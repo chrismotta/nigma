@@ -1,0 +1,19 @@
+#page {
+    padding-top: 60px;
+}
+footer .navbar-inner, footer .subnav {
+	min-height: 23px;
+}
+footer .navbar-inner small {
+    float: none;
+    margin: 0 auto;
+}
+#top .grid-view {
+	padding-top: 0px;
+}
+#blank-row {
+	height: 20px;
+}
+.row {
+	margin-left: 0px;
+}
