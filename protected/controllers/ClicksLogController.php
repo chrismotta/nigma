@@ -44,18 +44,24 @@ class ClicksLogController extends Controller
 		$model->languaje = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
 		$model->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 
-		var_dump($userData);
+		var_dump($model);
 		print "<hr/>";
 
 		// Save active record and redirect
 		
 		if($model->save()){
-			print "guardado - tid: ".$model->id;
+
+			$mytoken = md5($model->id);
+			print "guardado - tid: ".$mytoken;
+			print "<hr/>";
+			$model->tid = $mytoken;
+			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)
-			setcookie('sma_tid', $model->id, time() + 1 * 1 * 60 * 60, '/');
+			setcookie('sma_tid', $mytoken, time() + 1 * 1 * 60 * 60, '/');
 
-			
+			$redirectURL.= "&mytoken=".$mytoken;
+			print $redirectURL;
 			// redirect to campaign url
 			//$this->redirect($redirectURL);
 		}else{

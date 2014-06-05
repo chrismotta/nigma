@@ -46,6 +46,9 @@ return array(
 			'class'=>'CDbAuthManager',
 			'connectionID'=>'db'
 		),
+		'curl' =>array(
+		   'class' => 'application.extensions.curl.Curl',
+		),
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
