@@ -12,6 +12,7 @@ return array(
 	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'=>'Kickads AppServer',
 	'theme'=>'bootstrap',
+	'timeZone' => 'America/Argentina/Buenos_Aires',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
