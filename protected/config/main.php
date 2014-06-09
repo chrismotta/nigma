@@ -72,7 +72,7 @@ return array(
 			'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'mil998',
+			'password' => 'pernambuco',
 			'charset' => 'utf8',
 		),
 		

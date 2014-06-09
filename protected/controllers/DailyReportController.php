@@ -2,6 +2,15 @@
 
 class DailyReportController extends Controller
 {
+
+	/**
+	 * @property string $yesterday
+	 * @property string $today
+	 */
+
+	private $yesterday;
+	private $today;
+	
 	public function actionIndex()
 	{
 
@@ -9,16 +18,27 @@ class DailyReportController extends Controller
 		$today = date("Y-m-d H:i:s", strtotime("today"));
 
 		//$this->render('index');
+		$this->getAirpush();
+		
+	}
+	
+	/**
+	 * Loading tracking report from Airpush
+	 */
+
+	private function getAirpush()
+	{
+
 		echo "controller de daily report - airpush";
 		echo "<hr/>";
 
 		$cron_log = ApiCronLog::model()->findByAttributes(
 			array('networks_id'=>1), 
 			array(
-		        'condition'=>'date >= "'.$today.'"'
+		        'condition'=>'date >= "'.$this->today.'"'
 		    )
 		);
-		var_dump($today);
+		var_dump($this->today);
 		echo "<hr/>";
 		var_dump($cron_log);
 		echo "<hr/>";
@@ -71,6 +91,15 @@ class DailyReportController extends Controller
 			}
 
 		}
+	}
+
+	/**
+	 * Loading tracking report from Airpush
+	 */
+	
+	private function getReporo()
+	{
+
 	}
 
 	// Uncomment the following methods and override them if needed

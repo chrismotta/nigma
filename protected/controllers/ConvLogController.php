@@ -8,23 +8,46 @@ class ConvLogController extends Controller
 		// Get Request
 		if( isset( $_GET['mytoken'] ) ){
 			$tid = $_GET['mytoken'];
-			print "tid: ".$tid."<hr/>";
+			print "get tid: ".$tid."<hr/>";
 		}else{
-			print "tid: null<hr/>";
+			print "get tid: null<hr/>";
 			Yii::app()->end();
+		}
+
+		//Yii::app()->end();
+
+
+		// Get Campaign
+		
+		if($click = ClicksLog::model()->findByAttributes(
+			array('tid'=>$tid)
+			)){
+
+			if($conv = ConvLog::model()->findByAttributes(
+				array('tid'=>$tid)
+				)){
+
+				print "ConvLog: exists<hr/>";
+
+			}else{
+
+				$conv = new ConvLog();
+				$conv->tid = $tid;
+				$conv->save();
+				
+				var_dump($conv);
+
+			}
+
+		}else{
+			print "ClicksLog: null<hr/>";
 		}
 
 		Yii::app()->end();
 
 
-		// Get Campaign
-		
-		if($campaign = Campaigns::model()->findByPk($cid)){
-			$redirectURL = $campaign->url;
-		}else{
-			print "campaign: null<hr/>";
-			Yii::app()->end();
-		}
+
+
 
 		//print_r($campaign);
 		print "url: ".$redirectURL."<hr/>";
@@ -72,31 +95,4 @@ class ConvLogController extends Controller
 
 	}
 
-
-	// Uncomment the following methods and override them if needed
-	/*
-	public function filters()
-	{
-		// return the filter configuration for this controller, e.g.:
-		return array(
-			'inlineFilterName',
-			array(
-				'class'=>'path.to.FilterClass',
-				'propertyName'=>'propertyValue',
-			),
-		);
-	}
-
-	public function actions()
-	{
-		// return external action classes, e.g.:
-		return array(
-			'action1'=>'path.to.ActionClass',
-			'action2'=>array(
-				'class'=>'path.to.AnotherActionClass',
-				'propertyName'=>'propertyValue',
-			),
-		);
-	}
-	*/
 }
