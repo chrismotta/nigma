@@ -9,9 +9,9 @@ class ClicksLogController extends Controller
 		if( isset( $_GET['cid'] ) && isset( $_GET['nid'] ) ){
 			$cid = $_GET['cid'];
 			$nid = $_GET['nid'];
-			print "cid: ".$cid." - nid: ".$nid."<hr/>";
+			//print "cid: ".$cid." - nid: ".$nid."<hr/>";
 		}else{
-			print "cid: null || nid: null<hr/>";
+			//print "cid: null || nid: null<hr/>";
 			Yii::app()->end();
 		}
 
@@ -20,12 +20,12 @@ class ClicksLogController extends Controller
 		if($campaign = Campaigns::model()->findByPk($cid)){
 			$redirectURL = $campaign->url;
 		}else{
-			print "campaign: null<hr/>";
+			//print "campaign: null<hr/>";
 			Yii::app()->end();
 		}
 
 		//print_r($campaign);
-		print "url: ".$redirectURL."<hr/>";
+		//print "url: ".$redirectURL."<hr/>";
 
 		// Write down a log
 
@@ -44,16 +44,16 @@ class ClicksLogController extends Controller
 		$model->languaje = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
 		$model->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 
-		var_dump($model);
-		print "<hr/>";
+		//var_dump($model);
+		//print "<hr/>";
 
 		// Save active record and redirect
 		
 		if($model->save()){
 
 			$mytoken = md5($model->id);
-			print "guardado - tid: ".$mytoken;
-			print "<hr/>";
+			//print "guardado - tid: ".$mytoken;
+			//print "<hr/>";
 			$model->tid = $mytoken;
 			$model->save();
 
@@ -61,11 +61,11 @@ class ClicksLogController extends Controller
 			setcookie('sma_tid', $mytoken, time() + 1 * 1 * 60 * 60, '/');
 
 			$redirectURL.= "&mytoken=".$mytoken;
-			print $redirectURL;
+			//print $redirectURL;
 			// redirect to campaign url
-			//$this->redirect($redirectURL);
+			$this->redirect($redirectURL);
 		}else{
-			print "no guardado";
+			//print "no guardado";
 		}
 
 	}

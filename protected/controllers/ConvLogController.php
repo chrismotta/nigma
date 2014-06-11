@@ -8,9 +8,9 @@ class ConvLogController extends Controller
 		// Get Request
 		if( isset( $_GET['mytoken'] ) ){
 			$tid = $_GET['mytoken'];
-			print "get tid: ".$tid."<hr/>";
+			//print "get tid: ".$tid."<hr/>";
 		}else{
-			print "get tid: null<hr/>";
+			//print "get tid: null<hr/>";
 			Yii::app()->end();
 		}
 
@@ -27,7 +27,7 @@ class ConvLogController extends Controller
 				array('tid'=>$tid)
 				)){
 
-				print "ConvLog: exists<hr/>";
+				//print "ConvLog: exists<hr/>";
 
 			}else{
 
@@ -35,12 +35,12 @@ class ConvLogController extends Controller
 				$conv->tid = $tid;
 				$conv->save();
 				
-				var_dump($conv);
+				//var_dump($conv);
 
 			}
 
 		}else{
-			print "ClicksLog: null<hr/>";
+			//print "ClicksLog: null<hr/>";
 		}
 
 		Yii::app()->end();
@@ -50,7 +50,7 @@ class ConvLogController extends Controller
 
 
 		//print_r($campaign);
-		print "url: ".$redirectURL."<hr/>";
+		//print "url: ".$redirectURL."<hr/>";
 
 		// Write down a log
 
@@ -69,16 +69,16 @@ class ConvLogController extends Controller
 		$model->languaje = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
 		$model->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 
-		var_dump($model);
-		print "<hr/>";
+		//var_dump($model);
+		//print "<hr/>";
 
 		// Save active record and redirect
 		
 		if($model->save()){
 
 			$mytoken = md5($model->id);
-			print "guardado - tid: ".$mytoken;
-			print "<hr/>";
+			//print "guardado - tid: ".$mytoken;
+			//print "<hr/>";
 			$model->tid = $mytoken;
 			$model->save();
 
@@ -86,11 +86,11 @@ class ConvLogController extends Controller
 			setcookie('sma_tid', $mytoken, time() + 1 * 1 * 60 * 60, '/');
 
 			$redirectURL.= "&mytoken=".$mytoken;
-			print $redirectURL;
+			//print $redirectURL;
 			// redirect to campaign url
 			//$this->redirect($redirectURL);
 		}else{
-			print "no guardado";
+			//print "no guardado";
 		}
 
 	}
