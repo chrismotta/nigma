@@ -37,6 +37,39 @@ class ConvLogController extends Controller
 				
 				//var_dump($conv);
 
+				/** 
+				 * Only for adwords campaigns
+				 * Setting Google Conversion Tracking
+				 * Adwords = 3
+				 */
+
+				if($click->networks_id == 3){
+
+					$campaign = Campaigns::model()->findByPk($click->campaigns_id);
+					if($campaign->gc_id != 'NULL'){
+						//print "3"."<hr/>";
+						$gc_callback = "http://www.googleadservices.com/pagead/";
+						$gc_callback.= "conversion/".$campaign->gc_id."/";
+						$gc_callback.= "?label=".$campaign->gc_label;
+						$gc_callback.= "&guid=ON&script=0";
+						print $gc_callback;
+						$gc_callback = "http://www.google.com";
+
+						// Crea un nuevo recurso cURL
+						$curl = curl_init();
+
+						// Establece la URL y otras opciones apropiadas
+						curl_setopt($curl, CURLOPT_URL, $gc_callback);
+						curl_setopt($curl, CURLOPT_HEADER, 0);
+
+						// Captura la URL y la envía al navegador
+						curl_exec($curl);
+						//echo $curl;
+						// Cierrar el recurso cURLy libera recursos del sistema
+						curl_close($curl);
+					}
+				}
+
 			}
 
 		}else{
