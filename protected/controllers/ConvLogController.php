@@ -52,8 +52,7 @@ class ConvLogController extends Controller
 						$gc_callback.= "conversion/".$campaign->gc_id."/";
 						$gc_callback.= "?label=".$campaign->gc_label;
 						$gc_callback.= "&guid=ON&script=0";
-						print $gc_callback;
-						$gc_callback = "http://www.google.com";
+						//print $gc_callback;
 
 						// Crea un nuevo recurso cURL
 						$curl = curl_init();
@@ -64,7 +63,7 @@ class ConvLogController extends Controller
 
 						// Captura la URL y la envía al navegador
 						curl_exec($curl);
-						//echo $curl;
+
 						// Cierrar el recurso cURLy libera recursos del sistema
 						curl_close($curl);
 					}
