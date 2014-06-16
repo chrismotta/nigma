@@ -37,7 +37,7 @@ class ClicksLogController extends Controller
 
 		// Get visitor parameters
 		
-		$model->server_ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["SERVER_ADDR"] : null;
+		$model->server_ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
 		//"$model->forwarded_ip = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
 		$model->server_name = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : null;
 		$model->user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
