@@ -111,3 +111,8 @@ footer .navbar-inner small {
 .row {
 	margin-left: 0px;
 }
+
+.grid-view .button-column {
+    text-align: center;
+    width: 72px;
+}
