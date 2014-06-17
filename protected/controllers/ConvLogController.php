@@ -101,7 +101,7 @@ class ConvLogController extends Controller
 						// Cierrar el recurso cURLy libera recursos del sistema
 						curl_close($curl);
 
-						$gc_log = fopen( Yii::app()->theme->baseUrl . "log/gc.log", "a");
+						$gc_log = fopen( Yii::app()->theme->baseUrl . "/log/gc.log", "a");
 						fwrite($gc_log, $_GET['mytoken']."\n\r");
 						fclose($gc_log);
 						
