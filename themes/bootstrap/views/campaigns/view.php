@@ -23,7 +23,7 @@ $this->menu=array(
 	'attributes'=>array(
 		'id',
 		'rec',
-		'ios_id',
+		'opportunities_id',
 		'name',
 		'campaign_categories_id',
 		'offer_type',
