@@ -26,9 +26,9 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'ios_id'); ?>
-		<?php echo $form->textField($model,'ios_id'); ?>
-		<?php echo $form->error($model,'ios_id'); ?>
+		<?php echo $form->labelEx($model,'opportunities_id'); ?>
+		<?php echo $form->textField($model,'opportunities_id'); ?>
+		<?php echo $form->error($model,'opportunities_id'); ?>
 	</div>
 
 	<div class="row">

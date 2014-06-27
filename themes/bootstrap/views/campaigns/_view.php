@@ -13,8 +13,8 @@
 	<?php echo CHtml::encode($data->rec); ?>
 	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('ios_id')); ?>:</b>
-	<?php echo CHtml::encode($data->ios_id); ?>
+	<b><?php echo CHtml::encode($data->getAttributeLabel('opportunities_id')); ?>:</b>
+	<?php echo CHtml::encode($data->opportunities_id); ?>
 	<br />
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>

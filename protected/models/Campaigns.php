@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'campaigns':
  * @property integer $id
  * @property integer $rec
- * @property integer $ios_id
+ * @property integer $opportunities_id
  * @property string $name
  * @property integer $campaign_categories_id
  * @property integer $offer_type
@@ -39,13 +39,13 @@ class Campaigns extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('ios_id, name, campaign_categories_id, budget, cap, bid, comment, date_start, date_end', 'required'),
-			array('rec, ios_id, campaign_categories_id, offer_type, currency, budget_type, model, status', 'numerical', 'integerOnly'=>true),
+			array('opportunities_id, name, campaign_categories_id, budget, cap, bid, comment, date_start, date_end', 'required'),
+			array('rec, opportunities_id, campaign_categories_id, offer_type, currency, budget_type, model, status', 'numerical', 'integerOnly'=>true),
 			array('name, comment', 'length', 'max'=>128),
 			array('budget, cap, bid', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, ios_id, name, campaign_categories_id, offer_type, currency, budget_type, budget, cap, model, bid, comment, status, date_start, date_end', 'safe', 'on'=>'search'),
+			array('id, rec, opportunities_id, name, campaign_categories_id, offer_type, currency, budget_type, budget, cap, model, bid, comment, status, date_start, date_end', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -68,7 +68,7 @@ class Campaigns extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'rec' => 'Rec',
-			'ios_id' => 'Ios',
+			'opportunities_id' => 'Opportunities',
 			'name' => 'Name',
 			'campaign_categories_id' => 'Campaign Categories',
 			'offer_type' => 'Offer Type',
@@ -105,7 +105,7 @@ class Campaigns extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('rec',$this->rec);
-		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('opportunities_id',$this->opportunities_id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('campaign_categories_id',$this->campaign_categories_id);
 		$criteria->compare('offer_type',$this->offer_type);

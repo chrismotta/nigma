@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 );
 
 $this->menu=array(
-	array('label'=>'List Campaigns', 'url'=>array('index')),
+	/*array('label'=>'List Campaigns', 'url'=>array('index')),*/
 	array('label'=>'Create Campaigns', 'url'=>array('create')),
 );
 
@@ -46,23 +46,25 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 	'filter'=>$model,
 	'columns'=>array(
 		'id',
+		/*
 		'rec',
-		'ios_id',
+		*/
+		'opportunities_id',
 		'name',
+		/*
 		'campaign_categories_id',
 		'offer_type',
-		/*
 		'currency',
 		'budget_type',
-		'budget',
-		'cap',
-		'model',
-		'bid',
+		'budget', //sacar
+		'model', //sacar
+		'bid', //sacar
 		'comment',
+		*/
+		'cap',
 		'status',
 		'date_start',
 		'date_end',
-		*/
 		array(
 			'class'=>'CButtonColumn',
 		),
