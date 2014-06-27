@@ -93,6 +93,7 @@ class ConvLogController extends Controller
 
 						// Establece la URL y otras opciones apropiadas
 						curl_setopt($curl, CURLOPT_URL, $gc_callback);
+						curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 						curl_setopt($curl, CURLOPT_HEADER, 0);
 
 						// Captura la URL y la envía al navegador
