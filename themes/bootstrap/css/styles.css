@@ -16,6 +16,7 @@
 	width:111px;
 	height:30px;
 	margin:10px 0 10px 4px;
+	padding: 0px;
 }
 
 
@@ -26,7 +27,7 @@
   color: #e4e4e4;
   text-decoration: none;
   background-color: #49b16b;
-  height: 52px;
+  /*height: 52px;*/
   -webkit-box-shadow: inset 2px 1px 8px rgba(0, 0, 0, 0.125);
      -moz-box-shadow: inset 2px 1px 8px rgba(0, 0, 0, 0.125);
           box-shadow: inset 2px 1px 8px rgba(0, 0, 0, 0.125);
@@ -90,7 +91,9 @@ rect[Attributes Style] {
 }
 /* GRAFICOS BARRAS */
 
-
+[class*="span"] {
+	margin: 0px;
+}
 
 #page {
     padding-top: 60px;
@@ -114,5 +117,17 @@ footer .navbar-inner small {
 
 .grid-view .button-column {
     text-align: center;
-    width: 72px;
+    width: 30px;
+}
+
+/* grid-view */
+.grid-view {
+	font-size: 11px;
+}
+.single-button-column {
+	padding: 0px 1px;
+}
+.modal-footer {
+	font-size: 11px;
+	padding: 8px 15px;
 }
