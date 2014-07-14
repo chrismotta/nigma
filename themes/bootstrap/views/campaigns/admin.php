@@ -26,7 +26,167 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Manage Campaigns</h1>
+<h2>Manage Campaigns</h2>
+
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+	'id' => 'campaigns-grid',
+	'dataProvider' => $model->search(),
+	'filter' => $model,
+	'type' => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("row-id" => $data->id)',
+	'columns'=>array(
+		array(
+			'name'   => 'id',
+        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+		/*
+		'rec',
+		*/
+		array(
+			'name'   => 'opportunities_id',
+        	'header' => 'Opp',
+        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+		array(
+			'name'   => 'name',
+        	'headerHtmlOptions' => array('style' => 'width: 300px'),
+        ),
+		/*
+		'campaign_categories_id',
+		'offer_type',
+		'currency',
+		'budget_type',
+		'budget', //sacar
+		'model', //sacar
+		'bid', //sacar
+		'comment',
+		*/
+		array(
+			'name'   => 'cap',
+        	'headerHtmlOptions' => array('style' => 'width: 60px'),
+        	'value'  => '"$ ".$data->cap',
+        ),
+		array(
+			'name'   => 'status',
+        	'value'  => '$data->status == 0 ? "Active" : "Paused"',
+        	'headerHtmlOptions' => array('style' => 'width: 60px'),
+        ),
+		array(
+			'name'   => 'date_start',
+        	'value'  => 'date("d-m-Y", strtotime($data->date_start))',
+        	'headerHtmlOptions' => array('style' => 'width: 70px'),
+        ),
+		array(
+
+			'name'   => 'date_end',
+        	'value'  => 'date("d-m-Y", strtotime($data->date_end))',
+        	'headerHtmlOptions' => array('style' => 'width: 70px'),
+        ),
+		/*
+		//ajax using CHtml::ajaxLink
+		array(
+            'type'=>'raw',
+            'value'=>	'
+            			CHtml::ajaxLink(
+            				"<i class=\"icon-hand-up\"></i>",
+	            			Yii::app()->controller->createUrl("redirectAjax"),
+	        				array(
+								"type" => "POST",
+								"dataType" => "json",
+								"data" => array("cid" => $data->primaryKey),
+								"success" => "function( data )
+									{
+										$(\"#myModal .modal-header\").html(data[\"header\"]);
+										$(\"#myModal .modal-body\").html(data[\"body\"]);
+										$(\"#myModal .modal-footer\").html(data[\"footer\"]);
+										$(\"#myModal\").modal(\"toggle\");
+									}",
+								),
+							array(
+								"class"=>"single-button-column",
+								"rel"=>"tooltip",
+								"data-original-title"=>"Redirects"
+								)
+						) . 
+						CHtml::ajaxLink(
+							"<i class=\"icon-pencil\"></i>",
+	        				Yii::app()->controller->createUrl("updateAjax"),
+	        				array(
+								"type" => "POST",
+								"dataType" => "json",
+								"data" => array("cid" => $data->primaryKey),
+								"success" => "function( data )
+									{
+										$(\"#myModal .modal-header\").html(data[\"header\"]);
+										$(\"#myModal .modal-body\").html(data[\"body\"]);
+										$(\"#myModal .modal-footer\").html(data[\"footer\"]);
+										$(\"#myModal\").modal(\"toggle\");
+									}",
+								),
+							array(
+								"class"=>"single-button-column",
+								"rel"=>"tooltip",
+								"data-original-title"=>"Update"
+								)
+						);
+						',
+        	'headerHtmlOptions' => array('style' => 'width: 40px'),
+
+        ),
+        */
+		array(
+			'class'=>'bootstrap.widgets.TbButtonColumn',
+        	'headerHtmlOptions' => array('style' => "width: 60px"),
+			'buttons'=>array(
+				'redirects' => array(
+				    'label'=>'Redirects',
+                    'icon'=>'hand-up',
+				    'click'=>'
+				    function(){
+				    	var id = $(this).parents("tr").attr("row-id");
+				    	$.post(
+						"redirectAjax",
+						"cid="+id,
+						function(data)
+							{
+								//alert(data);
+								$("#myModal .modal-header").html(data["header"]);
+								$("#myModal .modal-body").html(data["body"]);
+								$("#myModal .modal-footer").html(data["footer"]);
+								$("#myModal").modal("toggle");
+							},
+						"json"
+						)
+				    }
+				    ',
+				),
+				'updateAjax' => array(
+				    'label'=>'Update',
+                    'icon'=>'pencil',
+				    'click'=>'
+				    function(){
+				    	var id = $(this).parents("tr").attr("row-id");
+				    	$.post(
+						"updateAjax/"+id,
+						"cid="+id,
+						function(data)
+							{
+								//alert(data);
+								$("#myModal .modal-header").html(data["header"]);
+								$("#myModal .modal-body").html(data["body"]);
+								$("#myModal .modal-footer").html(data["footer"]);
+								$("#myModal").modal("toggle");
+							},
+						"json"
+						)
+				    }
+				    ',
+				)
+			),
+            'template'=>'{redirects} {updateAjax} {delete}',
+		),
+	),
+)); ?>
 
 <p>
 You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
@@ -40,33 +200,10 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 )); ?>
 </div><!-- search-form -->
 
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
-	'id'=>'campaigns-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
-	'columns'=>array(
-		'id',
-		/*
-		'rec',
-		*/
-		'opportunities_id',
-		'name',
-		/*
-		'campaign_categories_id',
-		'offer_type',
-		'currency',
-		'budget_type',
-		'budget', //sacar
-		'model', //sacar
-		'bid', //sacar
-		'comment',
-		*/
-		'cap',
-		'status',
-		'date_start',
-		'date_end',
-		array(
-			'class'=>'CButtonColumn',
-		),
-	),
-)); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'myModal')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>

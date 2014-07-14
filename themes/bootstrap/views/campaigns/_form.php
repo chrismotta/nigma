@@ -19,11 +19,11 @@
 
 	<?php echo $form->errorSummary($model); ?>
 
-	<div class="row">
+	<!--div class="row">
 		<?php echo $form->labelEx($model,'rec'); ?>
 		<?php echo $form->textField($model,'rec'); ?>
 		<?php echo $form->error($model,'rec'); ?>
-	</div>
+	</div-->
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'opportunities_id'); ?>
