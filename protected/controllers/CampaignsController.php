@@ -6,7 +6,7 @@ class CampaignsController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete'),
 				'roles'=>array('admin'),
 			),
 			/*
@@ -80,6 +80,100 @@ class CampaignsController extends Controller
 		));
 	}
 
+
+	/**
+	 * AJAX ACTIONS
+	 */
+	
+	/**
+	 * Generate redirects.
+	 */
+	public function actionRedirectAjax()
+	{
+		$cid=$_POST['cid'];
+
+		/*
+		$model=new Campaigns('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Campaigns']))
+			$model->attributes=$_GET['Campaigns'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));
+		*/
+		
+		$data['header'] = '
+            <a class="close" data-dismiss="modal">&times;</a>
+            <h4>Redirects for campaign #'.$cid.'</h4>
+            ';
+		$data['body'] = '
+			<p class="span6"><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Airpush: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=1 </p>
+			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Reporo: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=2 </p>
+			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Ajillion: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=3 </p>
+			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Adwords: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=4 </p>
+			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Kimia: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=5 </p>
+			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Leadbolt: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=6 </p>
+			';
+		$data['footer'] = '
+			Copy and paste the redirect URL into the traffic source.
+			';
+
+		echo json_encode($data);
+	}
+
+	/**
+	 * Updates a particular model by ajax.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionUpdateAjax($id=null)
+	{
+		isset($id) ? $cid = $id : $cid = $_POST['cid'];
+		$model = $this->loadModel($cid);
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		$body = $this->renderPartial('_update',array(
+			'model'=>$model,
+		), true);
+
+		/*
+		if(isset($_POST['Campaigns']))
+		{
+			$model->attributes=$_POST['Campaigns'];
+			if($model->save())
+				$this->redirect(array('view','id'=>$model->id));
+		}
+
+		$this->render('update',array(
+			'model'=>$model,
+		));
+		*/
+		//echo '................................okk <hr/>';
+		//echo $body;
+		if(isset($_POST['Campaigns']))
+		{
+			$model->attributes=$_POST['Campaigns'];
+			if($model->save())
+				$this->redirect(array('admin'));
+		}
+
+		$data['header'] = '
+            <a class="close" data-dismiss="modal">&times;</a>
+            <h4>Update campaign #'.$cid.'</h4>
+            ';
+		$data['body'] = $body;
+		$data['footer'] = '
+			Edit campaign attributes. Fields with <span class="required">*</span> are required.
+			';
+
+		echo json_encode($data);
+	}
+
+
+
 	/**
 	 * Updates a particular model.
 	 * If update is successful, the browser will be redirected to the 'view' page.
@@ -87,6 +181,8 @@ class CampaignsController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+		if(isset($id)) die($id);
+
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
