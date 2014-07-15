@@ -8,6 +8,11 @@
  * @property integer $rec
  * @property string $name
  * @property integer $status
+ * @property integer $finance_entities_id
+ *
+ * The followings are the available model relations:
+ * @property FinanceEntities $financeEntities
+ * @property Ios[] $ioses
  */
 class Advertisers extends CActiveRecord
 {
@@ -27,12 +32,12 @@ class Advertisers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required'),
-			array('rec, status', 'numerical', 'integerOnly'=>true),
+			array('name, finance_entities_id', 'required'),
+			array('rec, status, finance_entities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, name, status', 'safe', 'on'=>'search'),
+			array('id, rec, name, status, finance_entities_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,6 +49,8 @@ class Advertisers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'financeEntities' => array(self::BELONGS_TO, 'FinanceEntities', 'finance_entities_id'),
+			'ioses' => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
 		);
 	}
 
@@ -57,6 +64,7 @@ class Advertisers extends CActiveRecord
 			'rec' => 'Rec',
 			'name' => 'Name',
 			'status' => 'Status',
+			'finance_entities_id' => 'Finance Entities',
 		);
 	}
 
@@ -82,6 +90,7 @@ class Advertisers extends CActiveRecord
 		$criteria->compare('rec',$this->rec);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('status',$this->status);
+		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
