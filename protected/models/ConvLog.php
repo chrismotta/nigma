@@ -7,6 +7,10 @@
  * @property integer $id
  * @property string $tid
  * @property string $date
+ * @property integer $campaign_id
+ *
+ * The followings are the available model relations:
+ * @property Campaigns $campaign
  */
 class ConvLog extends CActiveRecord
 {
@@ -26,11 +30,12 @@ class ConvLog extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('tid', 'required'),
+			array('tid, date, campaign_id', 'required'),
+			array('campaign_id', 'numerical', 'integerOnly'=>true),
 			array('tid', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, tid, date', 'safe', 'on'=>'search'),
+			array('id, tid, date, campaign_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -42,6 +47,7 @@ class ConvLog extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'campaign' => array(self::BELONGS_TO, 'Campaigns', 'campaign_id'),
 		);
 	}
 
@@ -54,6 +60,7 @@ class ConvLog extends CActiveRecord
 			'id' => 'ID',
 			'tid' => 'Tid',
 			'date' => 'Date',
+			'campaign_id' => 'Campaign',
 		);
 	}
 
@@ -78,6 +85,7 @@ class ConvLog extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('tid',$this->tid,true);
 		$criteria->compare('date',$this->date,true);
+		$criteria->compare('campaign_id',$this->campaign_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
