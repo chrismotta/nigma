@@ -7,7 +7,6 @@ class AirpushController extends Controller
 
 	public function actionIndex()
 	{
-
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
@@ -15,9 +14,9 @@ class AirpushController extends Controller
 			Yii::app()->end(1);
 		}
 
-		// validate if info have't been dowloades already.
+		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			// print "Information already downloaded.";
+			print "Information already downloaded.";
 			Yii::app()->end(2);
 		}
 
@@ -41,18 +40,11 @@ class AirpushController extends Controller
 		foreach ($result->advertiser_data as $campaign) {
 			$dailyReport = new DailyReport();
 			
-			//FIXME el ID de la campaña viene encerrado entre ** en el nombre. Paresarlo directamente.
-			$tmp = Campaigns::model()->findByAttributes( array('name'=>$campaign->campaignname) );
-			if (!$tmp) { // TODO add more validations?
-				print "ERROR - campaign not found: " . $campaign->campaignname . "<br>";
-				continue;
-			}
-
-			// FIXME unncomment when campaign name have the new format's name.
-			// $id_begin = strpos($campaign->campaignname, "*");
-			// $id_end = strpos($campaign->campaignname, "*", $id_begin + 1);
-			// $dailyReport->campaigns_id = substr($campaign->campaignname, $id_begin, $id_end);
-			$dailyReport->campaigns_id = $tmp->id;
+			// get campaign ID used in KickAds Server, from the campaign name use in the external network
+			$id_begin = strpos($campaign->campaignname, "*") + 1;
+			$id_end = strpos($campaign->campaignname, "*", $id_begin) - 1;
+			$dailyReport->campaigns_id = substr($campaign->campaignname, $id_begin,  $id_end - $id_begin + 1);
+			
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impression;
 			$dailyReport->clics = $campaign->clicks;
@@ -65,7 +57,6 @@ class AirpushController extends Controller
 				// print "ERROR - saving campaign: " . $campaign->campaignname . "<br>";
 				continue;
 			}
-			// print "OK - campaign found: " . $campaign->campaignname . ", campaign_id: " . $dailyReport->campaigns_id . ", impressions: " . $dailyReport->imp . ", clicks: " . $dailyReport->clics . ", conv: " . $dailyReport->conv . ", date: " . $dailyReport->date ."<br>";
 		}
 
 		Yii::app()->end();
