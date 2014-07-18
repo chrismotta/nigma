@@ -79,7 +79,7 @@ class ReporoController extends Controller
 				$dailyReport->value = 0;
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
-					// print "ERROR - saving campaign: " . $campaign->campaignname . "<br>";
+					// print "ERROR - saving campaign: " . $campaign_info->campaign_name . "<br>";
 					continue;
 				}
 			}
