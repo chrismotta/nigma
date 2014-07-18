@@ -13,6 +13,7 @@ return array(
 	'name'=>'',
 	'theme'=>'bootstrap',
 	'timeZone' => 'America/Argentina/Buenos_Aires',
+	'language'=>'en',
 
 	// preloading 'log' component
 	'preload'=>array('log'),
