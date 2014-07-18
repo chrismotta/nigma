@@ -99,13 +99,41 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'date_start'); ?>
-		<?php echo $form->textField($model,'date_start'); ?>
+		<?php
+            $this->widget('ext.rezvan.RDatePicker',array(
+                'model' => $model,
+			    'attribute' => 'date_start',
+                'options' => array(
+                    'autoclose'=>true,
+                    'format' => 'yyyy-mm-dd',
+                    'viewformat' => 'yyyy-mm-dd',
+                    'placement' => 'auto',
+                ),
+                'htmlOptions'=>array(
+                    'class'=>'span3'
+                )
+            ));
+        ?>
 		<?php echo $form->error($model,'date_start'); ?>
 	</div>
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'date_end'); ?>
-		<?php echo $form->textField($model,'date_end'); ?>
+		<?php
+            $this->widget('ext.rezvan.RDatePicker',array(
+                'model' => $model,
+			    'attribute' => 'date_end',
+                'options' => array(
+                    'autoclose'=>true,
+                    'format' => 'yyyy-mm-dd',
+                    'viewformat' => 'yyyy-mm-dd',
+                    'placement' => 'right',
+                ),
+                'htmlOptions'=>array(
+                    'class'=>'auto'
+                )
+            ));
+        ?>
 		<?php echo $form->error($model,'date_end'); ?>
 	</div>
 

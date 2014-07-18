@@ -5,11 +5,21 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="language" content="en" />
 
-
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/styles.css" />
-    <?php Yii::app()->bootstrap->register(); ?>
+    <?php 
+    // yii-bootstrap
+    Yii::app()->bootstrap->register();
+    //
+    $baseUrl = Yii::app()->theme->baseUrl;
+    $cs = Yii::app()->getClientScript();
+    // datepicker
+    //$cs->registerScriptFile($baseUrl.'/js/bootstrap-datepicker.js');
+    //$cs->registerCssFile($baseUrl.'/css/datepicker3.css');
+    // custom
+    $cs->registerScriptFile($baseUrl.'/js/custom.js');
+    $cs->registerCssFile($baseUrl.'/css/styles.css');
+    ?>
 </head>
 
 <body>

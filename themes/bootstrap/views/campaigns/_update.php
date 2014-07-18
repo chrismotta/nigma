@@ -1,1 +1,3 @@
-<?php $this->renderPartial('_formAjax', array('model'=>$model)); ?>
+<?php 
+$this->renderPartial('_formAjax', array('model'=>$model), false, true);
+?>
