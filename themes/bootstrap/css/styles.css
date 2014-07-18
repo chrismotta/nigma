@@ -131,3 +131,21 @@ footer .navbar-inner small {
 	font-size: 11px;
 	padding: 8px 15px;
 }
+
+fieldset hr {
+	background: #e9e9e9;;
+	height: 1px;
+	border: none;
+}
+
+.datepicker.dropdown-menu {
+	z-index: 2000;
+}
+.form-actions {
+	margin-top: 0px;
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.well {
+	margin-bottom: 0px;
+}
