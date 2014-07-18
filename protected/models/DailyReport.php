@@ -10,6 +10,7 @@
  * @property integer $imp
  * @property integer $clics
  * @property integer $conv
+ * @property integer $conv_adv
  * @property string $spend
  * @property integer $model
  * @property integer $value
@@ -34,11 +35,11 @@ class DailyReport extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('campaigns_id, networks_id, imp, clics, conv, spend, model, value, date', 'required'),
-			array('campaigns_id, networks_id, imp, clics, conv, model, value', 'numerical', 'integerOnly'=>true),
+			array('campaigns_id, networks_id, imp, clics, conv, conv_adv, model, value', 'numerical', 'integerOnly'=>true),
 			array('spend', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, imp, clics, conv, spend, model, value, date', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, imp, clics, conv, conv_adv, spend, model, value, date', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,6 +66,7 @@ class DailyReport extends CActiveRecord
 			'imp' => 'Imp',
 			'clics' => 'Clics',
 			'conv' => 'Conv',
+			'conv_adv' => 'Conv Adv',
 			'spend' => 'Spend',
 			'model' => 'Model',
 			'value' => 'Value',
@@ -96,6 +98,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('imp',$this->imp);
 		$criteria->compare('clics',$this->clics);
 		$criteria->compare('conv',$this->conv);
+		$criteria->compare('conv_adv',$this->conv_adv);
 		$criteria->compare('spend',$this->spend,true);
 		$criteria->compare('model',$this->model);
 		$criteria->compare('value',$this->value);
