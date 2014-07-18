@@ -135,24 +135,6 @@ class CampaignsController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
-		$body = $this->renderPartial('_update',array(
-			'model'=>$model,
-		), true);
-
-		/*
-		if(isset($_POST['Campaigns']))
-		{
-			$model->attributes=$_POST['Campaigns'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
-
-		$this->render('update',array(
-			'model'=>$model,
-		));
-		*/
-		//echo '................................okk <hr/>';
-		//echo $body;
 		if(isset($_POST['Campaigns']))
 		{
 			$model->attributes=$_POST['Campaigns'];
@@ -160,16 +142,10 @@ class CampaignsController extends Controller
 				$this->redirect(array('admin'));
 		}
 
-		$data['header'] = '
-            <a class="close" data-dismiss="modal">&times;</a>
-            <h4>Update campaign #'.$cid.'</h4>
-            ';
-		$data['body'] = $body;
-		$data['footer'] = '
-			Edit campaign attributes. Fields with <span class="required">*</span> are required.
-			';
+		$this->renderPartial('_update',array(
+			'model'=>$model,
+		), false, true);
 
-		echo json_encode($data);
 	}
 
 
@@ -181,8 +157,6 @@ class CampaignsController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		if(isset($id)) die($id);
-
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -267,4 +241,6 @@ class CampaignsController extends Controller
 			Yii::app()->end();
 		}
 	}
+
+
 }
