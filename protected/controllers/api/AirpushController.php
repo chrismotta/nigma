@@ -16,7 +16,7 @@ class AirpushController extends Controller
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "Information already downloaded.";
+			// print "Information already downloaded.";
 			Yii::app()->end(2);
 		}
 
@@ -48,7 +48,8 @@ class AirpushController extends Controller
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impression;
 			$dailyReport->clics = $campaign->clicks;
-			$dailyReport->conv = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign->Spent;
 			$dailyReport->model = 0;
 			$dailyReport->value = 0;
