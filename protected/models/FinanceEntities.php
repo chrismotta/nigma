@@ -1,32 +1,31 @@
 <?php
 
 /**
- * This is the model class for table "users".
+ * This is the model class for table "finance_entities".
  *
- * The followings are the available columns in table 'users':
+ * The followings are the available columns in table 'finance_entities':
  * @property integer $id
  * @property integer $rec
- * @property string $username
- * @property string $password
- * @property string $email
- * @property string $name
- * @property string $lastname
- * @property integer $status
- * @property integer $role
- * @property integer $permissions
+ * @property string $commercial
+ * @property string $address
+ * @property string $tax_id
+ * @property string $tax_percent
+ * @property string $zip_code
+ * @property string $country
+ * @property string $state
+ * @property string $web
  *
  * The followings are the available model relations:
- * @property Ios[] $ioses
- * @property Opportunities[] $opportunities
+ * @property Advertisers[] $advertisers
  */
-class Users extends CActiveRecord
+class FinanceEntities extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'users';
+		return 'finance_entities';
 	}
 
 	/**
@@ -37,12 +36,12 @@ class Users extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username, password, email, name, lastname', 'required'),
-			array('rec, status, role, permissions', 'numerical', 'integerOnly'=>true),
-			array('username, password, email, name, lastname', 'length', 'max'=>128),
+			array('commercial, address, tax_id, tax_percent, zip_code, country, state, web', 'required'),
+			array('rec', 'numerical', 'integerOnly'=>true),
+			array('commercial, address, tax_id, tax_percent, zip_code, country, state, web', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, username, password, email, name, lastname, status, role, permissions', 'safe', 'on'=>'search'),
+			array('id, rec, commercial, address, tax_id, tax_percent, zip_code, country, state, web', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,8 +53,7 @@ class Users extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'ioses' => array(self::HAS_MANY, 'Ios', 'user_id'),
-			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'manager_id'),
+			'advertisers' => array(self::HAS_MANY, 'Advertisers', 'finance_entities_id'),
 		);
 	}
 
@@ -67,14 +65,14 @@ class Users extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'rec' => 'Rec',
-			'username' => 'Username',
-			'password' => 'Password',
-			'email' => 'Email',
-			'name' => 'Name',
-			'lastname' => 'Lastname',
-			'status' => 'Status',
-			'role' => 'Role',
-			'permissions' => 'Permissions',
+			'commercial' => 'Commercial',
+			'address' => 'Address',
+			'tax_id' => 'Tax',
+			'tax_percent' => 'Tax Percent',
+			'zip_code' => 'Zip Code',
+			'country' => 'Country',
+			'state' => 'State',
+			'web' => 'Web',
 		);
 	}
 
@@ -98,14 +96,14 @@ class Users extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('rec',$this->rec);
-		$criteria->compare('username',$this->username,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('lastname',$this->lastname,true);
-		$criteria->compare('status',$this->status);
-		$criteria->compare('role',$this->role);
-		$criteria->compare('permissions',$this->permissions);
+		$criteria->compare('commercial',$this->commercial,true);
+		$criteria->compare('address',$this->address,true);
+		$criteria->compare('tax_id',$this->tax_id,true);
+		$criteria->compare('tax_percent',$this->tax_percent,true);
+		$criteria->compare('zip_code',$this->zip_code,true);
+		$criteria->compare('country',$this->country,true);
+		$criteria->compare('state',$this->state,true);
+		$criteria->compare('web',$this->web,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -116,7 +114,7 @@ class Users extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Users the static model class
+	 * @return FinanceEntities the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
