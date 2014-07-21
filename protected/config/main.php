@@ -9,17 +9,19 @@ Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'',
-	'theme'=>'bootstrap',
-	'timeZone' => 'America/Argentina/Buenos_Aires',
-	'language'=>'en',
+	'basePath'       =>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
+	'name'           =>'',
+	'theme'          =>'bootstrap',
+	'timeZone'       => 'America/Argentina/Buenos_Aires',
+	'language'       =>'en',
+	'sourceLanguage' =>'en',
+	'charset'        =>'utf-8',
 
 	// preloading 'log' component
-	'preload'=>array('log'),
+	'preload' =>array('log'),
 
 	// autoloading model and component classes
-	'import'=>array(
+	'import' =>array(
 		'application.models.*',
 		'application.components.*',
 	),
