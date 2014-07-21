@@ -48,15 +48,22 @@ $this->widget('ext.rezvan.RDatePicker',array(
 	'dataProvider' => $model->search(),
 	'filter' => $model,
 	'type' => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+    'template'=>'{items} {pager} {summary}',
+	
 	'columns'=>array(
+		// para incluir columnas de tablas relacionadas con search y order
+		// se usa la propiedad publica custom en 'name'
+		// y la ruta relacional de la columna en 'value'
+		array(
+			'name'   => 'advertisers_name',
+			'value'  => '$data->opportunities->ios->advertisers->name',
+        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
 		array(
 			'name'   => 'id',
         	'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
-		/*
-		'rec',
-		*/
 		array(
 			'name'   => 'opportunities_id',
         	'header' => 'Opp',
@@ -67,7 +74,17 @@ $this->widget('ext.rezvan.RDatePicker',array(
         	'headerHtmlOptions' => array('style' => 'width: 300px'),
         ),
 		/*
-		'campaign_categories_id',
+		// ejemplos de como setear correctamente columnas relacionadas
+		array(
+			'name'   => 'opportunities_rate',
+			'value'  => '$data->opportunities->rate',
+        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+		array(
+			'name'   => 'opportunities_carrier',
+			'value'  => '$data->opportunities->carrier',
+        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
 		'offer_type',
 		'currency',
 		'budget_type',
@@ -154,9 +171,9 @@ $this->widget('ext.rezvan.RDatePicker',array(
         	'headerHtmlOptions' => array('style' => "width: 60px"),
 			'buttons'=>array(
 				'redirects' => array(
-				    'label'=>'Redirects',
-                    'icon'=>'hand-up',
-				    'click'=>'
+					'label' =>'Redirects',
+					'icon'  =>'hand-up',
+					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("row-id");
 				    	$.post(
@@ -180,7 +197,9 @@ $this->widget('ext.rezvan.RDatePicker',array(
                     'icon'=>'pencil',
 				    'click'=>'
 				    function(){
-				    	var id = $(this).parents("tr").attr("row-id");
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"updateAjax/"+id,
 						"cid="+id,
@@ -200,10 +219,6 @@ $this->widget('ext.rezvan.RDatePicker',array(
 	),
 )); ?>
 
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
 
 <?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">

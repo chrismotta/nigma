@@ -35,6 +35,16 @@
 class Campaigns extends CActiveRecord
 {
 	/**
+	 * Related columns availables in search rules
+	 * @var [type] advertisers_name
+	 * @var [type] opportunities_rate
+	 * @var [type] opportunities_carrier
+	 */
+	public $advertisers_name;
+	public $opportunities_rate;
+	public $opportunities_carrier;
+
+	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
@@ -59,7 +69,8 @@ class Campaigns extends CActiveRecord
 			array('gc_label', 'length', 'max'=>30),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, opportunities_id, name, url, campaign_categories_id, offer_type, currency, budget_type, budget, cap, model, bid, comment, status, date_start, date_end, gc_id, gc_language, gc_format, gc_color, gc_label, gr_only', 'safe', 'on'=>'search'),
+			// .Related columns added
+			array('id, opportunities_id, advertisers_name, opportunities_rate, opportunities_carrier, name, url, campaign_categories_id, offer_type, currency, budget_type, budget, cap, model, bid, comment, status, date_start, date_end, gc_id, gc_language, gc_format, gc_color, gc_label, gr_only', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -82,29 +93,33 @@ class Campaigns extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'rec' => 'Rec',
-			'opportunities_id' => 'Opportunities',
-			'name' => 'Name',
-			'url' => 'Url',
-			'campaign_categories_id' => 'Campaign Categories',
-			'offer_type' => 'Offer Type',
-			'currency' => 'Currency',
-			'budget_type' => 'Budget Type',
-			'budget' => 'Budget',
-			'cap' => 'Cap',
-			'model' => 'Model',
-			'bid' => 'Bid',
-			'comment' => 'Comment',
-			'status' => 'Status',
-			'date_start' => 'Date Start',
-			'date_end' => 'Date End',
-			'gc_id' => 'Gc',
-			'gc_language' => 'Gc Language',
-			'gc_format' => 'Gc Format',
-			'gc_color' => 'Gc Color',
-			'gc_label' => 'Gc Label',
-			'gr_only' => 'Gr Only',
+			'id'                     => 'ID',
+			'rec'                    => 'Rec',
+			'opportunities_id'       => 'Opportunities',
+			'name'                   => 'Name',
+			'url'                    => 'Url',
+			'campaign_categories_id' => 'Categories',
+			'offer_type'             => 'Offer Type',
+			'currency'               => 'Currency',
+			'budget_type'            => 'Budget Type',
+			'budget'                 => 'Budget',
+			'cap'                    => 'Cap',
+			'model'                  => 'Model',
+			'bid'                    => 'Bid',
+			'comment'                => 'Comment',
+			'status'                 => 'Status',
+			'date_start'             => 'Date Start',
+			'date_end'               => 'Date End',
+			'gc_id'                  => 'Gc',
+			'gc_language'            => 'Gc Language',
+			'gc_format'              => 'Gc Format',
+			'gc_color'               => 'Gc Color',
+			'gc_label'               => 'Gc Label',
+			'gr_only'                => 'Gr Only',
+			// Header names for the related columns
+			'advertisers_name'       => 'Adver.', 
+			'opportunities_rate'     => 'Rate', 
+			'opportunities_carrier'  => 'Carrier', 
 		);
 	}
 
@@ -124,14 +139,13 @@ class Campaigns extends CActiveRecord
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
-		$criteria=new CDbCriteria;
-
+		$criteria = new CDbCriteria;
+		
 		$criteria->compare('id',$this->id);
 		$criteria->compare('rec',$this->rec);
-		$criteria->compare('opportunities_id',$this->opportunities_id);
+		$criteria->compare('opportunities_id',$this->opportunities_id);		
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('url',$this->url,true);
-		$criteria->compare('campaign_categories_id',$this->campaign_categories_id);
 		$criteria->compare('offer_type',$this->offer_type);
 		$criteria->compare('currency',$this->currency);
 		$criteria->compare('budget_type',$this->budget_type);
@@ -150,8 +164,36 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('gc_label',$this->gc_label,true);
 		$criteria->compare('gr_only',$this->gr_only,true);
 
+		// We need to list all related tables in with property
+		$criteria->with = array(  'opportunities', 'opportunities.ios.advertisers' );
+		// Related search criteria items added (use only table.columnName)
+		$criteria->compare('advertisers.name',$this->advertisers_name, true);
+		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
+		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+			'sort'=>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'advertisers_name'=>array(
+		                'asc'=>'advertisers.name',
+		                'desc'=>'advertisers.name DESC',
+		            ),
+		            'opportunities_rate'=>array(
+		                'asc'=>'opportunities.rate',
+		                'desc'=>'opportunities.rate DESC',
+		            ),
+		            'opportunities_carrier'=>array(
+		                'asc'=>'opportunities.carrier',
+		                'desc'=>'opportunities.carrier DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 
