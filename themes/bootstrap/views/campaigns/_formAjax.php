@@ -114,9 +114,9 @@ $this->widget('zii.widgets.jui.CJuiDatePicker', array(
     </fieldset>
 
 </div>
+    <?php $this->endWidget(); ?>
 
 <div class="modal-footer">
     Edit campaign attributes. Fields with <span class="required">*</span> are required.
 </div>
 
-    <?php $this->endWidget(); ?>

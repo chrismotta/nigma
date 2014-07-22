@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete'),
+				'actions'=>array('index','view','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
 				'roles'=>array('admin'),
 			),
 			/*
@@ -84,7 +84,7 @@ class CampaignsController extends Controller
 	/**
 	 * AJAX ACTIONS
 	 */
-	
+
 	/**
 	 * Generate redirects.
 	 */
@@ -123,6 +123,29 @@ class CampaignsController extends Controller
 	}
 
 	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionCreateAjax()
+	{
+		$model=new Campaigns;
+
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		if(isset($_POST['Campaigns']))
+		{
+			$model->attributes=$_POST['Campaigns'];
+			if($model->save())
+				$this->redirect(array('view','id'=>$model->id));
+		}
+		
+		$this->renderPartial('_formAjax',array(
+			'model'=>$model,
+		), false, true);
+	}
+	
+	/**
 	 * Updates a particular model by ajax.
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
@@ -133,7 +156,7 @@ class CampaignsController extends Controller
 		$model = $this->loadModel($cid);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Campaigns']))
 		{
@@ -142,7 +165,7 @@ class CampaignsController extends Controller
 				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('_update',array(
+		$this->renderPartial('_formAjax',array(
 			'model'=>$model,
 		), false, true);
 

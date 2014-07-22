@@ -150,3 +150,11 @@ fieldset hr {
 	margin-bottom: 0px;
 	m
 }
+
+.breadcrumb > .active {
+  color: #999999;
+  font-size: 17px;
+}
+.botonera {
+	text-align: right;
+}

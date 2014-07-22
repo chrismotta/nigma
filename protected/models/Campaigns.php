@@ -95,7 +95,7 @@ class Campaigns extends CActiveRecord
 		return array(
 			'id'                     => 'ID',
 			'rec'                    => 'Rec',
-			'opportunities_id'       => 'Opportunities',
+			'opportunities_id'       => 'Opportunitie',
 			'name'                   => 'Name',
 			'url'                    => 'Url',
 			'campaign_categories_id' => 'Categories',
@@ -117,7 +117,7 @@ class Campaigns extends CActiveRecord
 			'gc_label'               => 'Gc Label',
 			'gr_only'                => 'Gr Only',
 			// Header names for the related columns
-			'advertisers_name'       => 'Adver.', 
+			'advertisers_name'       => 'Advertiser', 
 			'opportunities_rate'     => 'Rate', 
 			'opportunities_carrier'  => 'Carrier', 
 		);

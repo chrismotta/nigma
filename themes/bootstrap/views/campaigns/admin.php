@@ -4,14 +4,19 @@
 
 $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
-	'Manage',
+	'Manage Campaigns',
 );
 
 $this->menu=array(
 	/*array('label'=>'List Campaigns', 'url'=>array('index')),*/
 	array('label'=>'Create Campaigns', 'url'=>array('create')),
 );
+?>
 
+<!--h2>Manage Campaigns</h2-->
+
+<div class="botonera">
+<?php
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
 	$('.search-form').toggle();
@@ -25,22 +30,25 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
-<h2>Manage Campaigns</h2>
+</div>
 
 <?php
-/*
-$this->widget('ext.rezvan.RDatePicker',array(
-    'name'=>'Campaigns[date_start]',
-    'value'=>$model->date_start,
-    'options' => array(
-        'autoclose'=>true,
-        'format' => 'dd-mm-yyyy',
-        'viewformat' => 'dd-mm-yyyy',
-        'placement' => 'right'
-    )
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'    =>'info',
+	'label'   =>'Create Campaign',
+	'block'   =>false,
+	'buttonType' => 'ajaxButton',
+	'url' => 'createAjax',
+	'ajaxOptions' => array(
+		'type' => 'POST',
+		'success' => 'function( data )
+			{
+								//alert(data);
+								$("#myModal").html(data);
+								$("#myModal").modal("toggle");
+			}',
+		),
 ));
-*/
 ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
@@ -61,12 +69,11 @@ $this->widget('ext.rezvan.RDatePicker',array(
         	'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'   => 'id',
+			'name'   => 'opportunities_id',
         	'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'   => 'opportunities_id',
-        	'header' => 'Opp',
+			'name'   => 'id',
         	'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
@@ -220,7 +227,7 @@ $this->widget('ext.rezvan.RDatePicker',array(
 )); ?>
 
 
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
+<?php //echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
 <?php /* $this->renderPartial('_search',array(
 	'model'=>$model,
