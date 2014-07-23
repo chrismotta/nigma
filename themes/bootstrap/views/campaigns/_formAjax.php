@@ -1,24 +1,13 @@
 <?php
-/* @var $this CampaignsController */
-/* @var $model Campaigns */
-/* @var $form CActiveForm */
-/*
-$this->widget('zii.widgets.jui.CJuiDatePicker', array(
-    'model' => $model,
-    'attribute' => 'date_start',
-    'options' => array(
-        'dateFormat' => 'dd-mm-yy'
-    ),
-    'htmlOptions' => array(
-        'class' => 'span2'
-    ),
-));
-*/
+/* @var $this CampaignsController
+ * @var $model Campaigns 
+ * @var $form CActiveForm 
+ */
 ?>
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Update campaign #<?php echo $model->id ?></h4>
+    <h4><?php echo $action ?> campaign <?php echo $action=="Update" ? "#".$model->id : "" ?></h4>
 </div>
 
 <div class="modal-body">
@@ -27,17 +16,24 @@ $this->widget('zii.widgets.jui.CJuiDatePicker', array(
         'id'=>'campaigns-form',
         'type'=>'horizontal',
         'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?>
 
     <fieldset>
-        <?php 
 
+        <?php 
 
         $categories = array('Games', 'Adult', 'Autos');
         $offer_type = array('VAS', 'App Owners', 'Branding', 'Lead Generation');
         $currency = array('Peso', 'Dolar', 'Euro', 'Real');
         $budget_type = array('Open','Fixed', 'Payment');
         $status = array('Active', 'Paused', 'Inactive');
+
+        if($action == "Create"){
+            echo $form->dropDownListRow($model, 'opportunities_id', $categories);
+        }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span4'));
         echo $form->radioButtonListInlineRow($model, 'status', $status);

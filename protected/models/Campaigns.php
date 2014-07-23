@@ -95,7 +95,7 @@ class Campaigns extends CActiveRecord
 		return array(
 			'id'                     => 'ID',
 			'rec'                    => 'Rec',
-			'opportunities_id'       => 'Opportunitie',
+			'opportunities_id'       => 'Opp.',
 			'name'                   => 'Name',
 			'url'                    => 'Url',
 			'campaign_categories_id' => 'Categories',
@@ -144,7 +144,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('rec',$this->rec);
 		$criteria->compare('opportunities_id',$this->opportunities_id);		
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('offer_type',$this->offer_type);
 		$criteria->compare('currency',$this->currency);
@@ -172,23 +172,23 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
 			// a sort tool in the related collumns
-			'sort'=>array(
+			'sort'     =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
 		            'advertisers_name'=>array(
-		                'asc'=>'advertisers.name',
-		                'desc'=>'advertisers.name DESC',
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
 		            ),
 		            'opportunities_rate'=>array(
-		                'asc'=>'opportunities.rate',
-		                'desc'=>'opportunities.rate DESC',
+						'asc'  =>'opportunities.rate',
+						'desc' =>'opportunities.rate DESC',
 		            ),
 		            'opportunities_carrier'=>array(
-		                'asc'=>'opportunities.carrier',
-		                'desc'=>'opportunities.carrier DESC',
+						'asc'  =>'opportunities.carrier',
+						'desc' =>'opportunities.carrier DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
