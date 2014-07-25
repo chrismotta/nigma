@@ -22,6 +22,9 @@
  */
 class DailyReport extends CActiveRecord
 {
+
+	public $network_name;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -43,7 +46,7 @@ class DailyReport extends CActiveRecord
 			array('spend', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, imp, clics, conv_api, conv_adv, spend, model, value, date', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, imp, clics, conv_api, conv_adv, spend, model, value, date', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,7 +72,7 @@ class DailyReport extends CActiveRecord
 			'id' => 'ID',
 			'campaigns_id' => 'Campaigns',
 			'networks_id' => 'Networks',
-			'imp' => 'Imp',
+			'imp' => 'Impressions',
 			'clics' => 'Clics',
 			'conv_api' => 'Conv Api',
 			'conv_adv' => 'Conv Adv',
@@ -77,6 +80,7 @@ class DailyReport extends CActiveRecord
 			'model' => 'Model',
 			'value' => 'Value',
 			'date' => 'Date',
+			'network_name'	=>	'Network Name',
 		);
 	}
 
@@ -110,8 +114,30 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('value',$this->value);
 		$criteria->compare('date',$this->date,true);
 
+		// Related search criteria items added (use only table.columnName)
+		$criteria->with = array( 'networks' );
+		$criteria->compare('networks.name',$this->network_name, true);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+			'sort'=>array(
+				'defaultOrder' => 't.id DESC',
+				'attributes'   =>array(
+					// Adding custom sort attributes
+		            'network_name'=>array(
+						'asc'  =>'networks.name',
+						'desc' =>'networks.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
+	    	// 'totalItemCount' => 50,
+		    'pagination'=>array(
+		        'pageSize'=>10,
+		    	),
 		));
 	}
 
@@ -124,5 +150,32 @@ class DailyReport extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function getGraphicDateRangeInfo($c_id, $net_id, $startDate, $endDate) {
+		$attributes = array('campaigns_id', 'netowrks_id', 'date');
+		$condition  = 'campaigns_id=:campaignid AND networks_id=:networkid AND DATE(date) >= :startDate and DATE(date) <= :endDate ORDER BY date';
+		$params     = array(":campaignid"=>$c_id, ":networkid"=>$net_id, ":startDate"=>$startDate, ":endDate"=>$endDate);
+		$r = DailyReport::model()->findAll( $condition, $params );
+
+		if ( empty($r) ) {
+			return "No results.";
+		} 
+
+		$spend       = array();
+		$impressions = array();
+		$clicks      = array();
+		$conv        = array();
+		$date        = array();
+
+		foreach ($r as $value) {
+			$dates[]       = date_format( new DateTime($value->date), "d-m-Y" );;
+			$spend[]       = array($value->date, $value->spend);
+			$impressions[] = array($value->date, $value->imp);
+			$clicks[]      = array($value->date, $value->clics);
+			$conv[]        = array($value->date, $value->conv_adv);
+		}
+		$result = array($spend, $conv, $impressions, $clicks, $dates);
+		return $result;
 	}
 }
