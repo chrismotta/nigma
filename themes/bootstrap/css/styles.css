@@ -158,3 +158,10 @@ fieldset hr {
 .botonera {
 	text-align: right;
 }
+.botonera-l {
+	margin-bottom: 15px;
+}
+.form-subtittle {
+	margin-top: 0px;
+	color: #666;
+}
