@@ -66,7 +66,7 @@ class CampaignsController extends Controller
 		$model=new Campaigns;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Campaigns']))
 		{
@@ -90,36 +90,12 @@ class CampaignsController extends Controller
 	 */
 	public function actionRedirectAjax()
 	{
-		$cid=$_POST['cid'];
-
-		/*
-		$model=new Campaigns('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['Campaigns']))
-			$model->attributes=$_GET['Campaigns'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-		));
-		*/
+		$cid   = $_POST['cid'];
+		$model = $this->loadModel($cid);
 		
-		$data['header'] = '
-            <a class="close" data-dismiss="modal">&times;</a>
-            <h4>Redirects for campaign #'.$cid.'</h4>
-            ';
-		$data['body'] = '
-			<p class="span6"><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Airpush: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=1 </p>
-			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Reporo: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=2 </p>
-			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Ajillion: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=3 </p>
-			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Adwords: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=4 </p>
-			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Kimia: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=5 </p>
-			<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Leadbolt: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$cid.'&nid=6 </p>
-			';
-		$data['footer'] = '
-			Copy and paste the redirect URL into the traffic source.
-			';
-
-		echo json_encode($data);
+		$this->renderPartial('_redirects',array(
+			'model'=>$model
+		), false, true);
 	}
 
 	/**
@@ -131,7 +107,7 @@ class CampaignsController extends Controller
 		$model=new Campaigns;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Campaigns']))
 		{
@@ -142,6 +118,7 @@ class CampaignsController extends Controller
 		
 		$this->renderPartial('_formAjax',array(
 			'model'=>$model,
+			'action'=>'Create'
 		), false, true);
 	}
 	
@@ -167,6 +144,7 @@ class CampaignsController extends Controller
 
 		$this->renderPartial('_formAjax',array(
 			'model'=>$model,
+			'action'=>'Update'
 		), false, true);
 
 	}

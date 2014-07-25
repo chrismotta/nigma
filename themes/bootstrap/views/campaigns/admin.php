@@ -34,51 +34,52 @@ $('.search-form form').submit(function(){
 
 <?php
 $this->widget('bootstrap.widgets.TbButton', array(
-	'type'    =>'info',
-	'label'   =>'Create Campaign',
-	'block'   =>false,
-	'buttonType' => 'ajaxButton',
-	'url' => 'createAjax',
+	'type'        => 'info',
+	'label'       => 'Create Campaign',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => 'createAjax',
 	'ajaxOptions' => array(
-		'type' => 'POST',
+		'type'    => 'POST',
 		'success' => 'function( data )
 			{
-								//alert(data);
-								$("#myModal").html(data);
-								$("#myModal").modal("toggle");
+			//alert(data);
+			$("#myModal").html(data);
+			$("#myModal").modal("toggle");
 			}',
 		),
-));
+	)
+);
 ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
-	'id' => 'campaigns-grid',
-	'dataProvider' => $model->search(),
-	'filter' => $model,
-	'type' => 'striped condensed',
+	'id'                       => 'campaigns-grid',
+	'dataProvider'             => $model->search(),
+	'filter'                   => $model,
+	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-    'template'=>'{items} {pager} {summary}',
+	'template'                 =>'{items} {pager} {summary}',
 	
-	'columns'=>array(
+	'columns'                  =>array(
 		// para incluir columnas de tablas relacionadas con search y order
 		// se usa la propiedad publica custom en 'name'
 		// y la ruta relacional de la columna en 'value'
 		array(
-			'name'   => 'advertisers_name',
-			'value'  => '$data->opportunities->ios->advertisers->name',
-        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'name'              => 'advertisers_name',
+			'value'             => '$data->opportunities->ios->advertisers->name',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'   => 'opportunities_id',
-        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'name'              => 'opportunities_id',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'   => 'id',
-        	'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'name'              => 'id',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'   => 'name',
-        	'headerHtmlOptions' => array('style' => 'width: 300px'),
+			'name'              => 'name',
+			'headerHtmlOptions' => array('style' => 'width: 300px'),
         ),
 		/*
 		// ejemplos de como setear correctamente columnas relacionadas
@@ -101,25 +102,25 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'comment',
 		*/
 		array(
-			'name'   => 'cap',
-        	'headerHtmlOptions' => array('style' => 'width: 60px'),
-        	'value'  => '"$ ".$data->cap',
+			'name'              => 'cap',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
+			'value'             => '"$ ".$data->cap',
         ),
 		array(
-			'name'   => 'status',
-        	'value'  => '$data->status == 0 ? "Active" : "Paused"',
-        	'headerHtmlOptions' => array('style' => 'width: 60px'),
+			'name'              => 'status',
+			'value'             => '$data->status == 0 ? "Active" : "Paused"',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
 		array(
-			'name'   => 'date_start',
-        	'value'  => 'date("d-m-Y", strtotime($data->date_start))',
-        	'headerHtmlOptions' => array('style' => 'width: 70px'),
+			'name'              => 'date_start',
+			'value'             => 'date("d-m-Y", strtotime($data->date_start))',
+			'headerHtmlOptions' => array('style' => 'width: 70px'),
         ),
 		array(
 
-			'name'   => 'date_end',
-        	'value'  => 'date("d-m-Y", strtotime($data->date_end))',
-        	'headerHtmlOptions' => array('style' => 'width: 70px'),
+			'name'              => 'date_end',
+			'value'             => 'date("d-m-Y", strtotime($data->date_end))',
+			'headerHtmlOptions' => array('style' => 'width: 70px'),
         ),
 		/*
 		//ajax using CHtml::ajaxLink
@@ -174,35 +175,32 @@ $this->widget('bootstrap.widgets.TbButton', array(
         ),
         */
 		array(
-			'class'=>'bootstrap.widgets.TbButtonColumn',
-        	'headerHtmlOptions' => array('style' => "width: 60px"),
-			'buttons'=>array(
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'buttons'           => array(
 				'redirects' => array(
 					'label' =>'Redirects',
 					'icon'  =>'hand-up',
 					'click' =>'
 				    function(){
-				    	var id = $(this).parents("tr").attr("row-id");
+				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	$.post(
 						"redirectAjax",
 						"cid="+id,
 						function(data)
 							{
 								//alert(data);
-								$("#myModal .modal-header").html(data["header"]);
-								$("#myModal .modal-body").html(data["body"]);
-								$("#myModal .modal-footer").html(data["footer"]);
+								$("#myModal").html(data);
 								$("#myModal").modal("toggle");
-							},
-						"json"
+							}
 						)
 				    }
 				    ',
 				),
 				'updateAjax' => array(
-				    'label'=>'Update',
-                    'icon'=>'pencil',
-				    'click'=>'
+					'label' => 'Update',
+					'icon'  => 'pencil',
+					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
@@ -221,7 +219,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    ',
 				)
 			),
-            'template'=>'{redirects} {updateAjax} {delete}',
+			'template' => '{redirects} {updateAjax} {delete}',
 		),
 	),
 )); ?>
