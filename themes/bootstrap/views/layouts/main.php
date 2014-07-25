@@ -33,7 +33,7 @@
                 array('label'=>'Dashboard', 'url'=>array('/site/index'), 'visible'=>!Yii::app()->user->isGuest),
 				array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Reporting', 'url'=>array('/campaigns/index')),
+                    array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                     array('label'=>'Conversions', 'url'=>'#'),
                     array('label'=>'Uploading Campaigns', 'url'=>'#'),
                     array('label'=>'Optimization', 'url'=>'#'),
