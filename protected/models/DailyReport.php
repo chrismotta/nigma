@@ -102,7 +102,7 @@ class DailyReport extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('imp',$this->imp);
