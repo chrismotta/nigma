@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
+				'actions'=>array('index','view','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
 				'roles'=>array('admin'),
 			),
 			/*
@@ -63,7 +63,7 @@ class CampaignsController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Campaigns;
+		$modelCamp=new Campaigns;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
@@ -76,7 +76,7 @@ class CampaignsController extends Controller
 		}
 
 		$this->render('create',array(
-			'model'=>$model,
+			'model'=>$modelCamp,
 		));
 	}
 
@@ -99,26 +99,51 @@ class CampaignsController extends Controller
 	}
 
 	/**
-	 * Creates a new model.
+	 * Creates a new model by ajax.
+	 * Optionally add a new opportunitie
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
 	public function actionCreateAjax()
 	{
 		$model=new Campaigns;
+		$modelOpp=new Opportunities;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		$this->performAjaxValidation($model, $modelOpp);
 
 		if(isset($_POST['Campaigns']))
 		{
 			$model->attributes=$_POST['Campaigns'];
+
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redriect(array('admin'));
+			
 		}
+		if(isset($_POST['Opportunities']))
+		{
+			$modelOpp->attributes=$_POST['Opportunities'];
+			$valid=$modelOpp->validate();
+
+			if($valid){
+				if($modelOpp->save())
+					//$this->redirect(array('admin'));
+					echo "successfull";
+				else
+					echo "error";
+			}else{
+				echo CActiveForm::validate($modelOpp);
+			}
+			Yii::app()->end();
+		}
+
+		// use listData in order to send a list of categories to the view
+        $categories = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
 		
 		$this->renderPartial('_formAjax',array(
-			'model'=>$model,
-			'action'=>'Create'
+			'model'      =>$model,
+			'modelOpp'   =>$modelOpp,
+			'categories' =>$categories,
+			'action'     =>'Create'
 		), false, true);
 	}
 	
@@ -142,13 +167,20 @@ class CampaignsController extends Controller
 				$this->redirect(array('admin'));
 		}
 
+		// use listData in order to send a list of categories to the view
+        $categories = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		
 		$this->renderPartial('_formAjax',array(
 			'model'=>$model,
+			'categories' =>$categories,
 			'action'=>'Update'
 		), false, true);
 
 	}
 
+	public function actionTestAjax(){
+		echo "ajax ok";
+	}
 
 
 	/**
@@ -234,11 +266,21 @@ class CampaignsController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Campaigns $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($model, $modelOpp=null)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='campaigns-form')
+		if(isset($_POST['ajax']))
 		{
-			echo CActiveForm::validate($model);
+			switch ($_POST['ajax']) {
+				case 'campaigns-form':
+					echo CActiveForm::validate($model);
+					break;
+				case 'opportunities-form':
+					echo CActiveForm::validate($modelOpp);
+					break;
+				
+				default:
+					break;
+			}
 			Yii::app()->end();
 		}
 	}

@@ -15,7 +15,6 @@ $this->menu=array(
 
 <!--h2>Manage Campaigns</h2-->
 
-<div class="botonera">
 <?php
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -30,8 +29,8 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-</div>
 
+<div class="botonera">
 <?php
 $this->widget('bootstrap.widgets.TbButton', array(
 	'type'        => 'info',
@@ -41,16 +40,19 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'url'         => 'createAjax',
 	'ajaxOptions' => array(
 		'type'    => 'POST',
-		'success' => 'function( data )
+		'success' => 'function(data)
 			{
-			//alert(data);
-			$("#myModal").html(data);
-			$("#myModal").modal("toggle");
+                    console.log(this.url);
+	                //alert("create");
+					$("#modalCampaigns").html(data);
+					$("#modalCampaigns").modal("toggle");
 			}',
 		),
+	'htmlOptions' => array('id' => 'createAjax'),
 	)
 );
 ?>
+</div>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'campaigns-grid',
@@ -136,10 +138,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 								"data" => array("cid" => $data->primaryKey),
 								"success" => "function( data )
 									{
-										$(\"#myModal .modal-header\").html(data[\"header\"]);
-										$(\"#myModal .modal-body\").html(data[\"body\"]);
-										$(\"#myModal .modal-footer\").html(data[\"footer\"]);
-										$(\"#myModal\").modal(\"toggle\");
+										$(\"#modalCampaigns .modal-header\").html(data[\"header\"]);
+										$(\"#modalCampaigns .modal-body\").html(data[\"body\"]);
+										$(\"#modalCampaigns .modal-footer\").html(data[\"footer\"]);
+										$(\"#modalCampaigns\").modal(\"toggle\");
 									}",
 								),
 							array(
@@ -157,10 +159,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 								"data" => array("cid" => $data->primaryKey),
 								"success" => "function( data )
 									{
-										$(\"#myModal .modal-header\").html(data[\"header\"]);
-										$(\"#myModal .modal-body\").html(data[\"body\"]);
-										$(\"#myModal .modal-footer\").html(data[\"footer\"]);
-										$(\"#myModal\").modal(\"toggle\");
+										$(\"#modalCampaigns .modal-header\").html(data[\"header\"]);
+										$(\"#modalCampaigns .modal-body\").html(data[\"body\"]);
+										$(\"#modalCampaigns .modal-footer\").html(data[\"footer\"]);
+										$(\"#modalCampaigns\").modal(\"toggle\");
 									}",
 								),
 							array(
@@ -190,8 +192,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						function(data)
 							{
 								//alert(data);
-								$("#myModal").html(data);
-								$("#myModal").modal("toggle");
+								$("#modalCampaigns").html(data);
+								$("#modalCampaigns").modal("toggle");
 							}
 						)
 				    }
@@ -211,8 +213,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						function(data)
 							{
 								//alert(data);
-								$("#myModal").html(data);
-								$("#myModal").modal("toggle");
+								$("#modalCampaigns").html(data);
+								$("#modalCampaigns").modal("toggle");
 							}
 						)
 				    }
@@ -232,10 +234,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 )); */?>
 </div><!-- search-form -->
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'myModal')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
 
 		<div class="modal-header"></div>
-        <div class="modal-body"></div>
+        <div class="modal-body"><h1>Campaigns</h1></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>

@@ -71,7 +71,7 @@ $this->pageTitle=Yii::app()->name;
 </div>
 
 <div class="row" id="top">
-	<div>
+	<div class="span6">
 		<h4>Top Conversions</h4>
 	</div>
 	<div class="span6">
