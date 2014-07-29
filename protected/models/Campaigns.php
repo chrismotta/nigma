@@ -5,32 +5,27 @@
  *
  * The followings are the available columns in table 'campaigns':
  * @property integer $id
- * @property integer $rec
- * @property integer $opportunities_id
  * @property string $name
- * @property string $url
+ * @property integer $networks_id
  * @property integer $campaign_categories_id
- * @property integer $offer_type
- * @property integer $currency
- * @property integer $budget_type
- * @property string $budget
+ * @property integer $wifi
+ * @property integer $formats_id
  * @property string $cap
- * @property integer $model
- * @property string $bid
- * @property string $comment
- * @property integer $status
- * @property string $date_start
- * @property string $date_end
- * @property string $gc_id
- * @property string $gc_language
- * @property integer $gc_format
- * @property string $gc_color
- * @property string $gc_label
- * @property string $gr_only
+ * @property string $model
+ * @property integer $ip
+ * @property integer $devices_id
+ * @property string $url
+ * @property string $status
+ * @property integer $opportunities_id
  *
  * The followings are the available model relations:
- * @property Opportunities $opportunities
+ * @property Networks $networks
+ * @property Devices $devices
+ * @property Formats $formats
  * @property CampaignCategories $campaignCategories
+ * @property Opportunities $opportunities
+ * @property ConvLog[] $convLogs
+ * @property DailyReport[] $dailyReports
  */
 class Campaigns extends CActiveRecord
 {
@@ -60,17 +55,16 @@ class Campaigns extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('opportunities_id, name, campaign_categories_id, budget, cap, bid, comment, date_start, date_end', 'required'),
-			array('rec, opportunities_id, campaign_categories_id, offer_type, currency, budget_type, model, status, gc_format', 'numerical', 'integerOnly'=>true),
-			array('name, comment', 'length', 'max'=>128),
+			array('name, networks_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, status, opportunities_id', 'required'),
+			array('networks_id, campaign_categories_id, wifi, formats_id, ip, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
+			array('name', 'length', 'max'=>128),
+			array('cap', 'length', 'max'=>11),
+			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>256),
-			array('budget, cap, bid', 'length', 'max'=>11),
-			array('gc_id, gc_language, gc_color, gr_only', 'length', 'max'=>10),
-			array('gc_label', 'length', 'max'=>30),
+			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			// .Related columns added
-			array('id, opportunities_id, advertisers_name, opportunities_rate, opportunities_carrier, name, url, campaign_categories_id, offer_type, currency, budget_type, budget, cap, model, bid, comment, status, date_start, date_end, gc_id, gc_language, gc_format, gc_color, gc_label, gr_only', 'safe', 'on'=>'search'),
+			array('id, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -82,8 +76,13 @@ class Campaigns extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'opportunities' => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
+			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'devices' => array(self::BELONGS_TO, 'Devices', 'devices_id'),
+			'formats' => array(self::BELONGS_TO, 'Formats', 'formats_id'),
 			'campaignCategories' => array(self::BELONGS_TO, 'CampaignCategories', 'campaign_categories_id'),
+			'opportunities' => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
+			'convLogs' => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
+			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),
 		);
 	}
 
@@ -93,33 +92,23 @@ class Campaigns extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'                     => 'ID',
-			'rec'                    => 'Rec',
-			'opportunities_id'       => 'Opp.',
-			'name'                   => 'Name',
-			'url'                    => 'Url',
-			'campaign_categories_id' => 'Categories',
-			'offer_type'             => 'Offer Type',
-			'currency'               => 'Currency',
-			'budget_type'            => 'Budget Type',
-			'budget'                 => 'Budget',
-			'cap'                    => 'Cap',
-			'model'                  => 'Model',
-			'bid'                    => 'Bid',
-			'comment'                => 'Comment',
-			'status'                 => 'Status',
-			'date_start'             => 'Date Start',
-			'date_end'               => 'Date End',
-			'gc_id'                  => 'Gc',
-			'gc_language'            => 'Gc Language',
-			'gc_format'              => 'Gc Format',
-			'gc_color'               => 'Gc Color',
-			'gc_label'               => 'Gc Label',
-			'gr_only'                => 'Gr Only',
+			'id' => 'ID',
+			'name' => 'Name',
+			'networks_id' => 'Networks',
+			'campaign_categories_id' => 'Campaign Categories',
+			'wifi' => 'Wifi',
+			'formats_id' => 'Formats',
+			'cap' => 'Cap',
+			'model' => 'Model',
+			'ip' => 'Ip',
+			'devices_id' => 'Devices',
+			'url' => 'Url',
+			'status' => 'Status',
+			'opportunities_id' => 'Opportunities',
 			// Header names for the related columns
 			'advertisers_name'       => 'Advertiser', 
 			'opportunities_rate'     => 'Rate', 
-			'opportunities_carrier'  => 'Carrier', 
+			'opportunities_carrier'  => 'Carrier',
 		);
 	}
 
@@ -139,30 +128,21 @@ class Campaigns extends CActiveRecord
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
-		$criteria = new CDbCriteria;
-		
-		$criteria->compare('id',$this->id);
-		$criteria->compare('rec',$this->rec);
-		$criteria->compare('opportunities_id',$this->opportunities_id);		
+		$criteria=new CDbCriteria;
+
+		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.name',$this->name,true);
-		$criteria->compare('url',$this->url,true);
-		$criteria->compare('offer_type',$this->offer_type);
-		$criteria->compare('currency',$this->currency);
-		$criteria->compare('budget_type',$this->budget_type);
-		$criteria->compare('budget',$this->budget,true);
+		$criteria->compare('networks_id',$this->networks_id);
+		$criteria->compare('campaign_categories_id',$this->campaign_categories_id);
+		$criteria->compare('t.wifi',$this->wifi);
+		$criteria->compare('formats_id',$this->formats_id);
 		$criteria->compare('cap',$this->cap,true);
-		$criteria->compare('model',$this->model);
-		$criteria->compare('bid',$this->bid,true);
-		$criteria->compare('comment',$this->comment,true);
-		$criteria->compare('status',$this->status);
-		$criteria->compare('date_start',$this->date_start,true);
-		$criteria->compare('date_end',$this->date_end,true);
-		$criteria->compare('gc_id',$this->gc_id,true);
-		$criteria->compare('gc_language',$this->gc_language,true);
-		$criteria->compare('gc_format',$this->gc_format);
-		$criteria->compare('gc_color',$this->gc_color,true);
-		$criteria->compare('gc_label',$this->gc_label,true);
-		$criteria->compare('gr_only',$this->gr_only,true);
+		$criteria->compare('model',$this->model,true);
+		$criteria->compare('ip',$this->ip);
+		$criteria->compare('devices_id',$this->devices_id);
+		$criteria->compare('url',$this->url,true);
+		$criteria->compare('status',$this->status,true);
+		$criteria->compare('opportunities_id',$this->opportunities_id);
 
 		// We need to list all related tables in with property
 		$criteria->with = array(  'opportunities', 'opportunities.ios.advertisers' );
