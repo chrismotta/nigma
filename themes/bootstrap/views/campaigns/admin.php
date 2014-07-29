@@ -110,20 +110,20 @@ $this->widget('bootstrap.widgets.TbButton', array(
         ),
 		array(
 			'name'              => 'status',
-			'value'             => '$data->status == 0 ? "Active" : "Paused"',
+			'value'             => '$data->status', //== 0 ? "Active" : "Paused"',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
-		array(
-			'name'              => 'date_start',
-			'value'             => 'date("d-m-Y", strtotime($data->date_start))',
-			'headerHtmlOptions' => array('style' => 'width: 70px'),
-        ),
-		array(
+		// array(
+		// 	'name'              => 'date_start',
+		// 	'value'             => 'date("d-m-Y", strtotime($data->date_start))',
+		// 	'headerHtmlOptions' => array('style' => 'width: 70px'),
+  //       ),
+		// array(
 
-			'name'              => 'date_end',
-			'value'             => 'date("d-m-Y", strtotime($data->date_end))',
-			'headerHtmlOptions' => array('style' => 'width: 70px'),
-        ),
+		// 	'name'              => 'date_end',
+		// 	'value'             => 'date("d-m-Y", strtotime($data->date_end))',
+		// 	'headerHtmlOptions' => array('style' => 'width: 70px'),
+  //       ),
 		/*
 		//ajax using CHtml::ajaxLink
 		array(

@@ -34,7 +34,7 @@
 
 	<div class="row">
 		<?php echo $form->labelEx($model,'name'); ?>
-		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>128)); ?>
+		<?php echo $form->textField($model,'name'); ?>
 		<?php echo $form->error($model,'name'); ?>
 	</div>
 
@@ -42,30 +42,6 @@
 		<?php echo $form->labelEx($model,'campaign_categories_id'); ?>
 		<?php echo $form->textField($model,'campaign_categories_id'); ?>
 		<?php echo $form->error($model,'campaign_categories_id'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'offer_type'); ?>
-		<?php echo $form->textField($model,'offer_type'); ?>
-		<?php echo $form->error($model,'offer_type'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'currency'); ?>
-		<?php echo $form->textField($model,'currency'); ?>
-		<?php echo $form->error($model,'currency'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'budget_type'); ?>
-		<?php echo $form->textField($model,'budget_type'); ?>
-		<?php echo $form->error($model,'budget_type'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'budget'); ?>
-		<?php echo $form->textField($model,'budget',array('size'=>11,'maxlength'=>11)); ?>
-		<?php echo $form->error($model,'budget'); ?>
 	</div>
 
 	<div class="row">
@@ -81,61 +57,9 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'bid'); ?>
-		<?php echo $form->textField($model,'bid',array('size'=>11,'maxlength'=>11)); ?>
-		<?php echo $form->error($model,'bid'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'comment'); ?>
-		<?php echo $form->textField($model,'comment',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'comment'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'status'); ?>
 		<?php echo $form->textField($model,'status'); ?>
 		<?php echo $form->error($model,'status'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'date_start'); ?>
-		<?php
-            $this->widget('ext.rezvan.RDatePicker',array(
-                'model' => $model,
-			    'attribute' => 'date_start',
-                'options' => array(
-                    'autoclose'=>true,
-                    'format' => 'yyyy-mm-dd',
-                    'viewformat' => 'yyyy-mm-dd',
-                    'placement' => 'auto',
-                ),
-                'htmlOptions'=>array(
-                    'class'=>'span3'
-                )
-            ));
-        ?>
-		<?php echo $form->error($model,'date_start'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'date_end'); ?>
-		<?php
-            $this->widget('ext.rezvan.RDatePicker',array(
-                'model' => $model,
-			    'attribute' => 'date_end',
-                'options' => array(
-                    'autoclose'=>true,
-                    'format' => 'yyyy-mm-dd',
-                    'viewformat' => 'yyyy-mm-dd',
-                    'placement' => 'right',
-                ),
-                'htmlOptions'=>array(
-                    'class'=>'auto'
-                )
-            ));
-        ?>
-		<?php echo $form->error($model,'date_end'); ?>
 	</div>
 
 	<div class="row buttons">

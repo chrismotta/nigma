@@ -61,10 +61,10 @@
         <h5 class="form-subtittle">New Opportunity</h5>
         <?php
         echo $form->textFieldRow($modelOpp, 'ios_id', array('class'=>'span4'));
-        echo $form->textFieldRow($modelOpp, 'manager_id', array('class'=>'span4'));
-        echo $form->textFieldRow($modelOpp, 'carrier', array('class'=>'span4'));
+        echo $form->textFieldRow($modelOpp, 'account_manager_id', array('class'=>'span4'));
+        echo $form->textFieldRow($modelOpp, 'carriers_id', array('class'=>'span4'));
         echo $form->textFieldRow($modelOpp, 'product', array('class'=>'span4'));
-        echo $form->radioButtonListInlineRow($modelOpp, 'model', array('CPC','CPM'));
+        echo $form->radioButtonListInlineRow($modelOpp, 'model_adv', array('CPC','CPM'));
         echo $form->textFieldRow($modelOpp, 'budget', array('prepend'=>'$'));
         echo $form->textFieldRow($modelOpp, 'rate', array('prepend'=>'$'));
         ?>
@@ -122,8 +122,8 @@
         $opportunities = array('test: 1','test: 2');
         $offer_type = array('VAS', 'App Owners', 'Branding', 'Lead Generation');
         $currency = array('Peso', 'Dolar', 'Euro', 'Real');
-        $budget_type = array('Open','Fixed', 'Payment');
-        $status = array('Active', 'Paused', 'Inactive');
+        // $budget_type = array('Open','Fixed', 'Payment');
+        $status = array('Active'/*, 'Paused'*/, 'Inactive');
 
 
         if($action == "Create"){
@@ -131,72 +131,20 @@
         }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span4'));
-        echo $form->radioButtonListInlineRow($model, 'status', $status);
         echo '<hr/>';
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));
-        echo $form->dropDownListRow($model, 'offer_type', $offer_type);
-        echo $form->dropDownListRow($model, 'currency', $currency);
+        // echo $form->dropDownListRow($model, 'offer_type', $offer_type);
+        // echo $form->dropDownListRow($model, 'currency', $currency);
         echo '<hr/>';
-        echo $form->radioButtonListInlineRow($model, 'budget_type', $budget_type);
-        echo $form->textFieldRow($model, 'budget', array('prepend'=>'$'));
+        // echo $form->radioButtonListInlineRow($model, 'budget_type', $budget_type);
+        // echo $form->textFieldRow($model, 'budget', array('prepend'=>'$'));
         echo $form->textFieldRow($model, 'cap', array('prepend'=>'$'));
         echo $form->radioButtonListInlineRow($model, 'model', array('CPC','CPM'));
-        echo $form->textFieldRow($model, 'bid', array('prepend'=>'$'));
+        // echo $form->textFieldRow($model, 'bid', array('prepend'=>'$'));
         echo '<hr/>';
 
-        // DATE PICKERS >>
         ?>
 
-        <div class="control-group ">
-            <label class="control-label required" for="Campaigns_name">Start Date <span class="required">*</span>
-            </label>
-            <div class="controls">
-            <?php
-                $this->widget('ext.rezvan.RDatePicker',array(
-                    'model'     => $model,
-                    'attribute' => 'date_start',
-                    'options'   => array(
-                        'autoclose'  =>true,
-                        'format'     => 'yyyy-mm-dd',
-                        'viewformat' => 'yyyy-mm-dd',
-                        'placement'  => 'right',
-                    ),
-                    'htmlOptions' =>array(
-                        'class' =>'span2'
-                    )
-                ));
-            ?>
-            </div>
-        </div>
-        <div class="control-group ">
-            <label class="control-label required" for="Campaigns_name">End Date <span class="required">*</span>
-            </label>
-            <div class="controls">
-            <?php
-                $this->widget('ext.rezvan.RDatePicker',array(
-                    'model'     => $model,
-                    'attribute' => 'date_end',
-                    'options'   => array(
-                        'autoclose'  =>true,
-                        'format'     => 'yyyy-mm-dd',
-                        'viewformat' => 'yyyy-mm-dd',
-                        'placement'  => 'right',
-                    ),
-                    'htmlOptions' => array(
-                        'class' =>'span2'
-                    )
-                ));
-            ?>
-            </div>
-        </div>
-
-        <?php
-        echo '<hr/>';
-        echo $form->textAreaRow($model, 'comment', array('class'=>'span4', 'rows'=>5)); 
-
-        ?>
-        <div class="row">
-    </div>
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     <div class="form-actions">
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
