@@ -125,29 +125,23 @@ if($action == "Create"){ ?>
 
         <?php 
 
-        $opportunities = array('test: 1','test: 2');
-        $offer_type = array('VAS', 'App Owners', 'Branding', 'Lead Generation');
-        $currency = array('Peso', 'Dolar', 'Euro', 'Real');
-        // $budget_type = array('Open','Fixed', 'Payment');
-        $status = array('Active'/*, 'Paused'*/, 'Inactive');
-
-
         if($action == "Create"){
-            echo $form->dropDownListRow($model, 'opportunities_id', $opportunities);
+            echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array('prompt' => 'Select an opportunitiy'));
         }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span4'));
         echo '<hr/>';
+        echo $form->dropDownListRow($model, 'networks_id', $networks, array('prompt' => 'Select a network'));
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));
-        // echo $form->dropDownListRow($model, 'offer_type', $offer_type);
-        // echo $form->dropDownListRow($model, 'currency', $currency);
+        echo $form->checkboxRow($model, 'wifi');
+        echo $form->checkboxRow($model, 'ip');
+        echo $form->dropDownListRow($model, 'formats_id', $formats, array('prompt' => 'Select a format'));
+        echo $form->dropDownListRow($model, 'devices_id', $devices, array('prompt' => 'Select a format'));
         echo '<hr/>';
-        // echo $form->radioButtonListInlineRow($model, 'budget_type', $budget_type);
-        // echo $form->textFieldRow($model, 'budget', array('prepend'=>'$'));
         echo $form->textFieldRow($model, 'cap', array('prepend'=>'$'));
         echo $form->radioButtonListInlineRow($model, 'model', $campModel);
-        // echo $form->textFieldRow($model, 'bid', array('prepend'=>'$'));
         echo '<hr/>';
+        echo $form->textFieldRow($model, 'url', array('class'=>'span4'));
 
         ?>
 

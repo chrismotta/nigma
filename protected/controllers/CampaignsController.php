@@ -119,19 +119,22 @@ class CampaignsController extends Controller
 	public function actionCreateAjax()
 	{
 		$model=new Campaigns;
-		$modelOpp=new Opportunities;
+		//$modelOpp=new Opportunities;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model, $modelOpp);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Campaigns']))
 		{
 			$model->attributes=$_POST['Campaigns'];
 
 			if($model->save())
-				$this->redriect(array('admin'));
+				$this->redirect(array('admin'));
 			
 		}
+
+		/*
+		// edicion de oportunidades desestimada en este modelo
 		if(isset($_POST['Opportunities']))
 		{
 			$modelOpp->attributes=$_POST['Opportunities'];
@@ -148,16 +151,25 @@ class CampaignsController extends Controller
 			}
 			Yii::app()->end();
 		}
+		 */
 
 		// use listData in order to send a list of categories to the view
-        $categories = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campModel = KHtml::enumItem($model, 'model');
+		$opportunities = CHtml::listData(Opportunities::model()->findAll(array('order'=>'id')), 'id', 'ios.name');
+		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel     = KHtml::enumItem($model, 'model');
 		$this->renderPartial('_formAjax',array(
-			'model'      => $model,
-			'modelOpp'   => $modelOpp,
-			'categories' => $categories,
-			'campModel'  => $campModel,
-			'action'     => 'Create'
+			'model'         => $model,
+			//'modelOpp'    => $modelOpp,
+			'opportunities' => $opportunities,
+			'categories'    => $categories,
+			'networks'      => $networks,
+			'devices'       => $devices,
+			'formats'       => $formats,
+			'campModel'     => $campModel,
+			'action'        => 'Create'
 		), false, true);
 	}
 	
@@ -181,14 +193,22 @@ class CampaignsController extends Controller
 		}
 
 		// use listData in order to send a list of categories to the view
-        $categories = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campModel = KHtml::enumItem($model, 'model');
-		
+		//$opportunities = CHtml::listData(Opportunities::model()->findAll(array('order'=>'id')), 'id', 'ios.name');
+		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel     = KHtml::enumItem($model, 'model');
 		$this->renderPartial('_formAjax',array(
-			'model'=>$model,
-			'categories' =>$categories,
-			'campModel'  => $campModel,
-			'action'=>'Update'
+			'model'         => $model,
+			//'modelOpp'    => $modelOpp,
+			//'opportunities' => $opportunities,
+			'categories'    => $categories,
+			'networks'      => $networks,
+			'devices'       => $devices,
+			'formats'       => $formats,
+			'campModel'     => $campModel,
+			'action'        => 'Update'
 		), false, true);
 
 	}
