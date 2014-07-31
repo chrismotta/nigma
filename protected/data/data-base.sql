@@ -23,7 +23,12 @@ INSERT INTO `networks` (`id`, `rec`, `name`, `url`, `query_string`, `token1`, `t
 (3, 0, 'Ajillion', 'http://admin.vanega.com/api/', '', 'api_kickads', 'mil99ocho', NULL),
 (4, 0, 'Adwords', '', '', '', '', NULL),
 (5, 0, 'Kimia', '', '', '', '', NULL),
-(6, 0, 'LeadBolt', 'https://www.leadbolt.net/api/advertiser_report', '', '90025293', '4a633bb5b8576e32', NULL);
+(6, 0, 'LeadBolt', 'https://www.leadbolt.net/api/advertiser_report', '', '90025293', '4a633bb5b8576e32', NULL),
+(7, 0, 'Buzzcity VAS', 'http://report.buzzcity.net/spendingreports.php', '', '88535', '44e92cd666a42bdccd2755dcc3d7d73c', NULL),
+(8, 0, 'Buzzcity ADT', 'http://report.buzzcity.net/spendingreports.php', '', '91642', 'bf3ec05e74b6779549e6a57c3d8fe86a', NULL),
+(9, 0, 'Buzzcity IP', 'http://report.buzzcity.net/spendingreports.php', '', '92379', '44ea35698cf09c91fbcb55ea09cbdf19', NULL),
+(10, 0, 'Buzzcity BRAND', 'http://report.buzzcity.net/spendingreports.php', '', '98985', '7064ce4567e9eb267593eb40c54d25e9', NULL),
+(11, 0, 'VServ', 'http://admin.vserv.mobi/pricing/clientExport.php', '', 'vng', 'kickADS2014*', NULL);
 
 --
 -- Dumping data for table `campaign_categories`
