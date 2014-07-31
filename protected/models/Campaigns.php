@@ -55,7 +55,7 @@ class Campaigns extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, networks_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, status, opportunities_id', 'required'),
+			array('name, networks_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
 			array('networks_id, campaign_categories_id, wifi, formats_id, ip, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			array('cap', 'length', 'max'=>11),

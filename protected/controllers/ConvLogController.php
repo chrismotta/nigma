@@ -40,9 +40,9 @@ class ConvLogController extends Controller
 		*/
 
 		// Get Request
-		if( isset( $_GET['mytoken'] ) ){
-			$tid = $_GET['mytoken'];
-			//print "get tid: ".$tid."<hr/>";
+		if( isset( $_GET['ktoken'] ) ){
+			$tid = $_GET['ktoken'];
+			print "get tid: ".$tid."<hr/>";
 		}else{
 			//print "get tid: null<hr/>";
 			Yii::app()->end();
@@ -61,12 +61,13 @@ class ConvLogController extends Controller
 				array('tid'=>$tid)
 				)){
 
-				//print "ConvLog: exists<hr/>";
+				print "ConvLog: exists<hr/>";
 
 			}else{
 
 				$conv = new ConvLog();
 				$conv->tid = $tid;
+				$conv->campaign_id = $click->campaigns_id;
 				$conv->save();
 				
 				//var_dump($conv);
@@ -77,6 +78,7 @@ class ConvLogController extends Controller
 				 * Adwords = 3
 				 */
 
+				/*
 				if($click->networks_id == 3){
 
 					$campaign = Campaigns::model()->findByPk($click->campaigns_id);
@@ -108,6 +110,7 @@ class ConvLogController extends Controller
 						
 					}
 				}
+				*/
 
 			}
 

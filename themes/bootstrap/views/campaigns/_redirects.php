@@ -15,14 +15,13 @@
     echo '
     <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>External Name: </strong>*'.$model->id.'* '.$model->name.' </p>
     <hr/>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Airpush: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid=1 </p>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Reporo: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid=2 </p>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Ajillion: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid=3 </p>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Adwords: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid=4 </p>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Kimia: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid=5 </p>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>Leadbolt: </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid=6 </p>
+    ';
+    foreach ($networks as $key => $value) {
+        echo '<p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>'.$value.': </strong>http://kickadserver.mobi/test/clicksLog?cid='.$model->id.'&nid='.$key.' </p>';
+    }
+    echo '
     <hr/>
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>S2S: </strong>http://kickadserver.mobi/test/convLog?'.$model->opportunities->server_to_server.'=&lt;'.$model->opportunities->server_to_server.'&gt; </p>
+    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>S2S: </strong>http://kickadserver.mobi/test/convLog?ktoken=&lt;'.$model->opportunities->server_to_server.'&gt; </p>
     ';
     ?>
 </div>

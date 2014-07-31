@@ -30,7 +30,7 @@ class ConvLog extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('tid, date, campaign_id', 'required'),
+			array('tid, campaign_id', 'required'),
 			array('campaign_id', 'numerical', 'integerOnly'=>true),
 			array('tid', 'length', 'max'=>255),
 			// The following rule is used by search().
