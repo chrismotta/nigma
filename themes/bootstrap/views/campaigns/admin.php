@@ -180,15 +180,34 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'buttons'           => array(
-				'redirects' => array(
-					'label' =>'Redirects',
-					'icon'  =>'hand-up',
+				'viewAjax' => array(
+					'label' =>'Detail',
+					'icon'  =>'eye-open',
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	$.post(
-						"redirectAjax",
-						"cid="+id,
+						"viewAjax/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalCampaigns").html(data);
+								$("#modalCampaigns").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				),
+				'redirects' => array(
+					'label' =>'Redirects',
+					'icon'  =>'repeat',
+					'click' =>'
+				    function(){
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	$.post(
+						"redirectAjax/"+id,
+						"",
 						function(data)
 							{
 								//alert(data);
@@ -209,7 +228,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"updateAjax/"+id,
-						"cid="+id,
+						"",
 						function(data)
 							{
 								//alert(data);
@@ -221,7 +240,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    ',
 				)
 			),
-			'template' => '{redirects} {updateAjax} {delete}',
+			'template' => '{viewAjax} {redirects} {updateAjax} {delete}',
 		),
 	),
 )); ?>

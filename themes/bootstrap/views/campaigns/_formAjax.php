@@ -13,7 +13,11 @@
 
 <div class="modal-body">
 
-<?php if($action == "Create"){ ?>
+<?php 
+/*
+// interacción con oportunidades desactivada
+
+if($action == "Create"){ ?>
 
 
     <div class="botonera-l">
@@ -102,7 +106,9 @@
     </div>
 
 
-<?php } ?>
+<?php } 
+*/
+?>
 
 
 
@@ -115,7 +121,7 @@
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?>
     <fieldset>
-        <h5 class="form-subtittle">Campaign</h5>
+        <!--h5 class="form-subtittle">Campaign</h5-->
 
         <?php 
 
@@ -139,7 +145,7 @@
         // echo $form->radioButtonListInlineRow($model, 'budget_type', $budget_type);
         // echo $form->textFieldRow($model, 'budget', array('prepend'=>'$'));
         echo $form->textFieldRow($model, 'cap', array('prepend'=>'$'));
-        echo $form->radioButtonListInlineRow($model, 'model', array('CPC','CPM'));
+        echo $form->radioButtonListInlineRow($model, 'model', $campModel);
         // echo $form->textFieldRow($model, 'bid', array('prepend'=>'$'));
         echo '<hr/>';
 

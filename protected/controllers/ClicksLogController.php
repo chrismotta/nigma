@@ -19,6 +19,7 @@ class ClicksLogController extends Controller
 		
 		if($campaign = Campaigns::model()->findByPk($cid)){
 			$redirectURL = $campaign->url;
+			$s2s = $campaign->opportunities->server_to_server;
 		}else{
 			//print "campaign: null<hr/>";
 			Yii::app()->end();
@@ -51,17 +52,17 @@ class ClicksLogController extends Controller
 		
 		if($model->save()){
 
-			$mytoken = md5($model->id);
-			//print "guardado - tid: ".$mytoken;
+			$ktoken = md5($model->id);
+			//print "guardado - tid: ".$ktoken;
 			//print "<hr/>";
-			$model->tid = $mytoken;
+			$model->tid = $ktoken;
 			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)
-			setcookie('sma_tid', $mytoken, time() + 1 * 1 * 60 * 60, '/');
+			setcookie('sma_tid', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
-			$redirectURL.= "&mytoken=".$mytoken;
-			//print $redirectURL;
+			$redirectURL.= "&".$s2s."=".$ktoken;
+			// print $redirectURL;
 			// redirect to campaign url
 			$this->redirect($redirectURL);
 		}else{

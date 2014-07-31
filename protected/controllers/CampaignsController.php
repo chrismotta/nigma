@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
+				'actions'=>array('index','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
 				'roles'=>array('admin'),
 			),
 			/*
@@ -84,14 +84,27 @@ class CampaignsController extends Controller
 	/**
 	 * AJAX ACTIONS
 	 */
+	
+
+	/**
+	 * Displays a particular model by ajax.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionViewAjax($id)
+	{
+		$model = $this->loadModel($id);
+
+		$this->renderPartial('_viewAjax',array(
+			'model'=>$model,
+		), false, true);
+	}
 
 	/**
 	 * Generate redirects.
 	 */
-	public function actionRedirectAjax()
+	public function actionRedirectAjax($id)
 	{
-		$cid   = $_POST['cid'];
-		$model = $this->loadModel($cid);
+		$model = $this->loadModel($id);
 		
 		$this->renderPartial('_redirects',array(
 			'model'=>$model
@@ -138,12 +151,13 @@ class CampaignsController extends Controller
 
 		// use listData in order to send a list of categories to the view
         $categories = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		
+		$campModel = KHtml::enumItem($model, 'model');
 		$this->renderPartial('_formAjax',array(
-			'model'      =>$model,
-			'modelOpp'   =>$modelOpp,
-			'categories' =>$categories,
-			'action'     =>'Create'
+			'model'      => $model,
+			'modelOpp'   => $modelOpp,
+			'categories' => $categories,
+			'campModel'  => $campModel,
+			'action'     => 'Create'
 		), false, true);
 	}
 	
@@ -152,10 +166,9 @@ class CampaignsController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdateAjax($id=null)
+	public function actionUpdateAjax($id)
 	{
-		isset($id) ? $cid = $id : $cid = $_POST['cid'];
-		$model = $this->loadModel($cid);
+		$model = $this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
@@ -169,10 +182,12 @@ class CampaignsController extends Controller
 
 		// use listData in order to send a list of categories to the view
         $categories = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel = KHtml::enumItem($model, 'model');
 		
 		$this->renderPartial('_formAjax',array(
 			'model'=>$model,
 			'categories' =>$categories,
+			'campModel'  => $campModel,
 			'action'=>'Update'
 		), false, true);
 
