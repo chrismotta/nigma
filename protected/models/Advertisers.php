@@ -15,6 +15,10 @@
  */
 class Advertisers extends CActiveRecord
 {
+
+	public $commercial_name;
+	public $commercial_lastname;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -34,10 +38,10 @@ class Advertisers extends CActiveRecord
 			array('name, cat', 'required'),
 			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
-			array('cat', 'length', 'max'=>5),
+			array('cat', 'length', 'max'=>16),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, cat, commercial_id', 'safe', 'on'=>'search'),
+			array('id, name, commercial_name, commercial_lastname, cat, commercial_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,8 +66,10 @@ class Advertisers extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'name' => 'Name',
-			'cat' => 'Cat',
+			'cat' => 'Category',
 			'commercial_id' => 'Commercial',
+			'commercial_name'	=>	'Commercial',
+			'commercial_lastname' => 'Commercial',
 		);
 	}
 
@@ -90,8 +96,29 @@ class Advertisers extends CActiveRecord
 		$criteria->compare('cat',$this->cat,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
 
+		$criteria->with = array('commercial');
+		$criteria->compare('commercial.name', $this->commercial_name);
+		$criteria->compare('commercial.lastname', $this->commercial_lastname);
+
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria' =>$criteria,
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'commercial_name'=>array(
+						'asc'  =>'commercial.name',
+						'desc' =>'commercial.name DESC',
+		            ),
+		            'commercial_lastname'=>array(
+						'asc'  =>'commercial.lastname',
+						'desc' =>'commercial.lastname DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 

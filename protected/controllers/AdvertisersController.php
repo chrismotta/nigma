@@ -2,11 +2,12 @@
 
 class AdvertisersController extends Controller
 {
+
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -51,9 +52,8 @@ class AdvertisersController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$model=$this->loadModel($id);
+		$this->renderPartial('_view', array('model'=>$model));
 	}
 
 	/**
@@ -65,18 +65,16 @@ class AdvertisersController extends Controller
 		$model=new Advertisers;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Advertisers']))
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -86,21 +84,24 @@ class AdvertisersController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Advertisers']))
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
+
+		// $this->render('update',array(
+		// 	'model'=>$model,
+		// ));
 	}
 
 	/**
@@ -169,5 +170,24 @@ class AdvertisersController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	public function renderFormAjax($model) 
+	{
+		$cat = KHtml::enumItem($model, 'cat');
+
+		if ( $model->isNewRecord ) {
+			$commercial="";
+			$model->commercial_id = Yii::app()->user->id;
+			// $commercial = CHtml::listData(Users::model()->findAll(), 'id', 'username');
+		} else {
+			$commercial = Users::model()->findByPk($model->commercial_id);
+		}
+
+		$this->renderPartial('_form',array(
+			'model'      =>$model,
+			'categories' =>$cat,
+			'commercial' =>$commercial,
+		), false, true);
 	}
 }

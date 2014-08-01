@@ -1,25 +1,40 @@
 <?php
 /* @var $this AdvertisersController */
-/* @var $data Advertisers */
+/* @var $model Advertiser */
 ?>
 
-<div class="view">
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>Advertiser <?php echo "#".$model->id ?></h4>
+</div>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
+<div class="modal-body">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>
-	<?php echo CHtml::encode($data->name); ?>
-	<br />
+<h5>Advertiser</h5>
+<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+    'type'=>'striped bordered condensed',
+	'data'=>$model,
+	'attributes'=>array(
+		'id',
+		'name',
+		'cat'
+	),
+)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('cat')); ?>:</b>
-	<?php echo CHtml::encode($data->cat); ?>
-	<br />
+<h5>Commercial</h5>
+<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+    'type'=>'striped bordered condensed',
+	'data'=>$model,
+	'attributes'=>array(
+		'commercial.id',
+		'commercial.name',
+		'commercial.lastname',
+		'commercial.username',
+	),
+)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('commercial_id')); ?>:</b>
-	<?php echo CHtml::encode($data->commercial_id); ?>
-	<br />
+</div>
 
-
+<div class="modal-footer">
+    Advertiser detail view.
 </div>
