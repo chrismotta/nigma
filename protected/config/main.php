@@ -9,15 +9,19 @@ Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
-	'basePath'=>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'=>'Kickads AppServer',
-	'theme'=>'bootstrap',
+	'basePath'       =>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
+	'name'           =>'',
+	'theme'          =>'bootstrap',
+	'timeZone'       => 'America/Argentina/Buenos_Aires',
+	'language'       =>'en',
+	'sourceLanguage' =>'en',
+	'charset'        =>'utf-8',
 
 	// preloading 'log' component
-	'preload'=>array('log'),
+	'preload' =>array('log'),
 
 	// autoloading model and component classes
-	'import'=>array(
+	'import' =>array(
 		'application.models.*',
 		'application.components.*',
 	),
@@ -46,6 +50,9 @@ return array(
 			'class'=>'CDbAuthManager',
 			'connectionID'=>'db'
 		),
+		'curl' =>array(
+		   'class' => 'application.extensions.curl.Curl',
+		),
 		'user'=>array(
 			// enable cookie-based authentication
 			'allowAutoLogin'=>true,
@@ -69,7 +76,7 @@ return array(
 			'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
 			'emulatePrepare' => true,
 			'username' => 'root',
-			'password' => 'mil998',
+			'password' => 'pernambuco',
 			'charset' => 'utf8',
 		),
 		

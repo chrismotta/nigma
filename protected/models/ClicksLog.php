@@ -7,12 +7,14 @@
  * @property integer $id
  * @property integer $campaigns_id
  * @property integer $networks_id
+ * @property string $tid
  * @property string $date
  * @property string $server_ip
  * @property string $server_name
  * @property string $user_agent
  * @property string $languaje
  * @property string $referer
+ * @property string $ip_forwarded
  */
 class ClicksLog extends CActiveRecord
 {
@@ -34,10 +36,10 @@ class ClicksLog extends CActiveRecord
 		return array(
 			array('campaigns_id, networks_id', 'required'),
 			array('campaigns_id, networks_id', 'numerical', 'integerOnly'=>true),
-			array('server_ip, server_name, user_agent, languaje, referer', 'length', 'max'=>255),
+			array('tid, server_ip, server_name, user_agent, languaje, referer, ip_forwarded', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, date, server_ip, server_name, user_agent, languaje, referer', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, tid, date, server_ip, server_name, user_agent, languaje, referer, ip_forwarded', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -49,6 +51,7 @@ class ClicksLog extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'campaign' => array(self::BELONGS_TO, 'Campaigns', 'campaign_id'),
 		);
 	}
 
@@ -58,15 +61,17 @@ class ClicksLog extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'id'           => 'ID',
 			'campaigns_id' => 'Campaigns',
-			'networks_id' => 'Networks',
-			'date' => 'Date',
-			'server_ip' => 'Server Ip',
-			'server_name' => 'Server Name',
-			'user_agent' => 'User Agent',
-			'languaje' => 'Languaje',
-			'referer' => 'Referer',
+			'networks_id'  => 'Networks',
+			'tid'          => 'Tid',
+			'date'         => 'Date',
+			'server_ip'    => 'Server Ip',
+			'server_name'  => 'Server Name',
+			'user_agent'   => 'User Agent',
+			'languaje'     => 'Languaje',
+			'referer'      => 'Referer',
+			'ip_forwarded' => 'Forwarded',
 		);
 	}
 
@@ -91,12 +96,14 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('networks_id',$this->networks_id);
+		$criteria->compare('tid',$this->tid,true);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('server_ip',$this->server_ip,true);
 		$criteria->compare('server_name',$this->server_name,true);
 		$criteria->compare('user_agent',$this->user_agent,true);
 		$criteria->compare('languaje',$this->languaje,true);
 		$criteria->compare('referer',$this->referer,true);
+		$criteria->compare('ip_forwarded',$this->ip_forwarded,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

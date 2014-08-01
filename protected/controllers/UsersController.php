@@ -70,6 +70,7 @@ class UsersController extends Controller
 		if(isset($_POST['Users']))
 		{
 			$model->attributes=$_POST['Users'];
+			$model->password=sha1($model->password);
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
@@ -94,6 +95,7 @@ class UsersController extends Controller
 		if(isset($_POST['Users']))
 		{
 			$model->attributes=$_POST['Users'];
+			//$model->
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}

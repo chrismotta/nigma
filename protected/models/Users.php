@@ -14,6 +14,10 @@
  * @property integer $status
  * @property integer $role
  * @property integer $permissions
+ *
+ * The followings are the available model relations:
+ * @property Ios[] $ioses
+ * @property Opportunities[] $opportunities
  */
 class Users extends CActiveRecord
 {
@@ -50,6 +54,8 @@ class Users extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'ioses' => array(self::HAS_MANY, 'Ios', 'user_id'),
+			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'manager_id'),
 		);
 	}
 

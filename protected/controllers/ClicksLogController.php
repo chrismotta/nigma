@@ -9,9 +9,9 @@ class ClicksLogController extends Controller
 		if( isset( $_GET['cid'] ) && isset( $_GET['nid'] ) ){
 			$cid = $_GET['cid'];
 			$nid = $_GET['nid'];
-			print "cid: ".$cid." - nid: ".$nid."<hr/>";
+			//print "cid: ".$cid." - nid: ".$nid."<hr/>";
 		}else{
-			print "cid: null || nid: null<hr/>";
+			//print "cid: null || nid: null<hr/>";
 			Yii::app()->end();
 		}
 
@@ -19,13 +19,14 @@ class ClicksLogController extends Controller
 		
 		if($campaign = Campaigns::model()->findByPk($cid)){
 			$redirectURL = $campaign->url;
+			$s2s = $campaign->opportunities->server_to_server;
 		}else{
-			print "campaign: null<hr/>";
+			//print "campaign: null<hr/>";
 			Yii::app()->end();
 		}
 
 		//print_r($campaign);
-		print "url: ".$redirectURL."<hr/>";
+		//print "url: ".$redirectURL."<hr/>";
 
 		// Write down a log
 
@@ -37,29 +38,35 @@ class ClicksLogController extends Controller
 
 		// Get visitor parameters
 		
-		$model->server_ip = isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"] : null;
-		//"$model->forwarded_ip = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
-		$model->server_name = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : null;
-		$model->user_agent = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-		$model->languaje = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
-		$model->referer = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
+		$model->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		$model->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
+		$model->server_name  = isset($_SERVER["SERVER_NAME"]) ? $_SERVER["SERVER_NAME"] : null;
+		$model->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+		$model->languaje     = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
+		$model->referer      = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 
-		var_dump($userData);
-		print "<hr/>";
+		//var_dump($model);
+		//print "<hr/>";
 
 		// Save active record and redirect
 		
 		if($model->save()){
-			print "guardado - tid: ".$model->id;
+
+			$ktoken = md5($model->id);
+			//print "guardado - tid: ".$ktoken;
+			//print "<hr/>";
+			$model->tid = $ktoken;
+			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)
-			setcookie('sma_tid', $model->id, time() + 1 * 1 * 60 * 60, '/');
+			setcookie('sma_tid', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
-			
+			$redirectURL.= "&".$s2s."=".$ktoken;
+			// print $redirectURL;
 			// redirect to campaign url
-			//$this->redirect($redirectURL);
+			$this->redirect($redirectURL);
 		}else{
-			print "no guardado";
+			//print "no guardado";
 		}
 
 	}

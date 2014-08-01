@@ -22,8 +22,8 @@
 	</div>
 
 	<div class="row">
-		<?php echo $form->label($model,'ios_id'); ?>
-		<?php echo $form->textField($model,'ios_id'); ?>
+		<?php echo $form->label($model,'opportunities_id'); ?>
+		<?php echo $form->textField($model,'opportunities_id'); ?>
 	</div>
 
 	<div class="row">

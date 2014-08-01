@@ -6,7 +6,7 @@ class CampaignsController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
 				'roles'=>array('admin'),
 			),
 			/*
@@ -63,10 +63,10 @@ class CampaignsController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Campaigns;
+		$modelCamp=new Campaigns;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Campaigns']))
 		{
@@ -76,9 +76,149 @@ class CampaignsController extends Controller
 		}
 
 		$this->render('create',array(
-			'model'=>$model,
+			'model'=>$modelCamp,
 		));
 	}
+
+
+	/**
+	 * AJAX ACTIONS
+	 */
+	
+
+	/**
+	 * Displays a particular model by ajax.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionViewAjax($id)
+	{
+		$model = $this->loadModel($id);
+
+		$this->renderPartial('_viewAjax',array(
+			'model'=>$model,
+		), false, true);
+	}
+
+	/**
+	 * Generate redirects.
+	 */
+	public function actionRedirectAjax($id)
+	{
+		$model    = $this->loadModel($id);
+		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		
+		$this->renderPartial('_redirects',array(
+			'model'    => $model,
+			'networks' => $networks,
+		), false, true);
+	}
+
+	/**
+	 * Creates a new model by ajax.
+	 * Optionally add a new opportunitie
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionCreateAjax()
+	{
+		$model=new Campaigns;
+		//$modelOpp=new Opportunities;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['Campaigns']))
+		{
+			$model->attributes=$_POST['Campaigns'];
+
+			if($model->save())
+				$this->redirect(array('admin'));
+			
+		}
+
+		/*
+		// edicion de oportunidades desestimada en este modelo
+		if(isset($_POST['Opportunities']))
+		{
+			$modelOpp->attributes=$_POST['Opportunities'];
+			$valid=$modelOpp->validate();
+
+			if($valid){
+				if($modelOpp->save())
+					//$this->redirect(array('admin'));
+					echo "successfull";
+				else
+					echo "error";
+			}else{
+				echo CActiveForm::validate($modelOpp);
+			}
+			Yii::app()->end();
+		}
+		 */
+
+		// use listData in order to send a list of categories to the view
+		$opportunities = CHtml::listData(Opportunities::model()->findAll(array('order'=>'id')), 'id', 'ios.name');
+		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel     = KHtml::enumItem($model, 'model');
+		$this->renderPartial('_formAjax',array(
+			'model'         => $model,
+			//'modelOpp'    => $modelOpp,
+			'opportunities' => $opportunities,
+			'categories'    => $categories,
+			'networks'      => $networks,
+			'devices'       => $devices,
+			'formats'       => $formats,
+			'campModel'     => $campModel,
+			'action'        => 'Create'
+		), false, true);
+	}
+	
+	/**
+	 * Updates a particular model by ajax.
+	 * If update is successful, the browser will be redirected to the 'view' page.
+	 * @param integer $id the ID of the model to be updated
+	 */
+	public function actionUpdateAjax($id)
+	{
+		$model = $this->loadModel($id);
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['Campaigns']))
+		{
+			$model->attributes=$_POST['Campaigns'];
+			if($model->save())
+				$this->redirect(array('admin'));
+		}
+
+		// use listData in order to send a list of categories to the view
+		//$opportunities = CHtml::listData(Opportunities::model()->findAll(array('order'=>'id')), 'id', 'ios.name');
+		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel     = KHtml::enumItem($model, 'model');
+		$this->renderPartial('_formAjax',array(
+			'model'         => $model,
+			//'modelOpp'    => $modelOpp,
+			//'opportunities' => $opportunities,
+			'categories'    => $categories,
+			'networks'      => $networks,
+			'devices'       => $devices,
+			'formats'       => $formats,
+			'campModel'     => $campModel,
+			'action'        => 'Update'
+		), false, true);
+
+	}
+
+	public function actionTestAjax(){
+		echo "ajax ok";
+	}
+
 
 	/**
 	 * Updates a particular model.
@@ -163,12 +303,24 @@ class CampaignsController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Campaigns $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($model, $modelOpp=null)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='campaigns-form')
+		if(isset($_POST['ajax']))
 		{
-			echo CActiveForm::validate($model);
+			switch ($_POST['ajax']) {
+				case 'campaigns-form':
+					echo CActiveForm::validate($model);
+					break;
+				case 'opportunities-form':
+					echo CActiveForm::validate($modelOpp);
+					break;
+				
+				default:
+					break;
+			}
 			Yii::app()->end();
 		}
 	}
+
+
 }

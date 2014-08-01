@@ -18,12 +18,12 @@ $this->menu=array(
 
 <h1>View Campaigns #<?php echo $model->id; ?></h1>
 
-<?php $this->widget('zii.widgets.CDetailView', array(
+<?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
 		'rec',
-		'ios_id',
+		'opportunities_id',
 		'name',
 		'campaign_categories_id',
 		'offer_type',

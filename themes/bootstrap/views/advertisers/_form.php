@@ -20,21 +20,21 @@
 	<?php echo $form->errorSummary($model); ?>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'rec'); ?>
-		<?php echo $form->textField($model,'rec'); ?>
-		<?php echo $form->error($model,'rec'); ?>
-	</div>
-
-	<div class="row">
 		<?php echo $form->labelEx($model,'name'); ?>
 		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>128)); ?>
 		<?php echo $form->error($model,'name'); ?>
 	</div>
 
 	<div class="row">
-		<?php echo $form->labelEx($model,'status'); ?>
-		<?php echo $form->textField($model,'status'); ?>
-		<?php echo $form->error($model,'status'); ?>
+		<?php echo $form->labelEx($model,'cat'); ?>
+		<?php echo $form->textField($model,'cat',array('size'=>15,'maxlength'=>15)); ?>
+		<?php echo $form->error($model,'cat'); ?>
+	</div>
+
+	<div class="row">
+		<?php echo $form->labelEx($model,'commercial_id'); ?>
+		<?php echo $form->textField($model,'commercial_id'); ?>
+		<?php echo $form->error($model,'commercial_id'); ?>
 	</div>
 
 	<div class="row buttons">

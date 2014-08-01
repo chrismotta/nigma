@@ -5,9 +5,13 @@
  *
  * The followings are the available columns in table 'advertisers':
  * @property integer $id
- * @property integer $rec
  * @property string $name
- * @property integer $status
+ * @property string $cat
+ * @property integer $commercial_id
+ *
+ * The followings are the available model relations:
+ * @property Users $commercial
+ * @property Ios[] $ioses
  */
 class Advertisers extends CActiveRecord
 {
@@ -27,12 +31,13 @@ class Advertisers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required'),
-			array('rec, status', 'numerical', 'integerOnly'=>true),
+			array('name, cat', 'required'),
+			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
+			array('cat', 'length', 'max'=>5),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, name, status', 'safe', 'on'=>'search'),
+			array('id, name, cat, commercial_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,6 +49,8 @@ class Advertisers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
+			'ioses' => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
 		);
 	}
 
@@ -54,9 +61,9 @@ class Advertisers extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'rec' => 'Rec',
 			'name' => 'Name',
-			'status' => 'Status',
+			'cat' => 'Cat',
+			'commercial_id' => 'Commercial',
 		);
 	}
 
@@ -79,9 +86,9 @@ class Advertisers extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('rec',$this->rec);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('status',$this->status);
+		$criteria->compare('cat',$this->cat,true);
+		$criteria->compare('commercial_id',$this->commercial_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

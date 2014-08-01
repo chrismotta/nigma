@@ -22,8 +22,8 @@ $this->menu=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
-		'rec',
 		'name',
-		'status',
+		'cat',
+		'commercial_id',
 	),
 )); ?>

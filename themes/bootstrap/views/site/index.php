@@ -4,7 +4,7 @@
 $this->pageTitle=Yii::app()->name;
 ?>
 <div class="row">
-	<div class="col-md-12">
+	<div class="span12">
 	<?php
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
@@ -71,15 +71,15 @@ $this->pageTitle=Yii::app()->name;
 </div>
 
 <div class="row" id="top">
-	<div class="col-md-6">
+	<div class="span6">
 		<h4>Top Conversions</h4>
 	</div>
-	<div class="col-md-6">
+	<div class="span6">
 		<h4>Top Conversion Rate</h4>
 	</div>
 </div>
 <div class="row" id="top">
-	<div class="col-md-4">
+	<div class="span4">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
 			'id'=>'campaigns-grid',
@@ -87,35 +87,16 @@ $this->pageTitle=Yii::app()->name;
 			'dataProvider'=>$dataProvider,
 			'columns'=>array(
 				'id',
-				/*
-				'rec',
-				'ios_id',
-				*/
 				'name',
-				/*
-				'campaign_categories_id',
-				'offer_type',
-				'currency',
-				'budget_type',
-				'budget',
-				'cap',
-				'model',
-				'bid',
-				'comment',
-				*/
-				'status',
-				/*
-				'date_start',
-				'date_end',
-				*/
 				array(
-					'class'=>'CButtonColumn',
-				),
+					'name'   => 'status',
+		        	'value'  => '$data->status == 0 ? "Active" : "Paused"',
+		        ),
 			),
 		));
 		?>
 	</div>
-	<div class="col-md-2">
+	<div class="span2">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
@@ -163,7 +144,7 @@ $this->pageTitle=Yii::app()->name;
 		);
 		?>
 	</div>
-	<div class="col-md-4" id="top">
+	<div class="span4" id="top">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
 			'id'=>'campaigns-grid',
@@ -171,35 +152,16 @@ $this->pageTitle=Yii::app()->name;
 			'dataProvider'=>$dataProvider,
 			'columns'=>array(
 				'id',
-				/*
-				'rec',
-				'ios_id',
-				*/
 				'name',
-				/*
-				'campaign_categories_id',
-				'offer_type',
-				'currency',
-				'budget_type',
-				'budget',
-				'cap',
-				'model',
-				'bid',
-				'comment',
-				*/
-				'status',
-				/*
-				'date_start',
-				'date_end',
-				*/
 				array(
-					'class'=>'CButtonColumn',
-				),
+					'name'   => 'status',
+		        	'value'  => '$data->status == 0 ? "Active" : "Paused"',
+		        ),
 			),
 		));
 		?>
 	</div>
-	<div class="col-md-2">
+	<div class="span2">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
@@ -250,15 +212,15 @@ $this->pageTitle=Yii::app()->name;
 </div>
 
 <div class="row" id="top">
-	<div class="col-md-6">
+	<div class="span6">
 		<h4>Top Daily Cap</h4>
 	</div>
-	<div class="col-md-6">
+	<div class="span6">
 		<h4>Top Profit</h4>
 	</div>
 </div>
 <div class="row" id="top">
-	<div class="col-md-4">
+	<div class="span4">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
 			'id'=>'campaigns-grid',
@@ -266,35 +228,16 @@ $this->pageTitle=Yii::app()->name;
 			'dataProvider'=>$dataProvider,
 			'columns'=>array(
 				'id',
-				/*
-				'rec',
-				'ios_id',
-				*/
 				'name',
-				/*
-				'campaign_categories_id',
-				'offer_type',
-				'currency',
-				'budget_type',
-				'budget',
-				'cap',
-				'model',
-				'bid',
-				'comment',
-				*/
-				'status',
-				/*
-				'date_start',
-				'date_end',
-				*/
 				array(
-					'class'=>'CButtonColumn',
-				),
+					'name'   => 'status',
+		        	'value'  => '$data->status == 0 ? "Active" : "Paused"',
+		        ),
 			),
 		));
 		?>
 	</div>
-	<div class="col-md-2">
+	<div class="span2">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
@@ -342,7 +285,7 @@ $this->pageTitle=Yii::app()->name;
 		);
 		?>
 	</div>
-	<div class="col-md-4" id="top">
+	<div class="span4" id="top">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
 			'id'=>'campaigns-grid',
@@ -350,35 +293,16 @@ $this->pageTitle=Yii::app()->name;
 			'dataProvider'=>$dataProvider,
 			'columns'=>array(
 				'id',
-				/*
-				'rec',
-				'ios_id',
-				*/
 				'name',
-				/*
-				'campaign_categories_id',
-				'offer_type',
-				'currency',
-				'budget_type',
-				'budget',
-				'cap',
-				'model',
-				'bid',
-				'comment',
-				*/
-				'status',
-				/*
-				'date_start',
-				'date_end',
-				*/
 				array(
-					'class'=>'CButtonColumn',
-				),
+					'name'   => 'status',
+		        	'value'  => '$data->status == 0 ? "Active" : "Paused"',
+		        ),
 			),
 		));
 		?>
 	</div>
-	<div class="col-md-2">
+	<div class="span2">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(

@@ -5,12 +5,21 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="language" content="en" />
 
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/bootstrap.css" />
-
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
-    <?php Yii::app()->bootstrap->register(); ?>
-    <link rel="stylesheet" type="text/css" href="<?php echo Yii::app()->theme->baseUrl; ?>/css/styles.css" />
+    <?php 
+    // yii-bootstrap
+    Yii::app()->bootstrap->register();
+    //
+    $baseUrl = Yii::app()->theme->baseUrl;
+    $cs = Yii::app()->getClientScript();
+    // datepicker
+    //$cs->registerScriptFile($baseUrl.'/js/bootstrap-datepicker.js');
+    //$cs->registerCssFile($baseUrl.'/css/datepicker3.css');
+    // custom
+    $cs->registerScriptFile($baseUrl.'/js/custom.js');
+    $cs->registerCssFile($baseUrl.'/css/styles.css');
+    ?>
 </head>
 
 <body>
@@ -24,7 +33,7 @@
                 array('label'=>'Dashboard', 'url'=>array('/site/index'), 'visible'=>!Yii::app()->user->isGuest),
 				array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Reporting', 'url'=>array('/campaigns/index')),
+                    array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                     array('label'=>'Conversions', 'url'=>'#'),
                     array('label'=>'Uploading Campaigns', 'url'=>'#'),
                     array('label'=>'Optimization', 'url'=>'#'),
