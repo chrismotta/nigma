@@ -76,13 +76,14 @@ class Campaigns extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
-			'devices' => array(self::BELONGS_TO, 'Devices', 'devices_id'),
-			'formats' => array(self::BELONGS_TO, 'Formats', 'formats_id'),
+			'networks'           => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'devices'            => array(self::BELONGS_TO, 'Devices', 'devices_id'),
+			'formats'            => array(self::BELONGS_TO, 'Formats', 'formats_id'),
 			'campaignCategories' => array(self::BELONGS_TO, 'CampaignCategories', 'campaign_categories_id'),
-			'opportunities' => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
-			'convLogs' => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
-			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),
+			'opportunities'      => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
+			'convLogs'           => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
+			'clicksLogs'         => array(self::HAS_MANY, 'ClicksLog', 'campaign_id'),
+			'dailyReports'       => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),
 		);
 	}
 
