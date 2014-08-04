@@ -60,7 +60,7 @@ class GeoLocation extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'carriers' => array(self::HAS_MANY, 'Carriers', 'id_country'),
-			'ioses' => array(self::HAS_MANY, 'Ios', 'country'),
+			'ioses' => array(self::HAS_MANY, 'Ios', 'country_id'),
 			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'country_id'),
 		);
 	}
