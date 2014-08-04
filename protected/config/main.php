@@ -6,6 +6,41 @@
 // bootstrap
 Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 
+// MySql Policy
+switch ( $_SERVER['HTTP_HOST'] ) {
+	case '127.0.0.1':
+	case 'localhost':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
+					'emulatePrepare'   => true,
+					'username'         => 'root',
+					'password'         => 'pernambuco',
+				);
+		break;
+	case 'test.kickadserver.mobi':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver_dev',
+					'emulatePrepare'   => true,
+					'username'         => 'root',
+					'password'         => 'pernambuco',
+				);
+		break;
+	case '70.38.54.225':
+	case 'kickadserver.mobi':
+	case 'app.kickadserver.mobi':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
+					'emulatePrepare'   => true,
+					'username'         => 'root',
+					'password'         => 'pernambuco',
+				);
+		break;
+	
+	default:
+		# code...
+		break;
+}
+
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
@@ -67,18 +102,16 @@ return array(
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
+
+		// uncomment the following to use a sqlite database
+		/*
 		'db'=>array(
 			'connectionString' => 'sqlite:'.dirname(__FILE__).'/../data/testdrive.db',
 		),
-		// uncomment the following to use a MySQL database
+		*/
 		
-		'db'=>array(
-			'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
-			'emulatePrepare' => true,
-			'username' => 'root',
-			'password' => 'pernambuco',
-			'charset' => 'utf8',
-		),
+		// uncomment the following to use a MySQL database
+		'db'=> $mysqlConnect,
 		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
