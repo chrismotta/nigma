@@ -10,7 +10,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4><?php ?> Advertiser <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+    <h4>Advertiser <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
 </div>
 
 
@@ -25,7 +25,6 @@
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?>
     <fieldset>
-        <!--h5 class="form-subtittle">Campaign</h5-->
         <?php 
 
         if ( ! $model->isNewRecord ) {
@@ -34,12 +33,9 @@
     	// echo $form->textFieldRow($model, 'id', array('class'=>'span3', 'readonly'=>true));
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'cat', $categories, array('prompt' => 'Select a category'));
-        
-        if ( $model->isNewRecord ) {
-        	echo $form->textFieldRow($model, 'commercial_id', array('class'=>'span3', 'readonly'=>true));
-        } else {
-	        echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
-        }
+
+        echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
+        echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

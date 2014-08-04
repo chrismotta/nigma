@@ -91,14 +91,14 @@ class Advertisers extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('cat',$this->cat,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
 
 		$criteria->with = array('commercial');
-		$criteria->compare('commercial.name', $this->commercial_name);
-		$criteria->compare('commercial.lastname', $this->commercial_lastname);
+		$criteria->compare('commercial.name', $this->commercial_name, true);
+		$criteria->compare('commercial.lastname', $this->commercial_lastname, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,

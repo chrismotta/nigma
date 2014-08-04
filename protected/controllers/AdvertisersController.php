@@ -98,10 +98,6 @@ class AdvertisersController extends Controller
 		}
 
 		$this->renderFormAjax($model);
-
-		// $this->render('update',array(
-		// 	'model'=>$model,
-		// ));
 	}
 
 	/**
@@ -177,9 +173,8 @@ class AdvertisersController extends Controller
 		$cat = KHtml::enumItem($model, 'cat');
 
 		if ( $model->isNewRecord ) {
-			$commercial="";
 			$model->commercial_id = Yii::app()->user->id;
-			// $commercial = CHtml::listData(Users::model()->findAll(), 'id', 'username');
+			$commercial = Users::model()->findByPk($model->commercial_id);
 		} else {
 			$commercial = Users::model()->findByPk($model->commercial_id);
 		}

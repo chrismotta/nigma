@@ -40,8 +40,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			{
                     // console.log(this.url);
 	                //alert("create");
-					$("#modalCampaigns").html(data);
-					$("#modalCampaigns").modal("toggle");
+					$("#modalAdvertiser").html(data);
+					$("#modalAdvertiser").modal("toggle");
 			}',
 		),
 	'htmlOptions' => array('id' => 'create'),
@@ -84,8 +84,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						function(data)
 							{
 								//alert(data);
-								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
+								$("#modalAdvertiser").html(data);
+								$("#modalAdvertiser").modal("toggle");
 							}
 						)
 				    }
@@ -105,8 +105,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						function(data)
 							{
 								//alert(data);
-								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
+								$("#modalAdvertiser").html(data);
+								$("#modalAdvertiser").modal("toggle");
 							}
 						)
 				    }
@@ -118,10 +118,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalAdvertiser')); ?>
 
 		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Campaigns</h1></div>
+        <div class="modal-body"><h1>Advertiser</h1></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
