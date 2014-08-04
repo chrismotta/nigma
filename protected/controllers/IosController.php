@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'updateAjax'),
+				'actions'=>array('index', 'view','create','update','admin','delete'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -51,9 +51,10 @@ class IosController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$model = $this->loadModel($id);
+		$this->renderPartial('_view', array( 
+			'model'=>$model 
+		), false, true);
 	}
 
 	/**
@@ -65,16 +66,16 @@ class IosController extends Controller
 		$model=new Ios;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Ios']))
 		{
 			$model->attributes=$_POST['Ios'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->renderAjaxForm($model);
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -87,18 +88,16 @@ class IosController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Ios']))
 		{
 			$model->attributes=$_POST['Ios'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -141,23 +140,6 @@ class IosController extends Controller
 		));
 	}
 
-	public function actionUpdateAjax($id=null) {
-		
-		$model=$this->loadModel($id);
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Ios']))
-		{
-			$model->attributes=$_POST['Ios'];
-			if($model->save())
-				$this->redirect(array('admin'));
-		}
-
-		$this->renderAjaxForm($model);
-	}
-
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
@@ -186,15 +168,27 @@ class IosController extends Controller
 		}
 	}
 
-	private function renderAjaxForm($model) {
-		
-		$data = array(
-			'model'       =>$model,
-			'countries'   =>CHtml::listData(GeoLocation::model()->findAllByAttributes(array(), 'status = "Active ORDER BY name"'), 'id_location', 'name'),
-			'commercials' =>CHtml::listData(Users::model()->findAll(array('order'=>'lastname')), 'id', 'lastname'),
-			'advertisers' =>CHtml::listData(Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name'),
-		);
-		
-		$this->renderPartial('_formAjax', $data, false, true);
+	public function renderFormAjax($model) 
+	{
+		$currency   = KHtml::enumItem($model, 'currency');
+		$entity     = KHtml::enumItem($model, 'entity');
+		$advertiser = CHtml::listData(Advertisers::model()->findAll(), 'id', 'name'); 
+		$country = CHtml::listData(GeoLocation::model()->findAll( "status='Active'" ), 'id_location', 'name' );
+
+		if ( $model->isNewRecord ) {
+			$model->commercial_id = Yii::app()->user->id;
+			$commercial = Users::model()->findByPk($model->commercial_id);;
+		} else {
+			$commercial = Users::model()->findByPk($model->commercial_id);
+		}
+
+		$this->renderPartial('_form',array(
+			'model'      =>$model,
+			'currency'   =>$currency,
+			'entity'     =>$entity,
+			'commercial' =>$commercial,
+			'advertiser' =>$advertiser,
+			'country'    =>$country,
+		), false, true);
 	}
 }

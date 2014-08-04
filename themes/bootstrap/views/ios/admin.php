@@ -3,8 +3,8 @@
 /* @var $model Ios */
 
 $this->breadcrumbs=array(
-	'Ioses'=>array('index'),
-	'Manage',
+	'Ios'=>array('index'),
+	'Manage Insertion Order',
 );
 
 $this->menu=array(
@@ -26,32 +26,51 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Manage Ioses</h1>
-
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
-
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+<div class="botonera">
+<?php
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Create IO',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => 'create',
+	'ajaxOptions' => array(
+		'type'    => 'POST',
+		'success' => 'function(data)
+			{
+                    // console.log(this.url);
+	                //alert("create");
+					$("#modalIos").html(data);
+					$("#modalIos").modal("toggle");
+			}',
+		),
+	'htmlOptions' => array('id' => 'create'),
+	)
+);
+?>
+</div>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
-	'id'=>'ios-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
+	'id'                       =>'ios-grid',
+	'dataProvider'             => $model->search(),
+	'filter'                   => $model,
+	'type'                     => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'template'                 => '{items} {pager} {summary}',
 	'columns'=>array(
 		'id',
+		array(
+			'name'=>'advertiser_name',
+			'value'=> '$data->advertisers->name'
+		),
 		'status',
 		'name',
+		array(
+		 	'name'=>'country_name',
+		 	'value'=> '$data->country->name'			
+		),
 		'address',
-		'country',
 		'state',
-		/*
 		'zip_code',
 		'phone',
 		'email',
@@ -59,15 +78,66 @@ or <b>=</b>) at the beginning of each of your search values to specify how the c
 		'currency',
 		'ret',
 		'tax_id',
-		'commercial_id',
 		'entity',
 		'net_payment',
-		'advertisers_id',
-		*/
+		array(
+			'name'=>'commercial_lastname',
+			'value'=> '$data->commercial->lastname . " " . $data->commercial->name'
+		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
-			'buttons'           => array(),
+			'buttons'           => array(
+				'viewAjax' => array(
+					'label' =>'Detail',
+					'icon'  =>'eye-open',
+					'click' =>'
+				    function(){
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	$.post(
+						"view/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalIos").html(data);
+								$("#modalIos").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				),
+				'updateAjax' => array(
+					'label' => 'Update',
+					'icon'  => 'pencil',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"update/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalIos").html(data);
+								$("#modalIos").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				)
+			),
+			'template' => '{viewAjax} {updateAjax} {delete}',
 		),
 	),
 )); ?>
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalIos')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"><h1>Insertion Order</h1></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>
