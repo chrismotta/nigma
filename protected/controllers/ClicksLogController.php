@@ -67,7 +67,7 @@ class ClicksLogController extends Controller
 		fwrite($gc_log, "---------------------------"."\n\r");
 		fclose($gc_log);
 
-		die($headers);
+		//die($headers);
 
 
 			//print "guardado - tid: ".$ktoken;
