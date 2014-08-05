@@ -53,6 +53,23 @@ class ClicksLogController extends Controller
 		if($model->save()){
 
 			$ktoken = md5($model->id);
+
+
+		$headers = var_export($_SERVER, true);
+		$headers.= var_export($_COOKIE, true);
+		$headers.= var_export(apache_response_headers(), true);
+		$headers.= var_export(apache_request_headers(), true);
+		// genero un log de headers para identificar
+		// el origen del click
+		$gc_log = fopen( "log/clicks.log", "a");
+		fwrite($gc_log, $ktoken."\n\r");
+		fwrite($gc_log, $headers."\n\r") ? null : fwrite($gc_log, "error"."\n\r");
+		fwrite($gc_log, "---------------------------"."\n\r");
+		fclose($gc_log);
+
+		die($headers);
+
+
 			//print "guardado - tid: ".$ktoken;
 			//print "<hr/>";
 			$model->tid = $ktoken;

@@ -57,9 +57,9 @@ class ConvLog extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'tid' => 'Tid',
-			'date' => 'Date',
+			'id'          => 'ID',
+			'tid'         => 'Tid',
+			'date'        => 'Date',
 			'campaign_id' => 'Campaign',
 		);
 	}
