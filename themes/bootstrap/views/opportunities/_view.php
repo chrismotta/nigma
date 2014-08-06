@@ -1,67 +1,79 @@
 <?php
 /* @var $this OpportunitiesController */
-/* @var $data Opportunities */
+/* @var $model Opportunities */
 ?>
 
-<div class="view">
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>Opportunity <?php echo "#".$model->id ?></h4>
+</div>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
+<div class="modal-body">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('carriers_id')); ?>:</b>
-	<?php echo CHtml::encode($data->carriers_id); ?>
-	<br />
+	<h5>Advertiser</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'ios.advertisers.id',
+			'ios.advertisers.name',
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('rate')); ?>:</b>
-	<?php echo CHtml::encode($data->rate); ?>
-	<br />
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('model_adv')); ?>:</b>
-	<?php echo CHtml::encode($data->model_adv); ?>
-	<br />
+	<h5>Insertion Order</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'ios.id',
+			'ios.name',
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('product')); ?>:</b>
-	<?php echo CHtml::encode($data->product); ?>
-	<br />
+	<h5>Account Manager</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'accountManager.id',
+			'accountManager.name',
+			'accountManager.lastname',
+			'accountManager.username',
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('account_manager_id')); ?>:</b>
-	<?php echo CHtml::encode($data->account_manager_id); ?>
-	<br />
+	<h5>Opportunity</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'id',
+			array(
+				'label' =>$model->getAttributeLabel('carrier_isp'),
+				'name'  =>'carriers.isp'
+			),
+			'rate',
+			'model_adv',
+			'product',
+			'comment',
+			array(
+				'label' =>$model->getAttributeLabel('country_name'),
+				'name'  =>'country.name'
+			),
+			array(
+				'label' =>$model->getAttributeLabel('wifi'),
+				'value' =>$model->wifi ? "Habilitado" : "Inhabilitado",
+			),
+			'budget',
+			'server_to_server',
+			'startDate',
+			'endDate',
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('comment')); ?>:</b>
-	<?php echo CHtml::encode($data->comment); ?>
-	<br />
+</div>
 
-	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('country_id')); ?>:</b>
-	<?php echo CHtml::encode($data->country_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('wifi')); ?>:</b>
-	<?php echo CHtml::encode($data->wifi); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('budget')); ?>:</b>
-	<?php echo CHtml::encode($data->budget); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('server_to_server')); ?>:</b>
-	<?php echo CHtml::encode($data->server_to_server); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('startDate')); ?>:</b>
-	<?php echo CHtml::encode($data->startDate); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('endDate')); ?>:</b>
-	<?php echo CHtml::encode($data->endDate); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('ios_id')); ?>:</b>
-	<?php echo CHtml::encode($data->ios_id); ?>
-	<br />
-
-	*/ ?>
-
+<div class="modal-footer">
+    Opportunity detail view.
 </div>

@@ -28,6 +28,14 @@
  */
 class Opportunities extends CActiveRecord
 {
+
+	public $country_name;
+	public $carrier_isp;
+	public $account_manager_name;
+	public $account_manager_lastname;
+	public $ios_name;
+	public $advertiser_name;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -53,7 +61,7 @@ class Opportunities extends CActiveRecord
 			array('startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, carriers_id, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, carriers_id, country_name, carrier_isp, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,6 +101,13 @@ class Opportunities extends CActiveRecord
 			'startDate' => 'Start Date',
 			'endDate' => 'End Date',
 			'ios_id' => 'Ios',
+
+			'country_name' => 'Country',
+			'carrier_isp' => 'Carrier',
+			'account_manager_name' => 'Account Manager',
+			'account_manager_lastname' => 'Account Manager',
+			'ios_name' => 'IO',
+			'advertiser_name' => 'Advertiser',
 		);
 	}
 
@@ -129,8 +144,47 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('endDate',$this->endDate,true);
 		$criteria->compare('ios_id',$this->ios_id);
 
+		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
+		$criteria->compare('country.name', $this->country_name, true);
+		$criteria->compare('carriers.isp', $this->carrier_isp, true);
+		$criteria->compare('accountManager.name', $this->account_manager_name, true);
+		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);
+		$criteria->compare('ios.name', $this->ios_name, true);
+		$criteria->compare('advertisers.name', $this->advertiser_name, true);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'advertiser_name'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),
+		            'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+		            ),
+		            'carrier_isp'=>array(
+						'asc'  =>'carriers.isp',
+						'desc' =>'carriers.isp DESC',
+		            ),
+		            'account_manager_name'=>array(
+						'asc'  =>'accountManager.name',
+						'desc' =>'accountManager.name DESC',
+		            ),
+		            'account_manager_lastname'=>array(
+						'asc'  =>'accountManager.lastname',
+						'desc' =>'accountManager.lastname DESC',
+		            ),
+		            'ios_name'=>array(
+						'asc'  =>'ios.name',
+						'desc' =>'ios.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 
