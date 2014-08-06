@@ -34,17 +34,13 @@
 				array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
-                    array('label'=>'Conversions', 'url'=>'#'),
-                    array('label'=>'Uploading Campaigns', 'url'=>'#'),
-                    array('label'=>'Optimization', 'url'=>'#'),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
 				array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Prospect', 'url'=>array('/advertisers/admin')),
-                    array('label'=>'Client', 'url'=>'#'),
-                    array('label'=>'IO Generation', 'url'=>'#'),
-                    array('label'=>'New Client', 'url'=>'#'),
+                    array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
+                    array('label'=>'IOs', 'url'=>array('/ios/admin')),
+                    array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
                     array('label'=>'Cierre y %', 'url'=>'#'),
                     array('label'=>'Media Kit', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
@@ -69,7 +65,6 @@
                 'items'=>array(
                     array('label'=>'Profile', 'url'=>'#'),
                     array('label'=>'Users', 'url'=>'#'),
-                    array('label'=>'Permissions', 'url'=>'#'),
                     array('label'=>'Configuration', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
