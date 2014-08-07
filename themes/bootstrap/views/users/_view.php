@@ -3,49 +3,27 @@
 /* @var $data Users */
 ?>
 
-<div class="view">
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>User <?php echo "#".$model->id ?></h4>
+</div>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
+<div class="modal-body">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('rec')); ?>:</b>
-	<?php echo CHtml::encode($data->rec); ?>
-	<br />
+	<h5>User</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'id',
+			'name',
+			'lastname',
+			'username',
+			'status',
+		),
+	)); ?>
+</div>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('username')); ?>:</b>
-	<?php echo CHtml::encode($data->username); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('password')); ?>:</b>
-	<?php echo CHtml::encode($data->password); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('email')); ?>:</b>
-	<?php echo CHtml::encode($data->email); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>
-	<?php echo CHtml::encode($data->name); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('lastname')); ?>:</b>
-	<?php echo CHtml::encode($data->lastname); ?>
-	<br />
-
-	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('status')); ?>:</b>
-	<?php echo CHtml::encode($data->status); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('role')); ?>:</b>
-	<?php echo CHtml::encode($data->role); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('permissions')); ?>:</b>
-	<?php echo CHtml::encode($data->permissions); ?>
-	<br />
-
-	*/ ?>
-
+<div class="modal-footer">
+    User detail view.
 </div>

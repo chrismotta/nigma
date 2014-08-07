@@ -4,12 +4,12 @@
 
 $this->breadcrumbs=array(
 	'Users'=>array('index'),
-	'Manage',
+	'Manage Users',
 );
 
 $this->menu=array(
-	array('label'=>'List Users', 'url'=>array('index')),
-	array('label'=>'Create Users', 'url'=>array('create')),
+	// array('label'=>'List Users', 'url'=>array('index')),
+	// array('label'=>'Create Users', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -26,39 +26,120 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h1>Manage Users</h1>
+<div class="botonera">
+<?php
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Create User',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => 'create',
+	'ajaxOptions' => array(
+		'type'    => 'POST',
+		'success' => 'function(data)
+			{
+                    // console.log(this.url);
+	                //alert("create");
+					$("#modalUser").html(data);
+					$("#modalUser").modal("toggle");
+			}',
+		),
+	'htmlOptions' => array('id' => 'create'),
+	)
+);
+?>
+</div>
 
-<p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
-
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
-
-<?php $this->widget('zii.widgets.grid.CGridView', array(
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'=>'users-grid',
-	'dataProvider'=>$model->search(),
-	'filter'=>$model,
+	'dataProvider'             => $model->search(),
+	'filter'                   => $model,
+	'type'                     => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'template'                 => '{items} {pager} {summary}',
 	'columns'=>array(
 		'id',
-		'rec',
 		'username',
-		'password',
+		// 'password',
 		'email',
 		'name',
-		/*
 		'lastname',
 		'status',
-		'role',
-		'permissions',
-		*/
 		array(
-			'class'=>'CButtonColumn',
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'buttons'           => array(
+				'viewAjax' => array(
+					'label' =>'Detail',
+					'icon'  =>'eye-open',
+					'click' =>'
+				    function(){
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	$.post(
+						"view/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalUser").html(data);
+								$("#modalUser").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				),
+				'updateAjax' => array(
+					'label' => 'Update',
+					'icon'  => 'pencil',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"update/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalUser").html(data);
+								$("#modalUser").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				),
+				'permissions' => array(
+					'label' => 'Permissions',
+					'icon'  => 'lock',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"adminRoles/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalUser").html(data);
+								$("#modalUser").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				)
+			),
+			'template' => '{viewAjax} {updateAjax} {permissions} {delete}',
 		),
 	),
 )); ?>
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalUser')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"><h1>Advertiser</h1></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>

@@ -4,79 +4,46 @@
 /* @var $form CActiveForm */
 ?>
 
-<div class="form">
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>User <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+</div>
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'users-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation'=>false,
-)); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+<div class="modal-body">
 
-	<?php echo $form->errorSummary($model); ?>
+    <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+		'id'                   =>'users-form',
+		'type'                 =>'horizontal',
+		'htmlOptions'          =>array('class'=>'well'),
+		// to enable ajax validation
+		'enableAjaxValidation' =>true,
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?>
+    <fieldset>
+        <?php 
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'rec'); ?>
-		<?php echo $form->textField($model,'rec'); ?>
-		<?php echo $form->error($model,'rec'); ?>
-	</div>
+        if ( ! $model->isNewRecord ) {
+    		echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
+    	}
+    	echo $form->textFieldRow($model, 'username', array('class'=>'span3'));
+    	echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'lastname', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'email', array('class'=>'span3'));
+        echo $form->radioButtonListInlineRow($model, 'status', $status);
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'username'); ?>
-		<?php echo $form->textField($model,'username',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'username'); ?>
-	</div>
+        ?>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'password'); ?>
-		<?php echo $form->passwordField($model,'password',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'password'); ?>
-	</div>
+    <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+    <div class="form-actions">
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
+    </div>
+    </fieldset>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'email'); ?>
-		<?php echo $form->textField($model,'email',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'email'); ?>
-	</div>
+    <?php $this->endWidget(); ?>
+</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'name'); ?>
-		<?php echo $form->textField($model,'name',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'name'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'lastname'); ?>
-		<?php echo $form->textField($model,'lastname',array('size'=>60,'maxlength'=>128)); ?>
-		<?php echo $form->error($model,'lastname'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'status'); ?>
-		<?php echo $form->textField($model,'status'); ?>
-		<?php echo $form->error($model,'status'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'role'); ?>
-		<?php echo $form->textField($model,'role'); ?>
-		<?php echo $form->error($model,'role'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'permissions'); ?>
-		<?php echo $form->textField($model,'permissions'); ?>
-		<?php echo $form->error($model,'permissions'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
-
-<?php $this->endWidget(); ?>
-
-</div><!-- form -->
+<div class="modal-footer">
+    Edit User attributes. Fields with <span class="required">*</span> are required.
+</div>
