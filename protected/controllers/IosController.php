@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -138,6 +138,28 @@ class IosController extends Controller
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+
+	public function actionDuplicate($id) 
+	{
+		$old = $this->loadModel($id);
+
+		$new = clone $old;
+		unset($new->id);
+		$new->unsetAttributes(array('id'));
+		$new->isNewRecord = true;
+		
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($new);
+
+		if(isset($_POST['Ios']))
+		{
+			$new->attributes=$_POST['Ios'];
+			if($new->save())
+				$this->redirect(array('admin'));
+		} 
+
+		$this->renderFormAjax($new);
 	}
 
 	/**

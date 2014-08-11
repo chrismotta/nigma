@@ -64,7 +64,7 @@
                 array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Profile', 'url'=>'#'),
-                    array('label'=>'Users', 'url'=>'#'),
+                    array('label'=>'Users', 'url'=>array('/users/admin')),
                     array('label'=>'Configuration', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),

@@ -5,17 +5,15 @@
  *
  * The followings are the available columns in table 'users':
  * @property integer $id
- * @property integer $rec
  * @property string $username
  * @property string $password
  * @property string $email
  * @property string $name
  * @property string $lastname
- * @property integer $status
- * @property integer $role
- * @property integer $permissions
+ * @property string $status
  *
  * The followings are the available model relations:
+ * @property Advertisers[] $advertisers
  * @property Ios[] $ioses
  * @property Opportunities[] $opportunities
  */
@@ -38,11 +36,11 @@ class Users extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('username, password, email, name, lastname', 'required'),
-			array('rec, status, role, permissions', 'numerical', 'integerOnly'=>true),
 			array('username, password, email, name, lastname', 'length', 'max'=>128),
+			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, username, password, email, name, lastname, status, role, permissions', 'safe', 'on'=>'search'),
+			array('id, username, password, email, name, lastname, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,8 +52,9 @@ class Users extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'ioses' => array(self::HAS_MANY, 'Ios', 'user_id'),
-			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'manager_id'),
+			'advertisers' => array(self::HAS_MANY, 'Advertisers', 'commercial_id'),
+			'ioses' => array(self::HAS_MANY, 'Ios', 'commercial_id'),
+			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'account_manager_id'),
 		);
 	}
 
@@ -66,15 +65,12 @@ class Users extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'rec' => 'Rec',
 			'username' => 'Username',
 			'password' => 'Password',
 			'email' => 'Email',
 			'name' => 'Name',
 			'lastname' => 'Lastname',
 			'status' => 'Status',
-			'role' => 'Role',
-			'permissions' => 'Permissions',
 		);
 	}
 
@@ -97,15 +93,12 @@ class Users extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('rec',$this->rec);
 		$criteria->compare('username',$this->username,true);
 		$criteria->compare('password',$this->password,true);
 		$criteria->compare('email',$this->email,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('lastname',$this->lastname,true);
-		$criteria->compare('status',$this->status);
-		$criteria->compare('role',$this->role);
-		$criteria->compare('permissions',$this->permissions);
+		$criteria->compare('status',$this->status,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -121,13 +114,5 @@ class Users extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
-
-	public function findUsersByRole($role) 
-	{
-		$users_ids = AuthAssignment::model()->getUsersIdsByRole($role);
-		$criteria = new CDbCriteria;
-        $criteria->addInCondition('id', $users_ids);
-        return Users::model()->findAll($criteria);
 	}
 }
