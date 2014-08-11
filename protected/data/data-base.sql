@@ -231,15 +231,6 @@ INSERT INTO `AuthAssignment` (`itemname`, `userid`, `bizrule`, `data`) VALUES
 ('admin', '6', NULL, NULL),
 ('media', '2', NULL, 'N;');
 
---
--- Dumping data for table `tbl_user`
---
-
-INSERT INTO `tbl_user` (`id`, `username`, `password`, `email`) VALUES
-(1, 'test1', 'pass1', 'test1@example.com'),
-(2, 'test2', 'pass2', 'test2@example.com'),
-(3, 'christian', 'mil998', 'subespacios@gmail.com');
-
 
 --
 -- Dumping data for table `geo_location` --> Get from data-set_geo_location.sql
