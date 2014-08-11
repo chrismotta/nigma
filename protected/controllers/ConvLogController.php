@@ -44,7 +44,7 @@ class ConvLogController extends Controller
 			$tid = $_GET['ktoken'];
 			print "get tid: ".$tid."<hr/>";
 		}else{
-			//print "get tid: null<hr/>";
+			print "get tid: null<hr/>";
 			Yii::app()->end();
 		}
 
