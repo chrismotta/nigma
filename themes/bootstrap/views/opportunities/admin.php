@@ -61,7 +61,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'id',
 		array(
 			'name'  =>'carrier_isp',
-			'value' =>'$data->carriers->isp',
+			'value' =>'$data->carriers ? $data->carriers->isp : ""',
 		),
 		array (
 			'name'              => 'rate',

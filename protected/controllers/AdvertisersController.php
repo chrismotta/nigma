@@ -29,7 +29,7 @@ class AdvertisersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete', 'externalForm'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -112,6 +112,44 @@ class AdvertisersController extends Controller
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+	}
+
+	public function actionExternalForm($id)
+	{
+		$validTime = ExternalIoForm::getExpirationHashTime();
+		
+		$model = $this->loadModel($id);
+
+		// FIXME si se entra mas de un IO???
+		$formURL = ExternalIoForm::model()->find( "advertisers_id=:adv AND status='Pending'", array(':adv'=>$id) );
+
+		if ( $formURL ) { // validate expiration hash's time
+			if ( (time() - strtotime($formURL->create_date) ) > $validTime ) { // hash expired
+				$formURL->create_date = date( 'Y-m-d H:i:s', time() );
+				$formURL->hash = sha1($id . $model->name . $formURL->create_date);
+				if ( ! $formURL->save() ) {
+					// echo "ERROR saving new hash <br>";
+					return;
+				}
+			} // else, hash not expired, do nothing
+		} else { // Create new row for ExternalIoForm
+			$formURL                 = new ExternalIoForm;
+			$formURL->advertisers_id = $id;
+			$formURL->commercial_id  = Yii::app()->user->id;
+			$formURL->hash           = sha1($id . $model->name . $formURL->create_date);
+			if ( ! $formURL->save() ) {
+				// echo "ERROR saving new External IO Form <br>";
+				return;
+			}
+		}
+
+		$url   = Yii::app()->getBaseUrl(true) . '/ios/externalCreate?ktoken=' . $formURL->hash;
+		$this->renderPartial('_externalForm',array(
+			'model'    => $model,
+			'formURL'  => $formURL,
+			'url'      => $url,
+			'timeLeft' => round( ( $validTime - (time() - strtotime($formURL->create_date)) ) / 3600 ), // date in hours to hash expiration.
+		), false, true);
 	}
 
 	/**
