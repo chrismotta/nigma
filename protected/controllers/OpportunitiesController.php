@@ -185,7 +185,7 @@ class OpportunitiesController extends Controller
 		$account = CHtml::listData(Users::model()->findUsersByRole('media'), 'id', 'username' );
 
 		// Get countries and carriers with status "Active"
-		$country = CHtml::listData(GeoLocation::model()->findAll( "status='Active'" ), 'id_location', 'name' );
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$carrier = CHtml::listData(Carriers::model()->findAll( "status='Active'" ), 'id_carrier', 'isp' );
 		
 		$model_adv = KHtml::enumItem($model, 'model_adv');

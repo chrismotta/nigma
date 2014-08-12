@@ -59,7 +59,7 @@ return array(
 	'import' =>array(
 		'application.models.*',
 		'application.components.*',
-		'application.ip2location.IP2Location',
+		'application.external.ip2location.IP2Location',
 	),
 
 	'modules'=>array(
