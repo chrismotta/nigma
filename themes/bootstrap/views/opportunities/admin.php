@@ -63,35 +63,46 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'name'  =>'carrier_isp',
 			'value' =>'$data->carriers->isp',
 		),
-		'rate',
-		'model_adv',
+		array (
+			'name'              => 'rate',
+			'headerHtmlOptions' => array('style'=>'width: 60px'),
+		),
+		array(
+			'name'              => 'model_adv',
+			'headerHtmlOptions' => array('style'=>'width: 60px'),
+		),
 		'product',
 		array(
 			'name'  =>'advertiser_name',
 			'value' =>'$data->ios->advertisers->name',
 		),
+		// array(
+		// 	'name'  =>'account_manager_lastname',
+		// 	'value' =>'$data->account_manager_id ? $data->accountManager->lastname . " " . $data->accountManager->name : ""',
+		// ),
+		// 'comment',
+		// array(
+		// 	'name'  =>'country_name',
+		// 	'value' =>'$data->country_id ? $data->country->name : ""',
+		// ),
+		// array( 
+		// 	'name'  =>'wifi',
+		// 	'value' =>'$data->wifi ? "Habilitado" : "Inhabilitado"',
+		// ),
 		array(
-			'name'  =>'account_manager_lastname',
-			'value' =>'$data->account_manager_id ? $data->accountManager->lastname . " " . $data->accountManager->name : ""',
+			'name' => 'budget',
+			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
-		'comment',
-		array(
-			'name'  =>'country_name',
-			'value' =>'$data->country_id ? $data->country->name : ""',
-		),
-		array( 
-			'name'  =>'wifi',
-			'value' =>'$data->wifi ? "Habilitado" : "Inhabilitado"',
-		),
-		'budget',
-		'server_to_server',
+		// 'server_to_server',
 		array( 
 			'name'  =>'startDate',
 			'value' =>'date("d-m-Y", strtotime($data->startDate))',
+			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
 		array( 
 			'name'  =>'endDate',
 			'value' =>'date("d-m-Y", strtotime($data->endDate))',
+			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
 		array( 
 			'name'  =>'ios_name',
