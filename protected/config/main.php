@@ -60,6 +60,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
+		'application.external.fpdf.fpdf',
 	),
 
 	'modules'=>array(
