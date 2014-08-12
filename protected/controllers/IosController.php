@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -162,7 +162,7 @@ class IosController extends Controller
 		$this->renderFormAjax($new);
 	}
 
-	public function actionExternalCreate() 
+	public function actionExternalCreate()
 	{
 
 		if ( isset($_GET['ktoken']) ) {
@@ -229,6 +229,24 @@ class IosController extends Controller
 		
 		
 		echo "OK submitting IO <br>";
+		Yii::app()->end();
+	}
+
+	public function actionGeneratePdf($id) 
+	{
+
+		$model = $this->loadModel($id);
+		$opportunities = Opportunities::model()->findAll( 'ios_id=:ios', array(':ios'=>$id) );
+
+		if (! $opportunities) {
+			echo "Must Assigned opportunities"; return;
+		}
+
+		$this->renderPartial('_generatePDF', array(
+			'model'         => $model,
+			'opportunities' => $opportunities
+		));
+		
 		Yii::app()->end();
 	}
 
