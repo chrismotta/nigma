@@ -195,7 +195,7 @@ class IosController extends Controller
 		$currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
 		$advertiser = CHtml::listData(Advertisers::model()->findAll(), 'id', 'name'); 
-		$country = CHtml::listData(GeoLocation::model()->findAll( "status='Active'" ), 'id_location', 'name' );
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 
 		if ( $model->isNewRecord ) {
 			$model->commercial_id = Yii::app()->user->id;
