@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -160,6 +160,76 @@ class IosController extends Controller
 		} 
 
 		$this->renderFormAjax($new);
+	}
+
+	public function actionExternalCreate() 
+	{
+
+		if ( isset($_GET['ktoken']) ) {
+			$ktoken = $_GET['ktoken'];
+		} else {
+			echo "ERROR invalid parameters <br>";
+			Yii::app()->end();	
+		}
+
+		$external = ExternalIoForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+
+		// Validate hash expiration time
+		$validTime = ExternalIoForm::getExpirationHashTime();
+		if ( ! $external || ( (time() - strtotime($external->create_date) ) > $validTime ) ) { // hash expired
+			$this->render('externalCreate', array(
+				'action'   => 'expire',
+			));
+			Yii::app()->end();
+		}
+
+		if ( $external->status == 'Submitted' ) {
+			$this->render('externalCreate', array(
+				'action'   => 'alreadySubmitted',
+			));
+			Yii::app()->end();
+		}
+
+		$ios = new Ios;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($ios);
+
+		if(isset($_POST['Ios'])) {
+			$ios = new Ios;
+			$ios->attributes=$_POST['Ios'];
+			$ios->status = 'Submitted';
+			if( $ios->save() )
+				$this->render('externalCreate', array(
+					'action'=> 'submit',
+				));
+			Yii::app()->end();
+		}
+
+		$currency   = KHtml::enumItem($ios, 'currency');
+		$entity     = KHtml::enumItem($ios, 'entity');
+		$advertiser = Advertisers::model()->findByPk($external->advertisers_id);
+		$country    = CHtml::listData(GeoLocation::model()->findAll( "status='Active'" ), 'id_location', 'name' );
+		$commercial = Users::model()->findByPk($external->commercial_id);;
+
+		$ios->status = 1;	// FIXME completar con status correspondiente
+		$ios->commercial_id = $commercial->id;
+		// $ios->entity = 'LLC';	// FIXME dejar en blanco o hardcodear?
+		$ios->advertisers_id = $advertiser->id;
+
+		$this->render('externalCreate', array(
+			'action'     => 'form',
+			'model'      => $ios,
+			'currency'   => $currency,
+			'entity'     => $entity,
+			'commercial' => $commercial,
+			'advertiser' => $advertiser,
+			'country'    => $country,
+		));
+		
+		
+		echo "OK submitting IO <br>";
+		Yii::app()->end();
 	}
 
 	/**

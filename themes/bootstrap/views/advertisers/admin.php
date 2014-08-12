@@ -70,7 +70,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 70px"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -111,9 +111,30 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						)
 				    }
 				    ',
+				),
+				'externalForm' => array(
+					'label' => 'External Form',
+					'icon'  => 'repeat',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"externalForm/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalAdvertiser").html(data);
+								$("#modalAdvertiser").modal("toggle");
+							}
+						)
+				    }
+				    ',
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {externalForm} {updateAjax} {delete}',
 		),
 	),
 )); ?>
