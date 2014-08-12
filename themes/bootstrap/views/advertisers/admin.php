@@ -66,7 +66,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'cat',
 		array(
 			'name'=>'commercial_lastname',
-			'value'=>'$data->commercial->lastname . " " .$data->commercial->name',
+			'value'=>'$data->commercial ? $data->commercial->lastname . " " .$data->commercial->name : ""',
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',

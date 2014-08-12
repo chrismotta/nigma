@@ -67,7 +67,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'name',
 		array(
 		 	'name'=>'country_name',
-		 	'value'=> '$data->country->name'			
+		 	'value'=> '$data->country ? $data->country->name : ""',			
 		),
 		// 'address',
 		// 'state',
@@ -82,7 +82,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'net_payment',
 		array(
 			'name'=>'commercial_lastname',
-			'value'=> '$data->commercial->lastname . " " . $data->commercial->name'
+			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
