@@ -5,7 +5,7 @@ class WurflManager {
 	public static function loadWurfl() {
 
 		$wurflDir = dirname(__FILE__) . '/WURFL';
-		$resourcesDir = dirname(__FILE__) . '/resources';
+		$resourcesDir = dirname(__FILE__) . '/../../data/wurfl';
 
 		require_once $wurflDir.'/Application.php';
 
