@@ -18,8 +18,8 @@ class ClicksLogController extends Controller
 		// Get Campaign
 		
 		if($campaign = Campaigns::model()->findByPk($cid)){
-			$redirectURL = $campaign->url;
-			$s2s         = $campaign->opportunities->server_to_server;
+			$redirectURL          = $campaign->url;
+			$s2s                  = $campaign->opportunities->server_to_server;
 			if(!isset($s2s)) $s2s = "ktoken";
 		}else{
 			//print "campaign: null<hr/>";
@@ -58,8 +58,6 @@ class ClicksLogController extends Controller
 			$model->carrier = $ipData->mobileCarrierName;
 		}
 
-		/*
-
 		// Get userAgent data
 		// .example:
 		// Mozilla/5.0 (Linux; Android 4.4.2; GT-I9500 Build/KOT49H) 
@@ -71,17 +69,13 @@ class ClicksLogController extends Controller
 		// Version/4.0 Mobile Safari/534.30
 
 		if(isset($model->user_agent)){
-			//echo $model->user_agent . "<br/>";
-			preg_match_all('/\([^\)]*\)/', $model->user_agent, $matches);
-			$UAresult = str_replace(array('(',')'), '', $matches[0][0]);
-			$UAresult = explode("; ", $UAresult);
-			//var_dump($matches);
-			//var_dump($matches[0][0]);
-			$model->device = $UAresult[0];
-			$model->device = $UAresult[1];
-		}
 
-		*/
+			$wurfl = WurflManager::loadWurfl();
+			$device = $wurfl->getDeviceForUserAgent($model->user_agent);
+			
+			$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
+			$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+		}
 
 		//var_dump($model);
 		//print "<hr/>";
