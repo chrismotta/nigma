@@ -123,7 +123,13 @@ class ClicksLogController extends Controller
 				$redirectURL.= "?";
 			}
 			$redirectURL.= $s2s."=".$ktoken;
-				
+
+			$redirectURL.= "&os=".$model->os;
+			$redirectURL.= "&device=".$model->device;
+
+			echo $redirectURL;
+			Yii::app()->end();
+
 			// print $redirectURL;
 			// redirect to campaign url
 			$this->redirect($redirectURL);

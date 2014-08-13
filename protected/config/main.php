@@ -61,8 +61,6 @@ return array(
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',
-		'application.external.wurfl.WURFL.*',
-		'application.external.wurfl.WURFL.Configuration.*',
 	),
 
 	'modules'=>array(
