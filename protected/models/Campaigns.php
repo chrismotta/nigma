@@ -17,6 +17,7 @@
  * @property string $url
  * @property string $status
  * @property integer $opportunities_id
+ * @property boolean $post_data
  *
  * The followings are the available model relations:
  * @property Networks $networks
@@ -93,23 +94,24 @@ class Campaigns extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'networks_id' => 'Networks',
+			'id'                     => 'ID',
+			'name'                   => 'Name',
+			'networks_id'            => 'Networks',
 			'campaign_categories_id' => 'Campaign Categories',
-			'wifi' => 'Wifi',
-			'formats_id' => 'Formats',
-			'cap' => 'Cap',
-			'model' => 'Model',
-			'ip' => 'Ip',
-			'devices_id' => 'Devices',
-			'url' => 'Url',
-			'status' => 'Status',
-			'opportunities_id' => 'Opportunities',
+			'wifi'                   => 'Wifi',
+			'formats_id'             => 'Formats',
+			'cap'                    => 'Cap',
+			'model'                  => 'Model',
+			'ip'                     => 'Ip',
+			'devices_id'             => 'Devices',
+			'url'                    => 'Url',
+			'status'                 => 'Status',
+			'opportunities_id'       => 'Opportunities',
 			// Header names for the related columns
 			'advertisers_name'       => 'Advertiser', 
 			'opportunities_rate'     => 'Rate', 
 			'opportunities_carrier'  => 'Carrier',
+			'post_data'              => 'Post Data',
 		);
 	}
 
@@ -144,6 +146,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('opportunities_id',$this->opportunities_id);
+		$criteria->compare('post_data',$this->post_data);
 
 		// We need to list all related tables in with property
 		$criteria->with = array(  'opportunities', 'opportunities.ios.advertisers' );

@@ -124,13 +124,20 @@ class ClicksLogController extends Controller
 			}
 			$redirectURL.= $s2s."=".$ktoken;
 
-			$redirectURL.= "&os=".$model->os;
-			$redirectURL.= "&device=".$model->device;
+			//parametros para playtown
+			
+			if($campaign->post_data){
+				$redirectURL.= "&os=".$model->os;
+				$redirectURL.= "&device=".$model->device;
+				$redirectURL.= "&country=".$model->country;
+				$redirectURL.= "&carrier=".$model->carrier;
+				$redirectURL.= "&referer=".$model->referer;
+				$redirectURL.= "&app=".$model->app;
+			}
 
 			echo $redirectURL;
 			Yii::app()->end();
 
-			// print $redirectURL;
 			// redirect to campaign url
 			$this->redirect($redirectURL);
 		}else{
