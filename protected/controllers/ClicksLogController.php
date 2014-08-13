@@ -136,6 +136,8 @@ class ClicksLogController extends Controller
 			}
 
 			echo $redirectURL;
+			echo "<hr/>";
+			var_dump($_SERVER);
 			Yii::app()->end();
 
 			// redirect to campaign url
