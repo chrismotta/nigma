@@ -1,3 +1,4 @@
 *.db
 /*.log
 /assets/
+/protected/data/wurfl/storage/
