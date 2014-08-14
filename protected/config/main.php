@@ -44,13 +44,13 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 // This is the main Web application configuration. Any writable
 // CWebApplication properties can be configured here.
 return array(
-	'basePath'       =>dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
-	'name'           =>'',
-	'theme'          =>'bootstrap',
-	'timeZone'       => 'America/Argentina/Buenos_Aires',
-	'language'       =>'en',
-	'sourceLanguage' =>'en',
-	'charset'        =>'utf-8',
+	'basePath'       => dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
+	'name'           => '',
+	'theme'          => 'bootstrap',
+	'timeZone'       =>  'America/Argentina/Buenos_Aires',
+	'language'       => 'en',
+	'sourceLanguage' => 'en',
+	'charset'        => 'utf-8',
 
 	// preloading 'log' component
 	'preload' =>array('log'),
@@ -60,6 +60,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
+		'application.external.wurfl.WurflManager',
 		'ext.pdffactory.*',
 	),
 

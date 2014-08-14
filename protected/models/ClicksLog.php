@@ -17,7 +17,7 @@
  * @property string $country
  * @property string $city
  * @property string $carrier
- * @property string $devices_id
+ * @property string $device
  * @property string $os
  * @property string $app
  *
@@ -44,10 +44,10 @@ class ClicksLog extends CActiveRecord
 		return array(
 			array('campaigns_id, networks_id', 'required'),
 			array('campaigns_id, networks_id', 'numerical', 'integerOnly'=>true),
-			array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, devices_id, os, app', 'length', 'max'=>255),
+			array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, devices_id, os, app', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -82,7 +82,7 @@ class ClicksLog extends CActiveRecord
 			'country' => 'Country',
 			'city' => 'City',
 			'carrier' => 'Carrier',
-			'devices_id' => 'Devices',
+			'device' => 'Device',
 			'os' => 'Os',
 			'app' => 'App',
 		);
@@ -119,7 +119,7 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('country',$this->country,true);
 		$criteria->compare('city',$this->city,true);
 		$criteria->compare('carrier',$this->carrier,true);
-		$criteria->compare('devices_id',$this->devices_id,true);
+		$criteria->compare('device',$this->device,true);
 		$criteria->compare('os',$this->os,true);
 		$criteria->compare('app',$this->app,true);
 
