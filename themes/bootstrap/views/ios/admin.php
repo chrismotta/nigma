@@ -86,7 +86,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'headerHtmlOptions' => array('style' => "width: 85px"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -148,9 +148,15 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						)
 				    }
 				    ',
+				),
+				'generatePdf' => array(
+					'label'   => 'Generate PDF',
+					'icon'    => 'print',
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/generatePdf/" . $data->id',
+					'options' => array('target' => '_blank')
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {delete}',
+			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {delete}',
 		),
 	),
 )); ?>

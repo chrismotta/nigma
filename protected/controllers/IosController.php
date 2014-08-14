@@ -234,20 +234,17 @@ class IosController extends Controller
 
 	public function actionGeneratePdf($id) 
 	{
-
 		$model = $this->loadModel($id);
-		$opportunities = Opportunities::model()->findAll( 'ios_id=:ios', array(':ios'=>$id) );
 
-		if (! $opportunities) {
-			echo "Must Assigned opportunities"; return;
-		}
+		$pdf = Pdf::doc();
+        $pdf->setData( array(
+			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
+			'io'            => $model,
+			'opportunities' => Opportunities::model()->findAll( 'ios_id=:id', array(':id'=>$id) ),
+        ));
+        $pdf->output();
 
-		$this->renderPartial('_generatePDF', array(
-			'model'         => $model,
-			'opportunities' => $opportunities
-		));
-		
-		Yii::app()->end();
+        Yii::app()->end();
 	}
 
 	/**
