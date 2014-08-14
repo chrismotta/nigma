@@ -60,7 +60,7 @@ return array(
 		'application.models.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
-		'application.external.fpdf.fpdf',
+		'ext.pdffactory.*',
 	),
 
 	'modules'=>array(
@@ -104,6 +104,36 @@ return array(
 				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
 			),
 		),
+
+		'pdfFactory'=>array(
+            'class'=>'ext.pdffactory.EPdfFactory',
+ 
+            //'tcpdfPath'=>'ext.pdffactory.vendors.tcpdf', //=default: the path to the tcpdf library
+            //'fpdiPath'=>'ext.pdffactory.vendors.fpdi', //=default: the path to the fpdi library
+ 
+            //the cache duration
+            'cacheHours'=>-1, //-1 = cache disabled, 0 = never expires, hours if >0
+ 
+             //The alias path to the directory, where the pdf files should be created
+            'pdfPath'=>'application.runtime.pdf',
+ 
+            //The alias path to the *.pdf template files
+            //'templatesPath'=>'application.pdf.templates', //= default
+ 
+            //the params for the constructor of the TCPDF class  
+            // see: http://www.tcpdf.org/doc/code/classTCPDF.html 
+            'tcpdfOptions'=>array(
+                  /* default values
+                    'format'=>'A4',
+                    'orientation'=>'P', //=Portrait or 'L' = landscape
+                    'unit'=>'mm', //measure unit: mm, cm, inch, or point
+                    'unicode'=>true,
+                    'encoding'=>'UTF-8',
+                    'diskcache'=>false,
+                    'pdfa'=>false,
+                   */
+            )
+        ),
 
 		// uncomment the following to use a sqlite database
 		/*
