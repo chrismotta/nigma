@@ -62,6 +62,7 @@ return array(
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',
 		'ext.pdffactory.*',
+		'ext.eexcelwriter.components.EExcelWriter',
 	),
 
 	'modules'=>array(
@@ -100,12 +101,14 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'=>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>'=>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'=>'<controller>/<action>',
+				'<controller:\w+>/<id:\d+>'              =>'<controller>/view',
+				'<controller:\w+>/<action:\w+>/<id:\d+>' =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>'          =>'<controller>/<action>',
 			),
 		),
-
+		'eexcelwriter'=>array(
+            'class'=>'eexcelwriter.components.EExcelWriter',
+        ),
 		'pdfFactory'=>array(
             'class'=>'ext.pdffactory.EPdfFactory',
  
