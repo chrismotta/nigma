@@ -86,7 +86,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 85px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -153,10 +153,39 @@ $this->widget('bootstrap.widgets.TbButton', array(
 					'label'   => 'Generate PDF',
 					'icon'    => 'print',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/generatePdf/" . $data->id',
-					'options' => array('target' => '_blank')
+					'options' => array('target' => '_blank'),
+					'visible' => '$data->status == 10 ? false : true',
+				),
+				'viewPdf' => array(
+					'label'   => 'View PDF',
+					'icon'    => 'print',
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
+					'options' => array('target' => '_blank'),
+					'visible' => '$data->status == 10 ? true : false',
+				),
+				'uploadPdf' => array(
+					'label'   => 'Upload PDF',
+					'icon'    => 'upload',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"uploadPdf/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalIos").html(data);
+								$("#modalIos").modal("toggle");
+							}
+						)
+				    }
+				    ',
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {delete}',
+			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {viewPdf} {uploadPdf} {delete}',
 		),
 	),
 )); ?>
