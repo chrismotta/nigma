@@ -2,3 +2,4 @@
 /*.log
 /assets/
 /protected/data/wurfl/storage/
+/uploads/*.*

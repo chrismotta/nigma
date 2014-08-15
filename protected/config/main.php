@@ -61,8 +61,8 @@ return array(
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',
-		'ext.pdffactory.*',
 		'ext.eexcelwriter.components.EExcelWriter',
+		'ext.pdffactory.EPdfFactoryDoc',
 	),
 
 	'modules'=>array(

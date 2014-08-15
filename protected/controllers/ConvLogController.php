@@ -2,6 +2,34 @@
 
 class ConvLogController extends Controller
 {
+	/**
+	 * Print daily conversions usin EExcelWriter
+	 * @return excel file
+	 */
+	public function actionExcelReport()
+	{
+		if(isset($_GET["apiKey"])){
+			if($_GET["apiKey"]=="123"){
+		
+				$model=new ConvLog('search');
+
+				$this->renderPartial('excelReport',array(
+					'model' => $model,
+				));
+		
+			}else{
+				echo 'Incorrect Token';
+			}
+		}else{
+			echo 'Access Denied';
+		}
+
+	}
+
+	/**
+	 * Record a conversion stamp
+	 * @return [type] [description]
+	 */
 	public function actionIndex()
 	{
 		/*

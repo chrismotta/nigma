@@ -2,6 +2,12 @@
 
 class ClicksLogController extends Controller
 {
+
+	/**
+	 * Record a click stamp and redirect
+	 * to the appropriate landing
+	 * @return [type] [description]
+	 */
 	public function actionIndex()
 	{
 

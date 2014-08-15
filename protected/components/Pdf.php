@@ -84,7 +84,7 @@ class Pdf extends EPdfFactoryDoc
     protected function initHeader()
     {
         $pdf = $this->getPdf();
-        $pdf->setHeaderData( dirname(__FILE__) . '/../../themes/bootstrap/img/pdf-header.png', 190, '', '', array(), array(255, 255, 255));
+        $pdf->setHeaderData( Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/pdf-header.png', 190, '', '', array(), array(255, 255, 255));
     }
 
     protected function initFooter()
@@ -211,4 +211,9 @@ class Pdf extends EPdfFactoryDoc
 		As part of this agreement with KICKADS, the client agrees to implement a server side pixel that will enable KICKADS to independently validate any conversions that are received. KICKADS will assist the client regarding the technical requirements for implementing this pixel, which when validated will allow KICKADS manage cpa campaigns effectively.
         ";
 
+
+    public static function getPath() 
+    {
+        return Yii::getPathOfAlias('webroot') . "/uploads/";
+    }
 }

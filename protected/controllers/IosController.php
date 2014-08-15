@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -209,7 +209,7 @@ class IosController extends Controller
 		$currency   = KHtml::enumItem($ios, 'currency');
 		$entity     = KHtml::enumItem($ios, 'entity');
 		$advertiser = Advertisers::model()->findByPk($external->advertisers_id);
-		$country    = CHtml::listData(GeoLocation::model()->findAll( "status='Active'" ), 'id_location', 'name' );
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$commercial = Users::model()->findByPk($external->commercial_id);;
 
 		$ios->status = 1;	// FIXME completar con status correspondiente
@@ -245,6 +245,54 @@ class IosController extends Controller
         $pdf->output();
 
         Yii::app()->end();
+	}
+
+	public function actionViewPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = Pdf::getPath();
+
+		if ( file_exists($path . $model->pdf_name) ) {
+			$info = pathinfo($model->pdf_name);
+			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
+				$this->redirect( array('uploads/Adv-1_IO-1.pdf') );
+			} else { // other files download
+				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
+			}
+		} else {
+			// FIXME redirect to 404 not found
+			echo "ERROR, file doesn't exist";
+		}
+		Yii::app()->end();
+	}
+
+	public function actionUploadPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = Pdf::getPath();
+
+		if(isset($_POST['submit'])) {
+
+			if ( is_uploaded_file($_FILES["upload-file"]["tmp_name"]) ) {
+				// Create new name for file
+				$extension = substr( $_FILES["upload-file"]["name"], strrpos($_FILES["upload-file"]["name"], '.') );
+				$newName = 'Adv-' . $model->advertisers_id . '_IO-' . $id . $extension;
+				
+				if ( ! move_uploaded_file($_FILES["upload-file"]['tmp_name'], $path . $newName) ) {
+					Yii::app()->end();
+				}
+
+				// Update status to complete
+				$model->status = 10;
+				$model->pdf_name = $newName;
+				$model->save();
+			}
+			$this->redirect(array('admin'));
+		}
+
+		$this->renderPartial('_uploadPDF', array(
+			'model' => $model,
+		));
 	}
 
 	/**

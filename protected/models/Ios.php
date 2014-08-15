@@ -21,6 +21,7 @@
  * @property string $entity
  * @property string $net_payment
  * @property integer $advertisers_id
+ * @property string $pdf_name
  *
  * The followings are the available model relations:
  * @property GeoLocation $country
@@ -54,7 +55,7 @@ class Ios extends CActiveRecord
 		return array(
 			array('name, address, country_id, state, zip_code, currency, tax_id, commercial_id, entity, net_payment, advertisers_id', 'required'),
 			array('status, country_id, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
-			array('name, address, state, zip_code, phone, email, contact_adm, ret, tax_id, net_payment', 'length', 'max'=>128),
+			array('name, address, state, zip_code, phone, email, contact_adm, pdf_name, ret, tax_id, net_payment', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
 			array('entity', 'length', 'max'=>3),
 			// The following rule is used by search().
@@ -101,6 +102,7 @@ class Ios extends CActiveRecord
 			'entity' => 'Entity',
 			'net_payment' => 'Net Payment',
 			'advertisers_id' => 'Advertisers',
+			'pdf_name' => 'Pdf Name',
 			// Custom attributes
 			'country_name' => 'Country',
 			'commercial_name' => 'Commercial',
@@ -144,6 +146,7 @@ class Ios extends CActiveRecord
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('advertisers_id',$this->advertisers_id);
+		$criteria->compare('pdf_name',$this->pdf_name,true);
 
 		$criteria->with = array( 'advertisers', 'commercial', 'country');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
