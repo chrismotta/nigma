@@ -9,7 +9,6 @@ $this->widget('EExcelWriter', array(
     'fileName'     => 'file.xls',
     'columns'      => array(
         'tid',
-        'id',
     ),
 ));
 

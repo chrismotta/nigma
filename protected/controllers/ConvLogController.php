@@ -9,8 +9,13 @@ class ConvLogController extends Controller
 	public function actionExcelReport()
 	{
 		if(isset($_GET["apiKey"])){
-			if($_GET["apiKey"]=="123"){
-		
+
+			$validApiKey = ApiKey::model()->findByAttributes(array('key' => $_GET["apiKey"]));
+
+			if(isset($validApiKey)){
+
+				$advertiser = $validApiKey->advertosers_id;
+						
 				$model=new ConvLog('search');
 
 				$this->renderPartial('excelReport',array(
