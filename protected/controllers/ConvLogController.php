@@ -8,24 +8,30 @@ class ConvLogController extends Controller
 	 */
 	public function actionExcelReport()
 	{
-		if(isset($_GET["apiKey"])){
+		if ( isset($_GET["date"]) ) {
+			$date = $_GET["date"];
+		} else {
+			$date = 'yesterday';
+		}
+
+		if( isset($_GET["apiKey"]) ) {
 
 			$validApiKey = ApiKey::model()->findByAttributes(array('key' => $_GET["apiKey"]));
 
 			if(isset($validApiKey)){
 
-				$advertiser = $validApiKey->advertosers_id;
-						
-				$model=new ConvLog('search');
+				$model = new ConvLog;
+				$model->advertiser_id = $validApiKey->advertisers_id;
+				$model->date = date_format( new DateTime($date), "Y-m-d" );
 
 				$this->renderPartial('excelReport',array(
 					'model' => $model,
 				));
 		
-			}else{
+			} else {
 				echo 'Incorrect Token';
 			}
-		}else{
+		} else {
 			echo 'Access Denied';
 		}
 
@@ -101,6 +107,7 @@ class ConvLogController extends Controller
 				$conv = new ConvLog();
 				$conv->tid = $tid;
 				$conv->campaign_id = $click->campaigns_id;
+				$conv->clicks_log_id = $click->id;
 				$conv->save();
 				
 				//var_dump($conv);
