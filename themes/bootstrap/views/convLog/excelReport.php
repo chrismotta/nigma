@@ -2,11 +2,13 @@
 /* @var $this CampaignsController */
 /* @var $model Campaigns */
 
+$name = 'KickAds-Report-' . date( 'd-m-Y', strtotime($model->date) ) . '.xls';
+
 $this->widget('EExcelWriter', array(
     'dataProvider' => $model->excel(),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
-    'fileName'     => 'file.xls',
+    'fileName'     => $name,
     'columns'      => array(
     	// array(
     	// 	'name' => 'Click Id',
@@ -67,5 +69,7 @@ $this->widget('EExcelWriter', array(
         ),
     ),
 ));
+
+unlink($name);
 
 ?>
