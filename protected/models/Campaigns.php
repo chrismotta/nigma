@@ -82,6 +82,7 @@ class Campaigns extends CActiveRecord
 			'formats'            => array(self::BELONGS_TO, 'Formats', 'formats_id'),
 			'campaignCategories' => array(self::BELONGS_TO, 'CampaignCategories', 'campaign_categories_id'),
 			'opportunities'      => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
+			'bannerSizes'        => array(self::BELONGS_TO, 'BannerSizes', 'banner_sizes_id'),
 			'convLogs'           => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
 			'clicksLogs'         => array(self::HAS_MANY, 'ClicksLog', 'campaign_id'),
 			'dailyReports'       => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),

@@ -23,6 +23,8 @@
  *
  * The followings are the available model relations:
  * @property Campaigns $campaigns
+ * @property ConvLog[] $convLogs
+ * @property Networks $networks
  */
 class ClicksLog extends CActiveRecord
 {
@@ -59,7 +61,9 @@ class ClicksLog extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
+			'convLogs' => array(self::HAS_MANY, 'ConvLog', 'clicks_log_id'),
 		);
 	}
 
