@@ -96,12 +96,12 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		// 'server_to_server',
 		array( 
 			'name'  =>'startDate',
-			'value' =>'date("d-m-Y", strtotime($data->startDate))',
+			'value' =>'$data->startDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->startDate)) : ""',
 			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
 		array( 
 			'name'  =>'endDate',
-			'value' =>'date("d-m-Y", strtotime($data->endDate))',
+			'value' =>'$data->endDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->endDate)) : ""',
 			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
 		array( 
