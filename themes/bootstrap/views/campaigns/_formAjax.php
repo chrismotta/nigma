@@ -129,7 +129,7 @@ if($action == "Create"){ ?>
             echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array('prompt' => 'Select an opportunitiy'));
         }
 
-        echo $form->textFieldRow($model, 'name', array('class'=>'span4'));
+        echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo '<hr/>';
         echo $form->dropDownListRow($model, 'networks_id', $networks, array('prompt' => 'Select a network'));
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));
@@ -141,7 +141,7 @@ if($action == "Create"){ ?>
         echo $form->textFieldRow($model, 'cap', array('prepend'=>'$'));
         echo $form->radioButtonListInlineRow($model, 'model', $campModel);
         echo '<hr/>';
-        echo $form->textFieldRow($model, 'url', array('class'=>'span4'));
+        echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
 
         ?>
 
