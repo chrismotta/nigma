@@ -2,6 +2,7 @@
 /* @var $this CampaignsController
  * @var $model Campaigns 
  * @var $form CActiveForm 
+ * @var $campaignName
  */
 ?>
 
@@ -13,7 +14,7 @@
 <div class="modal-body">
     <?php
     echo '
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>External Name: </strong>*'.$model->id.'* '.$model->name.' </p>
+    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>External Name: </strong>' . $campaignName . ' </p>
     <hr/>
     ';
     foreach ($networks as $key => $value) {
