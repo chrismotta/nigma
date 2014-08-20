@@ -15,6 +15,7 @@
  * @property integer $model
  * @property integer $value
  * @property string $date
+ * @property integer $is_from_api
  *
  * The followings are the available model relations:
  * @property Networks $networks
@@ -42,11 +43,11 @@ class DailyReport extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('campaigns_id, networks_id, imp, clics, conv_api, spend, model, value, date', 'required'),
-			array('campaigns_id, networks_id, imp, clics, conv_api, conv_adv, model, value', 'numerical', 'integerOnly'=>true),
+			array('campaigns_id, networks_id, imp, clics, conv_api, conv_adv, model, value, is_from_api', 'numerical', 'integerOnly'=>true),
 			array('spend', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, network_name, imp, clics, conv_api, conv_adv, spend, model, value, date', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, imp, clics, conv_api, conv_adv, spend, model, value, date, is_from_api', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,6 +81,7 @@ class DailyReport extends CActiveRecord
 			'model' => 'Model',
 			'value' => 'Value',
 			'date' => 'Date',
+			'is_from_api' => 'Is From Api',
 			'network_name'	=>	'Network Name',
 		);
 	}
@@ -113,6 +115,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('model',$this->model);
 		$criteria->compare('value',$this->value);
 		$criteria->compare('date',$this->date,true);
+		$criteria->compare('is_from_api',$this->is_from_api);
 
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 'networks' );
