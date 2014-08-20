@@ -2,7 +2,7 @@
 /* @var $this CampaignsController */
 /* @var $model Campaigns */
 
-$path = 'pdf/';
+$path = 'uploads/';
 $name = 'KickAds-Report-' . date( 'd-m-Y', strtotime($model->date) ) . '.xls';
 
 $this->widget('EExcelWriter', array(
@@ -24,10 +24,13 @@ $this->widget('EExcelWriter', array(
         	'name' => 'Campaign Name',
         	'value' => '$data->campaign->name',
         ),
-        'date',
+        array(
+            'name' => 'date',
+            'value' => 'date("H:i:s d-m-Y", strtotime($data->date))'
+        ),
         array(
         	'name' => 'Click Date',
-        	'value' => '$data->clicksLog->date',
+        	'value' => 'date("H:i:s d-m-Y", strtotime($data->clicksLog->date))',
         ),
         array(
         	'name' => 'Network',
