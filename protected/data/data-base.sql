@@ -17,18 +17,19 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `name`, `lastname`, 
 -- Dumping data for table `networks`
 --
 
-INSERT INTO `networks` (`id`, `rec`, `name`, `url`, `query_string`, `token1`, `token2`, `token3`) VALUES
-(1, 0, 'Airpush', 'http://openapi.airpush.com/getAdvertiserReports', '', 'n6r4jf4nwtb8es5gw3xx3mkn', '', NULL),
-(2, 0, 'Reporo', 'http://www.reporo.com/analytics/data-api.php', '', 'KKDDFJa06c0QNJGRqL3iI7LiKccfTh', 'dAlweJmmF1vnw88TNyfp5TL74E6XVfBwnUxfI8DvjgMCJWfj19m1XEO0U2WD', NULL),
-(3, 0, 'Ajillion', 'http://admin.vanega.com/api/', '', 'api_kickads', 'mil99ocho', NULL),
-(4, 0, 'Adwords', '', '', '', '', NULL),
-(5, 0, 'Kimia', '', '', '', '', NULL),
-(6, 0, 'LeadBolt', 'https://www.leadbolt.net/api/advertiser_report', '', '90025293', '4a633bb5b8576e32', NULL),
-(7, 0, 'Buzzcity VAS', 'http://report.buzzcity.net/spendingreports.php', '', '88535', '44e92cd666a42bdccd2755dcc3d7d73c', NULL),
-(8, 0, 'Buzzcity ADT', 'http://report.buzzcity.net/spendingreports.php', '', '91642', 'bf3ec05e74b6779549e6a57c3d8fe86a', NULL),
-(9, 0, 'Buzzcity IP', 'http://report.buzzcity.net/spendingreports.php', '', '92379', '44ea35698cf09c91fbcb55ea09cbdf19', NULL),
-(10, 0, 'Buzzcity BRAND', 'http://report.buzzcity.net/spendingreports.php', '', '98985', '7064ce4567e9eb267593eb40c54d25e9', NULL),
-(11, 0, 'VServ', 'http://admin.vserv.mobi/pricing/clientExport.php', '', 'vng', 'kickADS2014*', NULL);
+INSERT INTO `networks` (`id`, `prefix`, `name`, `url`, `query_string`, `token1`, `token2`, `token3`) VALUES
+(1, 'AI', 'Airpush', 'http://openapi.airpush.com/getAdvertiserReports', '', 'n6r4jf4nwtb8es5gw3xx3mkn', '', NULL),
+(2, 'RE', 'Reporo', 'http://www.reporo.com/analytics/data-api.php', '', 'KKDDFJa06c0QNJGRqL3iI7LiKccfTh', 'dAlweJmmF1vnw88TNyfp5TL74E6XVfBwnUxfI8DvjgMCJWfj19m1XEO0U2WD', NULL),
+(3, 'AJ', 'Ajillion', 'http://admin.vanega.com/api/', '', 'api_kickads', 'mil99ocho', NULL),
+(4, 'AD', 'Adwords', '', '', '', '', NULL),
+(5, 'KI', 'Kimia', '', '', '', '', NULL),
+(6, 'LE', 'LeadBolt', 'https://www.leadbolt.net/api/advertiser_report', '', '90025293', '4a633bb5b8576e32', NULL),
+(7, 'BV', 'Buzzcity VAS', 'http://report.buzzcity.net/spendingreports.php', '', '88535', '44e92cd666a42bdccd2755dcc3d7d73c', NULL),
+(8, 'BA', 'Buzzcity ADT', 'http://report.buzzcity.net/spendingreports.php', '', '91642', 'bf3ec05e74b6779549e6a57c3d8fe86a', NULL),
+(9, 'BI', 'Buzzcity IP', 'http://report.buzzcity.net/spendingreports.php', '', '92379', '44ea35698cf09c91fbcb55ea09cbdf19', NULL),
+(10, 'BB', 'Buzzcity BRAND', 'http://report.buzzcity.net/spendingreports.php', '', '98985', '7064ce4567e9eb267593eb40c54d25e9', NULL),
+(11, 'VS', 'VServ', 'http://admin.vserv.mobi/pricing/clientExport.php', '', 'vng', 'kickADS2014*', NULL),
+(12, 'TE', 'Testing', '', '', NULL, NULL, NULL);
 
 --
 -- Dumping data for table `campaign_categories`
