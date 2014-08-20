@@ -10,6 +10,7 @@ Yii::import('zii.widgets.grid.CGridView');
 
 class EExcelWriter extends CGridView{
     public $fileName = null;
+    public $filePath = null;
     public $stream = false; //stream to browser
     public $title = '';
 
@@ -30,7 +31,7 @@ class EExcelWriter extends CGridView{
         require_once(dirname(__FILE__) .'/../vendors/excelwriter/class.writeexcel_worksheet.inc.php');
 
         $this->initColumns();
-        $this->workBook = new writeexcel_workbookbig($this->fileName);
+        $this->workBook = new writeexcel_workbookbig($this->filePath . $this->fileName);
         $this->activeWorksheet = $this->workBook->addworksheet();
 
         // add some default formatting
@@ -159,7 +160,7 @@ class EExcelWriter extends CGridView{
         if($this->stream){ //output to browser
             header("Content-Type: application/x-msexcel; name=\"".$this->fileName."\"");
             header("Content-Disposition: inline; filename=\"".$this->fileName."\"");
-            $fh=fopen($this->fileName, "rb");
+            $fh=fopen($this->filePath . $this->fileName, "rb");
             fpassthru($fh);
         }
     }
