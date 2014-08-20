@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn'),
+				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -187,6 +187,15 @@ class DailyReportController extends Controller
 			// echo json_encode("ERROR updating conv_adv");
 		}
 		Yii::app()->end();
+	}
+
+	public function actionExcelReport()
+	{
+		$model = new DailyReport;
+		// FIXME se deberia filtrar para no importar toda la tabla
+		$this->renderPartial('excelReport',array(
+			'model' => $model,
+		));
 	}
 
 	/**

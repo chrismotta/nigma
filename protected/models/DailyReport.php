@@ -25,6 +25,8 @@ class DailyReport extends CActiveRecord
 {
 
 	public $network_name;
+	public $account_manager;
+	public $campaign_name;
 
 	/**
 	 * @return string the associated database table name
@@ -47,7 +49,7 @@ class DailyReport extends CActiveRecord
 			array('spend', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, network_name, imp, clics, conv_api, conv_adv, spend, model, value, date, is_from_api', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, clics, conv_api, conv_adv, spend, model, value, date, is_from_api', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,7 +85,21 @@ class DailyReport extends CActiveRecord
 			'date' => 'Date',
 			'is_from_api' => 'Is From Api',
 			'network_name'	=>	'Network Name',
+			'account_manager' => 'Account Manager',
+			'campaign_name' => 'Campaign Name'
 		);
+	}
+
+
+	public function excel()
+	{
+		$criteria=new CDbCriteria;
+
+		$criteria->with = array( 'campaigns', 'networks' );
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
 	}
 
 	/**
@@ -118,8 +134,10 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('is_from_api',$this->is_from_api);
 
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks' );
+		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		$criteria->compare('networks.name',$this->network_name, true);
+		$criteria->compare('accountManager.name',$this->account_manager, true);
+		$criteria->compare('campaigns.id',$this->campaign_name, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -132,6 +150,14 @@ class DailyReport extends CActiveRecord
 		            'network_name'=>array(
 						'asc'  =>'networks.name',
 						'desc' =>'networks.name DESC',
+		            ),
+		            'account_manager'=>array(
+						'asc'  =>'accountManager.name',
+						'desc' =>'accountManager.name DESC',
+		            ),
+		            'campaign_name'=>array(
+						'asc'  =>'campaigns.id',
+						'desc' =>'campaigns.id DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',

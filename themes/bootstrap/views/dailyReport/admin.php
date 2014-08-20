@@ -26,29 +26,6 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<div class="botonera">
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Add Daily Report Manualy',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'success' => 'function(data)
-				{
-	                    console.log(this.url);
-		                //alert("create");
-						$("#modalDailyReport").html(data);
-						$("#modalDailyReport").modal("toggle");
-				}',
-			),
-		'htmlOptions' => array('id' => 'createAjax'),
-		)
-	); ?>
-</div>
-
-
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
@@ -100,6 +77,39 @@ $('.search-form form').submit(function(){
 	</div>
 </div>
 
+<hr>
+
+<div class="botonera">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Add Daily Report Manualy',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'create',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'success' => 'function(data)
+				{
+	                    console.log(this.url);
+		                //alert("create");
+						$("#modalDailyReport").html(data);
+						$("#modalDailyReport").modal("toggle");
+				}',
+			),
+		'htmlOptions' => array('id' => 'createAjax'),
+		)
+	); ?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Excel Report',
+		'block'       => false,
+		'buttonType'  => 'link',
+		'url'         => 'excelReport',
+		'htmlOptions' => array('id' => 'excelReport'),
+		)
+	); ?>
+</div>
+
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
@@ -107,22 +117,24 @@ $('.search-form form').submit(function(){
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  => array(
 		array(
 			'name'  =>	'id',
-        	'headerHtmlOptions' => array('style' => 'width: 70px'),
+        	'headerHtmlOptions' => array('style' => 'width: 50px'),
         	'htmlOptions'	=> array( 'class' =>  'id'),
 		),
 		array(
-			'name'  =>	'campaigns_id',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'htmlOptions'	=> array( 'class' =>  'campaign_id'),
+			'name'  => 'account_manager',
+			'value' => '$data->campaigns->opportunities->accountManager ? $data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name : ""',
+        	'headerHtmlOptions' => array('style' => 'width: 120px'),
+        	'htmlOptions'	=> array( 'class' =>  'id'),
 		),
 		array(
-			'name'  =>	'networks_id',
-			'htmlOptions'	=> array( 'class' =>  'network_id', 'style' => 'width:65px;'),
+			'name'  => 'campaign_name',
+			'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
+			'headerHtmlOptions' => array('style' => 'width: 120px'),
 		),
 		array(
 			'name'  =>	'network_name',
@@ -144,7 +156,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'=>array('style'=>'width: 70px'),
         	'value' =>	'
         			CHtml::textField("row-" . $row, $data->conv_adv, array(
-        				"style" => "width:20px;", 
+        				"style" => "width:35px;", 
         				"onkeydown" => "$( \"#row-\" + $row ).parents( \"tr\" ).addClass( \"control-group error\" );" 
         				)) . " " .
         			CHtml::ajaxLink(
@@ -173,12 +185,12 @@ $('.search-form form').submit(function(){
         	'name'	=>	'spend',
         	'value'	=>	'"$ " . $data->spend',
         ),
-		array(
-        	'name'	=>	'model',
-        ),
-		array(
-        	'name'	=>	'value',
-        ),
+		// array(
+		// 	'name'	=>	'model',
+		// ),
+		// array(
+		// 	'name'	=>	'value',
+        // ),
 		array(
         	'name'	=>	'date',
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
