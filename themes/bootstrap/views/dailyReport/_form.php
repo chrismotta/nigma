@@ -2,87 +2,56 @@
 /* @var $this DailyReportController */
 /* @var $model DailyReport */
 /* @var $form CActiveForm */
+/* @var $networks */
+/* @var $campaigns */
 ?>
 
-<div class="form">
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>Daily Report <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+</div>
 
-<?php $form=$this->beginWidget('CActiveForm', array(
-	'id'=>'daily-report-form',
-	// Please note: When you enable ajax validation, make sure the corresponding
-	// controller action is handling ajax validation correctly.
-	// There is a call to performAjaxValidation() commented in generated controller code.
-	// See class documentation of CActiveForm for details on this.
-	'enableAjaxValidation'=>false,
-)); ?>
 
-	<p class="note">Fields with <span class="required">*</span> are required.</p>
+<div class="modal-body">
 
-	<?php echo $form->errorSummary($model); ?>
+    <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'daily-report-form',
+        'type'=>'horizontal',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?>
+    <fieldset>
+        <?php 
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'campaigns_id'); ?>
-		<?php echo $form->textField($model,'campaigns_id'); ?>
-		<?php echo $form->error($model,'campaigns_id'); ?>
-	</div>
+        echo $form->dropDownListRow($model, 'campaigns_id', $campaigns, array('prompt' => 'Select campaign'));
+        echo $form->dropDownListRow($model, 'networks_id', $networks, array('prompt' => 'Select a network'));
+        echo '<hr>';
+        echo $form->textFieldRow($model, 'imp', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'clics', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'conv_api', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'conv_adv', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'spend', array('class'=>'span3', 'prepend'=>'$'));
+        echo $form->textFieldRow($model, 'model', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'value', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'date', array('class'=>'span3'));
+        echo $form->checkboxRow($model, 'is_from_api', array('disabled'=>true));
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'networks_id'); ?>
-		<?php echo $form->textField($model,'networks_id'); ?>
-		<?php echo $form->error($model,'networks_id'); ?>
-	</div>
+        ?>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'imp'); ?>
-		<?php echo $form->textField($model,'imp'); ?>
-		<?php echo $form->error($model,'imp'); ?>
-	</div>
+    <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+    <div class="form-actions">
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
+    </div>
+    </fieldset>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'clics'); ?>
-		<?php echo $form->textField($model,'clics'); ?>
-		<?php echo $form->error($model,'clics'); ?>
-	</div>
+    <?php $this->endWidget(); ?>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'conv_api'); ?>
-		<?php echo $form->textField($model,'conv_api'); ?>
-		<?php echo $form->error($model,'conv_api'); ?>
-	</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'conv_adv'); ?>
-		<?php echo $form->textField($model,'conv_adv'); ?>
-		<?php echo $form->error($model,'conv_adv'); ?>
-	</div>
+</div>
 
-	<div class="row">
-		<?php echo $form->labelEx($model,'spend'); ?>
-		<?php echo $form->textField($model,'spend',array('size'=>11,'maxlength'=>11)); ?>
-		<?php echo $form->error($model,'spend'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'model'); ?>
-		<?php echo $form->textField($model,'model'); ?>
-		<?php echo $form->error($model,'model'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'value'); ?>
-		<?php echo $form->textField($model,'value'); ?>
-		<?php echo $form->error($model,'value'); ?>
-	</div>
-
-	<div class="row">
-		<?php echo $form->labelEx($model,'date'); ?>
-		<?php echo $form->textField($model,'date'); ?>
-		<?php echo $form->error($model,'date'); ?>
-	</div>
-
-	<div class="row buttons">
-		<?php echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
-	</div>
-
-<?php $this->endWidget(); ?>
-
-</div><!-- form -->
+<div class="modal-footer">
+    Create new Daily Report. Fields with <span class="required">*</span> are required.
+</div>

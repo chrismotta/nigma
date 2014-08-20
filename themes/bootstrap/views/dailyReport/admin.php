@@ -26,7 +26,28 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<h2>Manage Daily Reports</h2>
+<div class="botonera">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Add Daily Report Manualy',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'create',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'success' => 'function(data)
+				{
+	                    console.log(this.url);
+		                //alert("create");
+						$("#modalDailyReport").html(data);
+						$("#modalDailyReport").modal("toggle");
+				}',
+			),
+		'htmlOptions' => array('id' => 'createAjax'),
+		)
+	); ?>
+</div>
+
 
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -81,10 +102,12 @@ $('.search-form form').submit(function(){
 
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
-	'id'                    => 'daily-report-grid',
-	'dataProvider'          => $model->search(),
-	'filter'                => $model,
-	'selectionChanged'      => 'js:selectionChangedDailyReport',
+	'id'                       => 'daily-report-grid',
+	'dataProvider'             => $model->search(),
+	'filter'                   => $model,
+	'selectionChanged'         => 'js:selectionChangedDailyReport',
+	'type'                     => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  => array(
 		array(
@@ -161,14 +184,48 @@ $('.search-form form').submit(function(){
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
         	'htmlOptions'	=> array( 'class' =>  'date'),
         ),
+        array(
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'buttons'           => array(
+				'delete' => array(
+					'visible' => '! $data->is_from_api',
+				),
+				'updateAjax' => array(
+					'label'   => 'Update',
+					'icon'    => 'pencil',
+					'visible' => '! $data->is_from_api',
+					'click'   => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"update/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalDailyReport").html(data);
+								$("#modalDailyReport").modal("toggle");
+							}
+						)
+				    }
+				    ',
+				),
+			),
+			'template' => '{updateAjax} {delete}',
+		),
 	),
 )); ?>
 
-<!-- <p>
-You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>&lt;&gt;</b>
-or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
--->
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalDailyReport')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"><h1>Campaigns</h1></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>
 
 <div class="row" id="blank-row">
 </div>

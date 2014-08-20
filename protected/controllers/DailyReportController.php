@@ -65,18 +65,16 @@ class DailyReportController extends Controller
 		$model=new DailyReport;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -89,18 +87,16 @@ class DailyReportController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -219,5 +215,20 @@ class DailyReportController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	public function renderFormAjax($model)
+	{
+		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campaigns = CHtml::listData(Campaigns::model()->findAll(array('order'=>'name')), 'id', 'name');
+
+		if ( $model->isNewRecord )
+			$model->is_from_api = 0;
+
+		$this->renderPartial('_form', array(
+			'model'     => $model,
+			'networks'  => $networks,
+			'campaigns' => $campaigns, 
+		), false, true);
 	}
 }
