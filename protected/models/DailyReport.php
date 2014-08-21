@@ -8,12 +8,12 @@
  * @property integer $campaigns_id
  * @property integer $networks_id
  * @property integer $imp
+ * @property integer $imp_adv
  * @property integer $clics
  * @property integer $conv_api
  * @property integer $conv_adv
  * @property string $spend
- * @property integer $model
- * @property integer $value
+ * @property integer $revenue
  * @property string $date
  * @property integer $is_from_api
  *
@@ -44,12 +44,12 @@ class DailyReport extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('campaigns_id, networks_id, imp, clics, conv_api, spend, model, value, date', 'required'),
-			array('campaigns_id, networks_id, imp, clics, conv_api, conv_adv, model, value, is_from_api', 'numerical', 'integerOnly'=>true),
+			array('campaigns_id, networks_id, imp, clics, conv_api, spend, revenue, date', 'required'),
+			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, revenue, is_from_api', 'numerical', 'integerOnly'=>true),
 			array('spend', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, clics, conv_api, conv_adv, spend, model, value, date, is_from_api', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -76,12 +76,12 @@ class DailyReport extends CActiveRecord
 			'campaigns_id' => 'Campaigns',
 			'networks_id' => 'Networks',
 			'imp' => 'Impressions',
+			'imp_adv' => 'Impressions Adv',
 			'clics' => 'Clics',
 			'conv_api' => 'Conv Api',
 			'conv_adv' => 'Conv Adv',
 			'spend' => 'Spend',
-			'model' => 'Model',
-			'value' => 'Value',
+			'revenue' => 'Revenue',
 			'date' => 'Date',
 			'is_from_api' => 'Is From Api',
 			'network_name'	=>	'Network Name',
@@ -124,12 +124,12 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('imp',$this->imp);
+		$criteria->compare('imp_adv',$this->imp_adv);
 		$criteria->compare('clics',$this->clics);
 		$criteria->compare('conv_api',$this->conv_api);
 		$criteria->compare('conv_adv',$this->conv_adv);
 		$criteria->compare('spend',$this->spend,true);
-		$criteria->compare('model',$this->model);
-		$criteria->compare('value',$this->value);
+		$criteria->compare('revenue',$this->revenue);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('is_from_api',$this->is_from_api);
 
