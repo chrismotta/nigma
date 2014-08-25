@@ -173,19 +173,23 @@ class DailyReportController extends Controller
 
 	public function actionUpdateColumn() {
 
-		if ( isset($_POST["id"]) && isset($_POST["newValue"]) ) {
+		if ( isset($_POST["id"]) && isset($_POST["newValue"]) && isset($_POST["col"]) ) {
 			$keyvalue   = $_POST["id"];
 	        $newValue  = $_POST["newValue"];
+	        $col = $_POST["col"];
 		} else {
 			// echo json_encode("ERROR missing params.");
 			Yii::app()->end();
 		}
 
 		$model = DailyReport::model()->findByPk($keyvalue);
-		$model->conv_adv = $newValue;
-		if ( ! $model->update(array('conv_adv')) ) {
-			// echo json_encode("ERROR updating conv_adv");
+		$model[$col] = $newValue;
+		$model->updateRevenue();
+
+		if ( ! $model->update(array($col, 'revenue')) ) {
+			// echo json_encode("ERROR updating daily report");
 		}
+
 		Yii::app()->end();
 	}
 

@@ -122,19 +122,18 @@ $('.search-form form').submit(function(){
 	'columns'                  => array(
 		array(
 			'name'  =>	'id',
-        	'headerHtmlOptions' => array('style' => 'width: 50px'),
+        	'headerHtmlOptions' => array('style' => 'width: 30px'),
         	'htmlOptions'	=> array( 'class' =>  'id'),
 		),
 		array(
 			'name'  => 'account_manager',
 			'value' => '$data->campaigns->opportunities->accountManager ? $data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name : ""',
-        	'headerHtmlOptions' => array('style' => 'width: 120px'),
-        	'htmlOptions'	=> array( 'class' =>  'id'),
+        	'htmlOptions'	=> array( 'class' =>  'id', 'style' => 'width: 120px'),
 		),
 		array(
 			'name'  => 'campaign_name',
 			'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
-			'headerHtmlOptions' => array('style' => 'width: 120px'),
+			'htmlOptions' => array('style' => 'width: 120px'),
 		),
 		array(
 			'name'  =>	'network_name',
@@ -142,22 +141,20 @@ $('.search-form form').submit(function(){
 		),
 		array(	
 			'name'	=>	'imp',
+			'htmlOptions'=>array('style'=>'width: 50px'),
         ),
-        array(
-        	'name'	=>	'clics',
-        ),
-		array(
-        	'name'	=>	'conv_api',
-        	'htmlOptions'=>array('style'=>'width: 70px'),
-        ),
-		array(
-        	'name'	=>	'conv_adv',
-        	'type'	=>	'raw',
-			'htmlOptions'=>array('style'=>'width: 70px'),
+        array(	
+			'name'	=>	'imp_adv',
+			'type'	=>	'raw',
+			'htmlOptions'=>array('style'=>'width: 85px'),
         	'value' =>	'
-        			CHtml::textField("row-" . $row, $data->conv_adv, array(
+					CHtml::textField("row-imp" . $row, $data->imp_adv, array(
         				"style" => "width:35px;", 
-        				"onkeydown" => "$( \"#row-\" + $row ).parents( \"tr\" ).addClass( \"control-group error\" );" 
+        				"onkeydown" => "
+							var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
+	        				r.removeClass( \"control-group success\" );
+	        				r.addClass( \"control-group error\" );
+        				" 
         				)) . " " .
         			CHtml::ajaxLink(
             				"<i class=\"icon-pencil\"></i>",
@@ -165,12 +162,69 @@ $('.search-form form').submit(function(){
 	        				array(
 								"type"     => "POST",
 								"dataType" => "json",
-								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-\" + $row).val()" ) ,
+								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-imp\" + $row).val()", "col" => "imp_adv" ) ,
 								"success"  => "function( data )
 									{
-										// change css properties
-										$( \"#row-\" + $row ).parents( \"tr\" ).removeClass( \"control-group error\" );
-										$( \"#row-\" + $row ).parents( \"tr\" ).addClass( \"control-group success\" );
+										$.fn.yiiGridView.update(\"daily-report-grid\", {
+											complete: function(jqXHR, textStatus) {
+												if (textStatus == \'success\') {
+													// change css properties
+													var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
+													r.removeClass( \"control-group error\" );
+													r.addClass( \"control-group success\" );
+												}
+											}
+										});
+									}",
+								),
+							array(
+								"style"               => "width: 20px",
+								"rel"                 => "tooltip",
+								"data-original-title" => "Update"
+								)
+						)
+        	',
+        ),
+        array(
+        	'name'	=>	'clics',
+        	'htmlOptions'=>array('style'=>'width: 50px'),
+        ),
+		array(
+        	'name'	=>	'conv_api',
+        	'htmlOptions'=>array('style'=>'width: 50px'),
+        ),
+		array(
+        	'name'	=>	'conv_adv',
+        	'type'	=>	'raw',
+			'htmlOptions'=>array('style'=>'width: 85px'),
+        	'value' =>	'
+        			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
+        				"style" => "width:35px;", 
+        				"onkeydown" => "
+	        				var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
+	        				r.removeClass( \"control-group success\" );
+	        				r.addClass( \"control-group error\" );
+        				" 
+        				)) . " " .
+        			CHtml::ajaxLink(
+            				"<i class=\"icon-pencil\"></i>",
+	            			Yii::app()->controller->createUrl("updateColumn"),
+	        				array(
+								"type"     => "POST",
+								"dataType" => "json",
+								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-conv\" + $row).val()", "col" => "conv_adv" ) ,
+								"success"  => "function( data )
+									{
+										$.fn.yiiGridView.update(\"daily-report-grid\", {
+											complete: function(jqXHR, textStatus) {
+												if (textStatus == \'success\') {
+													// change css properties
+													var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
+													r.removeClass( \"control-group error\" );
+													r.addClass( \"control-group success\" );
+												}
+											}
+										});
 									}",
 								),
 							array(
@@ -181,24 +235,59 @@ $('.search-form form').submit(function(){
 						)
 					',
         ),
+        array(
+        	'name' => 'revenue',
+        	'value' => '"$ " . $data->revenue',
+        	'htmlOptions'=>array('style'=>'width: 70px'),
+        ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'"$ " . $data->spend',
+        	'htmlOptions'=>array('style'=>'width: 60px'),
         ),
-		// array(
-		// 	'name'	=>	'model',
-		// ),
-		// array(
-		// 	'name'	=>	'value',
-        // ),
+		array(
+			'name'  => 'profit',
+			'value'	=>	'"$ " . $data->profit',
+			'htmlOptions'=>array('style'=>'width: 60px'),
+		),
+		array(
+			'name'  => 'click_rate',
+			'value' => '$data->click_rate * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px'),
+		),
+		array(
+			'name'  => 'conv_rate',
+			'value' => '$data->conv_rate * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px'),
+		),
+		array(
+			'name'  => 'profit_perc',
+			'value' => '$data->profit_perc * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px'),
+		),
+		array(
+			'name'  => 'eCPM',
+			'value' => '"$ " . $data->eCPM',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
+		array(
+			'name'  => 'eCPC',
+			'value' => '"$ " . $data->eCPC',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
+		array(
+			'name'  => 'eCPA',
+			'value' => '"$ " . $data->eCPA',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
 		array(
         	'name'	=>	'date',
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
-        	'htmlOptions'	=> array( 'class' =>  'date'),
+        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px'),
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'headerHtmlOptions' => array('style' => "width: 50px"),
 			'buttons'           => array(
 				'delete' => array(
 					'visible' => '! $data->is_from_api',

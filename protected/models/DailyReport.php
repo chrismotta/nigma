@@ -28,6 +28,14 @@ class DailyReport extends CActiveRecord
 	public $account_manager;
 	public $campaign_name;
 
+	public $profit;
+	public $click_rate;
+	public $conv_rate;
+	public $profit_perc;
+	public $eCPM;
+	public $eCPC;
+	public $eCPA;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -45,11 +53,11 @@ class DailyReport extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('campaigns_id, networks_id, imp, clics, conv_api, spend, revenue, date', 'required'),
-			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, revenue, is_from_api', 'numerical', 'integerOnly'=>true),
-			array('spend', 'length', 'max'=>11),
+			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, is_from_api', 'numerical', 'integerOnly'=>true),
+			array('spend, revenue', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, profit, click_rate, conv_rate, profit_perc, eCPM, eCPC, eCPA, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,8 +83,8 @@ class DailyReport extends CActiveRecord
 			'id' => 'ID',
 			'campaigns_id' => 'Campaigns',
 			'networks_id' => 'Networks',
-			'imp' => 'Impressions',
-			'imp_adv' => 'Impressions Adv',
+			'imp' => 'Imp',
+			'imp_adv' => 'Imp Adv',
 			'clics' => 'Clics',
 			'conv_api' => 'Conv Api',
 			'conv_adv' => 'Conv Adv',
@@ -86,7 +94,15 @@ class DailyReport extends CActiveRecord
 			'is_from_api' => 'Is From Api',
 			'network_name'	=>	'Network Name',
 			'account_manager' => 'Account Manager',
-			'campaign_name' => 'Campaign Name'
+			'campaign_name' => 'Campaign Name',
+
+			'profit' => 'Profit',
+			'click_rate' => 'CTR',
+			'conv_rate' => 'Conv. Rate',
+			'profit_perc'=>'Profit %',
+			'eCPM' => 'eCPM',
+			'eCPC' => 'eCPC',
+			'eCPA' => 'eCPA',
 		);
 	}
 
@@ -94,6 +110,25 @@ class DailyReport extends CActiveRecord
 	public function excel()
 	{
 		$criteria=new CDbCriteria;
+
+		$profit = 'revenue-spend';
+		$ctr = 'ROUND((CASE WHEN imp_adv = 0 THEN clics/imp ELSE clics/imp_adv END), 2)';
+		$conv_rate = 'ROUND((CASE WHEN conv_adv = 0 THEN conv_api/clics ELSE conv_adv/clics END), 2)';
+		$profit_perc = 'ROUND( (' . $profit . ') /revenue, 2)';
+		$eCPM = 'ROUND((CASE WHEN imp_adv = 0 THEN spend*1000/imp ELSE spend*1000/imp_adv END), 2)';
+		$eCPC = 'ROUND(t.spend/t.clics, 2)';
+		$eCPA = 'ROUND((CASE WHEN conv_adv = 0 THEN spend/conv_api ELSE spend/conv_adv END), 2)';
+
+		$criteria->select=array(
+			'*', 
+			$profit . ' as profit', 
+			$ctr . ' as click_rate',
+			$conv_rate . ' as conv_rate',
+			$profit_perc . ' as profit_perc',
+			$eCPM . ' as eCPM',
+			$eCPC . ' as eCPC',
+			$eCPA . ' as eCPA',
+		);
 
 		$criteria->with = array( 'campaigns', 'networks' );
 
@@ -120,6 +155,25 @@ class DailyReport extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$profit = 'revenue-spend';
+		$ctr = 'ROUND((CASE WHEN imp_adv = 0 THEN clics/imp ELSE clics/imp_adv END), 2)';
+		$conv_rate = 'ROUND((CASE WHEN conv_adv = 0 THEN conv_api/clics ELSE conv_adv/clics END), 2)';
+		$profit_perc = 'ROUND( (' . $profit . ') /revenue, 2)';
+		$eCPM = 'ROUND((CASE WHEN imp_adv = 0 THEN spend*1000/imp ELSE spend*1000/imp_adv END), 2)';
+		$eCPC = 'ROUND(t.spend/t.clics, 2)';
+		$eCPA = 'ROUND((CASE WHEN conv_adv = 0 THEN spend/conv_api ELSE spend/conv_adv END), 2)';
+
+		$criteria->select=array(
+			'*', 
+			$profit . ' as profit', 
+			$ctr . ' as click_rate',
+			$conv_rate . ' as conv_rate',
+			$profit_perc . ' as profit_perc',
+			$eCPM . ' as eCPM',
+			$eCPC . ' as eCPC',
+			$eCPA . ' as eCPA',
+		);
+
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('networks_id',$this->networks_id);
@@ -132,6 +186,14 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('revenue',$this->revenue);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('is_from_api',$this->is_from_api);
+
+		$criteria->compare($profit,$this->profit,true);
+		$criteria->compare($ctr,$this->click_rate,true);
+		$criteria->compare($conv_rate,$this->conv_rate,true);
+		$criteria->compare($profit_perc,$this->profit_perc,true);
+		$criteria->compare($eCPM,$this->eCPM,true);
+		$criteria->compare($eCPC,$this->eCPC,true);
+		$criteria->compare($eCPA,$this->eCPA,true);
 
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
@@ -158,6 +220,34 @@ class DailyReport extends CActiveRecord
 		            'campaign_name'=>array(
 						'asc'  =>'campaigns.id',
 						'desc' =>'campaigns.id DESC',
+		            ),
+		            'profit'=>array(
+		            	'asc'  =>'profit',
+						'desc' =>'profit DESC',	
+		            ),
+		            'click_rate'=>array(
+		            	'asc'  =>'click_rate',
+						'desc' =>'click_rate DESC',
+		            ),
+		            'conv_rate'=>array(
+		            	'asc'  =>'conv_rate',
+						'desc' =>'conv_rate DESC',
+		            ),
+		            'profit_perc'=>array(
+		            	'asc'  =>'profit_perc',
+						'desc' =>'profit_perc DESC',
+		            ),
+		            'eCPM'=>array(
+		            	'asc'  =>'eCPM',
+						'desc' =>'eCPM DESC',
+		            ),
+		            'eCPC'=>array(
+		            	'asc'  =>'eCPC',
+						'desc' =>'eCPC DESC',
+		            ),
+		            'eCPA'=>array(
+		            	'asc'  =>'eCPA',
+						'desc' =>'eCPA DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
@@ -206,5 +296,23 @@ class DailyReport extends CActiveRecord
 		}
 		$result = array($spend, $conv, $impressions, $clicks, $dates);
 		return $result;
+	}
+
+	public function updateRevenue()
+	{
+		$c    = Campaigns::model()->findByPk($this->campaigns_id);
+		$opp  = Opportunities::model()->findByPk($c->opportunities_id);
+		$rate = $opp->rate;
+		switch ($opp->model_adv) {
+			case 'CPM':
+				$this->revenue = $this->imp_adv ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
+				break;
+			case 'CPC':
+				$this->revenue = $this->clics * $rate;
+				break;
+			case 'CPA':
+				$this->revenue = $this->conv_adv ? $this->conv_adv * $rate : $this->conv_api * $rate;
+				break;
+		}
 	}
 }
