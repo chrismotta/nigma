@@ -46,9 +46,7 @@ class VServController extends Controller
 			$dailyReport = new DailyReport();
 
 			// get campaign ID used in KickAds Server, from the campaign name use in the external network
-			$id_begin = strpos($campaign['attr']['name'], "*") + 1;
-			$id_end = strpos($campaign['attr']['name'], "*", $id_begin) - 1;
-			$dailyReport->campaigns_id = substr($campaign['attr']['name'], $id_begin,  $id_end - $id_begin + 1);
+			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
 
 			// sum the total of impression and clicks from all ads
 			$impressions = 0;
@@ -73,8 +71,7 @@ class VServController extends Controller
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $spend;
-			$dailyReport->model = 0;
-			$dailyReport->value = 0;
+			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				// print "ERROR - saving campaign: " . $campaign['attr']['name'] . "<br>";

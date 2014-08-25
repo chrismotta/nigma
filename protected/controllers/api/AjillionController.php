@@ -58,9 +58,7 @@ class AjillionController extends Controller
 				$dailyReport = new DailyReport();
 				
 				// get campaign ID used in KickAds Server, from the campaign name use in the external network
-				$id_begin = strpos($campaign->name, "*") + 1;
-				$id_end = strpos($campaign->name, "*", $id_begin) - 1;
-				$dailyReport->campaigns_id = substr($campaign->name, $id_begin,  $id_end - $id_begin + 1);
+				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->name);
 
 				$dailyReport->networks_id = $this->network_id;
 				$dailyReport->imp = $campaign_info[0]->impressions;
@@ -68,8 +66,7 @@ class AjillionController extends Controller
 				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 				$dailyReport->conv_adv = 0;
 				$dailyReport->spend = $campaign_info[0]->revenue;
-				$dailyReport->model = 0;
-				$dailyReport->value = 0;
+				$dailyReport->updateRevenue();
 				$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 				if ( !$dailyReport->save() ) {
 					// print "ERROR - saving campaign: " . $campaign->name . "<br>";

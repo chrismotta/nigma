@@ -41,18 +41,15 @@ class AirpushController extends Controller
 			$dailyReport = new DailyReport();
 			
 			// get campaign ID used in KickAds Server, from the campaign name use in the external network
-			$id_begin = strpos($campaign->campaignname, "*") + 1;
-			$id_end = strpos($campaign->campaignname, "*", $id_begin) - 1;
-			$dailyReport->campaigns_id = substr($campaign->campaignname, $id_begin,  $id_end - $id_begin + 1);
-			
+			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
+
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impression;
 			$dailyReport->clics = $campaign->clicks;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign->Spent;
-			$dailyReport->model = 0;
-			$dailyReport->value = 0;
+			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				// print "ERROR - saving campaign: " . $campaign->campaignname . "<br>";

@@ -65,9 +65,7 @@ class ReporoController extends Controller
 				
 				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
 				// get campaign ID used in KickAds Server, from the campaign name use in the external network
-				$id_begin = strpos($campaign_info->campaign_name, "*") + 1;
-				$id_end = strpos($campaign_info->campaign_name, "*", $id_begin) - 1;
-				$dailyReport->campaigns_id = substr($campaign_info->campaign_name, $id_begin,  $id_end - $id_begin + 1);
+				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
 
 				$dailyReport->networks_id = $this->network_id;
 				$dailyReport->imp = $campaign_stats[0]->impressions;
@@ -75,8 +73,7 @@ class ReporoController extends Controller
 				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 				$dailyReport->conv_adv = 0;
 				$dailyReport->spend = $campaign_stats[0]->spend;
-				$dailyReport->model = 0;
-				$dailyReport->value = 0;
+				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
 					// print "ERROR - saving campaign: " . $campaign_info->campaign_name . "<br>";
