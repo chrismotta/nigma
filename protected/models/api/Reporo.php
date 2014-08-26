@@ -1,23 +1,21 @@
 <?php
 
-class ReporoController extends Controller
+class Reporo
 {
 
 	private $network_id = 2;
 
-	public function actionIndex()
+	public function downloadInfo()
 	{
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
-			print "Parameter 'date' missing.";
-			Yii::app()->end(1);
+			$date = date('Y-m-d', strtotime('yesterday'));
 		}
-
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			// print "Information already downloaded.";
+			print "Reporo: WARNING - Information already downloaded. <br>";
 			Yii::app()->end(2);
 		}
 
@@ -36,14 +34,17 @@ class ReporoController extends Controller
 		// --- getting compaign_groups ids
 		$groups = $this->getResponse($actions["adv"]);
 
-		if (!$groups) { Yii::app()->end(1); }
+		if (!$groups) { 
+			print "Reporo: ERROR - getting advertisers inventory <br>";
+			Yii::app()->end(1); 
+		}
 
 		foreach ($groups->campaign_groups as $campaign_group) {
 			$group_id = $campaign_group->campaign_group;	// rename variable only to make code easy to read.
 
 			// check if campaign group has activities for the date specified
 			if ( ! $this->getResponse($actions["group_stats"] . $group_id . $params) ) {
-				// print "Campaign group: $group_id without activity in the date specified. <br>";
+				// print "Reporo: INFO - Campaign group: $group_id without activity in the date specified. <br>";
 				continue;
 			}
 
@@ -56,7 +57,7 @@ class ReporoController extends Controller
 			foreach ($campaigns->campaigns as $campaign) {
 				$campaign_stats = $this->getResponse($actions["campaign_stats"] . $campaign->campaign . $params);
 				if ( ! $campaign_stats ) {
-					print "Campaign:" . $campaign->campaign . "without activity in the date specified. <br>";
+					// print "Campaign:" . $campaign->campaign . "without activity in the date specified. <br>";
 					continue; 
 				}
 
@@ -67,6 +68,11 @@ class ReporoController extends Controller
 				// get campaign ID used in KickAds Server, from the campaign name use in the external network
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
 
+				if ( !$dailyReport->campaigns_id ) {
+					print "Reporo: ERROR - invalid external campaign name: '" . $campaign_info->campaign_name . "' <br>";
+					continue;
+				}
+
 				$dailyReport->networks_id = $this->network_id;
 				$dailyReport->imp = $campaign_stats[0]->impressions;
 				$dailyReport->clics = $campaign_stats[0]->clicks;
@@ -76,13 +82,14 @@ class ReporoController extends Controller
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
-					// print "ERROR - saving campaign: " . $campaign_info->campaign_name . "<br>";
+					print "Reporo: ERROR - saving campaign: " . $campaign_info->campaign_name . "<br>";
 					continue;
 				}
 			}
 			// --- end getting compaigns ids from campaign_group id
 		}
 		// --- end getting compaign_groups ids
+		print "Reporo: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
 		Yii::app()->end();
 	}
 
@@ -118,12 +125,12 @@ class ReporoController extends Controller
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
-			// print "ERROR Airpush json is empty <br>";
+			// print "Reporo: ERROR json is empty <br>";
 			return NULL;
 		}
 
 		if ( ! $obj ) {
-			// print "ERROR decoding Airpush json <br>";
+			// print "Reporo: ERROR decoding json <br>";
 			return NULL;
 		}
 		

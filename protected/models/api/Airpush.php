@@ -1,22 +1,21 @@
 <?php
 
-class AirpushController extends Controller
+class Airpush
 {
 
 	private $network_id = 1;
 
-	public function actionIndex()
+	public function downloadInfo()
 	{
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
-			// print "Parameter 'date' missing.";
-			Yii::app()->end(1);
+			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			// print "Information already downloaded.";
+			print "Airpush: WARNING - Information already downloaded. <br>";
 			Yii::app()->end(2);
 		}
 
@@ -31,17 +30,27 @@ class AirpushController extends Controller
 		$result = curl_exec($curl);
 		$result = json_decode($result);
 		if (!$result) {
-			// print "ERROR decoding Airpush json";
+			print "Airpush: ERROR - decoding json. <br>";
 			Yii::app()->end(1);
 		}
 		curl_close($curl);
 		
 		// Save campaigns information 
 		foreach ($result->advertiser_data as $campaign) {
+
+			if ( $campaign->impression == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
+				continue;
+			}
+
 			$dailyReport = new DailyReport();
 			
 			// get campaign ID used in KickAds Server, from the campaign name use in the external network
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
+
+			if ( !$dailyReport->campaigns_id ) {
+				print "Airpush: ERROR - invalid external campaign name: '" . $campaign->campaignname . "' <br>";
+				continue;
+			}
 
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impression;
@@ -52,11 +61,11 @@ class AirpushController extends Controller
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
-				// print "ERROR - saving campaign: " . $campaign->campaignname . "<br>";
+				print "Airpush: ERROR - saving campaign: " . $campaign->campaignname . ". <br>";
 				continue;
 			}
 		}
-
+		print "Airpush: SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)) . ".<br>";
 		Yii::app()->end();
 	}
 

@@ -1,25 +1,23 @@
 <?php
 
-class BuzzCityController extends Controller
+class BuzzCity
 {
 
 	private $networks_ids = array(7, 8, 9, 10);
 
-	public function actionIndex()
+	public function downloadInfo()
 	{
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
-			// print "Parameter 'date' missing.";
-			Yii::app()->end(1);
+			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
 		foreach ($this->networks_ids as $network_id) {
 
 			// validate if info have't been dowloaded already.
 			if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$network_id, ":date"=>$date)) ) {
-				// print "Information already downloaded.";
-				// Yii::app()->end(2);
+				print "BuzzCity: WARNING - Information already downloaded. <br>";
 				continue;
 			}
 
@@ -35,22 +33,32 @@ class BuzzCityController extends Controller
 			$result = curl_exec($curl);
 			$result = json_decode($result);
 			if (!$result) {
-				// print "ERROR decoding BuzzCity json";
+				print "BuzzCity: ERROR - Decoding BuzzCity json. <br>";
 				continue;
 			}
 			curl_close($curl);
 
 			if (empty($result->data)) {
-				print "ERROR empty result <br>";
+				print "BuzzCity: INFO - '" . $network->name . "' empty daily report. <br>";
 				continue;	
 			}
 			
 			// Save campaigns information 
 			foreach ($result->data as $campaign) {
+
+				if ( $campaign->exposures == 0) { // if no impressions dismiss campaign
+					continue;
+				}
+				
 				$dailyReport = new DailyReport();
 				
 				// get campaign ID used in KickAds Server, from the campaign name use in the external network
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->title);
+
+				if ( !$dailyReport->campaigns_id ) {
+					print "BuzzCity: ERROR - invalid external campaign name: '" . $campaign->title . "' <br>";
+					continue;
+				}
 
 				$dailyReport->networks_id = $network_id;
 				$dailyReport->imp = $campaign->exposures;
@@ -61,13 +69,13 @@ class BuzzCityController extends Controller
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
-					// print "ERROR - saving campaign: " . $campaign->title . "<br>";
+					print "BuzzCity: ERROR - Saving campaign: " . $campaign->title . ". <br>";
 					continue;
 				}
 			}
-
-			Yii::app()->end();
 		}
+		print "BuzzCity: SUCCESS - Daily info, downloaded. " . date('d-m-Y', strtotime($date)) . ".  <br>";
+		Yii::app()->end();
 	}
 
 }

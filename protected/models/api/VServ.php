@@ -1,23 +1,22 @@
 <?php
 
-class VServController extends Controller
+class VServ
 {
 
 	private $network_id = 11;
 
-	public function actionIndex()
+	public function downloadInfo()
 	{
 
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
-			// print "Parameter 'date' missing.";
-			Yii::app()->end(1);
+			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			// print "Information already downloaded.";
+			print "VServ: WARNING - Information already downloaded. <br>";
 			Yii::app()->end(2);
 		}
 
@@ -32,11 +31,9 @@ class VServController extends Controller
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		$result = curl_exec($curl);
-		// $result = json_decode($result);
 		$result = Utilities::xml2array($result);
-		// $result = $this->xml2array($result);
 		if (!$result) {
-			// print "ERROR decoding VServ json";
+			print "VServ: INFO - '" . $network->name . "' empty daily report. <br>";
 			Yii::app()->end(1);
 		}
 		curl_close($curl);
@@ -47,6 +44,11 @@ class VServController extends Controller
 
 			// get campaign ID used in KickAds Server, from the campaign name use in the external network
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
+
+			if ( !$dailyReport->campaigns_id ) {
+				print "VServ: ERROR - invalid external campaign name: '" . $campaign['attr']['name'] . "' <br>";
+				continue;
+			}
 
 			// sum the total of impression and clicks from all ads
 			$impressions = 0;
@@ -65,6 +67,10 @@ class VServController extends Controller
 				}
 			}
 
+			if ( $impressions == 0) { // if no impressions dismiss campaign
+				continue;
+			}
+
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $impressions;
 			$dailyReport->clics = $clicks;
@@ -74,11 +80,12 @@ class VServController extends Controller
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
-				// print "ERROR - saving campaign: " . $campaign['attr']['name'] . "<br>";
+				print "VServ: ERROR - saving campaign: " . $campaign['attr']['name'] . "<br>";
 				continue;
 			}
 		}
 
+		print "VServ: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
 		Yii::app()->end();
 
 	}
