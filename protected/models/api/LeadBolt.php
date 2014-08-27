@@ -1,26 +1,26 @@
 <?php
 
-class LeadBoltController extends Controller
+class LeadBolt
 {
 
 	private $network_id = 6;
 
-	public function actionIndex()
+	public function downloadInfo()
 	{
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
-			$date = str_replace('-', '', $date); // Leadbolt api use YYYYMMDD date format
 		} else {
-			// print "Parameter 'date' missing.";
-			Yii::app()->end(1);
+			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			// print "Information already downloaded.";
+			print "LeadBolt: WARNING - Information already downloaded. <br>";
 			Yii::app()->end(2);
 		}
 
+		$date = str_replace('-', '', $date); // Leadbolt api use YYYYMMDD date format
+		
 		// Get json from Loadbolt API.
 		$network = Networks::model()->findbyPk($this->network_id);
 		$advertiserid = $network->token1;
@@ -33,16 +33,26 @@ class LeadBoltController extends Controller
 		$result = curl_exec($curl);
 		$result = json_decode($result);
 		if (!$result) {
-			// print "ERROR decoding Leadbolt json";
+			print "LeadBolt: ERROR - decoding json. <br>";
 			Yii::app()->end(1);
 		}
 		curl_close($curl);
 
 		foreach ($result[0]->data as $campaign) {
+
+			if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
+				continue;
+			}
+			
 			$dailyReport = new DailyReport();
 			
 			// get campaign ID used in KickAds Server, from the campaign name use in the external network
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign_name);
+
+			if ( !$dailyReport->campaigns_id ) {
+				print "LeadBolt: ERROR - invalid external campaign name: '" . $campaign->campaign_name . "' <br>";
+				continue;
+			}
 
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impressions;
@@ -53,10 +63,11 @@ class LeadBoltController extends Controller
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
-				// print "ERROR - saving campaign: " . $campaign->campaign_name . "<br>";
+				print "LeadBolt: ERROR - saving campaign: " . $campaign->campaign_name . "<br>";
 				continue;
 			}
 		}
+		print "LeadBolt: SUCCESS - Daily info download.  " . date('d-m-Y', strtotime($date)) . ".<br>";
 		Yii::app()->end();
 	}
 

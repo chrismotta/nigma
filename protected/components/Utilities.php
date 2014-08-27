@@ -5,9 +5,13 @@ class Utilities {
 
 	public static function parseCampaignID($campaignname)
 	{
-		$id_begin = strpos($campaignname, "*") + 1;
-		$id_end = strpos($campaignname, "*", $id_begin) - 1;
-		return substr($campaignname, $id_begin,  $id_end - $id_begin + 1);
+		$id_begin = strpos($campaignname, "*");
+
+		if ( $id_begin === false )
+			return NULL;
+
+		$id_end = strpos($campaignname, "*", $id_begin + 1) - 1;
+		return $substr($campaignname, $id_begin + 1,  $id_end - $id_begin + 1);
 	}
 
 	/**

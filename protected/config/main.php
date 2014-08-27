@@ -58,6 +58,7 @@ return array(
 	// autoloading model and component classes
 	'import' =>array(
 		'application.models.*',
+		'application.models.api.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',

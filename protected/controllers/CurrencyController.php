@@ -12,7 +12,7 @@ class CurrencyController extends Controller
 	{
 		// validate if info have't been dowloaded already.
 		if ( Currency::model()->exists("date=DATE(:date)", array(":date"=>date('Y-m-d', strtotime('today')))) ) {
-			print "WARNING Currency information already downloaded.";
+			print "Currency: WARNING - information already downloaded.";
 			Yii::app()->end(1);
 		}
 
@@ -30,13 +30,13 @@ class CurrencyController extends Controller
 			$result = curl_exec($curl);
 			$result = json_decode($result);
 			if ( !$result ) {
-				print "ERROR downloading currency info <hr>";
+				print "Currency: ERROR - downloading currency info <hr>";
 				Yii::app()->end(2);
 			}
 			curl_close($curl);
 
 			if ( isset($result->err) ) {
-				print "ERROR url:" . $url . $code . ", message: " . $result->err . "<hr>";
+				print "Currency: ERROR url:" . $url . $code . ", message: " . $result->err . "<hr>";
 				Yii::app()->end(2);
 			}
 			$currency[$code] = $result->rate;
@@ -46,6 +46,8 @@ class CurrencyController extends Controller
 			print json_encode($currency->getErrors());
 			Yii::app()->end(2);
 		}
+
+		print "Currency: SUCCESS - Currency updated";
 		Yii::app()->end();
 	}
 
