@@ -36,12 +36,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'url'         => 'create',
 	'ajaxOptions' => array(
 		'type'    => 'POST',
+		'beforeSend' => 'function(data)
+			{
+			    	//var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					//$("#modalIos").html(dataInicial);
+					$("#modalIos").modal("toggle");
+			}',
 		'success' => 'function(data)
 			{
                     // console.log(this.url);
 	                //alert("create");
 					$("#modalIos").html(data);
-					$("#modalIos").modal("toggle");
 			}',
 		),
 	'htmlOptions' => array('id' => 'create'),
@@ -114,6 +119,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalIos").html(dataInicial);
+						$("#modalIos").modal("toggle");
+
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"update/"+id,
@@ -122,7 +132,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 							{
 								//alert(data);
 								$("#modalIos").html(data);
-								$("#modalIos").modal("toggle");
 							}
 						)
 				    }
@@ -193,7 +202,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalIos')); ?>
 
 		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Insertion Order</h1></div>
+        <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>

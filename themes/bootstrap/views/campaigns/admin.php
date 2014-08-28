@@ -7,10 +7,12 @@ $this->breadcrumbs=array(
 	'Manage Campaigns',
 );
 
+/*
 $this->menu=array(
-	/*array('label'=>'List Campaigns', 'url'=>array('index')),*/
+	//array('label'=>'List Campaigns', 'url'=>array('index')),
 	array('label'=>'Create Campaigns', 'url'=>array('create')),
 );
+*/
 ?>
 
 <!--h2>Manage Campaigns</h2-->
@@ -40,12 +42,18 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'url'         => 'createAjax',
 	'ajaxOptions' => array(
 		'type'    => 'POST',
+		'beforeSend' => 'function(data)
+			{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalCampaigns").html(dataInicial);
+					$("#modalCampaigns").modal("toggle");
+			}',
 		'success' => 'function(data)
 			{
-                    console.log(this.url);
+                    //console.log(this.url);
 	                //alert("create");
 					$("#modalCampaigns").html(data);
-					$("#modalCampaigns").modal("toggle");
+					//$("#modalCampaigns").modal("toggle");
 			}',
 		),
 	'htmlOptions' => array('id' => 'createAjax'),
@@ -225,6 +233,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalCampaigns").html(dataInicial);
+						$("#modalCampaigns").modal("toggle");
+
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"updateAjax/"+id,
@@ -233,7 +246,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 							{
 								//alert(data);
 								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
 							}
 						)
 				    }
@@ -256,7 +268,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
 
 		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Campaigns</h1></div>
+        <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
