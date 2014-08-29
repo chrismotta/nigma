@@ -58,23 +58,40 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
-		'id',
+		//'id',
 		array(
-			'name'  =>'carrier_mobile_brand',
-			'value' =>'$data->carriers ? $data->carriers->mobile_brand : ""',
+			'name'              =>'advertiser_name',
+			'value'             =>'$data->ios->advertisers->name',
+			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
-		array (
-			'name'              => 'rate',
-			'headerHtmlOptions' => array('style'=>'width: 60px'),
+		array( 
+			'name'              =>'ios_name',
+			'value'             =>'$data->ios->name',
+			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
 		array(
-			'name'              => 'model_adv',
-			'headerHtmlOptions' => array('style'=>'width: 60px'),
+			'name'              =>'country_name',
+			'value'             =>'$data->country->ISO3',
+			'headerHtmlOptions' => array('style'=>'width: 50px'),
+		),
+		array(
+			'name'              =>'carrier_mobile_brand',
+			'value'             =>'$data->carriers ? $data->carriers->mobile_brand : ""',
+			'headerHtmlOptions' => array('style'=>'width: 50px'),
 		),
 		'product',
 		array(
-			'name'  =>'advertiser_name',
-			'value' =>'$data->ios->advertisers->name',
+			'name'              => 'model_adv',
+			'headerHtmlOptions' => array('style'=>'width: 30px'),
+		),
+		array(
+			'name'              => 'currency',
+			'value'             =>'$data->ios->currency',
+			'headerHtmlOptions' => array('style'=>'width: 30px'),
+		),
+		array(
+			'name'              => 'rate',
+			'headerHtmlOptions' => array('style'=>'width: 60px'),
 		),
 		// array(
 		// 	'name'  =>'account_manager_lastname',
@@ -103,10 +120,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'name'  =>'endDate',
 			'value' =>'$data->endDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->endDate)) : ""',
 			'headerHtmlOptions' => array('style'=>'width: 80px'),
-		),
-		array( 
-			'name'  =>'ios_name',
-			'value' =>'$data->ios->name',
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',

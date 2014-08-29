@@ -36,6 +36,7 @@ class Opportunities extends CActiveRecord
 	public $account_manager_lastname;
 	public $ios_name;
 	public $advertiser_name;
+	public $currency;
 
 	/**
 	 * @return string the associated database table name
@@ -62,7 +63,7 @@ class Opportunities extends CActiveRecord
 			array('startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertiser_name, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -92,7 +93,7 @@ class Opportunities extends CActiveRecord
 			'carriers_id'              => 'Carriers',
 			'multi_carrier'            => 'Multi Carrier',
 			'rate'                     => 'Rate',
-			'model_adv'                => 'Model Adv',
+			'model_adv'                => 'Model',
 			'product'                  => 'Product',
 			'account_manager_id'       => 'Account Manager',
 			'comment'                  => 'Comment',
@@ -110,6 +111,7 @@ class Opportunities extends CActiveRecord
 			'account_manager_lastname' => 'Account Manager',
 			'ios_name'                 => 'IO',
 			'advertiser_name'          => 'Advertiser',
+			'currency'                 => 'Currency',
 		);
 	}
 
@@ -154,6 +156,7 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);
 		$criteria->compare('ios.name', $this->ios_name, true);
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
+		$criteria->compare('ios.currency', $this->currency, true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -186,6 +189,10 @@ class Opportunities extends CActiveRecord
 		            'ios_name'=>array(
 						'asc'  =>'ios.name',
 						'desc' =>'ios.name DESC',
+		            ),
+		            'currency'=>array(
+						'asc'  =>'ios.currency',
+						'desc' =>'ios.currency DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
