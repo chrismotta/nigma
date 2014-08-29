@@ -201,4 +201,17 @@ class Opportunities extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getVirtualName()
+	{
+		$adv = Advertisers::model()->findByPk( Ios::model()->findByPk($this->ios_id)->advertisers_id)->name;
+		$country = GeoLocation::model()->findByPk($this->country_id)->ISO3;
+
+		if ($this->multi_carrier) {
+			return $adv . '-' . $country . '-' . $this->getAttributeLabel('multi_carrier');
+		}
+		
+		$carrier = Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
+		return $adv . '-' . $country . '-' . $carrier . '-' . $this->rate;
+	}
 }
