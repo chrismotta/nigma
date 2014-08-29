@@ -60,8 +60,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'columns'                  =>array(
 		'id',
 		array(
-			'name'  =>'carrier_isp',
-			'value' =>'$data->carriers ? $data->carriers->isp : ""',
+			'name'  =>'carrier_mobile_brand',
+			'value' =>'$data->carriers ? $data->carriers->mobile_brand : ""',
 		),
 		array (
 			'name'              => 'rate',

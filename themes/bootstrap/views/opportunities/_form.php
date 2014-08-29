@@ -59,9 +59,26 @@
       
       }
 
-      echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
+      echo $form->dropDownListRow($model, 'country_id', $country, 
+        array(
+          'prompt' => 'Select a country', 
+          'onChange' => '
+                  if ( ! this.value) {
+                    return;
+                  }
+                  $.post(
+                      "getCarriers/"+this.value,
+                      "",
+                      function(data)
+                      {
+                        // alert(data);
+                        $(".carriers-dropdownlist").html(data);
+                      }
+                  )
+                  ',
+        ));
       echo $form->checkboxRow($model, 'multi_carrier');
-      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('prompt' => 'Select a carrier'));
+      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('class'=>'carriers-dropdownlist', 'prompt' => 'Select a carrier', 'encode'=>false));
       echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
       echo $form->radioButtonListInlineRow($model, 'model_adv', $model_adv);
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));

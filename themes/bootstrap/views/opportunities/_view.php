@@ -50,8 +50,8 @@
 		'attributes'=>array(
 			'id',
 			array(
-				'label' =>$model->getAttributeLabel('carrier_isp'),
-				'name'  =>'carriers.isp'
+				'label' =>$model->getAttributeLabel('carrier_mobile_brand'),
+				'name'  =>'carriers.mobile_brand'
 			),
 			'rate',
 			'model_adv',

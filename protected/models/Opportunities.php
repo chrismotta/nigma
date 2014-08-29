@@ -31,7 +31,7 @@ class Opportunities extends CActiveRecord
 {
 
 	public $country_name;
-	public $carrier_isp;
+	public $carrier_mobile_brand;
 	public $account_manager_name;
 	public $account_manager_lastname;
 	public $ios_name;
@@ -53,7 +53,7 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('carriers_id, rate, model_adv, wifi, budget, ios_id', 'required'),
+			array('rate, model_adv, wifi, budget, ios_id', 'required'),
 			array('carriers_id, multi_carrier, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
@@ -62,7 +62,7 @@ class Opportunities extends CActiveRecord
 			array('startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertiser_name, carriers_id, country_name, carrier_isp, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -105,7 +105,7 @@ class Opportunities extends CActiveRecord
 			'ios_id'                   => 'Ios',
 			
 			'country_name'             => 'Country',
-			'carrier_isp'              => 'Carrier',
+			'carrier_mobile_brand'     => 'Carrier',
 			'account_manager_name'     => 'Account Manager',
 			'account_manager_lastname' => 'Account Manager',
 			'ios_name'                 => 'IO',
@@ -149,7 +149,7 @@ class Opportunities extends CActiveRecord
 
 		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
 		$criteria->compare('country.name', $this->country_name, true);
-		$criteria->compare('carriers.isp', $this->carrier_isp, true);
+		$criteria->compare('carriers.mobile_brand', $this->carrier_mobile_brand, true);
 		$criteria->compare('accountManager.name', $this->account_manager_name, true);
 		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);
 		$criteria->compare('ios.name', $this->ios_name, true);
@@ -168,9 +168,9 @@ class Opportunities extends CActiveRecord
 						'asc'  =>'country.name',
 						'desc' =>'country.name DESC',
 		            ),
-		            'carrier_isp'=>array(
-						'asc'  =>'carriers.isp',
-						'desc' =>'carriers.isp DESC',
+		            'carrier_mobile_brand'=>array(
+						'asc'  =>'carriers.mobile_brand',
+						'desc' =>'carriers.mobile_brand DESC',
 		            ),
 		            'account_manager_name'=>array(
 						'asc'  =>'accountManager.name',

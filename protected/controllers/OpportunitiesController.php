@@ -28,7 +28,7 @@ class OpportunitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'getIos'),
+				'actions'=>array('index','view','create','update','admin','delete', 'getIos', 'getCarriers'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -188,7 +188,12 @@ class OpportunitiesController extends Controller
 
 		// Get countries and carriers with status "Active"
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
-		$carrier = CHtml::listData(Carriers::model()->findAll( "status='Active'" ), 'id_carrier', 'isp' );
+		
+		if ( $model->isNewRecord ) {
+			$carrier = array();
+		} else {
+			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
+		}
 		
 		$model_adv = KHtml::enumItem($model, 'model_adv');
 
@@ -212,6 +217,18 @@ class OpportunitiesController extends Controller
 		$response='<option value="">Select an IOs</option>';
 		foreach ($ios as $io) {
 			$response .= '<option value="' . $io->id . '">' . $io->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
+
+	public function actionGetCarriers($id)
+	{
+		$carriers = Carriers::model()->findAll( "id_country=:country AND status='Active'", array(':country'=>$id) );
+
+		$response='<option value="">Select a country</option>';
+		foreach ($carriers as $carrier) {
+			$response .= '<option value="' . $carrier->id_carrier . '">' . $carrier->mobile_brand . '</option>';
 		}
 		echo $response;
 		Yii::app()->end();
