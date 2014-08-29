@@ -5,12 +5,15 @@
  *
  * The followings are the available columns in table 'advertisers':
  * @property integer $id
+ * @property string $prefix
  * @property string $name
  * @property string $cat
  * @property integer $commercial_id
  *
  * The followings are the available model relations:
  * @property Users $commercial
+ * @property ApiKey[] $apiKeys
+ * @property ExternalIoForm[] $externalIoForms
  * @property Ios[] $ioses
  */
 class Advertisers extends CActiveRecord
@@ -35,13 +38,14 @@ class Advertisers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, cat', 'required'),
+			array('prefix, name, cat', 'required'),
 			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
+			array('prefix', 'length', 'max'=>45),
 			array('cat', 'length', 'max'=>16),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, commercial_name, commercial_lastname, cat, commercial_id', 'safe', 'on'=>'search'),
+			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,6 +58,8 @@ class Advertisers extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
+			'apiKeys' => array(self::HAS_MANY, 'ApiKey', 'advertisers_id'),
+			'externalIoForms' => array(self::HAS_MANY, 'ExternalIoForm', 'advertisers_id'),
 			'ioses' => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
 		);
 	}
@@ -65,6 +71,7 @@ class Advertisers extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
+			'prefix' => 'Prefix',
 			'name' => 'Name',
 			'cat' => 'Category',
 			'commercial_id' => 'Commercial',
@@ -93,6 +100,8 @@ class Advertisers extends CActiveRecord
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('prefix',$this->prefix,true);
+		$criteria->compare('name',$this->name,true);
 		$criteria->compare('cat',$this->cat,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
 

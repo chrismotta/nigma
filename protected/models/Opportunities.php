@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'opportunities':
  * @property integer $id
  * @property integer $carriers_id
+ * @property integer $multi_carrier
  * @property string $rate
  * @property string $model_adv
  * @property string $product
@@ -53,7 +54,7 @@ class Opportunities extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('carriers_id, rate, model_adv, wifi, budget, ios_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
+			array('carriers_id, multi_carrier, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
 			array('product, comment', 'length', 'max'=>255),
@@ -73,10 +74,10 @@ class Opportunities extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'opportunities_id'),
-			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
-			'carriers' => array(self::BELONGS_TO, 'Carriers', 'carriers_id'),
-			'ios' => array(self::BELONGS_TO, 'Ios', 'ios_id'),
+			'campaigns'      => array(self::HAS_MANY, 'Campaigns', 'opportunities_id'),
+			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'carriers'       => array(self::BELONGS_TO, 'Carriers', 'carriers_id'),
+			'ios'            => array(self::BELONGS_TO, 'Ios', 'ios_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 		);
 	}
@@ -87,27 +88,28 @@ class Opportunities extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'carriers_id' => 'Carriers',
-			'rate' => 'Rate',
-			'model_adv' => 'Model Adv',
-			'product' => 'Product',
-			'account_manager_id' => 'Account Manager',
-			'comment' => 'Comment',
-			'country_id' => 'Country',
-			'wifi' => 'Wifi',
-			'budget' => 'Budget',
-			'server_to_server' => 'Server To Server',
-			'startDate' => 'Start Date',
-			'endDate' => 'End Date',
-			'ios_id' => 'Ios',
-
-			'country_name' => 'Country',
-			'carrier_isp' => 'Carrier',
-			'account_manager_name' => 'Account Manager',
+			'id'                       => 'ID',
+			'carriers_id'              => 'Carriers',
+			'multi_carrier'            => 'Multi Carrier',
+			'rate'                     => 'Rate',
+			'model_adv'                => 'Model Adv',
+			'product'                  => 'Product',
+			'account_manager_id'       => 'Account Manager',
+			'comment'                  => 'Comment',
+			'country_id'               => 'Country',
+			'wifi'                     => 'Wifi',
+			'budget'                   => 'Budget',
+			'server_to_server'         => 'Server To Server',
+			'startDate'                => 'Start Date',
+			'endDate'                  => 'End Date',
+			'ios_id'                   => 'Ios',
+			
+			'country_name'             => 'Country',
+			'carrier_isp'              => 'Carrier',
+			'account_manager_name'     => 'Account Manager',
 			'account_manager_lastname' => 'Account Manager',
-			'ios_name' => 'IO',
-			'advertiser_name' => 'Advertiser',
+			'ios_name'                 => 'IO',
+			'advertiser_name'          => 'Advertiser',
 		);
 	}
 
@@ -131,6 +133,7 @@ class Opportunities extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('carriers_id',$this->carriers_id);
+		$criteria->compare('multi_carrier',$this->multi_carrier);
 		$criteria->compare('rate',$this->rate,true);
 		$criteria->compare('model_adv',$this->model_adv,true);
 		$criteria->compare('product',$this->product,true);

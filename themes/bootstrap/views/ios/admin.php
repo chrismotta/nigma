@@ -86,7 +86,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		// 'entity',
 		'net_payment',
 		array(
-			'name'=>'commercial_lastname',
+			'name'=>'com_lastname',
 			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
 		),
 		array(
