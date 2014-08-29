@@ -53,7 +53,7 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('country_id, rate, model_adv, wifi, budget, ios_id', 'required'),
+			array('country_id, model_adv, wifi, budget, ios_id', 'required'),
 			array('carriers_id, multi_carrier, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
@@ -157,6 +157,9 @@ class Opportunities extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
 			'sort'     =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes

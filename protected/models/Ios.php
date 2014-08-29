@@ -164,8 +164,11 @@ class Ios extends CActiveRecord
 		$criteria->compare('country.name', $this->country_name, true);
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'sort'     =>array(
+			'criteria'   => $criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
+			'sort'       => array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
 		            'advertiser_name'=>array(

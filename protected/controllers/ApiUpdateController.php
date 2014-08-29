@@ -11,6 +11,13 @@ class ApiUpdateController extends Controller
 		$this->actionLeadBolt();
 		$this->actionReporo();
 		$this->actionVServ();
+		$this->actionAdWords();
+	}
+
+	public function actionAdWords()
+	{
+		$adWords = new AdWords;
+		$adWords->downloadInfo();
 	}
 
 	public function actionAirpush()
