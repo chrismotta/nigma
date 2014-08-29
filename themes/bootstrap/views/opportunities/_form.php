@@ -77,7 +77,15 @@
                   )
                   ',
         ));
-      echo $form->checkboxRow($model, 'multi_carrier');
+      echo $form->checkboxRow($model, 'multi_carrier', 
+            array(
+              'onChange' => '
+                  alert("ok");
+                  if ( ! this.value) {
+                    return;
+                  }
+                  '
+            ));
       echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('class'=>'carriers-dropdownlist', 'prompt' => 'Select a carrier', 'encode'=>false));
       echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
       echo $form->radioButtonListInlineRow($model, 'model_adv', $model_adv);
