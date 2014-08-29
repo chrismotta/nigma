@@ -84,13 +84,13 @@
                     //alert("ok");
                     $("#Opportunities_carriers_id option:eq(0)").prop("selected", true);
                     $("#Opportunities_carriers_id").prop("disabled", true);
-                    $("#Opportunities_rate").prop("disabled", true);
-                    $("#Opportunities_rate").val("");
+                    //$("#Opportunities_rate").prop("disabled", true);
+                    //$("#Opportunities_rate").val("");
                   }else{
                     //alert("no");
                     $("#Opportunities_carriers_id").prop("disabled", false);
-                    $("#Opportunities_rate").prop("disabled", false);
-                    $("#Opportunities_rate").val("");
+                    //$("#Opportunities_rate").prop("disabled", false);
+                    //$("#Opportunities_rate").val("");
                   }
                   return;
                   '
