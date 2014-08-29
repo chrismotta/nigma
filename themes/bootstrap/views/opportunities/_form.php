@@ -80,10 +80,19 @@
       echo $form->checkboxRow($model, 'multi_carrier', 
             array(
               'onChange' => '
-                  alert("ok");
-                  if ( ! this.value) {
-                    return;
+                  if (this.checked == "1") {
+                    //alert("ok");
+                    $("#Opportunities_carriers_id option:eq(0)").prop("selected", true);
+                    $("#Opportunities_carriers_id").prop("disabled", true);
+                    $("#Opportunities_rate").prop("disabled", true);
+                    $("#Opportunities_rate").val("");
+                  }else{
+                    //alert("no");
+                    $("#Opportunities_carriers_id").prop("disabled", false);
+                    $("#Opportunities_rate").prop("disabled", false);
+                    $("#Opportunities_rate").val("");
                   }
+                  return;
                   '
             ));
       echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('class'=>'carriers-dropdownlist', 'prompt' => 'Select a carrier', 'encode'=>false));
