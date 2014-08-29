@@ -59,13 +59,13 @@
       
       }
 
-      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('prompt' => 'Select a carrier'));
+      echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
       echo $form->checkboxRow($model, 'multi_carrier');
+      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('prompt' => 'Select a carrier'));
       echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
       echo $form->radioButtonListInlineRow($model, 'model_adv', $model_adv);
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));
       echo $form->dropDownListRow($model, 'account_manager_id', $account , array('prompt' => 'Select an Account Manager'));
-      echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
       echo $form->checkboxRow($model, 'wifi');
       echo $form->textFieldRow($model, 'budget', array('class'=>'span3'));
       echo $form->textFieldRow($model, 'server_to_server', array('class'=>'span3'));
