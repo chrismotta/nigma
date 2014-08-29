@@ -37,6 +37,7 @@
 		echo $form->dropDownListRow($model, 'advertisers_id', $advertiser, array('prompt' => 'Select an advertiser'));
         echo $form->textFieldRow($model, 'status', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
         echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
