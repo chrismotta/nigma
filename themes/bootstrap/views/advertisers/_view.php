@@ -30,6 +30,7 @@
 		'commercial.name',
 		'commercial.lastname',
 		'commercial.username',
+		'commercial.email',
 	),
 )); ?>
 
