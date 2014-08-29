@@ -30,6 +30,7 @@
 			'commercial.name',
 			'commercial.lastname',
 			'commercial.username',
+			'commercial.email',
 		),
 	)); ?>
 
@@ -48,7 +49,8 @@
 			'state',
 			'zip_code',
 			'phone',
-			'email',
+			'contact_com',
+			'email_adm',
 			'contact_adm',
 			'currency',
 			'ret',

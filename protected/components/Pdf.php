@@ -37,8 +37,9 @@ class Pdf extends EPdfFactoryDoc
 		$values[$io->getAttributeLabel('state')] = $io->state;
 		$values[$io->getAttributeLabel('zip_code')] = $io->zip_code;
 		$values[$io->getAttributeLabel('phone')] = $io->phone;
-		$values[$io->getAttributeLabel('email')] = $io->email;
-		$values[$io->getAttributeLabel('contact_adm')] = $io->contact_adm;
+		$values[$io->getAttributeLabel('contact_com')] = $io->contact_com;
+        $values[$io->getAttributeLabel('email_adm')] = $io->email_adm;
+        $values[$io->getAttributeLabel('contact_adm')] = $io->contact_adm;
 		$values[$io->getAttributeLabel('currency')] = $io->currency;
 		$values[$io->getAttributeLabel('ret')] = $io->ret;
 		$values[$io->getAttributeLabel('tax_id')] = $io->tax_id;
