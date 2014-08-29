@@ -226,7 +226,7 @@ class OpportunitiesController extends Controller
 	{
 		$carriers = Carriers::model()->findAll( "id_country=:country AND status='Active'", array(':country'=>$id) );
 
-		$response='<option value="">Select a country</option>';
+		$response='<option value="">Select a carrier</option>';
 		foreach ($carriers as $carrier) {
 			$response .= '<option value="' . $carrier->id_carrier . '">' . $carrier->mobile_brand . '</option>';
 		}
