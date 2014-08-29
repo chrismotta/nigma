@@ -60,6 +60,7 @@
       }
 
       echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('prompt' => 'Select a carrier'));
+      echo $form->checkboxRow($model, 'multi_carrier');
       echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
       echo $form->radioButtonListInlineRow($model, 'model_adv', $model_adv);
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));

@@ -173,7 +173,9 @@ class OpportunitiesController extends Controller
 		
 		if ( $model->isNewRecord ) {
 			// Get only Advertisers and IOs that were created by the current user logged.
-			$advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
+			// comentado provisoriamente, generar permiso de admin
+			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
+			$advertiser = CHtml::listData( Advertisers::model()->findAll(), 'id', 'name' );
 			$ios = CHtml::listData(Ios::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name');
 		} else {
 			// If update register, only show Opportunity's IO and Advertiser
@@ -203,7 +205,9 @@ class OpportunitiesController extends Controller
 
 	public function actionGetIos($id)
 	{
-		$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		$ios = Ios::model()->findAll( "advertisers_id=:advertiser", array(':advertiser'=>$id) );
 
 		$response='<option value="">Select an IOs</option>';
 		foreach ($ios as $io) {
