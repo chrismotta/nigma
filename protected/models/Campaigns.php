@@ -40,7 +40,7 @@ class Campaigns extends CActiveRecord
 	public $advertisers_name;
 	public $opportunities_rate;
 	public $opportunities_carrier;
-	public $ios_id;
+	public $ios_name;
 	public $vectors_id;
 
 	/**
@@ -156,12 +156,12 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		// We need to list all related tables in with property
-		$criteria->with = array('opportunities', 'opportunities.ios.advertisers', 'vectors');
+		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'vectors');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
-		$criteria->compare('opportunities.ios.id',$this->ios_id, true);
+		$criteria->compare('ios.name',$this->ios_name, true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
 
 
@@ -187,9 +187,9 @@ class Campaigns extends CActiveRecord
 						'asc'  =>'opportunities.carrier',
 						'desc' =>'opportunities.carrier DESC',
 		            ),
-		            'ios_id'=>array(
-						'asc'  =>'opportunities.ios.id',
-						'desc' =>'opportunities.ios.id DESC',
+		            'ios_name'=>array(
+						'asc'  =>'ios.id',
+						'desc' =>'ios.id DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
