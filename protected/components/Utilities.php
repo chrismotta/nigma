@@ -5,6 +5,9 @@ class Utilities {
 
 	public static function parseCampaignID($campaignname)
 	{
+
+		return 1; // FIXME removed
+		
 		$id_begin = strpos($campaignname, "*");
 
 		if ( $id_begin === false )
