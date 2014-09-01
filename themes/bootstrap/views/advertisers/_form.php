@@ -32,6 +32,7 @@
     	}
     	// echo $form->textFieldRow($model, 'id', array('class'=>'span3', 'readonly'=>true));
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'prefix', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'cat', $categories, array('prompt' => 'Select a category'));
 
         echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
