@@ -105,11 +105,11 @@ class CampaignsController extends Controller
 	public function actionRedirectAjax($id)
 	{
 		$model    = $this->loadModel($id);
-		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$network = Networks::model()->findByPk($model->networks_id);
 
 		$this->renderPartial('_redirects',array(
 			'model'        => $model,
-			'networks'     => $networks,
+			'network'     => $network,
 			'campaignName' => Campaigns::model()->getExternalName($id),
 		), false, true);
 	}
