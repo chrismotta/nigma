@@ -215,13 +215,18 @@ class Opportunities extends CActiveRecord
 	public function getVirtualName()
 	{
 		$adv = Advertisers::model()->findByPk( Ios::model()->findByPk($this->ios_id)->advertisers_id)->name;
-		$country = GeoLocation::model()->findByPk($this->country_id)->ISO3;
+		
+		$country = '';
+		if ( $this->country_id !== NULL )
+			$country = '-' . GeoLocation::model()->findByPk($this->country_id)->ISO3;
 
-		if ($this->multi_carrier) {
-			return $adv . '-' . $country . '-' . $this->getAttributeLabel('multi_carrier');
+		$carrier = '';
+		if ( $this->carriers_id === NULL ) {
+			$carrier = '-MULTI';
+		} else {
+			$carrier = '-' . Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
 		}
 		
-		$carrier = Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
-		return $adv . '-' . $country . '-' . $carrier . '-' . $this->rate;
+		return $adv . $country . $carrier . '-' . $this->rate;
 	}
 }

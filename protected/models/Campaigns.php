@@ -230,28 +230,28 @@ class Campaigns extends CActiveRecord
 		$adv = Advertisers::model()->findByPk($ios->advertisers_id)->prefix;
 
 		$country = '';
-		if ( ! $opportunity->country_id )
+		if ( $opportunity->country_id !== NULL )
 			$country = '-' . GeoLocation::model()->findByPk($opportunity->country_id)->ISO2;
 
 		$carrier = '';
-		if ( ! $opportunity->carriers_id )
+		if ( $opportunity->carriers_id !== NULL )
 			$carrier = '-' . Carriers::model()->findByPk($opportunity->carriers_id)->mobile_brand;
 
 		$wifi_ip = $model->wifi ? '-WIFI' : '';
 		$wifi_ip .= $model->ip ? '-IP' : '';
 		
 		$device = '';
-		if ( ! $model->devices_id )
+		if ( $model->devices_id !== NULL )
 			$device = '-' . Devices::model()->findByPk($model->devices_id)->prefix;
 
 		$network = '';
-		if ( ! $model->networks_id )
+		if ( $model->networks_id !== NULL )
 			$network = '-' . Networks::model()->findByPk($model->networks_id)->prefix;
 		
 		$product = $opportunity->product ? '-' . $opportunity->product : '';
 
 		$format = '';
-		if ( ! $model->formats_id )
+		if ( $model->formats_id !== NULL )
 			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
 		
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
