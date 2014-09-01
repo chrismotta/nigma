@@ -62,12 +62,12 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'name'              =>'advertiser_name',
 			'value'             =>'$data->ios->advertisers->name',
-			'headerHtmlOptions' => array('style'=>'width: 80px'),
+			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
 		array( 
 			'name'              =>'ios_name',
 			'value'             =>'$data->ios->name',
-			'headerHtmlOptions' => array('style'=>'width: 80px'),
+			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
 		array(
 			'name'              =>'country_name',
@@ -77,7 +77,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'name'              =>'carrier_mobile_brand',
 			'value'             =>'$data->carriers ? $data->carriers->mobile_brand : ""',
-			'headerHtmlOptions' => array('style'=>'width: 50px'),
+			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
 		'product',
 		array(
