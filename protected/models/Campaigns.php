@@ -233,9 +233,9 @@ class Campaigns extends CActiveRecord
 		if ( $opportunity->country_id !== NULL )
 			$country = '-' . GeoLocation::model()->findByPk($opportunity->country_id)->ISO2;
 
-		$carrier = '';
+		$carrier = '-MUL';
 		if ( $opportunity->carriers_id !== NULL )
-			$carrier = '-' . Carriers::model()->findByPk($opportunity->carriers_id)->mobile_brand;
+			$carrier = '-' . substr( Carriers::model()->findByPk($opportunity->carriers_id)->mobile_brand , 0 , 3);
 
 		$wifi_ip = $model->wifi ? '-WIFI' : '';
 		$wifi_ip .= $model->ip ? '-IP' : '';
