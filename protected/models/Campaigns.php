@@ -42,6 +42,7 @@ class Campaigns extends CActiveRecord
 	public $opportunities_carrier;
 	public $ios_name;
 	public $vectors_id;
+	public $net_currency;
 
 	/**
 	 * @return string the associated database table name
@@ -68,7 +69,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id', 'safe', 'on'=>'search'),
+			array('id, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -118,6 +119,7 @@ class Campaigns extends CActiveRecord
 			'opportunities_carrier'  => 'Carrier',
 			'post_data'              => 'Post Data',
 			'banner_sizes_id'        => 'Banner Sizes',
+			'net_currency'           => 'Net Currency',
 		);
 	}
 
@@ -156,12 +158,13 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		// We need to list all related tables in with property
-		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'vectors');
+		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'vectors', 'networks');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 		$criteria->compare('ios.name',$this->ios_name, true);
+		$criteria->compare('networks.currency',$this->net_currency, true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
 
 
@@ -190,6 +193,10 @@ class Campaigns extends CActiveRecord
 		            'ios_name'=>array(
 						'asc'  =>'ios.id',
 						'desc' =>'ios.id DESC',
+		            ),
+		            'net_currency'=>array(
+						'asc'  =>'networks.currency',
+						'desc' =>'networks.currency DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',

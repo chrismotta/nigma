@@ -116,9 +116,14 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'comment',
 		*/
 		array(
+			'name'              => 'net_currency',
+			'headerHtmlOptions' => array('style' => 'width: 20px'),
+			'value'             => '$data->networks->currency',
+        ),
+		array(
 			'name'              => 'cap',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
-			'value'             => '"$ ".$data->cap',
+			'value'             => '$data->cap',
         ),
 		array(
 			'name'              => 'status',
