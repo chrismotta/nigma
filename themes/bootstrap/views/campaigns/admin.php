@@ -80,17 +80,19 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'              => 'ios_id',
-			'value'             => '$data->opportunities->ios->id',
+			'name'              => 'ios_name',
+			'value'             => '$data->opportunities->ios->name',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
+        /*
 		array(
 			'name'              => 'opportunities_id',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
+        */
 		array(
 			'name'              => 'name',
-			//'value'             => '$data->getExternalName($data->id)',
+			'value'             => '$data->getExternalName($data->id)',
 			'headerHtmlOptions' => array('style' => 'width: 300px'),
         ),
 		/*
@@ -114,9 +116,14 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'comment',
 		*/
 		array(
+			'name'              => 'net_currency',
+			'headerHtmlOptions' => array('style' => 'width: 20px'),
+			'value'             => '$data->networks->currency',
+        ),
+		array(
 			'name'              => 'cap',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
-			'value'             => '"$ ".$data->cap',
+			'value'             => '$data->cap',
         ),
 		array(
 			'name'              => 'status',

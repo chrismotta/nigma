@@ -101,7 +101,6 @@ class Advertisers extends CActiveRecord
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('prefix',$this->prefix,true);
-		$criteria->compare('name',$this->name,true);
 		$criteria->compare('cat',$this->cat,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
 

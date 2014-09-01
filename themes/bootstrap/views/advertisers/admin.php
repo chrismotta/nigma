@@ -63,6 +63,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'htmlOptions'=>array('style' => 'width: 100px'),
 		),
 		'name',
+		'prefix',
 		'cat',
 		array(
 			'name'=>'commercial_lastname',
