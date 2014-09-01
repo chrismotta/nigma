@@ -23,7 +23,8 @@ class SiteController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index', 'page', 'logout'),
-				'roles'=>array('admin'),
+				//'roles'=>array('admin'),
+				'users'=>array('@'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('login'),
