@@ -150,7 +150,7 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('ios_id',$this->ios_id);
 
 		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
-		$criteria->compare('country.name', $this->country_name, true);
+		$criteria->compare('country.ISO2', $this->country_name, true);
 		$criteria->compare('carriers.mobile_brand', $this->carrier_mobile_brand, true);
 		$criteria->compare('accountManager.name', $this->account_manager_name, true);
 		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);
@@ -218,7 +218,7 @@ class Opportunities extends CActiveRecord
 		
 		$country = '';
 		if ( $this->country_id !== NULL )
-			$country = '-' . GeoLocation::model()->findByPk($this->country_id)->ISO3;
+			$country = '-' . GeoLocation::model()->findByPk($this->country_id)->ISO2;
 
 		$carrier = '';
 		if ( $this->carriers_id === NULL ) {
