@@ -17,6 +17,7 @@
  * @property string $url
  * @property string $status
  * @property integer $opportunities_id
+ * @property boolean $post_data
  *
  * The followings are the available model relations:
  * @property Networks $networks
@@ -26,6 +27,7 @@
  * @property Opportunities $opportunities
  * @property ConvLog[] $convLogs
  * @property DailyReport[] $dailyReports
+ * @property Vectors[] $vectors
  */
 class Campaigns extends CActiveRecord
 {
@@ -38,6 +40,9 @@ class Campaigns extends CActiveRecord
 	public $advertisers_name;
 	public $opportunities_rate;
 	public $opportunities_carrier;
+	public $ios_name;
+	public $vectors_id;
+	public $net_currency;
 
 	/**
 	 * @return string the associated database table name
@@ -64,7 +69,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id', 'safe', 'on'=>'search'),
+			array('id, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -81,9 +86,11 @@ class Campaigns extends CActiveRecord
 			'formats'            => array(self::BELONGS_TO, 'Formats', 'formats_id'),
 			'campaignCategories' => array(self::BELONGS_TO, 'CampaignCategories', 'campaign_categories_id'),
 			'opportunities'      => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
+			'bannerSizes'        => array(self::BELONGS_TO, 'BannerSizes', 'banner_sizes_id'),
 			'convLogs'           => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
 			'clicksLogs'         => array(self::HAS_MANY, 'ClicksLog', 'campaign_id'),
 			'dailyReports'       => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),
+			'vectors'            => array(self::MANY_MANY, 'Vectors', 'vectors_has_campaigns(campaigns_id, vectors_id)'),
 		);
 	}
 
@@ -93,23 +100,26 @@ class Campaigns extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'networks_id' => 'Networks',
+			'id'                     => 'ID',
+			'name'                   => 'Name',
+			'networks_id'            => 'Networks',
 			'campaign_categories_id' => 'Campaign Categories',
-			'wifi' => 'Wifi',
-			'formats_id' => 'Formats',
-			'cap' => 'Cap',
-			'model' => 'Model',
-			'ip' => 'Ip',
-			'devices_id' => 'Devices',
-			'url' => 'Url',
-			'status' => 'Status',
-			'opportunities_id' => 'Opportunities',
+			'wifi'                   => 'Wifi',
+			'formats_id'             => 'Formats',
+			'cap'                    => 'Cap',
+			'model'                  => 'Model',
+			'ip'                     => 'Ip',
+			'devices_id'             => 'Devices',
+			'url'                    => 'Url',
+			'status'                 => 'Status',
+			'opportunities_id'       => 'Opportunities',
 			// Header names for the related columns
 			'advertisers_name'       => 'Advertiser', 
 			'opportunities_rate'     => 'Rate', 
 			'opportunities_carrier'  => 'Carrier',
+			'post_data'              => 'Post Data',
+			'banner_sizes_id'        => 'Banner Sizes',
+			'net_currency'           => 'Net Currency',
 		);
 	}
 
@@ -144,18 +154,27 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('opportunities_id',$this->opportunities_id);
+		$criteria->compare('post_data',$this->post_data);
+		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		// We need to list all related tables in with property
-		$criteria->with = array(  'opportunities', 'opportunities.ios.advertisers' );
+		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'vectors', 'networks');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		$criteria->compare('ios.name',$this->ios_name, true);
+		$criteria->compare('networks.currency',$this->net_currency, true);
+		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
+
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
 			// a sort tool in the related collumns
+            'pagination'=>array(
+                'pageSize'=>50,
+            ),
 			'sort'     =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
@@ -171,11 +190,32 @@ class Campaigns extends CActiveRecord
 						'asc'  =>'opportunities.carrier',
 						'desc' =>'opportunities.carrier DESC',
 		            ),
+		            'ios_name'=>array(
+						'asc'  =>'ios.id',
+						'desc' =>'ios.id DESC',
+		            ),
+		            'net_currency'=>array(
+						'asc'  =>'networks.currency',
+						'desc' =>'networks.currency DESC',
+		            ),
 		            // Adding all the other default attributes
 		            '*',
 		        ),
 		    ),
 		));
+	}
+
+	public function searchWidhVectors(){
+
+	    $criteria = new CDbCriteria;
+	    $criteria->with = array('vectors');
+		$criteria->together = true;
+	    $criteria->compare('vectors.id', $this->vectors_id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria' =>$criteria,
+			)
+		);
 	}
 
 	/**
@@ -187,5 +227,41 @@ class Campaigns extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function getExternalName($id)
+	{
+		$model = Campaigns::model()->findByPk($id);
+		$opportunity = Opportunities::model()->findByPk($model->opportunities_id);
+		$ios = Ios::model()->findByPk($opportunity->ios_id);
+		$adv = Advertisers::model()->findByPk($ios->advertisers_id)->prefix;
+
+		$country = '';
+		if ( $opportunity->country_id !== NULL )
+			$country = '-' . GeoLocation::model()->findByPk($opportunity->country_id)->ISO2;
+
+		$carrier = '-MUL';
+		if ( $opportunity->carriers_id !== NULL )
+			$carrier = '-' . substr( Carriers::model()->findByPk($opportunity->carriers_id)->mobile_brand , 0 , 3);
+
+		$wifi_ip = $model->wifi ? '-WIFI' : '';
+		$wifi_ip .= $model->ip ? '-IP' : '';
+		
+		$device = '';
+		if ( $model->devices_id !== NULL )
+			$device = '-' . Devices::model()->findByPk($model->devices_id)->prefix;
+
+		$network = '';
+		if ( $model->networks_id !== NULL )
+			$network = '-' . Networks::model()->findByPk($model->networks_id)->prefix;
+		
+		$product = $opportunity->product ? '-' . $opportunity->product : '';
+
+		$format = '';
+		if ( $model->formats_id !== NULL )
+			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
+		
+		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
+		return '*' . $model->id . '*' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
 	}
 }

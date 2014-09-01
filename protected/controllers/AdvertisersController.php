@@ -2,11 +2,12 @@
 
 class AdvertisersController extends Controller
 {
+
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	 * @return array action filters
@@ -28,7 +29,7 @@ class AdvertisersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete', 'externalForm'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -51,9 +52,8 @@ class AdvertisersController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$model=$this->loadModel($id);
+		$this->renderPartial('_view', array('model'=>$model));
 	}
 
 	/**
@@ -65,18 +65,16 @@ class AdvertisersController extends Controller
 		$model=new Advertisers;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Advertisers']))
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -86,21 +84,20 @@ class AdvertisersController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
+
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Advertisers']))
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -115,6 +112,44 @@ class AdvertisersController extends Controller
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+	}
+
+	public function actionExternalForm($id)
+	{
+		$validTime = ExternalIoForm::getExpirationHashTime();
+		
+		$model = $this->loadModel($id);
+
+		// FIXME si se entra mas de un IO???
+		$formURL = ExternalIoForm::model()->find( "advertisers_id=:adv AND status='Pending'", array(':adv'=>$id) );
+
+		if ( $formURL ) { // validate expiration hash's time
+			if ( (time() - strtotime($formURL->create_date) ) > $validTime ) { // hash expired
+				$formURL->create_date = date( 'Y-m-d H:i:s', time() );
+				$formURL->hash = sha1($id . $model->name . $formURL->create_date);
+				if ( ! $formURL->save() ) {
+					// echo "ERROR saving new hash <br>";
+					return;
+				}
+			} // else, hash not expired, do nothing
+		} else { // Create new row for ExternalIoForm
+			$formURL                 = new ExternalIoForm;
+			$formURL->advertisers_id = $id;
+			$formURL->commercial_id  = Yii::app()->user->id;
+			$formURL->hash           = sha1($id . $model->name . $formURL->create_date);
+			if ( ! $formURL->save() ) {
+				// echo "ERROR saving new External IO Form <br>";
+				return;
+			}
+		}
+
+		$url   = Yii::app()->getBaseUrl(true) . '/ios/externalCreate?ktoken=' . $formURL->hash;
+		$this->renderPartial('_externalForm',array(
+			'model'    => $model,
+			'formURL'  => $formURL,
+			'url'      => $url,
+			'timeLeft' => round( ( $validTime - (time() - strtotime($formURL->create_date)) ) / 3600 ), // date in hours to hash expiration.
+		), false, true);
 	}
 
 	/**
@@ -169,5 +204,23 @@ class AdvertisersController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	public function renderFormAjax($model) 
+	{
+		$cat = KHtml::enumItem($model, 'cat');
+
+		if ( $model->isNewRecord ) {
+			$model->commercial_id = Yii::app()->user->id;
+			$commercial = Users::model()->findByPk($model->commercial_id);
+		} else {
+			$commercial = Users::model()->findByPk($model->commercial_id);
+		}
+
+		$this->renderPartial('_form',array(
+			'model'      =>$model,
+			'categories' =>$cat,
+			'commercial' =>$commercial,
+		), false, true);
 	}
 }

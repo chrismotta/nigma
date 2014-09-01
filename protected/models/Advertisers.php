@@ -5,16 +5,23 @@
  *
  * The followings are the available columns in table 'advertisers':
  * @property integer $id
+ * @property string $prefix
  * @property string $name
  * @property string $cat
  * @property integer $commercial_id
  *
  * The followings are the available model relations:
  * @property Users $commercial
+ * @property ApiKey[] $apiKeys
+ * @property ExternalIoForm[] $externalIoForms
  * @property Ios[] $ioses
  */
 class Advertisers extends CActiveRecord
 {
+
+	public $commercial_name;
+	public $commercial_lastname;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -31,13 +38,14 @@ class Advertisers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, cat', 'required'),
+			array('prefix, name, cat', 'required'),
 			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
-			array('cat', 'length', 'max'=>5),
+			array('prefix', 'length', 'max'=>45),
+			array('cat', 'length', 'max'=>16),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, cat, commercial_id', 'safe', 'on'=>'search'),
+			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,6 +58,8 @@ class Advertisers extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
+			'apiKeys' => array(self::HAS_MANY, 'ApiKey', 'advertisers_id'),
+			'externalIoForms' => array(self::HAS_MANY, 'ExternalIoForm', 'advertisers_id'),
 			'ioses' => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
 		);
 	}
@@ -61,9 +71,12 @@ class Advertisers extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
+			'prefix' => 'Prefix',
 			'name' => 'Name',
-			'cat' => 'Cat',
+			'cat' => 'Category',
 			'commercial_id' => 'Commercial',
+			'commercial_name'	=>	'Commercial',
+			'commercial_lastname' => 'Commercial',
 		);
 	}
 
@@ -85,13 +98,38 @@ class Advertisers extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('cat',$this->cat,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
 
+		$criteria->with = array('commercial');
+		$criteria->compare('commercial.name', $this->commercial_name, true);
+		$criteria->compare('commercial.lastname', $this->commercial_lastname, true);
+
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria' =>$criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'commercial_name'=>array(
+						'asc'  =>'commercial.name',
+						'desc' =>'commercial.name DESC',
+		            ),
+		            'commercial_lastname'=>array(
+						'asc'  =>'commercial.lastname',
+						'desc' =>'commercial.lastname DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 

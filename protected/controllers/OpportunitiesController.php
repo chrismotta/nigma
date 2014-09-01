@@ -28,7 +28,7 @@ class OpportunitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','delete', 'getIos', 'getCarriers'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -51,9 +51,10 @@ class OpportunitiesController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$model = $this->loadModel($id);
+		$this->renderPartial('_view',array(
+			'model'=>$model,
+		), false, true);
 	}
 
 	/**
@@ -65,18 +66,16 @@ class OpportunitiesController extends Controller
 		$model=new Opportunities;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Opportunities']))
 		{
 			$model->attributes=$_POST['Opportunities'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -89,18 +88,16 @@ class OpportunitiesController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Opportunities']))
 		{
 			$model->attributes=$_POST['Opportunities'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -169,5 +166,71 @@ class OpportunitiesController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	public function renderFormAjax($model)
+	{
+		
+		if ( $model->isNewRecord ) {
+			// Get only Advertisers and IOs that were created by the current user logged.
+			// comentado provisoriamente, generar permiso de admin
+			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
+			$advertiser = CHtml::listData( Advertisers::model()->findAll(), 'id', 'name' );
+			$ios = CHtml::listData(Ios::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name');
+		} else {
+			// If update register, only show Opportunity's IO and Advertiser
+			$ios = Ios::model()->findByPk($model->ios_id);
+			$advertiser = Advertisers::model()->findByPk($ios->advertisers_id);
+		}
+		
+		// Get users with authorization "media"
+		$account = CHtml::listData(Users::model()->findUsersByRole('media'), 'id', 'username' );
+
+		// Get countries and carriers with status "Active"
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
+		
+		if ( $model->isNewRecord ) {
+			$carrier = array();
+		} else {
+			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
+		}
+		
+		$model_adv = KHtml::enumItem($model, 'model_adv');
+
+		$this->renderPartial('_form',array(
+			'model'      =>$model,
+			'advertiser' =>$advertiser,
+			'ios'        =>$ios,
+			'account'    =>$account,
+			'country'    =>$country,
+			'carrier'    =>$carrier,
+			'model_adv'  =>$model_adv,
+		), false, true);
+	}
+
+	public function actionGetIos($id)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		$ios = Ios::model()->findAll( "advertisers_id=:advertiser", array(':advertiser'=>$id) );
+
+		$response='<option value="">Select an IOs</option>';
+		foreach ($ios as $io) {
+			$response .= '<option value="' . $io->id . '">' . $io->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
+
+	public function actionGetCarriers($id)
+	{
+		$carriers = Carriers::model()->findAll( "id_country=:country AND status='Active'", array(':country'=>$id) );
+
+		$response='<option value="">Select a carrier</option>';
+		foreach ($carriers as $carrier) {
+			$response .= '<option value="' . $carrier->id_carrier . '">' . $carrier->mobile_brand . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 }

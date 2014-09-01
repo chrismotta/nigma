@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'opportunities':
  * @property integer $id
  * @property integer $carriers_id
+ * @property integer $multi_carrier
  * @property string $rate
  * @property string $model_adv
  * @property string $product
@@ -28,6 +29,15 @@
  */
 class Opportunities extends CActiveRecord
 {
+
+	public $country_name;
+	public $carrier_mobile_brand;
+	public $account_manager_name;
+	public $account_manager_lastname;
+	public $ios_name;
+	public $advertiser_name;
+	public $currency;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -44,8 +54,8 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('carriers_id, rate, model_adv, wifi, budget, ios_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
+			array('country_id, model_adv, wifi, budget, ios_id', 'required'),
+			array('carriers_id, multi_carrier, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
 			array('product, comment', 'length', 'max'=>255),
@@ -53,7 +63,7 @@ class Opportunities extends CActiveRecord
 			array('startDate, endDate', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, carriers_id, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,10 +75,10 @@ class Opportunities extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'opportunities_id'),
-			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
-			'carriers' => array(self::BELONGS_TO, 'Carriers', 'carriers_id'),
-			'ios' => array(self::BELONGS_TO, 'Ios', 'ios_id'),
+			'campaigns'      => array(self::HAS_MANY, 'Campaigns', 'opportunities_id'),
+			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'carriers'       => array(self::BELONGS_TO, 'Carriers', 'carriers_id'),
+			'ios'            => array(self::BELONGS_TO, 'Ios', 'ios_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 		);
 	}
@@ -79,20 +89,29 @@ class Opportunities extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'carriers_id' => 'Carriers',
-			'rate' => 'Rate',
-			'model_adv' => 'Model Adv',
-			'product' => 'Product',
-			'account_manager_id' => 'Account Manager',
-			'comment' => 'Comment',
-			'country_id' => 'Country',
-			'wifi' => 'Wifi',
-			'budget' => 'Budget',
-			'server_to_server' => 'Server To Server',
-			'startDate' => 'Start Date',
-			'endDate' => 'End Date',
-			'ios_id' => 'Ios',
+			'id'                       => 'ID',
+			'carriers_id'              => 'Carriers',
+			'multi_carrier'            => 'Multi Carrier',
+			'rate'                     => 'Rate',
+			'model_adv'                => 'Model',
+			'product'                  => 'Product',
+			'account_manager_id'       => 'Account Manager',
+			'comment'                  => 'Comment',
+			'country_id'               => 'Country',
+			'wifi'                     => 'Wifi',
+			'budget'                   => 'Budget',
+			'server_to_server'         => 'Server To Server',
+			'startDate'                => 'Start Date',
+			'endDate'                  => 'End Date',
+			'ios_id'                   => 'Ios',
+			
+			'country_name'             => 'Country',
+			'carrier_mobile_brand'     => 'Carrier',
+			'account_manager_name'     => 'Account Manager',
+			'account_manager_lastname' => 'Account Manager',
+			'ios_name'                 => 'IO',
+			'advertiser_name'          => 'Advertiser',
+			'currency'                 => 'Currency',
 		);
 	}
 
@@ -116,6 +135,7 @@ class Opportunities extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('carriers_id',$this->carriers_id);
+		$criteria->compare('multi_carrier',$this->multi_carrier);
 		$criteria->compare('rate',$this->rate,true);
 		$criteria->compare('model_adv',$this->model_adv,true);
 		$criteria->compare('product',$this->product,true);
@@ -129,8 +149,55 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('endDate',$this->endDate,true);
 		$criteria->compare('ios_id',$this->ios_id);
 
+		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
+		$criteria->compare('country.name', $this->country_name, true);
+		$criteria->compare('carriers.mobile_brand', $this->carrier_mobile_brand, true);
+		$criteria->compare('accountManager.name', $this->account_manager_name, true);
+		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);
+		$criteria->compare('ios.name', $this->ios_name, true);
+		$criteria->compare('advertisers.name', $this->advertiser_name, true);
+		$criteria->compare('ios.currency', $this->currency, true);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'advertiser_name'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),
+		            'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+		            ),
+		            'carrier_mobile_brand'=>array(
+						'asc'  =>'carriers.mobile_brand',
+						'desc' =>'carriers.mobile_brand DESC',
+		            ),
+		            'account_manager_name'=>array(
+						'asc'  =>'accountManager.name',
+						'desc' =>'accountManager.name DESC',
+		            ),
+		            'account_manager_lastname'=>array(
+						'asc'  =>'accountManager.lastname',
+						'desc' =>'accountManager.lastname DESC',
+		            ),
+		            'ios_name'=>array(
+						'asc'  =>'ios.name',
+						'desc' =>'ios.name DESC',
+		            ),
+		            'currency'=>array(
+						'asc'  =>'ios.currency',
+						'desc' =>'ios.currency DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 
@@ -143,5 +210,23 @@ class Opportunities extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function getVirtualName()
+	{
+		$adv = Advertisers::model()->findByPk( Ios::model()->findByPk($this->ios_id)->advertisers_id)->name;
+		
+		$country = '';
+		if ( $this->country_id !== NULL )
+			$country = '-' . GeoLocation::model()->findByPk($this->country_id)->ISO3;
+
+		$carrier = '';
+		if ( $this->carriers_id === NULL ) {
+			$carrier = '-MULTI';
+		} else {
+			$carrier = '-' . Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
+		}
+		
+		return $adv . $country . $carrier . '-' . $this->rate;
 	}
 }

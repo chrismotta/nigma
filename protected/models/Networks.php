@@ -5,13 +5,19 @@
  *
  * The followings are the available columns in table 'networks':
  * @property integer $id
- * @property integer $rec
+ * @property string $prefix
  * @property string $name
  * @property string $url
  * @property string $query_string
  * @property string $token1
  * @property string $token2
  * @property string $token3
+ *
+ * The followings are the available model relations:
+ * @property ApiCronLog[] $apiCronLogs
+ * @property Campaigns[] $campaigns
+ * @property ClicksLog[] $clicksLogs
+ * @property DailyReport[] $dailyReports
  */
 class Networks extends CActiveRecord
 {
@@ -31,12 +37,12 @@ class Networks extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, url, query_string', 'required'),
-			array('rec', 'numerical', 'integerOnly'=>true),
+			array('prefix, name, url, query_string', 'required'),
+			array('prefix', 'length', 'max'=>45),
 			array('name, url, query_string, token1, token2, token3', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, rec, name, url, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
+			array('id, prefix, name, url, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,6 +54,10 @@ class Networks extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'apiCronLogs' => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
+			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
+			'clicksLogs' => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
+			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'networks_id'),
 		);
 	}
 
@@ -58,7 +68,7 @@ class Networks extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'rec' => 'Rec',
+			'prefix' => 'Prefix',
 			'name' => 'Name',
 			'url' => 'Url',
 			'query_string' => 'Query String',
@@ -87,7 +97,7 @@ class Networks extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('rec',$this->rec);
+		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('query_string',$this->query_string,true);

@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'updateAjax'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -51,9 +51,10 @@ class IosController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$this->render('view',array(
-			'model'=>$this->loadModel($id),
-		));
+		$model = $this->loadModel($id);
+		$this->renderPartial('_view', array( 
+			'model'=>$model 
+		), false, true);
 	}
 
 	/**
@@ -65,16 +66,16 @@ class IosController extends Controller
 		$model=new Ios;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Ios']))
 		{
 			$model->attributes=$_POST['Ios'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->renderAjaxForm($model);
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -87,18 +88,16 @@ class IosController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Ios']))
 		{
 			$model->attributes=$_POST['Ios'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -141,21 +140,159 @@ class IosController extends Controller
 		));
 	}
 
-	public function actionUpdateAjax($id=null) {
-		
-		$model=$this->loadModel($id);
+	public function actionDuplicate($id) 
+	{
+		$old = $this->loadModel($id);
 
+		$new = clone $old;
+		unset($new->id);
+		$new->unsetAttributes(array('id'));
+		$new->isNewRecord = true;
+		
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($new);
 
 		if(isset($_POST['Ios']))
 		{
-			$model->attributes=$_POST['Ios'];
-			if($model->save())
+			$new->attributes=$_POST['Ios'];
+			if($new->save())
 				$this->redirect(array('admin'));
+		} 
+
+		$this->renderFormAjax($new);
+	}
+
+	public function actionExternalCreate()
+	{
+
+		if ( isset($_GET['ktoken']) ) {
+			$ktoken = $_GET['ktoken'];
+		} else {
+			echo "ERROR invalid parameters <br>";
+			Yii::app()->end();	
 		}
 
-		$this->renderAjaxForm($model);
+		$external = ExternalIoForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+
+		// Validate hash expiration time
+		$validTime = ExternalIoForm::getExpirationHashTime();
+		if ( ! $external || ( (time() - strtotime($external->create_date) ) > $validTime ) ) { // hash expired
+			$this->render('externalCreate', array(
+				'action'   => 'expire',
+			));
+			Yii::app()->end();
+		}
+
+		if ( $external->status == 'Submitted' ) {
+			$this->render('externalCreate', array(
+				'action'   => 'alreadySubmitted',
+			));
+			Yii::app()->end();
+		}
+
+		$ios = new Ios;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($ios);
+
+		if(isset($_POST['Ios'])) {
+			$ios = new Ios;
+			$ios->attributes=$_POST['Ios'];
+			$ios->status = 'Submitted';
+			if( $ios->save() )
+				$this->render('externalCreate', array(
+					'action'=> 'submit',
+				));
+			Yii::app()->end();
+		}
+
+		$currency   = KHtml::enumItem($ios, 'currency');
+		$entity     = KHtml::enumItem($ios, 'entity');
+		$advertiser = Advertisers::model()->findByPk($external->advertisers_id);
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
+		$commercial = Users::model()->findByPk($external->commercial_id);;
+
+		$ios->status = 1;	// FIXME completar con status correspondiente
+		$ios->commercial_id = $commercial->id;
+		// $ios->entity = 'LLC';	// FIXME dejar en blanco o hardcodear?
+		$ios->advertisers_id = $advertiser->id;
+
+		$this->render('externalCreate', array(
+			'action'     => 'form',
+			'model'      => $ios,
+			'currency'   => $currency,
+			'entity'     => $entity,
+			'commercial' => $commercial,
+			'advertiser' => $advertiser,
+			'country'    => $country,
+		));
+		
+		
+		echo "OK submitting IO <br>";
+		Yii::app()->end();
+	}
+
+	public function actionGeneratePdf($id) 
+	{
+		$model = $this->loadModel($id);
+
+		$pdf = Pdf::doc();
+        $pdf->setData( array(
+			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
+			'io'            => $model,
+			'opportunities' => Opportunities::model()->findAll( 'ios_id=:id', array(':id'=>$id) ),
+        ));
+        $pdf->output();
+
+        Yii::app()->end();
+	}
+
+	public function actionViewPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = Pdf::getPath();
+
+		if ( file_exists($path . $model->pdf_name) ) {
+			$info = pathinfo($model->pdf_name);
+			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
+				$this->redirect( array('uploads/Adv-1_IO-1.pdf') );
+			} else { // other files download
+				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
+			}
+		} else {
+			// FIXME redirect to 404 not found
+			echo "ERROR, file doesn't exist";
+		}
+		Yii::app()->end();
+	}
+
+	public function actionUploadPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = Pdf::getPath();
+
+		if(isset($_POST['submit'])) {
+
+			if ( is_uploaded_file($_FILES["upload-file"]["tmp_name"]) ) {
+				// Create new name for file
+				$extension = substr( $_FILES["upload-file"]["name"], strrpos($_FILES["upload-file"]["name"], '.') );
+				$newName = 'Adv-' . $model->advertisers_id . '_IO-' . $id . $extension;
+				
+				if ( ! move_uploaded_file($_FILES["upload-file"]['tmp_name'], $path . $newName) ) {
+					Yii::app()->end();
+				}
+
+				// Update status to complete
+				$model->status = 10;
+				$model->pdf_name = $newName;
+				$model->save();
+			}
+			$this->redirect(array('admin'));
+		}
+
+		$this->renderPartial('_uploadPDF', array(
+			'model' => $model,
+		));
 	}
 
 	/**
@@ -186,15 +323,27 @@ class IosController extends Controller
 		}
 	}
 
-	private function renderAjaxForm($model) {
-		
-		$data = array(
-			'model'       =>$model,
-			'countries'   =>CHtml::listData(GeoLocation::model()->findAllByAttributes(array(), 'status = "Active ORDER BY name"'), 'id_location', 'name'),
-			'commercials' =>CHtml::listData(Users::model()->findAll(array('order'=>'lastname')), 'id', 'lastname'),
-			'advertisers' =>CHtml::listData(Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name'),
-		);
-		
-		$this->renderPartial('_formAjax', $data, false, true);
+	public function renderFormAjax($model) 
+	{
+		$currency   = KHtml::enumItem($model, 'currency');
+		$entity     = KHtml::enumItem($model, 'entity');
+		$advertiser = CHtml::listData(Advertisers::model()->findAll(), 'id', 'name'); 
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
+
+		if ( $model->isNewRecord ) {
+			$model->commercial_id = Yii::app()->user->id;
+			$commercial = Users::model()->findByPk($model->commercial_id);;
+		} else {
+			$commercial = Users::model()->findByPk($model->commercial_id);
+		}
+
+		$this->renderPartial('_form',array(
+			'model'      =>$model,
+			'currency'   =>$currency,
+			'entity'     =>$entity,
+			'commercial' =>$commercial,
+			'advertiser' =>$advertiser,
+			'country'    =>$country,
+		), false, true);
 	}
 }

@@ -1,79 +1,66 @@
 <?php
 /* @var $this IosController */
-/* @var $data Ios */
+/* @var $model Ios */
 ?>
 
-<div class="view">
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>Io <?php echo "#".$model->id ?></h4>
+</div>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('id')); ?>:</b>
-	<?php echo CHtml::link(CHtml::encode($data->id), array('view', 'id'=>$data->id)); ?>
-	<br />
+<div class="modal-body">
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('status')); ?>:</b>
-	<?php echo CHtml::encode($data->status); ?>
-	<br />
+	<h5>Advertiser</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'advertisers.id',
+			'advertisers.name',
+			'advertisers.cat'
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>
-	<?php echo CHtml::encode($data->name); ?>
-	<br />
+	<h5>Commercial</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'commercial.id',
+			'commercial.name',
+			'commercial.lastname',
+			'commercial.username',
+			'commercial.email',
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('address')); ?>:</b>
-	<?php echo CHtml::encode($data->address); ?>
-	<br />
+	<h5>Insertion Order</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'id',
+			'name',
+			array(
+				'label' =>$model->getAttributeLabel('country_name'),
+				'name'  =>'country.name'
+			),
+			'address',
+			'state',
+			'zip_code',
+			'phone',
+			'contact_com',
+			'email_adm',
+			'contact_adm',
+			'currency',
+			'ret',
+			'tax_id',
+			'net_payment',
+		),
+	)); ?>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('country')); ?>:</b>
-	<?php echo CHtml::encode($data->country); ?>
-	<br />
+</div>
 
-	<b><?php echo CHtml::encode($data->getAttributeLabel('state')); ?>:</b>
-	<?php echo CHtml::encode($data->state); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('zip_code')); ?>:</b>
-	<?php echo CHtml::encode($data->zip_code); ?>
-	<br />
-
-	<?php /*
-	<b><?php echo CHtml::encode($data->getAttributeLabel('phone')); ?>:</b>
-	<?php echo CHtml::encode($data->phone); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('email')); ?>:</b>
-	<?php echo CHtml::encode($data->email); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('contact_adm')); ?>:</b>
-	<?php echo CHtml::encode($data->contact_adm); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('currency')); ?>:</b>
-	<?php echo CHtml::encode($data->currency); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('ret')); ?>:</b>
-	<?php echo CHtml::encode($data->ret); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('tax_id')); ?>:</b>
-	<?php echo CHtml::encode($data->tax_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('commercial_id')); ?>:</b>
-	<?php echo CHtml::encode($data->commercial_id); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('entity')); ?>:</b>
-	<?php echo CHtml::encode($data->entity); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('net_payment')); ?>:</b>
-	<?php echo CHtml::encode($data->net_payment); ?>
-	<br />
-
-	<b><?php echo CHtml::encode($data->getAttributeLabel('advertisers_id')); ?>:</b>
-	<?php echo CHtml::encode($data->advertisers_id); ?>
-	<br />
-
-	*/ ?>
-
+<div class="modal-footer">
+    Io detail view.
 </div>

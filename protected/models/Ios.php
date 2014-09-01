@@ -6,13 +6,17 @@
  * The followings are the available columns in table 'ios':
  * @property integer $id
  * @property string $name
+ * @property string $commercial_name
+ * @property integer $status
  * @property string $address
- * @property integer $country
+ * @property integer $country_id
  * @property string $state
  * @property string $zip_code
  * @property string $phone
- * @property string $email
+ * @property string $email$contact_com
+ * @property string $email_com
  * @property string $contact_adm
+ * @property string $email_adm
  * @property string $currency
  * @property string $ret
  * @property string $tax_id
@@ -20,15 +24,22 @@
  * @property string $entity
  * @property string $net_payment
  * @property integer $advertisers_id
+ * @property string $pdf_name
  *
  * The followings are the available model relations:
- * @property GeoLocation $country0
+ * @property GeoLocation $country
  * @property Advertisers $advertisers
  * @property Users $commercial
  * @property Opportunities[] $opportunities
  */
 class Ios extends CActiveRecord
 {
+
+	public $country_name;
+	public $com_name;
+	public $com_lastname;
+	public $advertiser_name;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -45,14 +56,14 @@ class Ios extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, address, country, state, zip_code, currency, tax_id, commercial_id, entity, net_payment, advertisers_id', 'required'),
-			array('country, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
-			array('name, address, state, zip_code, phone, email, contact_adm, ret, tax_id, net_payment', 'length', 'max'=>128),
+			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, commercial_id, entity, net_payment, advertisers_id', 'required'),
+			array('status, country_id, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
+			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
 			array('entity', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, address, country, state, zip_code, phone, email, contact_adm, currency, ret, tax_id, commercial_id, entity, net_payment, advertisers_id', 'safe', 'on'=>'search'),
+			array('id, country_name, com_lastname, com_name, advertiser_name, name, address, status, country_id, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, currency, ret, tax_id, commercial_id, entity, net_payment, advertisers_id, pdf_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,9 +75,9 @@ class Ios extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'country0' => array(self::BELONGS_TO, 'GeoLocation', 'country'),
-			'advertisers' => array(self::BELONGS_TO, 'Advertisers', 'advertisers_id'),
-			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
+			'country'       => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'advertisers'   => array(self::BELONGS_TO, 'Advertisers', 'advertisers_id'),
+			'commercial'    => array(self::BELONGS_TO, 'Users', 'commercial_id'),
 			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'ios_id'),
 		);
 	}
@@ -77,22 +88,32 @@ class Ios extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
-			'address' => 'Address',
-			'country' => 'Country',
-			'state' => 'State',
-			'zip_code' => 'Zip Code',
-			'phone' => 'Phone',
-			'email' => 'Email',
-			'contact_adm' => 'Contact Adm',
-			'currency' => 'Currency',
-			'ret' => 'Ret',
-			'tax_id' => 'Tax',
-			'commercial_id' => 'Commercial',
-			'entity' => 'Entity',
-			'net_payment' => 'Net Payment',
-			'advertisers_id' => 'Advertisers',
+			'id'              => 'ID',
+			'name'            => 'Name',
+			'commercial_name' => 'Commercial Name',
+			'address'         => 'Address',
+			'status'          => 'Status',
+			'country_id'      => 'Country',
+			'state'           => 'State',
+			'zip_code'        => 'Zip Code',
+			'phone'           => 'Phone',
+			'contact_com'     => 'Commercial Contact',
+			'email_com'       => 'Email Contact',
+			'contact_adm'     => 'Admin Contact',
+			'email_adm'       => 'Email Contact',
+			'currency'        => 'Currency',
+			'ret'             => 'Ret',
+			'tax_id'          => 'Tax',
+			'commercial_id'   => 'Commercial',
+			'entity'          => 'Entity',
+			'net_payment'     => 'Net Payment',
+			'advertisers_id'  => 'Advertisers',
+			'pdf_name'        => 'Pdf Name',
+			// Custom attributes
+			'country_name'    => 'Country',
+			'com_name'        => 'Commercial',
+			'com_lastname'    => 'Commercial',
+			'advertiser_name' => 'Advertiser',
 		);
 	}
 
@@ -114,15 +135,19 @@ class Ios extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.status',$this->status, true);
+		$criteria->compare('t.commercial_name',$this->commercial_name,true);
 		$criteria->compare('address',$this->address,true);
-		$criteria->compare('country',$this->country);
+		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('state',$this->state,true);
 		$criteria->compare('zip_code',$this->zip_code,true);
 		$criteria->compare('phone',$this->phone,true);
-		$criteria->compare('email',$this->email,true);
+		$criteria->compare('contact_com',$this->contact_com,true);
+		$criteria->compare('email_com',$this->email_com,true);
 		$criteria->compare('contact_adm',$this->contact_adm,true);
+		$criteria->compare('email_adm',$this->email_adm,true);
 		$criteria->compare('currency',$this->currency,true);
 		$criteria->compare('ret',$this->ret,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
@@ -130,9 +155,42 @@ class Ios extends CActiveRecord
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('advertisers_id',$this->advertisers_id);
+		$criteria->compare('pdf_name',$this->pdf_name,true);
+
+		$criteria->with = array( 'advertisers', 'commercial', 'country');
+		$criteria->compare('advertisers.name', $this->advertiser_name, true);
+		$criteria->compare('commercial.name', $this->com_name, true);
+		$criteria->compare('commercial.lastname', $this->com_lastname, true);
+		$criteria->compare('country.name', $this->country_name, true);
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria'   => $criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
+			'sort'       => array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'advertiser_name'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),
+		            'com_name'=>array(
+						'asc'  =>'commercial.name',
+						'desc' =>'commercial.name DESC',
+		            ),
+		            'com_lastname'=>array(
+						'asc'  =>'commercial.lastname',
+						'desc' =>'commercial.lastname DESC',
+		            ),
+					'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+					),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 

@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn'),
+				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -65,18 +65,16 @@ class DailyReportController extends Controller
 		$model=new DailyReport;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -89,18 +87,16 @@ class DailyReportController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -177,20 +173,33 @@ class DailyReportController extends Controller
 
 	public function actionUpdateColumn() {
 
-		if ( isset($_POST["id"]) && isset($_POST["newValue"]) ) {
+		if ( isset($_POST["id"]) && isset($_POST["newValue"]) && isset($_POST["col"]) ) {
 			$keyvalue   = $_POST["id"];
 	        $newValue  = $_POST["newValue"];
+	        $col = $_POST["col"];
 		} else {
 			// echo json_encode("ERROR missing params.");
 			Yii::app()->end();
 		}
 
 		$model = DailyReport::model()->findByPk($keyvalue);
-		$model->conv_adv = $newValue;
-		if ( ! $model->update(array('conv_adv')) ) {
-			// echo json_encode("ERROR updating conv_adv");
+		$model[$col] = $newValue;
+		$model->updateRevenue();
+
+		if ( ! $model->update(array($col, 'revenue')) ) {
+			// echo json_encode("ERROR updating daily report");
 		}
+
 		Yii::app()->end();
+	}
+
+	public function actionExcelReport()
+	{
+		$model = new DailyReport;
+		// FIXME se deberia filtrar para no importar toda la tabla
+		$this->renderPartial('excelReport',array(
+			'model' => $model,
+		));
 	}
 
 	/**
@@ -219,5 +228,20 @@ class DailyReportController extends Controller
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
 		}
+	}
+
+	public function renderFormAjax($model)
+	{
+		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campaigns = CHtml::listData(Campaigns::model()->findAll(array('order'=>'name')), 'id', 'name');
+
+		if ( $model->isNewRecord )
+			$model->is_from_api = 0;
+
+		$this->renderPartial('_form', array(
+			'model'     => $model,
+			'networks'  => $networks,
+			'campaigns' => $campaigns, 
+		), false, true);
 	}
 }

@@ -124,6 +124,9 @@ footer .navbar-inner small {
 .grid-view {
 	font-size: 11px;
 }
+#add-campaigns-grid {
+	padding-top: 0px;
+}
 .single-button-column {
 	padding: 0px 1px;
 }
