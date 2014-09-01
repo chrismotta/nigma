@@ -222,6 +222,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalCampaigns").html(dataInicial);
+						$("#modalCampaigns").modal("toggle");
+
 				    	$.post(
 						"redirectAjax/"+id,
 						"",
@@ -229,7 +234,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 							{
 								//alert(data);
 								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
 							}
 						)
 				    }
