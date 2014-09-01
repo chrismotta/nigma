@@ -14,7 +14,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `email`, `name`, `lastname`, 
 (4, 'exequielarriola', '11f5ee0507c272be14a76e039ee3d48e779ab88d', 'exequiel@vanega.com', 'Exequiel', 'Arriola', 'Active'),
 (5, 'fernandoragel', '258c724cba05fdb365a0209d11a1866fe2aed7d7', 'fernando@vanega.com', 'Fernando', 'Ragel', ''),
 (6, 'matiascerrotta', 'd5c781d3c9ee8f957978e10293e38e49820bb5e1', 'matias.cerrotta@kickads.mobi', 'Matias', 'Cerrotta', 'Active'),
-(7, 'michellescheiber', '906e9b22e2401bfe058ab6d340ab6dceb78ac7a3', 'michelle.schreiber@kickads.mobi', 'Michelle', 'Schreiber', 'Active'),
+(7, 'michelleschreiber', '906e9b22e2401bfe058ab6d340ab6dceb78ac7a3', 'michelle.schreiber@kickads.mobi', 'Michelle', 'Schreiber', 'Active'),
 (8, 'julianquinones', '442f4ba5bd9fba5ecf53b5d9cefec2336a2c6dd6', 'julian.quinones@kickads.mobi', 'Julian', 'Quinones', 'Active'),
 (9, 'victorrodriguez', '974808e79761335723748d15ac8253f8dcac1c4f', 'victor.rodriguez@kickads.mobi', 'Victor', 'Rodriguez Otero', 'Active'),
 (10, 'maiakirchuk', '03837d25a872a881ae1afea5390a796baae0568c', 'maia.kirchuk@kickads.mobi', 'Maia', 'Kirchuk', 'Active'),
@@ -93,6 +93,19 @@ INSERT INTO `campaign_categories` (`id`, `rec`, `name`) VALUES
 -- Dumping data for table `AuthItem`
 --
 
+INSERT INTO `AuthItem` (`name`, `type`, `description`, `bizrule`, `data`) VALUES
+('admin', 2, '', NULL, 'N;'),
+('business', 2, '', NULL, 'N;'),
+('commercial', 2, '', NULL, 'N;'),
+('commercial_manager', 2, '', NULL, 'N;'),
+('finance', 2, '', NULL, 'N;'),
+('media', 2, '', NULL, 'N;'),
+('media_manager', 2, '', NULL, 'N;');
+
+--
+-- Dumping data for table `AuthAssignment`
+--
+
 INSERT INTO `AuthAssignment` (`itemname`, `userid`, `bizrule`, `data`) VALUES
 ('admin', '1', NULL, 'N;'),
 ('admin', '2', NULL, 'N;'),
@@ -105,16 +118,6 @@ INSERT INTO `AuthAssignment` (`itemname`, `userid`, `bizrule`, `data`) VALUES
 ('media', '8', NULL, 'N;'),
 ('media_manager', '3', NULL, 'N;');
 
-
---
--- Dumping data for table `AuthAssignment`
---
-
-INSERT INTO `AuthAssignment` (`itemname`, `userid`, `bizrule`, `data`) VALUES
-('admin', '1', NULL, 'N;'),
-('admin', '5', NULL, NULL),
-('admin', '6', NULL, NULL),
-('media', '2', NULL, 'N;');
 
 
 --

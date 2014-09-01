@@ -29,6 +29,11 @@
     	echo $form->textFieldRow($model, 'username', array('class'=>'span3'));
     	echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'lastname', array('class'=>'span3'));
+
+        if ( $model->isNewRecord ) {
+            echo $form->textFieldRow($model, 'password', array('class'=>'span3'));
+        }
+
         echo $form->textFieldRow($model, 'email', array('class'=>'span3'));
         echo $form->radioButtonListInlineRow($model, 'status', $status);
 
