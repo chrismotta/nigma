@@ -80,15 +80,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'              => 'opportunities_id',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'name'              => 'ios_id',
+			'value'             => '$data->opportunities->ios->id',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
 		array(
-			'name'              => 'id',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'name'              => 'opportunities_id',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
 		array(
 			'name'              => 'name',
+			//'value'             => '$data->getExternalName($data->id)',
 			'headerHtmlOptions' => array('style' => 'width: 300px'),
         ),
 		/*

@@ -40,6 +40,7 @@ class Campaigns extends CActiveRecord
 	public $advertisers_name;
 	public $opportunities_rate;
 	public $opportunities_carrier;
+	public $ios_id;
 	public $vectors_id;
 
 	/**
@@ -160,6 +161,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		$criteria->compare('opportunities.ios.id',$this->ios_id, true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
 
 
@@ -184,6 +186,10 @@ class Campaigns extends CActiveRecord
 		            'opportunities_carrier'=>array(
 						'asc'  =>'opportunities.carrier',
 						'desc' =>'opportunities.carrier DESC',
+		            ),
+		            'ios_id'=>array(
+						'asc'  =>'opportunities.ios.id',
+						'desc' =>'opportunities.ios.id DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
