@@ -237,17 +237,17 @@ $('.search-form form').submit(function(){
         ),
         array(
         	'name' => 'revenue',
-        	'value' => '"$ " . $data->revenue',
+        	'value' => '$data->getRevenueUSD()',
         	'htmlOptions'=>array('style'=>'width: 70px'),
         ),
 		array(
         	'name'	=>	'spend',
-        	'value'	=>	'"$ " . $data->spend',
+        	'value'	=>	'$data->getSpendUSD()',
         	'htmlOptions'=>array('style'=>'width: 60px'),
         ),
 		array(
 			'name'  => 'profit',
-			'value'	=>	'"$ " . $data->profit',
+			'value'	=>	'$data->profit',
 			'htmlOptions'=>array('style'=>'width: 60px'),
 		),
 		array(
@@ -267,17 +267,17 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'  => 'eCPM',
-			'value' => '"$ " . $data->eCPM',
+			'value' => '$data->eCPM',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
 			'name'  => 'eCPC',
-			'value' => '"$ " . $data->eCPC',
+			'value' => '$data->eCPC',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
 			'name'  => 'eCPA',
-			'value' => '"$ " . $data->eCPA',
+			'value' => '$data->eCPA',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
