@@ -44,7 +44,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'type'    => 'POST',
 		'beforeSend' => 'function(data)
 			{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" /></div><div class=\"modal-footer\"></div>";
 					$("#modalCampaigns").html(dataInicial);
 					$("#modalCampaigns").modal("toggle");
 			}',

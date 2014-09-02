@@ -103,4 +103,19 @@ class Currency extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	/**
+	 * Find for the nearest currency dated lower
+	 * @param  $date
+	 * @return Currency
+	 */
+	public function findByDate($date)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->order = 'date DESC';
+		$criteria->condition = 'date<=Date(:date)';
+		$criteria->limit = 0;
+		$criteria->params = array(':date' => $date);
+		return Currency::model()->find( $criteria );
+	}
 }

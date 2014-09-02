@@ -163,6 +163,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id, true);
 		$criteria->compare('ios.name',$this->ios_name, true);
 		$criteria->compare('networks.currency',$this->net_currency, true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
