@@ -16,10 +16,8 @@ class ApiUpdateController extends Controller
 
 	public function actionAdWords()
 	{
-		print "FIXME Implemented"; return;
-
-		// $adWords = new AdWords;
-		// $adWords->downloadInfo();
+		$adWords = new AdWords;
+		$adWords->downloadInfo();
 	}
 
 	public function actionAirpush()

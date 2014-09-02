@@ -17,6 +17,7 @@
 		'attributes'=>array(
 			'ios.advertisers.id',
 			'ios.advertisers.name',
+			'ios.advertisers.cat',
 		),
 	)); ?>
 
@@ -28,18 +29,35 @@
 		'attributes'=>array(
 			'ios.id',
 			'ios.name',
+			'ios.commercial_name',
+			'ios.status',
+			// 'opportunities.ios.address',
+			array(
+				'label' => 'Country',
+				'name'  => 'ios.country.name',
+			),
+			'ios.state',
+			'ios.zip_code',
+			'ios.phone',
+			'ios.contact_com',
+			'ios.email_adm',
+			'ios.contact_adm',
+			'ios.currency',
+			'ios.ret',
+			'ios.tax_id',
+			'ios.net_payment',
 		),
 	)); ?>
 
-	<h5>Account Manager</h5>
+	<h5>Commercial Manager</h5>
 	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	    'type'=>'striped bordered condensed',
 		'data'=>$model,
 		'attributes'=>array(
-			'accountManager.id',
-			'accountManager.name',
-			'accountManager.lastname',
-			'accountManager.username',
+			'ios.commercial.id',
+			'ios.commercial.name',
+			'ios.commercial.lastname',
+			'ios.commercial.username',
 		),
 	)); ?>
 
@@ -72,6 +90,17 @@
 		),
 	)); ?>
 
+	<h5>Account Manager</h5>
+	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
+	    'type'=>'striped bordered condensed',
+		'data'=>$model,
+		'attributes'=>array(
+			'accountManager.id',
+			'accountManager.name',
+			'accountManager.lastname',
+			'accountManager.username',
+		),
+	)); ?>
 </div>
 
 <div class="modal-footer">
