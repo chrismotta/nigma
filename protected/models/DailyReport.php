@@ -315,4 +315,28 @@ class DailyReport extends CActiveRecord
 				break;
 		}
 	}
+
+	public function getRevenueUSD()
+	{
+		$camp         = Campaigns::model()->findByPk($this->campaigns_id);
+		$opp          = Opportunities::model()->findByPk($camp->opportunities_id);
+		$ios_currency = Ios::model()->findByPk($opp->ios_id)->currency;
+	
+		if ($ios_currency == 'USD')	// if currency is USD dont apply type change
+			return $this->revenue;
+
+		$currency = Currency::model()->findByDate($this->date);
+		return $currency ? $this->revenue * $currency[$ios_currency] : 'Currency ERROR!';
+	}
+
+	public function getSpendUSD()
+	{
+		$net_currency = Networks::model()->findByPk($this->networks_id)->currency;
+
+		if ($net_currency == 'USD') // if currency is USD dont apply type change
+			return $this->spend;
+
+		$currency = Currency::model()->findByDate($this->date);
+		return $currency ? $this->spend * $currency[$net_currency] : 'Currency ERROR!';
+	}
 }
