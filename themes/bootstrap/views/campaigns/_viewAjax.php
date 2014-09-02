@@ -111,7 +111,7 @@
 		),
 		array(
 			'label' => $model->getAttributeLabel('campaign_categories_id'),
-			'name'  => 'campaign_categories.name',
+			'name'  => 'campaignCategories.name',
 		),
 		array(
 			'label' =>$model->getAttributeLabel('wifi'),
