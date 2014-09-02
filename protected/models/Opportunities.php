@@ -6,7 +6,6 @@
  * The followings are the available columns in table 'opportunities':
  * @property integer $id
  * @property integer $carriers_id
- * @property integer $multi_carrier
  * @property string $rate
  * @property string $model_adv
  * @property string $product
@@ -37,6 +36,9 @@ class Opportunities extends CActiveRecord
 	public $ios_name;
 	public $advertiser_name;
 	public $currency;
+	public $open_budget;
+	public $multi_carrier;
+	public $multi_rate;
 
 	/**
 	 * @return string the associated database table name
@@ -54,8 +56,8 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('country_id, model_adv, wifi, budget, ios_id', 'required'),
-			array('carriers_id, multi_carrier, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
+			array('country_id, model_adv, wifi, ios_id', 'required'),
+			array('carriers_id, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
 			array('product, comment', 'length', 'max'=>255),
@@ -91,7 +93,6 @@ class Opportunities extends CActiveRecord
 		return array(
 			'id'                       => 'ID',
 			'carriers_id'              => 'Carriers',
-			'multi_carrier'            => 'Multi Carrier',
 			'rate'                     => 'Rate',
 			'model_adv'                => 'Model',
 			'product'                  => 'Product',
@@ -135,7 +136,6 @@ class Opportunities extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('carriers_id',$this->carriers_id);
-		$criteria->compare('multi_carrier',$this->multi_carrier);
 		$criteria->compare('rate',$this->rate,true);
 		$criteria->compare('model_adv',$this->model_adv,true);
 		$criteria->compare('product',$this->product,true);

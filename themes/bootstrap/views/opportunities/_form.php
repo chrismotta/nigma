@@ -77,31 +77,53 @@
                   )
                   ',
         ));
+      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('class'=>'carriers-dropdownlist', 'prompt' => 'Select a carrier', 'encode'=>false));
       echo $form->checkboxRow($model, 'multi_carrier', 
             array(
               'onChange' => '
                   if (this.checked == "1") {
-                    //alert("ok");
                     $("#Opportunities_carriers_id option:eq(0)").prop("selected", true);
                     $("#Opportunities_carriers_id").prop("disabled", true);
-                    //$("#Opportunities_rate").prop("disabled", true);
-                    //$("#Opportunities_rate").val("");
                   }else{
-                    //alert("no");
                     $("#Opportunities_carriers_id").prop("disabled", false);
-                    //$("#Opportunities_rate").prop("disabled", false);
-                    //$("#Opportunities_rate").val("");
                   }
                   return;
                   '
             ));
-      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('class'=>'carriers-dropdownlist', 'prompt' => 'Select a carrier', 'encode'=>false));
       echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
+      echo $form->checkboxRow($model, 'multi_rate', 
+            array(
+              'onChange' => '
+                  if (this.checked == "1") {
+                    //alert("ok");
+                    $("#Opportunities_rate").val("");
+                    $("#Opportunities_rate").prop("disabled", true);
+                  }else{
+                    //alert("no");
+                    $("#Opportunities_rate").prop("disabled", false);
+                  }
+                  return;
+                  '
+            ));
+      echo $form->textFieldRow($model, 'budget', array('class'=>'span3'));
+      echo $form->checkboxRow($model, 'open_budget', 
+            array(
+              'onChange' => '
+                  if (this.checked == "1") {
+                    //alert("ok");
+                    $("#Opportunities_budget").val("");
+                    $("#Opportunities_budget").prop("disabled", true);
+                  }else{
+                    //alert("no");
+                    $("#Opportunities_budget").prop("disabled", false);
+                  }
+                  return;
+                  '
+            ));
       echo $form->radioButtonListInlineRow($model, 'model_adv', $model_adv);
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));
       echo $form->dropDownListRow($model, 'account_manager_id', $account , array('prompt' => 'Select an Account Manager'));
       echo $form->checkboxRow($model, 'wifi');
-      echo $form->textFieldRow($model, 'budget', array('class'=>'span3'));
       echo $form->textFieldRow($model, 'server_to_server', array('class'=>'span3'));
       echo $form->textFieldRow($model, 'startDate', array('class'=>'span3'));
       echo $form->textFieldRow($model, 'endDate', array('class'=>'span3'));
