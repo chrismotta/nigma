@@ -13,12 +13,12 @@ $this->widget('EExcelWriter', array(
     'filePath'     => $path,
     'columns'      => array(
         array(
-        	'name' => 'campaign_name',
-        	'value' => '$data->campaigns->name',
+            'name'  => 'campaign_name',
+            'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
         ),
         array(
-        	'name' => 'network_name',
-        	'value' => '$data->networks->name',
+            'name'  => 'network_name',
+            'value' => '$data->networks->name',
         ),
         'imp',
         'imp_adv',
@@ -31,7 +31,7 @@ $this->widget('EExcelWriter', array(
             'htmlOptions'=>array('style'=>'width: 60px'),
         ),
         array(
-            'name' => 'revenue',
+            'name'  => 'revenue',
             'value' => '$data->getRevenueUSD()',
         ),
         array(
@@ -63,7 +63,7 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->eCPA',
         ),
         array(
-            'name' => 'date',
+            'name'  => 'date',
             'value' => 'date("d-m-Y", strtotime($data->date))',
         ),
     ),
