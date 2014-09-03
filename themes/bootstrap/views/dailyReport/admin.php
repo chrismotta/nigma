@@ -190,10 +190,6 @@ $('.search-form form').submit(function(){
         	'htmlOptions'=>array('style'=>'width: 50px'),
         ),
 		array(
-        	'name'	=>	'conv_api',
-        	'htmlOptions'=>array('style'=>'width: 50px'),
-        ),
-		array(
         	'name'	=>	'conv_adv',
         	'type'	=>	'raw',
 			'htmlOptions'=>array('style'=>'width: 85px'),
