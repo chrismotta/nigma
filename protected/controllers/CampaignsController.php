@@ -121,6 +121,7 @@ class CampaignsController extends Controller
 	 */
 	public function actionCreateAjax()
 	{
+
 		$model=new Campaigns;
 		//$modelOpp=new Opportunities;
 

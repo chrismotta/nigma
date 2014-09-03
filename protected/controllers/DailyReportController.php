@@ -69,7 +69,10 @@ class DailyReportController extends Controller
 
 		if(isset($_POST['DailyReport']))
 		{
-			$model->attributes=$_POST['DailyReport'];
+			$model->attributes = $_POST['DailyReport'];
+
+			$modelCampaign = Campaigns::model()->findByPk($model->campaigns_id);
+			$model->networks_id = $modelCampaign->networks_id;
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -232,15 +235,17 @@ class DailyReportController extends Controller
 
 	public function renderFormAjax($model)
 	{
-		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campaigns = CHtml::listData(Campaigns::model()->findAll(array('order'=>'name')), 'id', 'name');
+		//$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campaigns = CHtml::listData(Campaigns::model()->findAll(array('order'=>'name')), 'id',
+			function($camp) { return $camp->getExternalName($camp->id); }
+			);
 
 		if ( $model->isNewRecord )
 			$model->is_from_api = 0;
 
 		$this->renderPartial('_form', array(
 			'model'     => $model,
-			'networks'  => $networks,
+			//'networks'  => $networks,
 			'campaigns' => $campaigns, 
 		), false, true);
 	}

@@ -52,7 +52,7 @@ class DailyReport extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('campaigns_id, networks_id, imp, clics, conv_api, spend, date', 'required'),
+			array('campaigns_id, imp, clics, conv_api, spend, date', 'required'),
 			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, is_from_api', 'numerical', 'integerOnly'=>true),
 			array('spend, revenue', 'length', 'max'=>11),
 			// The following rule is used by search().

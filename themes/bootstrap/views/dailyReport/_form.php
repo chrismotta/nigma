@@ -26,7 +26,7 @@
         <?php 
 
         echo $form->dropDownListRow($model, 'campaigns_id', $campaigns, array('prompt' => 'Select campaign'));
-        echo $form->dropDownListRow($model, 'networks_id', $networks, array('prompt' => 'Select a network'));
+        //echo $form->hiddenField($model, 'networks_id', array('type'=>"hidden") );
         echo '<hr>';
         echo $form->textFieldRow($model, 'imp', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'imp_adv', array('class'=>'span3'));
