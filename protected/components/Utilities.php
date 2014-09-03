@@ -12,7 +12,9 @@ class Utilities {
 			return NULL;
 
 		$id_end = strpos($campaignname, "*", $id_begin + 1) - 1;
-		return substr($campaignname, $id_begin + 1,  $id_end - $id_begin + 1);
+		$id = substr($campaignname, $id_begin + 1,  $id_end - $id_begin + 1);
+		print "campaign name: " . $campaignname . ", id: " .$id . "<hr>";
+		return $id;
 	}
 
 	/**
