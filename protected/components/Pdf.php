@@ -62,6 +62,17 @@ class Pdf extends EPdfFactoryDoc
 			$values[$opp->getAttributeLabel('budget')] = $opp->budget;
 			$values[$opp->getAttributeLabel('startDate')] = date('d-m-Y', strtotime($opp->startDate));
 			$values[$opp->getAttributeLabel('endDate')] = date('d-m-Y', strtotime($opp->endDate));
+
+            if ( $adv->cat == 'Branding' ) {
+                $values[$opp->getAttributeLabel('freq_cap')] = $opp->freq_cap;
+                $values[$opp->getAttributeLabel('imp_per_day')] = $opp->imp_per_day;
+                $values[$opp->getAttributeLabel('imp_total')] = $opp->imp_total;
+                $values[$opp->getAttributeLabel('targeting')] = $opp->targeting;
+                $values[$opp->getAttributeLabel('sizes')] = $opp->sizes;
+                $values[$opp->getAttributeLabel('channel')] = $opp->channel;
+                $values[$opp->getAttributeLabel('channel_description')] = $opp->channel_description;
+            }
+
 			$this->printTable($pdf, $values);
 			$pdf->Ln();
 		}

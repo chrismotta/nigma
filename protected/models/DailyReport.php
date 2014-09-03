@@ -326,7 +326,7 @@ class DailyReport extends CActiveRecord
 			return $this->revenue;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? $this->revenue * $currency[$ios_currency] : 'Currency ERROR!';
+		return $currency ? number_format($this->revenue / $currency[$ios_currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getSpendUSD()
@@ -337,6 +337,6 @@ class DailyReport extends CActiveRecord
 			return $this->spend;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? $this->spend * $currency[$net_currency] : 'Currency ERROR!';
+		return $currency ? number_format($this->spend / $currency[$net_currency], 2) : 'Currency ERROR!';
 	}
 }
