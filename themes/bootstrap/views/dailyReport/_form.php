@@ -36,7 +36,7 @@
         echo $form->textFieldRow($model, 'spend', array('class'=>'span3', 'prepend'=>'$'));
         echo $form->textFieldRow($model, 'revenue', array('class'=>'span3','prepend'=>'$'));
         echo $form->textFieldRow($model, 'date', array('class'=>'span3'));
-        echo $form->checkboxRow($model, 'is_from_api', array('disabled'=>true));
+        echo $form->hiddenField($model, 'is_from_api', array('type'=>'hidden'));
 
         ?>
 
