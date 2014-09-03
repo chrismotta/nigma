@@ -236,7 +236,7 @@ class DailyReportController extends Controller
 	public function renderFormAjax($model)
 	{
 		//$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campaigns = CHtml::listData(Campaigns::model()->findAll(array('order'=>'name')), 'id',
+		$campaigns = CHtml::listData(Campaigns::model()->with(array('networks'))->findAll(array('order'=>'t.name', 'condition'=>'has_api = 0')), 'id',
 			function($camp) { return $camp->getExternalName($camp->id); }
 			);
 

@@ -25,6 +25,7 @@ class DailyReport extends CActiveRecord
 {
 
 	public $network_name;
+	public $network_hasApi;
 	public $account_manager;
 	public $campaign_name;
 
@@ -198,6 +199,7 @@ class DailyReport extends CActiveRecord
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		$criteria->compare('networks.name',$this->network_name, true);
+		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 
