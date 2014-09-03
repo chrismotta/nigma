@@ -54,9 +54,9 @@ class Networks extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'apiCronLogs' => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
-			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
-			'clicksLogs' => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
+			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
+			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
+			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'networks_id'),
 		);
 	}
@@ -67,14 +67,15 @@ class Networks extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'prefix' => 'Prefix',
-			'name' => 'Name',
-			'url' => 'Url',
+			'id'           => 'ID',
+			'prefix'       => 'Prefix',
+			'name'         => 'Name',
+			'url'          => 'Url',
+			'has_api'      => 'Has API',
 			'query_string' => 'Query String',
-			'token1' => 'Token1',
-			'token2' => 'Token2',
-			'token3' => 'Token3',
+			'token1'       => 'Token1',
+			'token2'       => 'Token2',
+			'token3'       => 'Token3',
 		);
 	}
 
@@ -100,6 +101,7 @@ class Networks extends CActiveRecord
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('url',$this->url,true);
+		$criteria->compare('has_api',$this->has_api,true);
 		$criteria->compare('query_string',$this->query_string,true);
 		$criteria->compare('token1',$this->token1,true);
 		$criteria->compare('token2',$this->token2,true);
