@@ -21,39 +21,33 @@ class Pdf extends EPdfFactoryDoc
         $this->printCompanyInfo($pdf, $io);
         $pdf->Ln();
 
-        // Print advertisers section.
+        // get advertisers.
 		$adv = $this->getDataItem('advertiser');
-		$values[$adv->getAttributeLabel('name')] = $adv->name;
-		$values[$adv->getAttributeLabel('cat')] = $adv->cat;
-
-        $this->printTitle($pdf, 'Advertiser');
-        $this->printTable($pdf, $values);
-        $pdf->Ln();
 
         // Print io section
 		unset($values);
-		$values[$io->getAttributeLabel('name')] = $io->name;
-		$values[$io->getAttributeLabel('address')] = $io->address;
-		$values[$io->getAttributeLabel('state')] = $io->state;
-		$values[$io->getAttributeLabel('zip_code')] = $io->zip_code;
-		$values[$io->getAttributeLabel('phone')] = $io->phone;
-		$values[$io->getAttributeLabel('contact_com')] = $io->contact_com;
+		$values[$io->getAttributeLabel('commercial_name')] = $io->name;
+		$values[$io->getAttributeLabel('tax_id')] = $io->tax_id;
+        $values[$io->getAttributeLabel('address')] = $io->address;
+        $values[$io->getAttributeLabel('state')] = $io->state;
+        $values[$io->getAttributeLabel('zip_code')] = $io->zip_code;
+        $values[$io->getAttributeLabel('phone')] = $io->phone;
+        $values[$io->getAttributeLabel('contact_com')] = $io->contact_com;
         $values[$io->getAttributeLabel('email_adm')] = $io->email_adm;
         $values[$io->getAttributeLabel('contact_adm')] = $io->contact_adm;
-		$values[$io->getAttributeLabel('currency')] = $io->currency;
-		$values[$io->getAttributeLabel('ret')] = $io->ret;
-		$values[$io->getAttributeLabel('tax_id')] = $io->tax_id;
+        $values[$io->getAttributeLabel('currency')] = $io->currency;
+        $values[$io->getAttributeLabel('ret')] = $io->ret;
 		$this->printTitle($pdf, 'Io');
 		$this->printTable($pdf, $values);
 		$pdf->Ln();
 
 		// Print Opportunities section
 		$opps = $this->getDataItem('opportunities');
-		$this->printTitle($pdf, 'Opportunities');
 		$pdf->Ln();
 		unset($values);
+        $i = 1;
 		foreach ($opps as $opp) {
-			$this->printTitle($pdf, 'Opportunity #' . $opp->id);
+			$this->printTitle($pdf, 'Campaign #' . $i);
 			$values[$opp->getAttributeLabel('rate')] = $opp->rate;
 			$values[$opp->getAttributeLabel('model_adv')] = $opp->model_adv;
 			$values[$opp->getAttributeLabel('product')] = $opp->product;
@@ -75,6 +69,7 @@ class Pdf extends EPdfFactoryDoc
 
 			$this->printTable($pdf, $values);
 			$pdf->Ln();
+            $i++;
 		}
 
 		// Print terms and signature in a new page

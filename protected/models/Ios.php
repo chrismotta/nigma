@@ -90,7 +90,7 @@ class Ios extends CActiveRecord
 		return array(
 			'id'              => 'ID',
 			'name'            => 'Name',
-			'commercial_name' => 'Commercial Name',
+			'commercial_name' => 'Legal Name',
 			'address'         => 'Address',
 			'status'          => 'Status',
 			'country_id'      => 'Country',
