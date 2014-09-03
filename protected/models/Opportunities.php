@@ -18,6 +18,13 @@
  * @property string $startDate
  * @property string $endDate
  * @property integer $ios_id
+ * @property string $freq_cap
+ * @property integer $imp_per_day
+ * @property integer $imp_total
+ * @property string $targeting
+ * @property string $sizes
+ * @property string $channel
+ * @property string $channel_description
  *
  * The followings are the available model relations:
  * @property Campaigns[] $campaigns
@@ -57,12 +64,13 @@ class Opportunities extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('country_id, model_adv, wifi, ios_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id', 'numerical', 'integerOnly'=>true),
+			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
-			array('product, comment', 'length', 'max'=>255),
-			array('server_to_server', 'length', 'max'=>45),
+			array('product, comment, targeting, sizes, channel_description', 'length', 'max'=>255),
+			array('server_to_server, freq_cap', 'length', 'max'=>45),
 			array('startDate, endDate', 'safe'),
+			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id', 'safe', 'on'=>'search'),
@@ -105,6 +113,12 @@ class Opportunities extends CActiveRecord
 			'startDate'                => 'Start Date',
 			'endDate'                  => 'End Date',
 			'ios_id'                   => 'Ios',
+			'imp_per_day'              => 'Imp Per Day',
+			'imp_total'                => 'Imp Total',
+			'targeting'                => 'Targeting',
+			'sizes'                    => 'Sizes',
+			'channel'                  => 'Channel',
+			'channel_description'      => 'Channel Description',
 			
 			'country_name'             => 'Country',
 			'carrier_mobile_brand'     => 'Carrier',
@@ -148,6 +162,13 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('startDate',$this->startDate,true);
 		$criteria->compare('endDate',$this->endDate,true);
 		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('freq_cap',$this->freq_cap,true);
+		$criteria->compare('imp_per_day',$this->imp_per_day);
+		$criteria->compare('imp_total',$this->imp_total);
+		$criteria->compare('targeting',$this->targeting,true);
+		$criteria->compare('sizes',$this->sizes,true);
+		$criteria->compare('channel',$this->channel,true);
+		$criteria->compare('channel_description',$this->channel_description,true);
 
 		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
 		$criteria->compare('country.ISO2', $this->country_name, true);
