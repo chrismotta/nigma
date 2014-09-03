@@ -75,7 +75,7 @@ class BuzzCity
 			}
 		}
 		print "BuzzCity: SUCCESS - Daily info, downloaded. " . date('d-m-Y', strtotime($date)) . ".  <br>";
-		Yii::app()->end();
+		return 0;
 	}
 
 }

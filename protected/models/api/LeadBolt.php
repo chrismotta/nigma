@@ -16,7 +16,7 @@ class LeadBolt
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
 			print "LeadBolt: WARNING - Information already downloaded. <br>";
-			Yii::app()->end(2);
+			return 2;
 		}
 
 		$date = str_replace('-', '', $date); // Leadbolt api use YYYYMMDD date format
@@ -34,7 +34,7 @@ class LeadBolt
 		$result = json_decode($result);
 		if (!$result) {
 			print "LeadBolt: ERROR - decoding json. <br>";
-			Yii::app()->end(1);
+			return 1;
 		}
 		curl_close($curl);
 
@@ -68,7 +68,7 @@ class LeadBolt
 			}
 		}
 		print "LeadBolt: SUCCESS - Daily info download.  " . date('d-m-Y', strtotime($date)) . ".<br>";
-		Yii::app()->end();
+		return 0;
 	}
 
 }

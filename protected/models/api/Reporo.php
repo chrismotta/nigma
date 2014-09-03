@@ -16,7 +16,7 @@ class Reporo
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
 			print "Reporo: WARNING - Information already downloaded. <br>";
-			Yii::app()->end(2);
+			return 2;
 		}
 
 		// --- setting actions for requests
@@ -36,7 +36,7 @@ class Reporo
 
 		if (!$groups) { 
 			print "Reporo: ERROR - getting advertisers inventory <br>";
-			Yii::app()->end(1); 
+			return 1;
 		}
 
 		foreach ($groups->campaign_groups as $campaign_group) {
@@ -90,7 +90,7 @@ class Reporo
 		}
 		// --- end getting compaign_groups ids
 		print "Reporo: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
-		Yii::app()->end();
+		return 0;
 	}
 
 	/**
