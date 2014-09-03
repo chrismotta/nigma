@@ -18,7 +18,7 @@ class AdWords
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
 			print "AdWords: WARNING - Information already downloaded. <br>";
-			Yii::app()->end(2);
+			return 2;
 		}
 
 		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
@@ -64,7 +64,7 @@ class AdWords
 		}
 		
 		print "AdWords: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
-		Yii::app()->end();
+		return 0;
 	}
 
 
