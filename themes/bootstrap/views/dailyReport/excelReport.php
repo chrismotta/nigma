@@ -22,10 +22,18 @@ $this->widget('EExcelWriter', array(
         ),
         'imp',
         'imp_adv',
+        'clics',
         'conv_api',
         'conv_adv',
-        'spend',
-        'revenue',
+        array(
+            'name'  =>  'spend',
+            'value' =>  '$data->getSpendUSD()',
+            'htmlOptions'=>array('style'=>'width: 60px'),
+        ),
+        array(
+            'name' => 'revenue',
+            'value' => '$data->getRevenueUSD()',
+        ),
         array(
             'name'  => 'profit',
             'value' =>  '$data->profit',
