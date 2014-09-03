@@ -32,6 +32,9 @@
 
       <?php 
 
+      echo "<h5>VAS Attributes</h5>";
+      echo "<hr>";
+
       if ( $model->isNewRecord ) {
         echo $form->dropDownListRow($model, 'advertiser_name', $advertiser, 
             array(
@@ -127,6 +130,30 @@
       echo $form->textFieldRow($model, 'server_to_server', array('class'=>'span3'));
       echo $form->textFieldRow($model, 'startDate', array('class'=>'span3'));
       echo $form->textFieldRow($model, 'endDate', array('class'=>'span3'));
+
+      // ----- Branding attributes
+      echo "<h5>Branding Attributes</h5>";
+      echo "<hr>";
+      
+      echo $form->textFieldRow($model, 'freq_cap', array('class'=>'span3'));
+      echo $form->textFieldRow($model, 'imp_per_day', array('class'=>'span3'));
+      echo $form->textFieldRow($model, 'imp_total', array('class'=>'span3'));
+      echo $form->textFieldRow($model, 'targeting', array('class'=>'span3'));
+      echo $form->textFieldRow($model, 'sizes', array('class'=>'span3'));
+      echo $form->dropDownListRow($model, 'channel', $channels, 
+        array(
+          'prompt' => 'Select a channel', 
+          'onChange' => '
+                  if ( this.value == "Categories" || this.value == "Sites Specifics") {
+                    $("#Opportunities_channel_description").prop("disabled", false);
+                  } else {
+                    $("#Opportunities_channel_description").prop("disabled", true);
+                  }
+                  ',
+        ));
+      echo $form->textFieldRow($model, 'channel_description', array('disabled'=>true, 'class'=>'span3'));
+      echo "<hr>";
+      // ----- End - Branding attributes
 ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

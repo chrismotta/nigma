@@ -71,7 +71,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		),
 		array(
 			'name'              =>'country_name',
-			'value'             =>'$data->country->ISO2',
+			'value'             =>'$data->country ? $data->country->ISO2 : ""',
 			'headerHtmlOptions' => array('style'=>'width: 50px'),
 		),
 		array(

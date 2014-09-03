@@ -189,13 +189,14 @@ class OpportunitiesController extends Controller
 		// Get countries and carriers with status "Active"
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		
-		if ( $model->isNewRecord ) {
+		if ( $model->isNewRecord || !$model->country_id ) {
 			$carrier = array();
 		} else {
 			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
 		}
 		
 		$model_adv = KHtml::enumItem($model, 'model_adv');
+		$channels = KHtml::enumItem($model, 'channel');
 
 		$this->renderPartial('_form',array(
 			'model'      =>$model,
@@ -205,6 +206,7 @@ class OpportunitiesController extends Controller
 			'country'    =>$country,
 			'carrier'    =>$carrier,
 			'model_adv'  =>$model_adv,
+			'channels'   =>$channels,
 		), false, true);
 	}
 

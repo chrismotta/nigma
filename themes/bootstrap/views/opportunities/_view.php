@@ -87,6 +87,13 @@
 			'server_to_server',
 			'startDate',
 			'endDate',
+			'freq_cap',
+			'imp_per_day',
+			'imp_total',
+			'targeting',
+			'sizes',
+			'channel',
+			'channel_description',
 		),
 	)); ?>
 
