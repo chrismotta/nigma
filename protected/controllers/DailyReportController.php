@@ -29,7 +29,7 @@ class DailyReportController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport'),
-				'roles'=>array('admin', 'media', 'media_manager'),
+				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
