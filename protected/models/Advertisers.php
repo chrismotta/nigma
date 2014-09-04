@@ -41,8 +41,9 @@ class Advertisers extends CActiveRecord
 			array('prefix, name, cat', 'required'),
 			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
-			array('prefix', 'length', 'max'=>45),
+			array('prefix', 'length', 'max'=>4),
 			array('cat', 'length', 'max'=>16),
+			array('name, prefix', 'unique'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id', 'safe', 'on'=>'search'),
