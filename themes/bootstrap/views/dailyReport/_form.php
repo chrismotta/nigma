@@ -31,6 +31,7 @@
         echo $form->textFieldRow($model, 'imp', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'imp_adv', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'clics', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'conv_api', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'conv_adv', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'spend', array('class'=>'span3', 'prepend'=>'$'));
         echo $form->textFieldRow($model, 'revenue', array('class'=>'span3','prepend'=>'$'));
