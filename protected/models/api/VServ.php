@@ -67,7 +67,7 @@ class VServ
 				}
 			}
 
-			if ( $impressions == 0) { // if no impressions dismiss campaign
+			if ( $impressions == 0 && $clicks == 0 ) { // if no impressions dismiss campaign
 				continue;
 			}
 

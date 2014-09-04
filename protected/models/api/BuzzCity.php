@@ -46,7 +46,7 @@ class BuzzCity
 			// Save campaigns information 
 			foreach ($result->data as $campaign) {
 
-				if ( $campaign->exposures == 0) { // if no impressions dismiss campaign
+				if ( $campaign->exposures == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
 					continue;
 				}
 				

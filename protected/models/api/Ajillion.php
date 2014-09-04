@@ -72,7 +72,7 @@ class Ajillion
 			$dailyReport->clics = $campaign->hits;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			$dailyReport->conv_adv = 0;
-			$dailyReport->spend = $campaign->revenue;
+			$dailyReport->spend = $campaign->cost;
 			$dailyReport->updateRevenue();
 			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			if ( !$dailyReport->save() ) {

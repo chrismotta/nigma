@@ -40,7 +40,7 @@ class LeadBolt
 
 		foreach ($result[0]->data as $campaign) {
 
-			if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
+			if ( $campaign->impressions == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
 				continue;
 			}
 			
