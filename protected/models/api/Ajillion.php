@@ -36,7 +36,7 @@ class Ajillion
 		// get all campaigns from all advertisers
 		$params = array(
 				"columns"=>array("campaign"),
-				"sums"=>array("hits", "revenue", "impressions", "conversions"),
+				"sums"=>array("hits", "cost", "impressions", "conversions"),
 				"campaign_uids"=>array(),
 				"advertiser_ids"=>$adv_ids,
 				"start_date"=>$date,
