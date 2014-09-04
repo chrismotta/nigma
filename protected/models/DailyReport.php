@@ -87,7 +87,7 @@ class DailyReport extends CActiveRecord
 			'imp' => 'Imp',
 			'imp_adv' => 'Imp Adv',
 			'clics' => 'Clics',
-			'conv_api' => 'Conv Api',
+			'conv_api' => 'Conv s2s',
 			'conv_adv' => 'Conv Adv',
 			'spend' => 'Spend',
 			'revenue' => 'Revenue',

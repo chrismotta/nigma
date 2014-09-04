@@ -73,6 +73,7 @@ class DailyReportController extends Controller
 
 			$modelCampaign = Campaigns::model()->findByPk($model->campaigns_id);
 			$model->networks_id = $modelCampaign->networks_id;
+			$model->updateRevenue();
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -95,6 +96,7 @@ class DailyReportController extends Controller
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
+			$model->updateRevenue();
 			if($model->save())
 				$this->redirect(array('admin'));
 		}

@@ -23,6 +23,7 @@ $this->widget('EExcelWriter', array(
         'imp',
         'imp_adv',
         'clics',
+        'conv_api',
         'conv_adv',
         array(
             'name'  =>  'spend',

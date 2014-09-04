@@ -192,6 +192,7 @@ $('.search-form form').submit(function(){
         	'name'	=>	'clics',
         	'htmlOptions'=>array('style'=>'width: 50px'),
         ),
+        'conv_api',
 		array(
         	'name'	=>	'conv_adv',
         	'type'	=>	'raw',
