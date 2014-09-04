@@ -61,13 +61,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'=>array(
-		'id',
+		array(
+			'name'=>'id',
+			'headerHtmlOptions' => array('style' => "width: 60px"),
+		),
 		array(
 			'name'=>'advertiser_name',
-			'value'=> '$data->advertisers->name'
+			'value'=> '$data->advertisers->name',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 		),
 		// 'status',
-		'name',
+		'commercial_name',
 		array(
 		 	'name'=>'country_name',
 		 	'value'=> '$data->country ? $data->country->name : ""',			
@@ -77,23 +81,25 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		// 'zip_code',
 		// 'phone',
 		// 'email',
+		'contact_com',
 		'contact_adm',
 		// 'currency',
 		// 'ret',
 		// 'tax_id',
 		// 'entity',
-		'net_payment',
+		//'net_payment',
 		array(
 			'name'=>'com_lastname',
 			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 100px"),
+			'headerHtmlOptions' => array('style' => "width: 120px"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
 					'icon'  =>'eye-open',
+					'url'   => '"javascript:;"',
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
@@ -113,6 +119,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				'updateAjax' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
+					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -137,11 +144,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				),
 				'duplicateAjax' => array(
 					'label' => 'Duplicate',
-					'icon'  => 'file',
+					'icon'  => 'plus-sign',
+					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalIos").html(dataInicial);
+						$("#modalIos").modal("toggle");
+
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"duplicate/"+id,
@@ -150,7 +163,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 							{
 								//alert(data);
 								$("#modalIos").html(data);
-								$("#modalIos").modal("toggle");
 							}
 						)
 				    }
@@ -158,21 +170,15 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				),
 				'generatePdf' => array(
 					'label'   => 'Generate PDF',
-					'icon'    => 'print',
+					'icon'    => 'download',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/generatePdf/" . $data->id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->status == 10 ? false : true',
-				),
-				'viewPdf' => array(
-					'label'   => 'View PDF',
-					'icon'    => 'print',
-					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
-					'options' => array('target' => '_blank'),
-					'visible' => '$data->status == 10 ? true : false',
+					//'visible' => '$data->status == 10 ? false : true',
 				),
 				'uploadPdf' => array(
-					'label'   => 'Upload PDF',
-					'icon'    => 'upload',
+					'label' => 'Upload Signed IO',
+					'icon'  => 'upload',
+					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -190,9 +196,16 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						)
 				    }
 				    ',
+				),
+				'viewPdf' => array(
+					'label'   => 'View Signed IO',
+					'icon'    => 'file',
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
+					'options' => array('target' => '_blank'),
+					'visible' => '$data->status == 10 ? true : false',
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {viewPdf} {uploadPdf} {delete}',
+			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
 		),
 	),
 )); ?>

@@ -36,7 +36,7 @@
         echo $form->dropDownListRow($model, 'cat', $categories, array('prompt' => 'Select a category'));
 
         echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
-        echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
+        //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

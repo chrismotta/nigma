@@ -123,7 +123,7 @@
                   return;
                   '
             ));
-      echo $form->radioButtonListInlineRow($model, 'model_adv', $model_adv);
+      echo $form->dropDownListRow($model, 'model_adv', $model_adv);
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));
       echo $form->dropDownListRow($model, 'account_manager_id', $account , array('prompt' => 'Select an Account Manager'));
       echo $form->checkboxRow($model, 'wifi');
@@ -153,6 +153,8 @@
         ));
       echo $form->textFieldRow($model, 'channel_description', array('disabled'=>true, 'class'=>'span3'));
       echo "<hr>";
+      echo $form->textAreaRow($model, 'comment', array('class'=>'span3', 'rows'=>5));
+
       // ----- End - Branding attributes
 ?>
         
