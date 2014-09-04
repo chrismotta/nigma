@@ -31,6 +31,10 @@ class OpportunitiesController extends Controller
 				'actions'=>array('index','view','create','update','admin','delete', 'getIos', 'getCarriers'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('index','view','redirect','admin'),
+				'roles'=>array('businness'),
+			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
