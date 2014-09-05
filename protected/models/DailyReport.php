@@ -108,7 +108,7 @@ class DailyReport extends CActiveRecord
 	}
 
 
-	public function excel()
+	public function excel($startDate=NULL, $endDate=NULL)
 	{
 		$criteria=new CDbCriteria;
 
@@ -119,6 +119,11 @@ class DailyReport extends CActiveRecord
 		$eCPM = 'ROUND((CASE WHEN imp_adv = 0 THEN spend*1000/imp ELSE spend*1000/imp_adv END), 2)';
 		$eCPC = 'ROUND(t.spend/t.clics, 2)';
 		$eCPA = 'ROUND((CASE WHEN conv_adv = 0 THEN spend/conv_api ELSE spend/conv_adv END), 2)';
+
+		if ( !$startDate && !$endDate ) {
+			$criteria->condition = 't.date >= DATE(:sDate) AND t.date <= DATE(:eDate)';
+	        $criteria->params = array(':sDate' => $startDate, ':eDate' => $endDate);
+	    }
 
 		$criteria->select=array(
 			'*', 
@@ -150,7 +155,7 @@ class DailyReport extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($startDate=NULL, $endDate=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -185,9 +190,15 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('conv_adv',$this->conv_adv);
 		$criteria->compare('spend',$this->spend,true);
 		$criteria->compare('revenue',$this->revenue);
-		$criteria->compare('date',$this->date,true);
 		$criteria->compare('is_from_api',$this->is_from_api);
 
+		// $criteria->addCondition('t.date >= DATE(' . date('Y-m-d', strtotime($startDate)) . ')');
+		// $criteria->addCondition('t.date <= DATE(' . date('Y-m-d', strtotime($endDate)) . ')');
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->condition = 't.date >= DATE(:sDate) AND t.date <= DATE(:eDate)';
+	        $criteria->params = array(':sDate' => $startDate, ':eDate' => $endDate);
+	    }
+		
 		$criteria->compare($profit,$this->profit,true);
 		$criteria->compare($ctr,$this->click_rate,true);
 		$criteria->compare($conv_rate,$this->conv_rate,true);

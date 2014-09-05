@@ -106,17 +106,88 @@ $('.search-form form').submit(function(){
 		'type'        => 'info',
 		'label'       => 'Excel Report',
 		'block'       => false,
-		'buttonType'  => 'link',
+		'buttonType'  => 'ajaxButton',
 		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalDailyReport").html(dataInicial);
+					$("#modalDailyReport").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalDailyReport").html(data);
+				}',
+			),
 		'htmlOptions' => array('id' => 'excelReport'),
 		)
 	); ?>
 </div>
 
+<br>
+
+<?php
+	$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+
+	$dateStart = date('Y-m-d', strtotime($dateStart));
+	$dateEnd = date('Y-m-d', strtotime($dateEnd));
+?>
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?>
+
+	<fieldset>
+	From: 
+	<?php 
+	    $this->widget('ext.rezvan.RDatePicker',array(
+		'name'  => 'dateStart',
+		'value' => date('d-m-Y', strtotime($dateStart)),
+		'htmlOptions' => array(
+			'style' => 'width: 80px',
+		),
+	    'options' => array(
+			'autoclose'      => true,
+			'format'         => 'dd-mm-yyyy',
+			'viewformat'     => 'dd-mm-yyyy',
+			'placement'      => 'right',
+	    ),
+	));
+	?>
+	To:
+	<?php 
+	    $this->widget('ext.rezvan.RDatePicker',array(
+		'name'        => 'dateEnd',
+		'value'       => date('d-m-Y', strtotime($dateEnd)),
+		'htmlOptions' => array(
+			'style' => 'width: 80px',
+		),
+		'options'     => array(
+			'autoclose'      => true,
+			'format'         => 'dd-mm-yyyy',
+			'viewformat'     => 'dd-mm-yyyy',
+			'placement'      => 'right',
+	    ),
+	));
+	?>
+
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+    </fieldset>
+
+<?php $this->endWidget(); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($dateStart, $dateEnd),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

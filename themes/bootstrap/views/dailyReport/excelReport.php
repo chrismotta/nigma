@@ -5,8 +5,14 @@
 $path = 'uploads/';
 $name = 'KickAds-DailyReport.xls';
 
+$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
+$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+
+$dateStart = date('Y-m-d', strtotime($dateStart));
+$dateEnd = date('Y-m-d', strtotime($dateEnd));
+
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel(),
+    'dataProvider' => $model->excel($dateStart, $dateEnd),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,

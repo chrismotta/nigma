@@ -200,11 +200,13 @@ class DailyReportController extends Controller
 
 	public function actionExcelReport()
 	{
-		$model = new DailyReport;
-		// FIXME se deberia filtrar para no importar toda la tabla
-		$this->renderPartial('excelReport',array(
-			'model' => $model,
-		));
+		if( isset($_POST['excel-report-daily']) ) {
+			$this->renderPartial('excelReport', array(
+				'model' => new DailyReport,
+			));
+		}
+
+		$this->renderPartial('_excelReport', array(), false, true);
 	}
 
 	/**
