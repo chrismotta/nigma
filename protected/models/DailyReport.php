@@ -120,9 +120,9 @@ class DailyReport extends CActiveRecord
 		$eCPC = 'ROUND(t.spend/t.clics, 2)';
 		$eCPA = 'ROUND((CASE WHEN conv_adv = 0 THEN spend/conv_api ELSE spend/conv_adv END), 2)';
 
-		if ( !$startDate && !$endDate ) {
-			$criteria->condition = 't.date >= DATE(:sDate) AND t.date <= DATE(:eDate)';
-	        $criteria->params = array(':sDate' => $startDate, ':eDate' => $endDate);
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 	    }
 
 		$criteria->select=array(
@@ -192,12 +192,10 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('revenue',$this->revenue);
 		$criteria->compare('is_from_api',$this->is_from_api);
 
-		// $criteria->addCondition('t.date >= DATE(' . date('Y-m-d', strtotime($startDate)) . ')');
-		// $criteria->addCondition('t.date <= DATE(' . date('Y-m-d', strtotime($endDate)) . ')');
 		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->condition = 't.date >= DATE(:sDate) AND t.date <= DATE(:eDate)';
-	        $criteria->params = array(':sDate' => $startDate, ':eDate' => $endDate);
-	    }
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
 		
 		$criteria->compare($profit,$this->profit,true);
 		$criteria->compare($ctr,$this->click_rate,true);

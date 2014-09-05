@@ -5,8 +5,8 @@
 $path = 'uploads/';
 $name = 'KickAds-DailyReport.xls';
 
-$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
-$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
+$dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
 
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));

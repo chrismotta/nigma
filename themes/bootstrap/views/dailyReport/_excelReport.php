@@ -5,7 +5,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Daily Report: Excel Report</h4>
+    <h4>Excel Report</h4>
 </div>
 
 
@@ -20,45 +20,49 @@
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?>
     <fieldset>
-        <?php 
-        echo "From: ";
-        
-        $this->widget('ext.rezvan.RDatePicker',array(
-            'name'  => 'dateStart',
-            'value' => date('d-m-Y', strtotime('yesterday')),
-            'htmlOptions' => array(
-                'style' => 'width: 80px',
-            ),
-            'options' => array(
-                'autoclose'      => true,
-                'format'         => 'dd-mm-yyyy',
-                'viewformat'     => 'dd-mm-yyyy',
-                'placement'      => 'right',
-            ),
-        ));
-        echo "<br>";
 
-        echo "To: ";
-        
-        $this->widget('ext.rezvan.RDatePicker',array(
-            'name'  => 'endDate',
-            'value' => date('d-m-Y', strtotime('yesterday')),
-            'htmlOptions' => array(
-                'style' => 'width: 80px',
-            ),
-            'options' => array(
-                'autoclose'      => true,
-                'format'         => 'dd-mm-yyyy',
-                'viewformat'     => 'dd-mm-yyyy',
-                'placement'      => 'right',
-            ),
-        ));
+        <div class="control-group">
+            <?php echo CHtml::label("From:", 'excel-dateStart', array('class'=>'control-label')); ?>
 
-        echo "<br>";
-        ?>
+            <div class="controls">
+                <?php $this->widget('ext.rezvan.RDatePicker',array(
+                    'name'  => 'excel-dateStart',
+                    'value' => date('d-m-Y', strtotime('yesterday')),
+                    'htmlOptions' => array(
+                        'style' => 'width: 80px',
+                    ),
+                    'options' => array(
+                        'autoclose'      => true,
+                        'format'         => 'dd-mm-yyyy',
+                        'viewformat'     => 'dd-mm-yyyy',
+                        'placement'      => 'right',
+                    ),
+                )); ?>
+            </div>
+        </div>
+            
+        <div class="control-group">
+            <?php echo CHtml::label("To:", 'excel-endDate', array('class'=>'control-label')); ?>
+            
+            <div class="controls">
+                <?php $this->widget('ext.rezvan.RDatePicker',array(
+                    'name'  => 'excel-endDate',
+                    'value' => date('d-m-Y', strtotime('yesterday')),
+                    'htmlOptions' => array(
+                        'style' => 'width: 80px',
+                    ),
+                    'options' => array(
+                        'autoclose'      => true,
+                        'format'         => 'dd-mm-yyyy',
+                        'viewformat'     => 'dd-mm-yyyy',
+                        'placement'      => 'right',
+                    ),
+                )); ?>
+            </div>
+        </div>
 
     <div class="form-actions">
-        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit', 'htmlOptions' => array('name' => 'excel-report-daily'))); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Download', 'htmlOptions' => array('name' => 'excel-report-daily'))); ?>
     </div>
     </fieldset>
 
