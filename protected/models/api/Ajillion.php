@@ -76,6 +76,7 @@ class Ajillion
 			$dailyReport->updateRevenue();
 			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "Ajillion: ERROR - Saving campaign: " . $campaign->campaign . ". <br>";
 				continue;
 			}

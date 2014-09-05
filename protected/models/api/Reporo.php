@@ -82,6 +82,7 @@ class Reporo
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
+					print json_encode($dailyReport->getErrors()) . "<br>";
 					print "Reporo: ERROR - saving campaign: " . $campaign_info->campaign_name . "<br>";
 					continue;
 				}

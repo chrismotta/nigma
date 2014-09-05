@@ -61,6 +61,7 @@ class Airpush
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "Airpush: ERROR - saving campaign: " . $campaign->campaignname . ". <br>";
 				continue;
 			}

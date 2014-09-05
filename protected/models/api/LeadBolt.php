@@ -63,6 +63,7 @@ class LeadBolt
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "LeadBolt: ERROR - saving campaign: " . $campaign->campaign_name . "<br>";
 				continue;
 			}

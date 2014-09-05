@@ -69,6 +69,7 @@ class BuzzCity
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
+					print json_encode($dailyReport->getErrors()) . "<br>";
 					print "BuzzCity: ERROR - Saving campaign: " . $campaign->title . ". <br>";
 					continue;
 				}

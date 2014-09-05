@@ -90,6 +90,7 @@ class AdWords
 		$dailyReport->updateRevenue();
 		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
 		if ( !$dailyReport->save() ) {
+			print json_encode($dailyReport->getErrors()) . "<br>";
 			print "AdWords: ERROR - saving campaign: " . $campaign['campaign'] . "<br>";
 			return NULL;
 		} 

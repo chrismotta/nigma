@@ -80,6 +80,7 @@ class VServ
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "VServ: ERROR - saving campaign: " . $campaign['attr']['name'] . "<br>";
 				continue;
 			}
