@@ -212,6 +212,7 @@ $('.search-form form').submit(function(){
 		array(
 			'name'  =>	'network_name',
 			'value'	=>	'$data->networks->name',
+			'filter' => $networks_names,
 		),
 		array(	
 			'name'	=>	'imp',

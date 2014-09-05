@@ -139,8 +139,11 @@ class DailyReportController extends Controller
 		if(isset($_GET['DailyReport']))
 			$model->attributes=$_GET['DailyReport'];
 
+		$networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
+
 		$this->render('admin',array(
 			'model'=>$model,
+			'networks_names' => $networks,
 		));
 	}
 
