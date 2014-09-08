@@ -29,14 +29,6 @@ class DailyReport extends CActiveRecord
 	public $account_manager;
 	public $campaign_name;
 
-	public $profit;
-	public $click_rate;
-	public $conv_rate;
-	public $profit_perc;
-	public $eCPM;
-	public $eCPC;
-	public $eCPA;
-
 	/**
 	 * @return string the associated database table name
 	 */
@@ -58,7 +50,7 @@ class DailyReport extends CActiveRecord
 			array('spend, revenue', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, profit, click_rate, conv_rate, profit_perc, eCPM, eCPC, eCPA, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -96,40 +88,18 @@ class DailyReport extends CActiveRecord
 			'network_name'	=>	'Network Name',
 			'account_manager' => 'Account Manager',
 			'campaign_name' => 'Campaign Name',
-
-			'profit' => 'Profit',
-			'click_rate' => 'CTR',
-			'conv_rate' => 'Conv. Rate',
-			'profit_perc'=>'Profit %',
-			'eCPM' => 'eCPM',
-			'eCPC' => 'eCPC',
-			'eCPA' => 'eCPA',
 		);
 	}
 
 
-	public function excel()
+	public function excel($startDate=NULL, $endDate=NULL)
 	{
 		$criteria=new CDbCriteria;
 
-		$profit = 'revenue-spend';
-		$ctr = 'ROUND((CASE WHEN imp_adv = 0 THEN clics/imp ELSE clics/imp_adv END), 2)';
-		$conv_rate = 'ROUND((CASE WHEN conv_adv = 0 THEN conv_api/clics ELSE conv_adv/clics END), 2)';
-		$profit_perc = 'ROUND( (' . $profit . ') /revenue, 2)';
-		$eCPM = 'ROUND((CASE WHEN imp_adv = 0 THEN spend*1000/imp ELSE spend*1000/imp_adv END), 2)';
-		$eCPC = 'ROUND(t.spend/t.clics, 2)';
-		$eCPA = 'ROUND((CASE WHEN conv_adv = 0 THEN spend/conv_api ELSE spend/conv_adv END), 2)';
-
-		$criteria->select=array(
-			'*', 
-			$profit . ' as profit', 
-			$ctr . ' as click_rate',
-			$conv_rate . ' as conv_rate',
-			$profit_perc . ' as profit_perc',
-			$eCPM . ' as eCPM',
-			$eCPC . ' as eCPC',
-			$eCPA . ' as eCPA',
-		);
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+	    }
 
 		$criteria->with = array( 'campaigns', 'networks' );
 
@@ -150,30 +120,11 @@ class DailyReport extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($startDate=NULL, $endDate=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
-		$profit = 'revenue-spend';
-		$ctr = 'ROUND((CASE WHEN imp_adv = 0 THEN clics/imp ELSE clics/imp_adv END), 2)';
-		$conv_rate = 'ROUND((CASE WHEN conv_adv = 0 THEN conv_api/clics ELSE conv_adv/clics END), 2)';
-		$profit_perc = 'ROUND( (' . $profit . ') /revenue, 2)';
-		$eCPM = 'ROUND((CASE WHEN imp_adv = 0 THEN spend*1000/imp ELSE spend*1000/imp_adv END), 2)';
-		$eCPC = 'ROUND(t.spend/t.clics, 2)';
-		$eCPA = 'ROUND((CASE WHEN conv_adv = 0 THEN spend/conv_api ELSE spend/conv_adv END), 2)';
-
-		$criteria->select=array(
-			'*', 
-			$profit . ' as profit', 
-			$ctr . ' as click_rate',
-			$conv_rate . ' as conv_rate',
-			$profit_perc . ' as profit_perc',
-			$eCPM . ' as eCPM',
-			$eCPC . ' as eCPC',
-			$eCPA . ' as eCPA',
-		);
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
@@ -185,17 +136,13 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('conv_adv',$this->conv_adv);
 		$criteria->compare('spend',$this->spend,true);
 		$criteria->compare('revenue',$this->revenue);
-		$criteria->compare('date',$this->date,true);
 		$criteria->compare('is_from_api',$this->is_from_api);
 
-		$criteria->compare($profit,$this->profit,true);
-		$criteria->compare($ctr,$this->click_rate,true);
-		$criteria->compare($conv_rate,$this->conv_rate,true);
-		$criteria->compare($profit_perc,$this->profit_perc,true);
-		$criteria->compare($eCPM,$this->eCPM,true);
-		$criteria->compare($eCPC,$this->eCPC,true);
-		$criteria->compare($eCPA,$this->eCPA,true);
-
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+		
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		$criteria->compare('networks.name',$this->network_name, true);
@@ -222,34 +169,6 @@ class DailyReport extends CActiveRecord
 		            'campaign_name'=>array(
 						'asc'  =>'campaigns.id',
 						'desc' =>'campaigns.id DESC',
-		            ),
-		            'profit'=>array(
-		            	'asc'  =>'profit',
-						'desc' =>'profit DESC',	
-		            ),
-		            'click_rate'=>array(
-		            	'asc'  =>'click_rate',
-						'desc' =>'click_rate DESC',
-		            ),
-		            'conv_rate'=>array(
-		            	'asc'  =>'conv_rate',
-						'desc' =>'conv_rate DESC',
-		            ),
-		            'profit_perc'=>array(
-		            	'asc'  =>'profit_perc',
-						'desc' =>'profit_perc DESC',
-		            ),
-		            'eCPM'=>array(
-		            	'asc'  =>'eCPM',
-						'desc' =>'eCPM DESC',
-		            ),
-		            'eCPC'=>array(
-		            	'asc'  =>'eCPC',
-						'desc' =>'eCPC DESC',
-		            ),
-		            'eCPA'=>array(
-		            	'asc'  =>'eCPA',
-						'desc' =>'eCPA DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
@@ -341,4 +260,51 @@ class DailyReport extends CActiveRecord
 		$currency = Currency::model()->findByDate($this->date);
 		return $currency ? number_format($this->spend / $currency[$net_currency], 2) : 'Currency ERROR!';
 	}
+
+	public function getProfit()
+	{
+		return $this->getRevenueUSD() - $this->getSpendUSD();
+	}
+
+	public function getCtr()
+	{
+		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
+		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 2);
+		return $r;
+	}
+
+	public function getConvRate()
+	{
+		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
+		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 2 );
+		return $r;
+	}
+
+	public function getProfitPerc()
+	{
+		$revenue = $this->getRevenueUSD();
+		$r = $revenue == 0 ? 0 : number_format($this->getProfit() / $revenue, 2);
+		return $r;
+	}
+
+	public function getECPM()
+	{
+		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
+		$r = $imp == 0 ? 0 : number_format($this->getSpendUSD() * 1000 / $imp, 2);
+		return $r;
+	}
+
+	public function getECPC()
+	{
+		$r = $this->clics == 0 ? 0 : number_format($this->getSpendUSD() / $this->clics, 2);
+		return $r;
+	}
+
+	public function getECPA()
+	{
+		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
+		$r = $conv == 0 ? 0 : number_format($this->getSpendUSD() / $conv, 2);
+		return $r;
+	}
+
 }

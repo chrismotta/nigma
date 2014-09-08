@@ -67,7 +67,7 @@ class VServ
 				}
 			}
 
-			if ( $impressions == 0) { // if no impressions dismiss campaign
+			if ( $impressions == 0 && $clicks == 0 ) { // if no impressions dismiss campaign
 				continue;
 			}
 
@@ -80,6 +80,7 @@ class VServ
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "VServ: ERROR - saving campaign: " . $campaign['attr']['name'] . "<br>";
 				continue;
 			}

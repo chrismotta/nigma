@@ -5,8 +5,14 @@
 $path = 'uploads/';
 $name = 'KickAds-DailyReport.xls';
 
+$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
+$dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
+
+$dateStart = date('Y-m-d', strtotime($dateStart));
+$dateEnd = date('Y-m-d', strtotime($dateEnd));
+
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel(),
+    'dataProvider' => $model->excel($dateStart, $dateEnd),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
@@ -28,39 +34,38 @@ $this->widget('EExcelWriter', array(
         array(
             'name'  =>  'spend',
             'value' =>  '$data->getSpendUSD()',
-            'htmlOptions'=>array('style'=>'width: 60px'),
         ),
         array(
             'name'  => 'revenue',
             'value' => '$data->getRevenueUSD()',
         ),
         array(
-            'name'  => 'profit',
-            'value' =>  '$data->profit',
+            'header'  => 'Profit',
+            'value' =>  '$data->getProfit()',
         ),
         array(
-            'name'  => 'click_rate',
-            'value' => '$data->click_rate * 100',
+            'header'  => 'Click Rate',
+            'value' => '$data->getCtr() * 100',
         ),
         array(
-            'name'  => 'conv_rate',
-            'value' => '$data->conv_rate * 100',
+            'header'  => 'Conv Rate',
+            'value' => '$data->getConvRate() * 100',
         ),
         array(
-            'name'  => 'profit_perc',
-            'value' => '$data->profit_perc * 100',
+            'header'  => 'Profit Perc',
+            'value' => '$data->getProfitPerc() * 100',
         ),
         array(
-            'name'  => 'eCPM',
-            'value' => '$data->eCPM',
+            'header'  => 'eCPM',
+            'value' => '$data->getECPM()',
         ),
         array(
-            'name'  => 'eCPC',
-            'value' => '$data->eCPC',
+            'header'  => 'eCPC',
+            'value' => '$data->getECPC()',
         ),
         array(
-            'name'  => 'eCPA',
-            'value' => '$data->eCPA',
+            'header'  => 'eCPA',
+            'value' => '$data->getECPA()',
         ),
         array(
             'name'  => 'date',

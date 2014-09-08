@@ -40,7 +40,7 @@ class LeadBolt
 
 		foreach ($result[0]->data as $campaign) {
 
-			if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
+			if ( $campaign->impressions == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
 				continue;
 			}
 			
@@ -63,6 +63,7 @@ class LeadBolt
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "LeadBolt: ERROR - saving campaign: " . $campaign->campaign_name . "<br>";
 				continue;
 			}

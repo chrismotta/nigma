@@ -106,17 +106,88 @@ $('.search-form form').submit(function(){
 		'type'        => 'info',
 		'label'       => 'Excel Report',
 		'block'       => false,
-		'buttonType'  => 'link',
+		'buttonType'  => 'ajaxButton',
 		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalDailyReport").html(dataInicial);
+					$("#modalDailyReport").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalDailyReport").html(data);
+				}',
+			),
 		'htmlOptions' => array('id' => 'excelReport'),
 		)
 	); ?>
 </div>
 
+<br>
+
+<?php
+	$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+
+	$dateStart = date('Y-m-d', strtotime($dateStart));
+	$dateEnd = date('Y-m-d', strtotime($dateEnd));
+?>
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?>
+
+	<fieldset>
+	From: 
+	<?php 
+	    $this->widget('ext.rezvan.RDatePicker',array(
+		'name'  => 'dateStart',
+		'value' => date('d-m-Y', strtotime($dateStart)),
+		'htmlOptions' => array(
+			'style' => 'width: 80px',
+		),
+	    'options' => array(
+			'autoclose'      => true,
+			'format'         => 'dd-mm-yyyy',
+			'viewformat'     => 'dd-mm-yyyy',
+			'placement'      => 'right',
+	    ),
+	));
+	?>
+	To:
+	<?php 
+	    $this->widget('ext.rezvan.RDatePicker',array(
+		'name'        => 'dateEnd',
+		'value'       => date('d-m-Y', strtotime($dateEnd)),
+		'htmlOptions' => array(
+			'style' => 'width: 80px',
+		),
+		'options'     => array(
+			'autoclose'      => true,
+			'format'         => 'dd-mm-yyyy',
+			'viewformat'     => 'dd-mm-yyyy',
+			'placement'      => 'right',
+	    ),
+	));
+	?>
+
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+    </fieldset>
+
+<?php $this->endWidget(); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($dateStart, $dateEnd),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
@@ -141,6 +212,7 @@ $('.search-form form').submit(function(){
 		array(
 			'name'  =>	'network_name',
 			'value'	=>	'$data->networks->name',
+			'filter' => $networks_names,
 		),
 		array(	
 			'name'	=>	'imp',
@@ -246,38 +318,38 @@ $('.search-form form').submit(function(){
         	'htmlOptions'=>array('style'=>'width: 60px'),
         ),
 		array(
-			'name'  => 'profit',
-			'value'	=>	'$data->profit',
+			'header'  => 'Profit',
+			'value'	=>	'$data->getProfit()',
 			'htmlOptions'=>array('style'=>'width: 60px'),
 		),
 		array(
-			'name'  => 'click_rate',
-			'value' => '$data->click_rate * 100 . "%"',
+			'header'  => 'Click Rate',
+			'value' => '$data->getCtr() * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px'),
 		),
 		array(
-			'name'  => 'conv_rate',
-			'value' => '$data->conv_rate * 100 . "%"',
+			'header'  => 'Conv Rate',
+			'value' => '$data->getConvRate() * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px'),
 		),
 		array(
-			'name'  => 'profit_perc',
-			'value' => '$data->profit_perc * 100 . "%"',
+			'header'  => 'Profit Perc',
+			'value' => '$data->getProfitPerc() * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px'),
 		),
 		array(
-			'name'  => 'eCPM',
-			'value' => '$data->eCPM',
+			'header'  => 'eCPM',
+			'value' => '$data->getECPM()',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
-			'name'  => 'eCPC',
-			'value' => '$data->eCPC',
+			'header'  => 'eCPC',
+			'value' => '$data->getECPC()',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
-			'name'  => 'eCPA',
-			'value' => '$data->eCPA',
+			'header'  => 'eCPA',
+			'value' => '$data->getECPA()',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(

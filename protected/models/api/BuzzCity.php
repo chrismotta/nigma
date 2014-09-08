@@ -46,7 +46,7 @@ class BuzzCity
 			// Save campaigns information 
 			foreach ($result->data as $campaign) {
 
-				if ( $campaign->exposures == 0) { // if no impressions dismiss campaign
+				if ( $campaign->exposures == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
 					continue;
 				}
 				
@@ -69,6 +69,7 @@ class BuzzCity
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
+					print json_encode($dailyReport->getErrors()) . "<br>";
 					print "BuzzCity: ERROR - Saving campaign: " . $campaign->title . ". <br>";
 					continue;
 				}

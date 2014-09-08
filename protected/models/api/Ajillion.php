@@ -36,7 +36,7 @@ class Ajillion
 		// get all campaigns from all advertisers
 		$params = array(
 				"columns"=>array("campaign"),
-				"sums"=>array("hits", "revenue", "impressions", "conversions"),
+				"sums"=>array("hits", "cost", "impressions", "conversions"),
 				"campaign_uids"=>array(),
 				"advertiser_ids"=>$adv_ids,
 				"start_date"=>$date,
@@ -72,10 +72,11 @@ class Ajillion
 			$dailyReport->clics = $campaign->hits;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			$dailyReport->conv_adv = 0;
-			$dailyReport->spend = $campaign->revenue;
+			$dailyReport->spend = number_format($campaign->cost, 2);
 			$dailyReport->updateRevenue();
 			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			if ( !$dailyReport->save() ) {
+				print json_encode($dailyReport->getErrors()) . "<br>";
 				print "Ajillion: ERROR - Saving campaign: " . $campaign->campaign . ". <br>";
 				continue;
 			}
