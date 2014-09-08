@@ -143,7 +143,7 @@ $('.search-form form').submit(function(){
         // to enable ajax validation
         'enableAjaxValidation'=>true,
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
-    )); ?>
+    )); ?> 
 
 	<fieldset>
 	From: 

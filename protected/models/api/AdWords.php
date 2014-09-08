@@ -1,7 +1,7 @@
 <?php
 
 class AdWords
-{
+{ 
 
 	private $network_id = 4;
 	private $adWords_version = 'v201406';
