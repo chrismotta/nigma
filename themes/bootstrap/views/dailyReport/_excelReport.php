@@ -1,4 +1,4 @@
-<?php
+<?php 
 /* @var $this DailyReportController */
 /* @var $form CActiveForm */
 ?>

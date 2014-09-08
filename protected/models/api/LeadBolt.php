@@ -1,7 +1,7 @@
 <?php
 
 class LeadBolt
-{
+{ 
 
 	private $network_id = 6;
 

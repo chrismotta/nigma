@@ -1,7 +1,7 @@
 <?php
 
 class Airpush
-{
+{ 
 
 	private $network_id = 1;
 

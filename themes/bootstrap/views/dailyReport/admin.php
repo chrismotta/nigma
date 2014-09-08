@@ -129,8 +129,8 @@ $('.search-form form').submit(function(){
 <br>
 
 <?php
-	$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
-	$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
@@ -142,8 +142,10 @@ $('.search-form form').submit(function(){
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
         'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/dailyReport/admin',
+        'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
-    )); ?>
+    )); ?> 
 
 	<fieldset>
 	From: 
