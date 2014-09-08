@@ -15,6 +15,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emulatePrepare'   => true,
 					'username'         => 'root',
 					'password'         => 'pernambuco',
+					'charset'          => 'utf8',
 				);
 		break;
 	case 'test.kickadserver.mobi':
@@ -23,6 +24,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emulatePrepare'   => true,
 					'username'         => 'root',
 					'password'         => 'pernambuco',
+					'charset'          => 'utf8',
 				);
 		break;
 	case '70.38.54.225':
@@ -33,6 +35,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emulatePrepare'   => true,
 					'username'         => 'root',
 					'password'         => 'pernambuco',
+					'charset'          => 'utf8',
 				);
 		break;
 	
@@ -50,7 +53,7 @@ return array(
 	'timeZone'       =>  'America/Argentina/Buenos_Aires',
 	'language'       => 'en',
 	'sourceLanguage' => 'en',
-	'charset'        => 'utf-8',
+	'charset'        => 'UTF-8',
 
 	// preloading 'log' component
 	'preload' =>array('log'),
