@@ -1,4 +1,4 @@
-<?php
+<?php 
 
 /**
  * This is the model class for table "daily_report".
@@ -154,6 +154,9 @@ class DailyReport extends CActiveRecord
 			'criteria'=>$criteria,
 			// Setting 'sort' property in order to add 
 			// a sort tool in the related collumns
+			'pagination'=>array(
+                'pageSize'=>30,
+            ),
 			'sort'=>array(
 				'defaultOrder' => 't.id DESC',
 				'attributes'   =>array(

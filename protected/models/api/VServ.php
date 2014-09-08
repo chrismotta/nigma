@@ -1,7 +1,7 @@
 <?php
 
 class VServ
-{
+{ 
 
 	private $network_id = 11;
 

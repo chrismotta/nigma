@@ -1,7 +1,7 @@
 <?php
 
 class Ajillion
-{
+{ 
 
 	private $network_id = 3;
 

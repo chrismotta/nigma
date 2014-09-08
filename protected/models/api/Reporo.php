@@ -1,7 +1,7 @@
 <?php
 
 class Reporo
-{
+{ 
 
 	private $network_id = 2;
 

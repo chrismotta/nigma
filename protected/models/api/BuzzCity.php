@@ -1,7 +1,7 @@
 <?php
 
 class BuzzCity
-{
+{ 
 
 	private $networks_ids = array(7, 8, 9, 10);
 
