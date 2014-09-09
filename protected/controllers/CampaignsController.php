@@ -162,11 +162,28 @@ class CampaignsController extends Controller
 		 */
 
 		// use listData in order to send a list of categories to the view
-		$opportunities = CHtml::listData(Opportunities::model()->findAll(
-			array('order'=>'id', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
-			'id', 
-			function($opp) { return $opp->getVirtualName(); }
-		);
+		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+		$isAdmin = false;
+		foreach ($roles as $role => $value) {
+			if ( $role == 'admin' or $role == 'media_manager') {
+				$isAdmin = true;
+				break;
+			}
+		}
+
+		if ( $isAdmin ) {
+			$opportunities = CHtml::listData(Opportunities::model()->findAll(
+				array('order'=>'id')), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+		} else {
+			$opportunities = CHtml::listData(Opportunities::model()->findAll(
+				array('order'=>'id', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+		}
 		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
