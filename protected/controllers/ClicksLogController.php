@@ -11,6 +11,8 @@ class ClicksLogController extends Controller
 	public function actionIndex()
 	{
 
+		//$timestampStart = microtime();
+
 		// Get Request
 		if( isset( $_GET['cid'] ) && isset( $_GET['nid'] ) ){
 			$cid = $_GET['cid'];
@@ -53,7 +55,7 @@ class ClicksLogController extends Controller
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 
 		// Get ip data
-
+/* ip2location off
 		$ip = isset($model->ip_forwarded) ? $model->ip_forwarded : $model->server_ip;
 		if(isset($ip)){
 			$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
@@ -63,7 +65,7 @@ class ClicksLogController extends Controller
 			$model->city    = $ipData->cityName;
 			$model->carrier = $ipData->mobileCarrierName;
 		}
-
+*/
 		// Get userAgent data
 		// .example:
 		// Mozilla/5.0 (Linux; Android 4.4.2; GT-I9500 Build/KOT49H) 
@@ -73,7 +75,7 @@ class ClicksLogController extends Controller
 		// Mozilla/5.0 (Linux; U; Android 4.1.1; es-ar; HTC One X Build/JRO03C) 
 		// AppleWebKit/534.30 (KHTML, like Gecko) 
 		// Version/4.0 Mobile Safari/534.30
-
+/* wurfl off
 		if(isset($model->user_agent)){
 
 			$wurfl = WurflManager::loadWurfl();
@@ -82,7 +84,7 @@ class ClicksLogController extends Controller
 			$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
 			$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
 		}
-
+*/
 		//var_dump($model);
 		//print "<hr/>";
 
@@ -121,7 +123,7 @@ class ClicksLogController extends Controller
 			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)
-			setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
+			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if( strpos($redirectURL, "?") ){
 				$redirectURL.= "&";
@@ -130,8 +132,8 @@ class ClicksLogController extends Controller
 			}
 			$redirectURL.= $s2s."=".$ktoken;
 
-			//parametros para playtown
-			
+			//parametros para oneclick
+/*
 			if($campaign->post_data){
 				$redirectURL.= "&os=".$model->os;
 				$redirectURL.= "&device=".$model->device;
@@ -140,17 +142,22 @@ class ClicksLogController extends Controller
 				$redirectURL.= "&referer=".$model->referer;
 				$redirectURL.= "&app=".$model->app;
 			}
-
-			/*
+*/
+			
 			// testing
+			/*
 			echo $redirectURL;
 			echo "<hr/>";
-			var_dump($_SERVER);
+			echo "time: ". (microtime() - $timestampStart);
+			//var_dump($_SERVER);
 			Yii::app()->end();
-			 */
+			*/
+			
+			
 
 			// redirect to campaign url
 			$this->redirect($redirectURL);
+			//header("Location: ".$redirectURL);
 		}else{
 			print "no guardado";
 		}
