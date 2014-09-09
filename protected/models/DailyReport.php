@@ -64,6 +64,7 @@ class DailyReport extends CActiveRecord
 		return array(
 			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
+			'carriers' => array(self::MANY_MANY, 'Carriers', 'daily_report_has_carriers(daily_report_id, carriers_id_carrier)'),
 		);
 	}
 
