@@ -268,17 +268,18 @@ $('.search-form form').submit(function(){
         ),
         'conv_api',
 		array(
-        	'name'	=>	'conv_adv',
-        	'type'	=>	'raw',
-			'htmlOptions'=>array('style'=>'width: 85px'),
-        	'value' =>	'
+			'name'        => 'conv_adv',
+			'type'        => 'raw',
+			'visible' => true,
+			'htmlOptions' => array('style'=>'width: 85px'),
+			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
-        				"style" => "width:35px;", 
+        				"style" => "width:35px;",
         				"onkeydown" => "
 	        				var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
 	        				r.addClass( \"control-group error\" );
-        				" 
+        				",
         				)) . " " .
         			CHtml::ajaxLink(
             				"<i class=\"icon-pencil\"></i>",
@@ -309,6 +310,45 @@ $('.search-form form').submit(function(){
 						)
 					',
         ),
+		array(
+			'name'        => 'conv_adv',
+			'type'        => 'raw',
+			'htmlOptions' => array('style'=>'width: 85px'),
+			'value'       => '
+					$data->conv_adv . " " .
+					CHtml::ajaxLink(
+            				"<i class=\"icon-plus\"></i>",
+	            			Yii::app()->controller->createUrl("multiRate"),
+	        				array(
+								"type"     => "POST",
+								"dataType" => "json",
+								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-conv\" + $row).val()", "col" => "conv_adv" ) ,
+								"success"  => "function( data )
+									{
+
+										$("#modalDailyReport").html(data);
+										$("#modalDailyReport").modal("toggle");
+
+										$.fn.yiiGridView.update(\"daily-report-grid\", {
+											complete: function(jqXHR, textStatus) {
+												if (textStatus == \'success\') {
+													// change css properties
+													var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
+													r.removeClass( \"control-group error\" );
+													r.addClass( \"control-group success\" );
+												}
+											}
+										});
+									}",
+								),
+							array(
+								"style"               => "width: 20px",
+								"rel"                 => "tooltip",
+								"data-original-title" => "Update"
+								)
+						)
+				',
+		),
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',

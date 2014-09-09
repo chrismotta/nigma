@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport'),
+				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -211,6 +211,37 @@ class DailyReportController extends Controller
 
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
+
+	public function actionMultiRate()
+	{
+
+		if ( isset($_POST['id']) ) {
+			$id = $_POST['id'];
+		} else {
+			Yii::app()->end();
+		}
+
+		if ( isset($_POST['multiRate-submit']) ) {
+			print "-- submit <br>";
+			return;
+		}
+
+		$model = $this->loadModel($id);
+
+		// $opp = $model->with(array('campaigns.opportunities'))->findAll();
+		// echo json_encode($opp) . '<hr>'; return;
+		
+		// $carriers = Carriers::model()->findAll( array('order' => 'mobile_brand', 'condition' => 'id_country=:c_id', 'params' => array(':c_id' => $opp->country_id)) );
+
+		// echo json_encode($carriers) . '<hr>'; return;
+		// var_dump($carriers); return;
+
+		$daily_carriers = DailyReportHasCarriers::model()->findAll(array('order'=>'daily_report_id', 'condition'=>'daily_report_id=:id', 'params'=>array(':id'=>$id)));
+
+		$this->renderPartial('_multiRate', array(
+			'daily_carriers' => $daily_carriers,
+		), false, true);
+	}	
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
