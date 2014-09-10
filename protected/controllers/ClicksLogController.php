@@ -176,7 +176,8 @@ class ClicksLogController extends Controller
 			if($test){
 				echo json_encode($ts);
 			}else{
-				$this->redirect($redirectURL);
+				//$this->redirect($redirectURL);
+				header("Location: ".$redirectURL);
 			}
 				
 		}else{
