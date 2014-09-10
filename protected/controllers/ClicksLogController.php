@@ -147,8 +147,8 @@ class ClicksLogController extends Controller
 
 		if($test){
 			if($_GET['ts'] == '1'){
-				header("Location: ".$redirectURL);
-				die();
+				//header("Location: ".$redirectURL);
+				die($redirectURL);
 			}
 		}
 
