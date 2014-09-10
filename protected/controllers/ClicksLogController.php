@@ -60,6 +60,14 @@ class ClicksLogController extends Controller
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 
 		$ts['model']         = microtime(true);
+
+		isset( $_GET['ts'] ) ? $test = true : $test = false;
+		if($test){
+			if($_GET['ts'] == '1'){
+				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
+				die();
+			}
+		}
 			
 		if($test){
 		
@@ -159,14 +167,6 @@ class ClicksLogController extends Controller
 			}
 */
 			
-
-		isset( $_GET['ts'] ) ? $test = true : $test = false;
-		if($test){
-			if($_GET['ts'] == '1'){
-				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
-				die();
-			}
-		}
 			
 			// testing
 			/*
