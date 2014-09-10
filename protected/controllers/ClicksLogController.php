@@ -185,6 +185,7 @@ class ClicksLogController extends Controller
 			}else{
 				//$this->redirect($redirectURL);
 				header("Location: ".$redirectURL);
+				die();
 			}
 				
 		}else{
