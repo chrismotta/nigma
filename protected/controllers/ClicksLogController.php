@@ -147,7 +147,7 @@ class ClicksLogController extends Controller
 
 		if($test){
 			if($_GET['ts'] == '1'){
-				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
+				header($redirectURL);
 				die();
 			}
 		}
@@ -157,7 +157,7 @@ class ClicksLogController extends Controller
 
 
 
-			
+
 
 			// Guardo los datos en cookies (Expira en 1 hora)
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
