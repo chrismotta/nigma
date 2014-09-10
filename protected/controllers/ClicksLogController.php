@@ -11,6 +11,7 @@ class ClicksLogController extends Controller
 	public function actionIndex()
 	{
 			
+		isset( $_GET['ts'] ) ? $test = true : $test = false;
 
 		$ts['request'] = $_SERVER['REQUEST_TIME'];
 		$ts['start'] = microtime(true);
@@ -60,15 +61,8 @@ class ClicksLogController extends Controller
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 
 		$ts['model']         = microtime(true);
-
-		isset( $_GET['ts'] ) ? $test = true : $test = false;
-		if($test){
-			if($_GET['ts'] == '1'){
-				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
-				die();
-			}
-		}
-			
+		
+		/*	
 		if($test){
 		
 			// Get ip data
@@ -107,6 +101,7 @@ class ClicksLogController extends Controller
 			$ts['wurfl'] = microtime(true);
 
 		}
+		*/
 
 		//var_dump($model);
 		//print "<hr/>";
@@ -144,6 +139,25 @@ class ClicksLogController extends Controller
 			//print "<hr/>";
 			$model->tid = $ktoken;
 			$model->save();
+
+
+
+
+
+
+		if($test){
+			if($_GET['ts'] == '1'){
+				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
+				die();
+			}
+		}
+
+
+
+
+
+
+			
 
 			// Guardo los datos en cookies (Expira en 1 hora)
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
