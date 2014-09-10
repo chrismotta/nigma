@@ -10,14 +10,6 @@ class ClicksLogController extends Controller
 	 */
 	public function actionIndex()
 	{
-
-		isset( $_GET['ts'] ) ? $test = true : $test = false;
-		if($test){
-			if($_GET['ts'] == '1'){
-				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
-				die();
-			}
-		}
 			
 
 		$ts['request'] = $_SERVER['REQUEST_TIME'];
@@ -49,6 +41,14 @@ class ClicksLogController extends Controller
 
 		//print_r($campaign);
 		//print "url: ".$redirectURL."<hr/>";
+
+		isset( $_GET['ts'] ) ? $test = true : $test = false;
+		if($test){
+			if($_GET['ts'] == '1'){
+				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
+				die();
+			}
+		}
 
 		// Write down a log
 
