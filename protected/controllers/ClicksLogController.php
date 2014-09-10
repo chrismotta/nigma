@@ -12,10 +12,13 @@ class ClicksLogController extends Controller
 	{
 
 		isset( $_GET['ts'] ) ? $test = true : $test = false;
-
-		if($_GET['ts'] == '1'){
-			header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
+		if($test){
+			if($_GET['ts'] == '1'){
+				header('Location: http://wct.jmaservicios.com/FMOAPI/SolicitudPin.aspx?c=283');
+				die();
+			}
 		}
+			
 
 		$ts['request'] = $_SERVER['REQUEST_TIME'];
 		$ts['start'] = microtime(true);
