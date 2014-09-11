@@ -10,6 +10,11 @@ class ClicksLogController extends Controller
 	 */
 	public function actionIndex()
 	{
+			
+		isset( $_GET['ts'] ) ? $test = true : $test = false;
+
+		$ts['request'] = $_SERVER['REQUEST_TIME'];
+		$ts['start'] = microtime(true);
 
 		// Get Request
 		if( isset( $_GET['cid'] ) && isset( $_GET['nid'] ) ){
@@ -25,8 +30,11 @@ class ClicksLogController extends Controller
 		
 		if($campaign = Campaigns::model()->findByPk($cid)){
 			$redirectURL          = $campaign->url;
+			$ts['campaign']       = microtime(true);
+			
 			$s2s                  = $campaign->opportunities->server_to_server;
 			if(!isset($s2s)) $s2s = "ktoken";
+			$ts['s2s']            = microtime(true);
 		}else{
 			//print "campaign: null<hr/>";
 			Yii::app()->end();
@@ -52,36 +60,48 @@ class ClicksLogController extends Controller
 		$model->referer      = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 
-		// Get ip data
+		$ts['model']         = microtime(true);
+		
+		
+		if($test){
+		
+			// Get ip data
 
-		$ip = isset($model->ip_forwarded) ? $model->ip_forwarded : $model->server_ip;
-		if(isset($ip)){
-			$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
-			$location       = new IP2Location($binPath, IP2Location::FILE_IO);
-			$ipData         = $location->lookup($ip, IP2Location::ALL);
-			$model->country = $ipData->countryName;
-			$model->city    = $ipData->cityName;
-			$model->carrier = $ipData->mobileCarrierName;
+			$ip = isset($model->ip_forwarded) ? $model->ip_forwarded : $model->server_ip;
+			if(isset($ip)){
+				$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+				$location       = new IP2Location($binPath, IP2Location::FILE_IO);
+				$ipData         = $location->lookup($ip, IP2Location::ALL);
+				$model->country = $ipData->countryName;
+				$model->city    = $ipData->cityName;
+				$model->carrier = $ipData->mobileCarrierName;
+			}
+
+			$ts['ip2location']  = microtime(true);
+
+			// Get userAgent data
+			// .example:
+			// Mozilla/5.0 (Linux; Android 4.4.2; GT-I9500 Build/KOT49H) 
+			// AppleWebKit/537.36 (KHTML, like Gecko)
+			// Chrome/36.0.1985.131 Mobile Safari/537.36
+			// .example:
+			// Mozilla/5.0 (Linux; U; Android 4.1.1; es-ar; HTC One X Build/JRO03C) 
+			// AppleWebKit/534.30 (KHTML, like Gecko) 
+			// Version/4.0 Mobile Safari/534.30
+
+			if(isset($model->user_agent)){
+
+				$wurfl = WurflManager::loadWurfl();
+				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
+				
+				$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
+				$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+			}
+
+			$ts['wurfl'] = microtime(true);
+
 		}
-
-		// Get userAgent data
-		// .example:
-		// Mozilla/5.0 (Linux; Android 4.4.2; GT-I9500 Build/KOT49H) 
-		// AppleWebKit/537.36 (KHTML, like Gecko)
-		// Chrome/36.0.1985.131 Mobile Safari/537.36
-		// .example:
-		// Mozilla/5.0 (Linux; U; Android 4.1.1; es-ar; HTC One X Build/JRO03C) 
-		// AppleWebKit/534.30 (KHTML, like Gecko) 
-		// Version/4.0 Mobile Safari/534.30
-
-		if(isset($model->user_agent)){
-
-			$wurfl = WurflManager::loadWurfl();
-			$device = $wurfl->getDeviceForUserAgent($model->user_agent);
-			
-			$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
-			$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
-		}
+		
 
 		//var_dump($model);
 		//print "<hr/>";
@@ -121,7 +141,7 @@ class ClicksLogController extends Controller
 			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)
-			setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
+			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if( strpos($redirectURL, "?") ){
 				$redirectURL.= "&";
@@ -130,8 +150,8 @@ class ClicksLogController extends Controller
 			}
 			$redirectURL.= $s2s."=".$ktoken;
 
-			//parametros para playtown
-			
+			//parametros para oneclick
+/*
 			if($campaign->post_data){
 				$redirectURL.= "&os=".$model->os;
 				$redirectURL.= "&device=".$model->device;
@@ -140,17 +160,29 @@ class ClicksLogController extends Controller
 				$redirectURL.= "&referer=".$model->referer;
 				$redirectURL.= "&app=".$model->app;
 			}
-
-			/*
+*/
+			
+			
 			// testing
+			/*
 			echo $redirectURL;
 			echo "<hr/>";
-			var_dump($_SERVER);
+			echo "time: ". (microtime(true) - $timestampStart);
+			//var_dump($_SERVER);
 			Yii::app()->end();
-			 */
+			*/
+			
+			$ts['redirect'] = microtime(true);
 
 			// redirect to campaign url
-			$this->redirect($redirectURL);
+			if($test){
+				echo json_encode($ts);
+			}else{
+				//$this->redirect($redirectURL);
+				header("Location: ".$redirectURL);
+				die();
+			}
+				
 		}else{
 			print "no guardado";
 		}

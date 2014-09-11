@@ -35,6 +35,11 @@ class CampaignsController extends Controller
 				'actions'=>array('index','viewAjax','redirectAjax','admin'),
 				'roles'=>array('businness'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('fetchCampaigns'),
+				'users'=>array('*'),
+				
+			),
 			/*
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
@@ -348,6 +353,26 @@ class CampaignsController extends Controller
 			Yii::app()->end();
 		}
 	}
+	
+	/**
+	 * Return an array of all campaigns in json format.
+	 * @return {cid, nid, url}
+	 */
+	public function actionFetchCampaigns()
+	{
+		/*
+		$criteria = new CDbCriteria;
+		$criteria->select = 't.url';
 
-
+		$campaigns = Campaigns::model()->findAll($criteria);
+		var_dump($campaigns);
+		echo "<hr/>";
+		*/
+	
+		$q = Yii::app()->db->createCommand()
+                    ->select('id, networks_id, url')
+                    ->from("campaigns")
+                    ->queryAll(false);
+		echo json_encode($q);
+	}
 }
