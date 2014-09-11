@@ -62,7 +62,7 @@ class ClicksLogController extends Controller
 
 		$ts['model']         = microtime(true);
 		
-		/*	
+		
 		if($test){
 		
 			// Get ip data
@@ -101,7 +101,7 @@ class ClicksLogController extends Controller
 			$ts['wurfl'] = microtime(true);
 
 		}
-		*/
+		
 
 		//var_dump($model);
 		//print "<hr/>";
@@ -139,25 +139,6 @@ class ClicksLogController extends Controller
 			//print "<hr/>";
 			$model->tid = $ktoken;
 			$model->save();
-
-
-
-
-
-
-		if($test){
-			if($_GET['ts'] == '1'){
-				//header("Location: ".$redirectURL);
-				die($redirectURL);
-			}
-		}
-
-
-
-
-
-
-
 
 			// Guardo los datos en cookies (Expira en 1 hora)
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
