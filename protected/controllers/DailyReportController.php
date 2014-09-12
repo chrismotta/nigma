@@ -73,6 +73,7 @@ class DailyReportController extends Controller
 
 			$modelCampaign = Campaigns::model()->findByPk($model->campaigns_id);
 			$model->networks_id = $modelCampaign->networks_id;
+			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			if($model->save())
 				$this->redirect(array('admin'));
@@ -96,6 +97,7 @@ class DailyReportController extends Controller
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
+			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			if($model->save())
 				$this->redirect(array('admin'));
