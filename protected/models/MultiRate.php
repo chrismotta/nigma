@@ -1,22 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "daily_report_has_carriers".
+ * This is the model class for table "multi_rate".
  *
- * The followings are the available columns in table 'daily_report_has_carriers':
+ * The followings are the available columns in table 'multi_rate':
+ * @property integer $id
  * @property integer $daily_report_id
  * @property integer $carriers_id_carrier
  * @property string $rate
  * @property integer $conv
+ *
+ * The followings are the available model relations:
+ * @property Carriers $carriersIdCarrier
+ * @property DailyReport $dailyReport
  */
-class DailyReportHasCarriers extends CActiveRecord
+class MultiRate extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'daily_report_has_carriers';
+		return 'multi_rate';
 	}
 
 	/**
@@ -32,7 +37,7 @@ class DailyReportHasCarriers extends CActiveRecord
 			array('rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('daily_report_id, carriers_id_carrier, rate, conv', 'safe', 'on'=>'search'),
+			array('id, daily_report_id, carriers_id_carrier, rate, conv', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -44,6 +49,8 @@ class DailyReportHasCarriers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'carriersIdCarrier' => array(self::BELONGS_TO, 'Carriers', 'carriers_id_carrier'),
+			'dailyReport' => array(self::BELONGS_TO, 'DailyReport', 'daily_report_id'),
 		);
 	}
 
@@ -53,6 +60,7 @@ class DailyReportHasCarriers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
+			'id' => 'ID',
 			'daily_report_id' => 'Daily Report',
 			'carriers_id_carrier' => 'Carriers Id Carrier',
 			'rate' => 'Rate',
@@ -78,6 +86,7 @@ class DailyReportHasCarriers extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->compare('id',$this->id);
 		$criteria->compare('daily_report_id',$this->daily_report_id);
 		$criteria->compare('carriers_id_carrier',$this->carriers_id_carrier);
 		$criteria->compare('rate',$this->rate,true);
@@ -92,7 +101,7 @@ class DailyReportHasCarriers extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return DailyReportHasCarriers the static model class
+	 * @return MultiRate the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
