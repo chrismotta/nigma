@@ -14,6 +14,7 @@
  * The followings are the available model relations:
  * @property GeoLocation $idCountry
  * @property Opportunities[] $opportunities
+ * @property MultiRate[] $multiRates
  */
 class Carriers extends CActiveRecord
 {
@@ -54,7 +55,7 @@ class Carriers extends CActiveRecord
 		return array(
 			'idCountry' => array(self::BELONGS_TO, 'GeoLocation', 'id_country'),
 			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'carriers_id'),
-			'dailyReports' => array(self::MANY_MANY, 'DailyReport', 'daily_report_has_carriers(carriers_id_carrier, daily_report_id)'),
+			'multiRates' => array(self::HAS_MANY, 'MultiRate', 'carriers_id_carrier'),
 		);
 	}
 

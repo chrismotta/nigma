@@ -212,34 +212,84 @@ class DailyReportController extends Controller
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
 
-	public function actionMultiRate()
+	public function actionMultiRate($id)
 	{
-
-		if ( isset($_POST['id']) ) {
-			$id = $_POST['id'];
-		} else {
-			Yii::app()->end();
-		}
-
-		if ( isset($_POST['multiRate-submit']) ) {
-			print "-- submit <br>";
-			return;
-		}
 
 		$model = $this->loadModel($id);
 
-		// $opp = $model->with(array('campaigns.opportunities'))->findAll();
-		// echo json_encode($opp) . '<hr>'; return;
-		
-		// $carriers = Carriers::model()->findAll( array('order' => 'mobile_brand', 'condition' => 'id_country=:c_id', 'params' => array(':c_id' => $opp->country_id)) );
+		// 
+		// Resolve multi rates submitted
+		// 
+		if ( isset($_POST['multiRate-submit']) ) {
 
-		// echo json_encode($carriers) . '<hr>'; return;
-		// var_dump($carriers); return;
+			// walk through all MultiRate records submitted
+			$i = 1;
+			$model->conv_adv = 0;
+			$model->revenue  = 0;
+			while ( isset($_POST['MultiRate' . $i]) ) {
 
-		$daily_carriers = DailyReportHasCarriers::model()->findAll(array('order'=>'daily_report_id', 'condition'=>'daily_report_id=:id', 'params'=>array(':id'=>$id)));
+				$tmp_id = $_POST['MultiRate' . $i]['id'];
+				if ($tmp_id != '') { // if MultiRate record already exists, load it.
+					$modelMultiRate = MultiRate::model()->findByPk($tmp_id);
+				} else {
+					$modelMultiRate = new MultiRate;
+				}
+				$modelMultiRate->attributes=$_POST['MultiRate' . $i];
+				// ignore records in blank
+				if ( $modelMultiRate->rate == 0 && $modelMultiRate->conv == 0 && $tmp_id == '') {
+					$i++;
+					continue;
+				}
+				$model->conv_adv += $modelMultiRate->conv;
+				// $model->revenue += ($modelMultiRate->conv * $modelMultiRate->rate);
+
+				if ( !$modelMultiRate->save() ) {
+					print "ERROR - " .  json_encode($modelMultiRate->getErrors()) . "<br>";
+				}
+
+				$i++;
+			}
+
+			$model->updateRevenue();
+			if ( $model->save() )
+				$this->redirect(array('admin'));
+		}
+
+
+		//
+		// Render modal for multi rates
+		//
+		if ( !$model->campaigns->opportunities->country_id ) {
+			print "ERROR - country_id NULL";
+			Yii::app()->end();
+		}
+
+		$carriers = Carriers::model()->findAll( array('order'=>'mobile_brand', 'condition'=>'id_country=:cid', 'params'=>array(':cid'=>$model->campaigns->opportunities->country_id)) ); // FIXME que pasa si country_id == NULL ???
+
+		$multi_rates = MultiRate::model()->findAll(array('order'=>'daily_report_id', 'condition'=>'daily_report_id=:id', 'params'=>array(':id'=>$id)));
+
+		// populate info into carriers list
+		foreach ($carriers as $carrier) {
+			$found = false;
+			// search every carrier in MultiRate, if carrier is not include then add to list with zero values
+			foreach ($multi_rates as $multi_rate) {
+				if ($multi_rate->carriers_id_carrier == $carrier->id_carrier) {
+					$found = true;
+					break;
+				}
+			}
+			if ( !$found ) {
+				$new = new MultiRate;
+				$new->daily_report_id = $id;
+				$new->carriers_id_carrier = $carrier->id_carrier;
+				$multi_rates[] = $new;
+			}
+		}
 
 		$this->renderPartial('_multiRate', array(
-			'daily_carriers' => $daily_carriers,
+			'model'       => $model,
+			'multi_rates' => $multi_rates,
+			'currency'    => $model->campaigns->opportunities->ios->currency,
 		), false, true);
 	}	
 

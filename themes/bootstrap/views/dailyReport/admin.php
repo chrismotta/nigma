@@ -270,7 +270,6 @@ $('.search-form form').submit(function(){
 		array(
 			'name'        => 'conv_adv',
 			'type'        => 'raw',
-			'visible' => true,
 			'htmlOptions' => array('style'=>'width: 85px'),
 			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
@@ -280,7 +279,41 @@ $('.search-form form').submit(function(){
 	        				r.removeClass( \"control-group success\" );
 	        				r.addClass( \"control-group error\" );
         				",
+        				"readonly" => $data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL,
         				)) . " " .
+					
+					//
+					// Show ajax link depending if opportunity is multi rate. The validation its done using ternary if
+					//
+
+					($data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL ?
+
+					//
+					// Ternary if == true then show multi rate ajax link
+					//
+					CHtml::ajaxLink(
+            				"<i class=\"icon-plus\"></i>",
+	            			"multiRate/" . $data->id,
+	        				array(
+								"type"     => "POST",
+								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)" ) ,
+								"success"  => "function( data )
+									{
+										$(\"#modalDailyReport\").html(data);
+										$(\"#modalDailyReport\").modal(\"toggle\");
+									}",
+								),
+							array(
+								"style"               => "width: 20px",
+								"rel"                 => "tooltip",
+								"data-original-title" => "Update"
+								)
+						) 
+					: 
+
+					//
+					// Ternary if == false then show common edit ajax link
+					//
         			CHtml::ajaxLink(
             				"<i class=\"icon-pencil\"></i>",
 	            			Yii::app()->controller->createUrl("updateColumn"),
@@ -303,52 +336,13 @@ $('.search-form form').submit(function(){
 									}",
 								),
 							array(
-								"style"               => "width: 20px",
+								"style"               => "width: 20px;",
 								"rel"                 => "tooltip",
-								"data-original-title" => "Update"
+								"data-original-title" => "Update",
 								)
-						)
+						))
 					',
         ),
-		array(
-			'name'        => 'conv_adv',
-			'type'        => 'raw',
-			'htmlOptions' => array('style'=>'width: 85px'),
-			'value'       => '
-					$data->conv_adv . " " .
-					CHtml::ajaxLink(
-            				"<i class=\"icon-plus\"></i>",
-	            			Yii::app()->controller->createUrl("multiRate"),
-	        				array(
-								"type"     => "POST",
-								"dataType" => "json",
-								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-conv\" + $row).val()", "col" => "conv_adv" ) ,
-								"success"  => "function( data )
-									{
-
-										$("#modalDailyReport").html(data);
-										$("#modalDailyReport").modal("toggle");
-
-										$.fn.yiiGridView.update(\"daily-report-grid\", {
-											complete: function(jqXHR, textStatus) {
-												if (textStatus == \'success\') {
-													// change css properties
-													var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
-													r.removeClass( \"control-group error\" );
-													r.addClass( \"control-group success\" );
-												}
-											}
-										});
-									}",
-								),
-							array(
-								"style"               => "width: 20px",
-								"rel"                 => "tooltip",
-								"data-original-title" => "Update"
-								)
-						)
-				',
-		),
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
