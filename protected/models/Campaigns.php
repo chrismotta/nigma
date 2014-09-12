@@ -277,6 +277,6 @@ class Campaigns extends CActiveRecord
 			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
 		
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
-		return $model->id . '*' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
+		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
 	}
 }
