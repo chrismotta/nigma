@@ -140,9 +140,7 @@ class Campaigns extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
-		$criteria->compare('t.id',$this->id);
-		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.id',$this->id);		
 		$criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('campaign_categories_id',$this->campaign_categories_id);
 		$criteria->compare('t.wifi',$this->wifi);
@@ -158,11 +156,16 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		// We need to list all related tables in with property
-		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'vectors', 'networks');
+		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+
+		//nomenclatura
+		$criteria->compare('t.id',$this->name,true);
+		$criteria->compare('country.ISO2',$this->name,true,'OR');
+		$criteria->compare('t.name',$this->name,true,'OR');
 
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		$filter = true;
@@ -274,6 +277,6 @@ class Campaigns extends CActiveRecord
 			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
 		
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
-		return '*' . $model->id . '*' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
+		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
 	}
 }

@@ -20,6 +20,7 @@
  * The followings are the available model relations:
  * @property Networks $networks
  * @property Campaigns $campaigns
+ * @property MultiRate[] $multiRates
  */
 class DailyReport extends CActiveRecord
 {
@@ -64,6 +65,7 @@ class DailyReport extends CActiveRecord
 		return array(
 			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
+			'multiRates' => array(self::HAS_MANY, 'MultiRate', 'daily_report_id'),
 		);
 	}
 
@@ -226,6 +228,18 @@ class DailyReport extends CActiveRecord
 	{
 		$c    = Campaigns::model()->findByPk($this->campaigns_id);
 		$opp  = Opportunities::model()->findByPk($c->opportunities_id);
+
+		// update revenue for multi carriers
+		if ($opp->rate == NULL && $opp->carriers_id == NULL) {
+			$multi_rates = MultiRate::model()->findAll(array('order'=>'daily_report_id', 'condition'=>'daily_report_id=:id', 'params'=>array(':id'=>$this->id)));
+			$this->revenue = 0;
+			foreach ($multi_rates as $multi_rate) {
+				$this->revenue += ($multi_rate->conv * $multi_rate->rate);
+			}
+			return;
+		}
+
+		// update revenue for single rate
 		$rate = $opp->rate;
 		switch ($opp->model_adv) {
 			case 'CPM':
