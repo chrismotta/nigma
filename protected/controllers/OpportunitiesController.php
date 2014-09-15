@@ -96,7 +96,9 @@ class OpportunitiesController extends Controller
 
 		if(isset($_POST['Opportunities']))
 		{
-			$model->attributes=$_POST['Opportunities'];
+			$model->carriers_id = NULL;
+			$model->rate = NULL;
+			$model->attributes = $_POST['Opportunities'];
 			if($model->save())
 				$this->redirect(array('admin'));
 		}

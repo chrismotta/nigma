@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport'),
+				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -73,6 +73,7 @@ class DailyReportController extends Controller
 
 			$modelCampaign = Campaigns::model()->findByPk($model->campaigns_id);
 			$model->networks_id = $modelCampaign->networks_id;
+			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			if($model->save())
 				$this->redirect(array('admin'));
@@ -96,6 +97,7 @@ class DailyReportController extends Controller
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
+			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			if($model->save())
 				$this->redirect(array('admin'));
@@ -211,6 +213,87 @@ class DailyReportController extends Controller
 
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
+
+	public function actionMultiRate($id)
+	{
+
+		$model = $this->loadModel($id);
+
+		// 
+		// Resolve multi rates submitted
+		// 
+		if ( isset($_POST['multiRate-submit']) ) {
+
+			// walk through all MultiRate records submitted
+			$i = 1;
+			$model->conv_adv = 0;
+			$model->revenue  = 0;
+			while ( isset($_POST['MultiRate' . $i]) ) {
+
+				$tmp_id = $_POST['MultiRate' . $i]['id'];
+				if ($tmp_id != '') { // if MultiRate record already exists, load it.
+					$modelMultiRate = MultiRate::model()->findByPk($tmp_id);
+				} else {
+					$modelMultiRate = new MultiRate;
+				}
+				$modelMultiRate->attributes=$_POST['MultiRate' . $i];
+				// ignore records in blank
+				if ( $modelMultiRate->rate == 0 && $modelMultiRate->conv == 0 && $tmp_id == '') {
+					$i++;
+					continue;
+				}
+				$model->conv_adv += $modelMultiRate->conv;
+				// $model->revenue += ($modelMultiRate->conv * $modelMultiRate->rate);
+
+				if ( !$modelMultiRate->save() ) {
+					print "ERROR - " .  json_encode($modelMultiRate->getErrors()) . "<br>";
+				}
+
+				$i++;
+			}
+
+			$model->updateRevenue();
+			if ( $model->save() )
+				$this->redirect(array('admin'));
+		}
+
+
+		//
+		// Render modal for multi rates
+		//
+		if ( !$model->campaigns->opportunities->country_id ) {
+			print "ERROR - country_id NULL";
+			Yii::app()->end();
+		}
+
+		$carriers = Carriers::model()->findAll( array('order'=>'mobile_brand', 'condition'=>'id_country=:cid', 'params'=>array(':cid'=>$model->campaigns->opportunities->country_id)) ); // FIXME que pasa si country_id == NULL ???
+
+		$multi_rates = MultiRate::model()->findAll(array('order'=>'daily_report_id', 'condition'=>'daily_report_id=:id', 'params'=>array(':id'=>$id)));
+
+		// populate info into carriers list
+		foreach ($carriers as $carrier) {
+			$found = false;
+			// search every carrier in MultiRate, if carrier is not include then add to list with zero values
+			foreach ($multi_rates as $multi_rate) {
+				if ($multi_rate->carriers_id_carrier == $carrier->id_carrier) {
+					$found = true;
+					break;
+				}
+			}
+			if ( !$found ) {
+				$new = new MultiRate;
+				$new->daily_report_id = $id;
+				$new->carriers_id_carrier = $carrier->id_carrier;
+				$multi_rates[] = $new;
+			}
+		}
+
+		$this->renderPartial('_multiRate', array(
+			'model'       => $model,
+			'multi_rates' => $multi_rates,
+			'currency'    => $model->campaigns->opportunities->ios->currency,
+		), false, true);
+	}	
 
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.

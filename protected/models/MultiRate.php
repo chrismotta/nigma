@@ -1,30 +1,27 @@
 <?php
 
 /**
- * This is the model class for table "users".
+ * This is the model class for table "multi_rate".
  *
- * The followings are the available columns in table 'users':
+ * The followings are the available columns in table 'multi_rate':
  * @property integer $id
- * @property string $username
- * @property string $password
- * @property string $email
- * @property string $name
- * @property string $lastname
- * @property string $status
+ * @property integer $daily_report_id
+ * @property integer $carriers_id_carrier
+ * @property string $rate
+ * @property integer $conv
  *
  * The followings are the available model relations:
- * @property Advertisers[] $advertisers
- * @property Ios[] $ioses
- * @property Opportunities[] $opportunities
+ * @property Carriers $carriersIdCarrier
+ * @property DailyReport $dailyReport
  */
-class Users extends CActiveRecord
+class MultiRate extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'users';
+		return 'multi_rate';
 	}
 
 	/**
@@ -35,12 +32,12 @@ class Users extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username, password, email, name, lastname', 'required'),
-			array('username, password, email, name, lastname', 'length', 'max'=>128),
-			array('status', 'length', 'max'=>8),
+			array('daily_report_id, carriers_id_carrier', 'required'),
+			array('daily_report_id, carriers_id_carrier, conv', 'numerical', 'integerOnly'=>true),
+			array('rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, username, password, email, name, lastname, status', 'safe', 'on'=>'search'),
+			array('id, daily_report_id, carriers_id_carrier, rate, conv', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -52,9 +49,8 @@ class Users extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'advertisers' => array(self::HAS_MANY, 'Advertisers', 'commercial_id'),
-			'ioses' => array(self::HAS_MANY, 'Ios', 'commercial_id'),
-			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'account_manager_id'),
+			'carriersIdCarrier' => array(self::BELONGS_TO, 'Carriers', 'carriers_id_carrier'),
+			'dailyReport' => array(self::BELONGS_TO, 'DailyReport', 'daily_report_id'),
 		);
 	}
 
@@ -65,12 +61,10 @@ class Users extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'username' => 'Username',
-			'password' => 'Password',
-			'email' => 'Email',
-			'name' => 'Name',
-			'lastname' => 'Lastname',
-			'status' => 'Status',
+			'daily_report_id' => 'Daily Report',
+			'carriers_id_carrier' => 'Carriers Id Carrier',
+			'rate' => 'Rate',
+			'conv' => 'Conv',
 		);
 	}
 
@@ -93,18 +87,13 @@ class Users extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('username',$this->username,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('lastname',$this->lastname,true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('daily_report_id',$this->daily_report_id);
+		$criteria->compare('carriers_id_carrier',$this->carriers_id_carrier);
+		$criteria->compare('rate',$this->rate,true);
+		$criteria->compare('conv',$this->conv);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-            'pagination'=>array(
-                'pageSize'=>50,
-            ),
 		));
 	}
 
@@ -112,18 +101,10 @@ class Users extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Users the static model class
+	 * @return MultiRate the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
-	}
-
-	public function findUsersByRole($role) 
-	{
-		$users_ids = AuthAssignment::model()->getUsersIdsByRole($role);
-		$criteria = new CDbCriteria;
-        $criteria->addInCondition('id', $users_ids);
-        return Users::model()->findAll($criteria);
 	}
 }
