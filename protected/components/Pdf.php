@@ -126,7 +126,7 @@ class Pdf extends EPdfFactoryDoc
     	$pdf->Cell(90, 7, 'DATE: ' . date('d-m-Y', time()), 0, 1, 'L', false);
     	$pdf->Cell(90, 7, 'BUENOS AIRES - ARGENTINA', 0, 0, 'L', false);
     	$pdf->Cell(90, 7, 'ORDER NUMBER: #' . $io->id, 0, 1, 'L', false);
-    	$pdf->Cell(90, 7, 'SANTIAGO. GUASCH @KICKADS.MOBI', 0, 0, 'L', false);
+    	$pdf->Cell(90, 7, 'SANTIAGO.GUASCH@KICKADS.MOBI', 0, 0, 'L', false);
     	$pdf->Cell(90, 7, 'KICKADS ADVERTISING NETWORK - ORDER', 0, 1, 'L', false);
     }
 
