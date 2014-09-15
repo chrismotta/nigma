@@ -80,9 +80,18 @@
                   )
                   ',
         ));
-      echo $form->dropDownListRow($model, 'carriers_id', $carrier, array('class'=>'carriers-dropdownlist', 'prompt' => 'Select a carrier', 'encode'=>false));
+
+      $model->carriers_id == NULL ? $multicarrier = true : $multicarrier = false;
+      echo $form->dropDownListRow($model, 'carriers_id', $carrier, 
+            array(
+              'class'    => 'carriers-dropdownlist', 
+              'prompt'   => 'Select a carrier', 
+              'encode'   => false,
+              'disabled' => $multicarrier
+            ));
       echo $form->checkboxRow($model, 'multi_carrier', 
             array(
+              'checked'  => $multicarrier,
               'onChange' => '
                   if (this.checked == "1") {
                     $("#Opportunities_carriers_id option:eq(0)").prop("selected", true);
@@ -93,9 +102,16 @@
                   return;
                   '
             ));
-      echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
+
+      $model->rate == NULL ? $multirate = true : $multirate = false;
+      echo $form->textFieldRow($model, 'rate', 
+            array(
+              'class'    => 'span3',
+              'disabled' => $multirate
+            ));
       echo $form->checkboxRow($model, 'multi_rate', 
             array(
+              'checked'  => $multirate,
               'onChange' => '
                   if (this.checked == "1") {
                     //alert("ok");
@@ -108,6 +124,7 @@
                   return;
                   '
             ));
+
       echo $form->textFieldRow($model, 'budget', array('class'=>'span3'));
       echo $form->checkboxRow($model, 'open_budget', 
             array(
