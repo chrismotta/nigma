@@ -154,7 +154,8 @@ class Pdf extends EPdfFactoryDoc
 		foreach ($info as $key => $value) {
 			$pdf->SetFillColor(155, 187, 89);
         	$pdf->SetTextColor(255);
-        	$pdf->Cell(60, 7, strtoupper($key), 1, 0, 'L', true);
+            // $pdf->Cell(60, 7, strtoupper($key), 1, 0, 'L', true);
+        	$pdf->MultiCell(60, 7, strtoupper($key), 1, 'L', true, 0);
 
         	if ($even) {
         		$pdf->SetFillColor(205, 221, 172);
@@ -164,7 +165,8 @@ class Pdf extends EPdfFactoryDoc
         	$even = ! $even;
 
         	$pdf->SetTextColor(0);
-        	$pdf->Cell(0, 7, strtoupper($value), 1, 1, 'L', true);
+            // $pdf->Cell(0, 7, strtoupper($value), 1, 1, 'L', true);
+        	$pdf->MultiCell(0, 7, strtoupper($value), 1, 'L', true, 1);
 
 		}
     }
