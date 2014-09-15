@@ -28,8 +28,10 @@ class Utilities {
 				$return = NULL;
 				break;
 		}
-
-		return $return;
+		if ( is_numeric($return) ) {
+			return $return;
+		}
+		return NULL;
 	}
 
 	/**
