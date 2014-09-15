@@ -42,6 +42,9 @@ class VServ
 		foreach ($result['campaignDetails']['campaign'] as $campaign) {
 			$dailyReport = new DailyReport();
 
+			if ( !isset($campaign['attr']['name']) ) // dismiss campaign without info
+				continue;
+
 			// get campaign ID used in KickAds Server, from the campaign name use in the external network
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
 
