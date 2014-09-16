@@ -285,8 +285,8 @@ class Campaigns extends CActiveRecord
 	}
 	public function countClicks($dateStart=NULL, $dateEnd=NULL)
 	{	
-		if(!$dateStart)	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
-		if(!$dateEnd) $dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+		if(!$dateStart)	$dateStart = 'today' ;
+		if(!$dateEnd) $dateEnd   = 'today';
 		
 		$dateStart = date('Y-m-d', strtotime($dateStart));
 		$dateEnd = date('Y-m-d', strtotime($dateEnd));

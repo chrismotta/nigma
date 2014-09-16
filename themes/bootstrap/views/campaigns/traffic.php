@@ -65,52 +65,12 @@ $this->widget('bootstrap.widgets.TbButton', array(
 ?>
 
 <?php
-	$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
-	$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
 ?>
-
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
-	'id'                       => 'traffic-grid',
-	'dataProvider'             => $model->searchTraffic(),
-	'filter'                   => $model,
-	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-	'template'                 =>'{items} {pager} {summary}',
-	
-	'columns'                  =>array(
-		// para incluir columnas de tablas relacionadas con search y order
-		// se usa la propiedad publica custom en 'name'
-		// y la ruta relacional de la columna en 'value'
-		array(
-			'name'              => 'advertisers_name',
-			'value'             => '$data->opportunities->ios->advertisers->name',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-        ),
-		array(
-			'name'              => 'ios_name',
-			'value'             => '$data->opportunities->ios->name',
-			'headerHtmlOptions' => array('style' => 'width: 60px'),
-        ),		
-		array(
-			'name'              => 'name',
-			'value'             => '$data->name',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-        ),
-        array(
-			'name'              => 'clicks',
-			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-        ),
-        array(
-			'name'              => 'conv',
-			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-        ),
-	),
-)); ?>
 
 <?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
@@ -119,7 +79,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'buttonType'  => 'ajaxButton',
 		'url'         => 'excelReport',
 		'ajaxOptions' => array(
-			'type'    => 'POST',
+			'type'    => 'GET',
 			'beforeSend' => 'function(data)
 				{
 			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
@@ -145,7 +105,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
         // to enable ajax validation
         'enableAjaxValidation'=>true,
         'action' => Yii::app()->getBaseUrl() . '/campaigns/traffic',
-        'method' => 'POST',
+        'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
@@ -188,6 +148,46 @@ $this->widget('bootstrap.widgets.TbButton', array(
     </fieldset>
 
 <?php $this->endWidget(); ?>
+<?php $this->widget('bootstrap.widgets.TbGridView', array(
+	'id'                       => 'traffic-grid',
+	'dataProvider'             => $model->searchTraffic(),
+	'filter'                   => $model,
+	'type'                     => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'template'                 =>'{items} {pager} {summary}',
+	
+	'columns'                  =>array(
+		// para incluir columnas de tablas relacionadas con search y order
+		// se usa la propiedad publica custom en 'name'
+		// y la ruta relacional de la columna en 'value'
+		array(
+			'name'              => 'advertisers_name',
+			'value'             => '$data->opportunities->ios->advertisers->name',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+		array(
+			'name'              => 'ios_name',
+			'value'             => '$data->opportunities->ios->name',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
+        ),		
+		array(
+			'name'              => 'name',
+			'value'             => '$data->name',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'clicks',
+			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'conv',
+			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+	),
+)); ?>
+
 
 <?php //echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
