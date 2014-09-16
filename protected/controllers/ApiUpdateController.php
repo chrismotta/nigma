@@ -10,8 +10,8 @@ class ApiUpdateController extends Controller
 		$this->actionBuzzCity();
 		$this->actionLeadBolt();
 		$this->actionReporo();
-		$this->actionVServ();
 		$this->actionAdWords();
+		$this->actionVServ();
 	}
 
 	public function actionAdWords()
