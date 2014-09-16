@@ -5,24 +5,26 @@ class Utilities {
 
 	public static function parseCampaignID($campaignname)
 	{
+
+		$campaignname = strip_tags($campaignname);
 		
 		$needle_count = substr_count($campaignname, "*");
 
 		switch ($needle_count) {
 			case 0:
 				$id_begin = 0;
-				$id_end = strpos($campaignname, "-") - 1;
-				$return = substr($campaignname, $id_begin,  $id_end + 1);
+				$id_end = strpos($campaignname, "-");
+				$return = substr($campaignname, $id_begin,  $id_end);
 				break;
 			case 1:
 				$id_begin = 0;
-				$id_end = strpos($campaignname, "*") - 1;
-				$return = substr($campaignname, $id_begin,  $id_end + 1);
+				$id_end = strpos($campaignname, "*");
+				$return = substr($campaignname, $id_begin,  $id_end);
 				break;
 			case 2:
 				$id_begin = strpos($campaignname, "*") + 1;
-				$id_end = strpos($campaignname, "*", $id_begin + 1) - 1;
-				$return = substr($campaignname, $id_begin,  $id_end + 1 - $id_begin);
+				$id_end = strpos($campaignname, "*", $id_begin + 1);
+				$return = substr($campaignname, $id_begin,  $id_end - $id_begin);
 				break;
 			default:
 				$return = NULL;
