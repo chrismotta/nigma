@@ -31,7 +31,6 @@ class Utilities {
 				break;
 		}
 		if ( is_numeric($return) ) {
-			return 3;
 			return $return;
 		}
 		return NULL;
