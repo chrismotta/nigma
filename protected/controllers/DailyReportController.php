@@ -292,7 +292,7 @@ class DailyReportController extends Controller
 			'model'       => $model,
 			'multi_rates' => $multi_rates,
 			'currency'    => $model->campaigns->opportunities->ios->currency,
-		), false, true);
+		), false, false);
 	}	
 
 	/**

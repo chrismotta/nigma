@@ -291,19 +291,19 @@ $('.search-form form').submit(function(){
 					//
 					// Ternary if == true then show multi rate ajax link
 					//
-					CHtml::ajaxLink(
+					CHtml::link(
             				"<i class=\"icon-plus\"></i>",
-	            			"multiRate/" . $data->id,
+	            			"javascript:;",
 	        				array(
-								"type"     => "POST",
-								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)" ) ,
-								"success"  => "function( data )
-									{
-										$(\"#modalDailyReport\").html(data);
-										$(\"#modalDailyReport\").modal(\"toggle\");
-									}",
-								),
-							array(
+	        					"onClick" => CHtml::ajax( array(
+									"type"    => "POST",
+									"url"     => "multiRate/" . $data->id,
+									"success" => "function( data )
+										{
+											$(\"#modalDailyReport\").html(data);
+											$(\"#modalDailyReport\").modal(\"toggle\");
+										}",
+									)),
 								"style"               => "width: 20px",
 								"rel"                 => "tooltip",
 								"data-original-title" => "Update"
@@ -314,16 +314,18 @@ $('.search-form form').submit(function(){
 					//
 					// Ternary if == false then show common edit ajax link
 					//
-        			CHtml::ajaxLink(
+        			CHtml::link(
             				"<i class=\"icon-pencil\"></i>",
-	            			Yii::app()->controller->createUrl("updateColumn"),
+	            			"javascript:;",
 	        				array(
-								"type"     => "POST",
-								"dataType" => "json",
-								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-conv\" + $row).val()", "col" => "conv_adv" ) ,
-								"success"  => "function( data )
-									{
-										$.fn.yiiGridView.update(\"daily-report-grid\", {
+	        					"onClick" => CHtml::ajax( array(
+									"url"      => "updateColumn",
+									"type"     => "POST",
+									"dataType" => "json",
+									"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-conv\" + $row).val()", "col" => "conv_adv" ) ,
+									"success"  => "function( data )
+										{
+											$.fn.yiiGridView.update(\"daily-report-grid\", {
 											complete: function(jqXHR, textStatus) {
 												if (textStatus == \'success\') {
 													// change css properties
@@ -333,9 +335,8 @@ $('.search-form form').submit(function(){
 												}
 											}
 										});
-									}",
-								),
-							array(
+										}",
+									)),
 								"style"               => "width: 20px;",
 								"rel"                 => "tooltip",
 								"data-original-title" => "Update",

@@ -126,7 +126,7 @@ class Pdf extends EPdfFactoryDoc
     	$pdf->Cell(90, 7, 'DATE: ' . date('d-m-Y', time()), 0, 1, 'L', false);
     	$pdf->Cell(90, 7, 'BUENOS AIRES - ARGENTINA', 0, 0, 'L', false);
     	$pdf->Cell(90, 7, 'ORDER NUMBER: #' . $io->id, 0, 1, 'L', false);
-    	$pdf->Cell(90, 7, 'SANTIAGO. GUASCH @KICKADS.MOBI', 0, 0, 'L', false);
+    	$pdf->Cell(90, 7, 'SANTIAGO.GUASCH@KICKADS.MOBI', 0, 0, 'L', false);
     	$pdf->Cell(90, 7, 'KICKADS ADVERTISING NETWORK - ORDER', 0, 1, 'L', false);
     }
 
@@ -154,7 +154,8 @@ class Pdf extends EPdfFactoryDoc
 		foreach ($info as $key => $value) {
 			$pdf->SetFillColor(155, 187, 89);
         	$pdf->SetTextColor(255);
-        	$pdf->Cell(60, 7, strtoupper($key), 1, 0, 'L', true);
+            // $pdf->Cell(60, 7, strtoupper($key), 1, 0, 'L', true);
+        	$pdf->MultiCell(60, 7, strtoupper($key), 1, 'L', true, 0);
 
         	if ($even) {
         		$pdf->SetFillColor(205, 221, 172);
@@ -164,7 +165,8 @@ class Pdf extends EPdfFactoryDoc
         	$even = ! $even;
 
         	$pdf->SetTextColor(0);
-        	$pdf->Cell(0, 7, strtoupper($value), 1, 1, 'L', true);
+            // $pdf->Cell(0, 7, strtoupper($value), 1, 1, 'L', true);
+        	$pdf->MultiCell(0, 7, strtoupper($value), 1, 'L', true, 1);
 
 		}
     }

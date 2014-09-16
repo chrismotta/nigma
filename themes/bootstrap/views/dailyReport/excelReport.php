@@ -19,6 +19,10 @@ $this->widget('EExcelWriter', array(
     'filePath'     => $path,
     'columns'      => array(
         array(
+            'name'  => 'account_manager',
+            'value' => '$data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name',
+        ),
+        array(
             'name'  => 'campaign_name',
             'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
         ),

@@ -29,6 +29,7 @@
         $data = array();
         foreach ($multi_rates as $multi_rate) {
             $data[] = array(
+                "carrier_id" => $form->hiddenField($multi_rate, 'carriers_id_carrier', array('type'=>"hidden", 'name'=>'MultiRate' . $i . '[carriers_id_carrier]') ),
                 "carrier"  => CHtml::label($multi_rate->carriersIdCarrier->mobile_brand, "", array()),
                 "currency" => CHtml::label($currency, "", array('name' => 'MultiRate' . $i . '[currency]')),
                 "id"       => $form->hiddenField($multi_rate, 'id', array('type'=>"hidden", 'name'=>'MultiRate' . $i . '[id]') ),
@@ -44,6 +45,7 @@
             'dataProvider' => new CArrayDataProvider($data),
             'template'     => "{items}",
             'columns'      =>array(
+                array('name'=>'carrier_id', 'type' => 'raw', 'header'=>''),
                 array('name'=>'carrier', 'type' => 'raw', 'header'=>'Carrier'),
                 array('name'=>'currency', 'type' => 'raw', 'header'=>'Currency'),
                 array('name'=>'id', 'type' => 'raw', 'header'=>''),
