@@ -369,6 +369,21 @@ class CampaignsController extends Controller
 
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
+	public function excel($startDate=NULL, $endDate=NULL)
+	{
+		$criteria=new CDbCriteria;
+
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+	    }
+
+		$criteria->with = array( 'campaigns', 'networks' );
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
 	public function actionFetchCampaigns()
 	{
 		/*

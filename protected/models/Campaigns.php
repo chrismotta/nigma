@@ -283,19 +283,41 @@ class Campaigns extends CActiveRecord
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
 		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
 	}
-	public function countClicks()
-	{
-		//$model=new model('ClicksLog');
-		$date = date('Y-m-d', strtotime('today'));
-		$this->clicks= ClicksLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$this->id, ":date"=>$date));
-	//return 1;
+	public function countClicks($dateStart=NULL, $dateEnd=NULL)
+	{	
+		if(!$dateStart)	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
+		if(!$dateEnd) $dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+		
+		$dateStart = date('Y-m-d', strtotime($dateStart));
+		$dateEnd = date('Y-m-d', strtotime($dateEnd));
+		$query = ClicksLog::model()->count("campaigns_id=:campaignid AND DATE(date)>=:dateStart AND DATE(date)<=:dateEnd", array(":campaignid"=>$this->id, ":dateStart"=>$dateStart, ":dateEnd"=>$dateEnd));
+		return $query;
 	}
-	public function countConv()
+	public function countConv($dateStart=NULL, $dateEnd=NULL)
 	{
-		//$model=new model('ClicksLog');
-		$date = date('Y-m-d', strtotime('today'));
-		$this->conv= ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$this->id, ":date"=>$date));
-	//return 1;
+		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
+		$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+		if(!$dateStart)$dateStart = 'today';
+		if(!$dateEnd)$dateEnd = 'today';
+		$dateStart = date('Y-m-d', strtotime($dateStart));
+		$dateEnd = date('Y-m-d', strtotime($dateEnd));
+		$query = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)>=:dateStart AND DATE(date)<=:dateEnd", array(":campaignid"=>$this->id, ":dateStart"=>$dateStart, ":dateEnd"=>$dateEnd));
+		return $query;
+	}
+	public function excel($startDate=NULL, $endDate=NULL)
+	{
+		$criteria=new CDbCriteria;
+
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+	    }
+
+		//$criteria->with = array( 'campaigns', 'networks' );
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
 	}
 	public function searchTraffic()
 	{

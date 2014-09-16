@@ -4,15 +4,13 @@
 
 $path = 'uploads/';
 $name = 'KickAds-TrafficRepor.xls';
-
 $dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'today' ;
 $dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'today';
-
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
 
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel($dateStart, $dateEnd),
+    'dataProvider' => $model->excel(),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
@@ -32,11 +30,11 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'              => 'clicks',
-            'value'             => '$data->countClicks()',
+            'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
         ),
         array(
             'name'              => 'conv',
-            'value'             => '$data->countConv()',
+            'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
         ),
     ),
 ));

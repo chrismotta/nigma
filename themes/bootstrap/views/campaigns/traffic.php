@@ -63,6 +63,15 @@ $this->widget('bootstrap.widgets.TbButton', array(
 </div>
 */
 ?>
+
+<?php
+	$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'yesterday';
+
+	$dateStart = date('Y-m-d', strtotime($dateStart));
+	$dateEnd = date('Y-m-d', strtotime($dateEnd));
+?>
+
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'traffic-grid',
 	'dataProvider'             => $model->searchTraffic(),
@@ -92,12 +101,12 @@ $this->widget('bootstrap.widgets.TbButton', array(
         ),
         array(
 			'name'              => 'clicks',
-			'value'             => '$data->countClicks()',
+			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
 			'name'              => 'conv',
-			'value'             => '$data->countConv()',
+			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 	),
@@ -126,6 +135,59 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		)
 	); ?>
 
+<br>
+
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/campaigns/traffic',
+        'method' => 'POST',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+
+	<fieldset>
+	From: 
+	<?php 
+	    $this->widget('ext.rezvan.RDatePicker',array(
+		'name'  => 'dateStart',
+		'value' => date('d-m-Y', strtotime($dateStart)),
+		'htmlOptions' => array(
+			'style' => 'width: 80px',
+		),
+	    'options' => array(
+			'autoclose'      => true,
+			'format'         => 'dd-mm-yyyy',
+			'viewformat'     => 'dd-mm-yyyy',
+			'placement'      => 'right',
+	    ),
+	));
+	?>
+	To:
+	<?php 
+	    $this->widget('ext.rezvan.RDatePicker',array(
+		'name'        => 'dateEnd',
+		'value'       => date('d-m-Y', strtotime($dateEnd)),
+		'htmlOptions' => array(
+			'style' => 'width: 80px',
+		),
+		'options'     => array(
+			'autoclose'      => true,
+			'format'         => 'dd-mm-yyyy',
+			'viewformat'     => 'dd-mm-yyyy',
+			'placement'      => 'right',
+	    ),
+	));
+	?>
+
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+    </fieldset>
+
+<?php $this->endWidget(); ?>
 
 <?php //echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
