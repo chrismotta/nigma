@@ -56,4 +56,10 @@ class ApiUpdateController extends Controller
 		$vServ->downloadInfo();
 	}
 
+	public function actionEroAdvertising()
+	{
+		$vServ = new EroAdvertising;
+		$vServ->downloadInfo();
+	}
+
 }
