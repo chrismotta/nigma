@@ -11,7 +11,8 @@ class ApiUpdateController extends Controller
 		$this->actionLeadBolt();
 		$this->actionReporo();
 		$this->actionAdWords();
-		$this->actionVServ();
+		$this->actionMobfox();
+		$this->actionEroAdvertising();
 	}
 
 	public function actionAdWords()
@@ -56,10 +57,15 @@ class ApiUpdateController extends Controller
 		$vServ->downloadInfo();
 	}
 
+	public function actionMobfox()
+	{
+		$mobfox = new Mobfox;
+		$mobfox->downloadInfo();
+	}
+
 	public function actionEroAdvertising()
 	{
 		$vServ = new EroAdvertising;
 		$vServ->downloadInfo();
 	}
-
 }
