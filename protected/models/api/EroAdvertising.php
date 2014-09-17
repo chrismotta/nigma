@@ -25,28 +25,12 @@ class EroAdvertising
 		$apiurl = $network->url;
 		$url = $apiurl . "?token=" . $apikey . "&periodstart=" . $date . "&periodend=" . $date;
 		//https://userpanel.ero-advertising.com/exportstats/advertiser/stats/?token=166dcc6c27d05e39024f034db0d7fd03&periodstart=yyyy-mm-dd&periodend=yyyy-mm-dd
+		echo $url;
+		return;
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($curl);
 		$result = Utilities::xml2array($result);
-		/*
-		
-		<title>*224*CONCEP-MX-IUS-S-ER-DISP-Sexy2 </title>
-		<views>4123</views>
-		<clicks>11</clicks>
-		<ctr>0.27</ctr>
-		<paid currency="EUR">0,6300</paid>
-		<conversions><conversion>
-			<name>Registros </name>
-			<count>0</count>
-			<cpa>n/a</cpa>
-			</conversion>
-		<conversion>
-			<name>Conversiones </name>
-			<count>0</count>
-			<cpa>n/a</cpa>
-		</conversion>
-		 */
 		if (!$result) {
 			print "EroAdvertising: ERROR - decoding json. <br>";
 			return 1;
