@@ -1,77 +1,35 @@
 <?php
+$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+
+$dateStart = date('Y-m-d', strtotime($dateStart));
+$dateEnd = date('Y-m-d', strtotime($dateEnd));
 /* @var $this CampaignsController */
 /* @var $model Campaigns */
 
+//Agrega los links de navegación
 $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
 	'View Traffic',
 );
 
-/*
-$this->menu=array(
-	//array('label'=>'List Campaigns', 'url'=>array('index')),
-	array('label'=>'Create Campaigns', 'url'=>array('create')),
-);
-*/
-?>
-
-<!--h2>Manage Campaigns</h2-->
-
-<?php
 Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$('#campaigns-grid').yiiGridView('update', {
-		data: $(this).serialize()
+	$('.search-button').click(function(){
+		$('.search-form').toggle();
+		return false;
 	});
-	return false;
-});
-");
+	$('.search-form form').submit(function(){
+		$('#campaigns-grid').yiiGridView('update', {
+			data: $(this).serialize()
+		});
+		return false;
+	});
+	");
 ?>
 
-<?php
-/*
+<hr>
+<!--####Botón excel report#####-->
 <div class="botonera">
-$this->widget('bootstrap.widgets.TbButton', array(
-	'type'        => 'info',
-	'label'       => 'Create Campaign',
-	'block'       => false,
-	'buttonType'  => 'ajaxButton',
-	'url'         => 'createAjax',
-	'ajaxOptions' => array(
-		'type'    => 'POST',
-		'beforeSend' => 'function(data)
-			{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalCampaigns").html(dataInicial);
-					$("#modalCampaigns").modal("toggle");
-			}',
-		'success' => 'function(data)
-			{
-                    //console.log(this.url);
-	                //alert("create");
-					$("#modalCampaigns").html(data);
-					//$("#modalCampaigns").modal("toggle");
-			}',
-		),
-	'htmlOptions' => array('id' => 'createAjax'),
-	)
-);
-</div>
-*/
-?>
-
-<?php
-	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
-	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
-
-	$dateStart = date('Y-m-d', strtotime($dateStart));
-	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-?>
-
 <?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
@@ -94,10 +52,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'htmlOptions' => array('id' => 'excelReport'),
 		)
 	); ?>
-
+</div>
 <br>
 
-
+<!--### Inicio del date picker ###-->
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
         'type'=>'search',
@@ -108,7 +66,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
-
+<!--### Campo from del date picker ###-->
 	<fieldset>
 	From: 
 	<?php 
@@ -126,6 +84,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	    ),
 	));
 	?>
+<!--### Campo to del date picker ###-->
 	To:
 	<?php 
 	    $this->widget('ext.rezvan.RDatePicker',array(
@@ -145,9 +104,9 @@ $this->widget('bootstrap.widgets.TbButton', array(
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
-    </fieldset>
-
 <?php $this->endWidget(); ?>
+    </fieldset>
+<!--### Tabla de traffic ###-->
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'traffic-grid',
 	'dataProvider'             => $model->searchTraffic(),
@@ -186,16 +145,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 	),
-)); ?>
+)); 
+?>
 
 
-<?php //echo CHtml::link('Advanced Search','#',array('class'=>'search-button')); ?>
 <div class="search-form" style="display:none">
-<?php /* $this->renderPartial('_search',array(
-	'model'=>$model,
-)); */?>
-</div><!-- search-form -->
-
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
 
 		<div class="modal-header"></div>
