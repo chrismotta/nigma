@@ -29,6 +29,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 		break;
 	case '70.38.54.225':
 	case 'kickadserver.mobi':
+	case '54.88.85.63':
+	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
 	case 'app.kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
