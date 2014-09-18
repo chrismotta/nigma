@@ -26,6 +26,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
+<!-- 
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
@@ -77,7 +78,7 @@ $('.search-form form').submit(function(){
 	</div>
 </div>
 
-<hr>
+<hr> -->
 
 <div class="botonera">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
@@ -191,7 +192,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'dataProvider'             => $model->search($dateStart, $dateEnd),
 	'filter'                   => $model,
-	'selectionChanged'         => 'js:selectionChangedDailyReport',
+	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
@@ -432,7 +433,7 @@ $('.search-form form').submit(function(){
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalDailyReport')); ?>
 
 		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Campaigns</h1></div>
+        <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>

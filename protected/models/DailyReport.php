@@ -151,7 +151,19 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
-
+		
+		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+		//Filtro por role
+		$filter = true;
+		foreach ($roles as $role => $value) {
+			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+				$filter = false;
+				break;
+			}
+		}
+		if ( $filter )
+			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			// Setting 'sort' property in order to add 
@@ -197,11 +209,20 @@ class DailyReport extends CActiveRecord
 		return parent::model($className);
 	}
 
+	/**
+	 * Get graphic info for the date specified. $startDate and $endDate must be in DB date format
+	 * 
+	 * @param  $c_id      campaign id
+	 * @param  $net_id    network id
+	 * @param  $startDate start date
+	 * @param  $endDate   end date
+	 * @return 
+	 */
 	public function getGraphicDateRangeInfo($c_id, $net_id, $startDate, $endDate) {
-		$attributes = array('campaigns_id', 'netowrks_id', 'date');
-		$condition  = 'campaigns_id=:campaignid AND networks_id=:networkid AND DATE(date) >= :startDate and DATE(date) <= :endDate ORDER BY date';
-		$params     = array(":campaignid"=>$c_id, ":networkid"=>$net_id, ":startDate"=>$startDate, ":endDate"=>$endDate);
-		$r = DailyReport::model()->findAll( $condition, $params );
+		
+		$condition = 'campaigns_id=:campaignid AND networks_id=:networkid AND DATE(date) >= :startDate and DATE(date) <= :endDate ORDER BY date';
+		$params    = array(":campaignid"=>$c_id, ":networkid"=>$net_id, ":startDate"=>$startDate, ":endDate"=>$endDate);
+		$r         = DailyReport::model()->findAll( $condition, $params );
 
 		if ( empty($r) ) {
 			return "No results.";
@@ -220,7 +241,13 @@ class DailyReport extends CActiveRecord
 			$clicks[]      = array($value->date, $value->clics);
 			$conv[]        = array($value->date, $value->conv_adv);
 		}
-		$result = array($spend, $conv, $impressions, $clicks, $dates);
+		$result = array(
+			'spend' => $spend, 
+			'conv'  => $conv, 
+			'imp'   => $impressions, 
+			'click' => $clicks, 
+			'date'  => $dates
+		);
 		return $result;
 	}
 
