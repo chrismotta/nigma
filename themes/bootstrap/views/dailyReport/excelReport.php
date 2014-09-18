@@ -27,6 +27,18 @@ $this->widget('EExcelWriter', array(
             'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
         ),
         array(
+            'name'  => 'opportunitie_name',
+            'value' => '$data->campaigns->opportunities->getVirtualName()',
+        ),
+        array(
+            'name'  => 'entity_name',
+            'value' => '$data->campaigns->opportunities->ios->entity',
+        ),
+        array(
+            'name'  => 'category_name',
+            'value' => '$data->campaigns->opportunities->ios->advertisers->cat',
+        ),
+        array(
             'name'  => 'network_name',
             'value' => '$data->networks->name',
         ),
