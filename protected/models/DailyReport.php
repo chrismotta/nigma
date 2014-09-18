@@ -153,6 +153,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+		//Filtro por role
 		$filter = true;
 		foreach ($roles as $role => $value) {
 			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
