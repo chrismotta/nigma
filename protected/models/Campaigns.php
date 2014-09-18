@@ -173,14 +173,19 @@ class Campaigns extends CActiveRecord
 
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		$filter = true;
+		$filerRole=NULL;
 		foreach ($roles as $role => $value) {
 			if ( $role == 'admin' or $role == 'media_manager') {
 				$filter = false;
 				break;
 			}
+			elseif($role=='sales')
+				$filerRole=$role;
 		}
-		if ( $filter )
+		if ( $filter and !$filerRole)
 			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
+		if ( $filter and $filerRole=='sales')
+			$criteria->compare('opportunities.ios.commercial_id', Yii::app()->user->id);
 
 		$criteria->compare('ios.name',$this->ios_name, true);
 		$criteria->compare('networks.currency',$this->net_currency, true);
