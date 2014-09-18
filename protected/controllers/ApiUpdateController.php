@@ -11,7 +11,8 @@ class ApiUpdateController extends Controller
 		$this->actionLeadBolt();
 		$this->actionReporo();
 		$this->actionAdWords();
-		$this->actionMobfox();
+		$this->actionVServ();
+		// $this->actionMobfox();
 		$this->actionEroAdvertising();
 	}
 
