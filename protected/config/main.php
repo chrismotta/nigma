@@ -8,6 +8,7 @@ Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
 
 // MySql Policy
 switch ( $_SERVER['HTTP_HOST'] ) {
+	// local
 	case '127.0.0.1':
 	case 'localhost':
 				$mysqlConnect = array(
@@ -18,6 +19,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'charset'          => 'utf8',
 				);
 		break;
+	// iweb test
 	case 'test.kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver_dev',
@@ -27,16 +29,26 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'charset'          => 'utf8',
 				);
 		break;
+	// iweb prod
 	case '70.38.54.225':
 	case 'kickadserver.mobi':
-	case '54.88.85.63':
-	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
 	case 'app.kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'root',
 					'password'         => 'pernambuco',
+					'charset'          => 'utf8',
+				);
+		break;
+	// amazon prod
+	case '54.88.85.63':
+	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'emulatePrepare'   => true,
+					'username'         => 'admin',
+					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
 				);
 		break;
