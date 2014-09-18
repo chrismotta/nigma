@@ -24,7 +24,7 @@ class Mobfox
 		$apiuser = $network->token1;
 		$apikey = $network->token2;
 		$apiurl = $network->url;
-		$url = $apiurl . "?apikey=" . $apikey . "&from=" . $date . "&to=" . $date . '&group=campaign_id&totals=total_impressions,total_clicks,total_conversions,total_cost&f:campaign_id=+';
+		$url = $apiurl . "?apikey=" . $apikey . "&from=" . $date . "&to=" . $date . '&group=campaign_id&totals=total_impressions,total_clicks,total_conversions,total_cost';
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($curl);
@@ -36,6 +36,7 @@ class Mobfox
 		curl_close($curl);
 
 		if ( isset($result->error) ) {
+			print json_encode($result->error);
 			print "Mobfox: ERROR - Getting campaigns. <br>";
 			return 1;
 		}
