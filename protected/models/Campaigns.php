@@ -179,12 +179,12 @@ class Campaigns extends CActiveRecord
 				$filter = false;
 				break;
 			}
-			elseif($role=='sales')
+			elseif($role=='commercial')
 				$filerRole=$role;
 		}
 		if ( $filter and !$filerRole)
 			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
-		if ( $filter and $filerRole=='sales')
+		if ( $filter and $filerRole=='commercial')
 			$criteria->compare('opportunities.ios.commercial_id', Yii::app()->user->id);
 
 		$criteria->compare('ios.name',$this->ios_name, true);
