@@ -100,7 +100,7 @@ class Opportunities extends CActiveRecord
 	{
 		return array(
 			'id'                       => 'ID',
-			'carriers_id'              => 'Carriers',
+			'carriers_id'              => 'Carrier',
 			'rate'                     => 'Rate',
 			'model_adv'                => 'Model',
 			'product'                  => 'Product',

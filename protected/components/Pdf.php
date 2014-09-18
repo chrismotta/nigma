@@ -48,14 +48,15 @@ class Pdf extends EPdfFactoryDoc
         $i = 1;
 		foreach ($opps as $opp) {
 			$this->printTitle($pdf, 'Campaign #' . $i);
-			$values[$opp->getAttributeLabel('rate')] = $opp->rate;
+			$values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers ? $opp->carriers->mobile_brand : '';
+            $values[$opp->getAttributeLabel('rate')] = $opp->rate;
 			$values[$opp->getAttributeLabel('model_adv')] = $opp->model_adv;
 			$values[$opp->getAttributeLabel('product')] = $opp->product;
 			$values[$opp->getAttributeLabel('comment')] = $opp->comment;
 			$values[$opp->getAttributeLabel('wifi')] = $opp->wifi ? 'Habilitado' : 'Inhabilitado';
 			$values[$opp->getAttributeLabel('budget')] = $opp->budget;
-			$values[$opp->getAttributeLabel('startDate')] = date('d-m-Y', strtotime($opp->startDate));
-			$values[$opp->getAttributeLabel('endDate')] = date('d-m-Y', strtotime($opp->endDate));
+			$values[$opp->getAttributeLabel('startDate')] = $opp->startDate == 0 ? '' : date('d-m-Y', strtotime($opp->startDate));
+			$values[$opp->getAttributeLabel('endDate')] = $opp->endDate == 0 ? '' : date('d-m-Y', strtotime($opp->endDate));
 
             if ( $adv->cat == 'Branding' ) {
                 $values[$opp->getAttributeLabel('freq_cap')] = $opp->freq_cap;
