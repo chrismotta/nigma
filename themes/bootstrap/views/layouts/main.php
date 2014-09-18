@@ -35,6 +35,7 @@
                 'items'=>array(
                     array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
+                    array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
 				array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 

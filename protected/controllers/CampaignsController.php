@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete'),
+				'actions'=>array('index','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -358,6 +358,18 @@ class CampaignsController extends Controller
 	 * Return an array of all campaigns in json format.
 	 * @return {cid, nid, url}
 	 */
+	
+	public function actionExcelReport()
+	{
+		if( isset($_POST['excel-traffic']) ) {
+			$this->renderPartial('excelReport', array(
+				'model' => new Campaigns,
+			));
+		}
+
+		$this->renderPartial('_excelReport', array(), false, true);
+	}
+	
 	public function actionFetchCampaigns()
 	{
 		/*
@@ -374,5 +386,16 @@ class CampaignsController extends Controller
                     ->from("campaigns")
                     ->queryAll(false);
 		echo json_encode($q);
+	}
+	public function actionTraffic(){
+		$model=new Campaigns();
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Campaigns']))
+			$model->attributes=$_GET['Campaigns'];
+
+		$this->render('traffic',array(
+			'model'=>$model,
+		));
+		
 	}
 }

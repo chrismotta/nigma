@@ -43,6 +43,8 @@ class Campaigns extends CActiveRecord
 	public $ios_name;
 	public $vectors_id;
 	public $net_currency;
+	public $clicks;
+	public $conv;
 
 	/**
 	 * @return string the associated database table name
@@ -120,6 +122,8 @@ class Campaigns extends CActiveRecord
 			'post_data'              => 'Post Data',
 			'banner_sizes_id'        => 'Banner Sizes',
 			'net_currency'           => 'Net Currency',
+			'clicks'           		 => 'Clicks Log',
+			'conv'		           	 => 'Convertions Log',
 		);
 	}
 
@@ -155,7 +159,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('post_data',$this->post_data);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
-		// We need to list all related tables in with property
+		//We need to list all related tables in with property
 		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
@@ -169,14 +173,19 @@ class Campaigns extends CActiveRecord
 
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		$filter = true;
+		$filerRole=NULL;
 		foreach ($roles as $role => $value) {
 			if ( $role == 'admin' or $role == 'media_manager') {
 				$filter = false;
 				break;
 			}
+			elseif($role=='commercial')
+				$filerRole=$role;
 		}
-		if ( $filter )
+		if ( $filter and !$filerRole)
 			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
+		if ( $filter and $filerRole=='commercial')
+			$criteria->compare('opportunities.ios.commercial_id', Yii::app()->user->id);
 
 		$criteria->compare('ios.name',$this->ios_name, true);
 		$criteria->compare('networks.currency',$this->net_currency, true);
@@ -279,4 +288,141 @@ class Campaigns extends CActiveRecord
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
 		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
 	}
+
+	public function countClicks($dateStart=NULL, $dateEnd=NULL)
+	{	
+		if(!$dateStart)	$dateStart = 'today' ;
+		if(!$dateEnd) $dateEnd   = 'today';
+		
+		$dateStart = date('Y-m-d', strtotime($dateStart));
+		$dateEnd = date('Y-m-d', strtotime($dateEnd));
+		//echo $dateStart . ' - ' . $dateEnd;
+		$query = ClicksLog::model()->count("campaigns_id=:campaignid AND DATE(date)>=:dateStart AND DATE(date)<=:dateEnd", array(":campaignid"=>$this->id, ":dateStart"=>$dateStart, ":dateEnd"=>$dateEnd));
+		return $query;
+	}
+	
+	public function countConv($dateStart=NULL, $dateEnd=NULL)
+	{
+		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
+		$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+		if(!$dateStart)$dateStart = 'today';
+		if(!$dateEnd)$dateEnd = 'today';
+		$dateStart = date('Y-m-d', strtotime($dateStart));
+		$dateEnd = date('Y-m-d', strtotime($dateEnd));
+		$query = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)>=:dateStart AND DATE(date)<=:dateEnd", array(":campaignid"=>$this->id, ":dateStart"=>$dateStart, ":dateEnd"=>$dateEnd));
+		return $query;
+	}
+	
+	public function excel($startDate=NULL, $endDate=NULL)
+	{
+		$criteria=new CDbCriteria;
+
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+	    }
+
+		//$criteria->with = array( 'campaigns', 'networks' );
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+	//Acción para obtener un array con rango de fechas
+	function arrayRangoFechas($start, $end) {
+	    $range = array();
+
+	    if (is_string($start) === true) $start = strtotime($start);
+	    if (is_string($end) === true ) $end = strtotime($end);
+
+	    if ($start > $end) return createDateRangeArray($end, $start);
+
+	    do {
+	        $range[] = date('Y-m-d', $start);
+	        $start = strtotime("+ 1 day", $start);
+	    } while($start <= $end);
+
+	    return $range;
+	}
+	function stringRangoFechas(array $fechas)
+	{
+		$stringFecha='';
+		foreach ($fechas as $fecha) 
+		{
+			$stringFecha=$stringFecha."'".$fecha."', ";
+		}
+		return $stringFecha;
+	}
+	function clicksPorRango(array $fechas)
+	{
+		$strFechas='';
+		foreach ($fechas as $fecha) {		
+			$strFechas+="'".Campaigns::countClicks($fecha,$fecha)."', ";
+		}
+		return $strFechas;
+	}
+
+	function arrayCharts($dateStart, $dateEnd) {
+	    $range = array();
+
+	    if (is_string($dateStart) === true) $dateStart = strtotime($dateStart);
+	    if (is_string($dateEnd) === true ) $dateEnd = strtotime($dateEnd);
+
+	    if ($dateStart > $dateEnd) $range=createDateRangeArray($dateEnd, $dateStart);
+
+	    do {
+	        $range[] = date('Y-m-d', $dateStart);
+	        $dateStart = strtotime("+ 1 day", $dateStart);
+	    } while($dateStart <= $dateEnd);
+	    $charts=array();
+	    foreach ($range as $date) {
+	    	$charts[]=array(
+	    		'date'=>$date,
+	    		'clicks'=>$this->countClicks($date,$date),
+	    		'convs'=>$this->countConv($date,$date),
+	    		);
+	    	echo self::countClicks('2014-09-15','2014-09-17').'<br>';
+	    }
+	    return $charts;
+	    
+	}
+	public function searchTraffic()
+	{
+		// @todo Please modify the following code to remove attributes that should not be searched.
+
+		$criteria=new CDbCriteria;
+		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
+		$criteria->compare('t.name',$this->name, true);
+		$criteria->compare('advertisers.name',$this->advertisers_name, true);
+		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
+		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		return new CActiveDataProvider($this, array(
+			'criteria' =>$criteria,
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+            'pagination'=>array(
+                'pageSize'=>50,
+            ),
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'campaigns_name'=>array(
+						'asc'  =>'campaigns.name',
+						'desc' =>'campaigns.name DESC',
+		            ),
+		            'advertisers_name'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),
+		            'ios_name'=>array(
+						'asc'  =>'ios.name',
+						'desc' =>'ios.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
+		));
+	}
+
 }
