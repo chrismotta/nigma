@@ -28,7 +28,7 @@ Yii::app()->clientScript->registerScript('search', "
 ?>
 
 <hr>
-<!--####Botón excel report#####-->
+<!--####Button excel report#####-->
 <div class="botonera">
 <?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
@@ -55,7 +55,7 @@ Yii::app()->clientScript->registerScript('search', "
 </div>
 <br>
 
-<!--### Inicio del date picker ###-->
+<!--### Date Picker ###-->
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
         'type'=>'search',
@@ -66,8 +66,7 @@ Yii::app()->clientScript->registerScript('search', "
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
-<!--### Campo from del date picker ###-->
-	<fieldset>
+<fieldset>
 	From: 
 	<?php 
 	    $this->widget('ext.rezvan.RDatePicker',array(
@@ -84,8 +83,9 @@ Yii::app()->clientScript->registerScript('search', "
 	    ),
 	));
 	?>
-<!--### Campo to del date picker ###-->
+
 	To:
+
 	<?php 
 	    $this->widget('ext.rezvan.RDatePicker',array(
 		'name'        => 'dateEnd',
@@ -103,10 +103,10 @@ Yii::app()->clientScript->registerScript('search', "
 	?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+</fieldset>
 
 <?php $this->endWidget(); ?>
-    </fieldset>
-<!--### Tabla de traffic ###-->
+<!--### Traffic grid###-->
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'traffic-grid',
 	'dataProvider'             => $model->searchTraffic(),
@@ -147,9 +147,6 @@ Yii::app()->clientScript->registerScript('search', "
 	),
 )); 
 ?>
-
-
-<div class="search-form" style="display:none">
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
 
 		<div class="modal-header"></div>
