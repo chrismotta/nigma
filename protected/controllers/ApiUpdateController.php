@@ -112,7 +112,7 @@ class ApiUpdateController extends Controller
 
 	public function actionLog()
 	{	
-		$fromDate = strtotime('yesterday');
+		$fromDate = strtotime('today');
 		$network = '%';
 
 		if ( isset( $_GET['date']) )
