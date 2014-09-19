@@ -97,7 +97,17 @@ class DailyReport extends CActiveRecord
 	public function excel($startDate=NULL, $endDate=NULL)
 	{
 		$criteria=new CDbCriteria;
-
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('campaigns_id',$this->campaigns_id);
+		$criteria->compare('networks_id',$this->networks_id);
+		$criteria->compare('imp',$this->imp);
+		$criteria->compare('imp_adv',$this->imp_adv);
+		$criteria->compare('clics',$this->clics);
+		$criteria->compare('conv_api',$this->conv_api);
+		$criteria->compare('conv_adv',$this->conv_adv);
+		$criteria->compare('spend',$this->spend,true);
+		$criteria->compare('revenue',$this->revenue);
+		$criteria->compare('is_from_api',$this->is_from_api);
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
