@@ -47,6 +47,7 @@ class ApiUpdateController extends Controller
 		$this->actionVServ();
 		// $this->actionMobfox();
 		$this->actionEroAdvertising();
+		$this->actionInMobi();
 	}
 
 	public function actionAdWords()
@@ -99,8 +100,14 @@ class ApiUpdateController extends Controller
 
 	public function actionEroAdvertising()
 	{
-		$vServ = new EroAdvertising;
-		$vServ->downloadInfo();
+		$eroAdvertising = new EroAdvertising;
+		$eroAdvertising->downloadInfo();
+	}
+
+	public function actionInMobi()
+	{
+		$inMobi = new InMobi;
+		$inMobi->downloadInfo();
 	}
 
 	public function actionLog()

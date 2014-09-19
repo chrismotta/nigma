@@ -12,7 +12,7 @@
 <div class="modal-body">
 
     <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'excel-report-daily-form',
+        'id'=>'excel-traffic-form',
         'type'=>'horizontal',
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
