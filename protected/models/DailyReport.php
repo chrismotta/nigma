@@ -103,8 +103,25 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 	    }
 
-		$criteria->with = array( 'campaigns', 'networks' );
+		//$criteria->with = array( 'campaigns', 'networks' );
 
+		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->compare('networks.name',$this->network_name, true);
+		$criteria->compare('networks.has_api',$this->network_hasApi, true);
+		$criteria->compare('accountManager.name',$this->account_manager, true);
+		$criteria->compare('campaigns.id',$this->campaign_name, true);
+		
+		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+		//Filtro por role
+		$filter = true;
+		foreach ($roles as $role => $value) {
+			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+				$filter = false;
+				break;
+			}
+		}
+		if ( $filter )
+			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
