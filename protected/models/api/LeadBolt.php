@@ -15,7 +15,7 @@ class LeadBolt
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "LeadBolt: WARNING - Information already downloaded. <br>";
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.leadBolt');
 			return 2;
 		}
 
@@ -33,7 +33,7 @@ class LeadBolt
 		$result = curl_exec($curl);
 		$result = json_decode($result);
 		if (!$result) {
-			print "LeadBolt: ERROR - decoding json. <br>";
+			Yii::log("Decoding json.", 'error', 'system.model.api.leadBolt');
 			return 1;
 		}
 		curl_close($curl);
@@ -50,7 +50,7 @@ class LeadBolt
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign_name);
 
 			if ( !$dailyReport->campaigns_id ) {
-				print "LeadBolt: ERROR - invalid external campaign name: '" . $campaign->campaign_name . "' <br>";
+				Yii::log("Invalid external campaign name: '" . $campaign->campaign_name, 'error', 'system.model.api.leadBolt');
 				continue;
 			}
 
@@ -63,12 +63,11 @@ class LeadBolt
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
-				print json_encode($dailyReport->getErrors()) . "<br>";
-				print "LeadBolt: ERROR - saving campaign: " . $campaign->campaign_name . "<br>";
+				Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.leadBolt');
 				continue;
 			}
 		}
-		print "LeadBolt: SUCCESS - Daily info download.  " . date('d-m-Y', strtotime($date)) . ".<br>";
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.leadBolt');
 		return 0;
 	}
 

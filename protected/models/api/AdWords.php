@@ -17,7 +17,7 @@ class AdWords
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "AdWords: WARNING - Information already downloaded. <br>";
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.adWords');
 			return 2;
 		}
 
@@ -47,7 +47,7 @@ class AdWords
 			$result = Utilities::xml2array($result);
 
 			if ( !isset($result['report']['table']['row']) ) {
-				print "AdWords: INFO - empty daily report, advertiser:  " . $advertiser->name . "<br>";
+				Yii::log("Empty daily report, advertiser:  " . $advertiser->name, 'info', 'system.model.api.adWords');
 				continue;
 			}
 
@@ -63,7 +63,7 @@ class AdWords
 			}
 		}
 		
-		print "AdWords: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
+		Yii::log("SUCCESS - Daily info download.", 'info', 'system.model.api.adWords');
 		return 0;
 	}
 
@@ -76,7 +76,7 @@ class AdWords
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['campaign']);
 
 		if ( !$dailyReport->campaigns_id ) {
-			print "AdWords: ERROR - invalid external campaign name: '" . $campaign['campaign'] . "' <br>";
+			Yii::log("Invalid external campaign name: '" . $campaign['campaign'], 'error', 'system.model.api.adWords');
 			return NULL;
 		}
 
@@ -90,8 +90,7 @@ class AdWords
 		$dailyReport->updateRevenue();
 		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
 		if ( !$dailyReport->save() ) {
-			print json_encode($dailyReport->getErrors()) . "<br>";
-			print "AdWords: ERROR - saving campaign: " . $campaign['campaign'] . "<br>";
+			Yii::log("Can't save campaign: '" . $campaign['campaign'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');
 			return NULL;
 		} 
 		return $dailyReport;

@@ -16,7 +16,7 @@ class VServ
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "VServ: WARNING - Information already downloaded. <br>";
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.vServ');
 			return 2;
 		}
 
@@ -33,7 +33,7 @@ class VServ
 		$result = curl_exec($curl);
 		$result = Utilities::xml2array($result);
 		if (!$result) {
-			print "VServ: INFO - '" . $network->name . "' empty daily report. <br>";
+			Yii::log("Empty daily report.", 'info', 'system.model.api.vServ');
 			return 1;
 		}
 		curl_close($curl);
@@ -49,7 +49,7 @@ class VServ
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
 
 			if ( !$dailyReport->campaigns_id ) {
-				print "VServ: ERROR - invalid external campaign name: '" . $campaign['attr']['name'] . "' <br>";
+				Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'info', 'system.model.api.vServ');
 				continue;
 			}
 
@@ -83,13 +83,11 @@ class VServ
 			$dailyReport->updateRevenue();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
-				print json_encode($dailyReport->getErrors()) . "<br>";
-				print "VServ: ERROR - saving campaign: " . $campaign['attr']['name'] . "<br>";
+				Yii::log("Can't save campaign: '" . $campaign['attr']['name'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.vServ');
 				continue;
 			}
 		}
-
-		print "VServ: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.vServ');
 		return 0;
 	}
 }

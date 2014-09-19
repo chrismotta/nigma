@@ -15,7 +15,7 @@ class Ajillion
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "Ajillion: WARNING - Information already downloaded. <br>";
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
 			return 2;
 		}
 
@@ -24,7 +24,7 @@ class Ajillion
 		// get all advertisers
 		$advertisers = $this->getResponse("advertiser.get");
 		if ( !$advertisers ) {
-			print "Ajillion: ERROR - Getting advertisers. <br>";
+			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
 			return 1;
 		}
 
@@ -46,7 +46,7 @@ class Ajillion
 		$campaigns = $this->getResponse("report.advertiser.performance.get", $params);
 
 		if ( !$campaigns ) {
-			print "Ajillion: ERROR - Getting campaigns. <br>";
+			Yii::log("Can't get campaigns", 'error', 'system.model.api.ajillion');
 			return 1;
 		}
 
@@ -63,7 +63,7 @@ class Ajillion
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign);
 
 			if ( !$dailyReport->campaigns_id ) {
-				print "Ajillion: ERROR - invalid external campaign name: '" . $campaign->campaign . "' <br>";
+				Yii::log("invalid external campaign name: '" . $campaign->campaign, 'error', 'system.model.api.ajillion');
 				continue;
 			}
 
@@ -76,13 +76,11 @@ class Ajillion
 			$dailyReport->updateRevenue();
 			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			if ( !$dailyReport->save() ) {
-				print json_encode($dailyReport->getErrors()) . "<br>";
-				print "Ajillion: ERROR - Saving campaign: " . $campaign->campaign . ". <br>";
+				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
 				continue;
 			}
 		}
-
-		print "Ajillion: SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)) . ". <br>";
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
 		return 0;
 	}
 
@@ -116,12 +114,12 @@ class Ajillion
 		$login = json_decode($json_response);
 
 		if ( !$login ) {
-			print "Ajillion: ERROR login <br>";
+			Yii::log("Login error", 'error', 'system.model.api.ajillion');
 			return NULL;
 		}
 
 		if ( $login->error !== NULL ) {
-			print "Ajillion: ERROR: - '". $login->error->message . "' <br>";
+			Yii::log($login->error->message, 'error', 'system.model.api.ajillion');
 			return NULL;	
 		}
 
@@ -142,17 +140,17 @@ class Ajillion
 		$response = json_decode($json_response);
 
 		if ( !$response ) {
-			print "Ajillion: ERROR - decoding json <br>";
+			Yii::log("Error decoding json", 'error', 'system.model.api.ajillion');
 			return NULL;
 		}
 
 		if ( $response->error !== NULL ) {
-			print "Ajillion: ERROR - " . $response->error->message . "<br>";
+			Yii::log($response->error->message . " error", 'error', 'system.model.api.ajillion');
 			return NULL;	
 		}
 
 		if ( empty($response->result) ) {
-			print "Ajillion: ERROR - json is empty <br>";
+			Yii::log("Json is empty", 'error', 'system.model.api.ajillion');
 			return NULL;
 		}
 
