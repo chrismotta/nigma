@@ -30,7 +30,7 @@ class InMobi
 
 
 
-	// Generamos la session
+	// Create Session
 	   $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
 	   curl_setopt($ch, CURLOPT_URL,"https://api.inmobi.com/v1.0/generatesession/generate");
 	   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -38,14 +38,14 @@ class InMobi
 	   curl_setopt($ch, CURLOPT_HTTPHEADER,array ('secretKey:'.$apikey,'userName:'.$user,'password:'.$pass));
 	   $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
 
-	// Pasamos Json a array multi
+	// Json to array
 	   $newresponse = json_decode($response); 
 	   $sessionId = $newresponse->respList[0]->sessionId; // guardo  el id de la session
 	   $accountId = $newresponse->respList[0]->accountId; // guardo  el id de la cuenta
 	   
 	   curl_close($ch);
 	   
-	// Obtengo la data por JSON
+	// get data Json
 	   $getReportJson = '{"reportRequest": 
 	   						{
 	   							"timeFrame":"'.$date.':'.$date.'",
@@ -53,12 +53,12 @@ class InMobi
 	   							"orderBy":["date"]
 	   						}
 
-	   					 }'; // se piden todos los campos con sus filtros
+	   					 }'; // fields filter
 	   $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
 	   curl_setopt($ch, CURLOPT_URL,$apiurl);
 	   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	   curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+	   //curl_setopt($ch, CURLOPT_TIMEOUT, 300);
 	   curl_setopt($ch, CURLOPT_HTTPHEADER, Array("accountId:$accountId","secretKey:$apikey","sessionId:$sessionId","Content-Type:application/json"));
 	   curl_setopt($ch, CURLOPT_POST,true);
 	   curl_setopt($ch, CURLOPT_POSTFIELDS, $getReportJson);
@@ -69,7 +69,17 @@ class InMobi
 			return 1;
 		}
 		curl_close($ch);
-		
+		if($newresponse->error=='true')
+		{
+			if($newresponse->errorList[0]->code==5001){
+				Yii::log("Empty daily report ",'error', 'system.model.api.inmobi');
+				return 0;
+			}
+			else {
+				Yii::log($newresponse->errorList[0]->message,'error', 'system.model.api.inmobi');
+				return 0;
+			}
+		}
 		// Save campaigns information 
 		foreach ($newresponse->respList as $campaign) {
 
