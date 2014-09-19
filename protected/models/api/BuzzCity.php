@@ -17,7 +17,7 @@ class BuzzCity
 
 			// validate if info have't been dowloaded already.
 			if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$network_id, ":date"=>$date)) ) {
-				print "BuzzCity: WARNING - Information already downloaded. <br>";
+				Yii::log("Information already downloaded.", 'warning', 'system.model.api.buzzCity');
 				continue;
 			}
 
@@ -33,13 +33,13 @@ class BuzzCity
 			$result = curl_exec($curl);
 			$result = json_decode($result);
 			if (!$result) {
-				print "BuzzCity: ERROR - Decoding BuzzCity json. <br>";
+				Yii::log("Decoding json.", 'error', 'system.model.api.buzzCity');
 				continue;
 			}
 			curl_close($curl);
 
 			if (empty($result->data)) {
-				print "BuzzCity: INFO - '" . $network->name . "' empty daily report. <br>";
+				Yii::log("Empty daily report.", 'info', 'system.model.api.buzzCity');
 				continue;	
 			}
 			
@@ -56,7 +56,7 @@ class BuzzCity
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->title);
 
 				if ( !$dailyReport->campaigns_id ) {
-					print "BuzzCity: ERROR - invalid external campaign name: '" . $campaign->title . "' <br>";
+					Yii::log("Invalid external campaign name: '" . $campaign->title, 'info', 'system.model.api.buzzCity');
 					continue;
 				}
 
@@ -69,13 +69,12 @@ class BuzzCity
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
-					print json_encode($dailyReport->getErrors()) . "<br>";
-					print "BuzzCity: ERROR - Saving campaign: " . $campaign->title . ". <br>";
+					Yii::log("Can't save campaign: '" . $campaign->title . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.buzzCity');
 					continue;
 				}
 			}
 		}
-		print "BuzzCity: SUCCESS - Daily info, downloaded. " . date('d-m-Y', strtotime($date)) . ".  <br>";
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.buzzCity');
 		return 0;
 	}
 

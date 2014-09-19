@@ -3,7 +3,7 @@
 /* @var $model DailyReport */
 
 $path = 'uploads/';
-$name = 'KickAds-TrafficRepor.xls';
+$name = 'KickAds-TrafficReport.xls';
 $dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'today' ;
 $dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'today';
 $dateStart = date('Y-m-d', strtotime($dateStart));

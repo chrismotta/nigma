@@ -58,6 +58,11 @@ $this->widget('EExcelWriter', array(
         array(
             'header'  => 'Profit',
             'value' =>  '$data->getProfit()',
+        ),        
+        array(
+            'header'  => 'Profit Perc',
+            'value' => '$data->getProfitPerc() * 100 . "%"',
+            'htmlOptions'=>array('style'=>'width: 30px'),
         ),
         array(
             'header'  => 'Click Rate',

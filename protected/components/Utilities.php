@@ -5,7 +5,6 @@ class Utilities {
 
 	public static function parseCampaignID($campaignname)
 	{
-
 		$campaignname = strip_tags($campaignname);
 		
 		$needle_count = substr_count($campaignname, "*");
@@ -31,6 +30,8 @@ class Utilities {
 				break;
 		}
 		if ( is_numeric($return) ) {
+			if ( !Campaigns::model()->isValidId($return) )
+				return NULL;
 			return $return;
 		}
 		return NULL;

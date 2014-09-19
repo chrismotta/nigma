@@ -15,7 +15,7 @@ class Reporo
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "Reporo: WARNING - Information already downloaded. <br>";
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.reporo');
 			return 2;
 		}
 
@@ -35,7 +35,7 @@ class Reporo
 		$groups = $this->getResponse($actions["adv"]);
 
 		if (!$groups) { 
-			print "Reporo: ERROR - getting advertisers inventory <br>";
+			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.reporo');
 			return 1;
 		}
 
@@ -69,7 +69,7 @@ class Reporo
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
 
 				if ( !$dailyReport->campaigns_id ) {
-					print "Reporo: ERROR - invalid external campaign name: '" . $campaign_info->campaign_name . "' <br>";
+					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'error', 'system.model.api.reporo');
 					continue;
 				}
 
@@ -82,15 +82,14 @@ class Reporo
 				$dailyReport->updateRevenue();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
-					print json_encode($dailyReport->getErrors()) . "<br>";
-					print "Reporo: ERROR - saving campaign: " . $campaign_info->campaign_name . "<br>";
+					Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.reporo');
 					continue;
 				}
 			}
 			// --- end getting compaigns ids from campaign_group id
 		}
 		// --- end getting compaign_groups ids
-		print "Reporo: SUCCESS - Daily info download. " . date('d-m-Y', strtotime($date)) . ". <br>";
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.reporo');
 		return 0;
 	}
 
@@ -126,12 +125,12 @@ class Reporo
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
-			// print "Reporo: ERROR json is empty <br>";
+			Yii::log("ERROR - json is empty", 'info', 'system.model.api.reporo');
 			return NULL;
 		}
 
 		if ( ! $obj ) {
-			// print "Reporo: ERROR decoding json <br>";
+			Yii::log("ERROR - decoding json", 'info', 'system.model.api.reporo');
 			return NULL;
 		}
 		
