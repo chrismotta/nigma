@@ -31,12 +31,12 @@ class InMobi
 
 
 	// Generamos la session
-	   $ch = curl_init() or die("Fallo cURL session init: ".curl_error()); 
+	   $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
 	   curl_setopt($ch, CURLOPT_URL,"https://api.inmobi.com/v1.0/generatesession/generate");
 	   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	   curl_setopt($ch, CURLOPT_HTTPHEADER,array ('secretKey:'.$apikey,'userName:'.$user,'password:'.$pass));
-	   $response = curl_exec($ch) or die("Fallo cURL session exec: ".curl_error());
+	   $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
 
 	// Pasamos Json a array multi
 	   $newresponse = json_decode($response); 
@@ -54,7 +54,7 @@ class InMobi
 	   						}
 
 	   					 }'; // se piden todos los campos con sus filtros
-	   $ch = curl_init() or die("Fallo cURL data init: ".curl_error()); 
+	   $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
 	   curl_setopt($ch, CURLOPT_URL,$apiurl);
 	   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -62,10 +62,10 @@ class InMobi
 	   curl_setopt($ch, CURLOPT_HTTPHEADER, Array("accountId:$accountId","secretKey:$apikey","sessionId:$sessionId","Content-Type:application/json"));
 	   curl_setopt($ch, CURLOPT_POST,true);
 	   curl_setopt($ch, CURLOPT_POSTFIELDS, $getReportJson);
-	   $response = curl_exec($ch) or die("Fallo cURL data exec: ".curl_error());
+	   $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
 	   $newresponse = json_decode($response);
 		if (!$newresponse) {
-			print "InMobi: ERROR - decoding json. <br>";
+			Yii::log("InMobi: ERROR - decoding json. ".curl_error(), 'error', 'system.model.api.inmobi');
 			return 1;
 		}
 		curl_close($ch);
@@ -83,7 +83,7 @@ class InMobi
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignName);
 
 			if ( !$dailyReport->campaigns_id ) {
-				print "InMobi: ERROR - invalid external campaign name: '" . $campaign->campaignName . "' <br>";
+				Yii::log("InMobi: ERROR - invalid external campaign name: '" . $campaign->campaignName, 'error', 'system.model.api.inmobi');
 				continue;
 			}
 
@@ -97,11 +97,11 @@ class InMobi
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				print json_encode($dailyReport->getErrors()) . "<br>";
-				print "InMobi: ERROR - saving campaign: " . $campaign->campaignName . ". <br>";
+				Yii::log("InMobi: ERROR - saving campaign: " . $campaign->campaignName, 'error', 'system.model.api.inmobi');
 				continue;
 			}
 		}
-		print "InMobi: SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)) . ".<br>";
+		Yii::log("InMobi: SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)), 'info', 'system.model.api.inmobi');
 		return 0;
 	}
 

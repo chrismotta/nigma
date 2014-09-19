@@ -5,6 +5,8 @@ class Utilities {
 
 	public static function parseCampaignID($campaignname)
 	{
+		return 4;
+
 		$campaignname = strip_tags($campaignname);
 		
 		$needle_count = substr_count($campaignname, "*");
