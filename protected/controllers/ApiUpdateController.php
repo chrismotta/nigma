@@ -23,7 +23,7 @@ class ApiUpdateController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'log'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi'),
 				'roles'=>array('admin', 'media_manager'),
 			),
 			array('deny',  // deny all users
