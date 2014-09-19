@@ -425,4 +425,10 @@ class Campaigns extends CActiveRecord
 		));
 	}
 
+	public function isValidId($id)
+	{
+		$isValid = $this->find('id=:id', array(':id' => $id));
+		return $isValid ? true : false;
+	}
+
 }

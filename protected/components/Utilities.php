@@ -30,6 +30,8 @@ class Utilities {
 				break;
 		}
 		if ( is_numeric($return) ) {
+			if ( !Campaigns::model()->isValidId($return) )
+				return NULL;
 			return $return;
 		}
 		return NULL;
