@@ -69,4 +69,14 @@ class ApiUpdateController extends Controller
 		$vServ = new EroAdvertising;
 		$vServ->downloadInfo();
 	}
+
+	public function actionLog()
+	{
+		$logs = Log::model()->findAll(array('order'=>'logtime DESC', 'condition'=>'category LIKE "system.model.api%"'));
+		foreach ($logs as $log) {
+			echo '<strong>date: </strong>' . date('d-m-Y', $log->logtime) . ' - <strong>level: </strong>' . $log->level . ' - <strong>category: </strong>' . $log->category . ' - <strong>message: </strong>' . $log->message . '<hr>';
+		}
+
+		echo "Log SUCCESS <hr>";
+	}
 }

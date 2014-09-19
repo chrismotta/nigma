@@ -171,21 +171,25 @@ return array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
 		),
-		'log'=>array(
-			'class'=>'CLogRouter',
-			'routes'=>array(
-				array(
-					'class'=>'CFileLogRoute',
-					'levels'=>'error, warning',
-				),
-				// uncomment the following to show log messages on web pages
-				/*
-				array(
-					'class'=>'CWebLogRoute',
-				),
-				*/
-			),
-		),
+		'log'=> array(
+			'class'  =>'CLogRouter',
+			'routes' =>array(
+                array(
+					'class'        =>'CDbLogRoute',
+					'connectionID' =>'db',
+					'logTableName' =>'log',
+					'levels'       =>'info, profile, error, warning',
+					'categories'   =>'system.*',
+                ),
+                array(
+					'class'    =>'CEmailLogRoute',
+					'levels'   =>'error, warning',
+					'subject'  =>'Log KickAds adServer',
+					'sentFrom' =>'KickAds adServer',
+					'emails'   =>'matias.cerrotta@kickads.mobi',
+                ),
+        	),
+        ),
 	),
 
 	// application-level parameters that can be accessed
