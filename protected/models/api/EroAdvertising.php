@@ -5,6 +5,37 @@ class EroAdvertising
 
 	private $network_id = 26;
 
+	public function saveCampaign($campaign)
+	{
+		if(!isset($campaign->clicks->value))continue;
+		if ( $campaign->views->value == 0 && $campaign->clicks->value == 0) { // if no impressions dismiss campaign
+			continue;
+		}
+		$dailyReport = new DailyReport();
+		// get campaign ID used in KickAds Server, from the campaign name use in the external network
+		// 
+		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->title->value);
+
+		if ( !$dailyReport->campaigns_id ) {
+			Yii::log("EroAdvertising: ERROR - invalid external campaign name: ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
+			continue;
+		}				
+		$dailyReport->networks_id = $this->network_id;
+		$dailyReport->imp = $campaign->views->value;
+		$dailyReport->clics = $campaign->clicks->value;
+		$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+		$dailyReport->conv_adv = 0;
+		$dailyReport->spend = str_replace(',', '.', $campaign->paid->value);
+		$dailyReport->updateRevenue();
+		$dailyReport->date = $date;
+
+		if ( !$dailyReport->save() ) {
+			print json_encode($dailyReport->getErrors()) . "<br>";
+			Yii::log("EroAdvertising: ERROR - saving campaign ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
+			continue;
+		}
+	}
+
 	public function downloadInfo()
 	{
 		if ( isset( $_GET['date']) ) {
@@ -31,72 +62,41 @@ class EroAdvertising
 		$result = curl_exec($curl);
 		$result = Utilities::xml2array($result);
 		$result = json_encode($result);
+		// echo $result;
+		// return;
 		$result = json_decode($result);
 		if (!$result) {
 			Yii::log("EroAdvertising: WARNING - ERROR - decoding json.", 'error', 'system.model.api.eroadvertising');
 			return 1;
 		}
-		curl_close($curl);		
-		//echo json_encode($result->data->period->stats)."<hr>";
-		foreach ($result->data->period->stats as $stats) {
-			if(!is_array($stats->campaign))
-			{
-				if(!isset($stats->campaign->clicks->value))continue;
-				if ( $stats->campaign->views->value == 0 && $stats->campaign->clicks->value == 0) { // if no impressions dismiss campaign
-					continue;
+		curl_close($curl);	
+		if(is_array($result->data->period->stats)){
+			foreach ($result->data->period->stats as $stats) {
+				if(!is_array($stats->campaign))
+				{
+					self::saveCampaign($stats->campaign);
 				}
-				$dailyReport = new DailyReport();
-				// get campaign ID used in KickAds Server, from the campaign name use in the external network
-				$dailyReport->campaigns_id = Utilities::parseCampaignID($stats->campaign->title->value);
-				if ( !$dailyReport->campaigns_id ) {
-					Yii::log("EroAdvertising: ERROR - invalid external campaign name: ".$stats->campaign->title->value, 'error', 'system.model.api.eroadvertising');
-					continue;
-				}				
-				$dailyReport->networks_id = $this->network_id;
-				$dailyReport->imp = $stats->campaign->views->value;
-				$dailyReport->clics = $stats->campaign->clicks->value;
-				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-				$dailyReport->conv_adv = 0;
-				$dailyReport->spend = str_replace(',', '.', $stats->campaign->paid->value);
-				$dailyReport->updateRevenue();
-				$dailyReport->date = $date;
+				else {
+					foreach ($stats->campaign as $campaign) {
+						self::saveCampaign($campaign);
+					}
 
-				if ( !$dailyReport->save() ) {
-					print json_encode($dailyReport->getErrors()) . "<br>";
-					Yii::log("EroAdvertising: ERROR - saving campaign: ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
-					continue;
 				}
 			}
-			else {
-				foreach ($stats->campaign as $campaign) {
-					if(!isset($campaign->clicks))continue;
-					if ( $campaign->views->value == 0 && $campaign->clicks->value == 0) { // if no impressions dismiss campaign
-						continue;
-					}
-					$dailyReport = new DailyReport();
-					// get campaign ID used in KickAds Server, from the campaign name use in the external network
-					$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->title->value);
-					if ( !$dailyReport->campaigns_id ) {
-						Yii::log("EroAdvertising: ERROR - invalid external campaign name: ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
-						continue;
-					}				
-					$dailyReport->networks_id = $this->network_id;
-					$dailyReport->imp = $campaign->views->value;
-					$dailyReport->clics = $campaign->clicks->value;
-					$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-					$dailyReport->conv_adv = 0;
-					$dailyReport->spend = str_replace(',', '.', $campaign->paid->value);
-					$dailyReport->updateRevenue();
-					$dailyReport->date = $date;
+		}
 
-					if ( !$dailyReport->save() ) {
-						print json_encode($dailyReport->getErrors()) . "<br>";
-						Yii::log("EroAdvertising: ERROR - saving campaign: ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
-						continue;
-					}
+		else {
+
+				if(!is_array($result->data->period->stats->campaign))
+				{
+					self::saveCampaign($result->data->period->stats->campaign);
 				}
+				else {
+					foreach ($result->data->period->stats->campaign as $campaign) {
+						self::saveCampaign($campaign);
+					}
 
-			}
+				}
 			
 		}
 		Yii::log("EroAdvertising: SUCCESS - Daily info downloaded. ".date('d-m-Y', strtotime($date)), 'info', 'system.model.api.eroadvertising');
