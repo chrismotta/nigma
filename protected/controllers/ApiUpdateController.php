@@ -3,38 +3,38 @@
 class ApiUpdateController extends Controller
 {
 
-	/**
-	 * @return array action filters
-	 */
-	public function filters()
-	{
-		return array(
-			'accessControl', // perform access control for CRUD operations
-			'postOnly + delete', // we only allow deletion via POST request
-		);
-	}
+	// /**
+	//  * @return array action filters
+	//  */
+	// public function filters()
+	// {
+	// 	return array(
+	// 		'accessControl', // perform access control for CRUD operations
+	// 		'postOnly + delete', // we only allow deletion via POST request
+	// 	);
+	// }
 
-	/**
-	 * Specifies the access control rules.
-	 * This method is used by the 'accessControl' filter.
-	 * @return array access control rules
-	 */
-	public function accessRules()
-	{
-		return array(
-			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi'),
-				'roles'=>array('admin', 'media_manager'),
-			),
-			array('deny',  // deny all users
-				'users'=>array('*'),
-			),
-			array('allow',
-				'actions'=>array('index', 'log'),
-				'roles'=>array('*'),
-			),
-		);
-	}
+	// /**
+	//  * Specifies the access control rules.
+	//  * This method is used by the 'accessControl' filter.
+	//  * @return array access control rules
+	//  */
+	// public function accessRules()
+	// {
+	// 	return array(
+	// 		array('allow',
+	// 			'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi'),
+	// 			'roles'=>array('admin', 'media_manager'),
+	// 		),
+	// 		array('deny',  // deny all users
+	// 			'users'=>array('*'),
+	// 		),
+	// 		array('allow',
+	// 			'actions'=>array('index', 'log'),
+	// 			'roles'=>array('*'),
+	// 		),
+	// 	);
+	// }
 
 	public function actionIndex()
 	{
