@@ -149,6 +149,22 @@ class DailyReport extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
+	function dateRange($start, $end) {
+	    $range = array();
+
+	    if (is_string($start) === true) $start = strtotime($start);
+	    if (is_string($end) === true ) $end = strtotime($end);
+
+	    if ($start > $end) return createDateRangeArray($end, $start);
+
+	    do {
+	        $range[] = date('Y-m-d', $start);
+	        $start = strtotime("+ 1 day", $start);
+	    } while($start <= $end);
+
+	    return $range;
+	}
+
 	public function search($startDate=NULL, $endDate=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.

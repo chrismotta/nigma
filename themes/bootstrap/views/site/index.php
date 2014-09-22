@@ -6,12 +6,15 @@ $this->pageTitle=Yii::app()->name;
 <div class="row">
 	<div class="span12">
 	<?php
+	$dateStart="-2 week";
+	$dateEnd="today";
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
+			'dataProvider'=>$model->search($dateStart,$dateEnd),
 			'chart' => array('type' => 'area'),
 			'title' => array('text' => ''),
 			'xAxis' => array(
-				'categories' => array('8-5-2014','9-5-2014','10-5-2014','11-5-2014','12-5-2014','13-5-2014','14-5-2014','8-5-2014','9-5-2014','10-5-2014','11-5-2014','12-5-2014','13-5-2014','14-5-2014')
+				'categories' => $model->dateRange($dateStart,$dateEnd)
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 			'yAxis' => array(
@@ -34,6 +37,7 @@ $this->pageTitle=Yii::app()->name;
 		)
 	);
 	?>
+	
 	<?php
 	/*
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
