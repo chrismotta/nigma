@@ -5,7 +5,7 @@ class EroAdvertising
 
 	private $network_id = 26;
 
-	public function saveCampaign($campaign)
+	public function saveCampaign($campaign, $date)
 	{
 		if(!isset($campaign->clicks->value))continue;
 		if ( $campaign->views->value == 0 && $campaign->clicks->value == 0) { // if no impressions dismiss campaign
@@ -74,11 +74,11 @@ class EroAdvertising
 			foreach ($result->data->period->stats as $stats) {
 				if(!is_array($stats->campaign))
 				{
-					self::saveCampaign($stats->campaign);
+					self::saveCampaign($stats->campaign,$date);
 				}
 				else {
 					foreach ($stats->campaign as $campaign) {
-						self::saveCampaign($campaign);
+						self::saveCampaign($campaign,$date);
 					}
 
 				}
@@ -89,11 +89,11 @@ class EroAdvertising
 
 				if(!is_array($result->data->period->stats->campaign))
 				{
-					self::saveCampaign($result->data->period->stats->campaign);
+					self::saveCampaign($result->data->period->stats->campaign,$date);
 				}
 				else {
 					foreach ($result->data->period->stats->campaign as $campaign) {
-						self::saveCampaign($campaign);
+						self::saveCampaign($campaign,$date);
 					}
 
 				}

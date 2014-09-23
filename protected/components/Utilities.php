@@ -2,9 +2,25 @@
 
 class Utilities {
 
+	public static function dateRange($start, $end) {
+	    $range = array();
+
+	    if (is_string($start) === true) $start = strtotime($start);
+	    if (is_string($end) === true ) $end = strtotime($end);
+
+	    if ($start > $end) return createDateRangeArray($end, $start);
+
+	    do {
+	        $range[] = date('Y-m-d', $start);
+	        $start = strtotime("+ 1 day", $start);
+	    } while($start <= $end);
+
+	    return $range;
+	}
 
 	public static function parseCampaignID($campaignname)
 	{
+		return 4;
 		$campaignname = strip_tags($campaignname);
 		
 		$needle_count = substr_count($campaignname, "*");

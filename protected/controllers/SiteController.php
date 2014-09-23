@@ -76,6 +76,8 @@ class SiteController extends Controller
 		// using the default layout 'protected/views/layouts/main.php'
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
+			'dataTopConversions'=>$model->gridTopConversions('-2 week 2 day','yesterday','conversions'),
+			'dataTopConversionsRate'=>$model->gridTopConversions('-2 week 2 day','yesterday','convrate'),
 			'model'=>$model,
 		));
 	}

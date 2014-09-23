@@ -29,6 +29,8 @@ class DailyReport extends CActiveRecord
 	public $network_hasApi;
 	public $account_manager;
 	public $campaign_name;
+	public $conversions;
+	public $convrate;
 
 	/**
 	 * @return string the associated database table name
@@ -98,16 +100,6 @@ class DailyReport extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 		$criteria->compare('t.id',$this->id);
-		/*$criteria->compare('campaigns_id',$this->campaigns_id);
-		$criteria->compare('networks_id',$this->networks_id);
-		$criteria->compare('imp',$this->imp);
-		$criteria->compare('imp_adv',$this->imp_adv);
-		$criteria->compare('clics',$this->clics);
-		$criteria->compare('conv_api',$this->conv_api);
-		$criteria->compare('conv_adv',$this->conv_adv);
-		$criteria->compare('spend',$this->spend,true);
-		$criteria->compare('revenue',$this->revenue);
-		$criteria->compare('is_from_api',$this->is_from_api);*/
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
@@ -137,32 +129,107 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	/**
-	 * Retrieves a list of models based on the current search/filter conditions.
-	 *
-	 * Typical usecase:
-	 * - Initialize the model fields with values from filter form.
-	 * - Execute this method to get CActiveDataProvider instance which will filter
-	 * models according to data in model fields.
-	 * - Pass data provider to CGridView, CListView or any similar widget.
-	 *
-	 * @return CActiveDataProvider the data provider that can return the models
-	 * based on the search/filter conditions.
-	 */
-	function dateRange($start, $end) {
-	    $range = array();
 
-	    if (is_string($start) === true) $start = strtotime($start);
-	    if (is_string($end) === true ) $end = strtotime($end);
+	public function getTotals($startDate=null, $endDate=null) {
+		
+		if(!$startDate)	$startDate = 'today' ;
+		if(!$endDate) $endDate   = 'today';
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+		$spends=array();
+		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+			$totalS=0;
+			$totalR=0;
+			$totalP=0;
+			$condition = 'DATE(date) = :date';
+			$params    = array(":date"=>$date);
+			$r         = DailyReport::model()->findAll( $condition, $params );
+			foreach ($r as $value) {
+				$totalS+= $value->getSpendUSD();
+				$totalR+= $value->getRevenueUSD();			
+				$totalP+= $value->getProfit();			
+			}
+			$spends[]=$totalS;
+			$revenues[]=$totalR;
+			$profits[]=$totalP;
+			$dates[]=$date;
+		}
+		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
+		return $result;
+	}
 
-	    if ($start > $end) return createDateRangeArray($end, $start);
+	public function getTopConversion($startDate=NULL, $endDate=NULL,$order)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
+						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+		$criteria->group='campaigns_id';
+		if($order=='conversions')$criteria->order='conversions DESC';
+		if($order=='convrate')$criteria->order='convrate DESC';
+		$criteria->with=array('campaigns', );
+		$criteria->limit=6;
 
-	    do {
-	        $range[] = date('Y-m-d', $start);
-	        $start = strtotime("+ 1 day", $start);
-	    } while($start <= $end);
+		$campaigns=array();
+		$conversions=array();
+		$campaigns_id=array();
+		$conversions_rate=array();
+		$r         = self::model()->findAll($criteria);
+		
+		foreach ($r as $value) {
+			$conversions[]=intval($value->conversions);
+			$conversions_rate[]=intval($value->convrate);
+			$campaigns[]=$value->campaigns->name;	
+			$campaigns_id[]=$value->campaigns->id;
+		}
+		$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
+		return $result;
 
-	    return $range;
+	}
+
+	public function gridTopConversions($startDate=NULL, $endDate=NULL, $order)
+	{
+		$criteria=new CDbCriteria;
+		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
+		//$criteria->compare('t.id',$this->id);
+		////SELECT campaigns_id,
+		// case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions
+		// FROM `daily_report` 
+		// WHERE DATE(date)>='2014-09-01' 
+		// AND DATE(date)<='2014-09-21'
+		// GROUP BY campaigns_id
+		// ORDER BY conversions
+		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
+						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+		$criteria->group='campaigns_id';
+		if($order=='conversions')$criteria->order='conversions DESC';
+		if($order=='convrate')$criteria->order='convrate DESC';
+		$criteria->with=array('campaigns', );
+		$criteria->limit=6;
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+			'pagination'=>false,
+			'sort'=>array(
+				'defaultOrder' => 't.conv_api DESC,t.conv_adv DESC',
+				'attributes'   =>array(
+					// Adding custom sort attributes
+		            'name'=>array(
+						'asc'  =>'campaigns.name',
+						'desc' =>'campaigns.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
+
+		));
 	}
 
 	public function search($startDate=NULL, $endDate=NULL)
@@ -392,6 +459,11 @@ class DailyReport extends CActiveRecord
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
 		$r = $conv == 0 ? 0 : number_format($this->getSpendUSD() / $conv, 2);
 		return $r;
+	}
+
+	public function getConversions()
+	{		
+		return $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
 	}
 
 }
