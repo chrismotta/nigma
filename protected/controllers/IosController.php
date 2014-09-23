@@ -111,7 +111,12 @@ class IosController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
+		if ( Opportunities::model()->count("ios_id=:ios_id", array(":ios_id" => $id)) > 0 ) {
+			echo "To remove this item must delete the opportunities associated with it.";
+			Yii::app()->end();
+		} else {
+			$this->loadModel($id)->delete();
+		}
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
