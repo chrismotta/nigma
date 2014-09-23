@@ -40,3 +40,6 @@ Install Environment
 - Ignore chmod changes in git
 	cd /var/www/html/kickads/appserver 
 	git config core.fileMode false
+- Plugins Sublime
+	https://sublime.wbond.net/installation#st2
+	http://www.pixmatstudios.com/blog/10-plugins-sublime-text-pixmat/#.VCG2Cq24E8o
