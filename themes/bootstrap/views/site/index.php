@@ -5,10 +5,11 @@ $this->pageTitle=Yii::app()->name;
 $dateStart="-2 week";
 $dateEnd="yesterday";
 ?>
-<!--
+
 <div class="row">
 	<div class="span12">
 	<?php
+	/*
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
 			'dataProvider'=>$model->getTotals($dateStart,$dateEnd),
@@ -39,11 +40,12 @@ $dateEnd="yesterday";
 			),
 		)
 	);
+	*/
 	?>
 	
 	</div>
 </div>
--->
+
 <div class="row" id="top">
 	<div class="span6">
 		<h4>Top Conversions</h4>
@@ -201,7 +203,7 @@ $dateEnd="yesterday";
 
 
 
-<!--
+<?php /*
 <div class="row" id="top">
 	<div class="span6">
 		<h4>Top Daily Cap</h4>
@@ -246,7 +248,7 @@ $dateEnd="yesterday";
 	                    	)
 	                    )
 					),
-				/*'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),*/
+				//'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'yAxis' => array(
 					'title' => array('text' => '')
 					),
@@ -264,10 +266,10 @@ $dateEnd="yesterday";
 		                    'stacking' => 'normal',
 		                    'dataLabels' => array(
 		                        'enabled' => false,
-		                        /*'color' => (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-		                        'style' => array(
-		                            'textShadow' => '0 0 3px black, 0 0 3px black'
-		                        )*/
+		                        //'color' => (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+		                        //'style' => array(
+		                        //    'textShadow' => '0 0 3px black, 0 0 3px black'
+		                        //)
 		                    )
 		                )
 		            ),
@@ -311,7 +313,7 @@ $dateEnd="yesterday";
 	                    	)
 	                    )
 					),
-				/*'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),*/
+				//'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'yAxis' => array(
 					'title' => array('text' => '')
 					),
@@ -329,10 +331,10 @@ $dateEnd="yesterday";
 		                    'stacking' => 'normal',
 		                    'dataLabels' => array(
 		                        'enabled' => false,
-		                        /*'color' => (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
-		                        'style' => array(
-		                            'textShadow' => '0 0 3px black, 0 0 3px black'
-		                        )*/
+		                        //'color' => (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white',
+		                        //'style' => array(
+		                        //    'textShadow' => '0 0 3px black, 0 0 3px black'
+		                        //)
 		                    )
 		                )
 		            ),
@@ -341,7 +343,7 @@ $dateEnd="yesterday";
 		);
 		?>
 	</div>
--->
+*/ ?>
 </div>
 
 <div class="row" id="blank-row">
