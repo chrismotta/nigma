@@ -5,6 +5,7 @@ $this->pageTitle=Yii::app()->name;
 $dateStart="-2 week";
 $dateEnd="yesterday";
 ?>
+<!--
 <div class="row">
 	<div class="span12">
 	<?php
@@ -42,9 +43,7 @@ $dateEnd="yesterday";
 	
 	</div>
 </div>
-
-
-<!--
+-->
 <div class="row" id="top">
 	<div class="span6">
 		<h4>Top Conversions</h4>
@@ -201,6 +200,8 @@ $dateEnd="yesterday";
 </div>
 
 
+
+<!--
 <div class="row" id="top">
 	<div class="span6">
 		<h4>Top Daily Cap</h4>
