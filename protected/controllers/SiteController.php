@@ -74,11 +74,13 @@ class SiteController extends Controller
 		$model=new DailyReport;
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
+		$startDate='-2 week 2 day';
+		$endDate='yesterday';
 		$this->render('index',array(
-			'dataTopConversions'=>$model->getDataDash('-2 week 2 day','yesterday','conversions','dataProvider'),
-			'dataTopConversionsRate'=>$model->getDataDash('-2 week 2 day','yesterday','convrate','dataProvider'),
-			'dataConvRateArray'=>$model->getDataDash('-2 week 2 day','yesterday','convrate','array'),
-			'dataConvArray'=>$model->getDataDash('-2 week 2 day','yesterday','conversions','array'),
+			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions','dataProvider'),
+			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate','dataProvider'),
+			'dataConvRateArray'=>$model->getDataDash($startDate,$endDate,'convrate','array'),
+			'dataConvArray'=>$model->getDataDash($startDate,$endDate,'conversions','array'),
 			'model'=>$model,
 		));
 	}
