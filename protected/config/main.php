@@ -31,7 +31,6 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 		break;
 	// iweb prod
 	case '70.38.54.225':
-	case 'app.kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
@@ -43,6 +42,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// amazon prod
 	case '54.88.85.63':
 	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
+	case 'app.kickadserver.mobi':
 	case 'kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
