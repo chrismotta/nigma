@@ -19,18 +19,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'charset'          => 'utf8',
 				);
 		break;
-	// iweb test
-	case 'test.kickadserver.mobi':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver_dev',
-					'emulatePrepare'   => true,
-					'username'         => 'root',
-					'password'         => 'pernambuco',
-					'charset'          => 'utf8',
-				);
-		break;
 	// iweb prod
-	case '70.38.54.225':
+	case '70.38.54.231':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
@@ -46,6 +36,16 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'emulatePrepare'   => true,
+					'username'         => 'admin',
+					'password'         => 'k1ck4ds3rv3r',
+					'charset'          => 'utf8',
+				);
+		break;
+	// amazon test
+	case 'test.kickadserver.mobi':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
 					'emulatePrepare'   => true,
 					'username'         => 'admin',
 					'password'         => 'k1ck4ds3rv3r',
