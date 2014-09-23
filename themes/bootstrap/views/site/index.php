@@ -2,7 +2,7 @@
 /* @var $this SiteController */
 
 $this->pageTitle=Yii::app()->name;
-$dateStart="-2 week";
+$dateStart="-2 week 2 day";
 $dateEnd="yesterday";
 ?>
 
@@ -87,7 +87,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $model->getTopConversion($dateStart,$dateEnd,'conversions')['campaigns_id'],
+					'categories' => $dataConvArray['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -102,7 +102,7 @@ $dateEnd="yesterday";
 					'title' => array('text' => '')
 					),
 				'series' => array(
-					array('name' => 'Conversions', 'data' => $model->getTopConversion($dateStart,$dateEnd,'conversions')['conversions']),
+					array('name' => 'Conversions', 'data' => $dataConvArray['conversions']),
 					//array('name' => 'Clicks', 'data' => array(205, 189, 215, 133, 192)),
 					//array('name' => 'Conversions', 'data' => array(12, 21, 29, 19, 12))
 					),
@@ -159,7 +159,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $model->getTopConversion($dateStart,$dateEnd,'convrate')['campaigns_id'],
+					'categories' => $dataConvRateArray['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -174,7 +174,7 @@ $dateEnd="yesterday";
 					'title' => array('text' => '')
 					),
 				'series' => array(
-					array('name' => 'Conversions Rate', 'data' => $model->getTopConversion($dateStart,$dateEnd,'convrate')['conversions_rate']),
+					array('name' => 'Conversions Rate', 'data' => $dataConvRateArray['conversions_rate']),
 					//array('name' => 'Clicks', 'data' => array(205, 189, 215, 133, 192)),
 					//array('name' => 'Conversions', 'data' => array(12, 21, 29, 19, 12))
 					),
