@@ -43,6 +43,8 @@ $dateEnd="yesterday";
 	</div>
 </div>
 
+
+<!--
 <div class="row" id="top">
 	<div class="span6">
 		<h4>Top Conversions</h4>
@@ -199,8 +201,6 @@ $dateEnd="yesterday";
 </div>
 
 
-
-<!--
 <div class="row" id="top">
 	<div class="span6">
 		<h4>Top Daily Cap</h4>
