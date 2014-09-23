@@ -84,7 +84,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $model->getTopConversion($dateStart,$dateEnd,'conversions')['campaigns'],
+					'categories' => $model->getTopConversion($dateStart,$dateEnd,'conversions')['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -156,7 +156,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $model->getTopConversion($dateStart,$dateEnd,'convrate')['campaigns'],
+					'categories' => $model->getTopConversion($dateStart,$dateEnd,'convrate')['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -197,6 +197,9 @@ $dateEnd="yesterday";
 		?>
 	</div>
 </div>
+
+
+
 <!--
 <div class="row" id="top">
 	<div class="span6">
