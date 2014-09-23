@@ -172,7 +172,7 @@ class DailyReport extends CActiveRecord
 		if($order=='convrate')$criteria->order='convrate DESC';
 		$criteria->with=array('campaigns', );
 		$criteria->limit=6;
-
+		$criteria->together=true;
 		$campaigns=array();
 		$conversions=array();
 		$campaigns_id=array();
@@ -217,7 +217,6 @@ class DailyReport extends CActiveRecord
 			'criteria'=>$criteria,
 			'pagination'=>false,
 			'sort'=>array(
-				'defaultOrder' => 't.conv_api DESC,t.conv_adv DESC',
 				'attributes'   =>array(
 					// Adding custom sort attributes
 		            'name'=>array(
