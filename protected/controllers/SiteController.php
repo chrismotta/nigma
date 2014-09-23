@@ -75,9 +75,10 @@ class SiteController extends Controller
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
 			'dataTopConversions'=>$model->gridTopConversions('-2 week 2 day','yesterday','conversions'),
 			'dataTopConversionsRate'=>$model->gridTopConversions('-2 week 2 day','yesterday','convrate'),
+			'dataConvRateArray'=>$model->getDataDash('-2 week 2 day','yesterday','convrate','array'),
+			'dataConvArray'=>$model->getDataDash('-2 week 2 day','yesterday','conversions','array'),
 			'model'=>$model,
 		));
 	}
