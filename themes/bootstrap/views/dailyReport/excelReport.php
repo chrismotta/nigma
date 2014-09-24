@@ -2,6 +2,8 @@
 /* @var $this DailyReportController */
 /* @var $model DailyReport */
 
+set_time_limit(1000);
+
 $path = 'uploads/';
 $name = 'KickAds-DailyReport.xls';
 
