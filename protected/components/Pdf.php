@@ -26,7 +26,7 @@ class Pdf extends EPdfFactoryDoc
 
         // Print io section
 		unset($values);
-		$values[$io->getAttributeLabel('commercial_name')] = $io->name;
+		$values[$io->getAttributeLabel('commercial_name')] = $io->commercial_name;
 		$values[$io->getAttributeLabel('tax_id')] = $io->tax_id;
         $values[$io->getAttributeLabel('address')] = $io->address;
         $values[$io->getAttributeLabel('state')] = $io->state;

@@ -23,7 +23,7 @@ class ApiUpdateController extends Controller
 	// {
 	// 	return array(
 	// 		array('allow',
-	// 			'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi'),
+	// 			'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds'),
 	// 			'roles'=>array('admin', 'media_manager'),
 	// 		),
 	// 		array('deny',  // deny all users
@@ -48,6 +48,7 @@ class ApiUpdateController extends Controller
 		// $this->actionMobfox();
 		$this->actionEroAdvertising();
 		$this->actionInMobi();
+		// $this->actionBingAds();
 	}
 
 	public function actionAdWords()
@@ -109,6 +110,13 @@ class ApiUpdateController extends Controller
 		$inMobi = new InMobi;
 		$inMobi->downloadInfo();
 	}
+
+	public function actionBingAds()
+	{
+		$bingAds = new BingAds;
+		$bingAds->downloadInfo();
+	}
+
 
 	public function actionLog()
 	{	

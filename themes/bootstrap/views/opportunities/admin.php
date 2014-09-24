@@ -124,6 +124,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'afterDelete' => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -164,7 +165,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						)
 				    }
 				    ',
-				)
+				),
 			),
 			'template' => '{viewAjax} {updateAjax} {delete}',
 		),
