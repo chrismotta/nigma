@@ -51,6 +51,7 @@ class DailyReport extends CActiveRecord
 			array('campaigns_id, imp, clics, conv_api, spend, date', 'required'),
 			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, is_from_api', 'numerical', 'integerOnly'=>true),
 			array('spend, revenue', 'length', 'max'=>11),
+			array('date', 'date',  'format'=>'yyyy-M-d'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
