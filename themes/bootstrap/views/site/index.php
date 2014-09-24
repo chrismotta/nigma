@@ -9,23 +9,22 @@ $dateEnd="yesterday";
 <div class="row">
 	<div class="span12">
 	<?php
-	/*
+	
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
-			'dataProvider'=>$model->getTotals($dateStart,$dateEnd),
 			'chart' => array('type' => 'area'),
 			'title' => array('text' => ''),
 			'xAxis' => array(
-				'categories' => $model->getTotals($dateStart,$dateEnd)['dates']
+				'categories' => $dataHighchart['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 			'yAxis' => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Spend', 'data' =>$model->getTotals($dateStart,$dateEnd)['spends']),
-				array('name' => 'Revenue', 'data' =>$model->getTotals($dateStart,$dateEnd)['revenues']),
-				array('name' => 'Profit', 'data' =>$model->getTotals($dateStart,$dateEnd)['profits']),
+				array('name' => 'Spend', 'data' =>$dataHighchart['spends']),
+				array('name' => 'Revenue', 'data' =>$dataHighchart['revenues']),
+				array('name' => 'Profit', 'data' =>$dataHighchart['profits']),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
@@ -40,7 +39,7 @@ $dateEnd="yesterday";
 			),
 		)
 	);
-	*/
+	
 	?>
 	
 	</div>

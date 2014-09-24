@@ -136,7 +136,6 @@ class DailyReport extends CActiveRecord
 		if(!$endDate) $endDate   = 'today';
 		$startDate = date('Y-m-d', strtotime($startDate));
 		$endDate = date('Y-m-d', strtotime($endDate));
-		$spends=array();
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
 			$totalS=0;
 			$totalR=0;

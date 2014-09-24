@@ -81,7 +81,7 @@ class SiteController extends Controller
 			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate','dataProvider'),
 			'dataConvRateArray'=>$model->getDataDash($startDate,$endDate,'convrate','array'),
 			'dataConvArray'=>$model->getDataDash($startDate,$endDate,'conversions','array'),
-			'model'=>$model,
+			'dataHighchart'=>$model->getTotals($startDate,$endDate),
 		));
 	}
 
