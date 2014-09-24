@@ -49,6 +49,7 @@ class ApiUpdateController extends Controller
 		$this->actionEroAdvertising();
 		$this->actionInMobi();
 		// $this->actionBingAds();
+		// $this->actionSmaato();
 	}
 
 	public function actionAdWords()
@@ -115,6 +116,12 @@ class ApiUpdateController extends Controller
 	{
 		$bingAds = new BingAds;
 		$bingAds->downloadInfo();
+	}
+
+	public function actionSmaato()
+	{
+		$smaato = new Smaato;
+		$smaato->downloadInfo();	
 	}
 
 

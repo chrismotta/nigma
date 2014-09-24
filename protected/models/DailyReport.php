@@ -137,7 +137,6 @@ class DailyReport extends CActiveRecord
 		if(!$endDate) $endDate   = 'today';
 		$startDate = date('Y-m-d', strtotime($startDate));
 		$endDate = date('Y-m-d', strtotime($endDate));
-		$spends=array();
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
 			$totalS=0;
 			$totalR=0;
@@ -159,39 +158,7 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	public function getTopConversion($startDate=NULL, $endDate=NULL,$order)
-	{
-		$criteria=new CDbCriteria;
-		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
-						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-		}
-		$criteria->group='campaigns_id';
-		if($order=='conversions')$criteria->order='conversions DESC';
-		if($order=='convrate')$criteria->order='convrate DESC';
-		$criteria->with=array('campaigns', );
-		$criteria->limit=6;
-		$criteria->together=true;
-		$campaigns=array();
-		$conversions=array();
-		$campaigns_id=array();
-		$conversions_rate=array();
-		$r         = self::model()->findAll($criteria);
-		
-		foreach ($r as $value) {
-			$conversions[]=intval($value->conversions);
-			$conversions_rate[]=intval($value->convrate);
-			$campaigns[]=$value->campaigns->name;	
-			$campaigns_id[]=$value->campaigns->id;
-		}
-		$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
-		return $result;
-
-	}
-
-	public function gridTopConversions($startDate=NULL, $endDate=NULL, $order)
+	public function getDataDash($startDate=NULL, $endDate=NULL, $order)
 	{
 		$criteria=new CDbCriteria;
 		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
@@ -214,49 +181,9 @@ class DailyReport extends CActiveRecord
 		if($order=='convrate')$criteria->order='convrate DESC';
 		$criteria->with=array('campaigns', );
 		$criteria->limit=6;
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'pagination'=>false,
-			'sort'=>array(
-				'attributes'   =>array(
-					// Adding custom sort attributes
-		            'name'=>array(
-						'asc'  =>'campaigns.name',
-						'desc' =>'campaigns.name DESC',
-		            ),
-		            // Adding all the other default attributes
-		            '*',
-		        ),
-		    ),
-
-		));
-	}
-
-	public function getDataDash($startDate=NULL, $endDate=NULL, $order,$type)
-	{
-		$criteria=new CDbCriteria;
-		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
-		//$criteria->compare('t.id',$this->id);
-		////SELECT campaigns_id,
-		// case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions
-		// FROM `daily_report` 
-		// WHERE DATE(date)>='2014-09-01' 
-		// AND DATE(date)<='2014-09-21'
-		// GROUP BY campaigns_id
-		// ORDER BY conversions
-		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
-						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-		}
-		$criteria->group='campaigns_id';
-		if($order=='conversions')$criteria->order='conversions DESC';
-		if($order=='convrate')$criteria->order='convrate DESC';
-		$criteria->with=array('campaigns', );
-		$criteria->limit=6;
-		if($type=='array')
-		{
+		$dataDash=array();
+		// if($type=='array')
+		// {
 			$campaigns=array();
 			$conversions=array();
 			$campaigns_id=array();
@@ -270,10 +197,11 @@ class DailyReport extends CActiveRecord
 				$campaigns_id[]=$value->campaigns->id;
 			}
 			$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
-			return $result;
-		}
-		else{
-			return new CActiveDataProvider($this, array(
+			//return $result;
+			$dataDash['array']=$result;
+		// }
+		// else{
+			$dataDash['dataProvider']= new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
 				'pagination'=>false,
 				'sort'=>array(
@@ -289,7 +217,8 @@ class DailyReport extends CActiveRecord
 			    ),
 
 			));
-		}
+		//}
+		return $dataDash;
 	}
 
 	public function search($startDate=NULL, $endDate=NULL)

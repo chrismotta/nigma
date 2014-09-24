@@ -9,23 +9,22 @@ $dateEnd="yesterday";
 <div class="row">
 	<div class="span12">
 	<?php
-	/*
+	
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
-			'dataProvider'=>$model->getTotals($dateStart,$dateEnd),
 			'chart' => array('type' => 'area'),
 			'title' => array('text' => ''),
 			'xAxis' => array(
-				'categories' => $model->getTotals($dateStart,$dateEnd)['dates']
+				'categories' => $dataHighchart['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 			'yAxis' => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Spend', 'data' =>$model->getTotals($dateStart,$dateEnd)['spends']),
-				array('name' => 'Revenue', 'data' =>$model->getTotals($dateStart,$dateEnd)['revenues']),
-				array('name' => 'Profit', 'data' =>$model->getTotals($dateStart,$dateEnd)['profits']),
+				array('name' => 'Spend', 'data' =>$dataHighchart['spends']),
+				array('name' => 'Revenue', 'data' =>$dataHighchart['revenues']),
+				array('name' => 'Profit', 'data' =>$dataHighchart['profits']),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
@@ -40,7 +39,7 @@ $dateEnd="yesterday";
 			),
 		)
 	);
-	*/
+	
 	?>
 	
 	</div>
@@ -60,7 +59,7 @@ $dateEnd="yesterday";
 		$this->widget('bootstrap.widgets.TbGridView', array(
 			'id'=>'topcampaigns-grid',
 			'type'=>'striped condensed',
-			'dataProvider'=>$dataTopConversions,
+			'dataProvider'=>$dataTopConversions['dataProvider'],
 			'template'                 =>'{items}',
 			'columns'=>array(
 				array(
@@ -87,7 +86,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $dataConvArray['campaigns_id'],
+					'categories' => $dataTopConversions['array']['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -102,7 +101,7 @@ $dateEnd="yesterday";
 					'title' => array('text' => '')
 					),
 				'series' => array(
-					array('name' => 'Conversions', 'data' => $dataConvArray['conversions']),
+					array('name' => 'Conversions', 'data' => $dataTopConversions['array']['conversions']),
 					//array('name' => 'Clicks', 'data' => array(205, 189, 215, 133, 192)),
 					//array('name' => 'Conversions', 'data' => array(12, 21, 29, 19, 12))
 					),
@@ -132,7 +131,7 @@ $dateEnd="yesterday";
 		$this->widget('bootstrap.widgets.TbGridView', array(
 			'id'=>'campaigns-grid',
 			'type'=>'striped condensed',
-			'dataProvider'=>$dataTopConversionsRate,
+			'dataProvider'=>$dataTopConversionsRate['dataProvider'],
 			'template'                 =>'{items}', 
 			'columns'=>array(
 				array(
@@ -159,7 +158,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $dataConvRateArray['campaigns_id'],
+					'categories' => $dataTopConversionsRate['array']['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -174,7 +173,7 @@ $dateEnd="yesterday";
 					'title' => array('text' => '')
 					),
 				'series' => array(
-					array('name' => 'Conversions Rate', 'data' => $dataConvRateArray['conversions_rate']),
+					array('name' => 'Conversions Rate', 'data' => $dataTopConversionsRate['array']['conversions_rate']),
 					//array('name' => 'Clicks', 'data' => array(205, 189, 215, 133, 192)),
 					//array('name' => 'Conversions', 'data' => array(12, 21, 29, 19, 12))
 					),
