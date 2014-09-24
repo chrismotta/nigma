@@ -212,6 +212,7 @@ class DailyReport extends CActiveRecord
 		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date';
 		$criteria->order='spend DESC';
 		$criteria->group='campaigns_id';
+		$criteria->limit=6;
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$spends[]=doubleval($value->getSpendUSD());
