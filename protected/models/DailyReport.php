@@ -199,35 +199,45 @@ class DailyReport extends CActiveRecord
 		if(!$endDate) $endDate   = 'today';
 		$startDate = date('Y-m-d', strtotime($startDate));
 		$endDate = date('Y-m-d', strtotime($endDate));
-		$date = date('Y-m-d', strtotime('yesterday'));
+
 		$dataTops=array();
 		$spends=array();
 		$revenues=array();
 		$profits=array();
 		$campaigns=array();	
 		$campaigns_id=array();
+
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date';
 		if($order=='spend')$criteria->order='spend DESC';
-		if($order=='profit')$criteria->order='revenue DESC';
+		if($order=='profit')$criteria->order='spend ASC, CASE revenue WHEN (revenue-spend)>0 THEN revenue END';
 		$criteria->group='campaigns_id';
 		$criteria->limit=6;
+
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$spends[]=doubleval($value->getSpendUSD());
-			$revenues[]=$value->getRevenueUSD();
-			$profits[]=$value->getProfit();
+			$revenues[]=doubleval($value->getRevenueUSD());
+			$profits[]=doubleval($value->getProfit());
 			$campaigns[]=$value->campaigns->name;		
-			$campaigns_id[]=$value->campaigns->name;		
+			$campaigns_id[]=$value->campaigns->id;		
 		}
 		
 		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'campaigns' => $campaigns, 'campaigns_id' => $campaigns_id);
 		$dataTops['array']= $result;
 		$dataTops['dataProvider']= new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(
+			            // Adding all the other default attributes
+			            '*',
+			        ),
+			    ),
+
+			));
 		return $dataTops;
 	}
 
@@ -279,12 +289,6 @@ class DailyReport extends CActiveRecord
 				'pagination'=>false,
 				'sort'=>array(
 					'attributes'   =>array(
-						// Adding custom sort attributes
-			            'name'=>array(
-							'asc'  =>'campaigns.name',
-							'desc' =>'campaigns.name DESC',
-			            ),
-			            // Adding all the other default attributes
 			            '*',
 			        ),
 			    ),

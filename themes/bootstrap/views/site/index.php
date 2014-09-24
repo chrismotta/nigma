@@ -2,8 +2,6 @@
 /* @var $this SiteController */
 
 $this->pageTitle=Yii::app()->name;
-$dateStart="-2 week 2 day";
-$dateEnd="yesterday";
 ?>
 
 <div class="row">
@@ -57,7 +55,7 @@ $dateEnd="yesterday";
 	<div class="span4">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
-			'id'=>'topcampaigns-grid',
+			'id'=>'topconversions-grid',
 			'type'=>'striped condensed',
 			'dataProvider'=>$dataTopConversions['dataProvider'],
 			'template'                 =>'{items}',
@@ -129,7 +127,7 @@ $dateEnd="yesterday";
 	<div class="span4" id="top">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
-			'id'=>'campaigns-grid',
+			'id'=>'conversionsrate-grid',
 			'type'=>'striped condensed',
 			'dataProvider'=>$dataTopConversionsRate['dataProvider'],
 			'template'                 =>'{items}', 
@@ -214,7 +212,7 @@ $dateEnd="yesterday";
 	<div class="span4">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
-			'id'=>'campaigns-grid',
+			'id'=>'topspend-grid',
 			'type'=>'striped condensed',
 			'dataProvider'=>$dataTops['dataProvider'],
 			'columns'=>array(
@@ -286,9 +284,9 @@ $dateEnd="yesterday";
 	<div class="span4">
 		<?php
 		$this->widget('bootstrap.widgets.TbGridView', array(
-			'id'=>'campaigns-grid',
+			'id'=>'topprofit-grid',
 			'type'=>'striped condensed',
-			'dataProvider'=>$dataTops['dataProvider'],
+			'dataProvider'=>$dataTopProfit['dataProvider'],
 			'columns'=>array(
 				array(
 					'name'   => 'id',
@@ -300,7 +298,7 @@ $dateEnd="yesterday";
 		        ),
 				array(
 					'name'   => 'Profits',
-		        	'value'  => '$data->getSpendUSD()',
+		        	'value'  => '$data->getProfit()',
 		        ),
 		    ),
 		));
@@ -314,7 +312,7 @@ $dateEnd="yesterday";
 				'title' => array('text' => ''),
 				'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 				'xAxis' => array(
-					'categories' => $dataTops['array']['campaigns_id'],
+					'categories' => $dataTopProfit['array']['campaigns_id'],
 					'labels' => array(
 	                    'rotation' => -45,
 	                    'align' => 'right',
@@ -329,7 +327,7 @@ $dateEnd="yesterday";
 					'title' => array('text' => '')
 					),
 				'series' => array(
-					array('name' => 'Profit', 'data' => $dataTops['array']['profits']),
+					array('name' => 'Profit', 'data' => $dataTopProfit['array']['profits']),
 					//array('name' => 'Clicks', 'data' => array(205, 189, 215, 133, 192)),
 					//array('name' => 'Conversions', 'data' => array(12, 21, 29, 19, 12))
 					),
