@@ -130,109 +130,118 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-
 	public function getTotals($startDate=null, $endDate=null) {
-		
+			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
 		$startDate = date('Y-m-d', strtotime($startDate));
 		$endDate = date('Y-m-d', strtotime($endDate));
+		$date = date('Y-m-d', strtotime('yesterday'));
+		$dataTops=array();
 		$spends=array();
-		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
-			$totalS=0;
-			$totalR=0;
-			$totalP=0;
-			$condition = 'DATE(date) = :date';
-			$params    = array(":date"=>$date);
-			$r         = DailyReport::model()->findAll( $condition, $params );
-			foreach ($r as $value) {
-				$totalS+= $value->getSpendUSD();
-				$totalR+= $value->getRevenueUSD();			
-				$totalP+= $value->getProfit();			
-			}
-			$spends[]=$totalS;
-			$revenues[]=$totalR;
-			$profits[]=$totalP;
-			$dates[]=$date;
-		}
-		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
-		return $result;
-	}
-
-	public function getTopConversion($startDate=NULL, $endDate=NULL,$order)
-	{
+		$revenues=array();
+		$profits=array();
+		$dates=array();
 		$criteria=new CDbCriteria;
-		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
-						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-		}
-		$criteria->group='campaigns_id';
-		if($order=='conversions')$criteria->order='conversions DESC';
-		if($order=='convrate')$criteria->order='convrate DESC';
-		$criteria->with=array('campaigns', );
-		$criteria->limit=6;
-		$criteria->together=true;
-		$campaigns=array();
-		$conversions=array();
-		$campaigns_id=array();
-		$conversions_rate=array();
-		$r         = self::model()->findAll($criteria);
-		
+		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date';
+		$criteria->order='date ASC';
+		$criteria->group='date';
+		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
-			$conversions[]=intval($value->conversions);
-			$conversions_rate[]=intval($value->convrate);
-			$campaigns[]=$value->campaigns->name;	
-			$campaigns_id[]=$value->campaigns->id;
+			$spends[]=doubleval($value->getSpendUSD());
+			$revenues[]=doubleval($value->getRevenueUSD());
+			$profits[]=$value->getProfit();
+			$dates[]=date('Y-m-d', strtotime($value->date));
+			//$campaigns[]=$value->campaigns->name;		
+			//$campaigns_id[]=$value->campaigns->name;		
 		}
-		$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
-		return $result;
-
-	}
-
-	public function gridTopConversions($startDate=NULL, $endDate=NULL, $order)
-	{
-		$criteria=new CDbCriteria;
-		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
-		//$criteria->compare('t.id',$this->id);
-		////SELECT campaigns_id,
-		// case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions
-		// FROM `daily_report` 
-		// WHERE DATE(date)>='2014-09-01' 
-		// AND DATE(date)<='2014-09-21'
-		// GROUP BY campaigns_id
-		// ORDER BY conversions
-		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
-						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-		}
-		$criteria->group='campaigns_id';
-		if($order=='conversions')$criteria->order='conversions DESC';
-		if($order=='convrate')$criteria->order='convrate DESC';
-		$criteria->with=array('campaigns', );
-		$criteria->limit=6;
-		return new CActiveDataProvider($this, array(
+		
+		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
+		$dataTops['array']= $result;
+		$dataTops['dataProvider']= new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-			'pagination'=>false,
-			'sort'=>array(
-				'attributes'   =>array(
-					// Adding custom sort attributes
-		            'name'=>array(
-						'asc'  =>'campaigns.name',
-						'desc' =>'campaigns.name DESC',
-		            ),
-		            // Adding all the other default attributes
-		            '*',
-		        ),
-		    ),
-
 		));
+		return $dataTops;
 	}
 
-	public function getDataDash($startDate=NULL, $endDate=NULL, $order,$type)
+	// public function getTotals($startDate=null, $endDate=null) {
+		
+	// 	if(!$startDate)	$startDate = 'today' ;
+	// 	if(!$endDate) $endDate   = 'today';
+	// 	$startDate = date('Y-m-d', strtotime($startDate));
+	// 	$endDate = date('Y-m-d', strtotime($endDate));
+	// 	foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+	// 		$totalS=0;
+	// 		$totalR=0;
+	// 		$totalP=0;
+	// 		$condition = 'DATE(date) = :date';
+	// 		$params    = array(":date"=>$date);
+	// 		$r         = DailyReport::model()->findAll( $condition, $params );
+	// 		foreach ($r as $value) {
+	// 			$totalS+= $value->getSpendUSD();
+	// 			$totalR+= $value->getRevenueUSD();			
+	// 			$totalP+= $value->getProfit();			
+	// 		}
+	// 		$spends[]=$totalS;
+	// 		$revenues[]=$totalR;
+	// 		$profits[]=$totalP;
+	// 		$dates[]=$date;
+	// 	}
+	// 	$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
+	// 	return $result;
+	// }
+
+	public function getTops($startDate=null, $endDate=null,$order) {
+			
+		if(!$startDate)	$startDate = 'today' ;
+		if(!$endDate) $endDate   = 'today';
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+
+		$dataTops=array();
+		$spends=array();
+		$revenues=array();
+		$profits=array();
+		$campaigns=array();	
+		$campaigns_id=array();
+
+		$criteria=new CDbCriteria;
+		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date';
+		if($order=='spend')$criteria->order='spend DESC';
+		if($order=='profit')$criteria->order='spend ASC, CASE revenue WHEN (revenue-spend)>0 THEN revenue END';
+		$criteria->group='campaigns_id';
+		$criteria->limit=6;
+
+		$r         = DailyReport::model()->findAll( $criteria );
+		foreach ($r as $value) {
+			$spends[]=doubleval($value->getSpendUSD());
+			$revenues[]=doubleval($value->getRevenueUSD());
+			$profits[]=doubleval($value->getProfit());
+			$campaigns[]=$value->campaigns->name;		
+			$campaigns_id[]=$value->campaigns->id;		
+		}
+		
+		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'campaigns' => $campaigns, 'campaigns_id' => $campaigns_id);
+		$dataTops['array']= $result;
+		$dataTops['dataProvider']= new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(
+			            // Adding all the other default attributes
+			            '*',
+			        ),
+			    ),
+
+			));
+		return $dataTops;
+	}
+
+	public function getDataDash($startDate=NULL, $endDate=NULL, $order)
 	{
 		$criteria=new CDbCriteria;
 		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
@@ -255,8 +264,9 @@ class DailyReport extends CActiveRecord
 		if($order=='convrate')$criteria->order='convrate DESC';
 		$criteria->with=array('campaigns', );
 		$criteria->limit=6;
-		if($type=='array')
-		{
+		$dataDash=array();
+		// if($type=='array')
+		// {
 			$campaigns=array();
 			$conversions=array();
 			$campaigns_id=array();
@@ -270,26 +280,22 @@ class DailyReport extends CActiveRecord
 				$campaigns_id[]=$value->campaigns->id;
 			}
 			$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
-			return $result;
-		}
-		else{
-			return new CActiveDataProvider($this, array(
+			//return $result;
+			$dataDash['array']=$result;
+		// }
+		// else{
+			$dataDash['dataProvider']= new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
 				'pagination'=>false,
 				'sort'=>array(
 					'attributes'   =>array(
-						// Adding custom sort attributes
-			            'name'=>array(
-							'asc'  =>'campaigns.name',
-							'desc' =>'campaigns.name DESC',
-			            ),
-			            // Adding all the other default attributes
 			            '*',
 			        ),
 			    ),
 
 			));
-		}
+		//}
+		return $dataDash;
 	}
 
 	public function search($startDate=NULL, $endDate=NULL)
