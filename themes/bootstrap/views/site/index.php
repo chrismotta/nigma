@@ -61,16 +61,13 @@ $this->pageTitle=Yii::app()->name;
 			'template'                 =>'{items}',
 			'columns'=>array(
 				array(
-					'name'   => 'id',
-		        	'value'  => '$data->campaigns->id',
-		        ),
-				array(
 					'name'   => 'name',
-		        	'value'  => '$data->campaigns->name',
+		        	'value'  => 'Campaigns::model()->getExternalName($data->campaigns->id)',        	
 		        ),
 				array(
-					'name'   => 'Conversions',
+					'name'   => 'Conv',
 		        	'value'  => '$data->conversions',
+					'htmlOptions' => array('style' => 'width: 50px'),
 		        ),
 			),
 		));
@@ -133,16 +130,13 @@ $this->pageTitle=Yii::app()->name;
 			'template'                 =>'{items}', 
 			'columns'=>array(
 				array(
-					'name'   => 'id',
-		        	'value'  => '$data->campaigns->id',
-		        ),
-				array(
 					'name'   => 'name',
-		        	'value'  => '$data->campaigns->name',
+		        	'value'  => 'Campaigns::model()->getExternalName($data->campaigns->id)',        	
 		        ),
 				array(
-					'name'   => 'Conversions Rate',
+					'name'   => 'CR',
 		        	'value'  => '$data->convrate."%"',
+					'htmlOptions' => array('style' => 'width: 50px'),
 		        ),
 			),
 		));
@@ -215,18 +209,16 @@ $this->pageTitle=Yii::app()->name;
 			'id'=>'topspend-grid',
 			'type'=>'striped condensed',
 			'dataProvider'=>$dataTops['dataProvider'],
+			'template'                 =>'{items}',
 			'columns'=>array(
 				array(
-					'name'   => 'id',
-		        	'value'  => '$data->campaigns->id',
-		        ),
-				array(
 					'name'   => 'name',
-		        	'value'  => '$data->campaigns->name',
+		        	'value'  => 'Campaigns::model()->getExternalName($data->campaigns->id)',        	
 		        ),
 				array(
 					'name'   => 'Spends',
 		        	'value'  => '$data->getSpendUSD()',
+					'htmlOptions' => array('style' => 'width: 50px'),
 		        ),
 		    ),
 		));
@@ -287,18 +279,16 @@ $this->pageTitle=Yii::app()->name;
 			'id'=>'topprofit-grid',
 			'type'=>'striped condensed',
 			'dataProvider'=>$dataTopProfit['dataProvider'],
+			'template'                 =>'{items}',
 			'columns'=>array(
 				array(
-					'name'   => 'id',
-		        	'value'  => '$data->campaigns->id',
-		        ),
-				array(
 					'name'   => 'name',
-		        	'value'  => '$data->campaigns->name',
+		        	'value'  => 'Campaigns::model()->getExternalName($data->campaigns->id)',        	
 		        ),
 				array(
-					'name'   => 'Profits',
+					'name'   => 'Prof',
 		        	'value'  => '$data->getProfit()',
+					'htmlOptions' => array('style' => 'width: 50px'),
 		        ),
 		    ),
 		));
