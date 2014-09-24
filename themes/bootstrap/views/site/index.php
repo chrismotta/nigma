@@ -76,7 +76,7 @@ $this->pageTitle=Yii::app()->name;
 		));
 		?>
 	</div>
-	<div class="span2">
+	<div class="span2 top-chart">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
@@ -148,7 +148,7 @@ $this->pageTitle=Yii::app()->name;
 		));
 		?>
 	</div>
-	<div class="span2">
+	<div class="span2 top-chart">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
@@ -232,7 +232,7 @@ $this->pageTitle=Yii::app()->name;
 		));
 		?>
 	</div>
-	<div class="span2">
+	<div class="span2 top-chart">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
@@ -304,7 +304,7 @@ $this->pageTitle=Yii::app()->name;
 		));
 		?>
 	</div>
-	<div class="span2">
+	<div class="span2 top-chart">
 		<?php
 		$this->Widget('ext.highcharts.HighchartsWidget', array(
 			'options'=>array(
