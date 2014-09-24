@@ -71,11 +71,15 @@ class SiteController extends Controller
 	public function actionIndex()
 	{
 		$dataProvider=new CActiveDataProvider('Campaigns');
-
+		$model=new DailyReport;
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
 		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
+			'dataTopConversions'=>$model->getDataDash('-2 week 2 day','yesterday','conversions','dataProvider'),
+			'dataTopConversionsRate'=>$model->getDataDash('-2 week 2 day','yesterday','convrate','dataProvider'),
+			'dataConvRateArray'=>$model->getDataDash('-2 week 2 day','yesterday','convrate','array'),
+			'dataConvArray'=>$model->getDataDash('-2 week 2 day','yesterday','conversions','array'),
+			'model'=>$model,
 		));
 	}
 

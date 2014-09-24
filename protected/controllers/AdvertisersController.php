@@ -111,7 +111,12 @@ class AdvertisersController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$this->loadModel($id)->delete();
+		if ( Ios::model()->count("advertisers_id=:adv_id", array(":adv_id" => $id)) > 0 ) {
+			echo "To remove this item must delete the ios associated with it.";
+			Yii::app()->end();
+		} else {
+			$this->loadModel($id)->delete();
+		}
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
