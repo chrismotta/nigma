@@ -77,10 +77,10 @@ class SiteController extends Controller
 		$startDate='-2 week 2 day';
 		$endDate='yesterday';
 		$this->render('index',array(
-			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions','dataProvider'),
-			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate','dataProvider'),
-			'dataConvRateArray'=>$model->getDataDash($startDate,$endDate,'convrate','array'),
-			'dataConvArray'=>$model->getDataDash($startDate,$endDate,'conversions','array'),
+			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions'),
+			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate'),
+			//'dataConvRateArray'=>$model->getDataDash($startDate,$endDate,'convrate','array'),
+			//'dataConvArray'=>$model->getDataDash($startDate,$endDate,'conversions','array'),
 			'dataHighchart'=>$model->getTotals($startDate,$endDate),
 		));
 	}
