@@ -100,7 +100,7 @@ class DailyReport extends CActiveRecord
 	public function excel($startDate=NULL, $endDate=NULL)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->compare('t.id',$this->id);
+		//$criteria->compare('t.id',$this->id);
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
@@ -108,7 +108,7 @@ class DailyReport extends CActiveRecord
 
 		//$criteria->with = array( 'campaigns', 'networks' );
 
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities', 'campaigns.opportunities.ios', 'campaigns.opportunities.ios.advertisers' ,'campaigns.opportunities.accountManager' );
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
