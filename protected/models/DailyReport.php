@@ -157,7 +157,7 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	public function getDataDash($startDate=NULL, $endDate=NULL, $order,$type)
+	public function getDataDash($startDate=NULL, $endDate=NULL, $order)
 	{
 		$criteria=new CDbCriteria;
 		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
@@ -180,8 +180,9 @@ class DailyReport extends CActiveRecord
 		if($order=='convrate')$criteria->order='convrate DESC';
 		$criteria->with=array('campaigns', );
 		$criteria->limit=6;
-		if($type=='array')
-		{
+		$dataDash=array();
+		// if($type=='array')
+		// {
 			$campaigns=array();
 			$conversions=array();
 			$campaigns_id=array();
@@ -195,10 +196,11 @@ class DailyReport extends CActiveRecord
 				$campaigns_id[]=$value->campaigns->id;
 			}
 			$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
-			return $result;
-		}
-		else{
-			return new CActiveDataProvider($this, array(
+			//return $result;
+			$dataDash['array']=$result;
+		// }
+		// else{
+			$dataDash['dataProvider']= new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
 				'pagination'=>false,
 				'sort'=>array(
@@ -214,7 +216,8 @@ class DailyReport extends CActiveRecord
 			    ),
 
 			));
-		}
+		//}
+		return $dataDash;
 	}
 
 	public function search($startDate=NULL, $endDate=NULL)
