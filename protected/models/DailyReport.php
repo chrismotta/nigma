@@ -193,7 +193,7 @@ class DailyReport extends CActiveRecord
 	// 	return $result;
 	// }
 
-	public function getTops($startDate=null, $endDate=null) {
+	public function getTops($startDate=null, $endDate=null,$order) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -210,7 +210,8 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date';
-		$criteria->order='spend DESC';
+		if($order=='spend')$criteria->order='spend DESC';
+		if($order=='profit')$criteria->order='revenue DESC';
 		$criteria->group='campaigns_id';
 		$criteria->limit=6;
 		$r         = DailyReport::model()->findAll( $criteria );
