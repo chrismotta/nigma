@@ -80,7 +80,7 @@ class SiteController extends Controller
 			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions'),
 			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate'),
 			'dataHighchart'=>$model->getTotals($startDate,$endDate),
-			'dataTops'=>$model->getTopsSpend($startDate,$endDate),
+			'dataTops'=>$model->getTops($startDate,$endDate,'spend'),
 			'dataTopProfit'=>$model->getTops($startDate,$endDate,'profit'),
 		));
 	}

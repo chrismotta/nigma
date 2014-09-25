@@ -177,33 +177,6 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	// public function getTotals($startDate=null, $endDate=null) {
-		
-	// 	if(!$startDate)	$startDate = 'today' ;
-	// 	if(!$endDate) $endDate   = 'today';
-	// 	$startDate = date('Y-m-d', strtotime($startDate));
-	// 	$endDate = date('Y-m-d', strtotime($endDate));
-	// 	foreach (Utilities::dateRange($startDate,$endDate) as $date) {
-	// 		$totalS=0;
-	// 		$totalR=0;
-	// 		$totalP=0;
-	// 		$condition = 'DATE(date) = :date';
-	// 		$params    = array(":date"=>$date);
-	// 		$r         = DailyReport::model()->findAll( $condition, $params );
-	// 		foreach ($r as $value) {
-	// 			$totalS+= $value->getSpendUSD();
-	// 			$totalR+= $value->getRevenueUSD();			
-	// 			$totalP+= $value->getProfit();			
-	// 		}
-	// 		$spends[]=$totalS;
-	// 		$revenues[]=$totalR;
-	// 		$profits[]=$totalP;
-	// 		$dates[]=$date;
-	// 	}
-	// 	$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
-	// 	return $result;
-	// }
-
 	public function getTops($startDate=null, $endDate=null,$order) {
 			
 		if(!$startDate)	$startDate = 'today' ;
@@ -251,55 +224,6 @@ class DailyReport extends CActiveRecord
 			));
 		return $dataTops;
 	}
-
-	public function getTopsSpend($startDate=null, $endDate=null) {
-			
-		if(!$startDate)	$startDate = 'today' ;
-		if(!$endDate) $endDate   = 'today';
-		$startDate = date('Y-m-d', strtotime($startDate));
-		$endDate = date('Y-m-d', strtotime($endDate));
-
-		$dataTops=array();
-		$spends=array();
-		$revenues=array();
-		$profits=array();
-		$campaigns=array();	
-		$campaigns_id=array();
-
-		$criteria=new CDbCriteria;
-		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
-		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, date';
-		$criteria->order='spend DESC';
-		//if($order=='profit')$criteria->order='spend ASC, CASE revenue WHEN (revenue-spend)>0 THEN revenue END';
-		$criteria->group='networks_id,campaigns_id';
-		$criteria->limit=6;
-
-		$r         = DailyReport::model()->findAll( $criteria );
-		foreach ($r as $value) {
-			$spends[]=doubleval($value->getSpendUSD());
-			// $revenues[]=doubleval($value->getRevenueUSD());
-			// $profits[]=doubleval($value->getProfit());
-			$campaigns[]=$value->campaigns->name;		
-			$campaigns_id[]=$value->campaigns->id;		
-		}
-		
-		$result=array('spends' => $spends, 'campaigns' => $campaigns, 'campaigns_id' => $campaigns_id);
-		$dataTops['array']= $result;
-		$dataTops['dataProvider']= new CActiveDataProvider($this, array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-				'sort'=>array(
-					'attributes'   =>array(
-			            // Adding all the other default attributes
-			            '*',
-			        ),
-			    ),
-
-			));
-		return $dataTops;
-	}
-
 
 	public function getDataDash($startDate=NULL, $endDate=NULL, $order)
 	{
