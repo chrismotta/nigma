@@ -77,7 +77,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'name'  => 'account_manager',
 			'value' => '$data->opportunities->accountManager ? $data->opportunities->accountManager->lastname . " " . $data->opportunities->accountManager->name : ""',
-        	'htmlOptions'	=> array( 'class' =>  'id', 'style' => 'width: 120px'),
+        	'htmlOptions'	=> array('style' => 'width: 120px'),
 		),
 		array(
 			'name'              => 'advertisers_name',
