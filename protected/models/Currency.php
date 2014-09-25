@@ -80,14 +80,14 @@ class Currency extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-
+/*
 		$criteria->compare('id',$this->id);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('ARS',$this->ARS,true);
 		$criteria->compare('EUR',$this->EUR,true);
 		$criteria->compare('BRL',$this->BRL,true);
 		$criteria->compare('GBP',$this->GBP,true);
-
+*/
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
