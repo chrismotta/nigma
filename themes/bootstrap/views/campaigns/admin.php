@@ -75,6 +75,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		// se usa la propiedad publica custom en 'name'
 		// y la ruta relacional de la columna en 'value'
 		array(
+			'name'  => 'account_manager',
+			'value' => '$data->opportunities->accountManager ? $data->opportunities->accountManager->lastname . " " . $data->opportunities->accountManager->name : ""',
+        	'htmlOptions'	=> array( 'class' =>  'id', 'style' => 'width: 120px'),
+		),
+		array(
 			'name'              => 'advertisers_name',
 			'value'             => '$data->opportunities->ios->advertisers->name',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
