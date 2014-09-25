@@ -45,7 +45,7 @@ class ApiUpdateController extends Controller
 		// $this->actionReporo();
 		$this->actionAdWords();
 		$this->actionVServ();
-		// $this->actionMobfox();
+		$this->actionMobfox();
 		$this->actionEroAdvertising();
 		$this->actionInMobi();
 		// $this->actionBingAds();
