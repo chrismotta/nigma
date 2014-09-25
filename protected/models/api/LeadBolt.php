@@ -12,6 +12,7 @@ class LeadBolt
 		} else {
 			$date = date('Y-m-d', strtotime('yesterday'));
 		}
+		$dateOrig = $date;
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
@@ -61,7 +62,7 @@ class LeadBolt
 			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign->spend;
 			$dailyReport->updateRevenue();
-			$dailyReport->date = $date;
+			$dailyReport->date = $dateOrig;
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.leadBolt');
 				continue;
