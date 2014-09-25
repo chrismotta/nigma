@@ -79,7 +79,7 @@ class SiteController extends Controller
 		$this->render('index',array(
 			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions'),
 			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate'),
-			'dataHighchart'=>$model->getTotals($startDate,$endDate)['array'],
+			'dataHighchart'=>$model->getTotals($startDate,$endDate),
 			'dataTops'=>$model->getTops($startDate,$endDate,'spend'),
 			'dataTopProfit'=>$model->getTops($startDate,$endDate,'profit'),
 		));

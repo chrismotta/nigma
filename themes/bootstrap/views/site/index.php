@@ -20,8 +20,8 @@ $this->pageTitle=Yii::app()->name;
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Spend', 'data' =>$dataHighchart['spends']),
 				array('name' => 'Revenue', 'data' =>$dataHighchart['revenues']),
+				array('name' => 'Spend', 'data' =>$dataHighchart['spends']),
 				array('name' => 'Profit', 'data' =>$dataHighchart['profits']),
 				),
 	        'legend' => array(
