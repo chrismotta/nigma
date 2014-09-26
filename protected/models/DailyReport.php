@@ -166,6 +166,45 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
+	public function getDailyTotals($startDate=null, $endDate=null) {
+			
+		if(!$startDate)	$startDate = 'today' ;
+		if(!$endDate) $endDate   = 'today';
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+		$imp=0;
+		$imp_adv=0;
+		$clics=0;
+		$conv_s2s=0;
+		$conv_adv=0;
+		$spend=0;
+		$revenue=0;
+
+		$criteria=new CDbCriteria;
+		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		$r         = DailyReport::model()->findAll( $criteria );
+		foreach ($r as $value) {
+			$imp+=$value->imp;
+			$imp_adv+=$value->imp_adv;
+			$clics+=$value->clics;
+			$conv_s2s+=$value->conv_api;
+			$conv_adv+=$value->conv_adv;
+			$spend+=doubleval($value->getSpendUSD());	
+			$revenue+=doubleval($value->getRevenueUSD());
+		}		
+		$result=array(
+				'imp'		=>$imp,
+				'imp_adv'	=>$imp_adv,
+				'clics'		=>$clics,
+				'conv_s2s'	=>$conv_s2s,
+				'conv_adv'	=>$conv_adv,
+				'spend'		=>$spend,
+				'revenue'	=>$revenue,
+			);
+		
+		return $result;
+	}
 	// public function getTotals($startDate=null, $endDate=null) {
 			
 	// 	if(!$startDate)	$startDate = 'today' ;

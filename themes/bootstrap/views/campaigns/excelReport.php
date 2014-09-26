@@ -17,6 +17,10 @@ $this->widget('EExcelWriter', array(
     'filePath'     => $path,
     'columns'      => array(
         array(
+            'name'  => 'account_manager',
+            'value' => '$data->opportunities->accountManager->lastname . " " . $data->opportunities->accountManager->name',
+        ),
+        array(
             'name'              => 'advertisers_name',
             'value'             => '$data->opportunities->ios->advertisers->name',
         ),

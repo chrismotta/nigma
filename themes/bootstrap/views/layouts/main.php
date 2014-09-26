@@ -52,6 +52,7 @@
                     array('label'=>'Providers', 'url'=>'#'),
                     array('label'=>'Cierre Mes', 'url'=>'#'),
                     array('label'=>'Invoices', 'url'=>'#'),
+                    array('label'=>'Currency', 'url'=>'/currency/admin'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(

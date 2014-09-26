@@ -187,8 +187,9 @@ $('.search-form form').submit(function(){
     </fieldset>
 
 <?php $this->endWidget(); ?>
-
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php 
+	$totals=$model->getDailyTotals($dateStart, $dateEnd);
+	$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
 	'dataProvider'             => $model->search($dateStart, $dateEnd),
 	'filter'                   => $model,
@@ -201,6 +202,7 @@ $('.search-form form').submit(function(){
 			'name'  =>	'id',
         	'headerHtmlOptions' => array('style' => 'width: 30px'),
         	'htmlOptions'	=> array( 'class' =>  'id'),
+        	'footer' => 'Totals:'
 		),
 		array(
 			'name'  => 'account_manager',
@@ -220,6 +222,7 @@ $('.search-form form').submit(function(){
 		array(	
 			'name'	=>	'imp',
 			'htmlOptions'=>array('style'=>'width: 50px'),
+			'footer'=>$totals['imp'],
         ),
         array(	
 			'name'	=>	'imp_adv',
@@ -262,12 +265,18 @@ $('.search-form form').submit(function(){
 								)
 						)
         	',
+			'footer'=>$totals['imp_adv'],
         ),
         array(
         	'name'	=>	'clics',
         	'htmlOptions'=>array('style'=>'width: 50px'),
+			'footer'=>$totals['clics'],
         ),
-        'conv_api',
+        array(
+        	'name'	=>	'conv_api',
+        	'htmlOptions'=>array('style'=>'width: 50px'),
+			'footer'=>$totals['conv_s2s'],
+        ),
 		array(
 			'name'        => 'conv_adv',
 			'type'        => 'raw',
@@ -344,21 +353,30 @@ $('.search-form form').submit(function(){
 								)
 						))
 					',
+			'footer'=>$totals['conv_adv'],
         ),
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
         	'htmlOptions'=>array('style'=>'width: 70px'),
+			'footer'=>$totals['revenue'],
         ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'$data->getSpendUSD()',
         	'htmlOptions'=>array('style'=>'width: 60px'),
+			'footer'=>$totals['spend'],
         ),
+		array(
+			'header'  => 'CPA',
+			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
 		array(
 			'header'  => 'Profit',
 			'value'	=>	'$data->getProfit()',
 			'htmlOptions'=>array('style'=>'width: 60px'),
+			'footer'=>$totals['revenue']-$totals['spend'],
 		),
 		array(
 			'header'  => 'Click Rate',
