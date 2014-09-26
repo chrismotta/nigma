@@ -365,7 +365,7 @@ class DailyReport extends CActiveRecord
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
-		$criteria->compare('networks_id',$this->networks_id);
+		if ( $networks == NULL) $criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('imp',$this->imp);
 		$criteria->compare('imp_adv',$this->imp_adv);
 		$criteria->compare('clics',$this->clics);
@@ -384,6 +384,7 @@ class DailyReport extends CActiveRecord
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
+		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		if ( $accountManager != NULL) {
@@ -392,9 +393,7 @@ class DailyReport extends CActiveRecord
 		if ( $opportunitie != NULL) {
 			$criteria->compare('opportunities.id',$opportunitie);
 		}
-		if ( $networks != NULL) {
-			$criteria->compare('networks.id',$networks);
-		}
+		
 		
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		//Filtro por role

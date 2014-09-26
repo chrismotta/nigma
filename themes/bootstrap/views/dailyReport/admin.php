@@ -227,13 +227,12 @@ $('.search-form form').submit(function(){
 
        }
        $models = Networks::model()->findAll();
-
-	$list = CHtml::listData($models, 
-                'id', 'name');
-	echo CHtml::dropDownList('networks', $networks, 
-              $list,
-              array('empty' => 'All networks',));
-       echo CHtml::dropDownList('networks', $networks,array(), array('class'=>'networks-dropdownlist', 'prompt' => 'All networks'));
+		$list = CHtml::listData($models, 
+	                'id', 'name');
+		echo CHtml::dropDownList('networks', $networks, 
+	              $list,
+	              array('empty' => 'All networks',));
+	       
 		
 	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
@@ -245,7 +244,7 @@ $('.search-form form').submit(function(){
 	$totals=$model->getDailyTotals($dateStart, $dateEnd);
 	$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie),
+	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
