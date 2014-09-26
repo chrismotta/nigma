@@ -379,9 +379,6 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 		}
-		if ( $accountManager != NULL) {
-			$criteria->compare('t.account_manager_id',$accountManager);
-		}
 		
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
@@ -389,6 +386,9 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
+		if ( $accountManager != NULL) {
+			$criteria->compare('campaigns.opportunities.account_manager_id',$accountManager);
+		}
 		
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		//Filtro por role
