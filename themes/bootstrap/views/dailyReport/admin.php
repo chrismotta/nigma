@@ -134,6 +134,7 @@ $('.search-form form').submit(function(){
 	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
@@ -199,7 +200,7 @@ $('.search-form form').submit(function(){
                 'id', 'FullName');
 	echo CHtml::dropDownList('accountManager', $accountManager, 
               $list,
-              array('empty' => '(Select a account manager','onChange' => '
+              array('empty' => 'All account managers','onChange' => '
                   if ( ! this.value) {
                     return;
                   }
@@ -213,7 +214,7 @@ $('.search-form form').submit(function(){
                       }
                   )
                   '));
-       echo CHtml::dropDownList('opportunitie', $opportunitie,array(), array('class'=>'opportunitie-dropdownlist', 'prompt' => 'Select an IOs'));
+       echo CHtml::dropDownList('opportunitie', $opportunitie,array(), array('class'=>'opportunitie-dropdownlist', 'prompt' => 'All opportunities'));
 		
        }
        else{
@@ -222,9 +223,18 @@ $('.search-form form').submit(function(){
 		                'id', 'virtualName');
 			echo CHtml::dropDownList('opportunitie', $opportunitie, 
 		              $list,
-		              array('empty' => '(Select a opportunitie',));
+		              array('empty' => 'All opportunities',));
 
        }
+       $models = Networks::model()->findAll();
+
+	$list = CHtml::listData($models, 
+                'id', 'name');
+	echo CHtml::dropDownList('networks', $networks, 
+              $list,
+              array('empty' => 'All networks',));
+       echo CHtml::dropDownList('networks', $networks,array(), array('class'=>'networks-dropdownlist', 'prompt' => 'All networks'));
+		
 	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 

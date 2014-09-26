@@ -351,7 +351,7 @@ class DailyReportController extends Controller
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
 
-		$response='<option value="">Select an opportunitie</option>';
+		$response='<option value="">All opportunities</option>';
 		foreach ($opps as $op) {
 			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
 		}
