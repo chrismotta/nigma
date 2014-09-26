@@ -183,15 +183,23 @@ $('.search-form form').submit(function(){
 	));
 	?>
 	<?php
-	$criteria=new CDbCriteria;
-	$criteria->with=array('opportunities', );
-	$criteria->compare('t.id','opportunities.account_manager_id');
-	$models = Users::model()->findAll($criteria);
+	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+	//Filtro por role
+	$filter = false;
+	foreach ($roles as $role => $value) {
+		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+			$filter = true;
+			break;
+		}
+	}
+	if ( $filter ){
+	$models = Users::model()->findUsersByRole('media');
 	$list = CHtml::listData($models, 
-                'id', 'name');
+                'id', 'FullName');
 	echo CHtml::dropDownList('accountManager', $accountManager, 
               $list,
               array('empty' => '(Select a account manager'));
+       }
 	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
