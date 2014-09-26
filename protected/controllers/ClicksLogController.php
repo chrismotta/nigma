@@ -43,7 +43,8 @@ class ClicksLogController extends Controller
 				$ts['s2s']            = microtime(true);
 			}else{
 				//print "campaign: null<hr/>";
-				Yii::app()->end();
+				//Yii::app()->end();
+				$cid = NULL;
 			}
 		}else{
 
