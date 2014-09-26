@@ -241,7 +241,7 @@ $('.search-form form').submit(function(){
 
 <?php $this->endWidget(); ?>
 <?php 
-	$totals=$model->getDailyTotals($dateStart, $dateEnd);
+	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
 	$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
@@ -266,6 +266,11 @@ $('.search-form form').submit(function(){
 			'name'  =>	'network_name',
 			'value'	=>	'$data->networks->name',
 			'filter' => $networks_names,
+		),
+		array(
+			'name'  => 'rate',
+			'value' => '$data->rate ? $data->rate : 0',
+			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(	
 			'name'	=>	'imp',
@@ -415,11 +420,6 @@ $('.search-form form').submit(function(){
         	'htmlOptions'=>array('style'=>'width: 60px'),
 			'footer'=>$totals['spend'],
         ),
-		array(
-			'header'  => 'CPA',
-			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
-			'htmlOptions'=>array('style'=>'width: 45px'),
-		),
 		array(
 			'header'  => 'Profit',
 			'value'	=>	'$data->getProfit()',

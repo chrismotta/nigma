@@ -31,6 +31,7 @@ class DailyReport extends CActiveRecord
 	public $campaign_name;
 	public $conversions;
 	public $convrate;
+	public $rate;
 
 	/**
 	 * @return string the associated database table name
@@ -93,6 +94,7 @@ class DailyReport extends CActiveRecord
 			'network_name'	=>	'Network Name',
 			'account_manager' => 'Account Manager',
 			'campaign_name' => 'Campaign Name',
+			'rate' => 'CPA',
 		);
 	}
 
@@ -166,7 +168,7 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	public function getDailyTotals($startDate=null, $endDate=null) {
+	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunitie=null,$networks=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -183,6 +185,14 @@ class DailyReport extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
+		if ( $accountManager != NULL) {
+					$criteria->compare('accountManager.id',$accountManager);
+				}
+		if ( $opportunitie != NULL) {
+					$criteria->compare('opportunities.id',$opportunitie);
+				}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$imp+=$value->imp;
@@ -381,7 +391,8 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager' );
+		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
@@ -429,6 +440,10 @@ class DailyReport extends CActiveRecord
 		            'campaign_name'=>array(
 						'asc'  =>'campaigns.id',
 						'desc' =>'campaigns.id DESC',
+		            ),
+		            'rate'=>array(
+						'asc'  =>'opportunities.rate',
+						'desc' =>'opportunities.rate DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
