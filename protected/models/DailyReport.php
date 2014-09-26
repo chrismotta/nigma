@@ -186,12 +186,12 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
-		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
+		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
 		if ( $accountManager != NULL) {
-					$criteria->compare('accountManager.id',$accountManager);
+					$criteria->addCondition('accountManager.id ='.$accountManager);
 				}
 		if ( $opportunitie != NULL) {
-					$criteria->compare('opportunities.id',$opportunitie);
+					$criteria->compare('opportunities.id ='.$opportunitie);
 				}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
