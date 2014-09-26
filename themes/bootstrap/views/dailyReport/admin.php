@@ -368,15 +368,15 @@ $('.search-form form').submit(function(){
 			'footer'=>$totals['spend'],
         ),
 		array(
+			'header'  => 'CPA',
+			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
+		array(
 			'header'  => 'Profit',
 			'value'	=>	'$data->getProfit()',
 			'htmlOptions'=>array('style'=>'width: 60px'),
 			'footer'=>$totals['revenue']-$totals['spend'],
-		),
-		array(
-			'header'  => 'OP Rate',
-			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
-			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
 			'header'  => 'Click Rate',
