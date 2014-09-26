@@ -17,27 +17,37 @@ class ClicksLogController extends Controller
 		$ts['start'] = microtime(true);
 
 		// Get Request
-		if( isset( $_GET['cid'] ) && isset( $_GET['nid'] ) ){
+		if( isset( $_GET['cid'] ) ){
 			$cid = $_GET['cid'];
-			$nid = $_GET['nid'];
 			//print "cid: ".$cid." - nid: ".$nid."<hr/>";
 		}else{
 			//print "cid: null || nid: null<hr/>";
-			Yii::app()->end();
+			//Yii::app()->end();
+			$cid = NULL;
+		}
+		if( isset( $_GET['nid'] ) ){
+			$nid = $_GET['nid'];
+			//print "cid: ".$cid." - nid: ".$nid."<hr/>";
+		}else{
+			$nid = NULL;
 		}
 
 		// Get Campaign
-		
-		if($campaign = Campaigns::model()->findByPk($cid)){
-			$redirectURL          = $campaign->url;
-			$ts['campaign']       = microtime(true);
-			
-			$s2s                  = $campaign->opportunities->server_to_server;
-			if(!isset($s2s)) $s2s = "ktoken";
-			$ts['s2s']            = microtime(true);
+		if($cid){
+			if($campaign = Campaigns::model()->findByPk($cid)){
+				$redirectURL          = $campaign->url;
+				$ts['campaign']       = microtime(true);
+				
+				$s2s                  = $campaign->opportunities->server_to_server;
+				if(!isset($s2s)) $s2s = "ktoken";
+				$ts['s2s']            = microtime(true);
+			}else{
+				//print "campaign: null<hr/>";
+				//Yii::app()->end();
+				$cid = NULL;
+			}
 		}else{
-			//print "campaign: null<hr/>";
-			Yii::app()->end();
+
 		}
 
 		//print_r($campaign);
@@ -47,8 +57,8 @@ class ClicksLogController extends Controller
 
 		$model = new ClicksLog();
 		//$model->id         = 2;
-		$model->campaigns_id = (int)$cid;
-		$model->networks_id  = (int)$nid;
+		$model->campaigns_id = $cid;
+		$model->networks_id  = $nid;
 		//$model->date       = 0;
 
 		// Get visitor parameters
@@ -59,6 +69,7 @@ class ClicksLogController extends Controller
 		$model->languaje     = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
 		$model->referer      = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
+		$model->redirect_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
 
 		$ts['model']         = microtime(true);
 		
@@ -143,12 +154,14 @@ class ClicksLogController extends Controller
 			// Guardo los datos en cookies (Expira en 1 hora)
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
-			if( strpos($redirectURL, "?") ){
-				$redirectURL.= "&";
-			} else {
-				$redirectURL.= "?";
+			if($cid){
+				if( strpos($redirectURL, "?") ){
+					$redirectURL.= "&";
+				} else {
+					$redirectURL.= "?";
+				}
+				$redirectURL.= $s2s."=".$ktoken;
 			}
-			$redirectURL.= $s2s."=".$ktoken;
 
 			//parametros para oneclick
 /*
@@ -172,16 +185,21 @@ class ClicksLogController extends Controller
 			Yii::app()->end();
 			*/
 			
-			$ts['redirect'] = microtime(true);
+			if($cid){
+				$ts['redirect'] = microtime(true);
 
-			// redirect to campaign url
-			if($test){
-				echo json_encode($ts);
+				// redirect to campaign url
+				if($test){
+					echo json_encode($ts);
+				}else{
+					//$this->redirect($redirectURL);
+					header("Location: ".$redirectURL);
+					die();
+				}
 			}else{
-				//$this->redirect($redirectURL);
-				header("Location: ".$redirectURL);
-				die();
+				echo "no redirect";
 			}
+				
 				
 		}else{
 			print "no guardado";
