@@ -387,7 +387,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		if ( $accountManager != NULL) {
-			$criteria->compare('campaigns.opportunities.account_manager_id',$accountManager);
+			$criteria->compare('accountManager.id',$accountManager);
 		}
 		
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
