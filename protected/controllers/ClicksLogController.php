@@ -8,7 +8,7 @@ class ClicksLogController extends Controller
 	 * to the appropriate landing
 	 * @return [type] [description]
 	 */
-	public function actionIndex()
+	public function actionIndex($id=null)
 	{
 			
 		isset( $_GET['ts'] ) ? $test = true : $test = false;
@@ -16,26 +16,35 @@ class ClicksLogController extends Controller
 		$ts['request'] = $_SERVER['REQUEST_TIME'];
 		$ts['start'] = microtime(true);
 
-		// Get Request
-		if( isset( $_GET['cid'] ) ){
-			$cid = $_GET['cid'];
-			//print "cid: ".$cid." - nid: ".$nid."<hr/>";
-		}else{
-			//print "cid: null || nid: null<hr/>";
-			//Yii::app()->end();
-			$cid = NULL;
-		}
-		if( isset( $_GET['nid'] ) ){
-			$nid = $_GET['nid'];
-			//print "cid: ".$cid." - nid: ".$nid."<hr/>";
-		}else{
+		if(isset($id)){
+			$cid = $id;
 			$nid = NULL;
+		}else{
+			// Get Request
+			if( isset( $_GET['cid'] ) ){
+				$cid = $_GET['cid'];
+				//print "cid: ".$cid." - nid: ".$nid."<hr/>";
+			}else{
+				//print "cid: null || nid: null<hr/>";
+				//Yii::app()->end();
+				$cid = NULL;
+			}
+			if( isset( $_GET['nid'] ) ){
+				$nid = $_GET['nid'];
+				//print "cid: ".$cid." - nid: ".$nid."<hr/>";
+			}else{
+				$nid = NULL;
+			}
 		}
 
 		// Get Campaign
 		if($cid){
 			if($campaign = Campaigns::model()->findByPk($cid)){
 				$redirectURL          = $campaign->url;
+				if($nid==NULL){
+					$nid              = $campaign->networks_id;
+				}
+				$nid = 4;
 				$ts['campaign']       = microtime(true);
 				
 				$s2s                  = $campaign->opportunities->server_to_server;
@@ -45,6 +54,7 @@ class ClicksLogController extends Controller
 				//print "campaign: null<hr/>";
 				//Yii::app()->end();
 				$cid = NULL;
+				$nid = NULL;
 			}
 		}else{
 
