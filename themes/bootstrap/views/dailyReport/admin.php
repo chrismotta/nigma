@@ -133,6 +133,7 @@ $('.search-form form').submit(function(){
 	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
@@ -198,7 +199,31 @@ $('.search-form form').submit(function(){
                 'id', 'FullName');
 	echo CHtml::dropDownList('accountManager', $accountManager, 
               $list,
-              array('empty' => '(Select a account manager'));
+              array('empty' => '(Select a account manager','onChange' => '
+                  if ( ! this.value) {
+                    return;
+                  }
+                  $.post(
+                      "getOpportunities/"+this.value,
+                      "",
+                      function(data)
+                      {
+                          // alert(data);
+                        $(".opportunitie-dropdownlist").html(data);
+                      }
+                  )
+                  '));
+       echo CHtml::dropDownList('opportunitie', $opportunitie,array(), array('class'=>'opportunitie-dropdownlist', 'prompt' => 'Select an IOs'));
+		
+       }
+       else{
+       		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
+			$list = CHtml::listData($models, 
+		                'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+		              $list,
+		              array('empty' => '(Select a opportunitie',));
+
        }
 	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
@@ -210,7 +235,7 @@ $('.search-form form').submit(function(){
 	$totals=$model->getDailyTotals($dateStart, $dateEnd);
 	$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager),
+	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

@@ -357,7 +357,7 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -388,6 +388,9 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		if ( $accountManager != NULL) {
 			$criteria->compare('accountManager.id',$accountManager);
+		}
+		if ( $opportunitie != NULL) {
+			$criteria->compare('opportunities.id',$opportunitie);
 		}
 		
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
