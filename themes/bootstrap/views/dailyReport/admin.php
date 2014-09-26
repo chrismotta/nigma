@@ -404,6 +404,11 @@ $('.search-form form').submit(function(){
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
+			'header'  => 'OP Rate',
+			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
+		array(
         	'name'	=>	'date',
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
         	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px'),
