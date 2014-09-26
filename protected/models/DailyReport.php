@@ -357,7 +357,7 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -378,6 +378,9 @@ class DailyReport extends CActiveRecord
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+		if ( $accountManager != NULL) {
+			$criteria->compare('t.account_manager_id',$accountManager);
 		}
 		
 		// Related search criteria items added (use only table.columnName)
