@@ -179,9 +179,6 @@ class DailyReport extends CActiveRecord
 		$conv_adv=0;
 		$spend=0;
 		$revenue=0;
-		$ecpm=0;
-		$ecpc=0;
-		$ecpa=0;
 
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
@@ -195,9 +192,6 @@ class DailyReport extends CActiveRecord
 			$conv_adv+=$value->conv_adv;
 			$spend+=doubleval($value->getSpendUSD());	
 			$revenue+=doubleval($value->getRevenueUSD());
-			$ecpm+=$value->getECPM();
-			$ecpc+=$value->getECPC();
-			$ecpa+=$value->getECPA();
 		}		
 		$result=array(
 				'imp'		=>$imp,
@@ -207,9 +201,6 @@ class DailyReport extends CActiveRecord
 				'conv_adv'	=>$conv_adv,
 				'spend'		=>$spend,
 				'revenue'	=>$revenue,
-				'ecpm'		=>$ecpm,
-				'ecpc'		=>$ecpc,
-				'ecpa'		=>$ecpa,
 			);
 		
 		return $result;

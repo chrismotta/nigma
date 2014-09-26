@@ -392,19 +392,16 @@ $('.search-form form').submit(function(){
 			'header'  => 'eCPM',
 			'value' => '$data->getECPM()',
 			'htmlOptions'=>array('style'=>'width: 45px'),
-			'footer'=>$totals['ecpm'],
 		),
 		array(
 			'header'  => 'eCPC',
 			'value' => '$data->getECPC()',
 			'htmlOptions'=>array('style'=>'width: 45px'),
-			'footer'=>$totals['ecpc'],
 		),
 		array(
 			'header'  => 'eCPA',
 			'value' => '$data->getECPA()',
 			'htmlOptions'=>array('style'=>'width: 45px'),
-			'footer'=>$totals['ecpa'],
 		),
 		array(
         	'name'	=>	'date',
