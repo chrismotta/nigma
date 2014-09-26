@@ -132,6 +132,7 @@ $('.search-form form').submit(function(){
 <?php
 	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
@@ -181,7 +182,17 @@ $('.search-form form').submit(function(){
 	    ),
 	));
 	?>
-
+	<?php
+	$criteria=new CDbCriteria;
+	$criteria->with=array('opportunities', );
+	$criteria->compare('t.id','opportunities.account_manager_id');
+	$models = Users::model()->findAll($criteria);
+	$list = CHtml::listData($models, 
+                'id', 'name');
+	echo CHtml::dropDownList('accountManager', $accountManager, 
+              $list,
+              array('empty' => '(Select a account manager'));
+	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
     </fieldset>
@@ -191,7 +202,7 @@ $('.search-form form').submit(function(){
 	$totals=$model->getDailyTotals($dateStart, $dateEnd);
 	$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $model->search($dateStart, $dateEnd),
+	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
