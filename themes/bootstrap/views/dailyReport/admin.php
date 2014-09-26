@@ -374,6 +374,11 @@ $('.search-form form').submit(function(){
 			'footer'=>$totals['revenue']-$totals['spend'],
 		),
 		array(
+			'header'  => 'OP Rate',
+			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
+		array(
 			'header'  => 'Click Rate',
 			'value' => '$data->getCtr() * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px'),
@@ -401,11 +406,6 @@ $('.search-form form').submit(function(){
 		array(
 			'header'  => 'eCPA',
 			'value' => '$data->getECPA()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
-		),
-		array(
-			'header'  => 'OP Rate',
-			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
 			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
