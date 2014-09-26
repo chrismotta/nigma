@@ -224,11 +224,6 @@ $('.search-form form').submit(function(){
         	'footer' => 'Totals:'
 		),
 		array(
-			'name'  => 'account_manager',
-			'value' => '$data->campaigns->opportunities->accountManager ? $data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name : ""',
-        	'htmlOptions'	=> array( 'class' =>  'id', 'style' => 'width: 120px'),
-		),
-		array(
 			'name'  => 'campaign_name',
 			'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
 			'htmlOptions' => array('style' => 'width: 120px'),
