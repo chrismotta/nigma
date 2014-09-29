@@ -214,8 +214,16 @@ $('.search-form form').submit(function(){
                       }
                   )
                   '));
-       echo CHtml::dropDownList('opportunitie', $opportunitie,array(), array('class'=>'opportunitie-dropdownlist', 'prompt' => 'All opportunities'));
-		
+	if(!$accountManager)echo CHtml::dropDownList('opportunitie', $opportunitie,array(), array('class'=>'opportunitie-dropdownlist', 'prompt' => 'All opportunities'));
+	else
+	{
+		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
+		$list = CHtml::listData($models, 
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	              $list,
+	              array('empty' => 'All opportunities',));
+	}
        }
        else{
        		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
