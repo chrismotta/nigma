@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate'),
+				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -84,6 +84,53 @@ class DailyReportController extends Controller
 		}
 
 		$this->renderFormAjax($model);
+	}
+
+	public function actionCreateByNetwork()
+	{
+		$date = date('Y-m-d', strtotime('yesterday'));
+		$currentNetwork = 1;
+
+		// If date and network are submitted then get values
+		if ( isset($_GET['networkSubmit']) ) {
+			$date           = $_GET['date'];
+			$currentNetwork = $_GET['network'];
+		}
+
+		if ( isset($_POST['saveSubmit']) ) {
+			
+			$model=new DailyReport;
+			$model->attributes = $_POST['DailyReport'];
+			$model->updateRevenue();
+				
+			// Validate if record has already been entry
+			$existingModel = DailyReport::model()->find('campaigns_id=:cid AND networks_id=:nid AND date=:date', array(':cid' => $model->campaigns_id, ':nid' => $model->networks_id, ':date' => $model->date));
+			if ( $existingModel ) {
+				$model->isNewRecord = false;
+				$model->id = $existingModel->id;
+			}
+
+			$r = new stdClass();
+			$r->c_id = $model->campaigns_id;
+			if ( $model->save() ) {
+				$r->result = "OK";
+			} else {
+				$r->result = "ERROR";
+				$r->message = $model->getErrors();
+			}
+			echo json_encode($r);
+			Yii::app()->end();
+		}
+		
+		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+
+		$this->render('createByNetwork', array(
+			'model'          => new DailyReport,
+			'campaign'       => new Campaigns,
+			'networks'       => $networks,
+			'date'           => $date,
+			'currentNetwork' => $currentNetwork,
+		));
 	}
 
 	/**
