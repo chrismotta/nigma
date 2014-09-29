@@ -191,7 +191,7 @@ class DailyReport extends CActiveRecord
 					$criteria->addCondition('accountManager.id ='.$accountManager);
 				}
 		if ( $opportunitie != NULL) {
-					$criteria->compare('opportunities.id ='.$opportunitie);
+					$criteria->addCondition('opportunities.id ='.$opportunitie);
 				}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
