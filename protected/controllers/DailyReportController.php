@@ -157,23 +157,23 @@ class DailyReportController extends Controller
 	 * Get data for Graphic
 	 */
 	public function actionGraphic() {
-		if ( isset($_GET['c_id']) && isset($_GET['net_id']) ) {
-			$c_id = $_GET['c_id'];
-			$net_id = $_GET['net_id'];
+		if ( isset($_POST['c_id']) && isset($_POST['net_id']) ) {
+			$c_id = $_POST['c_id'];
+			$net_id = $_POST['net_id'];
 		} else {
 			// echo json_encode("ERROR c_id or net_id missing");
 			Yii::app()->end();
 		}
 
-		if ( isset($_GET['endDate']) ) {
-			$endDate = new DateTime( $_GET['endDate'] );
+		if ( isset($_POST['endDate']) ) {
+			$endDate = new DateTime( $_POST['endDate'] );
 		} else {
 			$endDate = new DateTime("NOW");
 		}
 
 		
 		if ( isset($_POST['startDate']) ) {
-			$startDate = new DateTime( $_GET['startDate'] );
+			$startDate = new DateTime( $_POST['startDate'] );
 		} else {
 			$startDate = new DateTime( $endDate->format("Y-m-d") );
 			$startDate = $startDate->sub( DateInterval::createFromDateString('7 days') );
