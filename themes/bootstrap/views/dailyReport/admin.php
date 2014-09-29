@@ -249,7 +249,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
-	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
+	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',

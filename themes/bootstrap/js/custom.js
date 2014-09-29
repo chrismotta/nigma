@@ -29,11 +29,11 @@ var selectionChangedDailyReport = function(id) {
 		"c_id=" + c_id + "&net_id=" + net_id + "&endDate=" + endDate,
 		function(data) {
 				var chart = Highcharts.charts[0];
-				chart.series[0].setData(data['spend']);	// Spend
-				chart.series[1].setData(data['conv']);	// Conv
-				chart.series[2].setData(data['imp']);	// Impressions
-				chart.series[3].setData(data['click']);	// Clicks
-				chart.xAxis[0].setCategories(data['date']);	// xAxis
+				chart.series[0].setData(data['spends']);	// Spend
+				chart.series[1].setData(data['conversions']);	// Conv
+				chart.series[2].setData(data['impressions']);	// Impressions
+				chart.series[3].setData(data['clics']);	// Clicks
+				chart.xAxis[0].setCategories(data['dates']);	// xAxis
 				chart.redraw();
 				chart.hideLoading();
 			},

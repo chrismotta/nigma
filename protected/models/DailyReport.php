@@ -132,7 +132,7 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunitie=null,$networks=null) {
+	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunitie=NULL,$networks=NULL,$campaign=NULL) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -159,12 +159,9 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
-		if ( $accountManager != NULL) {
-					$criteria->addCondition('accountManager.id ='.$accountManager);
-				}
-		if ( $opportunitie != NULL) {
-					$criteria->addCondition('opportunities.id ='.$opportunitie);
-				}
+		if ( $accountManager != NULL)$criteria->addCondition('accountManager.id ='.$accountManager);
+		if ( $opportunitie != NULL)$criteria->addCondition('opportunities.id ='.$opportunitie);
+		if ( $campaign != NULL)$criteria->addCondition('campaigns.id ='.$campaign);
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
