@@ -142,11 +142,17 @@ class DailyReport extends CActiveRecord
 		$spends=array();
 		$revenues=array();
 		$profits=array();
+		$conversions=array();
+		$impressions=array();
+		$clics=array();
 		$dates=array();
 
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
 			$dataTops[$date]['spends']=0;
 			$dataTops[$date]['revenues']=0;
+			$dataTops[$date]['conversions']=0;
+			$dataTops[$date]['impressions']=0;
+			$dataTops[$date]['clics']=0;
 		}
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
@@ -155,15 +161,21 @@ class DailyReport extends CActiveRecord
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
 			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());
+			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
 		}
 		
 		foreach ($dataTops as $date => $data) {
 			$spends[]=$data['spends'];
 			$revenues[]=$data['revenues'];
 			$profits[]=$data['revenues']-$data['spends'];
+			$impressions[]=$data['impressions'];
+			$conversions[]=$data['conversions'];
+			$clics[]=$data['clics'];
 			$dates[]=$date;
 		}
-		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
+		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'impressions' => $impressions, 'conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
 		
 		return $result;
 	}
