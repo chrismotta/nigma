@@ -210,6 +210,7 @@ $('.search-form form').submit(function(){
                       function(data)
                       {
                           // alert(data);
+                        $(".opportunitie-dropdownlist").html();
                         $(".opportunitie-dropdownlist").html(data);
                       }
                   )
@@ -222,7 +223,7 @@ $('.search-form form').submit(function(){
 	                'id', 'virtualName');
 		echo CHtml::dropDownList('opportunitie', $opportunitie, 
 	              $list,
-	              array('empty' => 'All opportunities',));
+	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
 	}
        }
        else{
