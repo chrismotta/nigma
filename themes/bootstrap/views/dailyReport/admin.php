@@ -35,7 +35,7 @@ $('.search-form form').submit(function(){
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap=$model->getTotals($dateStart,$dateEnd);
+	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunitie,$networks);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
