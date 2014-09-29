@@ -25,6 +25,7 @@ Install Environment
 	sudo git clone https://github.com/yiisoft/yii.git yii
 
 *** Configurations ***
+- Copy Ip2Location.BIN and create Wurlf Folders
 - Change permissions for apache folder
 	sudo chmod 777 /var/www/html
 - Create intial test for php and apache
