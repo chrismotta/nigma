@@ -38,57 +38,64 @@ class VServ
 		}
 		curl_close($curl);
 
-		// Save campaigns information 
-		foreach ($result['campaignDetails']['campaign'] as $campaign) {
-			$dailyReport = new DailyReport();
-
-			if ( !isset($campaign['attr']['name']) ) // dismiss campaign without info
-				continue;
-
-			// get campaign ID used in KickAds Server, from the campaign name use in the external network
-			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
-
-			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'info', 'system.model.api.vServ');
-				continue;
-			}
-
-			// sum the total of impression and clicks from all ads
-			$impressions = 0;
-			$clicks = 0;
-			$spend = 0;
-			
-			if ( isset($campaign['ad']['attr']) ) {
-				$impressions = $campaign['ad']['entry']['impressions']['value'];
-				$clicks = $campaign['ad']['entry']['clicks']['value'];
-				$spend = $campaign['ad']['entry']['spend']['value'];
-			} else {
-				foreach ($campaign['ad'] as $ad) {
-					$impressions += $ad['entry']['impressions']['value'];
-					$clicks += $ad['entry']['clicks']['value'];
-					$spend += $ad['entry']['spend']['value'];
-				}
-			}
-
-			if ( $impressions == 0 && $clicks == 0 ) { // if no impressions dismiss campaign
-				continue;
-			}
-
-			$dailyReport->networks_id = $this->network_id;
-			$dailyReport->imp = $impressions;
-			$dailyReport->clics = $clicks;
-			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-			$dailyReport->conv_adv = 0;
-			$dailyReport->spend = $spend;
-			$dailyReport->updateRevenue();
-			$dailyReport->date = $date;
-			if ( !$dailyReport->save() ) {
-				Yii::log("Can't save campaign: '" . $campaign['attr']['name'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.vServ');
-				continue;
+		if ( isset($result['campaignDetails']['campaign']['attr']) ) {
+			$this->saveDailyReport($result['campaignDetails']['campaign'], $date);
+		} else {
+			// Save campaigns information 
+			foreach ($result['campaignDetails']['campaign'] as $campaign) {
+				$this->saveDailyReport($campaign, $date);
 			}
 		}
+
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.vServ');
 		return 0;
+	}
+
+
+	private function saveDailyReport($campaign, $date) {
+		$dailyReport = new DailyReport();
+
+		// get campaign ID used in KickAds Server, from the campaign name use in the external network
+		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
+
+		if ( !$dailyReport->campaigns_id ) {
+			Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'info', 'system.model.api.vServ');
+			continue;
+		}
+
+		// sum the total of impression and clicks from all ads
+		$impressions = 0;
+		$clicks = 0;
+		$spend = 0;
+		
+		if ( isset($campaign['ad']['attr']) ) {
+			$impressions = $campaign['ad']['entry']['impressions']['value'];
+			$clicks = $campaign['ad']['entry']['clicks']['value'];
+			$spend = $campaign['ad']['entry']['spend']['value'];
+		} else {
+			foreach ($campaign['ad'] as $ad) {
+				$impressions += $ad['entry']['impressions']['value'];
+				$clicks += $ad['entry']['clicks']['value'];
+				$spend += $ad['entry']['spend']['value'];
+			}
+		}
+
+		if ( $impressions == 0 && $clicks == 0 ) { // if no impressions dismiss campaign
+			continue;
+		}
+
+		$dailyReport->networks_id = $this->network_id;
+		$dailyReport->imp = $impressions;
+		$dailyReport->clics = $clicks;
+		$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+		$dailyReport->conv_adv = 0;
+		$dailyReport->spend = $spend;
+		$dailyReport->updateRevenue();
+		$dailyReport->date = $date;
+		if ( !$dailyReport->save() ) {
+			Yii::log("Can't save campaign: '" . $campaign['attr']['name'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.vServ');
+			continue;
+		}
 	}
 }
 ?>
