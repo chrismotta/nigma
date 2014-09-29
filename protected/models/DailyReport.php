@@ -162,6 +162,7 @@ class DailyReport extends CActiveRecord
 		if ( $accountManager != NULL)$criteria->addCondition('accountManager.id ='.$accountManager);
 		if ( $opportunitie != NULL)$criteria->addCondition('opportunities.id ='.$opportunitie);
 		if ( $campaign != NULL)$criteria->addCondition('campaigns.id ='.$campaign);
+		print_r($criteria);
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
