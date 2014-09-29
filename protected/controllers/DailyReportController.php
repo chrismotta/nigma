@@ -180,7 +180,7 @@ class DailyReportController extends Controller
 		}
 
 		$model = new DailyReport();
-		$response = $model->getTotals($startDate->format("Y-m-d"),$endDate->format("Y-m-d"));
+		$response = $model->getGraphicDateRangeInfo( $c_id, $net_id, $startDate->format("Y-m-d"), $endDate->format("Y-m-d") );
 		echo json_encode($response, JSON_NUMERIC_CHECK);
 		Yii::app()->end();
 	}

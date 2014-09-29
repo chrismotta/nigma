@@ -132,7 +132,7 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunitie=NULL,$networks=NULL,$campaign=NULL) {
+	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunitie=null,$networks=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -159,9 +159,12 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
-		if ( $accountManager != NULL)$criteria->addCondition('accountManager.id ='.$accountManager);
-		if ( $opportunitie != NULL)$criteria->addCondition('opportunities.id ='.$opportunitie);
-		if ( $campaign != NULL)$criteria->addCondition('campaigns.id ='.$campaign);
+		if ( $accountManager != NULL) {
+					$criteria->addCondition('accountManager.id ='.$accountManager);
+				}
+		if ( $opportunitie != NULL) {
+					$criteria->addCondition('opportunities.id ='.$opportunitie);
+				}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
@@ -502,25 +505,31 @@ class DailyReport extends CActiveRecord
 		if ( empty($r) ) {
 			return "No results.";
 		} 
-
-		$spend       = array();
-		$impressions = array();
-		$clicks      = array();
-		$conv        = array();
-		$date        = array();
-
+		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+			$dataTops[$date]['spends']=0;
+			$dataTops[$date]['conversions']=0;
+			$dataTops[$date]['impressions']=0;
+			$dataTops[$date]['clics']=0;
+		}
 		foreach ($r as $value) {
-			$dates[]       = date_format( new DateTime($value->date), "d-m-Y" );;
-			$spend[]       = array($value->date, $value->spend);
-			$impressions[] = array($value->date, $value->imp);
-			$clicks[]      = array($value->date, $value->clics);
-			$conv[]        = array($value->date, $value->conv_adv);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
+			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
+		}
+		
+		foreach ($dataTops as $date => $data) {
+			$spends[]=$data['spends'];
+			$impressions[]=$data['impressions'];
+			$conversions[]=$data['conversions'];
+			$clics[]=$data['clics'];
+			$dates[]=$date;
 		}
 		$result = array(
-			'spend' => $spend, 
-			'conv'  => $conv, 
+			'spend' => $spends, 
+			'conv'  => $conversions, 
 			'imp'   => $impressions, 
-			'click' => $clicks, 
+			'click' => $clics, 
 			'date'  => $dates
 		);
 		return $result;
