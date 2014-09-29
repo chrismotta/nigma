@@ -210,7 +210,6 @@ $('.search-form form').submit(function(){
                       function(data)
                       {
                           // alert(data);
-                        $(".opportunitie-dropdownlist").html();
                         $(".opportunitie-dropdownlist").html(data);
                       }
                   )
