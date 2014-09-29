@@ -53,10 +53,10 @@ $('.search-form form').submit(function(){
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Spend','data' => $totalsGrap['spends'],),
-				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
 				array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
 				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
+				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
+				array('name' => 'Spend','data' => $totalsGrap['spends'],),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
