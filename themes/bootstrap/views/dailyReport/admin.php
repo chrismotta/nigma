@@ -132,6 +132,9 @@ $('.search-form form').submit(function(){
 <?php
 	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
@@ -181,16 +184,82 @@ $('.search-form form').submit(function(){
 	    ),
 	));
 	?>
+	<?php
+	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+	//Filtro por role
+	$filter = false;
+	foreach ($roles as $role => $value) {
+		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+			$filter = true;
+			break;
+		}
+	}
+	if ( $filter ){
+	$models = Users::model()->findUsersByRole('media');
+	$list = CHtml::listData($models, 
+                'id', 'FullName');
+	echo CHtml::dropDownList('accountManager', $accountManager, 
+              $list,
+              array('empty' => 'All account managers','onChange' => '
+                  // if ( ! this.value) {
+                  //   return;
+                  // }
+                  $.post(
+                      "getOpportunities/"+this.value,
+                      "",
+                      function(data)
+                      {
+                          // alert(data);
+                        $(".opportunitie-dropdownlist").html(data);
+                      }
+                  )
+                  '));
+	if(!$accountManager){
+		$models = Opportunities::model()->findAll();
+		$list = CHtml::listData($models, 
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	              $list,
+	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+	}
+	else
+	{
+		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
+		$list = CHtml::listData($models, 
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	              $list,
+	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+	}
+       }
+       else{
+       		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
+			$list = CHtml::listData($models, 
+		                'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+		              $list,
+		              array('empty' => 'All opportunities',));
 
+       }
+       $models = Networks::model()->findAll();
+		$list = CHtml::listData($models, 
+	                'id', 'name');
+		echo CHtml::dropDownList('networks', $networks, 
+	              $list,
+	              array('empty' => 'All networks',));
+	       
+		
+	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
     </fieldset>
 
 <?php $this->endWidget(); ?>
-
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php 
+	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
+	$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $model->search($dateStart, $dateEnd),
+	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
@@ -201,11 +270,7 @@ $('.search-form form').submit(function(){
 			'name'  =>	'id',
         	'headerHtmlOptions' => array('style' => 'width: 30px'),
         	'htmlOptions'	=> array( 'class' =>  'id'),
-		),
-		array(
-			'name'  => 'account_manager',
-			'value' => '$data->campaigns->opportunities->accountManager ? $data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name : ""',
-        	'htmlOptions'	=> array( 'class' =>  'id', 'style' => 'width: 120px'),
+        	'footer' => 'Totals:'
 		),
 		array(
 			'name'  => 'campaign_name',
@@ -217,9 +282,15 @@ $('.search-form form').submit(function(){
 			'value'	=>	'$data->networks->name',
 			'filter' => $networks_names,
 		),
+		array(
+			'name'  => 'rate',
+			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+			'htmlOptions'=>array('style'=>'width: 45px'),
+		),
 		array(	
 			'name'	=>	'imp',
 			'htmlOptions'=>array('style'=>'width: 50px'),
+			'footer'=>$totals['imp'],
         ),
         array(	
 			'name'	=>	'imp_adv',
@@ -262,12 +333,18 @@ $('.search-form form').submit(function(){
 								)
 						)
         	',
+			'footer'=>$totals['imp_adv'],
         ),
         array(
         	'name'	=>	'clics',
         	'htmlOptions'=>array('style'=>'width: 50px'),
+			'footer'=>$totals['clics'],
         ),
-        'conv_api',
+        array(
+        	'name'	=>	'conv_api',
+        	'htmlOptions'=>array('style'=>'width: 50px'),
+			'footer'=>$totals['conv_s2s'],
+        ),
 		array(
 			'name'        => 'conv_adv',
 			'type'        => 'raw',
@@ -344,21 +421,25 @@ $('.search-form form').submit(function(){
 								)
 						))
 					',
+			'footer'=>$totals['conv_adv'],
         ),
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
         	'htmlOptions'=>array('style'=>'width: 70px'),
+			'footer'=>$totals['revenue'],
         ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'$data->getSpendUSD()',
         	'htmlOptions'=>array('style'=>'width: 60px'),
+			'footer'=>$totals['spend'],
         ),
 		array(
 			'header'  => 'Profit',
 			'value'	=>	'$data->getProfit()',
 			'htmlOptions'=>array('style'=>'width: 60px'),
+			'footer'=>$totals['revenue']-$totals['spend'],
 		),
 		array(
 			'header'  => 'Click Rate',

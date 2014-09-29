@@ -45,6 +45,7 @@ class Campaigns extends CActiveRecord
 	public $net_currency;
 	public $clicks;
 	public $conv;
+	public $account_manager;
 
 	/**
 	 * @return string the associated database table name
@@ -71,7 +72,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -124,6 +125,7 @@ class Campaigns extends CActiveRecord
 			'net_currency'           => 'Net Currency',
 			'clicks'           		 => 'Clicks Log',
 			'conv'		           	 => 'Convertions Log',
+			'account_manager' => 'Account Manager',
 		);
 	}
 
@@ -160,11 +162,12 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		//We need to list all related tables in with property
-		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
+		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		$criteria->compare('accountManager.name',$this->account_manager, true);
 
 		//nomenclatura
 		$criteria->compare('t.id',$this->name,true);
@@ -205,6 +208,10 @@ class Campaigns extends CActiveRecord
 		            'advertisers_name'=>array(
 						'asc'  =>'advertisers.name',
 						'desc' =>'advertisers.name DESC',
+		            ),
+		            'account_manager'=>array(
+						'asc'  =>'accountManager.name',
+						'desc' =>'accountManager.name DESC',
 		            ),
 		            'opportunities_rate'=>array(
 						'asc'  =>'opportunities.rate',

@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate'),
+				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -342,5 +342,20 @@ class DailyReportController extends Controller
 			//'networks'  => $networks,
 			'campaigns' => $campaigns, 
 		), false, true);
+	}
+
+
+	public function actionGetOpportunities($id=null)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		if($id)$opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
+		else $opps =Opportunities::model()->findAll();
+		$response='<option value="">All opportunities</option>';
+		foreach ($opps as $op) {
+			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 }

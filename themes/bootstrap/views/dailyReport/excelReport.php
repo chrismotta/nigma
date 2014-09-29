@@ -44,6 +44,11 @@ $this->widget('EExcelWriter', array(
             'name'  => 'network_name',
             'value' => '$data->networks->name',
         ),
+        array(
+            'header'  => 'CPA',
+            'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+            'htmlOptions'=>array('style'=>'width: 45px'),
+        ),
         'imp',
         'imp_adv',
         'clics',
