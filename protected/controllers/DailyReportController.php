@@ -89,7 +89,7 @@ class DailyReportController extends Controller
 	public function actionCreateByNetwork()
 	{
 		$date = date('Y-m-d', strtotime('yesterday'));
-		$currentNetwork = 1;
+		$currentNetwork = NULL;
 
 		// If date and network are submitted then get values
 		if ( isset($_GET['networkSubmit']) ) {
@@ -122,7 +122,7 @@ class DailyReportController extends Controller
 			Yii::app()->end();
 		}
 		
-		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name', 'condition' => 'has_api=0')), 'id', 'name');
 
 		$this->render('createByNetwork', array(
 			'model'          => new DailyReport,

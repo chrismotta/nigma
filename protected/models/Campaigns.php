@@ -237,23 +237,30 @@ class Campaigns extends CActiveRecord
 	}
 
 	/**
-	 * TODO hacer descripcion
+	 * Retrieves a list of models for specified network and date. Ignore the campaigns that had already info entry.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
 	 */
 	public function searchByNetworkAndDate($network_id, $date)
 	{
 		$criteria=new CDbCriteria;
-		
-		$criteria->select = 't.id';
-		$criteria->compare('networks_id', $network_id);
 
-		$criteria->addCondition("t.id NOT IN (SELECT d.campaigns_id FROM daily_report d WHERE d.networks_id=". $network_id . " AND d.date='". date('Y-m-d', strtotime($date)) . "')");
+		$criteria->select = 't.id';
+
+		if ( $network_id ) {
+			$criteria->compare('networks_id', $network_id);
+			$criteria->addCondition("t.id NOT IN (SELECT d.campaigns_id FROM daily_report d WHERE d.networks_id=". $network_id . " AND d.date='". date('Y-m-d', strtotime($date)) . "')");
+		} else {
+			$criteria->compare('networks_id', -1); // Select none
+		}
 
 		$criteria->with = array('opportunities', 'opportunities.country');
 		
 		// external name
-		$criteria->compare('t.id',$this->name,true);
-		$criteria->compare('country.ISO2',$this->name,true,'OR');
-		$criteria->compare('t.name',$this->name,true,'OR');
+		$criteria->compare('t.id', $this->name, true);
+		$criteria->compare('country.ISO2', $this->name, true, 'OR');
+		$criteria->compare('t.name', $this->name, true, 'OR');
 
 		// role filter
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);

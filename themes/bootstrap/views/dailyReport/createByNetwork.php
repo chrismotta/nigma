@@ -41,7 +41,7 @@ $this->breadcrumbs=array(
 	));
 	?>
 	Network: 
-	<?php echo CHtml::dropDownList('network', $currentNetwork, $networks, array()); ?>
+	<?php echo CHtml::dropDownList('network', $currentNetwork, $networks, array('empty' => 'Select Network')); ?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'networkSubmit'))); ?>
 
@@ -69,11 +69,13 @@ $this->breadcrumbs=array(
 				'type'        => 'raw',
 				'htmlOptions' => array('class'=>'span1'),
 				'value'       => 'CHtml::textField("row-imp", "", array(
-					"style" => "width:80%;",
+					"style" => "width:80%; margin-bottom: 0px;",
     				"onkeydown" => "
         				var r = $( this ).parents( \"tr\" );
         				r.removeClass( \"control-group success\" );
         				r.addClass( \"control-group error\" );
+        				r.find( \"#labelSubmit\" ).removeClass( \"label-success\" );
+        				r.find( \"#labelSubmit\" ).addClass( \"label-important\" );
     				"
     				));',
 			),
@@ -82,11 +84,13 @@ $this->breadcrumbs=array(
 				'type'        => 'raw',
 				'htmlOptions' => array('style'=>'width: 50px'),
 				'value'       => 'CHtml::textField("row-imp_adv", "", array(
-					"style" => "width:80%;",
+					"style" => "width:80%; margin-bottom: 0px;",
     				"onkeydown" => "
         				var r = $( this ).parents( \"tr\" );
         				r.removeClass( \"control-group success\" );
         				r.addClass( \"control-group error\" );
+        				r.find( \"#labelSubmit\" ).removeClass( \"label-success\" );
+        				r.find( \"#labelSubmit\" ).addClass( \"label-important\" );
     				"
     				));',
 			),
@@ -95,11 +99,13 @@ $this->breadcrumbs=array(
 				'type'        => 'raw',
 				'htmlOptions' => array('style'=>'width: 50px'),
 				'value'       => 'CHtml::textField("row-clics", "", array(
-					"style" => "width:80%;",
+					"style" => "width:80%; margin-bottom: 0px;",
     				"onkeydown" => "
         				var r = $( this ).parents( \"tr\" );
         				r.removeClass( \"control-group success\" );
         				r.addClass( \"control-group error\" );
+						r.find( \"#labelSubmit\" ).removeClass( \"label-success\" );
+        				r.find( \"#labelSubmit\" ).addClass( \"label-important\" );
     				"
     				));',
 			),
@@ -108,23 +114,26 @@ $this->breadcrumbs=array(
 				'type'        => 'raw',
 				'htmlOptions' => array('style'=>'width: 50px'),
 				'value'       => 'CHtml::textField("row-spend", "", array(
-					"style" => "width:80%;",
+					"style" => "width:80%; margin-bottom: 0px;",
     				"onkeydown" => "
         				var r = $( this ).parents( \"tr\" );
         				r.removeClass( \"control-group success\" );
         				r.addClass( \"control-group error\" );
+        				r.find( \"#labelSubmit\" ).removeClass( \"label-success\" );
+        				r.find( \"#labelSubmit\" ).addClass( \"label-important\" );
     				"
     				));',
 			),
 			array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 20px"),
+			'headerHtmlOptions' => array('style' => "width: 50px; vertical-align: middle;"),
 			'template'          => '{submit}',
 			'buttons'           => array(
 				'submit' => array(
-					'label' => 'Submit',
+					'label' => 'Save',
 					'url'   => '"javascript:;"',
-					'icon'  => 'upload',
+					// 'icon'  => 'upload',
+					'options' => array('class' => 'label', 'rel' => '', 'id'=>'labelSubmit'),
 					'click' => '
 				    function() {
 				    	// Create parameters
@@ -156,10 +165,16 @@ $this->breadcrumbs=array(
 									var r = $( "#" + data.c_id );
  									r.removeClass( "control-group error" );
 									r.addClass( "control-group success" );
+									var l = r.find("#labelSubmit");
+									l.removeClass( "label-important" );
+									l.addClass( "label-success" );
+									l.text("Update");
 								}
 								if (data.result == "ERROR") {
 									var r = $( "#" + data.c_id );
 									r.addClass( "control-group error" );
+									r.find("#labelSubmit").removeClass( "label-success" );
+									r.find("#labelSubmit").addClass( "label-important" );
 								}
 							},
 							"json"
