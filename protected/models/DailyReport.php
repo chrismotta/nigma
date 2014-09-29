@@ -158,11 +158,10 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
-		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
+		if ( $networks != NULL)$criteria->addCondition('t.networks_id ='.$networks);
 		if ( $accountManager != NULL)$criteria->addCondition('accountManager.id ='.$accountManager);
 		if ( $opportunitie != NULL)$criteria->addCondition('opportunities.id ='.$opportunitie);
-		if ( $campaign != NULL)$criteria->addCondition('campaigns.id ='.$campaign);
-		print_r($criteria);
+		if ( $campaign != NULL)$criteria->addCondition('t.campaigns_id ='.$campaign);
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	

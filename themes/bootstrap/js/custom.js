@@ -24,7 +24,7 @@ var selectionChangedDailyReport = function(id) {
 
 	var chart = Highcharts.charts[0];
 	chart.showLoading("Loading data from server..");
-	$.get(
+	$.post(
 		"graphic",
 		"c_id=" + c_id + "&net_id=" + net_id + "&endDate=" + endDate,
 		function(data) {
