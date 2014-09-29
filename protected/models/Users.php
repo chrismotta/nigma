@@ -126,4 +126,8 @@ class Users extends CActiveRecord
         $criteria->addInCondition('id', $users_ids);
         return Users::model()->findAll($criteria);
 	}
+	public function getFullName() 
+	{		
+        return $this->lastname.' '.$this->name;
+	}
 }

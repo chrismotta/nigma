@@ -31,6 +31,7 @@ class DailyReport extends CActiveRecord
 	public $campaign_name;
 	public $conversions;
 	public $convrate;
+	public $rate;
 
 	/**
 	 * @return string the associated database table name
@@ -93,6 +94,7 @@ class DailyReport extends CActiveRecord
 			'network_name'	=>	'Network Name',
 			'account_manager' => 'Account Manager',
 			'campaign_name' => 'Campaign Name',
+			'rate' => 'CPA',
 		);
 	}
 
@@ -149,23 +151,12 @@ class DailyReport extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, date';
-		$criteria->order='date ASC';
-		$criteria->group='date,networks_id';
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
+			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());
 		}
-		$criteria=new CDbCriteria;
-		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
-		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->select='campaigns_id,networks_id, SUM(revenue) as revenue, date';
-		$criteria->order='date ASC';
-		$criteria->group='campaigns_id';
-		$r         = DailyReport::model()->findAll( $criteria );
-		foreach ($r as $value) {
-			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());	
-		}
+		
 		foreach ($dataTops as $date => $data) {
 			$spends[]=$data['spends'];
 			$revenues[]=$data['revenues'];
@@ -176,6 +167,100 @@ class DailyReport extends CActiveRecord
 		
 		return $result;
 	}
+
+	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunitie=null,$networks=null) {
+			
+		if(!$startDate)	$startDate = 'today' ;
+		if(!$endDate) $endDate   = 'today';
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+		$imp=0;
+		$imp_adv=0;
+		$clics=0;
+		$conv_s2s=0;
+		$conv_adv=0;
+		$spend=0;
+		$revenue=0;
+
+		$criteria=new CDbCriteria;
+		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
+		if ( $accountManager != NULL) {
+					$criteria->addCondition('accountManager.id ='.$accountManager);
+				}
+		if ( $opportunitie != NULL) {
+					$criteria->addCondition('opportunities.id ='.$opportunitie);
+				}
+		$r         = DailyReport::model()->findAll( $criteria );
+		foreach ($r as $value) {
+			$imp+=$value->imp;
+			$imp_adv+=$value->imp_adv;
+			$clics+=$value->clics;
+			$conv_s2s+=$value->conv_api;
+			$conv_adv+=$value->conv_adv;
+			$spend+=doubleval($value->getSpendUSD());	
+			$revenue+=doubleval($value->getRevenueUSD());
+		}		
+		$result=array(
+				'imp'		=>$imp,
+				'imp_adv'	=>$imp_adv,
+				'clics'		=>$clics,
+				'conv_s2s'	=>$conv_s2s,
+				'conv_adv'	=>$conv_adv,
+				'spend'		=>$spend,
+				'revenue'	=>$revenue,
+			);
+		
+		return $result;
+	}
+	// public function getTotals($startDate=null, $endDate=null) {
+			
+	// 	if(!$startDate)	$startDate = 'today' ;
+	// 	if(!$endDate) $endDate   = 'today';
+	// 	$startDate = date('Y-m-d', strtotime($startDate));
+	// 	$endDate = date('Y-m-d', strtotime($endDate));
+	// 	$dataTops=array();
+	// 	$spends=array();
+	// 	$revenues=array();
+	// 	$profits=array();
+	// 	$dates=array();
+
+	// 	foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+	// 		$dataTops[$date]['spends']=0;
+	// 		$dataTops[$date]['revenues']=0;
+	// 	}
+	// 	$criteria=new CDbCriteria;
+	// 	$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+	// 	$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+	// 	$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, date';
+	// 	$criteria->order='date ASC';
+	// 	$criteria->group='date,networks_id';
+	// 	$r         = DailyReport::model()->findAll( $criteria );
+	// 	foreach ($r as $value) {
+	// 		$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
+	// 	}
+	// 	$criteria=new CDbCriteria;
+	// 	$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+	// 	$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+	// 	$criteria->select='campaigns_id,networks_id, SUM(revenue) as revenue, date';
+	// 	$criteria->order='date ASC';
+	// 	$criteria->group='campaigns_id';
+	// 	$r         = DailyReport::model()->findAll( $criteria );
+	// 	foreach ($r as $value) {
+	// 		$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());	
+	// 	}
+	// 	foreach ($dataTops as $date => $data) {
+	// 		$spends[]=$data['spends'];
+	// 		$revenues[]=$data['revenues'];
+	// 		$profits[]=$data['revenues']-$data['spends'];
+	// 		$dates[]=$date;
+	// 	}
+	// 	$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
+		
+	// 	return $result;
+	// }
 
 	public function getTops($startDate=null, $endDate=null,$order) {
 			
@@ -282,7 +367,7 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -290,7 +375,7 @@ class DailyReport extends CActiveRecord
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
-		$criteria->compare('networks_id',$this->networks_id);
+		if ( $networks == NULL) $criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('imp',$this->imp);
 		$criteria->compare('imp_adv',$this->imp_adv);
 		$criteria->compare('clics',$this->clics);
@@ -306,11 +391,20 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager' );
+		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
+		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
+		if ( $accountManager != NULL) {
+			$criteria->compare('accountManager.id',$accountManager);
+		}
+		if ( $opportunitie != NULL) {
+			$criteria->compare('opportunities.id',$opportunitie);
+		}
+		
 		
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		//Filtro por role
@@ -346,6 +440,10 @@ class DailyReport extends CActiveRecord
 		            'campaign_name'=>array(
 						'asc'  =>'campaigns.id',
 						'desc' =>'campaigns.id DESC',
+		            ),
+		            'rate'=>array(
+						'asc'  =>'opportunities.rate',
+						'desc' =>'opportunities.rate DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
