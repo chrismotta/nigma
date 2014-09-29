@@ -201,9 +201,9 @@ $('.search-form form').submit(function(){
 	echo CHtml::dropDownList('accountManager', $accountManager, 
               $list,
               array('empty' => 'All account managers','onChange' => '
-                  if ( ! this.value) {
-                    return;
-                  }
+                  // if ( ! this.value) {
+                  //   return;
+                  // }
                   $.post(
                       "getOpportunities/"+this.value,
                       "",
@@ -214,7 +214,14 @@ $('.search-form form').submit(function(){
                       }
                   )
                   '));
-	if(!$accountManager)echo CHtml::dropDownList('opportunitie', $opportunitie,array(), array('class'=>'opportunitie-dropdownlist', 'prompt' => 'All opportunities'));
+	if(!$accountManager){
+		$models = Opportunities::model()->findAll();
+		$list = CHtml::listData($models, 
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	              $list,
+	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+	}
 	else
 	{
 		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
