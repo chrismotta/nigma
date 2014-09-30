@@ -88,6 +88,7 @@ class AdWords
 		// cost is return in micropound, why? google, why?
 		$dailyReport->spend = number_format($campaign['cost'] / 1000000, 2, '.', ''); // ignore thousands separetor to save properly in db.
 		$dailyReport->updateRevenue();
+		$dailyReport->setNewFields();
 		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $campaign['campaign'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');

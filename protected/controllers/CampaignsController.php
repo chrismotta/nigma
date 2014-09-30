@@ -268,7 +268,7 @@ class CampaignsController extends Controller
 		{
 			$model->attributes=$_POST['Campaigns'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('dailyReport/admin'));
 		}
 
 		$this->render('update',array(

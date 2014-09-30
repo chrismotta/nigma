@@ -26,59 +26,57 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<!-- 
+<?php
+	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+
+	$dateStart = date('Y-m-d', strtotime($dateStart));
+	$dateEnd = date('Y-m-d', strtotime($dateEnd));
+	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunitie,$networks);
+?>
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
-	$this->Widget('ext.highcharts.HighstockWidget', array(
+
+	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
-			'chart'         => array( 'type' => 'area' ),
-			'title'         => array( 'text' => ''),
-			'rangeSelector' => array( 'enabled' => false ),
-			'navigator'     => array( 'enabled' => false ),
-			'scrollbar'     => array( 'enabled' => false ),
-			'tooltip'       => array( 'crosshairs'=>'true', 'shared'=>'true' ),
-			'legend'        => array(
-				'align'           =>  'left',
-				'borderWidth'     =>  1,
-				'backgroundColor' => '#FFFFFF',
-				'enabled'         =>  true,
-				'floating'        =>  true,
-				'layout'          => 'horizontal',
-				'verticalAlign'   =>  'top',
-	        	),
-			
-			'xAxis' => array( 
-				'title' => array('text' => ''), 
-				'categories' => array('14-07-2014', '15-07-2014', '16-07-2014', '17-07-2014', '18-07-2014', '19-07-2014', '20-07-2014', '21-07-2014')
+			'chart' => array('type' => 'area'),
+			'title' => array('text' => ''),
+			'xAxis' => array(
+				'categories' => $totalsGrap['dates']
 				),
-			'yAxis' => array( 'title' => array('text' => '') ),
+			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
+			'yAxis' => array(
+				'title' => array('text' => '')
+				),
 			'series' => array(
-				array(
-					'name' => 'Spend',
-					'data' => array( 10.22, 22.2 , 0, 10, 34, 45, 20, 15 ),
-					),
-				array(
-					'name' => 'Conv',
-					'data' => array( 02, 94, 124, 5, 82, 82, 82, 82 ),
-					),
-				array(
-					'name' => 'Impressions', 
-					'data' => array( 1022, 9993, 1012, 1000, 1498, 2498, 1298, 2698 ),
-					),
-				array(
-					'name' => 'Clicks', 
-					'data' => array(422, 393, 612, 500, 298, 398, 198, 408 ),
-					),
+				array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
+				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
+				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
+				array('name' => 'Spend','data' => $totalsGrap['spends'],),
 				),
-			)
+	        'legend' => array(
+	            'layout' => 'vertical',
+	            'align' =>  'left',
+	            'verticalAlign' =>  'top',
+	            'x' =>  40,
+	            'y' =>  3,
+	            'floating' =>  true,
+	            'borderWidth' =>  1,
+	            'backgroundColor' => '#FFFFFF'
+	        	)
+			),
 		)
 	);
 	?>
+			
 	</div>
 </div>
 
-<hr> -->
+<hr>
 
 <div class="botonera">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
@@ -129,16 +127,6 @@ $('.search-form form').submit(function(){
 
 <br>
 
-<?php
-	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
-	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
-	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-
-	$dateStart = date('Y-m-d', strtotime($dateStart));
-	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
@@ -261,10 +249,11 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
-	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
+	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
+	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(
 			'name'  =>	'id',
@@ -284,21 +273,23 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'  => 'rate',
-			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'value' => '$data->getRateUSD() ? $data->getRateUSD() : 0',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(	
 			'name'	=>	'imp',
-			'htmlOptions'=>array('style'=>'width: 50px'),
+			'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['imp'],
         ),
         array(	
 			'name'	=>	'imp_adv',
 			'type'	=>	'raw',
 			'htmlOptions'=>array('style'=>'width: 85px'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
         	'value' =>	'
 					CHtml::textField("row-imp" . $row, $data->imp_adv, array(
-        				"style" => "width:35px;", 
+        				"style" => "width:30px; text-align:right; font-size: 11px;", 
         				"onkeydown" => "
 							var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
@@ -337,21 +328,24 @@ $('.search-form form').submit(function(){
         ),
         array(
         	'name'	=>	'clics',
-        	'htmlOptions'=>array('style'=>'width: 50px'),
+        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['clics'],
         ),
         array(
         	'name'	=>	'conv_api',
-        	'htmlOptions'=>array('style'=>'width: 50px'),
+        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['conv_s2s'],
         ),
 		array(
 			'name'        => 'conv_adv',
 			'type'        => 'raw',
 			'htmlOptions' => array('style'=>'width: 85px'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
-        				"style" => "width:35px;",
+        				"style" => "width:30px; text-align:right; font-size: 11px;",
         				"onkeydown" => "
 	        				var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
@@ -426,67 +420,66 @@ $('.search-form form').submit(function(){
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
-        	'htmlOptions'=>array('style'=>'width: 70px'),
+        	'htmlOptions'=>array('style'=>'width: 70px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['revenue'],
         ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'$data->getSpendUSD()',
-        	'htmlOptions'=>array('style'=>'width: 60px'),
+        	'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['spend'],
         ),
 		array(
-			'header'  => 'Profit',
-			'value'	=>	'$data->getProfit()',
-			'htmlOptions'=>array('style'=>'width: 60px'),
-			'footer'=>$totals['revenue']-$totals['spend'],
+			'name'  => 'profit',
+			'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>$totals['profit'],
 		),
 		array(
-			'header'  => 'Click Rate',
-			'value' => '$data->getCtr() * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px'),
+			'name'  => 'profit_percent',
+			'value' => '$data->profit_percent * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
 		),
 		array(
-			'header'  => 'Conv Rate',
-			'value' => '$data->getConvRate() * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px'),
+			'name'  => 'click_through_rate',
+			'value' => '$data->click_through_rate * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
 		),
 		array(
-			'header'  => 'Profit Perc',
-			'value' => '$data->getProfitPerc() * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px'),
+			'name'  => 'conversion_rate',
+			'value' => '$data->conversion_rate * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
 		),
 		array(
-			'header'  => 'eCPM',
-			'value' => '$data->getECPM()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'name'  => 'eCPM',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
-			'header'  => 'eCPC',
-			'value' => '$data->getECPC()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'name'  => 'eCPC',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
-			'header'  => 'eCPA',
-			'value' => '$data->getECPA()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'name'  => 'eCPA',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
         	'name'	=>	'date',
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
-        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px'),
+        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 50px"),
+			'headerHtmlOptions' => array('style' => "width: 70px"),
 			'buttons'           => array(
 				'delete' => array(
-					'visible' => '! $data->is_from_api',
+					'visible' => '!$data->is_from_api',
 				),
 				'updateAjax' => array(
 					'label'   => 'Update',
 					'icon'    => 'pencil',
-					'visible' => '! $data->is_from_api',
+					'visible' => '!$data->is_from_api',
 					'click'   => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -502,11 +495,18 @@ $('.search-form form').submit(function(){
 								$("#modalDailyReport").modal("toggle");
 							}
 						)
+					return false;
 				    }
 				    ',
 				),
+				'updateCampaign' => array(
+					'label'   => 'Update Campaign',
+					'icon'    => 'eye-open',
+					//'visible' => '$data->getCapStatus()',
+					'url'   => 'Yii::app()->baseUrl."/campaigns/update/".$data->campaigns_id',
+				),
 			),
-			'template' => '{updateAjax} {delete}',
+			'template' => '{updateAjax} {delete} {updateCampaign}',
 		),
 	),
 )); ?>

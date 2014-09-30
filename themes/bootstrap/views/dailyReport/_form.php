@@ -25,7 +25,11 @@
     <fieldset>
         <?php 
 
-        echo $form->dropDownListRow($model, 'campaigns_id', $campaigns, array('prompt' => 'Select campaign'));
+        if ($model->isNewRecord)
+            echo $form->dropDownListRow($model, 'campaigns_id', $campaigns, array('prompt' => 'Select campaign'));
+        else
+            echo $form->dropDownListRow($model, 'campaigns_id', $campaigns, array('prompt' => 'Select campaign', 'disabled' => 'disabled'));
+
         //echo $form->hiddenField($model, 'networks_id', array('type'=>"hidden") );
         echo '<hr>';
         echo $form->textFieldRow($model, 'imp', array('class'=>'span3'));

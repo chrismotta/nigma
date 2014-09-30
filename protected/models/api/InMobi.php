@@ -104,6 +104,7 @@ class InMobi
 			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign->adSpend;
 			$dailyReport->updateRevenue();
+			$dailyReport->setNewFields();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				print json_encode($dailyReport->getErrors()) . "<br>";

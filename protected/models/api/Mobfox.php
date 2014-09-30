@@ -87,6 +87,7 @@ class Mobfox
 			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaignInfo['response']['report']['statistics']['total_cost']['amount']['value'];
 			$dailyReport->updateRevenue();
+			$dailyReport->setNewFields();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				Yii::log("ERROR - saving campaign: '" . $campaignInfo['response']['report']['name']['value'] . "'. Error message: " . json_encode($dailyReport->getErrors()), "error", "system.model.api.mobfox");
