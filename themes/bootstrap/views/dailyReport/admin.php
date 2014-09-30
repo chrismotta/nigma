@@ -273,7 +273,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'  => 'rate',
-			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+			'value' => '$data->getRateUSD() ? $data->getRateUSD() : 0',
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(	

@@ -58,7 +58,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
-		//'id',
+		array(
+			'name'              =>'id',
+			'headerHtmlOptions' => array('style'=>'width: 50px'),
+		),
 		array(
 			'name'              =>'advertiser_name',
 			'value'             =>'$data->ios->advertisers->name',
