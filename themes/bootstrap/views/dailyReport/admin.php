@@ -467,7 +467,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 50px"),
+			'headerHtmlOptions' => array('style' => "width: 70px"),
 			'buttons'           => array(
 				'delete' => array(
 					'visible' => '!$data->is_from_api',
