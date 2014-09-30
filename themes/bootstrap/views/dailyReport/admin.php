@@ -26,59 +26,57 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<!-- 
+<?php
+	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+
+	$dateStart = date('Y-m-d', strtotime($dateStart));
+	$dateEnd = date('Y-m-d', strtotime($dateEnd));
+	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunitie,$networks);
+?>
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
-	$this->Widget('ext.highcharts.HighstockWidget', array(
+
+	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'options'=>array(
-			'chart'         => array( 'type' => 'area' ),
-			'title'         => array( 'text' => ''),
-			'rangeSelector' => array( 'enabled' => false ),
-			'navigator'     => array( 'enabled' => false ),
-			'scrollbar'     => array( 'enabled' => false ),
-			'tooltip'       => array( 'crosshairs'=>'true', 'shared'=>'true' ),
-			'legend'        => array(
-				'align'           =>  'left',
-				'borderWidth'     =>  1,
-				'backgroundColor' => '#FFFFFF',
-				'enabled'         =>  true,
-				'floating'        =>  true,
-				'layout'          => 'horizontal',
-				'verticalAlign'   =>  'top',
-	        	),
-			
-			'xAxis' => array( 
-				'title' => array('text' => ''), 
-				'categories' => array('14-07-2014', '15-07-2014', '16-07-2014', '17-07-2014', '18-07-2014', '19-07-2014', '20-07-2014', '21-07-2014')
+			'chart' => array('type' => 'area'),
+			'title' => array('text' => ''),
+			'xAxis' => array(
+				'categories' => $totalsGrap['dates']
 				),
-			'yAxis' => array( 'title' => array('text' => '') ),
+			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
+			'yAxis' => array(
+				'title' => array('text' => '')
+				),
 			'series' => array(
-				array(
-					'name' => 'Spend',
-					'data' => array( 10.22, 22.2 , 0, 10, 34, 45, 20, 15 ),
-					),
-				array(
-					'name' => 'Conv',
-					'data' => array( 02, 94, 124, 5, 82, 82, 82, 82 ),
-					),
-				array(
-					'name' => 'Impressions', 
-					'data' => array( 1022, 9993, 1012, 1000, 1498, 2498, 1298, 2698 ),
-					),
-				array(
-					'name' => 'Clicks', 
-					'data' => array(422, 393, 612, 500, 298, 398, 198, 408 ),
-					),
+				array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
+				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
+				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
+				array('name' => 'Spend','data' => $totalsGrap['spends'],),
 				),
-			)
+	        'legend' => array(
+	            'layout' => 'vertical',
+	            'align' =>  'left',
+	            'verticalAlign' =>  'top',
+	            'x' =>  40,
+	            'y' =>  3,
+	            'floating' =>  true,
+	            'borderWidth' =>  1,
+	            'backgroundColor' => '#FFFFFF'
+	        	)
+			),
 		)
 	);
 	?>
+			
 	</div>
 </div>
 
-<hr> -->
+<hr>
 
 <div class="botonera">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
@@ -129,16 +127,6 @@ $('.search-form form').submit(function(){
 
 <br>
 
-<?php
-	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
-	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
-	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-
-	$dateStart = date('Y-m-d', strtotime($dateStart));
-	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
@@ -261,7 +249,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
-	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
+	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',

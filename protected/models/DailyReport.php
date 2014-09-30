@@ -139,7 +139,7 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function getTotals($startDate=null, $endDate=null) {
+	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunitie=null,$networks=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -149,28 +149,48 @@ class DailyReport extends CActiveRecord
 		$spends=array();
 		$revenues=array();
 		$profits=array();
+		$conversions=array();
+		$impressions=array();
+		$clics=array();
 		$dates=array();
 
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
 			$dataTops[$date]['spends']=0;
 			$dataTops[$date]['revenues']=0;
+			$dataTops[$date]['conversions']=0;
+			$dataTops[$date]['impressions']=0;
+			$dataTops[$date]['clics']=0;
 		}
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
+		if ( $accountManager != NULL) {
+					$criteria->addCondition('accountManager.id ='.$accountManager);
+				}
+		if ( $opportunitie != NULL) {
+					$criteria->addCondition('opportunities.id ='.$opportunitie);
+				}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
 			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());
+			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
 		}
 		
 		foreach ($dataTops as $date => $data) {
 			$spends[]=$data['spends'];
 			$revenues[]=$data['revenues'];
 			$profits[]=$data['revenues']-$data['spends'];
+			$impressions[]=$data['impressions'];
+			$conversions[]=$data['conversions'];
+			$clics[]=$data['clics'];
 			$dates[]=$date;
 		}
-		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
+		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'impressions' => $impressions, 'conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
 		
 		return $result;
 	}
@@ -230,52 +250,6 @@ class DailyReport extends CActiveRecord
 		
 		return $result;
 	}
-	// public function getTotals($startDate=null, $endDate=null) {
-			
-	// 	if(!$startDate)	$startDate = 'today' ;
-	// 	if(!$endDate) $endDate   = 'today';
-	// 	$startDate = date('Y-m-d', strtotime($startDate));
-	// 	$endDate = date('Y-m-d', strtotime($endDate));
-	// 	$dataTops=array();
-	// 	$spends=array();
-	// 	$revenues=array();
-	// 	$profits=array();
-	// 	$dates=array();
-
-	// 	foreach (Utilities::dateRange($startDate,$endDate) as $date) {
-	// 		$dataTops[$date]['spends']=0;
-	// 		$dataTops[$date]['revenues']=0;
-	// 	}
-	// 	$criteria=new CDbCriteria;
-	// 	$criteria->addCondition("DATE(date)>="."'".$startDate."'");
-	// 	$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-	// 	$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, date';
-	// 	$criteria->order='date ASC';
-	// 	$criteria->group='date,networks_id';
-	// 	$r         = DailyReport::model()->findAll( $criteria );
-	// 	foreach ($r as $value) {
-	// 		$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
-	// 	}
-	// 	$criteria=new CDbCriteria;
-	// 	$criteria->addCondition("DATE(date)>="."'".$startDate."'");
-	// 	$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-	// 	$criteria->select='campaigns_id,networks_id, SUM(revenue) as revenue, date';
-	// 	$criteria->order='date ASC';
-	// 	$criteria->group='campaigns_id';
-	// 	$r         = DailyReport::model()->findAll( $criteria );
-	// 	foreach ($r as $value) {
-	// 		$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());	
-	// 	}
-	// 	foreach ($dataTops as $date => $data) {
-	// 		$spends[]=$data['spends'];
-	// 		$revenues[]=$data['revenues'];
-	// 		$profits[]=$data['revenues']-$data['spends'];
-	// 		$dates[]=$date;
-	// 	}
-	// 	$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'dates' => $dates);
-		
-	// 	return $result;
-	// }
 
 	public function getTops($startDate=null, $endDate=null,$order) {
 			
@@ -500,25 +474,31 @@ class DailyReport extends CActiveRecord
 		if ( empty($r) ) {
 			return "No results.";
 		} 
-
-		$spend       = array();
-		$impressions = array();
-		$clicks      = array();
-		$conv        = array();
-		$date        = array();
-
+		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+			$dataTops[$date]['spends']=0;
+			$dataTops[$date]['conversions']=0;
+			$dataTops[$date]['impressions']=0;
+			$dataTops[$date]['clics']=0;
+		}
 		foreach ($r as $value) {
-			$dates[]       = date_format( new DateTime($value->date), "d-m-Y" );;
-			$spend[]       = array($value->date, $value->spend);
-			$impressions[] = array($value->date, $value->imp);
-			$clicks[]      = array($value->date, $value->clics);
-			$conv[]        = array($value->date, $value->conv_adv);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
+			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
+		}
+		
+		foreach ($dataTops as $date => $data) {
+			$spends[]=$data['spends'];
+			$impressions[]=$data['impressions'];
+			$conversions[]=$data['conversions'];
+			$clics[]=$data['clics'];
+			$dates[]=$date;
 		}
 		$result = array(
-			'spend' => $spend, 
-			'conv'  => $conv, 
+			'spend' => $spends, 
+			'conv'  => $conversions, 
 			'imp'   => $impressions, 
-			'click' => $clicks, 
+			'click' => $clics, 
 			'date'  => $dates
 		);
 		return $result;

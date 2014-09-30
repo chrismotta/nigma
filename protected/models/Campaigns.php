@@ -236,6 +236,60 @@ class Campaigns extends CActiveRecord
 		));
 	}
 
+	/**
+	 * Retrieves a list of models for specified network and date. Ignore the campaigns that had already info entry.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models
+	 * based on the search/filter conditions.
+	 */
+	public function searchByNetworkAndDate($network_id, $date)
+	{
+		$criteria=new CDbCriteria;
+
+		if ( $network_id ) {
+			$criteria->compare('networks_id', $network_id);
+			$criteria->addCondition("t.id NOT IN (SELECT d.campaigns_id FROM daily_report d WHERE d.networks_id=". $network_id . " AND d.date='". date('Y-m-d', strtotime($date)) . "')");
+		} else {
+			$criteria->compare('networks_id', -1); // Select none
+		}
+
+		$criteria->with = array('opportunities', 'opportunities.country');
+		
+		// external name
+		$criteria->compare('t.id', $this->name, true);
+		$criteria->compare('country.ISO2', $this->name, true, 'OR');
+		$criteria->compare('t.name', $this->name, true, 'OR');
+
+		// role filter
+		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+		$filter = true;
+		foreach ($roles as $role => $value) {
+			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+				$filter = false;
+				break;
+			}
+		}
+		if ( $filter )
+			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
+
+		return new CActiveDataProvider($this, array(
+			'criteria'   => $criteria,
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+			'pagination' => false,
+			'sort'       => array(
+		        'attributes'=>array(
+		        	'name'=>array(
+		        		'asc'  =>'t.id',
+						'desc' =>'t.id DESC',
+		        	),
+		        	// Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
+		));
+	}
+
 	public function searchWidhVectors(){
 
 	    $criteria = new CDbCriteria;
