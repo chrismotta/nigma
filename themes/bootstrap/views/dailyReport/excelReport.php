@@ -63,32 +63,32 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->getRevenueUSD()',
         ),
         array(
-            'header'  => 'Profit',
+            'name'  => 'profit',
             'value' =>  '$data->profit',
         ),
         array(
-            'header'  => 'Profit Perc',
-            'value' => '$data->getProfitPerc() * 100',
+            'name'  => 'profit_percent',
+            'value' => '$data->profit_percent * 100',
         ),
         array(
-            'header'  => 'Click Rate',
-            'value' => '$data->getCtr() * 100',
+            'name'  => 'click_through_rate',
+            'value' => '$data->click_through_rate * 100',
         ),
         array(
-            'header'  => 'Conv Rate',
-            'value' => '$data->getConvRate() * 100',
+            'name'  => 'conversion_rate',
+            'value' => '$data->conversion_rate * 100',
         ),
         array(
-            'header'  => 'eCPM',
-            'value' => '$data->getECPM()',
+            'name'  => 'eCPM',
+            'value' => '$data->eCPM',
         ),
         array(
-            'header'  => 'eCPC',
-            'value' => '$data->getECPC()',
+            'name'  => 'eCPC',
+            'value' => '$data->eCPC',
         ),
         array(
-            'header'  => 'eCPA',
-            'value' => '$data->getECPA()',
+            'name'  => 'eCPA',
+            'value' => '$data->eCPA',
         ),
         array(
             'name'  => 'date',

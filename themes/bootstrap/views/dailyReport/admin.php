@@ -279,12 +279,14 @@ $('.search-form form').submit(function(){
 		array(	
 			'name'	=>	'imp',
 			'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['imp'],
         ),
         array(	
 			'name'	=>	'imp_adv',
 			'type'	=>	'raw',
 			'htmlOptions'=>array('style'=>'width: 85px'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
         	'value' =>	'
 					CHtml::textField("row-imp" . $row, $data->imp_adv, array(
         				"style" => "width:30px; text-align:right; font-size: 11px;", 
@@ -327,17 +329,20 @@ $('.search-form form').submit(function(){
         array(
         	'name'	=>	'clics',
         	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['clics'],
         ),
         array(
         	'name'	=>	'conv_api',
         	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['conv_s2s'],
         ),
 		array(
 			'name'        => 'conv_adv',
 			'type'        => 'raw',
 			'htmlOptions' => array('style'=>'width: 85px'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
         				"style" => "width:30px; text-align:right; font-size: 11px;",
@@ -416,17 +421,20 @@ $('.search-form form').submit(function(){
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
         	'htmlOptions'=>array('style'=>'width: 70px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['revenue'],
         ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'$data->getSpendUSD()',
         	'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['spend'],
         ),
 		array(
 			'name'  => 'profit',
 			'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'=>$totals['profit'],
 		),
 		array(

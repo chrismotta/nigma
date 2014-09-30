@@ -106,6 +106,7 @@ class DailyReportController extends Controller
 			
 			$model=new DailyReport;
 			$model->attributes = $_POST['DailyReport'];
+			$model->is_from_api = 0;
 			$model->updateRevenue();
 			$model->setNewFields();
 				
@@ -261,7 +262,7 @@ class DailyReportController extends Controller
 		$model->updateRevenue();
 		$model->setNewFields();
 
-		if ( ! $model->update(array($col, 'revenue')) ) {
+		if ( ! $model->save() ) {
 			// echo json_encode("ERROR updating daily report");
 		}
 
