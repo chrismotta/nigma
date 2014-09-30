@@ -491,6 +491,7 @@ $('.search-form form').submit(function(){
 								$("#modalDailyReport").modal("toggle");
 							}
 						)
+					return false;
 				    }
 				    ',
 				),
