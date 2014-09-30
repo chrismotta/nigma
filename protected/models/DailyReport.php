@@ -594,4 +594,13 @@ class DailyReport extends CActiveRecord
 		return $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
 	}
 
+	public function getCapStatus()
+	{
+		if(strtotime($this->date) == strtotime('yesterday'))
+		{
+			$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
+			return $this->spend>=$cap ? TRUE : FALSE;
+		}
+		else return false;
+	}
 }
