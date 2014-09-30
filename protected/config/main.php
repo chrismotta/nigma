@@ -3,8 +3,8 @@
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
 
-// bootstrap
-Yii::setPathOfAlias('bootstrap', dirname(__FILE__).'/../extensions/bootstrap');
+// yiibooster
+Yii::setPathOfAlias('yiibooster', dirname(__FILE__).'/../extensions/yiibooster');
 
 // MySql Policy
 switch ( $_SERVER['HTTP_HOST'] ) {
@@ -70,7 +70,10 @@ return array(
 	'charset'        => 'UTF-8',
 
 	// preloading 'log' component
-	'preload' =>array('log'),
+	'preload' =>array(
+		'log',
+		'bootstrap',
+	),
 
 	// autoloading model and component classes
 	'import' =>array(
@@ -88,7 +91,7 @@ return array(
 		
 		'gii'=>array(
 			'generatorPaths'=>array(
-                'bootstrap.gii',
+                'yiibooster.gii',
             ),
 			'class'=>'system.gii.GiiModule',
 			'password'=>'mil998',
@@ -101,7 +104,7 @@ return array(
 	// application components
 	'components'=>array(
         'bootstrap'=>array(
-            'class'=>'bootstrap.components.Bootstrap',
+            'class'=>'yiibooster.components.Bootstrap',
         ),
 		'authManager'=>array(
 			'class'=>'CDbAuthManager',
