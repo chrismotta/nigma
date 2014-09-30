@@ -263,8 +263,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'  => 'campaign_name',
-			//'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
-			'value' => '$data->getCapStatus()',
+			'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
 			'htmlOptions' => array('style' => 'width: 120px'),
 		),
 		array(
@@ -471,12 +470,12 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => "width: 50px"),
 			'buttons'           => array(
 				'delete' => array(
-					'visible' => '! $data->is_from_api',
+					'visible' => '!$data->is_from_api',
 				),
 				'updateAjax' => array(
 					'label'   => 'Update',
 					'icon'    => 'pencil',
-					'visible' => '! $data->is_from_api',
+					'visible' => '!$data->is_from_api',
 					'click'   => '
 				    function(){
 				    	// get row id from data-row-id attribute
