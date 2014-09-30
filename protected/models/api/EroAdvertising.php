@@ -27,6 +27,7 @@ class EroAdvertising
 		$dailyReport->conv_adv = 0;
 		$dailyReport->spend = str_replace(',', '.', $campaign->paid->value);
 		$dailyReport->updateRevenue();
+		$dailyReport->setNewFields();
 		$dailyReport->date = $date;
 
 		if ( !$dailyReport->save() ) {

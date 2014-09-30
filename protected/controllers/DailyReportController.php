@@ -28,12 +28,16 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate'),
+				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','viewAjax','redirectAjax','admin'),
 				'roles'=>array('commercial'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('setNewFields','setAllNewFields'),
+				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
@@ -79,11 +83,67 @@ class DailyReportController extends Controller
 			$model->networks_id = $modelCampaign->networks_id;
 			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
+			$model->setNewFields();
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
 
 		$this->renderFormAjax($model);
+	}
+
+	public function actionCreateByNetwork()
+	{
+		$date = date('Y-m-d', strtotime('yesterday'));
+		$currentNetwork = NULL;
+
+		// If date and network are submitted then get values
+		if ( isset($_GET['networkSubmit']) ) {
+			$date           = $_GET['date'];
+			$currentNetwork = $_GET['network'];
+		}
+
+		if ( isset($_POST['saveSubmit']) ) {
+			
+			$model=new DailyReport;
+			$model->attributes = $_POST['DailyReport'];
+			$model->is_from_api = 0;
+			$model->updateRevenue();
+			$model->setNewFields();
+				
+			// Validate if record has already been entry
+			$existingModel = DailyReport::model()->find('campaigns_id=:cid AND networks_id=:nid AND date=:date', array(':cid' => $model->campaigns_id, ':nid' => $model->networks_id, ':date' => $model->date));
+			if ( $existingModel ) {
+				$model->isNewRecord = false;
+				$model->id = $existingModel->id;
+			}
+
+			$r = new stdClass();
+			$r->c_id = $model->campaigns_id;
+			if ( $model->save() ) {
+				$r->result = "OK";
+			} else {
+				$r->result = "ERROR";
+				$r->message = $model->getErrors();
+			}
+			echo json_encode($r);
+			Yii::app()->end();
+		}
+		
+		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name', 'condition' => 'has_api=0')), 'id', 'name');
+
+		$campaign = new Campaigns('search');
+		$campaign->unsetAttributes();  // clear any default values
+
+		$daily = new DailyReport('search');
+		$daily->unsetAttributes();  // clear any default values
+
+		$this->render('createByNetwork', array(
+			'model'          => $daily,
+			'campaign'       => $campaign,
+			'networks'       => $networks,
+			'date'           => $date,
+			'currentNetwork' => $currentNetwork,
+		));
 	}
 
 	/**
@@ -103,6 +163,7 @@ class DailyReportController extends Controller
 			$model->attributes=$_POST['DailyReport'];
 			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
+			$model->setNewFields();
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -199,6 +260,7 @@ class DailyReportController extends Controller
 		$model = DailyReport::model()->findByPk($keyvalue);
 		$model[$col] = $newValue;
 		$model->updateRevenue();
+		$model->setNewFields();
 
 		if ( ! $model->update(array($col, 'revenue')) ) {
 			// echo json_encode("ERROR updating daily report");
@@ -257,6 +319,7 @@ class DailyReportController extends Controller
 			}
 
 			$model->updateRevenue();
+			$model->setNewFields();
 			if ( $model->save() )
 				$this->redirect(array('admin'));
 		}
@@ -357,5 +420,27 @@ class DailyReportController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	public function actionSetNewFields($id){
+
+		if($model = DailyReport::model()->findByPk($id)){
+			$model->setNewFields();
+			$model->save();
+			echo $id . " - updated";
+		}else{
+			echo $id . "- not exists";
+		}
+
+	}
+	public function actionSetAllNewFields(){
+
+		set_time_limit(100000);
+		$list = DailyReport::model()->findAll();
+		foreach ($list as $model) {
+			$model->setNewFields();
+			$model->save();
+			echo $model->id . " - updated<br/>";
+		}
 	}
 }

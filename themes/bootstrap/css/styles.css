@@ -172,3 +172,6 @@ fieldset hr {
 .top-chart {
 	padding-top: 18px;
 }
+.errorCap {
+	color: red;
+}

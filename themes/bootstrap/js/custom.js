@@ -16,17 +16,23 @@ var selectionChangedDailyReport = function(id) {
 	var net_id = $( "#" + id + " table tbody .selected" ).attr("data-row-net-id");
 
 	// parsing data into corresponding format "Y-m-d"
-	var tmp    = $( "#" + id + " table tbody .selected" ).children(".date").text();
+	var tmp    = $( "#dateEnd").attr('value');
 	var y = tmp.substring(tmp.lastIndexOf("-") + 1);
 	var m = tmp.substring(tmp.indexOf("-") + 1, tmp.lastIndexOf("-"));
 	var d = tmp.substring(0, tmp.indexOf("-"));
 	var endDate = y + "-" + m + "-" + d;
 
+	var tmp    = $( "#dateStart").attr('value');
+	var y = tmp.substring(tmp.lastIndexOf("-") + 1);
+	var m = tmp.substring(tmp.indexOf("-") + 1, tmp.lastIndexOf("-"));
+	var d = tmp.substring(0, tmp.indexOf("-"));
+	var startDate = y + "-" + m + "-" + d;
+
 	var chart = Highcharts.charts[0];
 	chart.showLoading("Loading data from server..");
 	$.post(
 		"graphic",
-		"c_id=" + c_id + "&net_id=" + net_id + "&endDate=" + endDate,
+		"c_id=" + c_id + "&net_id=" + net_id + "&endDate=" + endDate + "&startDate=" + startDate,
 		function(data) {
 				var chart = Highcharts.charts[0];
 				chart.series[0].setData(data['spend']);	// Spend

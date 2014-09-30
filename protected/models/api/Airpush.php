@@ -59,6 +59,7 @@ class Airpush
 			$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign->Spent;
 			$dailyReport->updateRevenue();
+			$dailyReport->setNewFields();
 			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaignname . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.airpush');

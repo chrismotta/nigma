@@ -67,6 +67,7 @@ class BuzzCity
 				$dailyReport->conv_adv = 0;
 				$dailyReport->spend = $campaign->spending;
 				$dailyReport->updateRevenue();
+				$dailyReport->setNewFields();
 				$dailyReport->date = $date;
 				if ( !$dailyReport->save() ) {
 					Yii::log("Can't save campaign: '" . $campaign->title . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.buzzCity');
