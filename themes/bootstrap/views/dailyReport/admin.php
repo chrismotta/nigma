@@ -475,7 +475,7 @@ $('.search-form form').submit(function(){
 					'click'   => '
 				    function(){
 				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-c-id");
+				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"update/"+id,
