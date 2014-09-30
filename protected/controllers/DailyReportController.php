@@ -200,7 +200,7 @@ class DailyReportController extends Controller
 		$model[$col] = $newValue;
 		$model->updateRevenue();
 
-		if ( ! $model->update(array($col, 'revenue')) ) {
+		if ( ! $model->save() ) {
 			// echo json_encode("ERROR updating daily report");
 		}
 
