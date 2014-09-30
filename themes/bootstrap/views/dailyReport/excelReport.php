@@ -46,7 +46,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'header'  => 'rate',
-            'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
+            'value' => '$data->getRateUSD() ? $data->getRateUSD() : 0',
             'htmlOptions'=>array('style'=>'width: 45px'),
         ),
         'imp',
