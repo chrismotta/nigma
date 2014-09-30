@@ -253,7 +253,7 @@ $('.search-form form').submit(function(){
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
-	 'rowCssClassExpression' => '$data->getCapStatus() ? "error" : null',
+	 'rowCssClassExpression' => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(
 			'name'  =>	'id',
@@ -275,11 +275,11 @@ $('.search-form form').submit(function(){
 		array(
 			'name'  => 'rate',
 			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(	
 			'name'	=>	'imp',
-			'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 50px'),
 			'footer'=>$totals['imp'],
         ),
         array(	
@@ -288,7 +288,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'=>array('style'=>'width: 85px'),
         	'value' =>	'
 					CHtml::textField("row-imp" . $row, $data->imp_adv, array(
-        				"style" => "width:30px; text-align:right; font-size: 11px;", 
+        				"style" => "width:35px;", 
         				"onkeydown" => "
 							var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
@@ -327,12 +327,12 @@ $('.search-form form').submit(function(){
         ),
         array(
         	'name'	=>	'clics',
-        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+        	'htmlOptions'=>array('style'=>'width: 50px'),
 			'footer'=>$totals['clics'],
         ),
         array(
         	'name'	=>	'conv_api',
-        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
+        	'htmlOptions'=>array('style'=>'width: 50px'),
 			'footer'=>$totals['conv_s2s'],
         ),
 		array(
@@ -341,7 +341,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions' => array('style'=>'width: 85px'),
 			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
-        				"style" => "width:30px; text-align:right; font-size: 11px;",
+        				"style" => "width:35px;",
         				"onkeydown" => "
 	        				var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
@@ -416,51 +416,55 @@ $('.search-form form').submit(function(){
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
-        	'htmlOptions'=>array('style'=>'width: 70px; text-align:right;'),
+        	'htmlOptions'=>array('style'=>'width: 70px'),
 			'footer'=>$totals['revenue'],
         ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'$data->getSpendUSD()',
-        	'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
+        	'htmlOptions'=>array('style'=>'width: 60px'),
 			'footer'=>$totals['spend'],
         ),
 		array(
-			'name'  => 'profit',
-			'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
-			'footer'=>$totals['profit'],
+			'header'  => 'Profit',
+			'value'	=>	'$data->getProfit()',
+			'htmlOptions'=>array('style'=>'width: 60px'),
+			'footer'=>$totals['revenue']-$totals['spend'],
 		),
 		array(
-			'name'  => 'profit_percent',
-			'value' => '$data->profit_percent * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
+			'header'  => 'Click Rate',
+			'value' => '$data->getCtr() * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px'),
 		),
 		array(
-			'name'  => 'click_through_rate',
-			'value' => '$data->click_through_rate * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
+			'header'  => 'Conv Rate',
+			'value' => '$data->getConvRate() * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px'),
 		),
 		array(
-			'name'  => 'conversion_rate',
-			'value' => '$data->conversion_rate * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
+			'header'  => 'Profit Perc',
+			'value' => '$data->getProfitPerc() * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px'),
 		),
 		array(
-			'name'  => 'eCPM',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'header'  => 'eCPM',
+			'value' => '$data->getECPM()',
+			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
-			'name'  => 'eCPC',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'header'  => 'eCPC',
+			'value' => '$data->getECPC()',
+			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
-			'name'  => 'eCPA',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'header'  => 'eCPA',
+			'value' => '$data->getECPA()',
+			'htmlOptions'=>array('style'=>'width: 45px'),
 		),
 		array(
         	'name'	=>	'date',
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
-        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
+        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px'),
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
@@ -472,11 +476,11 @@ $('.search-form form').submit(function(){
 				'updateAjax' => array(
 					'label'   => 'Update',
 					'icon'    => 'pencil',
-					'visible' => '$data->is_from_api',
+					'visible' => '! $data->is_from_api',
 					'click'   => '
 				    function(){
 				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-c-id");
+				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"update/"+id,
@@ -491,8 +495,14 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'updateCampaign' => array(
+					'label'   => 'UpdateCampaign',
+					'icon'    => 'eye-open',
+					'visible' => '$data->getCapStatus()',
+					'url'   => 'Yii::app()->baseUrl."/campaigns/update/".$data->campaigns_id',
+				),
 			),
-			'template' => '{updateAjax} {delete}',
+			'template' => '{updateAjax} {delete} {updateCampaign}',
 		),
 	),
 )); ?>
