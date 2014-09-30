@@ -35,6 +35,10 @@ class DailyReportController extends Controller
 				'actions'=>array('index','viewAjax','redirectAjax','admin'),
 				'roles'=>array('commercial'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('setNewFields','setAllNewFields'),
+				'roles'=>array('admin'),
+			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
@@ -357,5 +361,25 @@ class DailyReportController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	public function actionSetNewFields($id){
+
+		if($model = DailyReport::model()->findByPk($id)){
+			$model->setNewFields();
+			$this->save();
+			echo $id . " - updated";
+		}else{
+			echo $id . "- not exists";
+		}
+
+	}
+	public function actionSetAllNewFields(){
+		$list = DailyReport::model()->findAll();
+		foreach ($list as $model) {
+			$model->setNewFields();
+			$this->save();
+			echo $id . " - updated";
+		}
 	}
 }
