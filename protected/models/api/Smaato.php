@@ -67,6 +67,7 @@ class Smaato
 			$dailyReport->conv_adv    = 0;
 			$dailyReport->spend       = $data->spend->value;;
 			$dailyReport->updateRevenue();
+			$dailyReport->setNewFields();
 			$dailyReport->date        = $date;
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->attr->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.smaato');

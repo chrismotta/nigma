@@ -107,6 +107,7 @@ class DailyReportController extends Controller
 			$model=new DailyReport;
 			$model->attributes = $_POST['DailyReport'];
 			$model->updateRevenue();
+			$model->setNewFields();
 				
 			// Validate if record has already been entry
 			$existingModel = DailyReport::model()->find('campaigns_id=:cid AND networks_id=:nid AND date=:date', array(':cid' => $model->campaigns_id, ':nid' => $model->networks_id, ':date' => $model->date));
@@ -258,6 +259,7 @@ class DailyReportController extends Controller
 		$model = DailyReport::model()->findByPk($keyvalue);
 		$model[$col] = $newValue;
 		$model->updateRevenue();
+		$model->setNewFields();
 
 		if ( ! $model->update(array($col, 'revenue')) ) {
 			// echo json_encode("ERROR updating daily report");
@@ -316,6 +318,7 @@ class DailyReportController extends Controller
 			}
 
 			$model->updateRevenue();
+			$model->setNewFields();
 			if ( $model->save() )
 				$this->redirect(array('admin'));
 		}
