@@ -433,6 +433,8 @@ class DailyReportController extends Controller
 
 	}
 	public function actionSetAllNewFields(){
+
+		set_time_limit(100000);
 		$list = DailyReport::model()->findAll();
 		foreach ($list as $model) {
 			$model->setNewFields();

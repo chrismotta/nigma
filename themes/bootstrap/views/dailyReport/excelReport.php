@@ -45,7 +45,7 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->networks->name',
         ),
         array(
-            'header'  => 'CPA',
+            'header'  => 'rate',
             'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
             'htmlOptions'=>array('style'=>'width: 45px'),
         ),
@@ -64,7 +64,11 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'header'  => 'Profit',
-            'value' =>  '$data->getProfit()',
+            'value' =>  '$data->profit',
+        ),
+        array(
+            'header'  => 'Profit Perc',
+            'value' => '$data->getProfitPerc() * 100',
         ),
         array(
             'header'  => 'Click Rate',
@@ -73,10 +77,6 @@ $this->widget('EExcelWriter', array(
         array(
             'header'  => 'Conv Rate',
             'value' => '$data->getConvRate() * 100',
-        ),
-        array(
-            'header'  => 'Profit Perc',
-            'value' => '$data->getProfitPerc() * 100',
         ),
         array(
             'header'  => 'eCPM',
