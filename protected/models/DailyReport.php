@@ -96,7 +96,7 @@ class DailyReport extends CActiveRecord
 			'campaign_name'      => 'Campaign Name',
 			'profit'             => 'Profit',
 			'profit_percent'     => 'Profit %',
-			'rate'               => 'CPA',
+			'rate'               => 'Rate',
 			'click_through_rate' => 'CTR',
 			'conversion_rate'    => 'CR',
 			'eCPM'               => 'eCPM',
