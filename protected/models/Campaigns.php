@@ -246,8 +246,6 @@ class Campaigns extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 
-		$criteria->select = 't.id';
-
 		if ( $network_id ) {
 			$criteria->compare('networks_id', $network_id);
 			$criteria->addCondition("t.id NOT IN (SELECT d.campaigns_id FROM daily_report d WHERE d.networks_id=". $network_id . " AND d.date='". date('Y-m-d', strtotime($date)) . "')");

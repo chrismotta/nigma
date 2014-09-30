@@ -124,9 +124,15 @@ class DailyReportController extends Controller
 		
 		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name', 'condition' => 'has_api=0')), 'id', 'name');
 
+		$campaign = new Campaigns('search');
+		$campaign->unsetAttributes();  // clear any default values
+
+		$daily = new DailyReport('search');
+		$daily->unsetAttributes();  // clear any default values
+
 		$this->render('createByNetwork', array(
-			'model'          => new DailyReport,
-			'campaign'       => new Campaigns,
+			'model'          => $daily,
+			'campaign'       => $campaign,
 			'networks'       => $networks,
 			'date'           => $date,
 			'currentNetwork' => $currentNetwork,
