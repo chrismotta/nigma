@@ -443,4 +443,5 @@ class DailyReportController extends Controller
 			echo $model->id . " - updated<br/>";
 		}
 	}
+
 }

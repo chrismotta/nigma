@@ -630,4 +630,17 @@ class DailyReport extends CActiveRecord
 		$this->eCPA               = $this->getECPA();
 	}
 
+	public function getRateUSD()
+	{
+		$opportunitie=Campaigns::model()->findByPk($this->campaigns_id)->opportunities_id;
+		$rate = Opportunities::model()->findByPk($opportunitie)->rate;
+		$net_currency = Networks::model()->findByPk($this->networks_id)->currency;
+
+		if ($net_currency == 'USD') // if currency is USD dont apply type change
+			return $rate;
+
+		$currency = Currency::model()->findByDate($this->date);
+		return $currency ? number_format($rate / $currency[$net_currency], 2) : 'Currency ERROR!';
+	}
+
 }
