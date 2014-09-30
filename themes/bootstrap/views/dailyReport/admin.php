@@ -285,11 +285,11 @@ $('.search-form form').submit(function(){
 		array(
 			'name'  => 'rate',
 			'value' => '$data->campaigns->opportunities->rate ? $data->campaigns->opportunities->rate : 0',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(	
 			'name'	=>	'imp',
-			'htmlOptions'=>array('style'=>'width: 50px'),
+			'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
 			'footer'=>$totals['imp'],
         ),
         array(	
@@ -298,7 +298,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'=>array('style'=>'width: 85px'),
         	'value' =>	'
 					CHtml::textField("row-imp" . $row, $data->imp_adv, array(
-        				"style" => "width:35px;", 
+        				"style" => "width:30px; text-align:right; font-size: 11px;", 
         				"onkeydown" => "
 							var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
@@ -337,12 +337,12 @@ $('.search-form form').submit(function(){
         ),
         array(
         	'name'	=>	'clics',
-        	'htmlOptions'=>array('style'=>'width: 50px'),
+        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
 			'footer'=>$totals['clics'],
         ),
         array(
         	'name'	=>	'conv_api',
-        	'htmlOptions'=>array('style'=>'width: 50px'),
+        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
 			'footer'=>$totals['conv_s2s'],
         ),
 		array(
@@ -351,7 +351,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions' => array('style'=>'width: 85px'),
 			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
-        				"style" => "width:35px;",
+        				"style" => "width:30px; text-align:right; font-size: 11px;",
         				"onkeydown" => "
 	        				var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
 	        				r.removeClass( \"control-group success\" );
@@ -426,55 +426,51 @@ $('.search-form form').submit(function(){
         array(
         	'name' => 'revenue',
         	'value' => '$data->getRevenueUSD()',
-        	'htmlOptions'=>array('style'=>'width: 70px'),
+        	'htmlOptions'=>array('style'=>'width: 70px; text-align:right;'),
 			'footer'=>$totals['revenue'],
         ),
 		array(
         	'name'	=>	'spend',
         	'value'	=>	'$data->getSpendUSD()',
-        	'htmlOptions'=>array('style'=>'width: 60px'),
+        	'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
 			'footer'=>$totals['spend'],
         ),
 		array(
-			'header'  => 'Profit',
-			'value'	=>	'$data->getProfit()',
-			'htmlOptions'=>array('style'=>'width: 60px'),
-			'footer'=>$totals['revenue']-$totals['spend'],
+			'name'  => 'profit',
+			'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
+			'footer'=>$totals['profit'],
 		),
 		array(
-			'header'  => 'Click Rate',
-			'value' => '$data->getCtr() * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px'),
+			'name'  => 'profit_percent',
+			'value' => '$data->profit_percent * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
 		),
 		array(
-			'header'  => 'Conv Rate',
-			'value' => '$data->getConvRate() * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px'),
+			'name'  => 'click_through_rate',
+			'value' => '$data->click_through_rate * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
 		),
 		array(
-			'header'  => 'Profit Perc',
-			'value' => '$data->getProfitPerc() * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px'),
+			'name'  => 'conversion_rate',
+			'value' => '$data->conversion_rate * 100 . "%"',
+			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
 		),
 		array(
-			'header'  => 'eCPM',
-			'value' => '$data->getECPM()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'name'  => 'eCPM',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
-			'header'  => 'eCPC',
-			'value' => '$data->getECPC()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'name'  => 'eCPC',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
-			'header'  => 'eCPA',
-			'value' => '$data->getECPA()',
-			'htmlOptions'=>array('style'=>'width: 45px'),
+			'name'  => 'eCPA',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
         	'name'	=>	'date',
         	'value'	=>	'date("d-m-Y", strtotime($data->date))',
-        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px'),
+        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
