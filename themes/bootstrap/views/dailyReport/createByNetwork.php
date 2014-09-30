@@ -10,6 +10,19 @@ $this->breadcrumbs=array(
 	'Daily Reports'=>array('index'),
 	'Create By Network',
 );
+
+Yii::app()->clientScript->registerScript('search', "
+$('.search-button').click(function(){
+	$('.search-form').toggle();
+	return false;
+});
+$('.search-form form').submit(function(){
+	$('#massivecreate-grid').yiiGridView('update', {
+		data: $(this).serialize()
+	});
+	return false;
+});
+");
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -52,10 +65,11 @@ $this->breadcrumbs=array(
 <hr>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
-	'id'                       => 'massiveCreate-dailly-report-grid',
+	'id'                       => 'massivecreate-grid',
 	'dataProvider'             => $campaign->searchByNetworkAndDate($currentNetwork, $date),
-	'filter'                   => $campaign,
+	// 'filter'                   => $campaign,
 	'type'                     => 'striped condensed',
+	'selectableRows'           => 0,
 	'rowHtmlOptionsExpression' => 'array("id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  => array(

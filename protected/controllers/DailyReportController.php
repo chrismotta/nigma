@@ -35,6 +35,10 @@ class DailyReportController extends Controller
 				'actions'=>array('index','viewAjax','redirectAjax','admin'),
 				'roles'=>array('commercial'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('setNewFields','setAllNewFields'),
+				'roles'=>array('admin'),
+			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
@@ -124,9 +128,15 @@ class DailyReportController extends Controller
 		
 		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name', 'condition' => 'has_api=0')), 'id', 'name');
 
+		$campaign = new Campaigns('search');
+		$campaign->unsetAttributes();  // clear any default values
+
+		$daily = new DailyReport('search');
+		$daily->unsetAttributes();  // clear any default values
+
 		$this->render('createByNetwork', array(
-			'model'          => new DailyReport,
-			'campaign'       => new Campaigns,
+			'model'          => $daily,
+			'campaign'       => $campaign,
 			'networks'       => $networks,
 			'date'           => $date,
 			'currentNetwork' => $currentNetwork,
@@ -404,5 +414,25 @@ class DailyReportController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	public function actionSetNewFields($id){
+
+		if($model = DailyReport::model()->findByPk($id)){
+			$model->setNewFields();
+			$this->save();
+			echo $id . " - updated";
+		}else{
+			echo $id . "- not exists";
+		}
+
+	}
+	public function actionSetAllNewFields(){
+		$list = DailyReport::model()->findAll();
+		foreach ($list as $model) {
+			$model->setNewFields();
+			$this->save();
+			echo $id . " - updated";
+		}
 	}
 }

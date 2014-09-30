@@ -32,5 +32,15 @@ $this->menu=array(
 		'model',
 		'value',
 		'date',
+		'revenue',
+		'profit',
+		'profit_percent',
+		'click_through_rate',
+		'conversion_rate',
+		'eCPM',
+		'eCPC',
+		'eCPA',
+		'comment',
+		'id'
 	),
 )); ?>

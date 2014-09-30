@@ -79,22 +79,29 @@ class DailyReport extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'campaigns_id' => 'Campaigns',
-			'networks_id' => 'Networks',
-			'imp' => 'Imp',
-			'imp_adv' => 'Imp Adv',
-			'clics' => 'Clics',
-			'conv_api' => 'Conv s2s',
-			'conv_adv' => 'Conv Adv',
-			'spend' => 'Spend',
-			'revenue' => 'Revenue',
-			'date' => 'Date',
-			'is_from_api' => 'Is From Api',
-			'network_name'	=>	'Network Name',
-			'account_manager' => 'Account Manager',
-			'campaign_name' => 'Campaign Name',
-			'rate' => 'CPA',
+			'id'                 => 'ID',
+			'campaigns_id'       => 'Campaigns',
+			'networks_id'        => 'Networks',
+			'imp'                => 'Imp',
+			'imp_adv'            => 'Imp Adv',
+			'clics'              => 'Clics',
+			'conv_api'           => 'Conv s2s',
+			'conv_adv'           => 'Conv Adv',
+			'spend'              => 'Spend',
+			'revenue'            => 'Revenue',
+			'date'               => 'Date',
+			'is_from_api'        => 'Is From Api',
+			'network_name'       => 'Network Name',
+			'account_manager'    => 'Account Manager',
+			'campaign_name'      => 'Campaign Name',
+			'profit'             => 'Profit',
+			'profit_percent'     => 'Profit %',
+			'rate'               => 'CPA',
+			'click_through_rate' => 'CTR',
+			'conversion_rate'    => 'CR',
+			'eCPM'               => 'eCPM',
+			'eCPC'               => 'eCPC',
+			'eCPA'               => 'eCPA',
 		);
 	}
 
@@ -191,47 +198,55 @@ class DailyReport extends CActiveRecord
 	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunitie=null,$networks=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
-		if(!$endDate) $endDate   = 'today';
+		if(!$endDate) $endDate     = 'today';
 		$startDate = date('Y-m-d', strtotime($startDate));
-		$endDate = date('Y-m-d', strtotime($endDate));
-		$imp=0;
-		$imp_adv=0;
-		$clics=0;
-		$conv_s2s=0;
-		$conv_adv=0;
-		$spend=0;
-		$revenue=0;
+		$endDate   = date('Y-m-d', strtotime($endDate));
+		$imp       = 0;
+		$imp_adv   = 0;
+		$clics     = 0;
+		$conv_s2s  = 0;
+		$conv_adv  = 0;
+		$spend     = 0;
+		$revenue   = 0;
+		$profit    = 0;
 
-		$criteria=new CDbCriteria;
+		$criteria = new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
-		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
+		
+		if ( $networks != NULL) {
+			$criteria->addCondition('networks.id ='.$networks);
+		}
 		if ( $accountManager != NULL) {
-					$criteria->addCondition('accountManager.id ='.$accountManager);
-				}
+			$criteria->addCondition('accountManager.id ='.$accountManager);
+		}
 		if ( $opportunitie != NULL) {
-					$criteria->addCondition('opportunities.id ='.$opportunitie);
-				}
-		$r         = DailyReport::model()->findAll( $criteria );
+			$criteria->addCondition('opportunities.id ='.$opportunitie);
+		}
+
+		$r = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
-			$imp+=$value->imp;
-			$imp_adv+=$value->imp_adv;
-			$clics+=$value->clics;
-			$conv_s2s+=$value->conv_api;
-			$conv_adv+=$value->conv_adv;
-			$spend+=doubleval($value->getSpendUSD());	
-			$revenue+=doubleval($value->getRevenueUSD());
-		}		
+			$imp      += $value->imp;
+			$imp_adv  += $value->imp_adv;
+			$clics    += $value->clics;
+			$conv_s2s += $value->conv_api;
+			$conv_adv += $value->conv_adv;
+			$spend    += doubleval($value->getSpendUSD());	
+			$revenue  += doubleval($value->getRevenueUSD());
+			$profit   += $value->profit;
+		}
+
 		$result=array(
-				'imp'		=>$imp,
-				'imp_adv'	=>$imp_adv,
-				'clics'		=>$clics,
-				'conv_s2s'	=>$conv_s2s,
-				'conv_adv'	=>$conv_adv,
-				'spend'		=>$spend,
-				'revenue'	=>$revenue,
-			);
+			'imp'		=> $imp,
+			'imp_adv'	=> $imp_adv,
+			'clics'		=> $clics,
+			'conv_s2s'	=> $conv_s2s,
+			'conv_adv'	=> $conv_adv,
+			'spend'		=> $spend,
+			'revenue'	=> $revenue,
+			'profit'	=> $profit,
+		);
 		
 		return $result;
 	}
@@ -603,4 +618,16 @@ class DailyReport extends CActiveRecord
 		}
 		else return false;
 	}
+	
+	public function setNewFields()
+	{
+		$this->profit             = $this->getProfit();
+		$this->profit_percent     = $this->getProfitPerc();
+		$this->click_through_rate = $this->getCtr();
+		$this->conversion_rate    = $this->getConvRate();
+		$this->eCPM               = $this->getECPM();
+		$this->eCPC               = $this->getECPC();
+		$this->eCPA               = $this->getECPA();
+	}
+
 }
