@@ -492,9 +492,9 @@ $('.search-form form').submit(function(){
 				    ',
 				),
 				'updateCampaign' => array(
-					'label'   => 'UpdateCampaign',
+					'label'   => 'Update Campaign',
 					'icon'    => 'eye-open',
-					'visible' => '$data->getCapStatus()',
+					//'visible' => '$data->getCapStatus()',
 					'url'   => 'Yii::app()->baseUrl."/campaigns/update/".$data->campaigns_id',
 				),
 			),
