@@ -420,7 +420,7 @@ class DailyReportController extends Controller
 
 		if($model = DailyReport::model()->findByPk($id)){
 			$model->setNewFields();
-			$this->save();
+			$model->save();
 			echo $id . " - updated";
 		}else{
 			echo $id . "- not exists";
@@ -431,7 +431,7 @@ class DailyReportController extends Controller
 		$list = DailyReport::model()->findAll();
 		foreach ($list as $model) {
 			$model->setNewFields();
-			$this->save();
+			$model->save();
 			echo $id . " - updated";
 		}
 	}
