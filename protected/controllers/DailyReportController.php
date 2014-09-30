@@ -106,6 +106,7 @@ class DailyReportController extends Controller
 			
 			$model=new DailyReport;
 			$model->attributes = $_POST['DailyReport'];
+			$model->is_from_api = 0;
 			$model->updateRevenue();
 			$model->setNewFields();
 				
