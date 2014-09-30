@@ -432,7 +432,7 @@ class DailyReportController extends Controller
 		foreach ($list as $model) {
 			$model->setNewFields();
 			$model->save();
-			echo $id . " - updated";
+			echo $model->id . " - updated<br/>";
 		}
 	}
 }
