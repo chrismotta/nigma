@@ -145,8 +145,38 @@
       echo $form->dropDownListRow($model, 'account_manager_id', $account , array('prompt' => 'Select an Account Manager'));
       echo $form->checkboxRow($model, 'wifi');
       echo $form->textFieldRow($model, 'server_to_server', array('class'=>'span3'));
-      echo $form->textFieldRow($model, 'startDate', array('class'=>'span3'));
-      echo $form->textFieldRow($model, 'endDate', array('class'=>'span3'));
+      echo $form->datepickerRow($model, 'startDate', array(
+                'options' => array(
+                    'autoclose'      => true,
+                    'todayHighlight' => true,
+                    'clearBtn'       => true,
+                    'format'         => 'yyyy-mm-dd',
+                    'viewformat'     => 'dd-mm-yyyy',
+                    'placement'      => 'right',
+                ),
+                'htmlOptions' => array(
+                    'class' => 'span3',
+                )),
+                array(
+                    'append' => '<i class="icon-calendar"></i>',
+                )
+        );
+      echo $form->datepickerRow($model, 'endDate', array(
+                'options' => array(
+                    'autoclose'      => true,
+                    'todayHighlight' => true,
+                    'clearBtn'       => true,
+                    'format'         => 'yyyy-mm-dd',
+                    'viewformat'     => 'dd-mm-yyyy',
+                    'placement'      => 'right',
+                ),
+                'htmlOptions' => array(
+                    'class' => 'span3',
+                )),
+                array(
+                    'append' => '<i class="icon-calendar"></i>',
+                )
+        );
 
       // ----- Branding attributes
       echo "<h5>Branding Attributes</h5>";

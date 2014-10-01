@@ -118,11 +118,13 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'name'  =>'startDate',
 			'value' =>'$data->startDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->startDate)) : ""',
 			'headerHtmlOptions' => array('style'=>'width: 80px'),
+			'filter' => false,
 		),
 		array( 
 			'name'  =>'endDate',
 			'value' =>'$data->endDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->endDate)) : ""',
 			'headerHtmlOptions' => array('style'=>'width: 80px'),
+			'filter' => false,
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
