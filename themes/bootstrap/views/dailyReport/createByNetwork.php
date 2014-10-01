@@ -39,7 +39,7 @@ $('.search-form form').submit(function(){
 	<fieldset>
 	Date: 
 	<?php 
-	    $this->widget('ext.rezvan.RDatePicker',array(
+	    $this->widget('bootstrap.widgets.TbDatePicker',array(
 		'name'  => 'date',
 		'value' => date('d-m-Y', strtotime($date)),
 		'htmlOptions' => array(

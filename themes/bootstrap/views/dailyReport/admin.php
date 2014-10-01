@@ -142,7 +142,7 @@ $('.search-form form').submit(function(){
 	<fieldset>
 	From: 
 	<?php 
-	    $this->widget('ext.rezvan.RDatePicker',array(
+	    $this->widget('bootstrap.widgets.TbDatePicker',array(
 		'name'  => 'dateStart',
 		'value' => date('d-m-Y', strtotime($dateStart)),
 		'htmlOptions' => array(
@@ -158,7 +158,7 @@ $('.search-form form').submit(function(){
 	?>
 	To:
 	<?php 
-	    $this->widget('ext.rezvan.RDatePicker',array(
+	    $this->widget('bootstrap.widgets.TbDatePicker',array(
 		'name'        => 'dateEnd',
 		'value'       => date('d-m-Y', strtotime($dateEnd)),
 		'htmlOptions' => array(
@@ -465,9 +465,10 @@ $('.search-form form').submit(function(){
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
-        	'name'	=>	'date',
-        	'value'	=>	'date("d-m-Y", strtotime($data->date))',
-        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
+			'name'        => 'date',
+			'value'       => 'date("d-m-Y", strtotime($data->date))',
+			'htmlOptions' => array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
+			'filter'      => false,
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
