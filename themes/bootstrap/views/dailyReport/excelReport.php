@@ -55,6 +55,10 @@ $this->widget('EExcelWriter', array(
         'conv_api',
         'conv_adv',
         array(
+            'name'  =>  'Consolidated',
+            'value' =>  '$data->getConv()',
+        ),
+        array(
             'name'  =>  'spend',
             'value' =>  '$data->getSpendUSD()',
         ),

@@ -655,4 +655,8 @@ class DailyReport extends CActiveRecord
 		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
 	}
 
+	public function getConv()
+	{
+		return !$this->conv_adv ? $this->conv_api : $this->conv_adv; 
+	}
 }
