@@ -179,11 +179,13 @@ Yii::app()->clientScript->registerScript('search', "
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'footer'			=>array_sum($totalsGrap["clics"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'footer'			=>array_sum($totalsGrap["conversions"]),
         ),
 	),
 )); 
