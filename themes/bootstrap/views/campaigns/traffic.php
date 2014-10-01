@@ -172,14 +172,14 @@ Yii::app()->clientScript->registerScript('search', "
         ),		
 		array(
 			'name'              => 'name',
-			'value'             => '$data->opportunities->getVirtualName()',
+			'value'             => 'Campaigns::model()->getExternalName($data->id)',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=>array_sum($totalsGrap["clics"]),
+			'footer'			=> array_sum($totalsGrap["clics"]),
         ),
         array(
 			'name'              => 'conv',
