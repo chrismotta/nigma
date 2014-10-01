@@ -426,7 +426,7 @@ class Campaigns extends CActiveRecord
 	    return $charts;
 	    
 	}
-	public function getTotals($startDate=NULL, $endDate=NULL,$accountManager=NULL,$opportunitie=null,$networks=null)
+	public function getTotals($startDate=NULL, $endDate=NULL,$campaign=NULL,$accountManager=NULL,$opportunitie=null,$networks=null)
 	{
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -444,16 +444,23 @@ class Campaigns extends CActiveRecord
 		$criteria=new CDbCriteria;
 		//$criteria->with('opportunities','networks');
 		$criteria->with = array('opportunities','opportunities.accountManager','networks');
-		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
-		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
-		if($networks!=null)$criteria->compare('t.networks_id',$networks);
+		if($campaign!=null)$criteria->compare('t.id',$campaign);
+		else
+		{
+			if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
+			if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
+			if($networks!=null)$criteria->compare('t.networks_id',$networks);
+		}
 		$campaigns=self::model()->findAll($criteria);
 		foreach ($campaigns as $campaign) 
 		{
 			foreach (Utilities::dateRange($startDate,$endDate) as $date) 
 			{
-				$dataTops[$date]['clics']+=intval(ClicksLog::model()->count("DATE(date)=':date' AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
-				$dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=':date' AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				// echo $campaign->id."<br>";
+				// echo $date."<br>";
+				//echo ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date))."<br>";
+				 $dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				 $dataTops[$date]['clics']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 			}
 		}
 

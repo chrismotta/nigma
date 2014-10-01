@@ -9,7 +9,7 @@ $accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : N
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 $networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 $totalsGrap=Campaigns::model()->totalsTraffic($dateStart,$dateEnd);
-// $totals=Campaigns::getTotals($dateStart, $dateEnd,$accountManager,$opportunitie,$networks);
+$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
 // print_r($totals);
 // return;
 /* @var $this CampaignsController */
@@ -252,13 +252,13 @@ Yii::app()->clientScript->registerScript('search', "
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=> array_sum($totalsGrap["clics"]),
+			'footer'			=> array_sum($totals["clics"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=>array_sum($totalsGrap["conversions"]),
+			'footer'			=>array_sum($totals["conversions"]),
         ),
 	),
 )); 
