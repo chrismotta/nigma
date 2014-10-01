@@ -32,8 +32,8 @@ class DailyReportController extends Controller
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin'),
-				'roles'=>array('commercial', 'finance'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'excelReport'),
+				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('setNewFields','setAllNewFields'),
