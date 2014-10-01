@@ -35,7 +35,7 @@
         }
 
         echo $form->textFieldRow($model, 'email', array('class'=>'span3'));
-        echo $form->radioButtonListInlineRow($model, 'status', $status);
+        echo $form->radioButtonListRow($model, 'status', $status);
 
         ?>
 
