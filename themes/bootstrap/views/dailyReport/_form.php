@@ -36,8 +36,22 @@
         echo $form->textFieldRow($model, 'imp_adv', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'clics', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'spend', array('class'=>'span3', 'prepend'=>'$'));
-        echo $form->textFieldRow($model, 'date', array('class'=>'span3'));
-        echo $form->hiddenField($model, 'is_from_api', array('type'=>'hidden'));
+        echo $form->hiddenField($model, 'is_from_api', array('type'=>'hidden'));       
+        echo $form->datepickerRow($model, 'date', array(
+                'options' => array(
+                    'autoclose'  => true,
+                    'todayBtn'   => true,
+                    'format'     => 'yyyy-mm-dd',
+                    'viewformat' => 'dd-mm-yyyy',
+                    'placement'  => 'right',
+                ),
+                'htmlOptions' => array(
+                    'class' => 'span3',
+                )),
+                array(
+                    'append' => '<i class="icon-calendar"></i>',
+                )
+        );
 
         ?>
 
