@@ -139,7 +139,7 @@ if($action == "Create"){ ?>
         echo $form->dropDownListRow($model, 'devices_id', $devices, array('prompt' => 'Select a format'));
         echo '<hr/>';
         echo $form->textFieldRow($model, 'cap', array('prepend'=>'$'));
-        echo $form->radioButtonListInlineRow($model, 'model', $campModel);
+        echo $form->radioButtonListRow($model, 'model', $campModel);
         echo '<hr/>';
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
 

@@ -20,7 +20,7 @@ class UserIdentity extends CUserIdentity
 	{
 		
 		$user = Users::model()->find("LOWER(username)=?", array(strtolower($this->username)));
-		if ($user === null) {
+		if ($user === null || $user->status == 'Inactive') {
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
 		}else if(sha1($this->password) !== $user->password){
 			$this->errorCode=self::ERROR_PASSWORD_INVALID;
