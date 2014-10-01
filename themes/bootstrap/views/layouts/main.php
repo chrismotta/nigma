@@ -8,9 +8,6 @@
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
     <?php 
-    // yii-bootstrap
-    Yii::app()->bootstrap->register();
-    //
     $baseUrl = Yii::app()->theme->baseUrl;
     $cs = Yii::app()->getClientScript();
     // datepicker
@@ -44,17 +41,18 @@
                     array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
                     array('label'=>'IOs', 'url'=>array('/ios/admin')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
-                    array('label'=>'Cierre y %', 'url'=>'#'),
-                    array('label'=>'Media Kit', 'url'=>'#'),
+                    //array('label'=>'Cierre y %', 'url'=>'#'),
+                    //array('label'=>'Media Kit', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Clients', 'url'=>'#'),
                     array('label'=>'Providers', 'url'=>'#'),
-                    array('label'=>'Cierre Mes', 'url'=>'#'),
-                    array('label'=>'Invoices', 'url'=>'#'),
+                    //array('label'=>'Cierre Mes', 'url'=>'#'),
+                    //array('label'=>'Invoices', 'url'=>'#'),
                     array('label'=>'Currency', 'url'=>'/currency/admin'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
+                /*
                 array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Clients', 'url'=>'#'),
@@ -65,6 +63,7 @@
                     array('label'=>'Daily Revenue', 'url'=>'#'),
                     array('label'=>'Budget', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
+                */
                 array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Profile', 'url'=>'#'),

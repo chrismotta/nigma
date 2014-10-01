@@ -86,11 +86,14 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		// 'currency',
 		// 'ret',
 		// 'tax_id',
-		// 'entity',
 		//'net_payment',
 		array(
 			'name'=>'com_lastname',
 			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
+		),
+		array(
+			'name'=>'entity',
+			'headerHtmlOptions' => array('style' => "width: 30px"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
