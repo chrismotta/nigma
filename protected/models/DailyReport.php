@@ -398,8 +398,9 @@ class DailyReport extends CActiveRecord
 		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 		//Filtro por role
 		$filter = true;
+		$seeAllRoles = array('admin', 'media_manager', 'bussiness', 'finance');
 		foreach ($roles as $role => $value) {
-			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+			if ( in_array($role, $seeAllRoles)) {
 				$filter = false;
 				break;
 			}

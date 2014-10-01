@@ -248,7 +248,11 @@ class Opportunities extends CActiveRecord
 		} else {
 			$carrier = '-' . Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
 		}
+
+		$product = '';
+		if ( $this->product != NULL )
+			$product = '-' . $this->product;
 		
-		return $adv . $country . $carrier . '-' . $this->rate;
+		return $adv . $country . $carrier . '-' . $this->rate . $product;
 	}
 }
