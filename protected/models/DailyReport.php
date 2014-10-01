@@ -123,17 +123,8 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		
-		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-		//Filtro por role
-		$filter = true;
-		foreach ($roles as $role => $value) {
-			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
-				$filter = false;
-				break;
-			}
-		}
-		if ( $filter )
-			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
+		FilterManager::model()->addUserFilter($criteria, 'daily');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -394,20 +385,8 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('opportunities.id',$opportunitie);
 		}
 		
-		
-		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-		//Filtro por role
-		$filter = true;
-		$seeAllRoles = array('admin', 'media_manager', 'bussiness', 'finance');
-		foreach ($roles as $role => $value) {
-			if ( in_array($role, $seeAllRoles)) {
-				$filter = false;
-				break;
-			}
-		}
-		if ( $filter )
-			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
-		
+		FilterManager::model()->addUserFilter($criteria, 'daily');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			// Setting 'sort' property in order to add 
@@ -439,10 +418,6 @@ class DailyReport extends CActiveRecord
 		            '*',
 		        ),
 		    ),
-	    	// 'totalItemCount' => 50,
-		    'pagination'=>array(
-		        'pageSize'=>10,
-		    	),
 		));
 	}
 

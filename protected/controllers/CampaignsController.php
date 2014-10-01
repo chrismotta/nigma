@@ -166,15 +166,7 @@ class CampaignsController extends Controller
 		}
 		 */
 
-		// use listData in order to send a list of categories to the view
-		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-		$isAdmin = false;
-		foreach ($roles as $role => $value) {
-			if ( $role == 'admin' or $role == 'media_manager') {
-				$isAdmin = true;
-				break;
-			}
-		}
+		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
 			$opportunities = CHtml::listData(Opportunities::model()->findAll(
