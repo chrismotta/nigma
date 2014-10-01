@@ -31,6 +31,7 @@ class ClicksLog extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+	public $clics;
 	public function tableName()
 	{
 		return 'clicks_log';
@@ -89,6 +90,7 @@ class ClicksLog extends CActiveRecord
 			'device' => 'Device',
 			'os' => 'Os',
 			'app' => 'App',
+			'clics' => 'Clics',
 		);
 	}
 

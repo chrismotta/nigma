@@ -17,7 +17,6 @@
 class ConvLog extends CActiveRecord
 {
 	public $advertiser_id;
-
 	/**
 	 * @return string the associated database table name
 	 */

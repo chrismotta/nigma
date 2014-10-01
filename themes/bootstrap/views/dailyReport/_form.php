@@ -39,11 +39,11 @@
         echo $form->hiddenField($model, 'is_from_api', array('type'=>'hidden'));       
         echo $form->datepickerRow($model, 'date', array(
                 'options' => array(
-                    'autoclose'  => true,
-                    'todayBtn'   => true,
-                    'format'     => 'yyyy-mm-dd',
-                    'viewformat' => 'dd-mm-yyyy',
-                    'placement'  => 'right',
+                    'autoclose'      => true,
+                    'todayHighlight' => true,
+                    'format'         => 'yyyy-mm-dd',
+                    'viewformat'     => 'dd-mm-yyyy',
+                    'placement'      => 'right',
                 ),
                 'htmlOptions' => array(
                     'class' => 'span3',

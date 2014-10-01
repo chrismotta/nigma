@@ -28,12 +28,12 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
+				'actions'=>array('index','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','viewAjax','redirectAjax','admin'),
-				'roles'=>array('businness'),
+				'roles'=>array('businness', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('fetchCampaigns'),
@@ -166,15 +166,7 @@ class CampaignsController extends Controller
 		}
 		 */
 
-		// use listData in order to send a list of categories to the view
-		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-		$isAdmin = false;
-		foreach ($roles as $role => $value) {
-			if ( $role == 'admin' or $role == 'media_manager') {
-				$isAdmin = true;
-				break;
-			}
-		}
+		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
 			$opportunities = CHtml::listData(Opportunities::model()->findAll(
@@ -214,6 +206,7 @@ class CampaignsController extends Controller
 	 */
 	public function actionUpdateAjax($id)
 	{
+		$backURL = $_SERVER['HTTP_REFERER'];
 		$model = $this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -223,7 +216,7 @@ class CampaignsController extends Controller
 		{
 			$model->attributes=$_POST['Campaigns'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect($backURL);
 		}
 
 		// use listData in order to send a list of categories to the view
@@ -399,5 +392,35 @@ class CampaignsController extends Controller
 			'model'=>$model,
 		));
 		
+	}
+
+	public function actionGraphic() {
+		if ( isset($_POST['c_id'])) {
+			$c_id = $_POST['c_id'];
+		} else {
+			// echo json_encode("ERROR c_id or net_id missing");
+			Yii::app()->end();
+		}
+
+		if ( isset($_POST['endDate']) ) {
+			$endDate = new DateTime( $_POST['endDate'] );
+		} else {
+			$endDate = new DateTime("NOW");
+		}
+
+		
+		if ( isset($_POST['startDate']) ) {
+			$startDate = new DateTime( $_POST['startDate'] );
+		} else {
+			$startDate = new DateTime( $endDate->format("Y-m-d") );
+			$startDate = $startDate->sub( DateInterval::createFromDateString('7 days') );
+		}
+		// $startDate = new DateTime($_GET['startDate']);
+		// $endDate = new DateTime($_GET['endDate']);
+		// $c_id=$_GET['c_id'];
+		$model = new Campaigns();
+		$response = $model->totalsTraffic($startDate->format("Y-m-d"), $endDate->format("Y-m-d"), $c_id );
+		echo json_encode($response, JSON_NUMERIC_CHECK);
+		Yii::app()->end();
 	}
 }
