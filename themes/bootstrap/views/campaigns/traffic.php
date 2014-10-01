@@ -164,6 +164,7 @@ Yii::app()->clientScript->registerScript('search', "
 			'name'              => 'advertisers_name',
 			'value'             => '$data->opportunities->ios->advertisers->name',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'footer'			=> 'Totals:'
         ),
 		array(
 			'name'              => 'ios_name',
