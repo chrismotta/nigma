@@ -524,13 +524,13 @@ class DailyReport extends CActiveRecord
 		$rate = $opp->rate;
 		switch ($opp->model_adv) {
 			case 'CPM':
-				$this->revenue = $this->imp_adv ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
+				$this->revenue = $this->imp_adv != NULL ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
 				break;
 			case 'CPC':
 				$this->revenue = $this->clics * $rate;
 				break;
 			case 'CPA':
-				$this->revenue = $this->conv_adv ? $this->conv_adv * $rate : $this->conv_api * $rate;
+				$this->revenue = $this->conv_adv != NULL ? $this->conv_adv * $rate : $this->conv_api * $rate;
 				break;
 		}
 	}
