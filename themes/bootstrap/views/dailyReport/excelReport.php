@@ -31,6 +31,10 @@ $this->widget('EExcelWriter', array(
         array(
             'name'  => 'opportunitie_name',
             'value' => '$data->campaigns->opportunities->getVirtualName()',
+        ),        
+        array(
+            'name'  => 'io_name',
+            'value' => '$data->campaigns->opportunities->ios->name',
         ),
         array(
             'name'  => 'entity_name',
