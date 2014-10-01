@@ -33,7 +33,7 @@ class DailyReportController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','viewAjax','redirectAjax','admin'),
-				'roles'=>array('commercial'),
+				'roles'=>array('commercial, finance'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('setNewFields','setAllNewFields'),
