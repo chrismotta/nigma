@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
+				'actions'=>array('index','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -399,5 +399,35 @@ class CampaignsController extends Controller
 			'model'=>$model,
 		));
 		
+	}
+
+	public function actionGraphic() {
+		if ( isset($_POST['c_id'])) {
+			$c_id = $_POST['c_id'];
+		} else {
+			// echo json_encode("ERROR c_id or net_id missing");
+			Yii::app()->end();
+		}
+
+		if ( isset($_POST['endDate']) ) {
+			$endDate = new DateTime( $_POST['endDate'] );
+		} else {
+			$endDate = new DateTime("NOW");
+		}
+
+		
+		if ( isset($_POST['startDate']) ) {
+			$startDate = new DateTime( $_POST['startDate'] );
+		} else {
+			$startDate = new DateTime( $endDate->format("Y-m-d") );
+			$startDate = $startDate->sub( DateInterval::createFromDateString('7 days') );
+		}
+		// $startDate = new DateTime($_GET['startDate']);
+		// $endDate = new DateTime($_GET['endDate']);
+		// $c_id=$_GET['c_id'];
+		$model = new Campaigns();
+		$response = $model->totalsTraffic($startDate->format("Y-m-d"), $endDate->format("Y-m-d"), $c_id );
+		echo json_encode($response, JSON_NUMERIC_CHECK);
+		Yii::app()->end();
 	}
 }

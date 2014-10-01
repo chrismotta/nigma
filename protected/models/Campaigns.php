@@ -447,6 +447,46 @@ class Campaigns extends CActiveRecord
 	    return $charts;
 	    
 	}
+
+	public function totalsTraffic($startDate=NULL, $endDate=NULL, $campaign=NULL)
+	{
+		if(!$startDate)	$startDate = 'today' ;
+		if(!$endDate) $endDate   = 'today';
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+		$dataTops=array();
+		$conversions=array();
+		$clics=array();
+		$dates=array();
+
+		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+			$dataTops[$date]['conversions']=0;
+			$dataTops[$date]['clics']=0;
+		}
+		$criteria=new CDbCriteria;
+		$criteria->select='count(*) as clics,DATE(date) as date';
+		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
+		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
+		if($campaign!=NULL)$criteria->addCondition("campaigns_id=".$campaign);
+		$criteria->group='DATE(date)';
+		$criteria->order='DATE(date) ASC';
+		$r         = ClicksLog::model()->findAll( $criteria );
+		foreach ($r as $value) {			
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']=intval($value->clics);
+			if($campaign==NULL)$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']=intval(ConvLog::model()->count("DATE(date)=:date", array(":date"=>date('Y-m-d', strtotime($value->date)))));
+			if($campaign!=NULL)$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign,":date"=>date('Y-m-d', strtotime($value->date)))));
+		}
+		
+		foreach ($dataTops as $date => $data) {
+			$conversions[]=$data['conversions'];
+			$clics[]=$data['clics'];
+			$dates[]=$date;
+		}
+		$result=array('conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
+		
+		return $result;
+	}
+
 	public function searchTraffic()
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.

@@ -4,6 +4,7 @@ $dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
+$totalsGrap=Campaigns::model()->totalsTraffic($dateStart,$dateEnd);
 /* @var $this CampaignsController */
 /* @var $model Campaigns */
 
@@ -26,7 +27,42 @@ Yii::app()->clientScript->registerScript('search', "
 	});
 	");
 ?>
+<div class="row">
+	<div id="container-highchart" class="span12">
+	<?php
 
+	$this->Widget('ext.highcharts.HighchartsWidget', array(
+		'options'=>array(
+			'chart' => array('type' => 'area'),
+			'title' => array('text' => ''),
+			'xAxis' => array(
+				'categories' => $totalsGrap['dates']
+				),
+			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
+			'yAxis' => array(
+				'title' => array('text' => '')
+				),
+			'series' => array(
+				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
+				array('name' => 'Conversions', 'data' => $totalsGrap['conversions'],),
+				),
+	        'legend' => array(
+	            'layout' => 'vertical',
+	            'align' =>  'left',
+	            'verticalAlign' =>  'top',
+	            'x' =>  40,
+	            'y' =>  3,
+	            'floating' =>  true,
+	            'borderWidth' =>  1,
+	            'backgroundColor' => '#FFFFFF'
+	        	)
+			),
+		)
+	);
+	?>
+			
+	</div>
+</div>
 <hr>
 <!--####Button excel report#####-->
 <div class="botonera">
@@ -112,6 +148,7 @@ Yii::app()->clientScript->registerScript('search', "
 	'dataProvider'             => $model->searchTraffic(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
+	'selectionChanged'         => 'js:selectionChangedTraffic',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 =>'{items} {pager} {summary}',
 	
@@ -131,7 +168,7 @@ Yii::app()->clientScript->registerScript('search', "
         ),		
 		array(
 			'name'              => 'name',
-			'value'             => '$data->name',
+			'value'             => '$data->opportunities->getVirtualName()',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
