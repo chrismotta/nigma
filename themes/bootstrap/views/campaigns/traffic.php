@@ -4,7 +4,14 @@ $dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
+
+$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 $totalsGrap=Campaigns::model()->totalsTraffic($dateStart,$dateEnd);
+// $totals=Campaigns::getTotals($dateStart, $dateEnd,$accountManager,$opportunitie,$networks);
+// print_r($totals);
+// return;
 /* @var $this CampaignsController */
 /* @var $model Campaigns */
 
@@ -141,7 +148,72 @@ Yii::app()->clientScript->registerScript('search', "
 		?>
 		<span class="add-on"><i class="icon-calendar"></i></span>
 	</div>
+	<?php
+	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
+	//Filtro por role
+	$filter = false;
+	foreach ($roles as $role => $value) {
+		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+			$filter = true;
+			break;
+		}
+	}
+	if ( $filter ){
+	$models = Users::model()->findUsersByRole('media');
+	$list = CHtml::listData($models, 
+                'id', 'FullName');
+	echo CHtml::dropDownList('accountManager', $accountManager, 
+              $list,
+              array('empty' => 'All account managers','onChange' => '
+                  // if ( ! this.value) {
+                  //   return;
+                  // }
+                  $.post(
+                      "getOpportunities/"+this.value,
+                      "",
+                      function(data)
+                      {
+                          // alert(data);
+                        $(".opportunitie-dropdownlist").html(data);
+                      }
+                  )
+                  '));
+	if(!$accountManager){
+		$models = Opportunities::model()->findAll();
+		$list = CHtml::listData($models, 
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	              $list,
+	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+	}
+	else
+	{
+		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
+		$list = CHtml::listData($models, 
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	              $list,
+	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+	}
+       }
+       else{
+       		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
+			$list = CHtml::listData($models, 
+		                'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+		              $list,
+		              array('empty' => 'All opportunities',));
 
+       }
+       $models = Networks::model()->findAll();
+		$list = CHtml::listData($models, 
+	                'id', 'name');
+		echo CHtml::dropDownList('networks', $networks, 
+	              $list,
+	              array('empty' => 'All networks',));
+	       
+		
+	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 </fieldset>
 
@@ -149,7 +221,7 @@ Yii::app()->clientScript->registerScript('search', "
 <!--### Traffic grid###-->
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'traffic-grid',
-	'dataProvider'             => $model->searchTraffic(),
+	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'selectionChanged'         => 'js:selectionChangedTraffic',

@@ -426,7 +426,46 @@ class Campaigns extends CActiveRecord
 	    return $charts;
 	    
 	}
+	public function getTotals($startDate=NULL, $endDate=NULL,$accountManager=NULL,$opportunitie=null,$networks=null)
+	{
+		if(!$startDate)	$startDate = 'today' ;
+		if(!$endDate) $endDate   = 'today';
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+		$dataTops=array();
+		$conversions=array();
+		$clics=array();
+		$dates=array();
+		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
+			$dataTops[$date]['conversions']=0;
+			$dataTops[$date]['clics']=0;
+		}
 
+		$criteria=new CDbCriteria;
+		//$criteria->with('opportunities','networks');
+		$criteria->with = array('opportunities','opportunities.accountManager','networks');
+		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
+		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
+		if($networks!=null)$criteria->compare('t.networks_id',$networks);
+		$campaigns=self::model()->findAll($criteria);
+		foreach ($campaigns as $campaign) 
+		{
+			foreach (Utilities::dateRange($startDate,$endDate) as $date) 
+			{
+				$dataTops[$date]['clics']+=intval(ClicksLog::model()->count("DATE(date)=':date' AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				$dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=':date' AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+			}
+		}
+
+		foreach ($dataTops as $date => $data) {
+			$conversions[]=$data['conversions'];
+			$clics[]=$data['clics'];
+			$dates[]=$date;
+		}
+		$result=array('conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
+		
+		return $result;
+	}
 	public function totalsTraffic($startDate=NULL, $endDate=NULL, $campaign=NULL)
 	{
 		if(!$startDate)	$startDate = 'today' ;
@@ -466,7 +505,7 @@ class Campaigns extends CActiveRecord
 		return $result;
 	}
 
-	public function searchTraffic()
+	public function searchTraffic($accountManager=NULL,$opportunitie=null,$networks=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -476,6 +515,9 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
+		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
+		if($networks!=null)$criteria->compare('t.networks_id',$networks);
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
@@ -511,4 +553,16 @@ class Campaigns extends CActiveRecord
 		return $isValid ? true : false;
 	}
 
+	public function getRateUSD()
+	{
+		$opportunitie=$this->opportunities_id;
+		$rate = Opportunities::model()->findByPk($opportunitie)->rate;
+		$io_currency = Ios::model()->findByPk(Opportunities::model()->findByPk($opportunitie)->ios_id)->currency;
+
+		if ($io_currency == 'USD') // if currency is USD dont apply type change
+			return $rate;
+
+		$currency = Currency::model()->findByDate($this->date);
+		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
+	}
 }
