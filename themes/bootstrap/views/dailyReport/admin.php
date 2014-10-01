@@ -141,37 +141,45 @@ $('.search-form form').submit(function(){
 
 	<fieldset>
 	From: 
-	<?php 
-	    $this->widget('bootstrap.widgets.TbDatePicker',array(
-		'name'  => 'dateStart',
-		'value' => date('d-m-Y', strtotime($dateStart)),
-		'htmlOptions' => array(
-			'style' => 'width: 80px',
-		),
-	    'options' => array(
-			'autoclose'      => true,
-			'format'         => 'dd-mm-yyyy',
-			'viewformat'     => 'dd-mm-yyyy',
-			'placement'      => 'right',
-	    ),
-	));
-	?>
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'  => 'dateStart',
+			'value' => date('d-m-Y', strtotime($dateStart)),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+		    'options' => array(
+				'autoclose'  => true,
+				'todayHighlight' => true,
+				'format'     => 'dd-mm-yyyy',
+				'viewformat' => 'dd-mm-yyyy',
+				'placement'  => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
 	To:
-	<?php 
-	    $this->widget('bootstrap.widgets.TbDatePicker',array(
-		'name'        => 'dateEnd',
-		'value'       => date('d-m-Y', strtotime($dateEnd)),
-		'htmlOptions' => array(
-			'style' => 'width: 80px',
-		),
-		'options'     => array(
-			'autoclose'      => true,
-			'format'         => 'dd-mm-yyyy',
-			'viewformat'     => 'dd-mm-yyyy',
-			'placement'      => 'right',
-	    ),
-	));
-	?>
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'        => 'dateEnd',
+			'value'       => date('d-m-Y', strtotime($dateEnd)),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+			'options'     => array(
+				'autoclose'      => true,
+				'todayHighlight' => true,
+				'format'         => 'dd-mm-yyyy',
+				'viewformat'     => 'dd-mm-yyyy',
+				'placement'      => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
 	<?php
 	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
 	//Filtro por role

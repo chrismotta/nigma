@@ -47,6 +47,7 @@ $('.search-form form').submit(function(){
 		),
 	    'options' => array(
 			'autoclose'      => true,
+			'todayHighlight' => true,
 			'format'         => 'dd-mm-yyyy',
 			'viewformat'     => 'dd-mm-yyyy',
 			'placement'      => 'right',
