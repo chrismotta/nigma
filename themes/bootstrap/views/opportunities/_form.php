@@ -57,8 +57,8 @@
         echo $form->dropDownListRow($model, 'ios_id', $ios, array('class'=>'ios-dropdownlist', 'prompt' => 'Select an IOs'));
       } else {
         echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true, ));
-        echo $form->textFieldRow($advertiser, 'name', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$ios->getAttributeLabel('advertisers_id')) ));
-        echo $form->textFieldRow($ios, 'name', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('ios_id')) ));
+        echo $form->textFieldRow($advertiser, 'name', array('class'=>'span3', 'readonly'=>true, 'label'=>$ios->getAttributeLabel('advertisers_id') ));
+        echo $form->textFieldRow($ios, 'name', array('class'=>'span3', 'readonly'=>true, 'label'=>$model->getAttributeLabel('ios_id') ));
       
       }
 
