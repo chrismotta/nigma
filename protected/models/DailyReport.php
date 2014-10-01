@@ -657,6 +657,6 @@ class DailyReport extends CActiveRecord
 
 	public function getConv()
 	{
-		return !$this->conv_adv ? $this->conv_api : $this->conv_adv; 
+		return $this->conv_adv==null ? $this->conv_api : $this->conv_adv; 
 	}
 }
