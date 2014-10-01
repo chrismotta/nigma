@@ -234,7 +234,7 @@ class DailyReport extends CActiveRecord
 			$conv_adv += $value->conv_adv;
 			$spend    += doubleval($value->getSpendUSD());	
 			$revenue  += doubleval($value->getRevenueUSD());
-			$profit   += $value->profit;
+			//$profit   += $value->getRevenueUSD()-$value->getSpendUSD();
 		}
 
 		$result=array(
@@ -245,7 +245,7 @@ class DailyReport extends CActiveRecord
 			'conv_adv'	=> $conv_adv,
 			'spend'		=> $spend,
 			'revenue'	=> $revenue,
-			'profit'	=> $profit,
+			'profit'	=> $revenue-$spend,
 		);
 		
 		return $result;
