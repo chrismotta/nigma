@@ -181,15 +181,9 @@ $('.search-form form').submit(function(){
 		<span class="add-on"><i class="icon-calendar"></i></span>
 	</div>
 	<?php
-	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-	//Filtro por role
-	$filter = false;
-	foreach ($roles as $role => $value) {
-		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
-			$filter = true;
-			break;
-		}
-	}
+
+	$filter = FilterManager::model()->isUserTotalAccess('daily');
+
 	if ( $filter ){
 	$models = Users::model()->findUsersByRole('media');
 	$list = CHtml::listData($models, 
