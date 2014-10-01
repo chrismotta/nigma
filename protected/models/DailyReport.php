@@ -609,12 +609,23 @@ class DailyReport extends CActiveRecord
 		return $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
 	}
 
+	public function getCapUSD()
+	{
+		$net_currency = Networks::model()->findByPk(Campaigns::model()->findByPk($this->campaigns_id)->networks_id)->currency;
+		$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
+		if ($net_currency == 'USD') // if currency is USD dont apply type change
+			return $cap;
+
+		$currency = Currency::model()->findByDate($this->date);
+		return $currency ? number_format($cap / $currency[$net_currency], 2) : 'Currency ERROR!';
+	}
+
 	public function getCapStatus()
 	{
 		if(strtotime($this->date) == strtotime('yesterday'))
 		{
-			$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
-			return $this->spend>=$cap ? TRUE : FALSE;
+			//$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
+			return $this->getSpendUSD()>=$this->getCapUSD() ? TRUE : FALSE;
 		}
 		else return false;
 	}
