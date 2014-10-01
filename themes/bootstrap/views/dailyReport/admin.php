@@ -253,8 +253,10 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 <?php 
 	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
-	$this->widget('bootstrap.widgets.TbGridView', array(
+	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
+        'fixedHeader' => true,
+        'headerOffset' => 50,
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
@@ -493,6 +495,12 @@ $('.search-form form').submit(function(){
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalDailyReport").html(dataInicial);
+						$("#modalDailyReport").modal("toggle");
+
+				    	
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"update/"+id,
@@ -501,7 +509,6 @@ $('.search-form form').submit(function(){
 							{
 								//alert(data);
 								$("#modalDailyReport").html(data);
-								$("#modalDailyReport").modal("toggle");
 							}
 						)
 					return false;
@@ -512,7 +519,27 @@ $('.search-form form').submit(function(){
 					'label'   => 'Update Campaign',
 					'icon'    => 'eye-open',
 					//'visible' => '$data->getCapStatus()',
-					'url'   => 'Yii::app()->baseUrl."/campaigns/update/".$data->campaigns_id',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-c-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalDailyReport").html(dataInicial);
+						$("#modalDailyReport").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"'.Yii::app()->baseUrl.'/campaigns/updateAjax/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalDailyReport").html(data);
+							}
+						)
+				    }
+				    ',
 				),
 			),
 			'template' => '{updateAjax} {delete} {updateCampaign}',

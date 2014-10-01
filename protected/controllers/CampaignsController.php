@@ -214,6 +214,7 @@ class CampaignsController extends Controller
 	 */
 	public function actionUpdateAjax($id)
 	{
+		$backURL = $_SERVER['HTTP_REFERER'];
 		$model = $this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -223,7 +224,7 @@ class CampaignsController extends Controller
 		{
 			$model->attributes=$_POST['Campaigns'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect($backURL);
 		}
 
 		// use listData in order to send a list of categories to the view
