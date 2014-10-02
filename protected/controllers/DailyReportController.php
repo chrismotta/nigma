@@ -77,11 +77,11 @@ class DailyReportController extends Controller
 
 		if(isset($_POST['DailyReport']))
 		{
-			$model->attributes = $_POST['DailyReport'];
-
-			$modelCampaign = Campaigns::model()->findByPk($model->campaigns_id);
+			$model->attributes  = $_POST['DailyReport'];
+			
+			$modelCampaign      = Campaigns::model()->findByPk($model->campaigns_id);
 			$model->networks_id = $modelCampaign->networks_id;
-			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
+			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
@@ -393,7 +393,11 @@ class DailyReportController extends Controller
 	public function renderFormAjax($model)
 	{
 		//$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campaigns = CHtml::listData(Campaigns::model()->with(array('networks'))->findAll(array('order'=>'t.name', 'condition'=>'has_api = 0')), 'id',
+		$campaigns = CHtml::listData(
+			Campaigns::model()->with(array('networks','opportunities.ios'))->findAll(
+				array('order'=>'ios.name', 'condition'=>'has_api = 0')
+				), 
+			'id',
 			function($camp) { return $camp->getExternalName($camp->id); }
 			);
 

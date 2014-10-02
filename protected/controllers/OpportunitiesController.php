@@ -186,8 +186,8 @@ class OpportunitiesController extends Controller
 			// Get only Advertisers and IOs that were created by the current user logged.
 			// comentado provisoriamente, generar permiso de admin
 			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
-			$advertiser = CHtml::listData( Advertisers::model()->findAll(), 'id', 'name' );
-			$ios = CHtml::listData(Ios::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name');
+			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name' );
+			$ios = CHtml::listData(Ios::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id), array('order'=>'name') ), 'id', 'name');
 		} else {
 			// If update register, only show Opportunity's IO and Advertiser
 			$ios = Ios::model()->findByPk($model->ios_id);

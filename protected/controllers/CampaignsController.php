@@ -169,14 +169,14 @@ class CampaignsController extends Controller
 		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
-			$opportunities = CHtml::listData(Opportunities::model()->findAll(
-				array('order'=>'id')), 
+			$opportunities = CHtml::listData(Opportunities::model()->with('ios')->findAll(
+				array('order'=>'ios.name')), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);
 		} else {
-			$opportunities = CHtml::listData(Opportunities::model()->findAll(
-				array('order'=>'id', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
+			$opportunities = CHtml::listData(Opportunities::model()->with('ios')->findAll(
+				array('order'=>'ios.name', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);

@@ -185,58 +185,65 @@ $('.search-form form').submit(function(){
 	$filter = FilterManager::model()->isUserTotalAccess('daily');
 
 	if ( $filter ){
-	$models = Users::model()->findUsersByRole('media');
-	$list = CHtml::listData($models, 
-                'id', 'FullName');
-	echo CHtml::dropDownList('accountManager', $accountManager, 
-              $list,
-              array('empty' => 'All account managers','onChange' => '
-                  // if ( ! this.value) {
-                  //   return;
-                  // }
-                  $.post(
-                      "getOpportunities/"+this.value,
-                      "",
-                      function(data)
-                      {
-                          // alert(data);
+		$models = Users::model()->findUsersByRole('media');
+		$list = CHtml::listData($models, 'id', 'FullName');
+		echo CHtml::dropDownList('accountManager', $accountManager, 
+            $list,
+            array('empty' => 'All account managers','onChange' => '
+                // if ( ! this.value) {
+                //   return;
+                // }
+                $.post(
+                    "getOpportunities/"+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
                         $(".opportunitie-dropdownlist").html(data);
-                      }
-                  )
-                  '));
-	if(!$accountManager){
-		$models = Opportunities::model()->findAll();
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	              $list,
-	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
-	}
-	else
-	{
-		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	              $list,
-	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
-	}
-       }
-       else{
-       		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
-			$list = CHtml::listData($models, 
-		                'id', 'virtualName');
-			echo CHtml::dropDownList('opportunitie', $opportunitie, 
-		              $list,
-		              array('empty' => 'All opportunities',));
+                    }
+                )
+                '));
 
-       }
-       $models = Networks::model()->findAll();
+		if(!$accountManager){
+			$models = Opportunities::model()->with('ios')->findAll(
+				array('order' => 'ios.name')
+				);
+			$list   = CHtml::listData($models, 'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+		            $list,
+		            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+		}else{
+			$models = Opportunities::model()->with('ios')->findAll(
+				"account_manager_id=:accountManager", 
+				array(':accountManager'=>$accountManager),
+       			array('order' => 'ios.name')
+       			);
+			$list   = CHtml::listData($models, 'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	            $list,
+	            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+		}
+
+    }else{
+   		$models = Opportunities::model()->with('ios')->findAll(
+   			"account_manager_id=:accountManager", 
+   			array(':accountManager'=>Yii::app()->user->id),
+   			array('order' => 'ios.name')
+   			);
 		$list = CHtml::listData($models, 
-	                'id', 'name');
-		echo CHtml::dropDownList('networks', $networks, 
-	              $list,
-	              array('empty' => 'All networks',));
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	            $list,
+	            array('empty' => 'All opportunities',));
+
+    }
+
+    $models = Networks::model()->findAll( array('order' => 'name') );
+	$list = CHtml::listData($models, 
+        'id', 'name');
+	echo CHtml::dropDownList('networks', $networks, 
+        $list,
+        array('empty' => 'All networks',));
 	       
 		
 	?>
