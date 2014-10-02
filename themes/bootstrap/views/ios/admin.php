@@ -68,6 +68,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'name'=>'advertiser_name',
 			'value'=> '$data->advertisers->name',
+			'headerHtmlOptions' => array('style' => "width: 80px"),
+		),
+		array(
+			'name'=>'name',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 		),
 		// 'status',
