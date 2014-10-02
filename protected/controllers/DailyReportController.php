@@ -395,7 +395,7 @@ class DailyReportController extends Controller
 		//$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campaigns = CHtml::listData(
 			Campaigns::model()->with(array('networks','opportunities.ios'))->findAll(
-				array('order'=>'ios.name', 'condition'=>'has_api = 0')
+				array('order'=>'ios.name', 'condition'=>'t.status = "Active" AND has_api = 0')
 				), 
 			'id',
 			function($camp) { return $camp->getExternalName($camp->id); }

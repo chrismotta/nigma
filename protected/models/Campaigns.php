@@ -253,6 +253,7 @@ class Campaigns extends CActiveRecord
 		
 		// external name
 		$criteria->compare('t.id', $this->name, true);
+		$criteria->compare('t.status', 'Active');
 		$criteria->compare('country.ISO2', $this->name, true, 'OR');
 		$criteria->compare('t.name', $this->name, true, 'OR');
 
