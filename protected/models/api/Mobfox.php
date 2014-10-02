@@ -84,7 +84,7 @@ class Mobfox
 			$dailyReport->imp = $campaignInfo['response']['report']['statistics']['impressions']['value'];
 			$dailyReport->clics = $campaignInfo['response']['report']['statistics']['clicks']['value'];
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-			$dailyReport->conv_adv = 0;
+			//$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaignInfo['response']['report']['statistics']['total_cost']['amount']['value'];
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
