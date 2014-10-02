@@ -46,7 +46,10 @@ class Campaigns extends CActiveRecord
 	public $clicks;
 	public $conv;
 	public $account_manager;
-
+	public $rate;
+	public $revenue;
+	public $profit;
+	public $spend;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -125,7 +128,11 @@ class Campaigns extends CActiveRecord
 			'net_currency'           => 'Net Currency',
 			'clicks'           		 => 'Clicks Log',
 			'conv'		           	 => 'Convertions Log',
-			'account_manager' => 'Account Manager',
+			'account_manager' 		 => 'Account Manager',
+			'rate'					 => 'Rate',
+			'revenue'				 => 'Revenue',
+			'profit'				 => 'Profit',
+			'spend'				 => 'Spend',
 		);
 	}
 
@@ -369,40 +376,7 @@ class Campaigns extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
-	//Acción para obtener un array con rango de fechas
-	function arrayRangoFechas($start, $end) {
-	    $range = array();
-
-	    if (is_string($start) === true) $start = strtotime($start);
-	    if (is_string($end) === true ) $end = strtotime($end);
-
-	    if ($start > $end) return createDateRangeArray($end, $start);
-
-	    do {
-	        $range[] = date('Y-m-d', $start);
-	        $start = strtotime("+ 1 day", $start);
-	    } while($start <= $end);
-
-	    return $range;
-	}
-	function stringRangoFechas(array $fechas)
-	{
-		$stringFecha='';
-		foreach ($fechas as $fecha) 
-		{
-			$stringFecha=$stringFecha."'".$fecha."', ";
-		}
-		return $stringFecha;
-	}
-	function clicksPorRango(array $fechas)
-	{
-		$strFechas='';
-		foreach ($fechas as $fecha) {		
-			$strFechas+="'".Campaigns::countClicks($fecha,$fecha)."', ";
-		}
-		return $strFechas;
-	}
-
+	
 	function arrayCharts($dateStart, $dateEnd) {
 	    $range = array();
 
@@ -561,7 +535,7 @@ class Campaigns extends CActiveRecord
 		return $isValid ? true : false;
 	}
 
-	public function getRateUSD()
+	public function getRateUSD($date)
 	{
 		$opportunitie=$this->opportunities_id;
 		$rate = Opportunities::model()->findByPk($opportunitie)->rate;
@@ -570,7 +544,7 @@ class Campaigns extends CActiveRecord
 		if ($io_currency == 'USD') // if currency is USD dont apply type change
 			return $rate;
 
-		$currency = Currency::model()->findByDate($this->date);
+		$currency = Currency::model()->findByDate($date);
 		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
 	}
 }

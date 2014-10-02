@@ -260,6 +260,35 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
 			'footer'			=>array_sum($totals["conversions"]),
         ),
+        array(
+			'name'              => 'rate',
+			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'revenue',
+			'value'             => '($data->countConv("' . $dateStart . '", "'.$dateEnd.'")*$data->getRateUSD("'.$dateEnd.'"))',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'spend',
+			'type'	=>	'raw',
+			'value'             => 'CHtml::textField("row-spend" . $row, 0, array(
+			        				"style" => "width:30px; text-align:right; font-size: 11px;", 
+			        				"onChange" => "
+			        					var profit= $( \"#row-spend$row\" ).parent().parent().children().eq(8);
+			        					var revenue= $( \"#row-spend$row\" ).parent().parent().children().eq(6);
+			        					var spend=$( \"#row-spend$row\" ).val();
+										profit.html(revenue.html()-spend);
+			        				" 
+			        				))',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'profit',
+			'value'             => '0',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
 	),
 )); 
 ?>
