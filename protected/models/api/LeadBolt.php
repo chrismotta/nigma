@@ -59,7 +59,7 @@ class LeadBolt
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->clicks;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-			$dailyReport->conv_adv = 0;
+			//$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign->spend;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
