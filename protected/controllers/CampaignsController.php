@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
+				'actions'=>array('index','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -438,7 +438,19 @@ class CampaignsController extends Controller
 		));
 		
 	}
-
+	public function actionGetOpportunities($id=null)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		if($id)$opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
+		else $opps =Opportunities::model()->findAll();
+		$response='<option value="">All opportunities</option>';
+		foreach ($opps as $op) {
+			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
 	public function actionGraphic() {
 		if ( isset($_POST['c_id'])) {
 			$c_id = $_POST['c_id'];
