@@ -80,16 +80,16 @@ class AdWords
 			return NULL;
 		}
 
+		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
 		$dailyReport->networks_id = $this->network_id;
 		$dailyReport->imp = $campaign['impressions'];
 		$dailyReport->clics = $campaign['clicks'];
 		$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 		//$dailyReport->conv_adv = 0;
-		// cost is return in micropound, why? google, why?
+		// cost is return in micropound, why? google, why? seguramente habia que comittear gil 
 		$dailyReport->spend = number_format($campaign['cost'] / 1000000, 2, '.', ''); // ignore thousands separetor to save properly in db.
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();
-		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $campaign['campaign'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');
 			return NULL;

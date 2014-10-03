@@ -97,6 +97,7 @@ class InMobi
 				continue;
 			}
 
+			$dailyReport->date = $date;
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->clicks;
@@ -105,7 +106,6 @@ class InMobi
 			$dailyReport->spend = $campaign->adSpend;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
-			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				print json_encode($dailyReport->getErrors()) . "<br>";
 				Yii::log("InMobi: ERROR - saving campaign: " . $campaign->campaignName, 'error', 'system.model.api.inmobi');

@@ -80,6 +80,7 @@ class Mobfox
 				continue;
 			}
 
+			$dailyReport->date = $date;
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaignInfo['response']['report']['statistics']['impressions']['value'];
 			$dailyReport->clics = $campaignInfo['response']['report']['statistics']['clicks']['value'];
@@ -88,7 +89,6 @@ class Mobfox
 			$dailyReport->spend = $campaignInfo['response']['report']['statistics']['total_cost']['amount']['value'];
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
-			$dailyReport->date = $date;
 			if ( !$dailyReport->save() ) {
 				Yii::log("ERROR - saving campaign: '" . $campaignInfo['response']['report']['name']['value'] . "'. Error message: " . json_encode($dailyReport->getErrors()), "error", "system.model.api.mobfox");
 				continue;
