@@ -130,11 +130,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
 			'value'             => '$data->cap',
         ),
-		array(
-			'name'              => 'status',
-			'value'             => '$data->status', //== 0 ? "Active" : "Paused"',
-			'headerHtmlOptions' => array('style' => 'width: 60px'),
-        ),
+		// array(
+		// 	'name'              => 'status',
+		// 	'value'             => '$data->status', //== 0 ? "Active" : "Paused"',
+		// 	'headerHtmlOptions' => array('style' => 'width: 60px'),
+  		//  ),
 		// array(
 		// 	'name'              => 'date_start',
 		// 	'value'             => 'date("d-m-Y", strtotime($data->date_start))',
@@ -268,7 +268,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						)
 				    }
 				    ',
-				)
+				),
 			),
 			'template' => '{viewAjax} {redirects} {updateAjax} {delete}',
 		),

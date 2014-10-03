@@ -9,7 +9,7 @@ $accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : N
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 $networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 $totalsGrap=Campaigns::model()->totalsTraffic($dateStart,$dateEnd);
-// $totals=Campaigns::getTotals($dateStart, $dateEnd,$accountManager,$opportunitie,$networks);
+$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
 // print_r($totals);
 // return;
 /* @var $this CampaignsController */
@@ -252,13 +252,42 @@ Yii::app()->clientScript->registerScript('search', "
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=> array_sum($totalsGrap["clics"]),
+			'footer'			=> array_sum($totals["clics"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=>array_sum($totalsGrap["conversions"]),
+			'footer'			=>array_sum($totals["conversions"]),
+        ),
+        array(
+			'name'              => 'rate',
+			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'revenue',
+			'value'             => '($data->countConv("' . $dateStart . '", "'.$dateEnd.'")*$data->getRateUSD("'.$dateEnd.'"))',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'spend',
+			'type'	=>	'raw',
+			'value'             => 'CHtml::textField("row-spend" . $row, 0, array(
+			        				"style" => "width:30px; text-align:right; font-size: 11px;", 
+			        				"onChange" => "
+			        					var profit= $( \"#row-spend$row\" ).parent().parent().children().eq(8);
+			        					var revenue= $( \"#row-spend$row\" ).parent().parent().children().eq(6);
+			        					var spend=$( \"#row-spend$row\" ).val();
+										profit.html(revenue.html()-spend);
+			        				" 
+			        				))',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'              => 'profit',
+			'value'             => '0',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 	),
 )); 

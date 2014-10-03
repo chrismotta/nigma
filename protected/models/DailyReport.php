@@ -200,6 +200,12 @@ class DailyReport extends CActiveRecord
 		$spend     = 0;
 		$revenue   = 0;
 		$profit    = 0;
+		$ctr    = 0;
+		$cr    = 0;
+		$profitperc    = 0;
+		$ecpm    = 0;
+		$ecpc    = 0;
+		$ecpa    = 0;
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
@@ -228,6 +234,15 @@ class DailyReport extends CActiveRecord
 			$profit   += $value->profit;
 		}
 
+		$impt = $imp_adv == 0 ? $imp : $imp_adv;
+		$convt = $conv_adv == 0 ? $conv_s2s : $conv_adv;
+		$ctr = $impt == 0 ? 0 : number_format($clics / $impt, 2);
+		$cr=$clics == 0 ? 0 : number_format( $convt / $clics, 2 );
+		$profitperc=$revenue == 0 ? 0 : number_format($profit / $revenue, 2);
+		$ecpm=$impt == 0 ? 0 : number_format($spend * 1000 / $impt, 2);
+		$ecpc=$clics == 0 ? 0 : number_format($spend / $clics, 2);
+		$ecpa=$convt == 0 ? 0 : number_format($spend / $convt, 2);
+
 		$result=array(
 			'imp'		=> $imp,
 			'imp_adv'	=> $imp_adv,
@@ -237,6 +252,12 @@ class DailyReport extends CActiveRecord
 			'spend'		=> $spend,
 			'revenue'	=> $revenue,
 			'profit'	=> $profit,
+			'ctr'		=> $ctr,
+			'cr'		=> $cr,
+			'profitperc'=> $profitperc,
+			'ecpm'		=> $ecpm,
+			'ecpc'		=> $ecpc,
+			'ecpa'		=> $ecpa,
 		);
 		
 		return $result;
