@@ -272,10 +272,12 @@ Yii::app()->clientScript->registerScript('search', "
 
 <?php $this->endWidget(); ?>
 <!--### Traffic grid###-->
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'traffic-grid',
 	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
+        'fixedHeader' => true,
+        'headerOffset' => 50,
 	'type'                     => 'striped condensed',
 	'selectionChanged'         => 'js:selectionChangedTraffic',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
@@ -304,28 +306,37 @@ Yii::app()->clientScript->registerScript('search', "
         array(
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
+			'filter'			=> '',
 			'footer'			=> array_sum($totals["clics"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'filter'			=> '',
 			'footer'			=>array_sum($totals["conversions"]),
         ),
         array(
 			'name'              => 'rate',
 			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'revenue',
 			'value'             => '($data->countConv("' . $dateStart . '", "'.$dateEnd.'")*$data->getRateUSD("'.$dateEnd.'"))',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'spend',
 			'type'	=>	'raw',
+			'filter'			=> '',
 			'value'             => 'CHtml::textField("row-spend" . $row, 0, array(
 			        				"style" => "width:30px; text-align:right; font-size: 11px;", 
 			        				"onChange" => "
@@ -339,21 +350,27 @@ Yii::app()->clientScript->registerScript('search', "
 										}
 			        				" 
 			        				))',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'profit',
 			'value'             => '0',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'filter'			=> '',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'profit_percent',
 			'value'             => '0',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'headerHtmlOptions' => array('style' => "width: 70px; text-align:right;"),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 			'buttons'           => array(
 				'showCampaign' => array(
 					'label'   => 'Show Campaign',
