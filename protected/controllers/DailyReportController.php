@@ -107,6 +107,7 @@ class DailyReportController extends Controller
 			$model=new DailyReport;
 			$model->attributes = $_POST['DailyReport'];
 			$model->is_from_api = 0;
+			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
 				
@@ -440,11 +441,15 @@ class DailyReportController extends Controller
 	public function actionSetAllNewFields(){
 
 		set_time_limit(100000);
-		$list = DailyReport::model()->findAll();
-		foreach ($list as $model) {
-			$model->setNewFields();
-			$model->save();
-			echo $model->id . " - updated<br/>";
+		if(isset($_GET['date'])){
+			$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
+			foreach ($list as $model) {
+				$model->setNewFields();
+				$model->save();
+				echo $model->id . " - updated<br/>";
+			}
+		}else{
+			echo "no date seted";
 		}
 	}
 

@@ -32,7 +32,7 @@ class CampaignsController extends Controller
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic'),
 				'roles'=>array('businness', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
