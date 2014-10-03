@@ -50,6 +50,7 @@ class Campaigns extends CActiveRecord
 	public $revenue;
 	public $profit;
 	public $spend;
+	public $profit_percent;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -132,7 +133,8 @@ class Campaigns extends CActiveRecord
 			'rate'					 => 'Rate',
 			'revenue'				 => 'Revenue',
 			'profit'				 => 'Profit',
-			'spend'				 => 'Spend',
+			'spend'					 => 'Spend',
+			'profit_percent'		 => 'Profit %',
 		);
 	}
 
