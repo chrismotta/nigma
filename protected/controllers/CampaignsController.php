@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
+				'actions'=>array('index','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -236,6 +236,24 @@ class CampaignsController extends Controller
 			'formats'       => $formats,
 			'campModel'     => $campModel,
 			'action'        => 'Update'
+		), false, true);
+
+	}
+	public function actionTrafficCampaignAjax($id)
+	{
+		$backURL = $_SERVER['HTTP_REFERER'];
+		$model = $this->loadModel($id);
+		//$totals=$model->totalsTraffic()
+		$this->renderPartial('_formTrafficCampaignAjax',array(
+			'model'        		=> $model,
+			'dateStart' 		=> $_POST['dateStart'],
+			'dateEnd' 			=> $_POST['dateEnd'],
+			// 'categories'    => $categories,
+			// 'networks'      => $networks,
+			// 'devices'       => $devices,
+			// 'formats'       => $formats,
+			// 'campModel'     => $campModel,
+			// 'action'        => 'Update'
 		), false, true);
 
 	}
