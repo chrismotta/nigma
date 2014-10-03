@@ -149,7 +149,7 @@ class Opportunities extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		$criteria->compare('t.id',$this->id);
 		$criteria->compare('carriers_id',$this->carriers_id);
 		$criteria->compare('rate',$this->rate,true);
 		$criteria->compare('model_adv',$this->model_adv,true);

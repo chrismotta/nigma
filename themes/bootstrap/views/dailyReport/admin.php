@@ -141,100 +141,109 @@ $('.search-form form').submit(function(){
 
 	<fieldset>
 	From: 
-	<?php 
-	    $this->widget('ext.rezvan.RDatePicker',array(
-		'name'  => 'dateStart',
-		'value' => date('d-m-Y', strtotime($dateStart)),
-		'htmlOptions' => array(
-			'style' => 'width: 80px',
-		),
-	    'options' => array(
-			'autoclose'      => true,
-			'format'         => 'dd-mm-yyyy',
-			'viewformat'     => 'dd-mm-yyyy',
-			'placement'      => 'right',
-	    ),
-	));
-	?>
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'  => 'dateStart',
+			'value' => date('d-m-Y', strtotime($dateStart)),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+		    'options' => array(
+				'autoclose'  => true,
+				'todayHighlight' => true,
+				'format'     => 'dd-mm-yyyy',
+				'viewformat' => 'dd-mm-yyyy',
+				'placement'  => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
 	To:
-	<?php 
-	    $this->widget('ext.rezvan.RDatePicker',array(
-		'name'        => 'dateEnd',
-		'value'       => date('d-m-Y', strtotime($dateEnd)),
-		'htmlOptions' => array(
-			'style' => 'width: 80px',
-		),
-		'options'     => array(
-			'autoclose'      => true,
-			'format'         => 'dd-mm-yyyy',
-			'viewformat'     => 'dd-mm-yyyy',
-			'placement'      => 'right',
-	    ),
-	));
-	?>
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'        => 'dateEnd',
+			'value'       => date('d-m-Y', strtotime($dateEnd)),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+			'options'     => array(
+				'autoclose'      => true,
+				'todayHighlight' => true,
+				'format'         => 'dd-mm-yyyy',
+				'viewformat'     => 'dd-mm-yyyy',
+				'placement'      => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
 	<?php
-	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-	//Filtro por role
-	$filter = false;
-	foreach ($roles as $role => $value) {
-		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
-			$filter = true;
-			break;
-		}
-	}
-	if ( $filter ){
-	$models = Users::model()->findUsersByRole('media');
-	$list = CHtml::listData($models, 
-                'id', 'FullName');
-	echo CHtml::dropDownList('accountManager', $accountManager, 
-              $list,
-              array('empty' => 'All account managers','onChange' => '
-                  // if ( ! this.value) {
-                  //   return;
-                  // }
-                  $.post(
-                      "getOpportunities/"+this.value,
-                      "",
-                      function(data)
-                      {
-                          // alert(data);
-                        $(".opportunitie-dropdownlist").html(data);
-                      }
-                  )
-                  '));
-	if(!$accountManager){
-		$models = Opportunities::model()->findAll();
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	              $list,
-	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
-	}
-	else
-	{
-		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	              $list,
-	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
-	}
-       }
-       else{
-       		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
-			$list = CHtml::listData($models, 
-		                'id', 'virtualName');
-			echo CHtml::dropDownList('opportunitie', $opportunitie, 
-		              $list,
-		              array('empty' => 'All opportunities',));
 
-       }
-       $models = Networks::model()->findAll();
+	$filter = FilterManager::model()->isUserTotalAccess('daily');
+
+	if ( $filter ){
+		$models = Users::model()->findUsersByRole('media');
+		$list = CHtml::listData($models, 'id', 'FullName');
+		echo CHtml::dropDownList('accountManager', $accountManager, 
+            $list,
+            array('empty' => 'All account managers','onChange' => '
+                // if ( ! this.value) {
+                //   return;
+                // }
+                $.post(
+                    "getOpportunities/"+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                        $(".opportunitie-dropdownlist").html(data);
+                    }
+                )
+                '));
+
+		if(!$accountManager){
+			$models = Opportunities::model()->with('ios')->findAll(
+				array('order' => 'ios.name')
+				);
+			$list   = CHtml::listData($models, 'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+		            $list,
+		            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+		}else{
+			$models = Opportunities::model()->with('ios')->findAll(
+				"account_manager_id=:accountManager", 
+				array(':accountManager'=>$accountManager),
+       			array('order' => 'ios.name')
+       			);
+			$list   = CHtml::listData($models, 'id', 'virtualName');
+			echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	            $list,
+	            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+		}
+
+    }else{
+   		$models = Opportunities::model()->with('ios')->findAll(
+   			"account_manager_id=:accountManager", 
+   			array(':accountManager'=>Yii::app()->user->id),
+   			array('order' => 'ios.name')
+   			);
 		$list = CHtml::listData($models, 
-	                'id', 'name');
-		echo CHtml::dropDownList('networks', $networks, 
-	              $list,
-	              array('empty' => 'All networks',));
+	                'id', 'virtualName');
+		echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	            $list,
+	            array('empty' => 'All opportunities',));
+
+    }
+
+    $models = Networks::model()->findAll( array('order' => 'name') );
+	$list = CHtml::listData($models, 
+        'id', 'name');
+	echo CHtml::dropDownList('networks', $networks, 
+        $list,
+        array('empty' => 'All networks',));
 	       
 		
 	?>
@@ -245,8 +254,10 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 <?php 
 	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
-	$this->widget('bootstrap.widgets.TbGridView', array(
+	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
+        'fixedHeader' => true,
+        'headerOffset' => 50,
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
@@ -465,9 +476,10 @@ $('.search-form form').submit(function(){
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
 		),
 		array(
-        	'name'	=>	'date',
-        	'value'	=>	'date("d-m-Y", strtotime($data->date))',
-        	'htmlOptions'=>array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
+			'name'        => 'date',
+			'value'       => 'date("d-m-Y", strtotime($data->date))',
+			'htmlOptions' => array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
+			'filter'      => false,
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
@@ -484,6 +496,12 @@ $('.search-form form').submit(function(){
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalDailyReport").html(dataInicial);
+						$("#modalDailyReport").modal("toggle");
+
+				    	
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"update/"+id,
@@ -492,7 +510,6 @@ $('.search-form form').submit(function(){
 							{
 								//alert(data);
 								$("#modalDailyReport").html(data);
-								$("#modalDailyReport").modal("toggle");
 							}
 						)
 					return false;
@@ -503,7 +520,27 @@ $('.search-form form').submit(function(){
 					'label'   => 'Update Campaign',
 					'icon'    => 'eye-open',
 					//'visible' => '$data->getCapStatus()',
-					'url'   => 'Yii::app()->baseUrl."/campaigns/update/".$data->campaigns_id',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-c-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalDailyReport").html(dataInicial);
+						$("#modalDailyReport").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"'.Yii::app()->baseUrl.'/campaigns/updateAjax/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalDailyReport").html(data);
+							}
+						)
+				    }
+				    ',
 				),
 			),
 			'template' => '{updateAjax} {delete} {updateCampaign}',

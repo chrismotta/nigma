@@ -123,17 +123,8 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		
-		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-		//Filtro por role
-		$filter = true;
-		foreach ($roles as $role => $value) {
-			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
-				$filter = false;
-				break;
-			}
-		}
-		if ( $filter )
-			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
+		FilterManager::model()->addUserFilter($criteria, 'daily');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
@@ -394,19 +385,8 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('opportunities.id',$opportunitie);
 		}
 		
-		
-		$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-		//Filtro por role
-		$filter = true;
-		foreach ($roles as $role => $value) {
-			if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
-				$filter = false;
-				break;
-			}
-		}
-		if ( $filter )
-			$criteria->compare('opportunities.account_manager_id', Yii::app()->user->id);
-		
+		FilterManager::model()->addUserFilter($criteria, 'daily');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			// Setting 'sort' property in order to add 
@@ -438,10 +418,6 @@ class DailyReport extends CActiveRecord
 		            '*',
 		        ),
 		    ),
-	    	// 'totalItemCount' => 50,
-		    'pagination'=>array(
-		        'pageSize'=>10,
-		    	),
 		));
 	}
 
@@ -523,13 +499,13 @@ class DailyReport extends CActiveRecord
 		$rate = $opp->rate;
 		switch ($opp->model_adv) {
 			case 'CPM':
-				$this->revenue = $this->imp_adv ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
+				$this->revenue = $this->imp_adv != NULL ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
 				break;
 			case 'CPC':
 				$this->revenue = $this->clics * $rate;
 				break;
 			case 'CPA':
-				$this->revenue = $this->conv_adv ? $this->conv_adv * $rate : $this->conv_api * $rate;
+				$this->revenue = $this->conv_adv != NULL ? $this->conv_adv * $rate : $this->conv_api * $rate;
 				break;
 		}
 	}
@@ -609,12 +585,23 @@ class DailyReport extends CActiveRecord
 		return $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
 	}
 
+	public function getCapUSD()
+	{
+		$net_currency = Networks::model()->findByPk(Campaigns::model()->findByPk($this->campaigns_id)->networks_id)->currency;
+		$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
+		if ($net_currency == 'USD') // if currency is USD dont apply type change
+			return $cap;
+
+		$currency = Currency::model()->findByDate($this->date);
+		return $currency ? number_format($cap / $currency[$net_currency], 2) : 'Currency ERROR!';
+	}
+
 	public function getCapStatus()
 	{
 		if(strtotime($this->date) == strtotime('yesterday'))
 		{
-			$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
-			return $this->spend>=$cap ? TRUE : FALSE;
+			//$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
+			return $this->getSpendUSD()>=$this->getCapUSD() ? TRUE : FALSE;
 		}
 		else return false;
 	}
@@ -643,4 +630,8 @@ class DailyReport extends CActiveRecord
 		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
 	}
 
+	public function getConv()
+	{
+		return $this->conv_adv==null ? $this->conv_api : $this->conv_adv; 
+	}
 }

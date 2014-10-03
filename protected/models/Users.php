@@ -124,7 +124,7 @@ class Users extends CActiveRecord
 		$users_ids = AuthAssignment::model()->getUsersIdsByRole($role);
 		$criteria = new CDbCriteria;
         $criteria->addInCondition('id', $users_ids);
-        return Users::model()->findAll($criteria);
+        return Users::model()->findAll($criteria, array('order' => 'name'));
 	}
 	public function getFullName() 
 	{		

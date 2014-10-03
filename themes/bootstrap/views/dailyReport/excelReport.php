@@ -31,6 +31,10 @@ $this->widget('EExcelWriter', array(
         array(
             'name'  => 'opportunitie_name',
             'value' => '$data->campaigns->opportunities->getVirtualName()',
+        ),        
+        array(
+            'name'  => 'io_name',
+            'value' => '$data->campaigns->opportunities->ios->name',
         ),
         array(
             'name'  => 'entity_name',
@@ -54,6 +58,10 @@ $this->widget('EExcelWriter', array(
         'clics',
         'conv_api',
         'conv_adv',
+        array(
+            'name'  =>  'Consolidated',
+            'value' =>  '$data->getConv()',
+        ),
         array(
             'name'  =>  'spend',
             'value' =>  '$data->getSpendUSD()',
