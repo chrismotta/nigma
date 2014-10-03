@@ -297,7 +297,6 @@ Yii::app()->clientScript->registerScript('search', "
 				'showCampaign' => array(
 					'label'   => 'Show Campaign',
 					'icon'    => 'eye-open',
-					//'visible' => '$data->getCapStatus()',
 					'click' => '
 				    function() {
 				    	// get row id from data-row-id attribute
@@ -316,7 +315,7 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '{showCampaign}',
+			'template' => '',
 		),
 		
 	),
