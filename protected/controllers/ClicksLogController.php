@@ -250,7 +250,7 @@ class ClicksLogController extends Controller
 
 			$ip             = $click->ip_forwarded != NULL ? $click->ip_forwarded : $click->server_ip;
 			$ipData         = $location->lookup($ip, IP2Location::ALL);
-			$click->country = $ipData->countryName;
+			$click->country = $ipData->countryCode;
 			$click->city    = $ipData->cityName;
 			$click->carrier = $ipData->mobileCarrierName;
 			
