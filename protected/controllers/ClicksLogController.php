@@ -223,13 +223,18 @@ class ClicksLogController extends Controller
 		if (isset($_GET['date']))
 			$date = $_GET['date'];
 
-		$hour = date('H:i', strtotime('now'));
-		if (isset($_GET['hour']))
-			$hour = $_GET['hour'];
+		$hourTo = date('H:i', strtotime('now'));
+		if (isset($_GET['hourFrom']) && isset($_GET['hourTo'])) {
+			$hourFrom = $_GET['hourFrom'];
+			$hourTo   = $_GET['hourTo'];
+		}
 
-		$tmp           = new DateTime($date . ' ' . $hour . ':00');
-		$timestampTo   = clone $tmp;		
-		$timestampFrom = $tmp->sub(new DateInterval('PT1H' . $timestampTo->format('i') . 'M'));
+		$tmp           = new DateTime($date . ' ' . $hourTo . ':00');
+		$timestampTo   = clone $tmp;
+		if ( isset($hourFrom) )
+			$timestampFrom = new DateTime($date . ' ' . $hourFrom . ':00');
+		else
+			$timestampFrom = $tmp->sub(new DateInterval('PT1H' . $timestampTo->format('i') . 'M'));
 
 		$clicks = ClicksLog::model()->findAll( 'date>=:dateFrom AND date<=:dateTo', array(':dateFrom' => $timestampFrom->format('Y-m-d H:i:s'), ':dateTo' => $timestampTo->format('Y-m-d H:i:s')) );
 
