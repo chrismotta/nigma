@@ -20,7 +20,7 @@ $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
 	'View Traffic',
 );
-
+//Yii::import('application.components.HighchartsSnippet', true);
 Yii::app()->clientScript->registerScript('search', "
 	$('.search-button').click(function(){
 		$('.search-form').toggle();
@@ -39,6 +39,7 @@ Yii::app()->clientScript->registerScript('search', "
 	<?php
 
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
+		'id' => 'hig1',
 		'options'=>array(
 			'chart' => array('type' => 'area'),
 			'title' => array('text' => ''),
@@ -289,13 +290,45 @@ Yii::app()->clientScript->registerScript('search', "
 			'value'             => '0',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
+        array(
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'buttons'           => array(
+				'showCampaign' => array(
+					'label'   => 'Show Campaign',
+					'icon'    => 'eye-open',
+					//'visible' => '$data->getCapStatus()',
+					'click' => '
+				    function() {
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+						var dateStart = $("#dateStart").val();
+						var dateEnd = $("#dateEnd").val();
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalTraffic").html(dataInicial);
+						$("#modalTraffic").modal("toggle");
+						
+						$.post("trafficCampaignAjax/"+id,{"dateStart":dateStart,"dateEnd":dateEnd})
+						 .done(function(data){
+						 	$("#modalTraffic").html(data);
+						 });
+				    }
+				    ',
+				),
+			),
+			'template' => '{showCampaign}',
+		),
+		
 	),
 )); 
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
+
+<div class="row" id="blank-row">
+</div>
