@@ -217,6 +217,45 @@ class ClicksLogController extends Controller
 
 	}
 
+	public function actionUpdateClicksData() 
+	{
+		$date = date('Y-m-d', strtotime('today'));
+		if (isset($_GET['date']))
+			$date = $_GET['date'];
+
+		$hour = date('H:i', strtotime('now'));
+		if (isset($_GET['hour']))
+			$hour = $_GET['hour'];
+
+		$tmp           = new DateTime($date . ' ' . $hour . ':00');
+		$timestampTo   = clone $tmp;		
+		$timestampFrom = $tmp->sub(new DateInterval('PT1H' . $timestampTo->format('i') . 'M'));
+
+		$clicks = ClicksLog::model()->findAll( 'date>=:dateFrom AND date<=:dateTo', array(':dateFrom' => $timestampFrom->format('Y-m-d H:i:s'), ':dateTo' => $timestampTo->format('Y-m-d H:i:s')) );
+
+		// initializing tools 
+		$wurfl    = WurflManager::loadWurfl();
+		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+		$location = new IP2Location($binPath, IP2Location::FILE_IO);
+		
+		foreach ($clicks as $click) {
+
+			if ( $click->country != NULL && $click->city != NULL && $click->carrier != NULL && $click->os != NULL && $click->device != NULL )
+				continue;
+
+			$ip             = $click->ip_forwarded != NULL ? $click->ip_forwarded : $click->server_ip;
+			$ipData         = $location->lookup($ip, IP2Location::ALL);
+			$click->country = $ipData->countryName;
+			$click->city    = $ipData->cityName;
+			$click->carrier = $ipData->mobileCarrierName;
+			
+			$device        = $wurfl->getDeviceForUserAgent($click->user_agent);
+			$click->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
+			$click->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+
+			$click->save();
+		}
+	}
 
 	// Uncomment the following methods and override them if needed
 	/*
