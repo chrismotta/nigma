@@ -55,6 +55,7 @@ class LeadBolt
 				continue;
 			}
 
+			$dailyReport->date = $dateOrig;
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->clicks;
@@ -63,7 +64,6 @@ class LeadBolt
 			$dailyReport->spend = $campaign->spend;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
-			$dailyReport->date = $dateOrig;
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.leadBolt');
 				continue;

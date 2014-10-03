@@ -60,6 +60,7 @@ class Smaato
 				continue;
 			}
 
+			$dailyReport->date        = $date;
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->clics       = $data->clicks->value;
 			$dailyReport->imp         = $data->impressions->value;
@@ -68,7 +69,6 @@ class Smaato
 			$dailyReport->spend       = $data->spend->value;;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
-			$dailyReport->date        = $date;
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->attr->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.smaato');
 				continue;

@@ -7,9 +7,9 @@ class EroAdvertising
 
 	public function saveCampaign($campaign, $date)
 	{
-		if(!isset($campaign->clicks->value))continue;
+		if(!isset($campaign->clicks->value))return;
 		if ( $campaign->views->value == 0 && $campaign->clicks->value == 0) { // if no impressions dismiss campaign
-			continue;
+			return;
 		}
 		$dailyReport = new DailyReport();
 		// get campaign ID used in KickAds Server, from the campaign name use in the external network
@@ -18,8 +18,9 @@ class EroAdvertising
 
 		if ( !$dailyReport->campaigns_id ) {
 			Yii::log("EroAdvertising: ERROR - invalid external campaign name: ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
-			continue;
+			return;
 		}				
+		$dailyReport->date = $date;
 		$dailyReport->networks_id = $this->network_id;
 		$dailyReport->imp = $campaign->views->value;
 		$dailyReport->clics = $campaign->clicks->value;
@@ -28,12 +29,11 @@ class EroAdvertising
 		$dailyReport->spend = str_replace(',', '.', $campaign->paid->value);
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();
-		$dailyReport->date = $date;
 
 		if ( !$dailyReport->save() ) {
 			print json_encode($dailyReport->getErrors()) . "<br>";
 			Yii::log("EroAdvertising: ERROR - saving campaign ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
-			continue;
+			return;
 		}
 	}
 

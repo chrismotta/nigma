@@ -67,6 +67,7 @@ class Ajillion
 				continue;
 			}
 
+			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->hits;
@@ -75,7 +76,6 @@ class Ajillion
 			$dailyReport->spend = number_format($campaign->cost, 2);
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
-			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
 				continue;
