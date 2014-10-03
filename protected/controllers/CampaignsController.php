@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
+				'actions'=>array('index','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -277,7 +277,18 @@ class CampaignsController extends Controller
 	public function actionDelete($id)
 	{
 		$model = $this->loadModel($id);
-		$model->status = 'Archived';
+		switch ($model->status) {
+			case 'Active':
+				$model->status = 'Archived';
+				break;
+			case 'Archived':
+				$model->status = 'Active';
+				break;
+			
+			default:
+				# code...
+				break;
+		}
 		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -297,12 +308,28 @@ class CampaignsController extends Controller
 	}
 
 	/**
-	 * Manages all models.
+	 * Manages active models.
 	 */
 	public function actionAdmin()
 	{
 		$model=new Campaigns('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
+		if(isset($_GET['Campaigns']))
+			$model->attributes=$_GET['Campaigns'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));
+	}
+	/**
+	 * Manages archived models.
+	 */
+	public function actionArchived()
+	{
+		$model=new Campaigns('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Archived';
 		if(isset($_GET['Campaigns']))
 			$model->attributes=$_GET['Campaigns'];
 

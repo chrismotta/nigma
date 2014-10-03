@@ -33,6 +33,7 @@
                     array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByNetwork')),
                     array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
+                    array('label'=>'Archived', 'url'=>array('/campaigns/archived')),
                     array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),

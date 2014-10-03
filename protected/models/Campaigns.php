@@ -163,7 +163,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('ip',$this->ip);
 		$criteria->compare('devices_id',$this->devices_id);
 		$criteria->compare('url',$this->url,true);
-		$criteria->compare('t.status','Active');
+		$criteria->compare('t.status',$this->status);
 		$criteria->compare('opportunities_id',$this->opportunities_id);
 		$criteria->compare('post_data',$this->post_data);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
