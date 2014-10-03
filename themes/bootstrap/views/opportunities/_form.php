@@ -94,10 +94,10 @@
               'checked'  => $multicarrier,
               'onChange' => '
                   if (this.checked == "1") {
-                    $("#Opportunities_carriers_id option:eq(0)").prop("selected", true);
-                    $("#Opportunities_carriers_id").prop("disabled", true);
+                    $("#opportunities-form #Opportunities_carriers_id option:eq(0)").prop("selected", true);
+                    $("#opportunities-form #Opportunities_carriers_id").prop("disabled", true);
                   }else{
-                    $("#Opportunities_carriers_id").prop("disabled", false);
+                    $("#opportunities-form #Opportunities_carriers_id").prop("disabled", false);
                   }
                   return;
                   '
@@ -115,11 +115,11 @@
               'onChange' => '
                   if (this.checked == "1") {
                     //alert("ok");
-                    $("#Opportunities_rate").val("");
-                    $("#Opportunities_rate").prop("disabled", true);
+                    $("#opportunities-form #Opportunities_rate").val("");
+                    $("#opportunities-form #Opportunities_rate").prop("disabled", true);
                   }else{
                     //alert("no");
-                    $("#Opportunities_rate").prop("disabled", false);
+                    $("#opportunities-form #Opportunities_rate").prop("disabled", false);
                   }
                   return;
                   '
