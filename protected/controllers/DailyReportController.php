@@ -440,11 +440,15 @@ class DailyReportController extends Controller
 	public function actionSetAllNewFields(){
 
 		set_time_limit(100000);
-		$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
-		foreach ($list as $model) {
-			$model->setNewFields();
-			$model->save();
-			echo $model->id . " - updated<br/>";
+		if(isset($_GET['date'])){
+			$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
+			foreach ($list as $model) {
+				$model->setNewFields();
+				$model->save();
+				echo $model->id . " - updated<br/>";
+			}
+		}else{
+			echo "no date seted";
 		}
 	}
 
