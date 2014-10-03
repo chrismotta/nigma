@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork'),
+				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork', 'updateConvs2s'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -107,6 +107,7 @@ class DailyReportController extends Controller
 			$model=new DailyReport;
 			$model->attributes = $_POST['DailyReport'];
 			$model->is_from_api = 0;
+			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
 				
@@ -440,11 +441,34 @@ class DailyReportController extends Controller
 	public function actionSetAllNewFields(){
 
 		set_time_limit(100000);
-		$list = DailyReport::model()->findAll();
-		foreach ($list as $model) {
-			$model->setNewFields();
-			$model->save();
-			echo $model->id . " - updated<br/>";
+		if(isset($_GET['date'])){
+			$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
+			foreach ($list as $model) {
+				$model->setNewFields();
+				$model->save();
+				echo $model->id . " - updated<br/>";
+			}
+		}else{
+			echo "no date seted";
+		}
+	}
+
+	public function actionUpdateConvs2s()
+	{
+		set_time_limit(100000);
+		if(isset($_GET['date'])) {
+			$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
+			foreach ($list as $model) {
+				if ($model->conv_api == 0) {
+					$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
+					$model->updateRevenue();
+					$model->setNewFields();
+					$model->save();
+					echo $model->id . " - updated<br/>";
+				}
+			}
+		}else{
+			echo "no date seted";
 		}
 	}
 
