@@ -107,6 +107,7 @@ class DailyReportController extends Controller
 			$model=new DailyReport;
 			$model->attributes = $_POST['DailyReport'];
 			$model->is_from_api = 0;
+			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
 				
