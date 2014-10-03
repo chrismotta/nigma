@@ -84,6 +84,7 @@ class VServ
 			continue;
 		}
 
+		$dailyReport->date = $date;
 		$dailyReport->networks_id = $this->network_id;
 		$dailyReport->imp = $impressions;
 		$dailyReport->clics = $clicks;
@@ -92,7 +93,6 @@ class VServ
 		$dailyReport->spend = $spend;
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();
-		$dailyReport->date = $date;
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $campaign['attr']['name'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.vServ');
 			continue;
