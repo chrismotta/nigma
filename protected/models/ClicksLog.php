@@ -47,10 +47,11 @@ class ClicksLog extends CActiveRecord
 		return array(
 			//array('campaigns_id, networks_id', 'required'),
 			array('campaigns_id, networks_id', 'numerical', 'integerOnly'=>true),
-			array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app', 'length', 'max'=>255),
+			array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app, redirect_url', 'length', 'max'=>255),
+			array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -87,10 +88,13 @@ class ClicksLog extends CActiveRecord
 			'country' => 'Country',
 			'city' => 'City',
 			'carrier' => 'Carrier',
+			'browser' => 'Browser',
+			'device_type' => 'Device Type',
 			'device' => 'Device',
 			'os' => 'Os',
 			'app' => 'App',
 			'clics' => 'Clics',
+			'redirect_url' => 'Redirect Url',
 		);
 	}
 
@@ -125,9 +129,12 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('country',$this->country,true);
 		$criteria->compare('city',$this->city,true);
 		$criteria->compare('carrier',$this->carrier,true);
+		$criteria->compare('browser',$this->browser,true);
+		$criteria->compare('device_type',$this->device_type,true);
 		$criteria->compare('device',$this->device,true);
 		$criteria->compare('os',$this->os,true);
 		$criteria->compare('app',$this->app,true);
+		$criteria->compare('redirect_url',$this->redirect_url,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
