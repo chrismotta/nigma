@@ -2,9 +2,23 @@
 /* @var $this CampaignsController */
 /* @var $model Campaigns */
 
+
+// defino si estamos en Campaigns o en Archived y seteo el deleteButton
+if(substr_count($_SERVER['REQUEST_URI'],'archived')){
+	$delete['icon']       = 'refresh';
+	$delete['label']      = 'Restore';
+	$delete['confirm']    = 'Are you shure to want to restore this campaign?';
+	$breadcrumbs['title'] = 'Archived Campaigns';
+}else{
+	$delete['icon']       = 'trash';
+	$delete['label']      = 'Delete';
+	$delete['confirm']    = 'Are you shure to want to delete this campaign?';
+	$breadcrumbs['title'] = 'Manage Campaigns';
+}
+
 $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
-	'Manage Campaigns',
+	$breadcrumbs['title'],
 );
 
 /*
@@ -62,11 +76,13 @@ $this->widget('bootstrap.widgets.TbButton', array(
 ?>
 </div>
 
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
+	'fixedHeader'              => true,
+	'headerOffset'             => 50,
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 =>'{items} {pager} {summary}',
 	
@@ -270,6 +286,9 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    ',
 				),
 			),
+			'deleteButtonIcon' => $delete['icon'],
+			'deleteButtonLabel' => $delete['label'],
+			'deleteConfirmation' => $delete['confirm'],
 			'template' => '{viewAjax} {redirects} {updateAjax} {delete}',
 		),
 	),

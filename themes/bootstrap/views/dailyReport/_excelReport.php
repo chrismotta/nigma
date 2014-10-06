@@ -21,44 +21,50 @@
     )); ?>
     <fieldset>
 
-        <div class="control-group">
+        <div class="input-append">
             <?php echo CHtml::label("From:", 'excel-dateStart', array('class'=>'control-label')); ?>
 
             <div class="controls">
-                <?php $this->widget('ext.rezvan.RDatePicker',array(
+                <?php $this->widget('bootstrap.widgets.TbDatePicker',array(
                     'name'  => 'excel-dateStart',
                     'value' => date('d-m-Y', strtotime('yesterday')),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
                     ),
                     'options' => array(
+                        'todayBtn'       => true,
                         'autoclose'      => true,
+                        'todayHighlight' => true,
                         'format'         => 'dd-mm-yyyy',
                         'viewformat'     => 'dd-mm-yyyy',
                         'placement'      => 'right',
-                    ),
-                )); ?>
+                ))); ?>
+                <span class="add-on"><i class="icon-calendar"></i></span>
             </div>
+        <br/>
         </div>
             
-        <div class="control-group">
+        <div class="input-append">
             <?php echo CHtml::label("To:", 'excel-dateEnd', array('class'=>'control-label')); ?>
             
             <div class="controls">
-                <?php $this->widget('ext.rezvan.RDatePicker',array(
+                <?php $this->widget('bootstrap.widgets.TbDatePicker',array(
                     'name'  => 'excel-dateEnd',
                     'value' => date('d-m-Y', strtotime('yesterday')),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
                     ),
                     'options' => array(
+                        'todayBtn'       => true,
                         'autoclose'      => true,
+                        'todayHighlight' => true,
                         'format'         => 'dd-mm-yyyy',
                         'viewformat'     => 'dd-mm-yyyy',
                         'placement'      => 'right',
-                    ),
-                )); ?>
+                ))); ?>
+                <span class="add-on"><i class="icon-calendar"></i></span>
             </div>
+        <br/>
         </div>
 
     <div class="form-actions">
