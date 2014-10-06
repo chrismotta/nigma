@@ -256,8 +256,8 @@ $('.search-form form').submit(function(){
 	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
-        'fixedHeader' => true,
-        'headerOffset' => 50,
+	'fixedHeader'              => true,
+	'headerOffset'             => 50,
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
