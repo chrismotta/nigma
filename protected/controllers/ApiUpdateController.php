@@ -50,6 +50,7 @@ class ApiUpdateController extends Controller
 		$this->actionInMobi();
 		// $this->actionBingAds();
 		// $this->actionSmaato();
+		$this->actionAdultmoda();
 	}
 
 	public function actionAdWords()
@@ -124,6 +125,11 @@ class ApiUpdateController extends Controller
 		$smaato->downloadInfo();	
 	}
 
+	public function actionAdultmoda()
+	{
+		$adultmoda = new Adultmoda;
+		$adultmoda->downloadInfo();
+	}
 
 	public function actionLog()
 	{	
