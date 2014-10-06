@@ -4,7 +4,8 @@
 
 
 // defino si estamos en Campaigns o en Archived y seteo el deleteButton
-if(substr_count($_SERVER['REQUEST_URI'],'archived')){
+$is_archived = substr_count($_SERVER['REQUEST_URI'],'archived');
+if($is_archived){
 	$delete['icon']       = 'refresh';
 	$delete['label']      = 'Restore';
 	$delete['confirm']    = 'Are you shure to want to restore this campaign?';
@@ -45,36 +46,37 @@ $('.search-form form').submit(function(){
 });
 ");
 ?>
-
-<div class="botonera">
 <?php
-$this->widget('bootstrap.widgets.TbButton', array(
-	'type'        => 'info',
-	'label'       => 'Create Campaign',
-	'block'       => false,
-	'buttonType'  => 'ajaxButton',
-	'url'         => 'createAjax',
-	'ajaxOptions' => array(
-		'type'    => 'POST',
-		'beforeSend' => 'function(data)
-			{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalCampaigns").html(dataInicial);
-					$("#modalCampaigns").modal("toggle");
-			}',
-		'success' => 'function(data)
-			{
-                    //console.log(this.url);
-	                //alert("create");
-					$("#modalCampaigns").html(data);
-					//$("#modalCampaigns").modal("toggle");
-			}',
-		),
-	'htmlOptions' => array('id' => 'createAjax'),
-	)
-);
+if(!$is_archived){
+	echo '<div class="botonera">';
+	$this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Create Campaign',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'createAjax',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalCampaigns").html(dataInicial);
+						$("#modalCampaigns").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+	                    //console.log(this.url);
+		                //alert("create");
+						$("#modalCampaigns").html(data);
+						//$("#modalCampaigns").modal("toggle");
+				}',
+			),
+		'htmlOptions' => array('id' => 'createAjax'),
+		)
+	);
+	echo '</div>';
+}
 ?>
-</div>
 
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
