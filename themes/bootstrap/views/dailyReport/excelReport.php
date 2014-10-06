@@ -102,6 +102,10 @@ $this->widget('EExcelWriter', array(
             'name'  => 'date',
             'value' => 'date("d-m-Y", strtotime($data->date))',
         ),
+        array(
+            'name'  => 'CAP',
+            'value' => '$data->getCapStatus() ? "Exceeded" : ""',
+        ),
     ),
 ));
 

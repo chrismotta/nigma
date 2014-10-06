@@ -9,7 +9,7 @@ $accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : N
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 $networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 $totalsGrap=Campaigns::model()->totalsTraffic($dateStart,$dateEnd);
-// $totals=Campaigns::getTotals($dateStart, $dateEnd,$accountManager,$opportunitie,$networks);
+$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
 // print_r($totals);
 // return;
 /* @var $this CampaignsController */
@@ -20,7 +20,7 @@ $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
 	'View Traffic',
 );
-
+//Yii::import('application.components.HighchartsSnippet', true);
 Yii::app()->clientScript->registerScript('search', "
 	$('.search-button').click(function(){
 		$('.search-form').toggle();
@@ -37,8 +37,61 @@ Yii::app()->clientScript->registerScript('search', "
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
-
+// $this->widget('ext.highcharts.HighmapsWidget', array(
+//     'id'=>'asd',
+//     'options' => array(
+//         'title' => array(
+//             'text' => 'Highmaps basic demo',
+//         ),
+//         'mapNavigation' => array(
+//             'enabled' => true,
+//             'buttonOptions' => array(
+//                 'verticalAlign' => 'bottom',
+//             )
+//         ),
+//         'colorAxis' => array(
+//             'min' => 0,
+//         ),
+//         'series' => array(
+//             array(
+//                 'data' => array(
+//                     array('hc-key' => 'ni', 'value' => 0),
+//                     array('hc-key' => 'hb', 'value' => 1),
+//                     array('hc-key' => 'sh', 'value' => 2),
+//                     array('hc-key' => 'be', 'value' => 3),
+//                     array('hc-key' => 'mv', 'value' => 4),
+//                     array('hc-key' => 'hh', 'value' => 5),
+//                     array('hc-key' => 'rp', 'value' => 6),
+//                     array('hc-key' => 'sl', 'value' => 7),
+//                     array('hc-key' => 'by', 'value' => 8),
+//                     array('hc-key' => 'th', 'value' => 9),
+//                     array('hc-key' => 'st', 'value' => 10),
+//                     array('hc-key' => 'sn', 'value' => 11),
+//                     array('hc-key' => 'br', 'value' => 12),
+//                     array('hc-key' => 'nw', 'value' => 13),
+//                     array('hc-key' => 'bw', 'value' => 14),
+//                     array('hc-key' => 'he', 'value' => 15),
+//                 ),
+//                 'mapData' => 'js:Highcharts.maps["custom/world"]',
+//                 'joinBy' => 'hc-key',
+//                 'name' => 'Random data',
+//                 'states' => array(
+//                     'hover' => array(
+//                         'color' => '#BADA55',
+//                     )
+//                 ),
+//                 'dataLabels' => array(
+//                     'enabled' => true,
+//                     'format' => '{point.name}',
+//                 )
+//             )
+//         )
+//     )
+// ));
+//  Yii::app()->clientScript->registerScriptFile('//code.highcharts.com/mapdata/custom/world.js');
+//  
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
+		'id' => 'hig1',
 		'options'=>array(
 			'chart' => array('type' => 'area'),
 			'title' => array('text' => ''),
@@ -219,10 +272,12 @@ Yii::app()->clientScript->registerScript('search', "
 
 <?php $this->endWidget(); ?>
 <!--### Traffic grid###-->
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'traffic-grid',
 	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
+        'fixedHeader' => true,
+        'headerOffset' => 50,
 	'type'                     => 'striped condensed',
 	'selectionChanged'         => 'js:selectionChangedTraffic',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
@@ -251,22 +306,106 @@ Yii::app()->clientScript->registerScript('search', "
         array(
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=> array_sum($totalsGrap["clics"]),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'footer'			=> array_sum($totals["clics"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=>array_sum($totalsGrap["conversions"]),
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'footer'			=>array_sum($totals["conversions"]),
         ),
+        array(
+			'name'              => 'rate',
+			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+        ),
+        array(
+			'name'              => 'revenue',
+			'value'             => '($data->countConv("' . $dateStart . '", "'.$dateEnd.'")*$data->getRateUSD("'.$dateEnd.'"))',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+        ),
+        array(
+			'name'              => 'spend',
+			'type'	=>	'raw',
+			'filter'			=> '',
+			'value'             => 'CHtml::textField("row-spend" . $row, 0, array(
+			        				"style" => "width:30px; text-align:right; font-size: 11px;", 
+			        				"onChange" => "
+			        					var revenue= $( \"#row-spend$row\" ).parent().parent().children().eq(6);
+			        					var profit= $( \"#row-spend$row\" ).parent().parent().children().eq(8);
+			        					var profit_percent= $( \"#row-spend$row\" ).parent().parent().children().eq(9);
+			        					var spend=$( \"#row-spend$row\" ).val();
+										profit.html((revenue.html()-spend).toFixed(2));
+										if(revenue.html()!=0){
+											profit_percent.html((profit.html()/revenue.html()*100).toFixed(2)+\"%\");
+										}
+			        				" 
+			        				))',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+        ),
+        array(
+			'name'              => 'profit',
+			'value'             => '0',
+			'filter'			=> '',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+        ),
+        array(
+			'name'              => 'profit_percent',
+			'value'             => '0',
+			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
+			'filter'			=> '',
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+        ),
+        array(
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 70px; text-align:right;"),
+			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'buttons'           => array(
+				'showCampaign' => array(
+					'label'   => 'Show Campaign',
+					'icon'    => 'eye-open',
+					'click' => '
+				    function() {
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+						var dateStart = $("#dateStart").val();
+						var dateEnd = $("#dateEnd").val();
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalTraffic").html(dataInicial);
+						$("#modalTraffic").modal("toggle");
+						
+						$.post("trafficCampaignAjax/"+id,{"dateStart":dateStart,"dateEnd":dateEnd})
+						 .done(function(data){
+						 	$("#modalTraffic").html(data);
+						 });
+				    }
+				    ',
+				),
+			),
+			'template' => '',
+		),
+		
 	),
 )); 
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
+
+<div class="row" id="blank-row">
+</div>

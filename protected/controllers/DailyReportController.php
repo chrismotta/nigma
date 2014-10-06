@@ -32,7 +32,7 @@ class DailyReportController extends Controller
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin', 'excelReport'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'excelReport', 'multiRate'),
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -396,7 +396,7 @@ class DailyReportController extends Controller
 		//$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campaigns = CHtml::listData(
 			Campaigns::model()->with(array('networks','opportunities.ios'))->findAll(
-				array('order'=>'ios.name', 'condition'=>'has_api = 0')
+				array('order'=>'ios.name', 'condition'=>'t.status = "Active" AND has_api = 0')
 				), 
 			'id',
 			function($camp) { return $camp->getExternalName($camp->id); }

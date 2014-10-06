@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','delete','traffic','excelReport'),
+				'actions'=>array('index','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -239,6 +239,24 @@ class CampaignsController extends Controller
 		), false, true);
 
 	}
+	public function actionTrafficCampaignAjax($id)
+	{
+		$backURL = $_SERVER['HTTP_REFERER'];
+		$model = $this->loadModel($id);
+		//$totals=$model->totalsTraffic()
+		$this->renderPartial('_formTrafficCampaignAjax',array(
+			'model'        		=> $model,
+			'dateStart' 		=> $_POST['dateStart'],
+			'dateEnd' 			=> $_POST['dateEnd'],
+			// 'categories'    => $categories,
+			// 'networks'      => $networks,
+			// 'devices'       => $devices,
+			// 'formats'       => $formats,
+			// 'campModel'     => $campModel,
+			// 'action'        => 'Update'
+		), false, true);
+
+	}
 
 	public function actionTestAjax(){
 		echo "ajax ok";
@@ -277,7 +295,18 @@ class CampaignsController extends Controller
 	public function actionDelete($id)
 	{
 		$model = $this->loadModel($id);
-		$model->status = 'Archived';
+		switch ($model->status) {
+			case 'Active':
+				$model->status = 'Archived';
+				break;
+			case 'Archived':
+				$model->status = 'Active';
+				break;
+			
+			default:
+				# code...
+				break;
+		}
 		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -297,12 +326,28 @@ class CampaignsController extends Controller
 	}
 
 	/**
-	 * Manages all models.
+	 * Manages active models.
 	 */
 	public function actionAdmin()
 	{
 		$model=new Campaigns('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
+		if(isset($_GET['Campaigns']))
+			$model->attributes=$_GET['Campaigns'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));
+	}
+	/**
+	 * Manages archived models.
+	 */
+	public function actionArchived()
+	{
+		$model=new Campaigns('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Archived';
 		if(isset($_GET['Campaigns']))
 			$model->attributes=$_GET['Campaigns'];
 
@@ -393,7 +438,19 @@ class CampaignsController extends Controller
 		));
 		
 	}
-
+	public function actionGetOpportunities($id=null)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		if($id)$opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
+		else $opps =Opportunities::model()->findAll();
+		$response='<option value="">All opportunities</option>';
+		foreach ($opps as $op) {
+			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
 	public function actionGraphic() {
 		if ( isset($_POST['c_id'])) {
 			$c_id = $_POST['c_id'];

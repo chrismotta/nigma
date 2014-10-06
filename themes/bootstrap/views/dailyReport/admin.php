@@ -256,8 +256,8 @@ $('.search-form form').submit(function(){
 	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
-        'fixedHeader' => true,
-        'headerOffset' => 50,
+	'fixedHeader'              => true,
+	'headerOffset'             => 50,
 	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
@@ -452,28 +452,40 @@ $('.search-form form').submit(function(){
 			'name'  => 'profit_percent',
 			'value' => '$data->profit_percent * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>($totals['profitperc']*100)."%",
 		),
 		array(
 			'name'  => 'click_through_rate',
 			'value' => '$data->click_through_rate * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>($totals['ctr']*100)."%",
 		),
 		array(
 			'name'  => 'conversion_rate',
 			'value' => '$data->conversion_rate * 100 . "%"',
 			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>($totals['cr']*100)."%",
 		),
 		array(
 			'name'  => 'eCPM',
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>$totals['ecpm'],
 		),
 		array(
 			'name'  => 'eCPC',
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>$totals['ecpc'],
 		),
 		array(
 			'name'  => 'eCPA',
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footer'=>$totals['ecpa'],
 		),
 		array(
 			'name'        => 'date',
@@ -543,6 +555,7 @@ $('.search-form form').submit(function(){
 				    ',
 				),
 			),
+
 			'template' => '{updateAjax} {delete} {updateCampaign}',
 		),
 	),
