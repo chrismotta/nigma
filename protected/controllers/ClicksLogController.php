@@ -247,7 +247,7 @@ class ClicksLogController extends Controller
 		
 		foreach ($clicks as $click) {
 
-			if ( $click->country != NULL && $click->city != NULL && $click->carrier != NULL && $click->os != NULL && $click->device != NULL )
+			if ( $click->country != NULL && $click->city != NULL && $click->carrier != NULL && $click->browser != NULL && $click->device_type != NULL && $click->os != NULL && $click->device != NULL )
 				continue;
 
 			$ip             = $click->ip_forwarded != NULL ? $click->ip_forwarded : $click->server_ip;
@@ -256,9 +256,17 @@ class ClicksLogController extends Controller
 			$click->city    = $ipData->cityName;
 			$click->carrier = $ipData->mobileCarrierName;
 			
-			$device        = $wurfl->getDeviceForUserAgent($click->user_agent);
-			$click->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
-			$click->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+			$device         = $wurfl->getDeviceForUserAgent($click->user_agent);
+			$click->device  = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
+			$click->os      = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+			$click->browser = $device->getVirtualCapability('advertised_browser') . " " . $device->getVirtualCapability('advertised_browser_version');
+			if ($device->getCapability('is_tablet') == 'true')
+				$click->device_type = 'Tablet';
+			else if ($device->getCapability('is_wireless_device') == 'true')
+				$click->device_type = 'Mobile';
+			else
+				$click->device_type = 'Desktop';
+
 
 			$click->save();
 		}
