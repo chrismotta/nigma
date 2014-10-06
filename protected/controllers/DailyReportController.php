@@ -32,7 +32,7 @@ class DailyReportController extends Controller
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin', 'excelReport'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'excelReport', 'multiRate'),
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
