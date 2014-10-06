@@ -393,7 +393,7 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '',
+			'template' => '{showCampaign}',
 		),
 		
 	),

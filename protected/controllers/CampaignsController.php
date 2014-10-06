@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
+				'actions'=>array('index','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -239,6 +239,22 @@ class CampaignsController extends Controller
 		), false, true);
 
 	}
+	public function actionGraphicCampaign()
+	{
+		$model = $this->loadModel($_GET['id']);
+		if(isset($_GET['dateStart']))$dateStart=$_GET['dateStart'];
+		else $dateStart=date_format('Y-m-d',strtotime('today'));
+		if(isset($_GET['dateEnd']))$dateEnd=$_GET['dateEnd'];
+		else $dateEnd=date_format('Y-m-d',strtotime('today'));
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+		$this->render('graphicCampaign',array(
+			'model'=>$model,
+			'dateStart'=>$dateStart,
+			'dateEnd'=>$dateEnd,
+		));
+	}
+
 	public function actionTrafficCampaignAjax($id)
 	{
 		$backURL = $_SERVER['HTTP_REFERER'];

@@ -1,26 +1,20 @@
 <?php
-/* @var $this CampaignsController
- * @var $model Campaigns 
- * @var $form CActiveForm 
- */
+/* @var $this CampaignsController */
+/* @var $dataProvider CActiveDataProvider */
 ?>
-
-<div class="modal-header">
-    <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Campaign Traffic</h4>
-</div>
-<div class="modal-body">
-    <div class="row">
+<div class="row">
     <div id="container-highchart" class="span12">
      <?php 
      $data=array();
+     $dateStart=date('Y-m-d', strtotime($dateStart));
+     $dateEnd=date('Y-m-d', strtotime($dateEnd));
     $criteria=new CDbCriteria;
     $criteria->select='count(*) as clics, country';
     $criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$model->id);
     $criteria->group='country';
     $clicksLogs = ClicksLog::model()->findAll($criteria);
     foreach ($clicksLogs as $log) {
-        if(strlen($log->country)==2)
+    	if(strlen($log->country)==2)
         $data[]=array('hc-key' => strtolower($log->country), 'value' => $log->clics);
     }
     $this->widget('ext.highcharts.HighmapsWidget', array(
@@ -60,10 +54,5 @@
  Yii::app()->clientScript->registerScriptFile('//code.highcharts.com/mapdata/custom/world.js');
  
  ?>
-    </div>
-</div>
-</div>
-
-<div class="modal-footer">
-    Edit campaign attributes. Fields with <span class="required">*</span> are required.
+	</div>
 </div>
