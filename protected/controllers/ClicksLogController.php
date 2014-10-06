@@ -220,6 +220,7 @@ class ClicksLogController extends Controller
 	public function actionUpdateClicksData() 
 	{
 		date_default_timezone_set('UTC');
+		set_time_limit(1000000);
 
 		$date = date('Y-m-d', strtotime('today'));
 		if (isset($_GET['date']))
