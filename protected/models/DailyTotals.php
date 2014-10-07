@@ -107,6 +107,7 @@ class DailyTotals extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
 	public function findByDate($date)
 	{
 		$criteria = new CDbCriteria;
@@ -114,6 +115,38 @@ class DailyTotals extends CActiveRecord
 		$criteria->limit = 0;
 		return DailyTotals::model()->find($criteria);
 	}
+
+	public function getTotals($dateStart=null,$dateEnd=null)
+	{
+		if(!$dateStart)	$dateStart = 'today' ;
+		if(!$dateEnd) $dateEnd   = 'today';
+		$dateStart = date('Y-m-d', strtotime($dateStart));
+		$dateEnd = date('Y-m-d', strtotime($dateEnd));
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("date>='".$dateStart."' AND date<='".$dateEnd."'");
+		$criteria->order='date ASC';
+		$totals=self::model()->findAll($criteria);
+		foreach ($totals as $total) {
+			$spends[]      =doubleval($total->spend);
+			$revenues[]    =doubleval($total->revenue);
+			$profits[]     =$total->revenue-$total->spend;
+			$impressions[] =doubleval($total->imp);
+			$conversions[] =doubleval($total->conv);
+			$clics[]       =doubleval($total->clicks);
+			$dates[]       =$total->date;
+		}
+		$result=array(
+						'spends'      => $spends, 
+						'revenues'    => $revenues, 
+						'profits'     => $profits, 
+						'impressions' => $impressions, 
+						'conversions' => $conversions, 
+						'clics'       => $clics, 
+						'dates'       => $dates);           
+		
+		return $result;
+	}
+
 	public function consolidated($dateStart=null,$dateEnd=null)
 	{
 		$totals                =array();
