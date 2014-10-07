@@ -109,24 +109,25 @@ class DailyTotals extends CActiveRecord
 	}
 	public function findByDate($date)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->order = 'date DESC';
+		$criteria            = new CDbCriteria;
+		$criteria->order     = 'date DESC';
 		$criteria->condition = 'date<=Date(:date)';
-		$criteria->limit = 0;
-		$criteria->params = array(':date' => $date);
+		$criteria->limit     = 0;
+		$criteria->params    = array(':date' => $date);
 		return DailyTotals::model()->find( $criteria );
 	}
 	public function consolidated()
 	{
-		$day=0;
-		$find_data=false;
-		$totals=array();
-		$totals['clicks']=0;
-		$totals['impressions']=0;
-		$totals['conversions']=0;
-		$totals['revenue']=0;
-		$totals['spend']=0;
-		$dateStart=null;
+		$day                   = 0;
+		$find_data             = false;
+		$totals                = array();
+		$totals['clicks']      = 0;
+		$totals['impressions'] = 0;
+		$totals['conversions'] = 0;
+		$totals['revenue']     = 0;
+		$totals['spend']       = 0;
+		$dateStart             = null;
+		
 		while (!$find_data) {
 			$day++;			
 			$dateStart=date('Y-m-d', strtotime('-'.$day.' day'));
@@ -137,30 +138,34 @@ class DailyTotals extends CActiveRecord
 			$daily=DailyReport::model()->find($criteria);
 			if($daily->conversions==null || $daily->conversions>0)$find_data=true;
 		}
+		
 		$dateRange=Utilities::dateRange($dateStart,date('Y-m-d', strtotime('yesterday')));
 		foreach ($dateRange as $date) {
-			$totals['clicks']=0;
-			$totals['impressions']=0;
-			$totals['conversions']=0;
-			$totals['revenue']=0;
-			$totals['spend']=0;
-			$criteria=new CDbCriteria;
+			$totals['clicks']      = 0;
+			$totals['impressions'] = 0;
+			$totals['conversions'] = 0;
+			$totals['revenue']     = 0;
+			$totals['spend']       = 0;
+			
+			$criteria = new CDbCriteria;
 			$criteria->addCondition("DATE(date)='".$date."'");
-			$daily=DailyReport::model()->findAll($criteria);
+			
+			$daily = DailyReport::model()->findAll($criteria);
 			foreach ($daily as $data) {				
-				$totals['clicks']+=$data->clics;
-				$totals['impressions']+=$data->imp_adv==0 ? $data->imp : $data->imp_adv;
-				$totals['conversions']+=$data->conv_adv==0 ? $data->conv_api : $data->conv_adv;
-				$totals['revenue']+=$data->getRevenueUSD();
-				$totals['spend']+=$data->getSpendUSD();
+				$totals['clicks']      +=$data->clics;
+				$totals['impressions'] +=$data->imp_adv==0 ? $data->imp : $data->imp_adv;
+				$totals['conversions'] +=$data->conv_adv==0 ? $data->conv_api : $data->conv_adv;
+				$totals['revenue']     +=$data->getRevenueUSD();
+				$totals['spend']       +=$data->getSpendUSD();
 			}
-			$dailyTotal=DailyTotals::model()->findByDate($date) ? DailyTotals::model()->findByDate($date) : new DailyTotals;
-			$dailyTotal->date=$date;
-			$dailyTotal->clicks=$totals['clicks'];
-			$dailyTotal->imp=$totals['impressions'];
-			$dailyTotal->conv=$totals['conversions'];
-			$dailyTotal->revenue=$totals['revenue'];
-			$dailyTotal->spend=$totals['spend'];
+		
+			$dailyTotal = DailyTotals::model()->findByDate($date) ? DailyTotals::model()->findByDate($date) : new DailyTotals;
+			$dailyTotal->date    = $date;
+			$dailyTotal->clicks  = $totals['clicks'];
+			$dailyTotal->imp     = $totals['impressions'];
+			$dailyTotal->conv    = $totals['conversions'];
+			$dailyTotal->revenue = $totals['revenue'];
+			$dailyTotal->spend   = $totals['spend'];
 			$dailyTotal->save();
 		}
 		
