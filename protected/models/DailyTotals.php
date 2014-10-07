@@ -135,7 +135,7 @@ class DailyTotals extends CActiveRecord
 			$criteria->select='sum(conv_adv) as conversions';
 			$criteria->addCondition("DATE(date)='".$dateStart."'");
 			$daily=DailyReport::model()->find($criteria);
-			if($daily->conversions>0)$find_data=true;
+			if($daily->conversions==null || $daily->conversions>0)$find_data=true;
 		}
 		$dateRange=Utilities::dateRange($dateStart,date('Y-m-d', strtotime('yesterday')));
 		foreach ($dateRange as $date) {
