@@ -285,11 +285,37 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    }
 				    ',
 				),
+				'duplicateAjax' => array(
+					'label' => 'Duplicate',
+					'icon'  => 'plus-sign',
+					'url'   => '"javascript:;"',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalCampaigns").html(dataInicial);
+						$("#modalCampaigns").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"duplicate/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalCampaigns").html(data);
+							}
+						)
+				    }
+				    ',
+				),
 			),
 			'deleteButtonIcon' => $delete['icon'],
 			'deleteButtonLabel' => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {redirects} {updateAjax} {delete}',
+			'template' => '{viewAjax} {duplicateAjax} {redirects} {updateAjax} {delete}',
 		),
 	),
 )); ?>
