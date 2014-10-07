@@ -216,7 +216,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
         */
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
