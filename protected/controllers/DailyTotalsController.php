@@ -34,8 +34,11 @@ class DailyTotalsController extends Controller
 	}
 	*/
 	public function actionConsolidated()
-	{
-		$model=new DailyTotals;
-		$model->consolidated();
+	{		
+		$model =new DailyTotals;
+		if(isset($_GET['startDate']) && isset($_GET['endDate']))$model->consolidated($_GET['startDate'],$_GET['endDate']);
+		else if(isset($_GET['startDate']))$model->consolidated($_GET['startDate'],null);
+		else if(isset($_GET['endDate']))$model->consolidated(null,$_GET['endDate']);
+		else $model->consolidated();
 	}
 }
