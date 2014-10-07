@@ -117,14 +117,14 @@ class DailyTotals extends CActiveRecord
 	}
 
 	public function getTotals($dateStart=null,$dateEnd=null)
-	{
-		$spends      =0;
-		$revenues    =0;
-		$profits     =0;
-		$impressions =0;
-		$conversions =0;
-		$clics       =0;
-		$dates       =0;
+	{		
+		$spends      =array();
+		$revenues    =array();
+		$profits     =array();
+		$impressions =array();
+		$conversions =array();
+		$clics       =array();
+		$dates       =array();
 		if(!$dateStart)	$dateStart = 'today' ;
 		if(!$dateEnd) $dateEnd   = 'today';
 		$dateStart = date('Y-m-d', strtotime($dateStart));
