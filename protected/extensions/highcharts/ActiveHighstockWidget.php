@@ -6,7 +6,7 @@
  * @author David Baker <github@acorncomputersolutions.com>
  * @link https://github.com/miloschuman/yii-highcharts/
  * @license http://www.opensource.org/licenses/mit-license.php MIT License
- * @version 4.0.1
+ * @version 4.0.4
  */
 
 require_once(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'HighstockWidget.php');
@@ -134,13 +134,13 @@ class ActiveHighstockWidget extends HighstockWidget
      */
     protected function processData($row, $batch)
     {
-        if (!is_array($batch['data'])) {
-            return array(floatval($row[$batch['data']]));
+        if(!is_array($batch['data'])) {
+            return array($this->processDataValue($row[$batch['data']]));
         }
 
         $items = array();
-        foreach ($batch['data'] as $item) {
-            $items[] = floatval($row[$item]);
+        foreach($batch['data'] as $item) {
+            $items[] = $this->processDataValue($row[$item]);
         }
         return $items;
     }
@@ -196,5 +196,19 @@ class ActiveHighstockWidget extends HighstockWidget
             $dates[$key] = $row[0];
         }
         array_multisort($dates, SORT_ASC, $series);
+    }
+
+    /**
+     * Highstocks won't graph a value if we have a null for it.
+     * We want to make sure we don't cast nulls to 0 using floatval,
+     * so we check here to make sure the value should be converted to
+     * a float before we do anything.
+     *
+     * @param $value
+     * @return float|null
+     */
+    protected function processDataValue($value)
+    {
+        return ($value === null) ? null : floatval($value);
     }
 }

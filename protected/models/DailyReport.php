@@ -619,7 +619,7 @@ class DailyReport extends CActiveRecord
 
 	public function getCapStatus()
 	{
-		if(strtotime($this->date) == strtotime('yesterday'))
+		if(strtotime($this->date) == strtotime('yesterday') || $this->network_name=='Adwords')
 		{
 			//$cap = Campaigns::model()->findByPk($this->campaigns_id)->cap;
 			return $this->getSpendUSD()>=$this->getCapUSD() ? TRUE : FALSE;

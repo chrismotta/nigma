@@ -309,6 +309,7 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
 			'filter'			=> '',
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'footer'			=> array_sum($totals["clics"]),
         ),
         array(
@@ -316,6 +317,7 @@ Yii::app()->clientScript->registerScript('search', "
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
 			'filter'			=> '',
 			'footer'			=>array_sum($totals["conversions"]),
         ),
@@ -393,7 +395,7 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '',
+			'template' => '{showCampaign}',
 		),
 		
 	),
