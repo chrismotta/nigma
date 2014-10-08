@@ -27,6 +27,10 @@ class IosController extends Controller
 	public function accessRules()
 	{
 		return array(
+			array('allow',
+				'actions'=>array('externalCreate'),
+				'users'=>array('*'),
+			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
@@ -205,13 +209,16 @@ class IosController extends Controller
 		$this->performAjaxValidation($ios);
 
 		if(isset($_POST['Ios'])) {
+			echo "submited";
 			$ios = new Ios;
 			$ios->attributes=$_POST['Ios'];
-			$ios->status = 'Submitted';
+			$ios->status = NULL; // FIXME completar con status correspondiente
 			if( $ios->save() )
 				$this->render('externalCreate', array(
 					'action'=> 'submit',
 				));
+			else
+				echo "error saveing" . json_encode($ios->getErrors());
 			Yii::app()->end();
 		}
 
@@ -223,7 +230,6 @@ class IosController extends Controller
 
 		$ios->status = 1;	// FIXME completar con status correspondiente
 		$ios->commercial_id = $commercial->id;
-		// $ios->entity = 'LLC';	// FIXME dejar en blanco o hardcodear?
 		$ios->advertisers_id = $advertiser->id;
 
 		$this->render('externalCreate', array(
