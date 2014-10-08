@@ -276,6 +276,20 @@ $('.search-form form').submit(function(){
 			'value'       => 'Campaigns::model()->getExternalName($data->campaigns_id)',
 			'htmlOptions' => array('style' => 'width: 120px'),
 		),
+        array(	
+			'name'        => 'comment',
+			'filter'      =>false,
+			'class'       => 'bootstrap.widgets.TbEditableColumn',
+			'htmlOptions' => array('class'=>'editableField'),
+			'editable'    => array(
+				'title'     => 'Comment',
+				'type'      => 'textarea',
+				'url'       => 'updateEditable/',
+				'display' => 'js:function(value, source){
+					$(this).html("<i class=\"icon-font\"></i>");
+				}'
+            ),
+        ),
 		array(
 			'name'   =>	'network_name',
 			'value'  =>	'$data->networks->name',
@@ -294,17 +308,16 @@ $('.search-form form').submit(function(){
         ),
         array(	
 			'name'              => 'imp_adv',
-			'type'              => 'raw',
 			'htmlOptions'       => array('style'=>'width: 50px; text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['imp_adv'],
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
 			'editable'          => array(
-				'title'     => 'Comment',
+				'title'     => 'Impressions',
 				'type'      => 'text',
 				'url'       => 'updateEditable/',
-				'name'      => 'comment',
 				'emptytext' => 'Null',
+				'inputclass'=> 'input-mini',
             ),
         ),
         array(
@@ -323,14 +336,20 @@ $('.search-form form').submit(function(){
 			'name'              => 'conv_adv',
 			'htmlOptions'       => array('style'=>'width: 85px; text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			/*'class'             => 'bootstrap.widgets.TbEditableColumn',
-            'editable' => array(
-				'title'     => 'Comment',
+			'class'             => 'bootstrap.widgets.TbEditableColumn',
+			'editable'          => array(
+				'title'     => 'Conversions',
 				'type'      => 'text',
 				'url'       => 'updateEditable/',
-				'name'      => 'comment',
 				'emptytext' => 'Null',
-            ),*/
+				'inputclass'=> 'input-mini',
+				//'apply'     => false,
+            ),
+		),
+		array(
+			'name'              => 'conv_adv',
+			'htmlOptions'       => array('style'=>'width: 85px; text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'type'        => 'raw',
 			'value'       =>	'
         			CHtml::textField("row-conv" . $row, $data->conv_adv, array(

@@ -52,6 +52,7 @@ class DailyReport extends CActiveRecord
 			array('campaigns_id, imp, clics, conv_api, spend, date', 'required'),
 			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, is_from_api', 'numerical', 'integerOnly'=>true),
 			array('spend, revenue', 'length', 'max'=>11),
+			array('comment', 'length', 'max'=>255),
 			array('date', 'date',  'format'=>'yyyy-M-d'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -102,6 +103,7 @@ class DailyReport extends CActiveRecord
 			'eCPM'               => 'eCPM',
 			'eCPC'               => 'eCPC',
 			'eCPA'               => 'eCPA',
+			'comment'            => 'Com.',
 		);
 	}
 
@@ -385,6 +387,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('spend',$this->spend,true);
 		$criteria->compare('revenue',$this->revenue);
 		$criteria->compare('is_from_api',$this->is_from_api);
+		//$criteria->compare('comment',$this->comment);
 
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));

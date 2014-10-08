@@ -175,3 +175,11 @@ fieldset hr {
 .errorCap {
 	color: red;
 }
+
+.editableField {
+	text-align: center !important;
+}
+.editableField a {
+	text-decoration: none;
+	border-bottom: none;
+}
