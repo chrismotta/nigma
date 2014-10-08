@@ -72,6 +72,7 @@ class SiteController extends Controller
 	{
 		$dataProvider=new CActiveDataProvider('Campaigns');
 		$model=new DailyReport;
+		$totals=new DailyTotals;
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
 		$startDate='-1 week';
@@ -79,7 +80,7 @@ class SiteController extends Controller
 		$this->render('index',array(
 			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions'),
 			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate'),
-			'dataHighchart'=>$model->getTotals($startDate,$endDate),
+			'dataHighchart'=>$totals->getTotals($startDate,$endDate),
 			'dataTops'=>$model->getTops($startDate,$endDate,'spend'),
 			'dataTopProfit'=>$model->getTops($startDate,$endDate,'profit'),
 		));
