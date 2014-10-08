@@ -275,8 +275,7 @@ class IosController extends Controller
 				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
 			}
 		} else {
-			// FIXME redirect to 404 not found
-			echo "ERROR, file doesn't exist";
+			throw new CHttpException(404,"The file doesn't exist.");
 		}
 		Yii::app()->end();
 	}
