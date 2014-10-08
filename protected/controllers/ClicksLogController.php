@@ -251,16 +251,16 @@ class ClicksLogController extends Controller
 
 			$countClicks++;
 			if ( 
-				$click->country         != NULL && 
-				$click->city            != NULL && 
-				$click->carrier         != NULL && 
-				$click->browser         != NULL && 
-				$click->browser_version != NULL && 
-				$click->device_type     != NULL && 
-				$click->os              != NULL && 
-				$click->os_version      != NULL && 
-				$click->device          != NULL &&
-				$click->device_model    != NULL 
+				$click->country         !== NULL && 
+				$click->city            !== NULL && 
+				$click->carrier         !== NULL && 
+				$click->browser         !== NULL && 
+				$click->browser_version !== NULL && 
+				$click->device_type     !== NULL && 
+				$click->os              !== NULL && 
+				$click->os_version      !== NULL && 
+				$click->device          !== NULL &&
+				$click->device_model    !== NULL 
 				)
 			{
 				echo $countClicks . " - " . $click->date . " - " . $click->id . "<br/>";
@@ -274,12 +274,12 @@ class ClicksLogController extends Controller
 			$click->carrier         = $ipData->mobileCarrierName;
 			
 			$device                 = $wurfl->getDeviceForUserAgent($click->user_agent);
-			$click->device          = $device->getCapability('brand_name');
-			$click->device_model    = $device->getCapability('marketing_name');
-			$click->os              = $device->getCapability('device_os');
-			$click->os_version      = $device->getCapability('device_os_version');
-			$click->browser         = $device->getVirtualCapability('advertised_browser');
-			$click->browser_version = $device->getVirtualCapability('advertised_browser_version');
+			$click->device          = isset($device->getCapability('brand_name')) ? $device->getCapability('brand_name') : "";
+			$click->device_model    = isset($device->getCapability('marketing_name')) ? $device->getCapability('marketing_name') : "";
+			$click->os              = isset($device->getCapability('device_os')) ? $device->getCapability('device_os') : "";
+			$click->os_version      = isset($device->getCapability('device_os_version')) ? $device->getCapability('device_os_version') : "";
+			$click->browser         = isset($device->getVirtualCapability('advertised_browser')) ? $device->getCapability('advertised_browser') : "";
+			$click->browser_version = isset($device->getVirtualCapability('advertised_browser_version')) ? $device->getCapability('advertised_browser_version') : "";
 			
 			if ($device->getCapability('is_tablet') == 'true')
 				$click->device_type = 'Tablet';
