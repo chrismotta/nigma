@@ -245,10 +245,8 @@ class ClicksLogController extends Controller
 		$wurfl    = WurflManager::loadWurfl();
 		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
-
-		echo "total: ".count($clicks);
-		die();
 		
+		$countClicks = 0;
 		foreach ($clicks as $click) {
 
 			if ( 
@@ -288,9 +286,12 @@ class ClicksLogController extends Controller
 			else
 				$click->device_type = 'Desktop';
 
-
 			$click->save();
+			$countClicks++;
 		}
+
+		echo "total: ".$countClicks;
+		die();
 	}
 
 	// Uncomment the following methods and override them if needed
