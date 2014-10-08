@@ -126,8 +126,6 @@ $('.search-form form').submit(function(){
 </div>
 
 <br>
-
-
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
         'type'=>'search',
@@ -267,113 +265,98 @@ $('.search-form form').submit(function(){
 	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(
-			'name'  =>	'id',
-        	'headerHtmlOptions' => array('style' => 'width: 30px'),
-        	'htmlOptions'	=> array( 'class' =>  'id'),
-        	'footer' => 'Totals:'
+			'name'              =>	'id',
+			'footer'            => 'Totals:',
 		),
 		array(
-			'name'  => 'campaign_name',
-			'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
-			'htmlOptions' => array('style' => 'width: 120px'),
+			'name'        => 'campaign_name',
+			'value'       => 'Campaigns::model()->getExternalName($data->campaigns_id)',
+			'headerHtmlOptions' => array('width' => '200'),
+			'htmlOptions' => array('style'=>'word-wrap:break-word;'),
 		),
+        array(	
+			'name'        => 'comment',
+			'filter'      =>false,
+			'class'       => 'bootstrap.widgets.TbEditableColumn',
+			'htmlOptions' => array('class'=>'editableField'),
+			'editable'    => array(
+				'title'     => 'Comment',
+				'type'      => 'textarea',
+				'url'       => 'updateEditable/',
+				'display' => 'js:function(value, source){
+					$(this).html("<i class=\"icon-font\"></i>");
+				}'
+            ),
+        ),
 		array(
-			'name'  =>	'network_name',
-			'value'	=>	'$data->networks->name',
+			'name'   =>	'network_name',
+			'value'  =>	'$data->networks->name',
 			'filter' => $networks_names,
 		),
 		array(
-			'name'  => 'rate',
-			'value' => '$data->getRateUSD() ? $data->getRateUSD() : 0',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'name'        => 'rate',
+			'value'       => '$data->getRateUSD() ? $data->getRateUSD() : 0',
+			'htmlOptions' => array('style'=>'text-align:right;'),
 		),
 		array(	
-			'name'	=>	'imp',
-			'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['imp'],
+			'name'              => 'imp',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['imp'],
         ),
         array(	
-			'name'	=>	'imp_adv',
-			'type'	=>	'raw',
-			'htmlOptions'=>array('style'=>'width: 85px'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-        	'value' =>	'
-					CHtml::textField("row-imp" . $row, $data->imp_adv, array(
-        				"style" => "width:30px; text-align:right; font-size: 11px;", 
-        				"onkeydown" => "
-							var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
-	        				r.removeClass( \"control-group success\" );
-	        				r.addClass( \"control-group error\" );
-        				" 
-        				)) . " " .
-        			CHtml::ajaxLink(
-            				"<i class=\"icon-pencil\"></i>",
-	            			Yii::app()->controller->createUrl("updateColumn"),
-	        				array(
-								"type"     => "POST",
-								"dataType" => "json",
-								"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-imp\" + $row).val()", "col" => "imp_adv" ) ,
-								"success"  => "function( data )
-									{
-										$.fn.yiiGridView.update(\"daily-report-grid\", {
-											complete: function(jqXHR, textStatus) {
-												if (textStatus == \'success\') {
-													// change css properties
-													var r = $( \"#row-imp\" + $row ).parents( \"tr\" );
-													r.removeClass( \"control-group error\" );
-													r.addClass( \"control-group success\" );
-												}
-											}
-										});
-									}",
-								),
-							array(
-								"style"               => "width: 20px",
-								"rel"                 => "tooltip",
-								"data-original-title" => "Update"
-								)
-						)
-        	',
-			'footer'=>$totals['imp_adv'],
+			'name'              => 'imp_adv',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['imp_adv'],
+			'class'             => 'bootstrap.widgets.TbEditableColumn',
+			'editable'          => array(
+				'title'     => 'Impressions',
+				'type'      => 'text',
+				'url'       => 'updateEditable/',
+				'emptytext' => 'Null',
+				'inputclass'=> 'input-mini',
+            ),
         ),
         array(
-        	'name'	=>	'clics',
-        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['clics'],
+			'name'              => 'clics',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['clics'],
         ),
         array(
-        	'name'	=>	'conv_api',
-        	'htmlOptions'=>array('style'=>'width: 50px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['conv_s2s'],
+			'name'              => 'conv_api',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['conv_s2s'],
         ),
 		array(
-			'name'        => 'conv_adv',
-			'type'        => 'raw',
-			'htmlOptions' => array('style'=>'width: 85px'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'value'       =>	'
-        			CHtml::textField("row-conv" . $row, $data->conv_adv, array(
-        				"style" => "width:30px; text-align:right; font-size: 11px;",
-        				"onkeydown" => "
-	        				var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
-	        				r.removeClass( \"control-group success\" );
-	        				r.addClass( \"control-group error\" );
-        				",
-        				"readonly" => $data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL,
-        				)) . " " .
-					
-					//
-					// Show ajax link depending if opportunity is multi rate. The validation its done using ternary if
-					//
-
-					($data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL ?
-
-					//
-					// Ternary if == true then show multi rate ajax link
-					//
+			'name'              => 'conv_adv',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'class'             => 'bootstrap.widgets.TbEditableColumn',
+			'cssClassExpression' => '$data->campaigns->opportunities->rate === NULL 
+									&& $data->campaigns->opportunities->carriers_id === NULL ?
+									"notMultiCarrier" :
+									"multiCarrier"',
+			'editable'          => array(
+				'title'     => 'Conversions',
+				'type'      => 'text',
+				'url'       => 'updateEditable/',
+				'emptytext' => 'Null',
+				'inputclass'=> 'input-mini',
+            ),
+			'footer' => $totals['conv_adv'],
+		),
+		array(
+			'name'              => 'mr',
+			'filter'			=> '',
+			'headerHtmlOptions' => array('class'=>'plusMR'),
+			'filterHtmlOptions' => array('class'=>'plusMR'),
+			'htmlOptions'       => array('class'=>'plusMR'),
+			'type'              => 'raw',
+			'value'             =>	'
+				$data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL ?
 					CHtml::link(
             				"<i class=\"icon-plus\"></i>",
 	            			"javascript:;",
@@ -392,110 +375,81 @@ $('.search-form form').submit(function(){
 								"data-original-title" => "Update"
 								)
 						) 
-					: 
-
-					//
-					// Ternary if == false then show common edit ajax link
-					//
-        			CHtml::link(
-            				"<i class=\"icon-pencil\"></i>",
-	            			"javascript:;",
-	        				array(
-	        					"onClick" => CHtml::ajax( array(
-									"url"      => "updateColumn",
-									"type"     => "POST",
-									"dataType" => "json",
-									"data"     => array( "id" => "js:$.fn.yiiGridView.getKey(\"daily-report-grid\", $row)",	 "newValue" => "js:$(\"#row-conv\" + $row).val()", "col" => "conv_adv" ) ,
-									"success"  => "function( data )
-										{
-											$.fn.yiiGridView.update(\"daily-report-grid\", {
-											complete: function(jqXHR, textStatus) {
-												if (textStatus == \'success\') {
-													// change css properties
-													var r = $( \"#row-conv\" + $row ).parents( \"tr\" );
-													r.removeClass( \"control-group error\" );
-													r.addClass( \"control-group success\" );
-												}
-											}
-										});
-										}",
-									)),
-								"style"               => "width: 20px;",
-								"rel"                 => "tooltip",
-								"data-original-title" => "Update",
-								)
-						))
-					',
-			'footer'=>$totals['conv_adv'],
+				: null
+				',
         ),
         array(
-        	'name' => 'revenue',
-        	'value' => '$data->getRevenueUSD()',
-        	'htmlOptions'=>array('style'=>'width: 70px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['revenue'],
+			'name'              => 'revenue',
+			'value'             => '$data->getRevenueUSD()',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['revenue'],
         ),
 		array(
-        	'name'	=>	'spend',
-        	'value'	=>	'$data->getSpendUSD()',
-        	'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['spend'],
+			'name'              => 'spend',
+			'value'             => '$data->getSpendUSD()',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['spend'],
         ),
 		array(
-			'name'  => 'profit',
-			'htmlOptions'=>array('style'=>'width: 60px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['profit'],
+			'name'              => 'profit',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['profit'],
 		),
 		array(
-			'name'  => 'profit_percent',
-			'value' => '$data->profit_percent * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>($totals['profitperc']*100)."%",
+			'name'              => 'profit_percent',
+			'value'             => '$data->profit_percent * 100 . "%"',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => ($totals['profitperc']*100)."%",
 		),
 		array(
-			'name'  => 'click_through_rate',
-			'value' => '$data->click_through_rate * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>($totals['ctr']*100)."%",
+			'name'              => 'click_through_rate',
+			'value'             => '$data->click_through_rate * 100 . "%"',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => ($totals['ctr']*100)."%",
 		),
 		array(
-			'name'  => 'conversion_rate',
-			'value' => '$data->conversion_rate * 100 . "%"',
-			'htmlOptions'=>array('style'=>'width: 30px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>($totals['cr']*100)."%",
+			'name'              => 'conversion_rate',
+			'value'             => '$data->conversion_rate * 100 . "%"',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => ($totals['cr']*100)."%",
 		),
 		array(
-			'name'  => 'eCPM',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['ecpm'],
+			'name'              => 'eCPM',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['ecpm'],
 		),
 		array(
-			'name'  => 'eCPC',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['ecpc'],
+			'name'              => 'eCPC',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['ecpc'],
 		),
 		array(
-			'name'  => 'eCPA',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'footer'=>$totals['ecpa'],
+			'name'              => 'eCPA',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => $totals['ecpa'],
 		),
 		array(
 			'name'        => 'date',
 			'value'       => 'date("d-m-Y", strtotime($data->date))',
-			'htmlOptions' => array('class' =>  'date', 'style'=>'width: 50px; text-align:right;'),
+			'headerHtmlOptions' => array('style' => "width: 30px"),
+			'htmlOptions' => array(
+				'class' => 'date', 
+				'style'=>'text-align:right;'
+				),
 			'filter'      => false,
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'headerHtmlOptions' => array('style' => "width: 20px"),
 			'buttons'           => array(
 				'delete' => array(
 					'visible' => '!$data->is_from_api',
@@ -556,7 +510,7 @@ $('.search-form form').submit(function(){
 				),
 			),
 
-			'template' => '{updateAjax} {delete} {updateCampaign}',
+			'template' => '{updateCampaign} {updateAjax} {delete}',
 		),
 	),
 )); ?>

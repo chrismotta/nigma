@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork', 'updateConvs2s'),
+				'actions'=>array('index','getOpportunities','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork', 'updateConvs2s', 'updateEditable'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -245,6 +245,17 @@ class DailyReportController extends Controller
 		$response = $model->getGraphicDateRangeInfo( $c_id, $net_id, $startDate->format("Y-m-d"), $endDate->format("Y-m-d") );
 		echo json_encode($response, JSON_NUMERIC_CHECK);
 		Yii::app()->end();
+	}
+
+	public function actionUpdateEditable(){
+		$req = Yii::app()->getRequest();
+
+		$model = DailyReport::model()->findByPk($req->getParam('pk'));
+		$model[$req->getParam('name')] = $req->getParam('value');
+
+		$model->save();
+		Yii::app()->end();
+
 	}
 
 	public function actionUpdateColumn() {

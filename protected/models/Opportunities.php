@@ -143,7 +143,7 @@ class Opportunities extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($accountManager=NULL, $advertiser=NULL, $country=NULL, $io=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -156,7 +156,8 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('product',$this->product,true);
 		$criteria->compare('account_manager_id',$this->account_manager_id);
 		$criteria->compare('comment',$this->comment,true);
-		$criteria->compare('country_id',$this->country_id);
+		if($country==NULL)$criteria->compare('country_id',$this->country_id);
+		else $criteria->compare('t.country_id',$country);
 		$criteria->compare('wifi',$this->wifi);
 		$criteria->compare('budget',$this->budget,true);
 		$criteria->compare('server_to_server',$this->server_to_server,true);
@@ -179,7 +180,9 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('ios.name', $this->ios_name, true);
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
 		$criteria->compare('ios.currency', $this->currency, true);
-
+		if($accountManager != NULL)$criteria->compare('accountManager.id',$accountManager);
+		if($advertiser != NULL)$criteria->compare('advertisers.id',$advertiser);
+		if($io != NULL)$criteria->compare('io.id',$io);
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination' => array(
