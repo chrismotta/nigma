@@ -32,6 +32,7 @@ class DailyReport extends CActiveRecord
 	public $conversions;
 	public $convrate;
 	public $rate;
+	public $mr;
 
 	/**
 	 * @return string the associated database table name
@@ -104,6 +105,7 @@ class DailyReport extends CActiveRecord
 			'eCPC'               => 'eCPC',
 			'eCPA'               => 'eCPA',
 			'comment'            => 'Com.',
+			'mr'				 => '',
 		);
 	}
 
