@@ -275,21 +275,19 @@ class ClicksLogController extends Controller
 			
 			$device                 = $wurfl->getDeviceForUserAgent($click->user_agent);
 
-			/*
-			$click->device          = isset($device->getCapability('brand_name')) ? $device->getCapability('brand_name') : "";
-			$click->device_model    = isset($device->getCapability('marketing_name')) ? $device->getCapability('marketing_name') : "";
-			$click->os              = isset($device->getCapability('device_os')) ? $device->getCapability('device_os') : "";
-			$click->os_version      = isset($device->getCapability('device_os_version')) ? $device->getCapability('device_os_version') : "";
-			$click->browser         = isset($device->getVirtualCapability('advertised_browser')) ? $device->getCapability('advertised_browser') : "";
-			$click->browser_version = isset($device->getVirtualCapability('advertised_browser_version')) ? $device->getCapability('advertised_browser_version') : "";
-			*/
-
 			$click->device          = $device->getCapability('brand_name');
 			$click->device_model    = $device->getCapability('marketing_name');
 			$click->os              = $device->getCapability('device_os');
 			$click->os_version      = $device->getCapability('device_os_version');
 			$click->browser         = $device->getVirtualCapability('advertised_browser');
 			$click->browser_version = $device->getVirtualCapability('advertised_browser_version');
+			
+			$click->device          === NULL ? $click->device = "" : null;
+			$click->device_model    === NULL ? $click->device_model = "" : null;
+			$click->os              === NULL ? $click->os = "" : null;
+			$click->os_version      === NULL ? $click->os_version = "" : null;
+			$click->browser         === NULL ? $click->browser = "" : null;
+			$click->browser_version === NULL ? $click->browser_version = "" : null;
 
 			if ($device->getCapability('is_tablet') == 'true')
 				$click->device_type = 'Tablet';
