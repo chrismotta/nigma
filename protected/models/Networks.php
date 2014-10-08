@@ -7,7 +7,9 @@
  * @property integer $id
  * @property string $prefix
  * @property string $name
+ * @property string $currency
  * @property string $url
+ * @property integer $has_api
  * @property string $query_string
  * @property string $token1
  * @property string $token2
@@ -37,12 +39,16 @@ class Networks extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('prefix, name, url, query_string', 'required'),
+			array('prefix, name, url', 'required'),
+			array('has_api', 'numerical', 'integerOnly'=>true),
 			array('prefix', 'length', 'max'=>45),
-			array('name, url, query_string, token1, token2, token3', 'length', 'max'=>128),
+			array('name, url', 'length', 'max'=>128),
+			array('currency', 'length', 'max'=>3),
+			array('query_string', 'length', 'max'=>255),
+			array('token1, token2, token3', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, url, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
+			array('id, prefix, name, currency, url, has_api, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -70,8 +76,9 @@ class Networks extends CActiveRecord
 			'id'           => 'ID',
 			'prefix'       => 'Prefix',
 			'name'         => 'Name',
+			'currency'     => 'Currency',
 			'url'          => 'Url',
-			'has_api'      => 'Has API',
+			'has_api'      => 'Has Api',
 			'query_string' => 'Query String',
 			'token1'       => 'Token1',
 			'token2'       => 'Token2',
@@ -100,8 +107,9 @@ class Networks extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('currency',$this->currency,true);
 		$criteria->compare('url',$this->url,true);
-		$criteria->compare('has_api',$this->has_api,true);
+		$criteria->compare('has_api',$this->has_api);
 		$criteria->compare('query_string',$this->query_string,true);
 		$criteria->compare('token1',$this->token1,true);
 		$criteria->compare('token2',$this->token2,true);
