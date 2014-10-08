@@ -246,6 +246,7 @@ class ClicksLogController extends Controller
 		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		
+		echo 'total: '.count($clicks).'<hr/>';
 		$countClicks = 0;
 		foreach ($clicks as $click) {
 
