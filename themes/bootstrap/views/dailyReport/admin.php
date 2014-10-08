@@ -126,8 +126,6 @@ $('.search-form form').submit(function(){
 </div>
 
 <br>
-
-
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
         'type'=>'search',
