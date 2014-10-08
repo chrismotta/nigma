@@ -248,8 +248,21 @@ class ClicksLogController extends Controller
 		
 		foreach ($clicks as $click) {
 
-			if ( $click->country != NULL && $click->city != NULL && $click->carrier != NULL && $click->browser != NULL && $click->device_type != NULL && $click->os != NULL && $click->device != NULL )
+			if ( 
+				$click->country         != NULL && 
+				$click->city            != NULL && 
+				$click->carrier         != NULL && 
+				$click->browser         != NULL && 
+				$click->browser_version != NULL && 
+				$click->device_type     != NULL && 
+				$click->os              != NULL && 
+				$click->os_version      != NULL && 
+				$click->device          != NULL &&
+				$click->device_model    != NULL 
+				)
+			{
 				continue;
+			}
 
 			$ip                     = $click->ip_forwarded != NULL ? $click->ip_forwarded : $click->server_ip;
 			$ipData                 = $location->lookup($ip, IP2Location::ALL);
