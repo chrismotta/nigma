@@ -245,6 +245,8 @@ class ClicksLogController extends Controller
 		$wurfl    = WurflManager::loadWurfl();
 		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
+
+		die(count($clicks));
 		
 		foreach ($clicks as $click) {
 
