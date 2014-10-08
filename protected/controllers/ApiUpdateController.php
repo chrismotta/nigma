@@ -53,6 +53,10 @@ class ApiUpdateController extends Controller
 		$this->actionAdultmoda();
 	}
 
+	public function actionBingCode(){
+		echo $_REQUEST['code'];
+	}
+
 	public function actionAdWords()
 	{
 		$adWords = new AdWords;

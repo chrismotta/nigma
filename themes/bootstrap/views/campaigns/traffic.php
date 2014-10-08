@@ -1,11 +1,11 @@
 <?php
-$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
-$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
+$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
 
-$dateStart = date('Y-m-d', strtotime($dateStart));
-$dateEnd = date('Y-m-d', strtotime($dateEnd));
+$dateStart      = date('Y-m-d', strtotime($dateStart));
+$dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
-$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 $networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 $totalsGrap=DailyTotals::model()->getTotals($dateStart,$dateEnd);
