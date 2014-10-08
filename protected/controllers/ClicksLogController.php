@@ -249,6 +249,7 @@ class ClicksLogController extends Controller
 		$countClicks = 0;
 		foreach ($clicks as $click) {
 
+			$countClicks++;
 			if ( 
 				$click->country         != NULL && 
 				$click->city            != NULL && 
@@ -287,11 +288,9 @@ class ClicksLogController extends Controller
 				$click->device_type = 'Desktop';
 
 			$click->save();
-			$countClicks++;
+			echo $countClicks . " - " . $click->date . "<br/>";
 		}
 
-		echo "total: ".$countClicks;
-		die();
 	}
 
 	// Uncomment the following methods and override them if needed
