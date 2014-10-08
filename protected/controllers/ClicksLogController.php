@@ -263,6 +263,7 @@ class ClicksLogController extends Controller
 				$click->device_model    != NULL 
 				)
 			{
+				echo $countClicks . " - " . $click->date . " - " . $click->id . "<br/>";
 				continue;
 			}
 
@@ -288,7 +289,7 @@ class ClicksLogController extends Controller
 				$click->device_type = 'Desktop';
 
 			$click->save();
-			echo $countClicks . " - " . $click->date . "<br/>";
+			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
 		}
 
 	}
