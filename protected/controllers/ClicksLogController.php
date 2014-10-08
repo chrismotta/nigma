@@ -251,16 +251,16 @@ class ClicksLogController extends Controller
 
 			$countClicks++;
 			if ( 
-				$click->country         !== NULL && 
-				$click->city            !== NULL && 
-				$click->carrier         !== NULL && 
-				$click->browser         !== NULL && 
-				$click->browser_version !== NULL && 
-				$click->device_type     !== NULL && 
-				$click->os              !== NULL && 
-				$click->os_version      !== NULL && 
-				$click->device          !== NULL &&
-				$click->device_model    !== NULL 
+				$click->country         != NULL && 
+				$click->city            != NULL && 
+				$click->carrier         != NULL && 
+				$click->browser         != NULL && 
+				$click->browser_version != NULL && 
+				$click->device_type     != NULL && 
+				$click->os              != NULL && 
+				$click->os_version      != NULL && 
+				$click->device          != NULL &&
+				$click->device_model    != NULL 
 				)
 			{
 				echo $countClicks . " - " . $click->date . " - " . $click->id . "<br/>";
