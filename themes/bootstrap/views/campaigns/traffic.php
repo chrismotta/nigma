@@ -207,7 +207,7 @@ Yii::app()->clientScript->registerScript('search', "
 	//Filtro por role
 	$filter = false;
 	foreach ($roles as $role => $value) {
-		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness') {
+		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness' or $role =='sem') {
 			$filter = true;
 			break;
 		}

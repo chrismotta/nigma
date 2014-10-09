@@ -41,6 +41,7 @@
 		'attributes'=>array(
 			'id',
 			'name',
+			'commercial_name',
 			array(
 				'label' =>$model->getAttributeLabel('country_name'),
 				'name'  =>'country.name'
