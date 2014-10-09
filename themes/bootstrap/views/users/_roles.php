@@ -41,7 +41,7 @@
             
             // Create array config for attribute property for DetailView            
             $isAssigned       = Yii::app()->authManager->checkAccess($data->name, $model->id);
-            $dataRow['value'] = CHtml::checkbox($data->name, $isAssigned, array('class'=>'span3') ) . " " . CHtml::label($data->name, $data->name, array('class'=>'label'));
+            $dataRow['value'] = CHtml::checkbox($data->name, $isAssigned, array('class'=>'span1') ) . " " . CHtml::label($data->name, $data->name, array('class'=>'label'));
             $attributesGrid[] =  $dataRow;
 
             // Create array for data property for DetailView
@@ -61,7 +61,7 @@
 
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     <div class="form-actions">
-        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit', 'htmlOptions' => array('name' => 'submit') )); ?>
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
     </div>
     </fieldset>
