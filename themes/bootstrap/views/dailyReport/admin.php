@@ -316,6 +316,11 @@ $('.search-form form').submit(function(){
 				'url'       => 'updateEditable/',
 				'emptytext' => 'Null',
 				'inputclass'=> 'input-mini',
+				'success' => 'js: function(response, newValue) {
+					  	if (!response.success) {
+							$.fn.yiiGridView.update("daily-report-grid");
+					  	}
+					}',
             ),
         ),
         array(
@@ -345,6 +350,11 @@ $('.search-form form').submit(function(){
 				'url'       => 'updateEditable/',
 				'emptytext' => 'Null',
 				'inputclass'=> 'input-mini',
+				'success' => 'js: function(response, newValue) {
+					  	if (!response.success) {
+							$.fn.yiiGridView.update("daily-report-grid");
+					  	}
+					}',
             ),
 			'footer' => $totals['conv_adv'],
 		),
