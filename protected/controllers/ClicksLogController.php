@@ -246,10 +246,27 @@ class ClicksLogController extends Controller
 		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		
+		echo 'total: '.count($clicks).'<hr/>';
+		$countClicks = 0;
 		foreach ($clicks as $click) {
 
-			if ( $click->country != NULL && $click->city != NULL && $click->carrier != NULL && $click->browser != NULL && $click->device_type != NULL && $click->os != NULL && $click->device != NULL )
+			$countClicks++;
+			if ( 
+				$click->country         !== NULL && 
+				$click->city            !== NULL && 
+				$click->carrier         !== NULL && 
+				$click->browser         !== NULL && 
+				$click->browser_version !== NULL && 
+				$click->device_type     !== NULL && 
+				$click->os              !== NULL && 
+				$click->os_version      !== NULL && 
+				$click->device          !== NULL &&
+				$click->device_model    !== NULL 
+				)
+			{
+				echo $countClicks . " - " . $click->date . " - " . $click->id . "<br/>";
 				continue;
+			}
 
 			$ip                     = $click->ip_forwarded != NULL ? $click->ip_forwarded : $click->server_ip;
 			$ipData                 = $location->lookup($ip, IP2Location::ALL);
@@ -258,6 +275,7 @@ class ClicksLogController extends Controller
 			$click->carrier         = $ipData->mobileCarrierName;
 			
 			$device                 = $wurfl->getDeviceForUserAgent($click->user_agent);
+
 			$click->device          = $device->getCapability('brand_name');
 			$click->device_model    = $device->getCapability('marketing_name');
 			$click->os              = $device->getCapability('device_os');
@@ -265,6 +283,13 @@ class ClicksLogController extends Controller
 			$click->browser         = $device->getVirtualCapability('advertised_browser');
 			$click->browser_version = $device->getVirtualCapability('advertised_browser_version');
 			
+			$click->device          === NULL ? $click->device = "" : null;
+			$click->device_model    === NULL ? $click->device_model = "" : null;
+			$click->os              === NULL ? $click->os = "" : null;
+			$click->os_version      === NULL ? $click->os_version = "" : null;
+			$click->browser         === NULL ? $click->browser = "" : null;
+			$click->browser_version === NULL ? $click->browser_version = "" : null;
+
 			if ($device->getCapability('is_tablet') == 'true')
 				$click->device_type = 'Tablet';
 			else if ($device->getCapability('is_wireless_device') == 'true')
@@ -272,9 +297,10 @@ class ClicksLogController extends Controller
 			else
 				$click->device_type = 'Desktop';
 
-
 			$click->save();
+			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
 		}
+
 	}
 
 	// Uncomment the following methods and override them if needed

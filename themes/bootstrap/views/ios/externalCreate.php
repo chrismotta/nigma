@@ -46,6 +46,7 @@ $this->menu=array();
 		<?php 
 
 			//echo $form->textFieldRow($model, 'status', array('class'=>'span3'));
+			echo $form->hiddenField($model, 'advertisers_id', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
