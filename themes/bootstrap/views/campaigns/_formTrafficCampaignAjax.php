@@ -17,10 +17,10 @@ $criteria->with=array('clicksLog');
 $criteria->addCondition('t.campaign_id='.$model->id);
 $criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($dateStart))."'");
 $criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($dateEnd))."'");
-$criteria->addCondition('t.clicks_log_id=clicksLog.id');
+//$criteria->addCondition('t.clicks_log_id=clicksLog.id');
 $modeld=new ConvLog;
 $data=new CActiveDataProvider($modeld, array(
-            'criteria' =>$criteria,         
+            'criteria' =>$criteria,      
             'pagination'=>array(
                 'pageSize'=>5,
             ),
@@ -28,7 +28,7 @@ $data=new CActiveDataProvider($modeld, array(
     );
 //country, city, carrier, browser, os, device, device_type, referer_url y app
 $this->widget('bootstrap.widgets.TbGridView', array(
-    'id'           =>'topspend-grid',
+    'id'           =>'conversions-grid',
     'type'         =>'striped condensed',
     'dataProvider' =>$data,
     'template'     =>'{items} {summary} {pager}',
