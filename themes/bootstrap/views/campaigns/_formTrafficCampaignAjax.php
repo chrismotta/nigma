@@ -16,8 +16,8 @@
 $criteria=new CDbCriteria;
 $criteria->with=array('clicksLog');
 $criteria->addCondition('t.campaign_id='.$model->id);
-// $criteria->addCondition('DATE(t.date)>='.$dateStart);
-// $criteria->addCondition('DATE(t.date)<='.$dateEnd);
+$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($dateStart))."'");
+$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($dateEnd))."'");
 $criteria->addCondition('t.clicks_log_id=clicksLog.id');
 $modeld=new ConvLog;
 $data=new CActiveDataProvider($modeld, array(

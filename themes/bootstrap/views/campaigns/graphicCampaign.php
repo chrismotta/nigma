@@ -2,44 +2,96 @@
 /* @var $this CampaignsController */
 /* @var $dataProvider CActiveDataProvider */
 $this->pageTitle=Yii::app()->name;
+$this->breadcrumbs=array(
+    'Campaigns'=>array('index'),
+    'Traffic'=>array('traffic'),
+    'View Campaign',
+);
+
+$dateStart=$_GET['dateStart'];
+$dateEnd=$_GET['dateEnd'];
 ?>
 
 
 <div class="row" id="top">
-    <div id="container-highchart" class="span12">
-        <h2>Dashboard Campaign</h2>
+    <div class="span12">
+        <h4>Campaign: <?php echo Campaigns::model()->getExternalName($_GET['id']); ?></h4>
+
+        <br>
+<?php 
+
+    $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/campaigns/graphicCampaign',
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+
+    <fieldset>
+    From: 
+    <div class="input-append">
+        <?php 
+            $this->widget('bootstrap.widgets.TbDatePicker',array(
+            'name'  => 'dateStart',
+            'value' => date('d-m-Y', strtotime($dateStart)),
+            'htmlOptions' => array(
+                'style' => 'width: 80px',
+            ),
+            'options' => array(
+                'autoclose'  => true,
+                'todayHighlight' => true,
+                'format'     => 'dd-mm-yyyy',
+                'viewformat' => 'dd-mm-yyyy',
+                'placement'  => 'right',
+            ),
+        ));
+        ?>
+        <span class="add-on"><i class="icon-calendar"></i></span>
+    </div>
+    To:
+    <div class="input-append">
+        <?php 
+            $this->widget('bootstrap.widgets.TbDatePicker',array(
+            'name'        => 'dateEnd',
+            'value'       => date('d-m-Y', strtotime($dateEnd)),
+            'htmlOptions' => array(
+                'style' => 'width: 80px',
+            ),
+            'options'     => array(
+                'autoclose'      => true,
+                'todayHighlight' => true,
+                'format'         => 'dd-mm-yyyy',
+                'viewformat'     => 'dd-mm-yyyy',
+                'placement'      => 'right',
+            ),
+        ));
+        ?>
+        <span class="add-on"><i class="icon-calendar"></i></span>
+    </div>
+    <?php echo $form->hiddenField($model, 'id', array('name'=>'id')) ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+    </fieldset>
+
+<?php $this->endWidget(); ?>
     </div>
 </div>
 <div class="row" id="top">
-    <div id="container-highchart" class="span12">
+    <div id="container-highchart" class="span9">
+
     <?php 
-    // $data=array();
-    // $dateStart=date('Y-m-d', strtotime($dateStart));
-    // $dateEnd=date('Y-m-d', strtotime($dateEnd));
-    // $criteria=new CDbCriteria;
-    // $criteria->select='count(*) as clics, country';
-    // $criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$model->id);
-    // $criteria->group='country';
-    // $clicksLogs = ClicksLog::model()->findAll($criteria);
-    // foreach ($clicksLogs as $log) {
-    // 	if(strlen($log->country)==2)
-    //     $data[]=array('hc-key' => strtolower($log->country), 'value' => $log->clics);
-    // }
-
-    // //select campaigns_id,count(*),device from clicks_log where campaigns_id=11 group by device;
-    // $criteria=new CDbCriteria;
-    // $criteria->select='count(*) as clics,device';
-    // $criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$model->id);
-
-
         $this->widget('ext.highcharts.HighmapsWidget', array(
-        'id'=>'asd',
+        'id'=>'geo-map',
         'options' => array(
             'title' => array(
-                'text' => 'GEO Traffic Clicks',
+                //'text' => 'GEO Traffic Clicks',
             ),
             'mapNavigation' => array(
-                'enabled' => true,
+                'enabled' => false,
                 'buttonOptions' => array(
                     'verticalAlign' => 'bottom',
                 )
@@ -49,7 +101,7 @@ $this->pageTitle=Yii::app()->name;
             ),
             'series' => array(
                 array(
-                    'data' => $geo,
+                    'data' => $geo['array'],
                     'mapData' => 'js:Highcharts.maps["custom/world"]',
                     'joinBy' => 'hc-key',
                     'name' => 'Random data',
@@ -59,7 +111,7 @@ $this->pageTitle=Yii::app()->name;
                         )
                     ),
                     'dataLabels' => array(
-                        'enabled' => true,
+                        'enabled' => false,
                         'format' => '{point.name}',
                     )
                 )
@@ -69,7 +121,31 @@ $this->pageTitle=Yii::app()->name;
      Yii::app()->clientScript->registerScriptFile('//code.highcharts.com/mapdata/custom/world.js');
      
      ?>
+
 	</div>
+    <div class="span3">
+        <?php
+        $this->widget('bootstrap.widgets.TbGridView', array(
+            'id'           =>'geo-grid',
+            'type'         =>'striped condensed',
+            'dataProvider' =>$geo['dataprovider'],
+            'template'     =>'{items}',
+            'columns'      =>array(
+                array(
+                    'name'        => 'Country',
+                    'value'       => 'GeoLocation::model()->getNameFromISO2($data->country)', 
+                    'htmlOptions' => array('style' => 'width: 60px'),          
+                ),
+                array(
+                    'name'        => 'Clicks',
+                    'value'       => '$data->clics', 
+                    'htmlOptions' => array('style' => 'width: 10px'),  
+                ),
+            ),
+        ));
+        ?>
+
+    </div>
 </div>
 
 <div class="row" id="top">
@@ -156,7 +232,7 @@ $this->pageTitle=Yii::app()->name;
                     'series' => array(
                         array(
                             'name'=> 'Clics',
-                            'data' => $device,
+                            'data' => $device['array'],
                             ),
                         ),
                     'legend' => array(
@@ -182,7 +258,7 @@ $this->pageTitle=Yii::app()->name;
     </div>
 </div> 
 
-<div class="row" id="top" id="top">
+<div class="row" id="top">
     <div class="span6">
         <h4>Browsers</h4>
     </div>
@@ -292,5 +368,38 @@ $this->pageTitle=Yii::app()->name;
             ?>
     </div>
 </div> 
+
+<div class="row" id="top">
+    <div class="span12">
+        <h4>Device</h4>
+    </div>
+</div>
+
+<div class="row" id="top">
+    <div class="span12">
+        <?php
+        $this->widget('bootstrap.widgets.TbGridView', array(
+            'id'           =>'geo-grid',
+            'type'         =>'striped condensed',
+            'dataProvider' =>$device['dataprovider'],
+            'template'     =>'{items}',
+            'columns'      =>array(
+                array(
+                    'name'        => 'Device',
+                    'value'       => '$data->device', 
+                    'htmlOptions' => array('style' => 'width: 60px'),          
+                ),
+                array(
+                    'name'        => 'Clicks',
+                    'value'       => '$data->clics', 
+                    'htmlOptions' => array('style' => 'width: 10px'),  
+                ),
+            ),
+        ));
+        ?>
+    </div>
+</div>
+
+<div 
 <div class="row" id="blank-row">
 </div>
