@@ -46,6 +46,7 @@
 			'ios.ret',
 			'ios.tax_id',
 			'ios.net_payment',
+			'ios.entity',
 		),
 	)); ?>
 

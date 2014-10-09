@@ -549,4 +549,99 @@ class Campaigns extends CActiveRecord
 		$currency = Currency::model()->findByDate($date);
 		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
 	}
+
+	public function getGeoClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		$data=array();
+	    $dateStart=date('Y-m-d', strtotime($dateStart));
+	    $dateEnd=date('Y-m-d', strtotime($dateEnd));
+	    $criteria=new CDbCriteria;
+	    $criteria->select='count(*) as clics, country';
+	    if($campaign!=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+	    else $criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+	    $criteria->group='country';
+	    $clicksLogs = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+	    	if(strlen($log->country)==2)
+	        $data[]=array('hc-key' => strtolower($log->country), 'value' => intval($log->clics));
+    	}
+    	return $data;
+	}
+
+	public function getDevicesClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		//select campaigns_id,count(*),device from clicks_log where campaigns_id=11 group by device;
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics,device';
+		if($campaign!=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$criteria->group                         ='device';
+		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+			$data[]=array($log->device, intval($log->clics));
+	    }
+		return $data;
+	}
+
+	public function getCarriersClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		//select campaigns_id,count(*),carrier,date from clicks_log where campaigns_id=11 group by carrier;
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics,carrier';
+		if($campaign !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$criteria->group                         ='carrier';
+		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+			$data[]=array($log->carrier, intval($log->clics));
+	    }
+		return $data;
+	}
+
+	public function getOSClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		//select campaigns_id,count(*),os,date from clicks_log where campaigns_id=11 group by os;
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics,os';
+		if($campaign !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$criteria->group                         ='os';
+		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+			$data[]=array($log->os, intval($log->clics));
+	    }
+		return $data;
+	}
+
+	public function getBrowsersClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		//select campaigns_id,count(*),browser,date from clicks_log where campaigns_id=11 group by browser;
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics,browser';
+		if($campaign !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$criteria->group                         ='browser';
+		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+			$data[]=array($log->browser, intval($log->clics));
+	    }
+		return $data;
+	}
 }

@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
+				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -239,6 +239,43 @@ class CampaignsController extends Controller
 		), false, true);
 
 	}
+
+	public function actionDuplicate($id) 
+	{
+		$old = $this->loadModel($id);
+
+		$new = clone $old;
+		unset($new->id);
+		$new->unsetAttributes(array('id'));
+		$new->isNewRecord = true;
+		
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($new);
+
+		if(isset($_POST['Campaigns']))
+		{
+			$new->attributes=$_POST['Campaigns'];
+			if($new->save())
+				$this->redirect(array('admin'));
+		} 
+		$model=$new;
+		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel     = KHtml::enumItem($model, 'model');
+		$this->renderPartial('_formAjax',array(
+			'model'         => $model,
+			//'modelOpp'    => $modelOpp,
+			//'opportunities' => $opportunities,
+			'categories'    => $categories,
+			'networks'      => $networks,
+			'devices'       => $devices,
+			'formats'       => $formats,
+			'campModel'     => $campModel,
+			'action'        => 'Update'
+		), false, true);
+	}
 	public function actionGraphicCampaign()
 	{
 		$model = $this->loadModel($_GET['id']);
@@ -249,9 +286,12 @@ class CampaignsController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 		$this->render('graphicCampaign',array(
-			'model'=>$model,
-			'dateStart'=>$dateStart,
-			'dateEnd'=>$dateEnd,
+			'model'		=>$model,
+			'geo'		=>Campaigns::model()->getGeoClicks($dateStart,$dateEnd,$model->id),
+			'carrier'	=>Campaigns::model()->getCarriersClicks($dateStart,$dateEnd,$model->id),
+			'browser'	=>Campaigns::model()->getBrowsersClicks($dateStart,$dateEnd,$model->id),
+			'os'		=>Campaigns::model()->getOSClicks($dateStart,$dateEnd,$model->id),
+			'device'	=>Campaigns::model()->getDevicesClicks($dateStart,$dateEnd,$model->id)
 		));
 	}
 
@@ -496,4 +536,5 @@ class CampaignsController extends Controller
 		echo json_encode($response, JSON_NUMERIC_CHECK);
 		Yii::app()->end();
 	}
+
 }

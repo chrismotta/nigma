@@ -7,9 +7,10 @@ $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
 $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-$totalsGrap     = Campaigns::model()->totalsTraffic($dateStart,$dateEnd);
-$totals         = Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
+$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+$totalsGrap=DailyTotals::model()->getTotals($dateStart,$dateEnd);
+if($accountManager==null && $opportunitie==null && $networks==null)$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
+else $totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
 // print_r($totals);
 // return;
 /* @var $this CampaignsController */
@@ -276,8 +277,8 @@ Yii::app()->clientScript->registerScript('search', "
 	'id'                       => 'traffic-grid',
 	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks),
 	'filter'                   => $model,
-        'fixedHeader' => true,
-        'headerOffset' => 50,
+    'fixedHeader'			   => true,
+    'headerOffset'			   => 50,
 	'type'                     => 'striped condensed',
 	'selectionChanged'         => 'js:selectionChangedTraffic',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
@@ -309,35 +310,35 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
 			'filter'			=> '',
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
+			'footerHtmlOptions'	=>array('style'=>'text-align:right;'),
 			'footer'			=> array_sum($totals["clics"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions'=>array('style'=>'text-align:right;'),
-			'filter'			=> '',
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions' =>array('style'=>'text-align:right;'),
+			'filter'            => '',
 			'footer'			=>array_sum($totals["conversions"]),
         ),
         array(
 			'name'              => 'rate',
 			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
-			'filter'			=> '',
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
+			'filter'            => '',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'revenue',
 			'value'             => '($data->countConv("' . $dateStart . '", "'.$dateEnd.'")*$data->getRateUSD("'.$dateEnd.'"))',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'filter'			=> '',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'filter'            => '',
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'spend',
-			'type'	=>	'raw',
+			'type'				=>	'raw',
 			'filter'			=> '',
 			'value'             => 'CHtml::textField("row-spend" . $row, 0, array(
 			        				"style" => "width:30px; text-align:right; font-size: 11px;", 
@@ -353,30 +354,30 @@ Yii::app()->clientScript->registerScript('search', "
 			        				" 
 			        				))',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'profit',
 			'value'             => '0',
-			'filter'			=> '',
+			'filter'            => '',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'profit_percent',
 			'value'             => '0',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'filter'			=> '',
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'filter'            => '',
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 70px; text-align:right;"),
-			'htmlOptions'=>array('style'=>'width: 45px; text-align:right;'),
+			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
 			'buttons'           => array(
 				'showCampaign' => array(
-					'label'   => 'Show Campaign',
-					'icon'    => 'eye-open',
+					'label' => 'Show Campaign',
+					'icon'  => 'eye-open',
 					'click' => '
 				    function() {
 				    	// get row id from data-row-id attribute

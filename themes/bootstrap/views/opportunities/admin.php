@@ -26,6 +26,12 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
+<?php
+	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
+	$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
+
+?>
 <div class="botonera">
 <?php
 $this->widget('bootstrap.widgets.TbButton', array(
@@ -49,10 +55,70 @@ $this->widget('bootstrap.widgets.TbButton', array(
 );
 ?>
 </div>
+<br>
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/opportunities/admin',
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
 
+	<fieldset>
+	<?php
+	$filter = FilterManager::model()->isUserTotalAccess('campaign.account');
+
+	if ( $filter ){
+		$models = Users::model()->findUsersByRole('media');
+		$list = CHtml::listData($models, 'id', 'FullName');
+		echo CHtml::dropDownList('accountManager', $accountManager, 
+            $list,
+            array('empty' => 'All account managers'));
+
+
+    }
+  //   else{
+  //  		$models = Opportunities::model()->with('ios')->findAll(
+  //  			"account_manager_id=:accountManager", 
+  //  			array(':accountManager'=>Yii::app()->user->id),
+  //  			array('order' => 'ios.name')
+  //  			);
+		// $list = CHtml::listData($models, 
+	 //                'id', 'virtualName');
+		// echo CHtml::dropDownList('opportunitie', $opportunitie, 
+	 //            $list,
+	 //            array('empty' => 'All opportunities',));
+
+  //   }
+
+    $models = Advertisers::model()->findAll( array('order' => 'name') );
+	$list = CHtml::listData($models, 
+        'id', 'name');
+	echo CHtml::dropDownList('advertiser', $advertiser, 
+        $list,
+        array('empty' => 'All advertisers',));
+	       
+	$criteria = new CDbCriteria;
+	$criteria->with = array( 'country');
+    $models = Opportunities::model()->findAll($criteria);
+	$list = CHtml::listData($models, 
+        'country.id_location', 'country.name');
+	echo CHtml::dropDownList('country', $country, 
+        $list,
+        array('empty' => 'All countrys',));
+	  
+	?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+    </fieldset>
+
+<?php $this->endWidget(); ?>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'opportunities-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($accountManager,$advertiser,$country),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
