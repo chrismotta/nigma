@@ -253,6 +253,8 @@ class DailyReportController extends Controller
 		$model = DailyReport::model()->findByPk($req->getParam('pk'));
 		$model[$req->getParam('name')] = $req->getParam('value');
 
+		$model->updateRevenue();
+		$model->setNewFields();
 		$model->save();
 		Yii::app()->end();
 
