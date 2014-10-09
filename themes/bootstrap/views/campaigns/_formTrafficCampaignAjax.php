@@ -11,7 +11,6 @@
 </div>
 <div class="modal-body">
     <div class="row">
-        <br>
     <?php
 $criteria=new CDbCriteria;
 $criteria->with=array('clicksLog');
@@ -21,13 +20,18 @@ $criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($dateEnd))."'"
 $criteria->addCondition('t.clicks_log_id=clicksLog.id');
 $modeld=new ConvLog;
 $data=new CActiveDataProvider($modeld, array(
-            'criteria' =>$criteria,));
+            'criteria' =>$criteria,         
+            'pagination'=>array(
+                'pageSize'=>5,
+            ),
+        )
+    );
 //country, city, carrier, browser, os, device, device_type, referer_url y app
 $this->widget('bootstrap.widgets.TbGridView', array(
-    'id'=>'topspend-grid',
-    'type'=>'striped condensed',
-    'dataProvider'=>$data,
-    'template'                 =>'{items}',
+    'id'           =>'topspend-grid',
+    'type'         =>'striped condensed',
+    'dataProvider' =>$data,
+    'template'     =>'{items} {summary} {pager}',
     'columns'=>array(
         array(
             'name'   => 'id',

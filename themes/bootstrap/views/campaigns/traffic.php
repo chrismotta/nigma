@@ -38,59 +38,6 @@ Yii::app()->clientScript->registerScript('search', "
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
-// $this->widget('ext.highcharts.HighmapsWidget', array(
-//     'id'=>'asd',
-//     'options' => array(
-//         'title' => array(
-//             'text' => 'Highmaps basic demo',
-//         ),
-//         'mapNavigation' => array(
-//             'enabled' => true,
-//             'buttonOptions' => array(
-//                 'verticalAlign' => 'bottom',
-//             )
-//         ),
-//         'colorAxis' => array(
-//             'min' => 0,
-//         ),
-//         'series' => array(
-//             array(
-//                 'data' => array(
-//                     array('hc-key' => 'ni', 'value' => 0),
-//                     array('hc-key' => 'hb', 'value' => 1),
-//                     array('hc-key' => 'sh', 'value' => 2),
-//                     array('hc-key' => 'be', 'value' => 3),
-//                     array('hc-key' => 'mv', 'value' => 4),
-//                     array('hc-key' => 'hh', 'value' => 5),
-//                     array('hc-key' => 'rp', 'value' => 6),
-//                     array('hc-key' => 'sl', 'value' => 7),
-//                     array('hc-key' => 'by', 'value' => 8),
-//                     array('hc-key' => 'th', 'value' => 9),
-//                     array('hc-key' => 'st', 'value' => 10),
-//                     array('hc-key' => 'sn', 'value' => 11),
-//                     array('hc-key' => 'br', 'value' => 12),
-//                     array('hc-key' => 'nw', 'value' => 13),
-//                     array('hc-key' => 'bw', 'value' => 14),
-//                     array('hc-key' => 'he', 'value' => 15),
-//                 ),
-//                 'mapData' => 'js:Highcharts.maps["custom/world"]',
-//                 'joinBy' => 'hc-key',
-//                 'name' => 'Random data',
-//                 'states' => array(
-//                     'hover' => array(
-//                         'color' => '#BADA55',
-//                     )
-//                 ),
-//                 'dataLabels' => array(
-//                     'enabled' => true,
-//                     'format' => '{point.name}',
-//                 )
-//             )
-//         )
-//     )
-// ));
-//  Yii::app()->clientScript->registerScriptFile('//code.highcharts.com/mapdata/custom/world.js');
-//  
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'id' => 'hig1',
 		'options'=>array(

@@ -153,7 +153,7 @@ $dateEnd=$_GET['dateEnd'];
         <h4>Carriers</h4>
     </div>
     <div class="span6">
-        <h4>Devices</h4>
+        <h4>Devices Type</h4>
     </div>
 </div>
 
@@ -232,7 +232,7 @@ $dateEnd=$_GET['dateEnd'];
                     'series' => array(
                         array(
                             'name'=> 'Clics',
-                            'data' => $device['array'],
+                            'data' => $device_type,
                             ),
                         ),
                     'legend' => array(
@@ -379,18 +379,29 @@ $dateEnd=$_GET['dateEnd'];
     <div class="span12">
         <?php
         $this->widget('bootstrap.widgets.TbGridView', array(
-            'id'           =>'geo-grid',
+            'id'           =>'device-grid',
             'type'         =>'striped condensed',
-            'dataProvider' =>$device['dataprovider'],
-            'template'     =>'{items}',
+            'dataProvider' =>$device,
+            'filter'       =>new ClicksLog,
+            'template'     => '{items} {summary} {pager}',
             'columns'      =>array(
                 array(
-                    'name'        => 'Device',
+                    'name'        => 'device',
                     'value'       => '$data->device', 
                     'htmlOptions' => array('style' => 'width: 60px'),          
                 ),
                 array(
-                    'name'        => 'Clicks',
+                    'name'        => 'device_model',
+                    'value'       => '$data->device_model', 
+                    'htmlOptions' => array('style' => 'width: 60px'),          
+                ),
+                array(
+                    'name'        => 'device_type',
+                    'value'       => '$data->device_type', 
+                    'htmlOptions' => array('style' => 'width: 60px'),          
+                ),
+                array(
+                    'name'        => 'clics',
                     'value'       => '$data->clics', 
                     'htmlOptions' => array('style' => 'width: 10px'),  
                 ),

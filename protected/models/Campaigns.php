@@ -582,6 +582,29 @@ class Campaigns extends CActiveRecord
     	return $data;
 	}
 
+	public function getDevicesTypeClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		//select campaigns_id,count(*),device from clicks_log where campaigns_id=11 group by device;
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics,device_type';
+		if($campaign                             !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$criteria->group                         ='device_type';
+		$criteria->order                         ='clics DESC';
+		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+			$data[]=array(
+				$log->device_type==null || $log->device_type=="" || $log->device_type=="-" || $log->device_type==" " ? "Other" : $log->device_type,
+			 	intval($log->clics)
+			 );
+	    }
+		return $data;
+	}
+
 	public function getDevicesClicks($dateStart=null,$dateEnd=null,$campaign=null)
 	{
 		//select campaigns_id,count(*),device from clicks_log where campaigns_id=11 group by device;
@@ -589,30 +612,42 @@ class Campaigns extends CActiveRecord
 		$dateStart                               =date('Y-m-d', strtotime($dateStart));
 		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
 		$criteria                                =new CDbCriteria;
-		$criteria->select                        ='count(*) as clics,device';
+		$criteria->select                        ='count(*) as clics,device,device_model,device_type';
 		if($campaign                             !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
 		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
 		$criteria->group                         ='device';
-		$criteria->order                         ='clics DESC';
+		//$criteria->order                         ='clics DESC';
 		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
-		$data['dataprovider']= new CActiveDataProvider(ClicksLog::model(), array(
+		$data= new CActiveDataProvider(ClicksLog::model(), array(
 				'criteria'   =>$criteria,
-				'pagination' =>false,
+				'pagination'=>array(
+                'pageSize'=>10,
+            ),
 				'sort'       =>array(
+					'defaultOrder' => 'clics DESC',
 					'attributes'   =>array(
+			            'clics'=>array(
+							'asc'  =>'clics',
+							'desc' =>'clics DESC',
+			            ),
+			            'device'=>array(
+							'asc'  =>'device',
+							'desc' =>'device DESC',
+			            ),
+			            'device_model'=>array(
+							'asc'  =>'device_model',
+							'desc' =>'device_model DESC',
+			            ),
+			            'device_type'=>array(
+							'asc'  =>'device_model',
+							'desc' =>'device_model DESC',
+			            ),
 			            // Adding all the other default attributes
 			            '*',
 			        ),
 			    ),
 
 			));
-	    foreach ($clicksLogs as $log) 
-	    {
-			$data['array'][]=array(
-				$log->device==null || $log->device=="" || $log->device=="-" || $log->os==" " ? "Other" : $log->device,
-			 	intval($log->clics)
-			 );
-	    }
 		return $data;
 	}
 
@@ -631,7 +666,7 @@ class Campaigns extends CActiveRecord
 	    foreach ($clicksLogs as $log) 
 	    {
 	    	$data[]=array(
-				$log->carrier==null || $log->carrier=="" || $log->carrier=="-" || $log->os==" " ? "Other" : $log->carrier,
+				$log->carrier==null || $log->carrier=="" || $log->carrier=="-" || $log->carrier==" " ? "Other" : $log->carrier,
 			 	intval($log->clics)
 			 );
 	    }
