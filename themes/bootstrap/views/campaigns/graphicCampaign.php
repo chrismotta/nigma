@@ -4,12 +4,13 @@
 $this->pageTitle=Yii::app()->name;
 ?>
 
-<div class="row">
+
+<div class="row" id="top">
     <div id="container-highchart" class="span12">
         <h2>Dashboard Campaign</h2>
     </div>
 </div>
-<div class="row">
+<div class="row" id="top">
     <div id="container-highchart" class="span12">
     <?php 
     // $data=array();
@@ -35,7 +36,7 @@ $this->pageTitle=Yii::app()->name;
         'id'=>'asd',
         'options' => array(
             'title' => array(
-                'text' => '',
+                'text' => 'GEO Traffic Clicks',
             ),
             'mapNavigation' => array(
                 'enabled' => true,
@@ -80,7 +81,7 @@ $this->pageTitle=Yii::app()->name;
     </div>
 </div>
 
-<div class="row">
+<div class="row" id="top">
     <div class="span6">
         <?php
             $this->Widget('ext.highcharts.HighchartsWidget', array(
@@ -130,9 +131,6 @@ $this->pageTitle=Yii::app()->name;
             );
             ?>
     </div>
-</div> 
-
-<div class="row">
     <div class="span6">
         <?php
             $this->Widget('ext.highcharts.HighchartsWidget', array(
@@ -184,7 +182,7 @@ $this->pageTitle=Yii::app()->name;
     </div>
 </div> 
 
-<div class="row" id="top">
+<div class="row" id="top" id="top">
     <div class="span6">
         <h4>Browsers</h4>
     </div>
@@ -193,7 +191,7 @@ $this->pageTitle=Yii::app()->name;
     </div>
 </div>
 
-<div class="row">
+<div class="row" id="top">
     <div class="span6">
         <?php
             $this->Widget('ext.highcharts.HighchartsWidget', array(
@@ -243,9 +241,7 @@ $this->pageTitle=Yii::app()->name;
             );
             ?>
     </div>
-</div> 
 
-<div class="row">
     <div class="span6">
         <?php
             $this->Widget('ext.highcharts.HighchartsWidget', array(

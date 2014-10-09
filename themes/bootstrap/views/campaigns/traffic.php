@@ -383,6 +383,19 @@ Yii::app()->clientScript->registerScript('search', "
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
 						var dateStart = $("#dateStart").val();
+						var dateEnd = $("#dateEnd").val();						
+						window.location="graphicCampaign?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+				    }
+				    ',
+				),
+				'showConversion' => array(
+					'label' => 'Show Conversions',
+					'icon'  => 'random',
+					'click' => '
+				    function() {
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+						var dateStart = $("#dateStart").val();
 						var dateEnd = $("#dateEnd").val();
 				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
 						$("#modalTraffic").html(dataInicial);
@@ -396,7 +409,7 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '{showCampaign}',
+			'template' => '{showCampaign} {showConversion}',
 		),
 		
 	),

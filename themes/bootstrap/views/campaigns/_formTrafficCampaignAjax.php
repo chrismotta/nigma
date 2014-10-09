@@ -11,56 +11,76 @@
 </div>
 <div class="modal-body">
     <div class="row">
-    <div id="container-highchart" class="span12">
-     <?php 
-     $data=array();
-    $criteria=new CDbCriteria;
-    $criteria->select='count(*) as clics, country';
-    $criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$model->id);
-    $criteria->group='country';
-    $clicksLogs = ClicksLog::model()->findAll($criteria);
-    foreach ($clicksLogs as $log) {
-        if(strlen($log->country)==2)
-        $data[]=array('hc-key' => strtolower($log->country), 'value' => $log->clics);
-    }
-    $this->widget('ext.highcharts.HighmapsWidget', array(
-    'id'=>'asd',
-    'options' => array(
-        'title' => array(
-            'text' => 'Highmaps basic demo',
+        <br>
+    <?php
+$criteria=new CDbCriteria;
+$criteria->with=array('clicksLog');
+$criteria->addCondition('t.campaign_id='.$model->id);
+// $criteria->addCondition('DATE(t.date)>='.$dateStart);
+// $criteria->addCondition('DATE(t.date)<='.$dateEnd);
+$criteria->addCondition('t.clicks_log_id=clicksLog.id');
+$modeld=new ConvLog;
+$data=new CActiveDataProvider($modeld, array(
+            'criteria' =>$criteria,));
+//country, city, carrier, browser, os, device, device_type, referer_url y app
+$this->widget('bootstrap.widgets.TbGridView', array(
+    'id'=>'topspend-grid',
+    'type'=>'striped condensed',
+    'dataProvider'=>$data,
+    'template'                 =>'{items}',
+    'columns'=>array(
+        array(
+            'name'   => 'id',
+            'value'  => '$data->id',            
         ),
-        'mapNavigation' => array(
-            'enabled' => true,
-            'buttonOptions' => array(
-                'verticalAlign' => 'bottom',
-            )
+        array(
+            'name'   => 'Campaign',
+            'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
         ),
-        'colorAxis' => array(
-            'min' => 0,
+        array(
+            'name'   => 'Country',
+            'value'  => '$data->clicksLog->country',            
         ),
-        'series' => array(
-            array(
-                'data' => $data,
-                'mapData' => 'js:Highcharts.maps["custom/world"]',
-                'joinBy' => 'hc-key',
-                'name' => 'Random data',
-                'states' => array(
-                    'hover' => array(
-                        'color' => '#BADA55',
-                    )
-                ),
-                'dataLabels' => array(
-                    'enabled' => true,
-                    'format' => '{point.name}',
-                )
-            )
-        )
-    )
+        array(
+            'name'   => 'City',
+            'value'  => '$data->clicksLog->city',            
+        ),
+        array(
+            'name'   => 'Carrier',
+            'value'  => '$data->clicksLog->carrier',            
+        ),
+        array(
+            'name'   => 'Browser',
+            'value'  => '$data->clicksLog->browser',            
+        ),
+        array(
+            'name'   => 'OS',
+            'value'  => '$data->clicksLog->os',            
+        ),
+        array(
+            'name'   => 'Device',
+            'value'  => '$data->clicksLog->device',            
+        ),
+        array(
+            'name'   => 'Device Type',
+            'value'  => '$data->clicksLog->device_type',            
+        ),
+        array(
+            'name'   => 'Referer URL',
+            'value'  => '$data->clicksLog->referer',            
+        ),
+        array(
+            'name'   => 'APP',
+            'value'  => '$data->clicksLog->app',            
+        ),
+        array(
+            'name'   => 'Date',
+            'value'  => '$data->date',            
+        ),
+    ),
 ));
- Yii::app()->clientScript->registerScriptFile('//code.highcharts.com/mapdata/custom/world.js');
- 
- ?>
-    </div>
+?>
+
 </div>
 </div>
 
