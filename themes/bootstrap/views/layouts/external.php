@@ -8,8 +8,6 @@
     <title><?php echo CHtml::encode($this->pageTitle); ?></title>
 
     <?php 
-    // yii-bootstrap
-    Yii::app()->bootstrap->register();
     //
     $baseUrl = Yii::app()->theme->baseUrl;
     $cs = Yii::app()->getClientScript();

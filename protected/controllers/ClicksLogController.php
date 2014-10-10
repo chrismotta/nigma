@@ -8,6 +8,24 @@ class ClicksLogController extends Controller
 	 * to the appropriate landing
 	 * @return [type] [description]
 	 */
+	
+	public function accessRules()
+	{
+		return array(
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('updateClicksData'),
+				'roles'=>array('admin'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('updateClicksData'),
+				'ips'=>array('54.88.85.63'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
+
 	public function actionIndex($id=null)
 	{
 			

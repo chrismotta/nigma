@@ -122,6 +122,13 @@ class GeoLocation extends CActiveRecord
 	 * @param string $className active record class name.
 	 * @return GeoLocation the static model class
 	 */
+	public function getNameFromISO2($iso)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("ISO2='".$iso."'");
+		return isset(self::model()->find($criteria)->name) ? self::model()->find($criteria)->name : "Other";
+	}
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
