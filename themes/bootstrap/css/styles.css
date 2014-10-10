@@ -197,5 +197,5 @@ fieldset hr {
 }
 
 .highcharts-container text {
-	visibility: hidden;
+	/*visibility: hidden;*/
 }
