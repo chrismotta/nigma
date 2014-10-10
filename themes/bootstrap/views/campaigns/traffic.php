@@ -52,7 +52,7 @@ Yii::app()->clientScript->registerScript('search', "
 				),
 			'series' => array(
 				array('name' => 'Clicks', 'data' => $totalsGrap['clics_redirect'],),
-				array('name' => 'Conversions', 'data' => $totalsGrap['conversions'],),
+				array('name' => 'Conversions', 'data' => $totalsGrap['conversions_s2s'],),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
@@ -241,7 +241,7 @@ Yii::app()->clientScript->registerScript('search', "
 			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
 			'footerHtmlOptions' =>array('style'=>'text-align:right;'),
 			'filter'            => '',
-			'footer'			=>array_sum($totals["conversions"]),
+			'footer'			=>array_sum($totals["conversions_s2s"]),
         ),
         array(
 			'name'              => 'rate',
