@@ -324,7 +324,6 @@ Yii::app()->clientScript->registerScript('search', "
 						
 						$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
-						 	$("#modalTraffic").css({"width":"90%","margin-left":"-45%"});
 						 	$("#modalTraffic").html(data);
 						 });
 				    }
@@ -340,12 +339,12 @@ Yii::app()->clientScript->registerScript('search', "
 						var dateStart = $("#dateStart").val();
 						var dateEnd = $("#dateEnd").val();
 				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalTraffic").html(dataInicial);
-						$("#modalTraffic").modal("toggle");
+						$("#modalExcel").html(dataInicial);
+						$("#modalExcel").modal("toggle");
 						
 						$.post("excelReport?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
-						 	$("#modalTraffic").html(data);
+						 	$("#modalExcel").html(data);
 						 });
 				    }
 				    ',
@@ -357,13 +356,22 @@ Yii::app()->clientScript->registerScript('search', "
 	),
 )); 
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic')); //,'htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%')?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); //,'htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%')?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalExcel')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>
+
 
 <div class="row" id="blank-row">
 </div>
