@@ -8,12 +8,14 @@
  * @property string $date
  * @property integer $imp
  * @property integer $clicks
+ * @property integer $clicks_redirect
  * @property integer $conv
  * @property string $spend
  * @property string $revenue
  */
 class DailyTotals extends CActiveRecord
 {
+	public $clicks_redirect;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -31,7 +33,7 @@ class DailyTotals extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('date', 'required'),
-			array('imp, clicks, conv', 'numerical', 'integerOnly'=>true),
+			array('imp, clicks, clicks_redirect, conv', 'numerical', 'integerOnly'=>true),
 			array('spend, revenue', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -56,13 +58,14 @@ class DailyTotals extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'date' => 'Date',
-			'imp' => 'Imp',
-			'clicks' => 'Clicks',
-			'conv' => 'Conv',
-			'spend' => 'Spend',
-			'revenue' => 'Revenue',
+			'id'              => 'ID',
+			'date'            => 'Date',
+			'imp'             => 'Imp',
+			'clicks'          => 'Clicks',
+			'clicks_redirect' => 'Clicks Redirect',
+			'conv'            => 'Conv',
+			'spend'           => 'Spend',
+			'revenue'         => 'Revenue',
 		);
 	}
 
@@ -88,6 +91,7 @@ class DailyTotals extends CActiveRecord
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('imp',$this->imp);
 		$criteria->compare('clicks',$this->clicks);
+		$criteria->compare('clicks_redirect',$this->clicks_redirect);
 		$criteria->compare('conv',$this->conv);
 		$criteria->compare('spend',$this->spend,true);
 		$criteria->compare('revenue',$this->revenue,true);
@@ -118,13 +122,14 @@ class DailyTotals extends CActiveRecord
 
 	public function getTotals($dateStart=null,$dateEnd=null)
 	{		
-		$spends      =array();
-		$revenues    =array();
-		$profits     =array();
-		$impressions =array();
-		$conversions =array();
-		$clics       =array();
-		$dates       =array();
+		$spends         =array();
+		$revenues       =array();
+		$profits        =array();
+		$impressions    =array();
+		$conversions    =array();
+		$clics          =array();
+		$clics_redirect =array();
+		$dates          =array();
 		if(!$dateStart)	$dateStart = 'today' ;
 		if(!$dateEnd) $dateEnd   = 'today';
 		$dateStart = date('Y-m-d', strtotime($dateStart));
@@ -134,43 +139,52 @@ class DailyTotals extends CActiveRecord
 		$criteria->order='date ASC';
 		$totals=self::model()->findAll($criteria);
 		foreach ($totals as $total) {
-			$spends[]      =doubleval($total->spend);
-			$revenues[]    =doubleval($total->revenue);
-			$profits[]     =$total->revenue-$total->spend;
-			$impressions[] =doubleval($total->imp);
-			$conversions[] =doubleval($total->conv);
-			$clics[]       =doubleval($total->clicks);
-			$dates[]       =$total->date;
+			$spends[]         =doubleval($total->spend);
+			$revenues[]       =doubleval($total->revenue);
+			$profits[]        =$total->revenue-$total->spend;
+			$impressions[]    =doubleval($total->imp);
+			$conversions[]    =doubleval($total->conv);
+			$clics[]          =doubleval($total->clicks);
+			$clics_redirect[] =doubleval($total->clicks_redirect);
+			$dates[]          =$total->date;
 		}
 		$result=array(
-						'spends'      => $spends, 
-						'revenues'    => $revenues, 
-						'profits'     => $profits, 
-						'impressions' => $impressions, 
-						'conversions' => $conversions, 
-						'clics'       => $clics, 
-						'dates'       => $dates);           
+						'spends'         => $spends, 
+						'revenues'       => $revenues, 
+						'profits'        => $profits, 
+						'impressions'    => $impressions, 
+						'conversions'    => $conversions, 
+						'clics'          => $clics, 
+						'clics_redirect' => $clics_redirect, 
+						'dates'          => $dates);           
 		
 		return $result;
 	}
 
 	public function consolidated($dateStart=null,$dateEnd=null)
 	{
-		$totals                =array();
-		$totals['clicks']      =0;
-		$totals['impressions'] =0;
-		$totals['conversions'] =0;
-		$totals['revenue']     =0;
-		$totals['spend']       =0;
+		$totals                    =array();
+		$totals['clicks']          =0;
+		$totals['clicks_redirect'] =0;
+		$totals['impressions']     =0;
+		$totals['conversions']     =0;
+		$totals['revenue']         =0;
+		$totals['spend']           =0;
 		$dateStart             =!$dateStart ? date('Y-m-d', strtotime('-4 day')) : $dateStart;
 		$dateEnd               =!$dateEnd ? date('Y-m-d', strtotime('today')) : $dateEnd;
 		$dateRange             =Utilities::dateRange($dateStart,$dateEnd);
-		foreach ($dateRange as $date) {
-			$totals['clicks']      =0;
-			$totals['impressions'] =0;
-			$totals['conversions'] =0;
-			$totals['revenue']     =0;
-			$totals['spend']       =0;
+		foreach ($dateRange as $date) {			
+			$criteria              =new CDbCriteria;
+			$criteria->select='count(*) as clics';
+			$criteria->addCondition("DATE(date)='".$date."'");
+
+			$totals['clicks']          =0;
+			$totals['impressions']     =0;
+			$totals['conversions']     =0;
+			$totals['revenue']         =0;
+			$totals['spend']           =0;
+			$totals['clicks_redirect'] =ClicksLog::model()->find($criteria)->clics;
+
 			$criteria              =new CDbCriteria;
 			$criteria->addCondition("DATE(date)='".$date."'");
 			$daily 				   =DailyReport::model()->findAll($criteria);
@@ -183,17 +197,18 @@ class DailyTotals extends CActiveRecord
 			}
 			$dailyTotal = DailyTotals::model()->findByDate($date);  
 			if(!$dailyTotal) $dailyTotal = new DailyTotals();
-			$dailyTotal->date    =$date;
-			$dailyTotal->clicks  =$totals['clicks'];
-			$dailyTotal->imp     =$totals['impressions'];
-			$dailyTotal->conv    =$totals['conversions'];
-			$dailyTotal->revenue =$totals['revenue'];
-			$dailyTotal->spend   =$totals['spend'];
-			$isNew=$dailyTotal->getIsNewRecord();
+			$dailyTotal->date            =$date;
+			$dailyTotal->clicks_redirect =$totals['clicks_redirect'];
+			$dailyTotal->clicks          =$totals['clicks'];
+			$dailyTotal->imp             =$totals['impressions'];
+			$dailyTotal->conv            =$totals['conversions'];
+			$dailyTotal->revenue         =$totals['revenue'];
+			$dailyTotal->spend           =$totals['spend'];
+			$isNew                       =$dailyTotal->getIsNewRecord();
 			if($dailyTotal->save())
 			{
-				if($isNew)echo 'Daily Total: '.$dailyTotal->date.' - Clicks:'.$dailyTotal->clicks.' save!<br>';
-				else echo 'Daily Total: '.$dailyTotal->date.' - Clicks:'.$dailyTotal->clicks.' update!<br>';
+				if($isNew)echo 'Daily Total: '.$dailyTotal->date.' - Clicks:'.$dailyTotal->clicks_redirect.' save!<br>';
+				else echo 'Daily Total: '.$dailyTotal->date.' - Clicks:'.$dailyTotal->clicks_redirect.' update!<br>';
 			}
 			else 'Daily Total: '.$dailyTotal->date.' erro!<br>';
 		}

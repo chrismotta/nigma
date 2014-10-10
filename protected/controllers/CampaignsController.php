@@ -296,15 +296,15 @@ class CampaignsController extends Controller
 		));
 	}
 
-	public function actionTrafficCampaignAjax($id)
+	public function actionTrafficCampaignAjax()
 	{
 		$backURL = $_SERVER['HTTP_REFERER'];
-		$model = $this->loadModel($id);
+		$model = $this->loadModel($_GET['id']);
 		//$totals=$model->totalsTraffic()
 		$this->renderPartial('_formTrafficCampaignAjax',array(
 			'model'        		=> $model,
-			'dateStart' 		=> $_POST['dateStart'],
-			'dateEnd' 			=> $_POST['dateEnd'],
+			'dateStart' 		=> $_GET['dateStart'],
+			'dateEnd' 			=> $_GET['dateEnd'],
 			// 'categories'    => $categories,
 			// 'networks'      => $networks,
 			// 'devices'       => $devices,
