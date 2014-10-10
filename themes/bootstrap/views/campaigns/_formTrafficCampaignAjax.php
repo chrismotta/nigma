@@ -22,7 +22,7 @@ $modeld=new ConvLog;
 $data=new CActiveDataProvider($modeld, array(
             'criteria' =>$criteria,      
             'pagination'=>array(
-                'pageSize'=>5,
+                'pageSize'=>10,
             ),
         )
     );
