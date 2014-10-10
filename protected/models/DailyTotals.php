@@ -174,13 +174,21 @@ class DailyTotals extends CActiveRecord
 		$dateEnd               =!$dateEnd ? date('Y-m-d', strtotime('today')) : $dateEnd;
 		$dateRange             =Utilities::dateRange($dateStart,$dateEnd);
 		foreach ($dateRange as $date) {			
+			if($date == date('Y-m-d', strtotime('today')))
+			{
+				$criteria              =new CDbCriteria;
+				$criteria->select='count(*) as conv';
+				$criteria->addCondition("DATE(date)='".$date."'");
+				$totals['conversions'] =ConvLog::model()->find($criteria)->conv;
+			}
+			else $totals['conversions']     =0;
+
 			$criteria              =new CDbCriteria;
 			$criteria->select='count(*) as clics';
 			$criteria->addCondition("DATE(date)='".$date."'");
-
+			
 			$totals['clicks']          =0;
 			$totals['impressions']     =0;
-			$totals['conversions']     =0;
 			$totals['revenue']         =0;
 			$totals['spend']           =0;
 			$totals['clicks_redirect'] =ClicksLog::model()->find($criteria)->clics;
@@ -188,10 +196,11 @@ class DailyTotals extends CActiveRecord
 			$criteria              =new CDbCriteria;
 			$criteria->addCondition("DATE(date)='".$date."'");
 			$daily 				   =DailyReport::model()->findAll($criteria);
-			foreach ($daily as $data) {				
+			foreach ($daily as $data) {			
+				if($date != date('Y-m-d', strtotime('today')))
+					$totals['conversions'] +=$data->conv_adv==0 ? $data->conv_api : $data->conv_adv;	
 				$totals['clicks']      +=$data->clics;
 				$totals['impressions'] +=$data->imp_adv==0 ? $data->imp : $data->imp_adv;
-				$totals['conversions'] +=$data->conv_adv==0 ? $data->conv_api : $data->conv_adv;
 				$totals['revenue']     +=$data->getRevenueUSD();
 				$totals['spend']       +=$data->getSpendUSD();
 			}
