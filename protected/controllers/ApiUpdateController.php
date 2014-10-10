@@ -23,11 +23,11 @@ class ApiUpdateController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato'),
 				'roles'=>array('admin', 'media_manager'),
 			),
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
@@ -153,5 +153,12 @@ class ApiUpdateController extends Controller
 		}
 
 		echo "Log SUCCESS <hr>";
+	}
+
+	public function actionCampaign() 
+	{
+		echo "IMPORTANT - Implemented only for Ajillion <br>";
+		$ajillion = new Ajillion;
+		$ajillion->downloadInfo();
 	}
 }

@@ -7,14 +7,27 @@ class Ajillion
 
 	public function downloadInfo()
 	{
+		if ( isset( $_GET['cid']) ) {
+			$cid = $_GET['cid'];
+			if ( !Campaigns::model()->exists( "id=:id", array(":id" => $cid)) ) {
+				Yii::log("campaign_id: $cid doesn't exists.", 'warning', 'system.model.api.ajillion');
+				return 2;
+			}
+		}
+
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
 			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
+
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( isset($cid) )
+			$alreadyExist = DailyReport::model()->exists("networks_id=:network AND campaigns_id=:campaign_id AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date, ":campaign_id" => $cid));
+		else 
+			$alreadyExist = DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date));
+		if ( $alreadyExist ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
 			return 2;
 		}
@@ -67,6 +80,14 @@ class Ajillion
 				continue;
 			}
 
+			$returnAfterSave = false;
+			if ( isset($cid) ) {
+				if ( $cid == $dailyReport->campaigns_id )
+					$returnAfterSave = true;
+				else
+					continue;
+			}
+
 			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
 			$dailyReport->networks_id = $this->network_id;
 			$dailyReport->imp = $campaign->impressions;
@@ -78,12 +99,15 @@ class Ajillion
 			$dailyReport->setNewFields();
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
-				continue;
 			}
+
+			if ( $returnAfterSave ) // return if only has to update one campaign
+				break;
 		}
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
 		return 0;
 	}
+
 
 	private function getResponse($method, $params = array() ) {
 
@@ -158,5 +182,4 @@ class Ajillion
 		curl_close($curl);
 		return $response->result;
 	}
-
 }
