@@ -363,12 +363,11 @@ class Campaigns extends CActiveRecord
 		return $query;
 	}
 	
-	public function excel($startDate=NULL, $endDate=NULL)
+	public function excel($startDate=NULL, $endDate=NULL, $id=null)
 	{
 		$criteria=new CDbCriteria;
-		$criteria=new CDbCriteria;
 		$criteria->with=array('clicksLog');
-		$criteria->addCondition('t.campaign_id='.$model->id);
+		$criteria->addCondition('t.campaign_id='.$id);
 		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
 		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");
 		//$criteria->addCondition('t.clicks_log_id=clicksLog.id');

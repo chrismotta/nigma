@@ -324,6 +324,7 @@ Yii::app()->clientScript->registerScript('search', "
 						
 						$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
+						 	$("#modalTraffic").css({"width":"90%","margin-left":"-45%"});
 						 	$("#modalTraffic").html(data);
 						 });
 				    }
@@ -342,7 +343,7 @@ Yii::app()->clientScript->registerScript('search', "
 						$("#modalTraffic").html(dataInicial);
 						$("#modalTraffic").modal("toggle");
 						
-						$.post("excelReport")
+						$.post("excelReport?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
 						 	$("#modalTraffic").html(data);
 						 });
@@ -350,13 +351,13 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '{showCampaign} {showConversion}',
+			'template' => '{showCampaign} {showConversion} {excelConversion}',
 		),
 		
 	),
 )); 
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic')); //,'htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%')?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>

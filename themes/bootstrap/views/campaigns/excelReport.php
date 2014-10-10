@@ -8,9 +8,9 @@ $dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'tod
 $dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'today';
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
-
+$id=$_POST['id'];
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel(),
+    'dataProvider' => $model->excel($dateStart,$dateEnd,$id),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
@@ -26,43 +26,43 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'   => 'IP',
-            'value'  => '$data->clicksLog->server_ip',            
+            'value'  => '!isset($data->clicksLog->server_ip) ? "-" : $data->clicksLog->server_ip',            
         ),
         array(
             'name'   => 'Country',
-            'value'  => '$data->clicksLog->country',            
+            'value'  => '!isset($data->clicksLog->country) ? "-" : $data->clicksLog->country',            
         ),
         array(
             'name'   => 'City',
-            'value'  => '$data->clicksLog->city',            
+            'value'  => '!isset($data->clicksLog->city) ? "-" : $data->clicksLog->city',            
         ),
         array(
             'name'   => 'Carrier',
-            'value'  => '$data->clicksLog->carrier',            
+            'value'  => '!isset($data->clicksLog->carrier) ? "-" : $data->clicksLog->carrier',            
         ),
         array(
             'name'   => 'Browser',
-            'value'  => '$data->clicksLog->browser',            
+            'value'  => '!isset($data->clicksLog->browser) ? "-" $data->clicksLog->browser: ',            
         ),
         array(
             'name'   => 'OS',
-            'value'  => '$data->clicksLog->os',            
+            'value'  => '!isset($data->clicksLog->os) ? "-" : $data->clicksLog->os',            
         ),
         array(
             'name'   => 'Device',
-            'value'  => '$data->clicksLog->device',            
+            'value'  => '!isset($data->clicksLog->device) ? "-" : $data->clicksLog->device',            
         ),
         array(
             'name'   => 'Device Type',
-            'value'  => '$data->clicksLog->device_type',            
+            'value'  => '!isset($data->clicksLog->device_type) ? "-" : $data->clicksLog->device_type',            
         ),
-        array(
-            'name'   => 'Referer URL',
-            'value'  => '$data->clicksLog->referer',            
-        ),
+        // array(
+        //     'name'   => 'Referer URL',
+        //     'value'  => '!isset($data->clicksLog->referer) ? "-" : htmlentities($data->clicksLog->referer)',            
+        // ),
         array(
             'name'   => 'APP',
-            'value'  => '$data->clicksLog->app',            
+            'value'  => '!isset($data->clicksLog->app) ? "-" : $data->clicksLog->app',            
         ),
         array(
             'name'   => 'Date',
