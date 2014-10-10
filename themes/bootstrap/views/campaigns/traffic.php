@@ -72,32 +72,6 @@ Yii::app()->clientScript->registerScript('search', "
 	</div>
 </div>
 <hr>
-<!--####Button excel report#####-->
-<div class="botonera">
-<?php $this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Excel Report',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
-		'ajaxOptions' => array(
-			'type'    => 'GET',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalCampaigns").html(dataInicial);
-					$("#modalCampaigns").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalCampaigns").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'excelReport'),
-		)
-	); ?>
-</div>
-<br>
 
 <!--### Date Picker ###-->
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -356,7 +330,7 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '{showCampaign} {showConversion}',
+			'template' => '{showCampaign}',
 		),
 		
 	),
