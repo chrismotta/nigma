@@ -257,16 +257,26 @@ class ClicksLogController extends Controller
 		else
 			$timestampFrom = $tmp->sub(new DateInterval('PT1H' . $timestampTo->format('i') . 'M'));
 
-		$clicks = ClicksLog::model()->findAll( 'date>=:dateFrom AND date<=:dateTo', array(':dateFrom' => $timestampFrom->format('Y-m-d H:i:s'), ':dateTo' => $timestampTo->format('Y-m-d H:i:s')) );
+		$criteria=new CDbCriteria;
+		$criteria->compare('date', '>=' . $timestampFrom->format('Y-m-d H:i:s'));
+		$criteria->compare('date', '<=' . $timestampTo->format('Y-m-d H:i:s'));
+		$dataProvider = new CActiveDataProvider("ClicksLog", array(
+			'criteria' => $criteria,
+			'pagination' => array(
+                'pageSize' => 100,
+            ),
+		));
+		$iterator = new CDataProviderIterator($dataProvider);
 
 		// initializing tools 
 		$wurfl    = WurflManager::loadWurfl();
 		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		
-		echo 'total: '.count($clicks).'<hr/>';
+		echo 'total: '.count($iterator).'<hr/>';
+		$timeBegin = time();
 		$countClicks = 0;
-		foreach ($clicks as $click) {
+		foreach ($iterator as $click) {
 
 			$countClicks++;
 			if ( 
@@ -318,6 +328,7 @@ class ClicksLogController extends Controller
 			$click->save();
 			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
 		}
+		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
 
 	}
 
