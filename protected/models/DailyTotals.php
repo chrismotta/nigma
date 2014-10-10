@@ -163,7 +163,7 @@ class DailyTotals extends CActiveRecord
 		$totals['revenue']     =0;
 		$totals['spend']       =0;
 		$dateStart             =!$dateStart ? date('Y-m-d', strtotime('-4 day')) : $dateStart;
-		$dateEnd               =!$dateEnd ? date('Y-m-d', strtotime('yesterday')) : $dateEnd;
+		$dateEnd               =!$dateEnd ? date('Y-m-d', strtotime('today')) : $dateEnd;
 		$dateRange             =Utilities::dateRange($dateStart,$dateEnd);
 		foreach ($dateRange as $date) {
 			$totals['clicks']      =0;
