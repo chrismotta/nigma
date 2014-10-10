@@ -329,6 +329,26 @@ Yii::app()->clientScript->registerScript('search', "
 				    }
 				    ',
 				),
+				'excelConversion' => array(
+					'label' => 'Download Conversions',
+					'icon'  => 'download',
+					'click' => '
+				    function() {
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+						var dateStart = $("#dateStart").val();
+						var dateEnd = $("#dateEnd").val();
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalTraffic").html(dataInicial);
+						$("#modalTraffic").modal("toggle");
+						
+						$.post("excelReport")
+						 .done(function(data){
+						 	$("#modalTraffic").html(data);
+						 });
+				    }
+				    ',
+				),
 			),
 			'template' => '{showCampaign} {showConversion}',
 		),

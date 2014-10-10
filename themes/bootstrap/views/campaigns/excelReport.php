@@ -3,7 +3,7 @@
 /* @var $model DailyReport */
 
 $path = 'uploads/';
-$name = 'KickAds-TrafficReport.xls';
+$name = 'KickAds-ConversionsReport.xls';
 $dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'today' ;
 $dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'today';
 $dateStart = date('Y-m-d', strtotime($dateStart));
@@ -17,28 +17,56 @@ $this->widget('EExcelWriter', array(
     'filePath'     => $path,
     'columns'      => array(
         array(
-            'name'  => 'account_manager',
-            'value' => '$data->opportunities->accountManager->lastname . " " . $data->opportunities->accountManager->name',
+            'name'   => 'id',
+            'value'  => '$data->id',            
         ),
         array(
-            'name'              => 'advertisers_name',
-            'value'             => '$data->opportunities->ios->advertisers->name',
+            'name'   => 'Campaign',
+            'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
         ),
         array(
-            'name'              => 'ios_name',
-            'value'             => '$data->opportunities->ios->name',
-        ),      
-        array(
-            'name'              => 'name',
-            'value'             => '$data->name',
+            'name'   => 'IP',
+            'value'  => '$data->clicksLog->server_ip',            
         ),
         array(
-            'name'              => 'clicks',
-            'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
+            'name'   => 'Country',
+            'value'  => '$data->clicksLog->country',            
         ),
         array(
-            'name'              => 'conv',
-            'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
+            'name'   => 'City',
+            'value'  => '$data->clicksLog->city',            
+        ),
+        array(
+            'name'   => 'Carrier',
+            'value'  => '$data->clicksLog->carrier',            
+        ),
+        array(
+            'name'   => 'Browser',
+            'value'  => '$data->clicksLog->browser',            
+        ),
+        array(
+            'name'   => 'OS',
+            'value'  => '$data->clicksLog->os',            
+        ),
+        array(
+            'name'   => 'Device',
+            'value'  => '$data->clicksLog->device',            
+        ),
+        array(
+            'name'   => 'Device Type',
+            'value'  => '$data->clicksLog->device_type',            
+        ),
+        array(
+            'name'   => 'Referer URL',
+            'value'  => '$data->clicksLog->referer',            
+        ),
+        array(
+            'name'   => 'APP',
+            'value'  => '$data->clicksLog->app',            
+        ),
+        array(
+            'name'   => 'Date',
+            'value'  => '$data->date',            
         ),
     ),
 ));
