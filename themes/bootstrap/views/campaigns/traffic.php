@@ -322,7 +322,7 @@ Yii::app()->clientScript->registerScript('search', "
 						$("#modalTraffic").html(dataInicial);
 						$("#modalTraffic").modal("toggle");
 						
-						$.post("trafficCampaignAjax/"+id,{"dateStart":dateStart,"dateEnd":dateEnd})
+						$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
 						 	$("#modalTraffic").html(data);
 						 });
@@ -330,7 +330,7 @@ Yii::app()->clientScript->registerScript('search', "
 				    ',
 				),
 			),
-			'template' => '{showCampaign}',
+			'template' => '{showCampaign} {showConversion}',
 		),
 		
 	),
