@@ -54,12 +54,13 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'   => 'Device Type',
-            'value'  => '!isset($data->clicksLog->device_type) ? "-" : $data->clicksLog->device_type',            
+            'value'  => '!isset($data->clicksLog->device_type) ? "-" : $data->clicksLog->device_type',   
         ),
-        // array(
-        //     'name'   => 'Referer URL',
-        //     'value'  => '!isset($data->clicksLog->referer) ? "-" : htmlentities($data->clicksLog->referer)',            
-        // ),
+        array(
+            'name'   => 'Referer URL',
+            'type'   => 'html',
+            'value'  => '!isset($data->clicksLog->referer) ? "-" : " ".htmlspecialchars($data->clicksLog->referer)',  
+        ),
         array(
             'name'   => 'APP',
             'value'  => '!isset($data->clicksLog->app) ? "-" : $data->clicksLog->app',            
