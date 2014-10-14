@@ -9,6 +9,7 @@
  * @property integer $imp
  * @property integer $clicks
  * @property integer $clicks_redirect
+ * @property integer $conv_s2s
  * @property integer $conv
  * @property string $spend
  * @property string $revenue
@@ -33,7 +34,7 @@ class DailyTotals extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('date', 'required'),
-			array('imp, clicks, clicks_redirect, conv', 'numerical', 'integerOnly'=>true),
+			array('imp, clicks, clicks_redirect, conv, conv_s2s', 'numerical', 'integerOnly'=>true),
 			array('spend, revenue', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -62,8 +63,9 @@ class DailyTotals extends CActiveRecord
 			'date'            => 'Date',
 			'imp'             => 'Imp',
 			'clicks'          => 'Clicks',
-			'clicks_redirect' => 'Clicks Redirect',
+			'clicks_redirect' => 'Clicks',
 			'conv'            => 'Conv',
+			'conv_s2s'        => 'Conv',
 			'spend'           => 'Spend',
 			'revenue'         => 'Revenue',
 		);
@@ -93,6 +95,7 @@ class DailyTotals extends CActiveRecord
 		$criteria->compare('clicks',$this->clicks);
 		$criteria->compare('clicks_redirect',$this->clicks_redirect);
 		$criteria->compare('conv',$this->conv);
+		$criteria->compare('conv_s2s',$this->conv_s2s);
 		$criteria->compare('spend',$this->spend,true);
 		$criteria->compare('revenue',$this->revenue,true);
 
@@ -127,6 +130,7 @@ class DailyTotals extends CActiveRecord
 		$profits        =array();
 		$impressions    =array();
 		$conversions    =array();
+		$conversions_s2s=array();
 		$clics          =array();
 		$clics_redirect =array();
 		$dates          =array();
@@ -144,6 +148,7 @@ class DailyTotals extends CActiveRecord
 			$profits[]        =$total->revenue-$total->spend;
 			$impressions[]    =doubleval($total->imp);
 			$conversions[]    =doubleval($total->conv);
+			$conversions_s2s[]=doubleval($total->conv_s2s);
 			$clics[]          =doubleval($total->clicks);
 			$clics_redirect[] =doubleval($total->clicks_redirect);
 			$dates[]          =$total->date;
@@ -154,6 +159,7 @@ class DailyTotals extends CActiveRecord
 						'profits'        => $profits, 
 						'impressions'    => $impressions, 
 						'conversions'    => $conversions, 
+						'conversions_s2s'=> $conversions_s2s, 
 						'clics'          => $clics, 
 						'clics_redirect' => $clics_redirect, 
 						'dates'          => $dates);           
@@ -168,37 +174,34 @@ class DailyTotals extends CActiveRecord
 		$totals['clicks_redirect'] =0;
 		$totals['impressions']     =0;
 		$totals['conversions']     =0;
+		$totals['conversions_s2s'] =0;
 		$totals['revenue']         =0;
 		$totals['spend']           =0;
 		$dateStart             =!$dateStart ? date('Y-m-d', strtotime('-4 day')) : $dateStart;
 		$dateEnd               =!$dateEnd ? date('Y-m-d', strtotime('today')) : $dateEnd;
 		$dateRange             =Utilities::dateRange($dateStart,$dateEnd);
-		foreach ($dateRange as $date) {			
-			if($date == date('Y-m-d', strtotime('today')))
-			{
-				$criteria              =new CDbCriteria;
-				$criteria->select='count(*) as conv';
-				$criteria->addCondition("DATE(date)='".$date."'");
-				$totals['conversions'] =ConvLog::model()->find($criteria)->conv;
-			}
-			else $totals['conversions']     =0;
-
-			$criteria              =new CDbCriteria;
-			$criteria->select='count(*) as clics';
-			$criteria->addCondition("DATE(date)='".$date."'");
+		foreach ($dateRange as $date) {		
+			$criteriaConv         =new CDbCriteria;
+			$criteriaConv->select ='count(*) as conv';
+			$criteriaConv->addCondition("DATE(date)='".$date."'");
 			
+			$criteriaClicks         =new CDbCriteria;
+			$criteriaClicks->select ='count(*) as clics';
+			$criteriaClicks->addCondition("DATE(date)='".$date."'");
+
+			$totals['conversions']     =0;
 			$totals['clicks']          =0;
 			$totals['impressions']     =0;
 			$totals['revenue']         =0;
 			$totals['spend']           =0;
-			$totals['clicks_redirect'] =ClicksLog::model()->find($criteria)->clics;
+			$totals['clicks_redirect'] =ClicksLog::model()->find($criteriaClicks)->clics;
+			$totals['conversions_s2s'] =ConvLog::model()->find($criteriaConv)->conv;
 
 			$criteria              =new CDbCriteria;
 			$criteria->addCondition("DATE(date)='".$date."'");
 			$daily 				   =DailyReport::model()->findAll($criteria);
 			foreach ($daily as $data) {			
-				if($date != date('Y-m-d', strtotime('today')))
-					$totals['conversions'] +=$data->conv_adv==0 ? $data->conv_api : $data->conv_adv;	
+				$totals['conversions'] +=$data->conv_adv==0 ? $data->conv_api : $data->conv_adv;	
 				$totals['clicks']      +=$data->clics;
 				$totals['impressions'] +=$data->imp_adv==0 ? $data->imp : $data->imp_adv;
 				$totals['revenue']     +=$data->getRevenueUSD();
@@ -208,6 +211,7 @@ class DailyTotals extends CActiveRecord
 			if(!$dailyTotal) $dailyTotal = new DailyTotals();
 			$dailyTotal->date            =$date;
 			$dailyTotal->clicks_redirect =$totals['clicks_redirect'];
+			$dailyTotal->conv_s2s        =$totals['conversions_s2s'];
 			$dailyTotal->clicks          =$totals['clicks'];
 			$dailyTotal->imp             =$totals['impressions'];
 			$dailyTotal->conv            =$totals['conversions'];

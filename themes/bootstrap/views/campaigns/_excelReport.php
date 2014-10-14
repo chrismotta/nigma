@@ -23,11 +23,11 @@
 
         <div class="control-group">
             <?php echo CHtml::label("From:", 'excel-dateStart', array('class'=>'control-label')); ?>
-
+            
             <div class="controls">
                 <?php $this->widget('ext.rezvan.RDatePicker',array(
                     'name'  => 'excel-dateStart',
-                    'value' => date('d-m-Y', strtotime('today')),
+                    'value' => date('d-m-Y', strtotime($_GET['dateStart'])),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
                     ),
@@ -42,12 +42,13 @@
         </div>
             
         <div class="control-group">
+            <input type="hidden" value="<?php echo $_GET['id'] ?>" id="id" name="id">
             <?php echo CHtml::label("To:", 'excel-endDate', array('class'=>'control-label')); ?>
             
             <div class="controls">
                 <?php $this->widget('ext.rezvan.RDatePicker',array(
                     'name'  => 'excel-endDate',
-                    'value' => date('d-m-Y', strtotime('today')),
+                    'value' => date('d-m-Y', strtotime($_GET['dateEnd'])),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
                     ),

@@ -38,22 +38,25 @@ $('.search-form form').submit(function(){
 
 	<fieldset>
 	Date: 
-	<?php 
-	    $this->widget('bootstrap.widgets.TbDatePicker',array(
-		'name'  => 'date',
-		'value' => date('d-m-Y', strtotime($date)),
-		'htmlOptions' => array(
-			'style' => 'width: 80px',
-		),
-	    'options' => array(
-			'autoclose'      => true,
-			'todayHighlight' => true,
-			'format'         => 'dd-mm-yyyy',
-			'viewformat'     => 'dd-mm-yyyy',
-			'placement'      => 'right',
-	    ),
-	));
-	?>
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'  => 'date',
+			'value' => date('d-m-Y', strtotime($date)),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+		    'options' => array(
+				'autoclose'      => true,
+				'todayHighlight' => true,
+				'format'         => 'dd-mm-yyyy',
+				'viewformat'     => 'dd-mm-yyyy',
+				'placement'      => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
 	Network: 
 	<?php echo CHtml::dropDownList('network', $currentNetwork, $networks, array('empty' => 'Select Network')); ?>
 
@@ -65,11 +68,13 @@ $('.search-form form').submit(function(){
 
 <hr>
 
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'massivecreate-grid',
 	'dataProvider'             => $campaign->searchByNetworkAndDate($currentNetwork, $date),
 	// 'filter'                   => $campaign,
 	'type'                     => 'striped condensed',
+	'fixedHeader'              => true,
+	'headerOffset'             => 50,
 	'selectableRows'           => 0,
 	'rowHtmlOptionsExpression' => 'array("id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',

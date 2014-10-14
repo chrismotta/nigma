@@ -42,6 +42,10 @@ $this->widget('bootstrap.widgets.TbGridView', array(
             'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
         ),
         array(
+            'name'   => 'IP',
+            'value'  => '$data->clicksLog->server_ip',            
+        ),
+        array(
             'name'   => 'Country',
             'value'  => '$data->clicksLog->country',            
         ),
