@@ -51,6 +51,8 @@ class Campaigns extends CActiveRecord
 	public $profit;
 	public $spend;
 	public $profit_percent;
+	public $format;
+	public $clics_redirect;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -135,6 +137,8 @@ class Campaigns extends CActiveRecord
 			'profit'				 => 'Profit',
 			'spend'					 => 'Spend',
 			'profit_percent'		 => 'Profit %',
+			'format'				 => 'Format',
+			'clics_redirect'		 => 'Clics Redirect',
 		);
 	}
 
@@ -726,5 +730,18 @@ class Campaigns extends CActiveRecord
 			 );
 	    }
 		return $data;
+	}
+
+	public function getClicksRedirect($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics';
+		if($campaign !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
+		return $clicksLogs;
 	}
 }
