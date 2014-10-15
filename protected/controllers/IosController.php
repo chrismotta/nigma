@@ -32,7 +32,7 @@ class IosController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf', 'archived'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -115,12 +115,28 @@ class IosController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if ( Opportunities::model()->count("ios_id=:ios_id", array(":ios_id" => $id)) > 0 ) {
-			echo "To remove this item must delete the opportunities associated with it.";
-			Yii::app()->end();
-		} else {
-			$this->loadModel($id)->delete();
+		$model = $this->loadModel($id);
+		switch ($model->status) {
+			case 'Active':
+				if ( Opportunities::model()->count("ios_id=:ios_id AND status='Active'", array(":ios_id" => $id)) > 0 ) {
+					echo "To remove this item must delete the opportunities associated with it.";
+					Yii::app()->end();
+				} else {
+					$model->status = 'Archived';
+				}
+				break;
+				
+			case 'Archived':
+				if ($model->advertisers->status == 'Active') {
+					$model->status = 'Active';
+				} else {
+					echo "To restore this item must restore the advertiser associated with it.";
+					Yii::app()->end();
+				}
+				break;
 		}
+
+		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -145,12 +161,30 @@ class IosController extends Controller
 	{
 		$model=new Ios('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
 		if(isset($_GET['Ios']))
 			$model->attributes=$_GET['Ios'];
 
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+
+	/**
+	 * Manages archived models.
+	 */
+	public function actionArchived()
+	{
+		$model=new Ios('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Archived';
+		if(isset($_GET['Ios']))
+			$model->attributes=$_GET['Ios'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+			'isArchived' => true,
+		));		
 	}
 
 	public function actionDuplicate($id) 

@@ -262,14 +262,4 @@ class Opportunities extends CActiveRecord
 		
 		return $adv . $country . $carrier . '-' . $this->rate . $product;
 	}
-
-	public function archivedCampaigns()
-	{
-		$campaigns = Campaigns::model()->findAll('opportunities_id=:id' , array(':id' => $this->id));	
-		foreach ($campaigns as $campaign) {
-			$campaign->status = 'Archived';
-			$campaign->save();
-		}
-	}
-
 }

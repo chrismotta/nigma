@@ -114,17 +114,25 @@ class OpportunitiesController extends Controller
 	public function actionDelete($id)
 	{
 		$model = $this->loadModel($id);
-
 		switch ($model->status) {
 			case 'Active':
-				$model->archivedCampaigns();
-				$model->status = 'Archived';
+				if ( Campaigns::model()->count("opportunities_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
+					echo "To remove this item must delete the campaigns associated with it.";
+					Yii::app()->end();
+				} else {
+					$model->status = 'Archived';
+				}
 				break;
 			case 'Archived':
-				$model->status = 'Active';
+				if ($model->ios->status == 'Active') {
+					$model->status = 'Active';
+				} else {
+					echo "To restore this item must restore the IO associated with it.";
+					Yii::app()->end();
+				}
 				break;
 		}
-		
+
 		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -167,6 +175,7 @@ class OpportunitiesController extends Controller
 	{
 		$model=new Opportunities('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
 		if(isset($_GET['Opportunities']))
 			$model->attributes=$_GET['Opportunities'];
 
