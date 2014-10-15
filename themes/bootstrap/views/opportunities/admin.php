@@ -2,9 +2,22 @@
 /* @var $this OpportunitiesController */
 /* @var $model Opportunities */
 
+// Config parameters depending if have to show Archived or Admin view
+if( isset($isArchived) ) {
+	$delete['icon']       = 'refresh';
+	$delete['label']      = 'Restore';
+	$delete['confirm']    = 'Are you shure to want to restore this opportunities?';
+	$breadcrumbs['title'] = 'Archived Opportunities';
+} else {
+	$delete['icon']       = 'trash';
+	$delete['label']      = 'Delete';
+	$delete['confirm']    = 'Are you sure you want to delete this opportunity and all associated campaigns?';
+	$breadcrumbs['title'] = 'Manage Opportunities';
+}
+
 $this->breadcrumbs=array(
 	'Opportunities'=>array('index'),
-	'Manage Opportunities',
+	$breadcrumbs['title'],
 );
 
 $this->menu=array(
@@ -238,6 +251,9 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    ',
 				),
 			),
+			'deleteButtonIcon'   => $delete['icon'],
+			'deleteButtonLabel'  => $delete['label'],
+			'deleteConfirmation' => $delete['confirm'],
 			'template' => '{viewAjax} {updateAjax} {delete}',
 		),
 	),
