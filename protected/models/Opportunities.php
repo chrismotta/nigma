@@ -174,7 +174,7 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('sizes',$this->sizes,true);
 		$criteria->compare('channel',$this->channel,true);
 		$criteria->compare('channel_description',$this->channel_description,true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('t.status',$this->status,true);
 
 		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
 		$criteria->compare('country.ISO2', $this->country_name, true);

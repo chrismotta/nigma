@@ -163,8 +163,8 @@ class Ios extends CActiveRecord
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('advertisers_id',$this->advertisers_id);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
-		$criteria->compare('status',$this->status,true);
-		$criteria->compare('description',$this->description,true);
+		$criteria->compare('t.status',$this->status,true);
+		$criteria->compare('t.description',$this->description,true);
 
 		$criteria->with = array( 'advertisers', 'commercial', 'country');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);

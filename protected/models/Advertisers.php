@@ -111,7 +111,7 @@ class Advertisers extends CActiveRecord
 		$criteria->with = array('commercial');
 		$criteria->compare('commercial.name', $this->commercial_name, true);
 		$criteria->compare('commercial.lastname', $this->commercial_lastname, true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('t.status',$this->status,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
