@@ -212,7 +212,7 @@ class IosController extends Controller
 			echo "submited";
 			$ios = new Ios;
 			$ios->attributes=$_POST['Ios'];
-			$ios->status = NULL; // FIXME completar con status correspondiente
+			$ios->prospect = NULL; // FIXME completar con prospect correspondiente
 			if( $ios->save() )
 				$this->render('externalCreate', array(
 					'action'=> 'submit',
@@ -228,7 +228,7 @@ class IosController extends Controller
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$commercial = Users::model()->findByPk($external->commercial_id);;
 
-		$ios->status = 1;	// FIXME completar con status correspondiente
+		$ios->prospect = 1;	// FIXME completar con prospect correspondiente
 		$ios->commercial_id = $commercial->id;
 		$ios->advertisers_id = $advertiser->id;
 
@@ -296,8 +296,8 @@ class IosController extends Controller
 					Yii::app()->end();
 				}
 
-				// Update status to complete
-				$model->status = 10;
+				// Update prospect to complete
+				$model->prospect = 10;
 				$model->pdf_name = $newName;
 				$model->save();
 			}

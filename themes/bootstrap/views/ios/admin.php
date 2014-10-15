@@ -210,7 +210,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->status == 10 ? true : false',
+					'visible' => '$data->prospect == 10 ? true : false',
 				)
 			),
 			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
