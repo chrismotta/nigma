@@ -361,11 +361,4 @@ class IosController extends Controller
 		), false, true);
 	}
 
-	public function actionClients()
-	{
-		$model=new Ios;
-		$this->render('clients',array(
-			'model'=>$model,
-		));
-	}
 }
