@@ -32,7 +32,7 @@ class IosController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','clients', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
+				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf', 'archived', 'clients'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -115,12 +115,28 @@ class IosController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if ( Opportunities::model()->count("ios_id=:ios_id", array(":ios_id" => $id)) > 0 ) {
-			echo "To remove this item must delete the opportunities associated with it.";
-			Yii::app()->end();
-		} else {
-			$this->loadModel($id)->delete();
+		$model = $this->loadModel($id);
+		switch ($model->status) {
+			case 'Active':
+				if ( Opportunities::model()->count("ios_id=:ios_id AND status='Active'", array(":ios_id" => $id)) > 0 ) {
+					echo "To remove this item must delete the opportunities associated with it.";
+					Yii::app()->end();
+				} else {
+					$model->status = 'Archived';
+				}
+				break;
+				
+			case 'Archived':
+				if ($model->advertisers->status == 'Active') {
+					$model->status = 'Active';
+				} else {
+					echo "To restore this item must restore the advertiser associated with it.";
+					Yii::app()->end();
+				}
+				break;
 		}
+
+		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -145,12 +161,30 @@ class IosController extends Controller
 	{
 		$model=new Ios('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
 		if(isset($_GET['Ios']))
 			$model->attributes=$_GET['Ios'];
 
 		$this->render('admin',array(
 			'model'=>$model,
 		));
+	}
+
+	/**
+	 * Manages archived models.
+	 */
+	public function actionArchived()
+	{
+		$model=new Ios('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Archived';
+		if(isset($_GET['Ios']))
+			$model->attributes=$_GET['Ios'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+			'isArchived' => true,
+		));		
 	}
 
 	public function actionDuplicate($id) 
@@ -212,7 +246,7 @@ class IosController extends Controller
 			echo "submited";
 			$ios = new Ios;
 			$ios->attributes=$_POST['Ios'];
-			$ios->status = NULL; // FIXME completar con status correspondiente
+			$ios->prospect = NULL; // FIXME completar con prospect correspondiente
 			if( $ios->save() )
 				$this->render('externalCreate', array(
 					'action'=> 'submit',
@@ -228,7 +262,7 @@ class IosController extends Controller
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$commercial = Users::model()->findByPk($external->commercial_id);;
 
-		$ios->status = 1;	// FIXME completar con status correspondiente
+		$ios->prospect = 1;	// FIXME completar con prospect correspondiente
 		$ios->commercial_id = $commercial->id;
 		$ios->advertisers_id = $advertiser->id;
 
@@ -296,8 +330,8 @@ class IosController extends Controller
 					Yii::app()->end();
 				}
 
-				// Update status to complete
-				$model->status = 10;
+				// Update prospect to complete
+				$model->prospect = 10;
 				$model->pdf_name = $newName;
 				$model->save();
 			}

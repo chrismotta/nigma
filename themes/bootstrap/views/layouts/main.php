@@ -33,11 +33,10 @@
                     array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByNetwork')),
                     array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
-                    array('label'=>'Archived', 'url'=>array('/campaigns/archived')),
                     array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
-				array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
                     array('label'=>'IOs', 'url'=>array('/ios/admin')),
@@ -52,6 +51,14 @@
                     //array('label'=>'Cierre Mes', 'url'=>'#'),
                     //array('label'=>'Invoices', 'url'=>'#'),
                     array('label'=>'Currency', 'url'=>'/currency/admin'),
+                ), 'visible'=>!Yii::app()->user->isGuest),
+
+                array('label'=>'Archive', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Advertisers', 'url'=>array('/advertisers/archived')),
+                    array('label'=>'IOs', 'url'=>array('/ios/archived')),
+                    array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
+                    array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 /*
                 array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
