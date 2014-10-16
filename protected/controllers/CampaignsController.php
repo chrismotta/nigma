@@ -357,15 +357,13 @@ class CampaignsController extends Controller
 				$model->status = 'Archived';
 				break;
 			case 'Archived':
-				if ($model->opportunities->status == 'Active') {
-					$model->status = 'Active';
-				} else {
-					echo "To restore this item must restore the opportunity associated with it.";
-					Yii::app()->end();
-				}
+				$model->status = 'Active';
+				break;
+			
+			default:
+				# code...
 				break;
 		}
-
 		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser

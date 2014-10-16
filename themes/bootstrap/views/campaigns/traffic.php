@@ -226,7 +226,6 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
-        	'header'            => 'Clicks',
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
@@ -236,7 +235,6 @@ Yii::app()->clientScript->registerScript('search', "
 			'footer'			=> array_sum($totals["clics_redirect"]),
         ),
         array(
-        	'header'            => 'Conv.',
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),

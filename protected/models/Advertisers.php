@@ -9,7 +9,6 @@
  * @property string $name
  * @property string $cat
  * @property integer $commercial_id
- * @property string $status
  *
  * The followings are the available model relations:
  * @property Users $commercial
@@ -39,16 +38,15 @@ class Advertisers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('prefix, name, cat, status', 'required'),
+			array('prefix, name, cat', 'required'),
 			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			array('prefix', 'length', 'max'=>6),
-			array('status', 'length', 'max'=>8),
 			array('cat', 'length', 'max'=>16),
 			array('name, prefix', 'unique'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id, status', 'safe', 'on'=>'search'),
+			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,7 +78,6 @@ class Advertisers extends CActiveRecord
 			'commercial_id' => 'Commercial',
 			'commercial_name'	=>	'Commercial',
 			'commercial_lastname' => 'Commercial',
-			'status' => 'Status',
 		);
 	}
 
@@ -111,7 +108,6 @@ class Advertisers extends CActiveRecord
 		$criteria->with = array('commercial');
 		$criteria->compare('commercial.name', $this->commercial_name, true);
 		$criteria->compare('commercial.lastname', $this->commercial_lastname, true);
-		$criteria->compare('t.status',$this->status,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,

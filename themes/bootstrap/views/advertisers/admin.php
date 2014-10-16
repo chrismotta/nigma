@@ -2,23 +2,9 @@
 /* @var $this AdvertisersController */
 /* @var $model Advertisers */
 
-// Config parameters depending if have to show Archived or Admin view
-if( isset($isArchived) ) {
-	$delete['icon']       = 'refresh';
-	$delete['label']      = 'Restore';
-	$delete['confirm']    = 'Are you sure you want to restore this advertiser?';
-	$breadcrumbs['title'] = 'Archived Advertisers';
-} else {
-	$delete['icon']       = 'trash';
-	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this advertiser?';
-	$breadcrumbs['title'] = 'Manage Advertisers';
-}
-
-
 $this->breadcrumbs=array(
 	'Advertisers'=>array('index'),
-	$breadcrumbs['title'],
+	'Manage Advertisers',
 );
 
 $this->menu=array(
@@ -40,31 +26,29 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<?php if( !isset($isArchived) )  : ?>
-	<div class="botonera">
-	<?php
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Create Advertiser',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'success' => 'function(data)
-				{
-	                    // console.log(this.url);
-		                //alert("create");
-						$("#modalAdvertiser").html(data);
-						$("#modalAdvertiser").modal("toggle");
-				}',
-			),
-		'htmlOptions' => array('id' => 'create'),
-		)
-	);
-	?>
-	</div>
-<?php endif; ?>
+<div class="botonera">
+<?php
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Create Advertiser',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => 'create',
+	'ajaxOptions' => array(
+		'type'    => 'POST',
+		'success' => 'function(data)
+			{
+                    // console.log(this.url);
+	                //alert("create");
+					$("#modalAdvertiser").html(data);
+					$("#modalAdvertiser").modal("toggle");
+			}',
+		),
+	'htmlOptions' => array('id' => 'create'),
+	)
+);
+?>
+</div>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'advertisers-grid',
@@ -152,9 +136,6 @@ $('.search-form form').submit(function(){
 				    ',
 				)
 			),
-			'deleteButtonIcon'   => $delete['icon'],
-			'deleteButtonLabel'  => $delete['label'],
-			'deleteConfirmation' => $delete['confirm'],
 			'template' => '{viewAjax} {externalForm} {updateAjax} {delete}',
 		),
 	),

@@ -2,22 +2,9 @@
 /* @var $this IosController */
 /* @var $model Ios */
 
-// Config parameters depending if have to show Archived or Admin view
-if( isset($isArchived) ) {
-	$delete['icon']       = 'refresh';
-	$delete['label']      = 'Restore';
-	$delete['confirm']    = 'Are you sure you want to restore this IO?';
-	$breadcrumbs['title'] = 'Archived Insertion Orders';
-} else {
-	$delete['icon']       = 'trash';
-	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this IO?';
-	$breadcrumbs['title'] = 'Manage Insertion Orders';
-}
-
 $this->breadcrumbs=array(
 	'Ios'=>array('index'),
-	$breadcrumbs['title']
+	'Manage Insertion Order',
 );
 
 $this->menu=array(
@@ -39,34 +26,32 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<?php if( !isset($isArchived) )  : ?>
-	<div class="botonera">
-	<?php
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Create IO',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalIos").html(dataInicial);
-					$("#modalIos").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalIos").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'create'),
-		)
-	);
-	?>
-	</div>
-<?php endif; ?>
+<div class="botonera">
+<?php
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Create IO',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => 'create',
+	'ajaxOptions' => array(
+		'type'    => 'POST',
+		'beforeSend' => 'function(data)
+			{
+		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				$("#modalIos").html(dataInicial);
+				$("#modalIos").modal("toggle");
+			}',
+		'success' => 'function(data)
+			{
+				$("#modalIos").html(data);
+			}',
+		),
+	'htmlOptions' => array('id' => 'create'),
+	)
+);
+?>
+</div>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       =>'ios-grid',
@@ -117,7 +102,7 @@ $('.search-form form').submit(function(){
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),
-			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
+			'afterDelete' => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -225,12 +210,9 @@ $('.search-form form').submit(function(){
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->prospect == 10 ? true : false',
+					'visible' => '$data->status == 10 ? true : false',
 				)
 			),
-			'deleteButtonIcon'   => $delete['icon'],
-			'deleteButtonLabel'  => $delete['label'],
-			'deleteConfirmation' => $delete['confirm'],
 			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
 		),
 	),

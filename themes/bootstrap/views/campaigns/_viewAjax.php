@@ -18,7 +18,6 @@
 		'opportunities.ios.advertisers.id',
 		'opportunities.ios.advertisers.name',
 		'opportunities.ios.advertisers.cat',
-		'opportunities.ios.advertisers.status',
 	),
 )); ?>
 
@@ -31,7 +30,6 @@
 		'opportunities.ios.name',
 		'opportunities.ios.commercial_name',
 		'opportunities.ios.status',
-		'opportunities.ios.prospect',
 		// 'opportunities.ios.address',
 		array(
 			'label' => 'Country',
@@ -85,7 +83,6 @@
 		'opportunities.server_to_server',
 		'opportunities.startDate',
 		'opportunities.endDate',
-		'opportunities.status',
 	),
 )); ?>
 

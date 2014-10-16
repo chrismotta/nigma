@@ -18,7 +18,6 @@
 			'ios.advertisers.id',
 			'ios.advertisers.name',
 			'ios.advertisers.cat',
-			'ios.advertisers.status',
 		),
 	)); ?>
 
@@ -32,7 +31,6 @@
 			'ios.name',
 			'ios.commercial_name',
 			'ios.status',
-			'ios.prospect',
 			// 'opportunities.ios.address',
 			array(
 				'label' => 'Country',
@@ -97,7 +95,6 @@
 			'sizes',
 			'channel',
 			'channel_description',
-			'status',
 		),
 	)); ?>
 

@@ -29,7 +29,7 @@ class AdvertisersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'externalForm', 'archived'),
+				'actions'=>array('index','view','create','update','admin','delete', 'externalForm'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -111,23 +111,12 @@ class AdvertisersController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		$model = $this->loadModel($id);		
-		switch ($model->status) {
-			case 'Active':
-				if ( Ios::model()->count("advertisers_id=:adv_id AND status='Active'", array(":adv_id" => $id)) > 0 ) {
-					echo "To remove this item must delete the ios associated with it.";
-					Yii::app()->end();
-				} else {
-					$model->status = 'Archived';
-				}
-				break;
-				
-			case 'Archived':
-				$model->status = 'Active';
-				break;
+		if ( Ios::model()->count("advertisers_id=:adv_id", array(":adv_id" => $id)) > 0 ) {
+			echo "To remove this item must delete the ios associated with it.";
+			Yii::app()->end();
+		} else {
+			$this->loadModel($id)->delete();
 		}
-
-		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -190,29 +179,11 @@ class AdvertisersController extends Controller
 	{
 		$model=new Advertisers('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->status = 'Active';
 		if(isset($_GET['Advertisers']))
 			$model->attributes=$_GET['Advertisers'];
 
 		$this->render('admin',array(
 			'model'=>$model,
-		));
-	}
-
-	/**
-	 * Manages archived models.
-	 */
-	public function actionArchived()
-	{
-		$model=new Advertisers('search');
-		$model->unsetAttributes();  // clear any default values
-		$model->status = 'Archived';
-		if(isset($_GET['Advertisers']))
-			$model->attributes=$_GET['Advertisers'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-			'isArchived' => true,
 		));
 	}
 
