@@ -71,8 +71,31 @@ Yii::app()->clientScript->registerScript('search', "
 			
 	</div>
 </div>
-<hr>
-
+<div class="botonera">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Excel Conversions Report',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalExcel").html(dataInicial);
+					$("#modalExcel").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalExcel").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'excelReport'),
+		)
+	); ?>
+</div>
+<br>
 <!--### Date Picker ###-->
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',

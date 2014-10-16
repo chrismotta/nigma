@@ -8,7 +8,7 @@ $dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'tod
 $dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'today';
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
-$id=$_POST['id'];
+$id= isset($_POST['id']) ? $_POST['id'] : null;
 $this->widget('EExcelWriter', array(
     'dataProvider' => $model->excel($dateStart,$dateEnd,$id),
     'title'        => 'EExcelWriter',
