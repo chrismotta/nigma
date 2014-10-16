@@ -32,7 +32,7 @@ class IosController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
+				'actions'=>array('index','clients', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -359,5 +359,13 @@ class IosController extends Controller
 			'advertiser' =>$advertiser,
 			'country'    =>$country,
 		), false, true);
+	}
+
+	public function actionClients()
+	{
+		$model=new Ios;
+		$this->render('clients',array(
+			'model'=>$model,
+		));
 	}
 }
