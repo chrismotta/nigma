@@ -146,8 +146,7 @@ class UsersController extends Controller
 		$roles = Yii::app()->authManager->getAuthItems(2); // Get only "roles"
 
 		// Validate if the callback is from form's submit
-		// FIXME: El submit envia este parametro="yt0", se puede validar de otra forma?
-		if ( isset($_POST['yt0']) ) {
+		if ( isset($_POST['submit']) ) {
 			foreach ($roles as $role) {
 				$isAssigned = Yii::app()->authManager->checkAccess($role->name, $id);
 

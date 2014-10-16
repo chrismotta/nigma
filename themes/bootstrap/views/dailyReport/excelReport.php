@@ -29,6 +29,10 @@ $this->widget('EExcelWriter', array(
             'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
         ),
         array(
+            'name'  => 'format',
+            'value' => '$data->campaigns->formats->name',
+        ),
+        array(
             'name'  => 'opportunitie_name',
             'value' => '$data->campaigns->opportunities->getVirtualName()',
         ),        
@@ -55,7 +59,11 @@ $this->widget('EExcelWriter', array(
         ),
         'imp',
         'imp_adv',
-        'clics',
+        'clics',        
+        array(
+            'name'  => 'clics_redirect',
+            'value' => 'Campaigns::model()->getClicksRedirect($data->date, $data->date, $data->campaigns_id)',
+        ),
         'conv_api',
         'conv_adv',
         array(

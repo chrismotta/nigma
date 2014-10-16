@@ -19,22 +19,22 @@ class ApiUpdateController extends Controller
 	//  * This method is used by the 'accessControl' filter.
 	//  * @return array access control rules
 	//  */
-	// public function accessRules()
-	// {
-	// 	return array(
-	// 		array('allow',
-	// 			'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds'),
-	// 			'roles'=>array('admin', 'media_manager'),
-	// 		),
-	// 		array('deny',  // deny all users
-	// 			'users'=>array('*'),
-	// 		),
-	// 		array('allow',
-	// 			'actions'=>array('index', 'log'),
-	// 			'roles'=>array('*'),
-	// 		),
-	// 	);
-	// }
+	public function accessRules()
+	{
+		return array(
+			array('allow',
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign'),
+				'roles'=>array('admin', 'media_manager'),
+			),
+			array('allow',
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign'),
+				'ips'=>array('54.88.85.63'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
 
 	public function actionIndex()
 	{
@@ -153,5 +153,12 @@ class ApiUpdateController extends Controller
 		}
 
 		echo "Log SUCCESS <hr>";
+	}
+
+	public function actionCampaign() 
+	{
+		echo "IMPORTANT - Implemented only for Ajillion <br>";
+		$ajillion = new Ajillion;
+		$ajillion->downloadInfo();
 	}
 }

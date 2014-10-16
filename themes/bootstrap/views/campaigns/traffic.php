@@ -38,59 +38,6 @@ Yii::app()->clientScript->registerScript('search', "
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
-// $this->widget('ext.highcharts.HighmapsWidget', array(
-//     'id'=>'asd',
-//     'options' => array(
-//         'title' => array(
-//             'text' => 'Highmaps basic demo',
-//         ),
-//         'mapNavigation' => array(
-//             'enabled' => true,
-//             'buttonOptions' => array(
-//                 'verticalAlign' => 'bottom',
-//             )
-//         ),
-//         'colorAxis' => array(
-//             'min' => 0,
-//         ),
-//         'series' => array(
-//             array(
-//                 'data' => array(
-//                     array('hc-key' => 'ni', 'value' => 0),
-//                     array('hc-key' => 'hb', 'value' => 1),
-//                     array('hc-key' => 'sh', 'value' => 2),
-//                     array('hc-key' => 'be', 'value' => 3),
-//                     array('hc-key' => 'mv', 'value' => 4),
-//                     array('hc-key' => 'hh', 'value' => 5),
-//                     array('hc-key' => 'rp', 'value' => 6),
-//                     array('hc-key' => 'sl', 'value' => 7),
-//                     array('hc-key' => 'by', 'value' => 8),
-//                     array('hc-key' => 'th', 'value' => 9),
-//                     array('hc-key' => 'st', 'value' => 10),
-//                     array('hc-key' => 'sn', 'value' => 11),
-//                     array('hc-key' => 'br', 'value' => 12),
-//                     array('hc-key' => 'nw', 'value' => 13),
-//                     array('hc-key' => 'bw', 'value' => 14),
-//                     array('hc-key' => 'he', 'value' => 15),
-//                 ),
-//                 'mapData' => 'js:Highcharts.maps["custom/world"]',
-//                 'joinBy' => 'hc-key',
-//                 'name' => 'Random data',
-//                 'states' => array(
-//                     'hover' => array(
-//                         'color' => '#BADA55',
-//                     )
-//                 ),
-//                 'dataLabels' => array(
-//                     'enabled' => true,
-//                     'format' => '{point.name}',
-//                 )
-//             )
-//         )
-//     )
-// ));
-//  Yii::app()->clientScript->registerScriptFile('//code.highcharts.com/mapdata/custom/world.js');
-//  
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
 		'id' => 'hig1',
 		'options'=>array(
@@ -104,8 +51,8 @@ Yii::app()->clientScript->registerScript('search', "
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
-				array('name' => 'Conversions', 'data' => $totalsGrap['conversions'],),
+				array('name' => 'Clicks', 'data' => $totalsGrap['clics_redirect'],),
+				array('name' => 'Conversions', 'data' => $totalsGrap['conversions_s2s'],),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
@@ -125,32 +72,6 @@ Yii::app()->clientScript->registerScript('search', "
 	</div>
 </div>
 <hr>
-<!--####Button excel report#####-->
-<div class="botonera">
-<?php $this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Excel Report',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
-		'ajaxOptions' => array(
-			'type'    => 'GET',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalCampaigns").html(dataInicial);
-					$("#modalCampaigns").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalCampaigns").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'excelReport'),
-		)
-	); ?>
-</div>
-<br>
 
 <!--### Date Picker ###-->
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -305,22 +226,24 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
+        	'header'            => 'Clicks',
 			'name'              => 'clicks',
 			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
 			'filter'			=> '',
 			'footerHtmlOptions'	=>array('style'=>'text-align:right;'),
-			'footer'			=> array_sum($totals["clics"]),
+			'footer'			=> array_sum($totals["clics_redirect"]),
         ),
         array(
+        	'header'            => 'Conv.',
 			'name'              => 'conv',
 			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
 			'footerHtmlOptions' =>array('style'=>'text-align:right;'),
 			'filter'            => '',
-			'footer'			=>array_sum($totals["conversions"]),
+			'footer'			=>array_sum($totals["conversions_s2s"]),
         ),
         array(
 			'name'              => 'rate',
@@ -383,32 +306,74 @@ Yii::app()->clientScript->registerScript('search', "
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
 						var dateStart = $("#dateStart").val();
+						var dateEnd = $("#dateEnd").val();						
+						window.location="graphicCampaign?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+				    }
+				    ',
+				),
+				'showConversion' => array(
+					'label' => 'Show Conversions',
+					'icon'  => 'random',
+					'click' => '
+				    function() {
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+						var dateStart = $("#dateStart").val();
 						var dateEnd = $("#dateEnd").val();
 				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
 						$("#modalTraffic").html(dataInicial);
 						$("#modalTraffic").modal("toggle");
 						
-						$.post("trafficCampaignAjax/"+id,{"dateStart":dateStart,"dateEnd":dateEnd})
+						$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
 						 	$("#modalTraffic").html(data);
 						 });
 				    }
 				    ',
 				),
+				'excelConversion' => array(
+					'label' => 'Download Conversions',
+					'icon'  => 'download',
+					'click' => '
+				    function() {
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+						var dateStart = $("#dateStart").val();
+						var dateEnd = $("#dateEnd").val();
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalExcel").html(dataInicial);
+						$("#modalExcel").modal("toggle");
+						
+						$.post("excelReport?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
+						 .done(function(data){
+						 	$("#modalExcel").html(data);
+						 });
+				    }
+				    ',
+				),
 			),
-			'template' => '{showCampaign}',
+			'template' => '{showCampaign} {showConversion} {excelConversion}',
 		),
 		
 	),
 )); 
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); //,'htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%')?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalExcel')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>
+
 
 <div class="row" id="blank-row">
 </div>

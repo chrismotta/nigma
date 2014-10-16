@@ -51,6 +51,8 @@ class Campaigns extends CActiveRecord
 	public $profit;
 	public $spend;
 	public $profit_percent;
+	public $format;
+	public $clics_redirect;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -135,6 +137,8 @@ class Campaigns extends CActiveRecord
 			'profit'				 => 'Profit',
 			'spend'					 => 'Spend',
 			'profit_percent'		 => 'Profit %',
+			'format'				 => 'Format',
+			'clics_redirect'		 => 'Clics Redirect',
 		);
 	}
 
@@ -363,18 +367,16 @@ class Campaigns extends CActiveRecord
 		return $query;
 	}
 	
-	public function excel($startDate=NULL, $endDate=NULL)
+	public function excel($startDate=NULL, $endDate=NULL, $id=null)
 	{
 		$criteria=new CDbCriteria;
-
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-	    }
-
-		//$criteria->with = array( 'campaigns', 'networks' );
-
-		return new CActiveDataProvider($this, array(
+		$criteria->with=array('clicksLog');
+		$criteria->addCondition('t.campaign_id='.$id);
+		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
+		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");
+		//$criteria->addCondition('t.clicks_log_id=clicksLog.id');
+		$modelc=new ConvLog;
+		return new CActiveDataProvider($modelc, array(
 			'criteria'=>$criteria,
 		));
 	}
@@ -414,8 +416,10 @@ class Campaigns extends CActiveRecord
 		$clics=array();
 		$dates=array();
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
-			$dataTops[$date]['conversions']=0;
-			$dataTops[$date]['clics']=0;
+			$dataTops[$date]['conversions']     =0;
+			$dataTops[$date]['clics']           =0;
+			$dataTops[$date]['clics_redirect']  =0;
+			$dataTops[$date]['conversions_s2s'] =0;
 		}
 
 		$criteria=new CDbCriteria;
@@ -438,15 +442,26 @@ class Campaigns extends CActiveRecord
 				//echo ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date))."<br>";
 				 $dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 				 $dataTops[$date]['clics']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+
+				 $dataTops[$date]['conversions_s2s']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				 $dataTops[$date]['clics_redirect']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 			}
 		}
 
 		foreach ($dataTops as $date => $data) {
-			$conversions[]=$data['conversions'];
-			$clics[]=$data['clics'];
-			$dates[]=$date;
+			$conversions[]     =$data['conversions'];
+			$clics[]           =$data['clics'];
+			$clics_redirect[]  =$data['clics_redirect'];
+			$conversions_s2s[] =$data['conversions_s2s'];
+			$dates[]           =$date;
 		}
-		$result=array('conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
+		$result=array(
+			'conversions'     => $conversions, 
+			'clics'           => $clics, 
+			'dates'           => $dates, 
+			'clics_redirect'  => $clics_redirect, 
+			'conversions_s2s' => $conversions_s2s
+			);
 		
 		return $result;
 	}
@@ -552,21 +567,57 @@ class Campaigns extends CActiveRecord
 
 	public function getGeoClicks($dateStart=null,$dateEnd=null,$campaign=null)
 	{
-		$data=array();
-	    $dateStart=date('Y-m-d', strtotime($dateStart));
-	    $dateEnd=date('Y-m-d', strtotime($dateEnd));
-	    $criteria=new CDbCriteria;
-	    $criteria->select='count(*) as clics, country';
+		$data['array']        =array();
+		$data['dataprovider'] =array();
+		$dateStart            =date('Y-m-d', strtotime($dateStart));
+		$dateEnd              =date('Y-m-d', strtotime($dateEnd));
+		$criteria             =new CDbCriteria;
+		$criteria->select     ='count(*) as clics, country';
 	    if($campaign!=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
 	    else $criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
-	    $criteria->group='country';
+		$criteria->group ='country';
+		$criteria->order ='clics DESC';
 	    $clicksLogs = ClicksLog::model()->findAll($criteria);
+	    $data['dataprovider']= new CActiveDataProvider(ClicksLog::model(), array(
+				'criteria'   =>$criteria,
+				'pagination' =>false,
+				'sort'       =>array(
+					'attributes'   =>array(
+			            // Adding all the other default attributes
+			            '*',
+			        ),
+			    ),
+
+			));
 	    foreach ($clicksLogs as $log) 
 	    {
 	    	if(strlen($log->country)==2)
-	        $data[]=array('hc-key' => strtolower($log->country), 'value' => intval($log->clics));
+	        $data['array'][]=array('hc-key' => strtolower($log->country), 'value' => intval($log->clics));
     	}
     	return $data;
+	}
+
+	public function getDevicesTypeClicks($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		//select campaigns_id,count(*),device from clicks_log where campaigns_id=11 group by device;
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics,device_type';
+		if($campaign                             !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$criteria->group                         ='device_type';
+		$criteria->order                         ='clics DESC';
+		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
+	    foreach ($clicksLogs as $log) 
+	    {
+			$data[]=array(
+				$log->device_type==null || $log->device_type=="" || $log->device_type=="-" || $log->device_type==" " ? "Other" : $log->device_type,
+			 	intval($log->clics)
+			 );
+	    }
+		return $data;
 	}
 
 	public function getDevicesClicks($dateStart=null,$dateEnd=null,$campaign=null)
@@ -576,15 +627,42 @@ class Campaigns extends CActiveRecord
 		$dateStart                               =date('Y-m-d', strtotime($dateStart));
 		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
 		$criteria                                =new CDbCriteria;
-		$criteria->select                        ='count(*) as clics,device';
-		if($campaign!=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		$criteria->select                        ='count(*) as clics,device,device_model,device_type';
+		if($campaign                             !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
 		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
 		$criteria->group                         ='device';
+		//$criteria->order                         ='clics DESC';
 		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
-	    foreach ($clicksLogs as $log) 
-	    {
-			$data[]=array($log->device, intval($log->clics));
-	    }
+		$data= new CActiveDataProvider(ClicksLog::model(), array(
+				'criteria'   =>$criteria,
+				'pagination'=>array(
+                'pageSize'=>10,
+            ),
+				'sort'       =>array(
+					'defaultOrder' => 'clics DESC',
+					'attributes'   =>array(
+			            'clics'=>array(
+							'asc'  =>'clics',
+							'desc' =>'clics DESC',
+			            ),
+			            'device'=>array(
+							'asc'  =>'device',
+							'desc' =>'device DESC',
+			            ),
+			            'device_model'=>array(
+							'asc'  =>'device_model',
+							'desc' =>'device_model DESC',
+			            ),
+			            'device_type'=>array(
+							'asc'  =>'device_model',
+							'desc' =>'device_model DESC',
+			            ),
+			            // Adding all the other default attributes
+			            '*',
+			        ),
+			    ),
+
+			));
 		return $data;
 	}
 
@@ -602,7 +680,10 @@ class Campaigns extends CActiveRecord
 		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
 	    foreach ($clicksLogs as $log) 
 	    {
-			$data[]=array($log->carrier, intval($log->clics));
+	    	$data[]=array(
+				$log->carrier==null || $log->carrier=="" || $log->carrier=="-" || $log->carrier==" " ? "Other" : $log->carrier,
+			 	intval($log->clics)
+			 );
 	    }
 		return $data;
 	}
@@ -621,7 +702,10 @@ class Campaigns extends CActiveRecord
 		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
 	    foreach ($clicksLogs as $log) 
 	    {
-			$data[]=array($log->os, intval($log->clics));
+	    	$data[]=array(
+				$log->os==null || $log->os=="" || $log->os=="-" || $log->os==" " ? "Other" : $log->os,
+			 	intval($log->clics)
+			 );
 	    }
 		return $data;
 	}
@@ -640,8 +724,24 @@ class Campaigns extends CActiveRecord
 		$clicksLogs                              = ClicksLog::model()->findAll($criteria);
 	    foreach ($clicksLogs as $log) 
 	    {
-			$data[]=array($log->browser, intval($log->clics));
+			$data[]=array(
+				$log->browser==null || $log->browser=="" || $log->browser=="-" || $log->os==" " ? "Other" : $log->browser,
+			 	intval($log->clics)
+			 );
 	    }
 		return $data;
+	}
+
+	public function getClicksRedirect($dateStart=null,$dateEnd=null,$campaign=null)
+	{
+		$data                                    =array();
+		$dateStart                               =date('Y-m-d', strtotime($dateStart));
+		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
+		$criteria                                =new CDbCriteria;
+		$criteria->select                        ='count(*) as clics';
+		if($campaign !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
+		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
+		return $clicksLogs;
 	}
 }

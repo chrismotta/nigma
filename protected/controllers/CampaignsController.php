@@ -32,7 +32,7 @@ class CampaignsController extends Controller
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','graphicCampaign','trafficCampaignAjax','graphic'),
 				'roles'=>array('businness', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -286,24 +286,25 @@ class CampaignsController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 		$this->render('graphicCampaign',array(
-			'model'		=>$model,
-			'geo'		=>Campaigns::model()->getGeoClicks($dateStart,$dateEnd,$model->id),
-			'carrier'	=>Campaigns::model()->getCarriersClicks($dateStart,$dateEnd,$model->id),
-			'browser'	=>Campaigns::model()->getBrowsersClicks($dateStart,$dateEnd,$model->id),
-			'os'		=>Campaigns::model()->getOSClicks($dateStart,$dateEnd,$model->id),
-			'device'	=>Campaigns::model()->getDevicesClicks($dateStart,$dateEnd,$model->id)
+			'model'       =>$model,
+			'geo'         =>Campaigns::model()->getGeoClicks($dateStart,$dateEnd,$model->id),
+			'carrier'     =>Campaigns::model()->getCarriersClicks($dateStart,$dateEnd,$model->id),
+			'browser'     =>Campaigns::model()->getBrowsersClicks($dateStart,$dateEnd,$model->id),
+			'os'          =>Campaigns::model()->getOSClicks($dateStart,$dateEnd,$model->id),
+			'device'      =>Campaigns::model()->getDevicesClicks($dateStart,$dateEnd,$model->id),
+			'device_type' =>Campaigns::model()->getDevicesTypeClicks($dateStart,$dateEnd,$model->id),
 		));
 	}
 
-	public function actionTrafficCampaignAjax($id)
+	public function actionTrafficCampaignAjax()
 	{
 		$backURL = $_SERVER['HTTP_REFERER'];
-		$model = $this->loadModel($id);
+		$model = $this->loadModel($_GET['id']);
 		//$totals=$model->totalsTraffic()
 		$this->renderPartial('_formTrafficCampaignAjax',array(
 			'model'        		=> $model,
-			'dateStart' 		=> $_POST['dateStart'],
-			'dateEnd' 			=> $_POST['dateEnd'],
+			'dateStart' 		=> $_GET['dateStart'],
+			'dateEnd' 			=> $_GET['dateEnd'],
 			// 'categories'    => $categories,
 			// 'networks'      => $networks,
 			// 'devices'       => $devices,

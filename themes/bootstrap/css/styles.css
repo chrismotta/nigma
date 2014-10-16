@@ -195,3 +195,10 @@ fieldset hr {
 	width: 15px !important;
 	border-spacing: 0px !important;
 }
+
+.highcharts-container text {
+	visibility: hidden;
+}
+.highcharts-container g text {
+	visibility: visible;
+}
