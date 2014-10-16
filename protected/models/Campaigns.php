@@ -371,7 +371,7 @@ class Campaigns extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 		$criteria->with=array('clicksLog');
-		$criteria->addCondition('t.campaign_id='.$id);
+		if($id) $criteria->addCondition('t.campaign_id='.$id);
 		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
 		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");
 		//$criteria->addCondition('t.clicks_log_id=clicksLog.id');
@@ -517,6 +517,7 @@ class Campaigns extends CActiveRecord
 		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
 		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
 		if($networks!=null)$criteria->compare('t.networks_id',$networks);
+		//$criteria->order = 't.id desc';
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
