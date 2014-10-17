@@ -33,6 +33,18 @@ class FinanceController extends Controller
 		);
 	}
 	*/
+	public function accessRules()
+	{
+		return array(
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('clients','view','excelReport'),
+				'roles'=>array('admin'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
 
 	
 	public function actionClients()
