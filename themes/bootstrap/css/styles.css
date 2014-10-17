@@ -199,3 +199,6 @@ fieldset hr {
 .highcharts-container text {
 	visibility: hidden;
 }
+.highcharts-container g text {
+	visibility: visible;
+}
