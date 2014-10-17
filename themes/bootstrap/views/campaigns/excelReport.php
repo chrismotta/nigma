@@ -26,7 +26,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'   => 'Network',
-            'value'  => '$data->clicksLog->networks->name',           
+            'value'  => '$data->clicksLog->campaigns->networks->name',           
         ),
         array(
             'name'   => 'IP',
