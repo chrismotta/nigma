@@ -17,7 +17,8 @@
 	'attributes'=>array(
 		'id',
 		'name',
-		'cat'
+		'cat',
+		'status',
 	),
 )); ?>
 

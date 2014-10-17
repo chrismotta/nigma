@@ -7,10 +7,14 @@ $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
 $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-$totalsGrap=DailyTotals::model()->getTotals($dateStart,$dateEnd);
-if($accountManager==null && $opportunitie==null && $networks==null)$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
-else $totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
+$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+$totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
+
+if($accountManager==null && $opportunitie==null && $networks==null)
+	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
+else 
+	$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
+
 // print_r($totals);
 // return;
 /* @var $this CampaignsController */
@@ -71,8 +75,31 @@ Yii::app()->clientScript->registerScript('search', "
 			
 	</div>
 </div>
-<hr>
-
+<div class="botonera">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Excel Conversions Report',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalExcel").html(dataInicial);
+					$("#modalExcel").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalExcel").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'excelReport'),
+		)
+	); ?>
+</div>
+<br>
 <!--### Date Picker ###-->
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',

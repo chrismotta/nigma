@@ -8,12 +8,12 @@ $is_archived = substr_count($_SERVER['REQUEST_URI'],'archived');
 if($is_archived){
 	$delete['icon']       = 'refresh';
 	$delete['label']      = 'Restore';
-	$delete['confirm']    = 'Are you shure to want to restore this campaign?';
+	$delete['confirm']    = 'Are you sure you want to restore this campaign?';
 	$breadcrumbs['title'] = 'Archived Campaigns';
 }else{
 	$delete['icon']       = 'trash';
-	$delete['label']      = 'Delete';
-	$delete['confirm']    = 'Are you shure to want to delete this campaign?';
+	$delete['label']      = 'Archive';
+	$delete['confirm']    = 'Are you sure you want to archive this campaign?';
 	$breadcrumbs['title'] = 'Manage Campaigns';
 }
 
@@ -219,6 +219,7 @@ if(!$is_archived){
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',

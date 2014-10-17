@@ -38,6 +38,7 @@ class ClicksLogController extends Controller
 		$ts['request'] = $_SERVER['REQUEST_TIME'];
 		$ts['start'] = microtime(true);
 
+		// if is new format
 		if(isset($id)){
 			$cid = $id;
 			$nid = NULL;
@@ -66,7 +67,6 @@ class ClicksLogController extends Controller
 				if($nid==NULL){
 					$nid              = $campaign->networks_id;
 				}
-				$nid = 4;
 				$ts['campaign']       = microtime(true);
 				
 				$s2s                  = $campaign->opportunities->server_to_server;

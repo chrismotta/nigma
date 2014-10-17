@@ -283,15 +283,18 @@ class Campaigns extends CActiveRecord
 		));
 	}
 
-	public function searchWidhVectors(){
+	public function searchByVectors($vector_id){
 
 	    $criteria = new CDbCriteria;
 	    $criteria->with = array('vectors');
 		$criteria->together = true;
-	    $criteria->compare('vectors.id', $this->vectors_id);
+	    $criteria->compare('vectors.id', $vector_id);
+
+  		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 
 		return new CActiveDataProvider($this, array(
-			'criteria' =>$criteria,
+			'criteria'   =>$criteria,
+			'pagination' =>false,
 			)
 		);
 	}
@@ -370,8 +373,8 @@ class Campaigns extends CActiveRecord
 	public function excel($startDate=NULL, $endDate=NULL, $id=null)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->with=array('clicksLog');
-		$criteria->addCondition('t.campaign_id='.$id);
+		$criteria->with=array('clicksLog', 'clicksLog.networks');
+		if($id) $criteria->addCondition('t.campaign_id='.$id);
 		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
 		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");
 		//$criteria->addCondition('t.clicks_log_id=clicksLog.id');
@@ -517,6 +520,7 @@ class Campaigns extends CActiveRecord
 		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
 		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
 		if($networks!=null)$criteria->compare('t.networks_id',$networks);
+		//$criteria->order = 't.id desc';
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
