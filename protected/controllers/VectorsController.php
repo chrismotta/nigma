@@ -27,7 +27,7 @@ class VectorsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','admin','create','update','delete','createRelation','updateRelation','deleteRelation'),
+				'actions'=>array('index','view','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived'),
 				'roles'=>array('admin', 'media_manager', 'sem', 'media'),
 			),
 			array('deny',  // deny all users
@@ -101,17 +101,26 @@ class VectorsController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if(Yii::app()->request->isPostRequest)
-		{
-			// we only allow deletion via POST request
-			$this->loadModel($id)->delete();
+		// if(Yii::app()->request->isPostRequest)
+		// {
+			$model = $this->loadModel($id);
+			switch ($model->status) {
+				case 'Active':
+					$model->status = 'Archived';
+					break;
+				case 'Archived':
+					$model->status = 'Active';
+					break;
+			}
+			$model->save();
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
+
+		// }
+		// else
+		// 	throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
 
@@ -206,11 +215,29 @@ class VectorsController extends Controller
 	{
 		$model=new Vectors('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
 		if(isset($_GET['Vectors']))
 			$model->attributes=$_GET['Vectors'];
 
 		$this->render('admin',array(
 			'model'=>$model,
+		));
+	}
+
+	/**
+	 * Manages archived models.
+	 */
+	public function actionArchived()
+	{
+		$model=new Vectors('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Archived';
+		if(isset($_GET['Vectors']))
+			$model->attributes=$_GET['Vectors'];
+
+		$this->render('admin',array(
+			'model'      =>$model,
+			'isArchived' =>true,
 		));
 	}
 
