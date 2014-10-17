@@ -96,7 +96,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						"",
 						function(data)
 							{
-								alert("admin updateRelation");
+								// alert(data);
 								$("#modalVectors").html(data);
 							}
 						)

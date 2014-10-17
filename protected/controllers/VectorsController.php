@@ -27,7 +27,7 @@ class VectorsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','admin','create','update','delete','updateRelation','deleteRelation'),
+				'actions'=>array('index','view','admin','create','update','delete','createRelation','updateRelation','deleteRelation'),
 				'roles'=>array('admin', 'media_manager', 'sem', 'media'),
 			),
 			array('deny',  // deny all users
@@ -116,21 +116,28 @@ class VectorsController extends Controller
 
 
 	/**
-	 * Asociate campaigns to a vector.
-	 * @param integer $id the ID of the model to be displayed
+	 * Add campaign to vector.
 	 */
-	public function actionUpdateRelation($id)
+	public function actionCreateRelation($id)
 	{
-		if ( isset($_POST['submit']) ) {
+		// if ( isset($_POST['submit']) ) {
 			// echo "POST: " . json_encode($_REQUEST) . "<hr>"; return;
 			$vhc               = new VectorsHasCampaigns;
 			$vhc->vectors_id   = $id;
 			$vhc->campaigns_id = $_POST['Campaigns']['name'];
 			$vhc->save();
 			echo "OK";
-			Yii::app()->end();
+			// Yii::app()->end();
 			// return false;
-		}
+		// }
+	}
+
+	/**
+	 * Asociate campaigns to a vector.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionUpdateRelation($id)
+	{
 
 		// TODO Get campaigns available for adding to vector
 		$criteria = new CDbCriteria;
