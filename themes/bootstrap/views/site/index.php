@@ -6,6 +6,63 @@ $this->pageTitle=Yii::app()->name;
 
 <div class="row">
 	<div class="span12">
+		<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl(),
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+
+	<fieldset>
+	From: 
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'  => 'dateStart',
+			'value' => date('d-m-Y', strtotime('-1 week')),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+		    'options' => array(
+				'autoclose'  => true,
+				'todayHighlight' => true,
+				'format'     => 'dd-mm-yyyy',
+				'viewformat' => 'dd-mm-yyyy',
+				'placement'  => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
+	To:
+	<div class="input-append">
+		<?php 
+		    $this->widget('bootstrap.widgets.TbDatePicker',array(
+			'name'        => 'dateEnd',
+			'value'       => date('d-m-Y', strtotime('today')),
+			'htmlOptions' => array(
+				'style' => 'width: 80px',
+			),
+			'options'     => array(
+				'autoclose'      => true,
+				'todayHighlight' => true,
+				'format'         => 'dd-mm-yyyy',
+				'viewformat'     => 'dd-mm-yyyy',
+				'placement'      => 'right',
+		    ),
+		));
+		?>
+		<span class="add-on"><i class="icon-calendar"></i></span>
+	</div>
+	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+    </fieldset>
+
+<?php $this->endWidget(); ?>
 	<?php
 	
 	$this->Widget('ext.highcharts.HighchartsWidget', array(
