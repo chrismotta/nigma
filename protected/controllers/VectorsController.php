@@ -27,19 +27,9 @@ class VectorsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','admin','create','update','delete','addCampaign','deleteRelation','createRelation'),
-				'roles'=>array('admin', 'media_manager'),
+				'actions'=>array('index','view','admin','create','update','delete','updateRelation','deleteRelation'),
+				'roles'=>array('admin', 'media_manager', 'sem', 'media'),
 			),
-			/*
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
-				'users'=>array('@'),
-			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
-			),
-			*/
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -66,18 +56,18 @@ class VectorsController extends Controller
 		$model=new Vectors;
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Vectors']))
 		{
 			$model->attributes=$_POST['Vectors'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('create',array(
+		$this->renderPartial('_form',array(
 			'model'=>$model,
-		),false,true);
+		), false, true);
 	}
 
 	/**
@@ -90,18 +80,18 @@ class VectorsController extends Controller
 		$model=$this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Vectors']))
 		{
 			$model->attributes=$_POST['Vectors'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('update',array(
+		$this->renderPartial('_form',array(
 			'model'=>$model,
-		),false,true);
+		), false, true);
 	}
 
 	/**
@@ -124,24 +114,46 @@ class VectorsController extends Controller
 			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
+
 	/**
 	 * Asociate campaigns to a vector.
 	 * @param integer $id the ID of the model to be displayed
 	 */
-	public function actionAddCampaign($id)
+	public function actionUpdateRelation($id)
 	{
-		
-		$campaignsModel = new Campaigns('searchWidhVectors');
+		if ( isset($_POST['submit']) ) {
+			// echo "POST: " . json_encode($_REQUEST) . "<hr>"; return;
+			$vhc               = new VectorsHasCampaigns;
+			$vhc->vectors_id   = $id;
+			$vhc->campaigns_id = $_POST['Campaigns']['name'];
+			$vhc->save();
+			echo "OK";
+			Yii::app()->end();
+			// return false;
+		}
+
+		// TODO Get campaigns available for adding to vector
+		$criteria = new CDbCriteria;
+		$criteria->with = array('vectors');
+		$criteria->addCondition("t.id NOT IN (SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id=". $id . ")");
+		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
+
+		$campaigns = CHtml::listData( Campaigns::model()->findAll( $criteria ),
+			'id', 
+			function($c) { return $c->getExternalName($c->id); } );
+
+		$campaignsModel = new Campaigns;
 		$campaignsModel->unsetAttributes();  // clear any default values
-		$campaignsModel->vectors_id = $id;
 
-		$vectorsModel = Vectors::model()->findByPk($id);
-		$vhcModel = new VectorsHasCampaigns;
+		$vectorsModel = $this->loadModel($id); 
+		// $vectorsModel = Vectors::model()->findByPk($id);
+		// $vhcModel     = new VectorsHasCampaigns;
 
-		$this->renderPartial('_addCampaign',array(
+		$this->renderPartial('_updateRelation',array(
+			'campaigns'      => $campaigns,
 			'campaignsModel' => $campaignsModel,
 			'vectorsModel'   => $vectorsModel,
-			'vhcModel'       => $vhcModel,
+			// 'vhcModel'       => $vhcModel,
 		), false, true);
 	
 	}
@@ -149,49 +161,24 @@ class VectorsController extends Controller
 	/**
 	 * Deletes added campaigns.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
 	 */
-	public function actionDeleteRelation($id)
+	public function actionDeleteRelation()
 	{
-		if(Yii::app()->request->isPostRequest)
-		{
+		// if(Yii::app()->request->isPostRequest) {
 			// we only allow deletion via POST request
-			
-			$model = VectorsHasCampaigns::model()->findByAttributes(
-				array('vectors_id' => 1, 'campaigns_id' => 2)
-				);
+			// echo json_encode($_REQUEST); return;
+			$model = VectorsHasCampaigns::model()->findByPk( array(
+					'vectors_id' => $_GET['vid'],
+					'campaigns_id' => $_GET['cid'],
+				));
 			$model->delete();
 
 			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
-		}
-		else
-			throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
-	}
-
-	/**
-	 * Add campaigns relations.
-	 * If deletion is successful, the browser will be redirected to the 'admin' page.
-	 * @param integer $id the ID of the model to be deleted
-	 */
-	public function actionCreateRelation()
-	{
-		$model=new VectorsHasCampaigns;
-
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
-
-		if(isset($_POST['Vectors']))
-		{
-			$model->attributes=$_POST['Vectors'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
-
-		$this->render('create',array(
-			'model'=>$model,
-		));
+		// }
+		// else
+		// 	throw new CHttpException(400,'Invalid request. Please do not repeat this request again.');
 	}
 
 	/**

@@ -283,15 +283,18 @@ class Campaigns extends CActiveRecord
 		));
 	}
 
-	public function searchWidhVectors(){
+	public function searchByVectors($vector_id){
 
 	    $criteria = new CDbCriteria;
 	    $criteria->with = array('vectors');
 		$criteria->together = true;
-	    $criteria->compare('vectors.id', $this->vectors_id);
+	    $criteria->compare('vectors.id', $vector_id);
+
+  		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 
 		return new CActiveDataProvider($this, array(
-			'criteria' =>$criteria,
+			'criteria'   =>$criteria,
+			'pagination' =>false,
 			)
 		);
 	}
