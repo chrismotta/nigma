@@ -36,12 +36,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'url'         => 'create',
 	'ajaxOptions' => array(
 		'type'    => 'POST',
+		'beforeSend' => 'function(data)
+			{
+		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				$("#modalVectors").html(dataInicial);
+				$("#modalVectors").modal("toggle");
+			}',
 		'success' => 'function(data)
 			{
                     console.log(this.url);
 	                //alert("create");
-					$("#modalCampaigns").html(data);
-					$("#modalCampaigns").modal("toggle");
+					$("#modalVectors").html(data);
 			}',
 		),
 	'htmlOptions' => array('id' => 'createAjax'),
@@ -82,15 +87,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 					'icon'  =>'plus',
 					'click' =>'
 				    function(){
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalVectors").html(dataInicial);
+						$("#modalVectors").modal("toggle");
 				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	$.post(
-						"addCampaign/"+id,
+						"updateRelation/"+id,
 						"",
 						function(data)
 							{
-								//alert(data);
-								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
+								alert("admin updateRelation");
+								$("#modalVectors").html(data);
 							}
 						)
 				    }
@@ -98,9 +105,12 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				),
 				'updateAjax' => array(
 					'label' =>'Update',
-					'icon'  => 'pencil',
+					'icon'  =>'pencil',
 					'click' =>'
 				    function(){
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				    	$("#modalVectors").html(dataInicial);
+						$("#modalVectors").modal("toggle");
 				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	$.post(
 						"update/"+id,
@@ -108,8 +118,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						function(data)
 							{
 								//alert(data);
-								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
+								$("#modalVectors").html(data);
 							}
 						)
 				    }
@@ -122,10 +131,10 @@ $this->widget('bootstrap.widgets.TbButton', array(
 
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalVectors')); ?>
 
 		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Vectors</h1></div>
+        <div class="modal-body"></div>
         <div class="modal-footer"></div>
 
 <?php $this->endWidget(); ?>
