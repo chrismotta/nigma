@@ -17,7 +17,8 @@
 		'attributes'=>array(
 			'advertisers.id',
 			'advertisers.name',
-			'advertisers.cat'
+			'advertisers.cat',
+			'advertisers.status',
 		),
 	)); ?>
 
@@ -48,6 +49,7 @@
 			),
 			'address',
 			'state',
+			'prospect',
 			'zip_code',
 			'phone',
 			'contact_com',
@@ -58,6 +60,7 @@
 			'tax_id',
 			'net_payment',
 			'entity',
+			'status',
 		),
 	)); ?>
 

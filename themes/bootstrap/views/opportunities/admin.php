@@ -2,9 +2,22 @@
 /* @var $this OpportunitiesController */
 /* @var $model Opportunities */
 
+// Config parameters depending if have to show Archived or Admin view
+if( isset($isArchived) ) {
+	$delete['icon']       = 'refresh';
+	$delete['label']      = 'Restore';
+	$delete['confirm']    = 'Are you sure you want to restore this opportunities?';
+	$breadcrumbs['title'] = 'Archived Opportunities';
+} else {
+	$delete['icon']       = 'trash';
+	$delete['label']      = 'Archive';
+	$delete['confirm']    = 'Are you sure you want to archive this opportunity?';
+	$breadcrumbs['title'] = 'Manage Opportunities';
+}
+
 $this->breadcrumbs=array(
 	'Opportunities'=>array('index'),
-	'Manage Opportunities',
+	$breadcrumbs['title'],
 );
 
 $this->menu=array(
@@ -32,30 +45,33 @@ $('.search-form form').submit(function(){
 	$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
 
 ?>
-<div class="botonera">
-<?php
-$this->widget('bootstrap.widgets.TbButton', array(
-	'type'        => 'info',
-	'label'       => 'Create Opportunity',
-	'block'       => false,
-	'buttonType'  => 'ajaxButton',
-	'url'         => 'create',
-	'ajaxOptions' => array(
-		'type'    => 'POST',
-		'success' => 'function(data)
-			{
-                    // console.log(this.url);
-	                //alert("create");
-					$("#modalOpportunities").html(data);
-					$("#modalOpportunities").modal("toggle");
-			}',
-		),
-	'htmlOptions' => array('id' => 'create'),
-	)
-);
-?>
-</div>
+<?php if( !isset($isArchived) )  : ?>
+	<div class="botonera">
+	<?php
+	$this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Create Opportunity',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'create',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'success' => 'function(data)
+				{
+	                    // console.log(this.url);
+		                //alert("create");
+						$("#modalOpportunities").html(data);
+						$("#modalOpportunities").modal("toggle");
+				}',
+			),
+		'htmlOptions' => array('id' => 'create'),
+		)
+	);
+	?>
+	</div>
+<?php endif; ?>
 <br>
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
         'type'=>'search',
@@ -195,7 +211,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
-			'afterDelete' => 'function(link, success, data) { if(data) alert(data); }',
+			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -238,6 +254,9 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    ',
 				),
 			),
+			'deleteButtonIcon'   => $delete['icon'],
+			'deleteButtonLabel'  => $delete['label'],
+			'deleteConfirmation' => $delete['confirm'],
 			'template' => '{viewAjax} {updateAjax} {delete}',
 		),
 	),
