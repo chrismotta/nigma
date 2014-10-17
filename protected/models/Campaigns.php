@@ -748,4 +748,20 @@ class Campaigns extends CActiveRecord
 		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
 		return $clicksLogs;
 	}
+
+	public function findByOpportunities($opportunitie)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("opportunities_id=".$opportunitie."");
+		return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(
+			            '*',
+			        ),
+			    ),
+
+			));
+	}
 }

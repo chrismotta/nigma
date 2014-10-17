@@ -270,46 +270,6 @@ class Ios extends CActiveRecord
 		$criteria->order='ios.commercial_name asc';
 	 */
 	
-// public function getClients($month,$year)
-// 	{
-// 		$data=array();	
-// 		$ios=self::model()->findAll();
-// 		$i=0;
-// 		foreach ($ios as $io) {
-// 			$data[$i]['id']=$io->id;
-// 			$data[$i]['name']=$io->commercial_name;
-// 			$data[$i]['currency']=$io->currency;
-// 			$data[$i]['entity']=$io->entity;
-// 			$data[$i]['model']=array();
-
-// 			$criteria=new CDbCriteria;
-// 			$criteria->addCondition('ios_id='.$io->id);
-// 			$criteria->group='ios_id,model_adv,rate';
-// 			$opportunities=Opportunities::model()->findAll($criteria);
-// 			foreach ($opportunities as $opportunitie) {
-// 				$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['conv']=0;
-// 				$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['rev']=0;
-
-// 				$criteria=new CDbCriteria;
-// 				$criteria->addCondition('opportunities_id='.$opportunitie->id);
-// 				$campaigns=Campaigns::model()->findAll($criteria);
-// 				foreach ($campaigns as $campaign) {
-// 					$criteria=new CDbCriteria;
-// 					$criteria->addCondition('campaigns_id='.$campaign->id);
-// 					$criteria->addCondition('MONTH(date)='.$month);
-// 					$criteria->addCondition('YEAR(date)='.$year);
-// 					$dailys=DailyReport::model()->findAll($criteria);
-// 					foreach ($dailys as $daily) {
-// 						$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['rev']+=$daily->revenue;
-// 						$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
-// 					}
-// 				}
-// 			}
-			
-// 			$i++;
-// 		}
-// 		return $data;
-// 	}
 
 	public function getClients($month,$year)
 	{
@@ -323,9 +283,6 @@ class Ios extends CActiveRecord
 			$criteria->group='ios_id,model_adv,rate';
 			$opportunities=Opportunities::model()->findAll($criteria);
 			foreach ($opportunities as $opportunitie) {
-
-				
-
 				$criteria=new CDbCriteria;
 				$criteria->addCondition('opportunities_id='.$opportunitie->id);
 				$campaigns=Campaigns::model()->findAll($criteria);
@@ -362,5 +319,19 @@ class Ios extends CActiveRecord
 		}
 		return $data;
 	}
+	public function findByAdvertisers($advertiser)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("advertisers_id=".$advertiser."");
+		return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(
+			            '*',
+			        ),
+			    ),
 
+			));
+	}
 }
