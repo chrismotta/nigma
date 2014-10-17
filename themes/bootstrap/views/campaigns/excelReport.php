@@ -25,6 +25,10 @@ $this->widget('EExcelWriter', array(
             'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
         ),
         array(
+            'name'   => 'Network',
+            'value'  => '$data->clicksLog->networks->name',           
+        ),
+        array(
             'name'   => 'IP',
             'value'  => '!isset($data->clicksLog->server_ip) ? "-" : $data->clicksLog->server_ip',            
         ),
