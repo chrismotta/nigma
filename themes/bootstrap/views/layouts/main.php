@@ -47,7 +47,7 @@
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Clients', 'url'=>'#'),
+                    array('label'=>'Clients', 'url'=>'url'=>array('/finance/clients')),
                     array('label'=>'Providers', 'url'=>'#'),
                     //array('label'=>'Cierre Mes', 'url'=>'#'),
                     //array('label'=>'Invoices', 'url'=>'#'),
