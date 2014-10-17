@@ -12,24 +12,41 @@ $this->menu=array(
 );
 $year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-//echo json_encode($model->getClients($month,$year));
-$clients=$model->getClients($month,$year);
-
-$dataProvider=new CArrayDataProvider($clients, array(
-    'id'=>'clients',
-    // 'sort'=>array(
-    //     'attributes'=>array(
-    //          'id', 'username', 'email',
-    //     ),
-    // ),
-    'pagination'=>array(
-        'pageSize'=>30,
-    ),
-));
-// 
-//echo json_encode($dataProvider);
-// return;
+$totals['revenue']=0;
+$totals['rate']=0;
+$totals['conv']=0;
+foreach ($clients as $client) {
+	$totals['revenue']+=$client['revenue'];
+	$totals['rate']+=$client['rate'];
+	$totals['conv']+=$client['conv'];
+}
 ?>
+<hr>
+
+<div class="botonera">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Excel Report',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalClients").html(dataInicial);
+					$("#modalClients").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalClients").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'excelReport'),
+		)
+	); ?>
+</div>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
@@ -37,7 +54,7 @@ $dataProvider=new CArrayDataProvider($clients, array(
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
         'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/ios/clients',
+        'action' => Yii::app()->getBaseUrl() . '/finance/clients',
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -74,66 +91,106 @@ $dataProvider=new CArrayDataProvider($clients, array(
 <?php $this->endWidget(); ?>
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
-	'id'                       => 'clients-grid',
+	'id'                         => 'clients-grid',
 	//'fixedHeader'              => true,
 	//'headerOffset'             => 50,
-	'dataProvider'             => $dataProvider,
-	'filter'                   => $model,
-	'type'                     => 'striped condensed',
+	'dataProvider'               => $dataProvider,
+	'filter'                     => $filtersForm,
+	//'filter'                   => $model,
+	'type'                       => 'striped condensed',	
+	'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
 	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
-	'template'                 => '{items} {pager} {summary}',
-	'columns'                  => array(
+	'template'                   => '{items} {pager} {summary}',
+	'columns'                    => array(
 		array(
 			'name'              =>	'id',
-			'value'	=>'$data["id"]',	
+			'value'             =>'$data["id"]',	
+			'headerHtmlOptions' => array('width' => '10'),
+			'header'            =>'ID',                           
 			),	
 		array(
-			'name'              =>	'commercial_name',
-			'value'	=>'$data["name"]',		
-			'footer' =>'Totals:',
+			'name'                =>'name',
+			'value'               =>'$data["name"]',
+			//'headerHtmlOptions' => array('width' => '500'),		
+			'header'              =>'Commercial Name',
+			//'footer'              =>'Totals:',      
 			),	
 		array(
-			'name'              =>	'model',
-			'value'	=>'$data["model"]',		
+			'name'              =>'model',
+			'value'             =>'$data["model"]',	
+			'headerHtmlOptions' => array('width' => '80'),
+			'header'            =>'Model',		
 			),
 		array(
-			'name'              =>	'entity',
-			'value'	=>'$data["entity"]',		
+			'name'              =>'entity',
+			'value'             =>'$data["entity"]',
+			'headerHtmlOptions' => array('width' => '80'),	
+			'header'            =>'Entity',    
 			),	
 		array(
-			'name'              =>	'currency',
-			'value'	=>'$data["currency"]',		
+			'name'              =>'currency',
+			'value'             =>'$data["currency"]',
+			'headerHtmlOptions' => array('width' => '80'),		
+			'header'            =>'Currency',	
 			),
 		array(
-			'name'              =>	'rate',
-			'value'	=>'$data["rate"]',		
+			'name'              =>'rate',
+			'value'             =>'$data["rate"]',
+			'headerHtmlOptions' => array('width' => '80'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			//'footer'			=> $totals['rate'],
+			'header'            =>'Rate',	
 		),	
 		array(
-			'name'              =>	'conv',
-			'header'=>'Clics/Imp/Conv',
-			'value'	=>'$data["conv"]',		
+			'name'              =>'conv',
+			'header'            =>'Clics/Imp/Conv',
+			'value'             =>'$data["conv"]',	
+			'headerHtmlOptions' => array('width' => '80'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			//'footer'			=> $totals['conv'],
 		),
 		array(
-			'name'              =>	'revenue',
-			'value'	=>'$data["rev"]',		
+			'name'              =>'revenue',
+			'header'            =>'Revenue',
+			'value'             =>'$data["revenue"]',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),		
+			//'footer'			=> $totals['revenue'],
 		),
-		// array(
-		// 	'name'              =>	'conv',
-		// 	'header'			=>'conv_adv',
-		// 	'value'	=>'intval($data->conv_adv)',		
-		// ),
-		// array(
-		// 	'name'              =>	'conv',
-		// 	'value'	=>'intval($data->conversions)',		
-		// ),
-		// array(
-		// 	'name'              =>	'rate',
-		// 	'value'	=>'$data->campaigns->opportunities->rate',		
-		// ),
-		// array(
-		// 	'name'              =>	'revenue',
-		// 	'value'	=>'$data->revenue',		
-		// ),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '40'),
+			'name'              =>	'name',
+			'value'             =>'CHtml::ajaxLink(
+				"<i class=\"icon-eye-open\"></i>", 
+				"view/".$data["id"], 
+			    array (
+			        "type"    => "POST",
+			        "beforeSend"=>"function(){
+		 				$(\"#modalClients\").modal(\"toggle\");
+	
+			        }",
+			        "success" => "function(data){
+			        	$(\"#modalClients\").html(data)
+			        	//alert(data);
+			        }"
+			    ), 
+			    array ()
+			);',		
+		),
 	),
-	'mergeColumns' => array('id','commercial_name'),
+	'mergeColumns' => array('id','name'),
 )); ?>
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
+
+		<div class="modal-header"></div>
+        <div class="modal-body"></div>
+        <div class="modal-footer"></div>
+
+<?php $this->endWidget(); ?>
+
+<div class="row" id="blank-row">
+</div>

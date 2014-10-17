@@ -182,7 +182,7 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('ios.currency', $this->currency, true);
 		if($accountManager != NULL)$criteria->compare('accountManager.id',$accountManager);
 		if($advertiser != NULL)$criteria->compare('advertisers.id',$advertiser);
-		if($io != NULL)$criteria->compare('io.id',$io);
+		if($io != NULL)$criteria->addCondition('t.ios_id='.$io);
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination' => array(
@@ -258,4 +258,20 @@ class Opportunities extends CActiveRecord
 		
 		return $adv . $country . $carrier . '-' . $this->rate . $product;
 	}
+	public function findByIo($io)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("ios_id=".$io."");
+		return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(
+			            '*',
+			        ),
+			    ),
+
+			));
+	}
+
 }

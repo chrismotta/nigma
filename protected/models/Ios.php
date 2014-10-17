@@ -43,6 +43,8 @@ class Ios extends CActiveRecord
 	public $conv;
 	public $revenue;
 	public $model;
+	public $buttons;
+	public $name;
 
 	/**
 	 * @return string the associated database table name
@@ -122,7 +124,8 @@ class Ios extends CActiveRecord
 			'rate'            => 'Rate',
 			'conv'            => 'Conv.',
 			'revenue'         => 'Revenue',
-			'Model'         => 'Model',
+			'model'           => 'Model',
+			'name'			  => 'Name',
 		);
 	}
 
@@ -333,10 +336,10 @@ class Ios extends CActiveRecord
 							$data[$i]['model']=$opportunitie->model_adv;
 							$data[$i]['rate']=$opportunitie->rate;
 							isset($data[$i]['conv']) ?  : $data[$i]['conv']=0;
-							isset($data[$i]['rev']) ?  : $data[$i]['rev']=0;
+							isset($data[$i]['revenue']) ?  : $data[$i]['revenue']=0;
 							//!isset($data[$i]['rev']) ? $data[$i]['rev']=0 : ;
 
-							$data[$i]['rev']+=$daily->revenue;
+							$data[$i]['revenue']+=$daily->revenue;
 							if($opportunitie->model_adv=='CPA')$data[$i]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
 							if($opportunitie->model_adv=='CPM')$data[$i]['conv']+=$daily->imp;
 							if($opportunitie->model_adv=='CPC')$data[$i]['conv']+=$daily->clics;
