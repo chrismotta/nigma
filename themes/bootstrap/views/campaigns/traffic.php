@@ -7,10 +7,14 @@ $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
 $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-$totalsGrap=DailyTotals::model()->getTotals($dateStart,$dateEnd);
-if($accountManager==null && $opportunitie==null && $networks==null)$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
-else $totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
+$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+$totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
+
+if($accountManager==null && $opportunitie==null && $networks==null)
+	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
+else 
+	$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
+
 // print_r($totals);
 // return;
 /* @var $this CampaignsController */
