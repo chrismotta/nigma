@@ -28,7 +28,7 @@ class OpportunitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'getIos', 'getCarriers'),
+				'actions'=>array('index','view','create','update','admin','delete', 'getIos', 'getCarriers', 'archived'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -113,16 +113,48 @@ class OpportunitiesController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-		if ( Campaigns::model()->count("opportunities_id=:opp_id", array(":opp_id" => $id)) > 0 ) {
-			echo "To remove this item must delete the campaigns associated with it.";
-			Yii::app()->end();
-		} else {
-			$this->loadModel($id)->delete();
+		$model = $this->loadModel($id);
+		switch ($model->status) {
+			case 'Active':
+				if ( Campaigns::model()->count("opportunities_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
+					echo "To remove this item must delete the campaigns associated with it.";
+					Yii::app()->end();
+				} else {
+					$model->status = 'Archived';
+				}
+				break;
+			case 'Archived':
+				if ($model->ios->status == 'Active') {
+					$model->status = 'Active';
+				} else {
+					echo "To restore this item must restore the IO associated with it.";
+					Yii::app()->end();
+				}
+				break;
 		}
+
+		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+	}
+
+	/**
+	 * Manages archived models.
+	 */
+	public function actionArchived()
+	{
+		$model=new Opportunities('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Archived';
+		if(isset($_GET['Opportunities']))
+			$model->attributes=$_GET['Opportunities'];
+
+		$this->render('admin',array(
+			'model'      => $model,
+			'isArchived' => true,
+		));
 	}
 
 	/**
@@ -143,6 +175,7 @@ class OpportunitiesController extends Controller
 	{
 		$model=new Opportunities('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
 		if(isset($_GET['Opportunities']))
 			$model->attributes=$_GET['Opportunities'];
 
