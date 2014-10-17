@@ -112,7 +112,7 @@ foreach ($clients as $client) {
 		array(
 			'name'                =>'name',
 			'value'               =>'$data["name"]',
-			'htmlOptions'       => array('style'=>'text-align:left;'),		
+			'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'              =>'Commercial Name',
 			//'footer'              =>'Totals:',      
 			),	

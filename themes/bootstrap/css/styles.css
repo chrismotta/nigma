@@ -199,3 +199,7 @@ fieldset hr {
 .highcharts-container text {
 	visibility: hidden;
 }
+
+#alignLeft {
+	text-align: left !important;
+}
