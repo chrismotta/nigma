@@ -26,6 +26,10 @@ class ClicksLogController extends Controller
 		);
 	}
 
+	public function actionTracking($id=null)
+	{
+		$this->actionIndex($id);
+	}
 	public function actionIndex($id=null)
 	{
 			

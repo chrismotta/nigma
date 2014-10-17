@@ -41,6 +41,10 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->campaigns->opportunities->ios->name',
         ),
         array(
+            'name'  => 'country',
+            'value' => '$data->campaigns->opportunities->country->name',
+        ),
+        array(
             'name'  => 'entity_name',
             'value' => '$data->campaigns->opportunities->ios->entity',
         ),
