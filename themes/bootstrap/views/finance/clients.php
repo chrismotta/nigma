@@ -3,7 +3,8 @@
 /* @var $dataProvider CActiveDataProvider */
 
 $this->breadcrumbs=array(
-	'Ioses',
+	'Finance'=>'#',	
+	'Clients',
 );
 
 $this->menu=array(
@@ -105,13 +106,13 @@ foreach ($clients as $client) {
 		array(
 			'name'              =>	'id',
 			'value'             =>'$data["id"]',	
-			'headerHtmlOptions' => array('width' => '10'),
+			'headerHtmlOptions' => array('width' => '60'),
 			'header'            =>'ID',                           
 			),	
 		array(
 			'name'                =>'name',
 			'value'               =>'$data["name"]',
-			//'headerHtmlOptions' => array('width' => '500'),		
+			'htmlOptions'       => array('style'=>'text-align:left;'),		
 			'header'              =>'Commercial Name',
 			//'footer'              =>'Totals:',      
 			),	

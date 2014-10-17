@@ -38,7 +38,7 @@ class FinanceController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('clients','view','excelReport'),
-				'roles'=>array('admin'),
+				'roles'=>array('admin', 'finance'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
