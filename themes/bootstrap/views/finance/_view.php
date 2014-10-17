@@ -58,6 +58,7 @@
 			'tax_id',
 			'net_payment',
 			'entity',
+			'description',
 		),
 	)); ?>
 	

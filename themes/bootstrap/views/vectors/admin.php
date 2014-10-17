@@ -1,7 +1,21 @@
 <?php
+
+// Config parameters depending if have to show Archived or Admin view
+if( isset($isArchived) ) {
+	$delete['icon']       = 'refresh';
+	$delete['label']      = 'Restore';
+	$delete['confirm']    = 'Are you sure you want to restore this vector?';
+	$breadcrumbs['title'] = 'Archived Vectors';
+} else {
+	$delete['icon']       = 'trash';
+	$delete['label']      = 'Archive';
+	$delete['confirm']    = 'Are you sure you want to archive this vector?';
+	$breadcrumbs['title'] = 'Manage vector';
+}
+
 $this->breadcrumbs=array(
 	'Vectors'=>array('index'),
-	'Manage Vectors',
+	$breadcrumbs['title'],
 );
 
 /*
@@ -26,34 +40,35 @@ $('.search-form form').submit(function(){
 
 ?>
 
-<div class="botonera">
-<?php
-$this->widget('bootstrap.widgets.TbButton', array(
-	'type'        => 'info',
-	'label'       => 'Create Vector',
-	'block'       => false,
-	'buttonType'  => 'ajaxButton',
-	'url'         => 'create',
-	'ajaxOptions' => array(
-		'type'    => 'POST',
-		'beforeSend' => 'function(data)
-			{
-		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-				$("#modalVectors").html(dataInicial);
-				$("#modalVectors").modal("toggle");
-			}',
-		'success' => 'function(data)
-			{
-                    console.log(this.url);
-	                //alert("create");
-					$("#modalVectors").html(data);
-			}',
-		),
-	'htmlOptions' => array('id' => 'createAjax'),
-	)
-);
-?>
-</div>
+<?php if( !isset($isArchived) )  : ?>
+	<div class="botonera">
+	<?php
+	$this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Create Vector',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'create',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalVectors").html(dataInicial);
+					$("#modalVectors").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+	                    console.log(this.url);
+		                //alert("create");
+						$("#modalVectors").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'createAjax'),
+		)
+	); ?>
+	</div>
+<?php endif; ?>
 
 <?php // echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
 <div class="search-form" style="display:none">
@@ -125,6 +140,9 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				    ',
 				),
 			),
+			'deleteButtonIcon'   => $delete['icon'],
+			'deleteButtonLabel'  => $delete['label'],
+			'deleteConfirmation' => $delete['confirm'],
 			'template' => '{addCampaign} {updateAjax} {delete}',
 		),
 	),
