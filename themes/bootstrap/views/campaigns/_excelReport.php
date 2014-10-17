@@ -46,11 +46,11 @@ $cid = isset($_GET['id']) ? $_GET['id'] : null;
             
         <div class="control-group">
             <input type="hidden" value="<?php echo $cid ?>" id="id" name="id">
-            <?php echo CHtml::label("To:", 'excel-endDate', array('class'=>'control-label')); ?>
+            <?php echo CHtml::label("To:", 'excel-dateEnd', array('class'=>'control-label')); ?>
             
             <div class="controls">
                 <?php $this->widget('ext.rezvan.RDatePicker',array(
-                    'name'  => 'excel-endDate',
+                    'name'  => 'excel-dateEnd',
                     'value' => date('d-m-Y', strtotime($dateEnd)),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
