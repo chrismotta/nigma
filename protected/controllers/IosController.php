@@ -32,7 +32,7 @@ class IosController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf', 'archived'),
+				'actions'=>array('index','clients', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf', 'archived'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -394,4 +394,5 @@ class IosController extends Controller
 			'country'    =>$country,
 		), false, true);
 	}
+
 }
