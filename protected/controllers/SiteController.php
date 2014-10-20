@@ -70,19 +70,19 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Campaigns');
-		$model=new DailyReport;
-		$totals=new DailyTotals;
+		$dataProvider =new CActiveDataProvider('Campaigns');
+		$model        =new DailyReport;
+		$totals       =new DailyTotals;
 		// renders the view file 'protected/views/site/index.php'
 		// using the default layout 'protected/views/layouts/main.php'
-		$startDate='-1 week';
-		$endDate='yesterday';
+		$startDate = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week';
+		$endDate   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 		$this->render('index',array(
-			'dataTopConversions'=>$model->getDataDash($startDate,$endDate,'conversions'),
-			'dataTopConversionsRate'=>$model->getDataDash($startDate,$endDate,'convrate'),
-			'dataHighchart'=>$totals->getTotals($startDate,$endDate),
-			'dataTops'=>$model->getTops($startDate,$endDate,'spend'),
-			'dataTopProfit'=>$model->getTops($startDate,$endDate,'profit'),
+			'dataTopConversions'     =>$model->getDataDash($startDate,$endDate,'conversions'),
+			'dataTopConversionsRate' =>$model->getDataDash($startDate,$endDate,'convrate'),
+			'dataHighchart'          =>$totals->getTotals($startDate,$endDate),
+			'dataTops'               =>$model->getTops($startDate,$endDate,'spend'),
+			'dataTopProfit'          =>$model->getTops($startDate,$endDate,'profit'),
 		));
 	}
 
