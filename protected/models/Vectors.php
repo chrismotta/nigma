@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'vectors':
  * @property integer $id
  * @property string $name
+ * @property string $status
  *
  * The followings are the available model relations:
  * @property Campaigns[] $campaigns
@@ -28,11 +29,12 @@ class Vectors extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required'),
+			array('name, status', 'required'),
 			array('name', 'length', 'max'=>255),
+			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name', 'safe', 'on'=>'search'),
+			array('id, name, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,8 +56,9 @@ class Vectors extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
+			'id'     => 'ID',
+			'name'   => 'Name',
+			'status' => 'Status',
 		);
 	}
 
@@ -77,8 +80,9 @@ class Vectors extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.status',$this->status,true);
 
 		$criteria->with = array( 'campaigns' );
 

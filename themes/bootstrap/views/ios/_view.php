@@ -61,6 +61,7 @@
 			'net_payment',
 			'entity',
 			'status',
+			'description',
 		),
 	)); ?>
 
