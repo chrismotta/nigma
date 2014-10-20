@@ -66,7 +66,7 @@ $('.search-form form').submit(function(){
 	</div>
 <?php endif; ?>
 
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'advertisers-grid',
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,

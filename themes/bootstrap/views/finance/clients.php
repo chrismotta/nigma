@@ -13,16 +13,41 @@ $this->menu=array(
 );
 $year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-$totals['revenue']=0;
-$totals['rate']=0;
-$totals['conv']=0;
-foreach ($clients as $client) {
-	$totals['revenue']+=$client['revenue'];
-	$totals['rate']+=$client['rate'];
-	$totals['conv']+=$client['conv'];
-}
+$entity=isset($_GET['entity']) ? $_GET['entity'] : null;
+//echo json_encode(Ios::model()->getClientsByIo($month,$year,41));
 ?>
 <hr>
+
+
+<?php 
+	$this->widget('yiibooster.widgets.TbGroupGridView', array(
+	'id'                         => 'totals-grid',
+	//'fixedHeader'              => true,
+	//'headerOffset'             => 50,
+	'dataProvider'               => $totals,
+	//'filter'                     => $filtersForm,
+	//'filter'                   => $model,
+	'type'                       => 'striped condensed',	
+	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
+	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'template'                   => '{items} {pager} {summary}',
+	'columns'                    => array(
+		array(
+			'name'              =>	'currency',
+			'value'             =>'$data["currency"]',	
+			'headerHtmlOptions' => array('width' => '60'),
+			'header'            =>'Currency',                           
+			),	
+		array(
+			'name'                =>'total',
+			'value'               =>'$data["total"]',
+			//'htmlOptions'       => array('id'=>'alignLeft'),		
+			'header'              =>'Total',
+			//'footer'              =>'Totals:',      
+			),			
+		),
+)); ?>
+
 
 <div class="botonera">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
@@ -80,9 +105,20 @@ foreach ($clients as $client) {
 				$years[$year]=$year;
 			}
 
+			$criteria=new CDbCriteria;
+			$criteria->select='entity';
+			$criteria->group='entity';
+			$criteria->addCondition('entity!=""');
+			$io=new Ios;
+			$entity=$io->findAll($criteria);
+			$entities[0]='Select a entity';
+			foreach ($entity as $value) {
+				$entities[$value->entity]=$value->entity;
+			}
 		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true))));
 		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true))));
-		//echo CHtml::dropDownList($years,'year',$years);
+		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+		
 		            ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
@@ -110,7 +146,7 @@ foreach ($clients as $client) {
 			'header'            =>'ID',                           
 			),	
 		array(
-			'name'                =>'name',
+			'name'                =>'id',
 			'value'               =>'$data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'              =>'Commercial Name',
@@ -143,6 +179,38 @@ foreach ($clients as $client) {
 			'header'            =>'Rate',	
 		),	
 		array(
+			'name'              => 'mr',
+			'header'			=> '',
+			'filter'			=> '',
+			'headerHtmlOptions' => array('class'=>'plusMR'),
+			'filterHtmlOptions' => array('class'=>'plusMR'),
+			'htmlOptions'       => array('class'=>'plusMR'),
+			'type'              => 'raw',
+			'value'             =>	'
+				$data["rate"] === NULL && !isset($data["carrier"]) ?
+					CHtml::link(
+            				"<i class=\"icon-plus\"></i>",
+	            			"javascript:;",
+	        				array(
+	        					"onClick" => CHtml::ajax( array(
+									"type"    => "POST",
+									"url"     => "multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
+									"success" => "function( data )
+										{
+											$(\"#modalClients\").html(data);
+											$(\"#modalClients\").modal(\"toggle\");
+										}",
+									)),
+								"style"               => "width: 20px",
+								"rel"                 => "tooltip",
+								"data-original-title" => "Update"
+								)
+						) 
+				: null
+				'
+				,
+        ),
+		array(
 			'name'              =>'conv',
 			'header'            =>'Clics/Imp/Conv',
 			'value'             =>'$data["conv"]',	
@@ -163,7 +231,7 @@ foreach ($clients as $client) {
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '40'),
-			'name'              =>	'name',
+			'name'              =>	'id',
 			'value'             =>'CHtml::ajaxLink(
 				"<i class=\"icon-eye-open\"></i>", 
 				"view/".$data["id"], 

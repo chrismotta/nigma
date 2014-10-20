@@ -37,7 +37,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport'),
+				'actions'=>array('clients','view','excelReport','multiRate'),
 				'roles'=>array('admin', 'finance'),
 			),
 			array('deny',  // deny all users
@@ -51,20 +51,46 @@ class FinanceController extends Controller
 	{
 		$year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$entity=isset($_GET['entity']) ? $_GET['entity'] : null;
 		$model=new Ios;
-		$clients=$model->getClients($month,$year);
+		$clients=$model->getClients($month,$year,$entity);
 		$filtersForm=new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
-		 
-		// Get rawData and create dataProvider
+		 foreach ($clients as $client) {
+			isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']=0;
+			isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']=0;
+			isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue']=0;
+			$totals[$client['currency']]['rate']+=$client['rate'];
+			$totals[$client['currency']]['conv']+=$client['conv'];
+			$totals[$client['currency']]['revenue']+=$client['revenue'];
+		}
+		$i=0;
+		foreach ($totals as $key => $value) {
+			$totalsdata[$i]['id']=$i;
+			$totalsdata[$i]['currency']=$key;
+			$totalsdata[$i]['total']=$value['revenue'];
+			$i++;
+		}
+		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','total',
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		//Get rawData and create dataProvider
 		//$rawData=User::model()->findAll();
 		$filteredData=$filtersForm->filter($clients);
 		$dataProvider=new CArrayDataProvider($filteredData, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue'
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -77,7 +103,31 @@ class FinanceController extends Controller
 			'filtersForm'=>$filtersForm,
 			'dataProvider'=>$dataProvider,
 			'clients'=>$clients,
+			'totals'=>$totalsDataProvider,
 		));
+	}
+
+	public function actionMultiRate()
+	{
+		$month=$_GET['month'];
+		$year=$_GET['year'];
+		$id=$_GET['id'];
+		$data=Ios::model()->getClientsByIo($month,$year,$id);
+		$dataProvider=new CArrayDataProvider($data, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'rate', 'conv','revenue'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		$this->renderPartial('_multiRate', array(
+			//'model'       => $model,
+			'dataProvider' => $dataProvider,
+		), false, false);
 	}
 
 	public function actionView($id)
