@@ -39,7 +39,7 @@ class Advertisers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('prefix, name, cat, status', 'required'),
+			array('prefix, name, cat', 'required'),
 			array('commercial_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			array('prefix', 'length', 'max'=>6),
