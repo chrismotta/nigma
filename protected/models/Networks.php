@@ -8,8 +8,10 @@
  * @property string $prefix
  * @property string $name
  * @property string $currency
+ * @property string $percent_off
  * @property string $url
  * @property integer $has_api
+ * @property integer $useVectors
  * @property string $query_string
  * @property string $token1
  * @property string $token2
@@ -20,6 +22,7 @@
  * @property Campaigns[] $campaigns
  * @property ClicksLog[] $clicksLogs
  * @property DailyReport[] $dailyReports
+ * @property Vectors[] $vectors
  */
 class Networks extends CActiveRecord
 {
@@ -40,15 +43,16 @@ class Networks extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('prefix, name, url', 'required'),
-			array('has_api', 'numerical', 'integerOnly'=>true),
+			array('has_api, useVectors', 'numerical', 'integerOnly'=>true),
 			array('prefix', 'length', 'max'=>45),
 			array('name, url', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>3),
+			array('percent_off', 'length', 'max'=>5),
 			array('query_string', 'length', 'max'=>255),
 			array('token1, token2, token3', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, currency, url, has_api, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
+			array('id, prefix, name, currency, percent_off, url, has_api, useVectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,10 +64,11 @@ class Networks extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
-			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
-			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
+			'apiCronLogs' => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
+			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
+			'clicksLogs' => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'networks_id'),
+			'vectors' => array(self::HAS_MANY, 'Vectors', 'networks_id'),
 		);
 	}
 
@@ -73,16 +78,18 @@ class Networks extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'           => 'ID',
-			'prefix'       => 'Prefix',
-			'name'         => 'Name',
-			'currency'     => 'Currency',
-			'url'          => 'Url',
-			'has_api'      => 'Has Api',
+			'id' => 'ID',
+			'prefix' => 'Prefix',
+			'name' => 'Name',
+			'currency' => 'Currency',
+			'percent_off' => 'Percent Off',
+			'url' => 'Url',
+			'has_api' => 'Has Api',
+			'useVectors' => 'Use Vectors',
 			'query_string' => 'Query String',
-			'token1'       => 'Token1',
-			'token2'       => 'Token2',
-			'token3'       => 'Token3',
+			'token1' => 'Token1',
+			'token2' => 'Token2',
+			'token3' => 'Token3',
 		);
 	}
 
@@ -108,8 +115,10 @@ class Networks extends CActiveRecord
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('currency',$this->currency,true);
+		$criteria->compare('percent_off',$this->percent_off,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('has_api',$this->has_api);
+		$criteria->compare('useVectors',$this->useVectors);
 		$criteria->compare('query_string',$this->query_string,true);
 		$criteria->compare('token1',$this->token1,true);
 		$criteria->compare('token2',$this->token2,true);

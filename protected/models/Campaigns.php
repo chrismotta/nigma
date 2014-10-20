@@ -27,6 +27,7 @@
  * @property Opportunities $opportunities
  * @property ConvLog[] $convLogs
  * @property DailyReport[] $dailyReports
+ * @property DailyVectors[] $dailyVectors
  * @property Vectors[] $vectors
  */
 class Campaigns extends CActiveRecord
@@ -99,6 +100,7 @@ class Campaigns extends CActiveRecord
 			'convLogs'           => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
 			'clicksLogs'         => array(self::HAS_MANY, 'ClicksLog', 'campaign_id'),
 			'dailyReports'       => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),
+			'dailyVectors'       => array(self::HAS_MANY, 'DailyVectors', 'campaigns_id'),
 			'vectors'            => array(self::MANY_MANY, 'Vectors', 'vectors_has_campaigns(campaigns_id, vectors_id)'),
 		);
 	}
