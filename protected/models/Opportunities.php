@@ -64,7 +64,7 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('country_id, model_adv, wifi, ios_id, status', 'required'),
+			array('country_id, model_adv, wifi, ios_id', 'required'),
 			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
