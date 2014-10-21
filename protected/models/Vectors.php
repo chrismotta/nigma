@@ -125,9 +125,7 @@ class Vectors extends CActiveRecord
 		}
 
 		$criteria->compare('t.status', 'Active');
-
-		FilterManager::model()->addUserFilter($criteria, 'vector.account');
-
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			// Setting 'sort' property in order to add 
