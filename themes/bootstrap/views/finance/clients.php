@@ -11,43 +11,12 @@ $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
 );
-$year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-$month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-$entity=isset($_GET['entity']) ? $_GET['entity'] : null;
+$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 
 ?>
 <hr>
-
-
-<?php 
-	$this->widget('yiibooster.widgets.TbGroupGridView', array(
-	'id'                         => 'totals-grid',
-	//'fixedHeader'              => true,
-	//'headerOffset'             => 50,
-	'dataProvider'               => $totals,
-	//'filter'                     => $filtersForm,
-	//'filter'                   => $model,
-	'type'                       => 'striped condensed',	
-	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
-	'template'                   => '{items} {pager} {summary}',
-	'columns'                    => array(
-		array(
-			'name'              =>	'currency',
-			'value'             =>'$data["currency"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'Currency',                           
-			),	
-		array(
-			'name'                =>'total',
-			'value'               =>'$data["total"]',
-			//'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'              =>'Total',
-			//'footer'              =>'Totals:',      
-			),			
-		),
-)); ?>
-
 
 <div class="botonera">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
@@ -111,12 +80,12 @@ $entity=isset($_GET['entity']) ? $_GET['entity'] : null;
 			$criteria->addCondition('entity!=""');
 			$io=new Ios;
 			$entity=$io->findAll($criteria);
-			$entities[0]='Select a entity';
+			$entities[0]='All entities';
 			foreach ($entity as $value) {
 				$entities[$value->entity]=$value->entity;
 			}
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true))));
-		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
 		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
 		
 		            ?>
@@ -172,7 +141,7 @@ $entity=isset($_GET['entity']) ? $_GET['entity'] : null;
 			),
 		array(
 			'name'              =>'rate',
-			'value'             =>'$data["rate"]',
+			'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			//'footer'			=> $totals['rate'],
@@ -252,7 +221,34 @@ $entity=isset($_GET['entity']) ? $_GET['entity'] : null;
 	),
 	'mergeColumns' => array('id','name'),
 )); ?>
-
+<?php 
+	$this->widget('yiibooster.widgets.TbGroupGridView', array(
+	'id'                         => 'totals-grid',
+	//'fixedHeader'              => true,
+	//'headerOffset'             => 50,
+	'dataProvider'               => $totals,
+	//'filter'                     => $filtersForm,
+	//'filter'                   => $model,
+	'type'                       => 'striped condensed',	
+	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
+	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'template'                   => '{items} {pager}',
+	'columns'                    => array(
+		array(
+			'name'              =>	'currency',
+			'value'             =>'$data["currency"]',	
+			'headerHtmlOptions' => array('width' => '60'),
+			'header'            =>'Currency',                           
+			),	
+		array(
+			'name'                =>'total',
+			'value'               =>'$data["total"]',
+			//'htmlOptions'       => array('id'=>'alignLeft'),		
+			'header'              =>'Total',
+			//'footer'              =>'Totals:',      
+			),			
+		),
+)); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
 
 		<div class="modal-header"></div>

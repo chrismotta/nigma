@@ -6,8 +6,9 @@ $path    = 'uploads/';
 $name    = 'KickAds-Clients.xls';
 $year    =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 $month   =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
+$entity   =isset($_POST['entity']) ? $_POST['entity'] : null;
 //echo json_encode($model->getClients($month,$year));
-$clients =Ios::getClients($month,$year);
+$clients =Ios::getClients($month,$year,$entity);
 
 $dataProvider=new CArrayDataProvider($clients, array(
     'id'=>'clients',

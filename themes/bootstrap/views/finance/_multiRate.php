@@ -8,7 +8,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Daily Report #<?php //echo $model->id ?> - Multi Rate</h4>
+    <h4>Io #<?php echo $id ?> - Multi Rate</h4>
 </div>
 
 
@@ -32,5 +32,4 @@
 </div>
 
 <div class="modal-footer">
-    Add multi rate info. Fields with <span class="required">*</span> are required.
 </div>

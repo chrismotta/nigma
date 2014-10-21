@@ -136,7 +136,7 @@ class FinanceController extends Controller
 		    ),
 		));
 		$this->renderPartial('_multiRate', array(
-			//'model'       => $model,
+			'id'       => $id,
 			'dataProvider' => $dataProvider,
 		), false, false);
 	}
