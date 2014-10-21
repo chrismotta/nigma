@@ -65,9 +65,7 @@ class VectorsController extends Controller
 				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('_form',array(
-			'model'=>$model,
-		), false, true);
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -89,9 +87,7 @@ class VectorsController extends Controller
 				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('_form',array(
-			'model'=>$model,
-		), false, true);
+		$this->renderFormAjax($model);
 	}
 
 	/**
@@ -252,6 +248,16 @@ class VectorsController extends Controller
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
+	}
+
+	private function renderFormAjax($model)
+	{
+		$networks = CHtml::listData(Networks::model()->findAll(array('order' => 'name', 'condition' => 'useVectors=1')), 'id', 'name');
+
+		$this->renderPartial('_form',array(
+			'model'    => $model,
+			'networks' => $networks,
+		), false, true);
 	}
 
 	/**
