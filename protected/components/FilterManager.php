@@ -44,6 +44,13 @@ class FilterManager
 				'admin',
 				'media_manager',
 			)),
+		'vector.account' => array( 
+			'column' => 'campaigns.opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'sem',
+			)),
 		);
 
     /**

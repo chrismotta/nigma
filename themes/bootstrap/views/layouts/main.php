@@ -59,6 +59,7 @@
                     array('label'=>'IOs', 'url'=>array('/ios/archived')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
+                    array('label'=>'Vectors', 'url'=>array('/vectors/archived')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 /*
                 array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 

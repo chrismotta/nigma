@@ -12,14 +12,24 @@
  * @property integer $clics
  * @property integer $conv_api
  * @property integer $conv_adv
- * @property string $spend
+ * @property integer $spend
  * @property integer $revenue
  * @property string $date
  * @property integer $is_from_api
+ * @property string $profit
+ * @property string $profit_percent
+ * @property string $click_through_rate
+ * @property string $conversion_rate
+ * @property string $eCPM
+ * @property string $eCPC
+ * @property string $eCPA
+ * @property string $comment
  *
  * The followings are the available model relations:
- * @property Networks $networks
  * @property Campaigns $campaigns
+ * @property Vectors $vectors
+ * @property Networks $networks
+ * @property DailyVectors[] $dailyVectors
  * @property MultiRate[] $multiRates
  */
 class DailyReport extends CActiveRecord
@@ -52,12 +62,12 @@ class DailyReport extends CActiveRecord
 		return array(
 			array('campaigns_id, imp, clics, conv_api, spend, date', 'required'),
 			array('campaigns_id, networks_id, imp, imp_adv, clics, conv_api, conv_adv, is_from_api', 'numerical', 'integerOnly'=>true),
-			array('spend, revenue', 'length', 'max'=>11),
+			array('spend, revenue, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA', 'length', 'max'=>11),
 			array('comment', 'length', 'max'=>255),
 			array('date', 'date',  'format'=>'yyyy-M-d'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, network_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -72,6 +82,7 @@ class DailyReport extends CActiveRecord
 			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
 			'multiRates' => array(self::HAS_MANY, 'MultiRate', 'daily_report_id'),
+			'dailyVectors' => array(self::HAS_MANY, 'DailyVectors', 'daily_report_id'),
 		);
 	}
 
@@ -659,5 +670,30 @@ class DailyReport extends CActiveRecord
 	public function getConv()
 	{
 		return $this->conv_adv==0 ? $this->conv_api : $this->conv_adv; 
+	}
+
+	public function createByNetwork()
+	{
+		$this->is_from_api = 0;
+		$this->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$this->campaigns_id, ":date"=>$this->date));
+		$this->updateRevenue();
+		$this->setNewFields();
+			
+		// Validate if record has already been entry
+		$existingModel = DailyReport::model()->find('campaigns_id=:cid AND networks_id=:nid AND date=:date', array(':cid' => $this->campaigns_id, ':nid' => $this->networks_id, ':date' => $this->date));
+		if ( $existingModel ) {
+			$this->isNewRecord = false;
+			$this->id = $existingModel->id;
+		}
+
+		$r = new stdClass();
+		$r->c_id = $this->campaigns_id;
+		if ( $this->save() ) {
+			$r->result = "OK";
+		} else {
+			$r->result  = "ERROR";
+			$r->message = $this->getErrors();
+		}
+		return $r;
 	}
 }
