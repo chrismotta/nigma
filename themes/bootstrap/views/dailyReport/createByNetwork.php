@@ -68,9 +68,19 @@ $('.search-form form').submit(function(){
 
 <hr>
 
+<?php 
+	if ( $currentNetwork != NULL )
+		if ( Networks::model()->findByPk($currentNetwork)->useVectors )
+			$dataProvider = $vector->searchByNetworkAndDate($currentNetwork, $date);
+		else
+			$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
+	else
+		$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
+?>
+
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'massivecreate-grid',
-	'dataProvider'             => $campaign->searchByNetworkAndDate($currentNetwork, $date),
+	'dataProvider'             => $dataProvider,
 	// 'filter'                   => $campaign,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,

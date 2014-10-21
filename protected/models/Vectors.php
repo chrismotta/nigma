@@ -148,7 +148,7 @@ class Vectors extends CActiveRecord
 
 	public function getExternalName($id)
 	{
-		return "Vector - " . $this->name;
+		return $this->id . "-" . $this->name . " - Vector";
 	}
 
 	/**

@@ -671,4 +671,29 @@ class DailyReport extends CActiveRecord
 	{
 		return $this->conv_adv==0 ? $this->conv_api : $this->conv_adv; 
 	}
+
+	public function createByNetwork()
+	{
+		$this->is_from_api = 0;
+		$this->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$this->campaigns_id, ":date"=>$this->date));
+		$this->updateRevenue();
+		$this->setNewFields();
+			
+		// Validate if record has already been entry
+		$existingModel = DailyReport::model()->find('campaigns_id=:cid AND networks_id=:nid AND date=:date', array(':cid' => $this->campaigns_id, ':nid' => $this->networks_id, ':date' => $this->date));
+		if ( $existingModel ) {
+			$this->isNewRecord = false;
+			$this->id = $existingModel->id;
+		}
+
+		$r = new stdClass();
+		$r->c_id = $this->campaigns_id;
+		if ( $this->save() ) {
+			$r->result = "OK";
+		} else {
+			$r->result  = "ERROR";
+			$r->message = $this->getErrors();
+		}
+		return $r;
+	}
 }
