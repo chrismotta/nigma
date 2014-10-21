@@ -16,10 +16,8 @@ $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 
 ?>
-<hr>
-
-<div class="botonera">
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
+<!--<div class="botonera">
+	<?php /*$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
 		'block'       => false,
@@ -40,8 +38,8 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			),
 		'htmlOptions' => array('id' => 'excelReport'),
 		)
-	); ?>
-</div>
+	);*/ ?>
+</div>-->
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
@@ -90,7 +88,28 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		
 		            ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
-
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Excel Report',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalClients").html(dataInicial);
+					$("#modalClients").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalClients").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'excelReport','style'=>'float:right'),
+		)
+	); ?>
 	</div>
     </fieldset>
 

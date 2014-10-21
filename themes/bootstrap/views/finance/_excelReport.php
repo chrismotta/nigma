@@ -49,9 +49,38 @@
             foreach ($entity as $value) {
                 $entities[$value->entity]=$value->entity;
             }
-        echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true))));
-        echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true))));
-        echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+        echo $form->dropDownList(
+            new DailyReport,
+            'date',
+            $months,
+            array(
+                'name'=>'month', 
+                'style' => "width: 140px; margin-left: 1em",
+                'options' => array(
+                    isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true),
+                    )
+                )
+            );
+        echo $form->dropDownList(
+            new DailyReport,
+            'date',
+            $years,
+            array(
+                'name'=>'year',
+                'style' => "width: 140px; margin-left: 1em",
+                'options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true))
+                )
+            );
+        echo $form->dropDownList(
+            new Ios,
+            'entity',
+            $entities,
+            array(
+                'name'=>'entity',
+                'style' => "width: 140px; margin-left: 1em",
+                'options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))
+                )
+            );
         //echo CHtml::dropDownList($years,'year',$years);
                     ?>
     
@@ -67,5 +96,5 @@
 </div>
 
 <div class="modal-footer">
-    Excel Report Daily Report. Search by <span class="required">date</span>.
+    
 </div>
