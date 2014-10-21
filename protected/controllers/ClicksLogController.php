@@ -239,6 +239,16 @@ class ClicksLogController extends Controller
 
 	}
 
+
+	public function actionVector($id=null)
+	{
+		$vhc    = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid'=>$id));
+		$count  = count($vhc);
+		$random = mt_rand(0, $count - 1);
+		$this->actionIndex($vhc[$random]->campaigns_id);
+	}
+
+
 	public function actionUpdateClicksData() 
 	{
 		date_default_timezone_set('UTC');
