@@ -49,28 +49,39 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-		$year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-		$entity=isset($_GET['entity']) ? $_GET['entity'] : null;
-		$model=new Ios;
-		$clients=$model->getClients($month,$year,$entity);
-		$filtersForm=new FiltersForm;
+		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$model       =new Ios;
+		$clients     =$model->getClients($month,$year,$entity);
+		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
 		 foreach ($clients as $client) {
-			isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']=0;
-			isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']=0;
-			isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue']=0;
-			$totals[$client['currency']]['rate']+=$client['rate'];
-			$totals[$client['currency']]['conv']+=$client['conv'];
-			$totals[$client['currency']]['revenue']+=$client['revenue'];
+			isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']       =0;
+			isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']       =0;
+			isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue'] =0;
+			$totals[$client['currency']]['rate']    +=$client['rate'];
+			$totals[$client['currency']]['conv']    +=$client['conv'];
+			$totals[$client['currency']]['revenue'] +=$client['revenue'];
 		}
 		$i=0;
-		foreach ($totals as $key => $value) {
-			$totalsdata[$i]['id']=$i;
-			$totalsdata[$i]['currency']=$key;
-			$totalsdata[$i]['total']=$value['revenue'];
-			$i++;
+			
+		
+		if(isset($totals))
+		{
+			foreach ($totals as $key => $value) {
+				$totalsdata[$i]['id']       =$i;
+				$totalsdata[$i]['currency'] =$key;
+				$totalsdata[$i]['total']    =$value['revenue'];
+				$i++;
+			}
+		}
+		else
+		{
+			$totalsdata[0]['id']       =null;
+			$totalsdata[0]['currency'] =null;
+			$totalsdata[0]['total']    =null;
 		}
 		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
 		    'id'=>'totals',
@@ -99,11 +110,11 @@ class FinanceController extends Controller
 		));
 		
 		$this->render('clients',array(
-			'model'=>$model,
-			'filtersForm'=>$filtersForm,
-			'dataProvider'=>$dataProvider,
-			'clients'=>$clients,
-			'totals'=>$totalsDataProvider,
+			'model'        =>$model,
+			'filtersForm'  =>$filtersForm,
+			'dataProvider' =>$dataProvider,
+			'clients'      =>$clients,
+			'totals'       =>$totalsDataProvider,
 		));
 	}
 

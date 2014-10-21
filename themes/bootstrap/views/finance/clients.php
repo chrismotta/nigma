@@ -14,7 +14,7 @@ $this->menu=array(
 $year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity=isset($_GET['entity']) ? $_GET['entity'] : null;
-//echo json_encode(Ios::model()->getClientsByIo($month,$year,41));
+
 ?>
 <hr>
 
