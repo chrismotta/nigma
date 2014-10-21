@@ -579,14 +579,14 @@ class DailyReport extends CActiveRecord
 	public function getCtr()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
-		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 2);
+		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 4);
 		return $r;
 	}
 
 	public function getConvRate()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
-		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 2 );
+		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 4 );
 		return $r;
 	}
 

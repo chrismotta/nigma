@@ -420,14 +420,14 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'              => 'click_through_rate',
-			'value'             => '$data->click_through_rate * 100 . "%"',
+			'value'             => 'number_format($data->click_through_rate * 100, 2) . "%"',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['ctr']*100)."%",
 		),
 		array(
 			'name'              => 'conversion_rate',
-			'value'             => '$data->conversion_rate * 100 . "%"',
+			'value'             => 'number_format($data->conversion_rate * 100, 2) . "%"',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['cr']*100)."%",
