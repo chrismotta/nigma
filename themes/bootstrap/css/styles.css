@@ -176,6 +176,11 @@ fieldset hr {
 	color: red;
 }
 
+.isFromVector {
+	border-left: medium solid #E49A08;
+	padding-left: 15px;
+}
+
 .editableField {
 	text-align: center !important;
 }

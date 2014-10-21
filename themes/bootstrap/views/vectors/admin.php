@@ -103,7 +103,7 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'buttons'           => array(
 				'addCampaign' => array(
-					'label' =>'Detail',
+					'label' =>'Manage Campaigns',
 					'icon'  =>'plus',
 					'click' =>'
 				    function(){

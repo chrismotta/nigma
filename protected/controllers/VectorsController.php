@@ -143,11 +143,13 @@ class VectorsController extends Controller
 	 */
 	public function actionUpdateRelation($id)
 	{
+		$vectorsModel = $this->loadModel($id); 
 
 		// TODO Get campaigns available for adding to vector
 		$criteria = new CDbCriteria;
 		$criteria->with = array('vectors');
 		$criteria->addCondition("t.id NOT IN (SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id=". $id . ")");
+		$criteria->compare('t.networks_id', $vectorsModel->networks_id);
 		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 
 		$campaigns = CHtml::listData( Campaigns::model()->findAll( $criteria ),
@@ -157,15 +159,11 @@ class VectorsController extends Controller
 		$campaignsModel = new Campaigns;
 		$campaignsModel->unsetAttributes();  // clear any default values
 
-		$vectorsModel = $this->loadModel($id); 
-		// $vectorsModel = Vectors::model()->findByPk($id);
-		// $vhcModel     = new VectorsHasCampaigns;
 
 		$this->renderPartial('_updateRelation',array(
 			'campaigns'      => $campaigns,
 			'campaignsModel' => $campaignsModel,
 			'vectorsModel'   => $vectorsModel,
-			// 'vhcModel'       => $vhcModel,
 		), false, true);
 	
 	}

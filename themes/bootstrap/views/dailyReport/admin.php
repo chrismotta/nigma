@@ -265,8 +265,11 @@ $('.search-form form').submit(function(){
 	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(
-			'name'              =>	'id',
-			'footer'            => 'Totals:',
+			'name'               =>	'id',
+			'footer'             => 'Totals:',
+			'cssClassExpression' => '$data->isFromVector() ? "isFromVector" : NULL',
+			'htmlOptions'        => array('style' => 'padding-left: 10px; height: 70px;'),
+			'headerHtmlOptions'  => array('style' => 'border-left: medium solid #FFF;'),
 		),
 		array(
 			'name'        => 'campaign_name',

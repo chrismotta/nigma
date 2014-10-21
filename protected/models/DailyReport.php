@@ -696,4 +696,9 @@ class DailyReport extends CActiveRecord
 		}
 		return $r;
 	}
+
+	public function isFromVector()
+	{
+		return VectorsHasCampaigns::model()->exists('campaigns_id=:cid', array(':cid'=>$this->campaigns_id));
+	}
 }
