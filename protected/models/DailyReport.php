@@ -317,7 +317,7 @@ class DailyReport extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date';
+		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date,profit';
 		if($order=='spend')$criteria->order='spend DESC';
 		if($order=='profit')$criteria->order='profit DESC';
 		$criteria->group='campaigns_id,networks_id';
@@ -327,7 +327,7 @@ class DailyReport extends CActiveRecord
 		foreach ($r as $value) {
 			$spends[]=doubleval($value->getSpendUSD());
 			$revenues[]=doubleval($value->getRevenueUSD());
-			$profits[]=doubleval($value->getProfit());
+			$profits[]=doubleval($value->profit);
 			$campaigns[]=$value->campaigns->name;		
 			$campaigns_id[]=$value->campaigns->id;		
 		}
@@ -627,7 +627,10 @@ class DailyReport extends CActiveRecord
 	{
 		return $this->getRevenueUSD() - $this->getSpendUSD();
 	}
-
+	public function getProfits()
+	{
+		return $this->profit;
+	}
 	public function getCtr()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
