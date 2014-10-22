@@ -526,6 +526,7 @@ $('.search-form form').submit(function(){
 								$("#modalDailyReport").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
