@@ -229,6 +229,7 @@ $('.search-form form').submit(function(){
 								$("#modalOpportunities").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -250,6 +251,7 @@ $('.search-form form').submit(function(){
 								$("#modalOpportunities").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),

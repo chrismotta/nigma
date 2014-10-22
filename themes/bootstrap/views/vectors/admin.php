@@ -120,6 +120,7 @@ $('.search-form form').submit(function(){
 								$("#modalVectors").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -141,6 +142,7 @@ $('.search-form form').submit(function(){
 								$("#modalVectors").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),

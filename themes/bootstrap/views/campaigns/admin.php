@@ -237,6 +237,7 @@ if(!$is_archived){
 								$("#modalCampaigns").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -260,6 +261,7 @@ if(!$is_archived){
 								$("#modalCampaigns").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -285,13 +287,13 @@ if(!$is_archived){
 								$("#modalCampaigns").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
 				'duplicateAjax' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
-					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -311,6 +313,7 @@ if(!$is_archived){
 								$("#modalCampaigns").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),

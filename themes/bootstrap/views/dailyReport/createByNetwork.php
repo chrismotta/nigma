@@ -161,7 +161,6 @@ $('.search-form form').submit(function(){
 			'buttons'           => array(
 				'submit' => array(
 					'label' => 'Save',
-					'url'   => '"javascript:;"',
 					// 'icon'  => 'upload',
 					'options' => array('class' => 'label', 'rel' => '', 'id'=>'labelSubmit'),
 					'click' => '
@@ -209,6 +208,7 @@ $('.search-form form').submit(function(){
 							},
 							"json"
 						)
+						return false;
 				    }
 				    ',
 				),
