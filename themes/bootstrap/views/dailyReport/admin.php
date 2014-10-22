@@ -269,8 +269,11 @@ $('.search-form form').submit(function(){
 	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(
-			'name'              =>	'id',
-			'footer'            => 'Totals:',
+			'name'               =>	'id',
+			'footer'             => 'Totals:',
+			'cssClassExpression' => '$data->isFromVector() ? "isFromVector" : NULL',
+			'htmlOptions'        => array('style' => 'padding-left: 10px; height: 70px;'),
+			'headerHtmlOptions'  => array('style' => 'border-left: medium solid #FFF;'),
 		),
 		array(
 			'name'        => 'campaign_name',
@@ -425,14 +428,14 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'              => 'click_through_rate',
-			'value'             => '$data->click_through_rate * 100 . "%"',
+			'value'             => 'number_format($data->click_through_rate * 100, 2) . "%"',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['ctr']*100)."%",
 		),
 		array(
 			'name'              => 'conversion_rate',
-			'value'             => '$data->conversion_rate * 100 . "%"',
+			'value'             => 'number_format($data->conversion_rate * 100, 2) . "%"',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['cr']*100)."%",

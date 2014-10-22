@@ -431,19 +431,26 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
-		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		if ( $accountManager != NULL) {
 			$criteria->compare('accountManager.id',$accountManager);
 		}
 		if ( $opportunitie != NULL) {
 			$criteria->compare('opportunities.id',$opportunitie);
 		}
+
+		// external name
+		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
+		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
+		$criteria->compare('country.ISO2',$this->campaign_name,true,'OR');
+		$criteria->compare('advertisers.prefix',$this->campaign_name,true,'OR');
+		$criteria->compare('opportunities.product',$this->campaign_name,true,'OR');
+		$criteria->compare('campaigns.name',$this->campaign_name,true,'OR');
 		
 		FilterManager::model()->addUserFilter($criteria, 'daily');
 
@@ -602,14 +609,14 @@ class DailyReport extends CActiveRecord
 	public function getCtr()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
-		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 2);
+		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 4);
 		return $r;
 	}
 
 	public function getConvRate()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
-		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 2 );
+		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 4 );
 		return $r;
 	}
 
@@ -718,5 +725,10 @@ class DailyReport extends CActiveRecord
 			$r->message = $this->getErrors();
 		}
 		return $r;
+	}
+
+	public function isFromVector()
+	{
+		return VectorsHasCampaigns::model()->exists('campaigns_id=:cid', array(':cid'=>$this->campaigns_id));
 	}
 }

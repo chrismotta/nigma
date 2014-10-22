@@ -108,6 +108,15 @@ class DailyReportController extends Controller
 				$attr = $_POST['DailyReport'];
 				$vector_id = $attr['campaigns_id'];
 				$campaigns = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid' => $vector_id));
+
+				if (empty($campaigns)) { // if vectors hasn't associated campaigns then exit
+					$r         = new stdClass();
+					$r->result = 'OK';
+					$r->c_id   = $vector_id;
+					echo json_encode($r);
+					Yii::app()->end();
+				}
+
 				$porc = count($campaigns);
 				$attr['imp']     = number_format($attr['imp']   / $porc, 0);
 				$attr['imp_adv'] = number_format($attr['imp_adv']   / $porc, 0);
@@ -119,13 +128,12 @@ class DailyReportController extends Controller
 					$model->attributes = $attr;
 					$model->campaigns_id = $campaign->campaigns_id;
 					$r = $model->createByNetwork();
+					$r->c_id = $vector_id;
 					if ($r->result == 'ERROR') {
-						$r->c_id = $vector_id;
 						echo json_encode($r);
 						Yii::app()->end();
 					}
 				}
-				$r->c_id = $vector_id;
 				echo json_encode($r);
 			} else { // Is entry campaigns
 				$model=new DailyReport;

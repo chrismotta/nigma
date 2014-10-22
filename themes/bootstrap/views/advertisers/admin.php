@@ -97,7 +97,7 @@ $('.search-form form').submit(function(){
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
 				    	$.post(
-						"view/"+id,
+						"viewAjax/"+id,
 						"",
 						function(data)
 							{
