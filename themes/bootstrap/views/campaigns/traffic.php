@@ -122,7 +122,9 @@ Yii::app()->clientScript->registerScript('search', "
 				'style' => 'width: 80px',
 			),
 		    'options' => array(
-				'autoclose'      => true,
+				'todayBtn'       => true,
+                'autoclose'      => true,
+                'todayHighlight' => true,
 				'format'         => 'dd-mm-yyyy',
 				'viewformat'     => 'dd-mm-yyyy',
 				'placement'      => 'right',
@@ -141,7 +143,9 @@ Yii::app()->clientScript->registerScript('search', "
 				'style' => 'width: 80px',
 			),
 			'options'     => array(
-				'autoclose'      => true,
+				'todayBtn'       => true,
+                'autoclose'      => true,
+                'todayHighlight' => true,
 				'format'         => 'dd-mm-yyyy',
 				'viewformat'     => 'dd-mm-yyyy',
 				'placement'      => 'right',
