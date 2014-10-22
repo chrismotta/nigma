@@ -121,7 +121,7 @@ class DailyReport extends CActiveRecord
 	}
 
 
-	public function excel($startDate=NULL, $endDate=NULL)
+	public function excel($startDate=NULL, $endDate=NULL, $sum=0)
 	{
 		$criteria=new CDbCriteria;
 		//$criteria->compare('t.id',$this->id);
@@ -129,6 +129,28 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 	    }
+
+		//sumas
+		if($sum==1){
+			$criteria->group  = 'campaigns_id';
+			$criteria->select = array(
+				'*', 
+				'sum(imp) as imp',
+				'sum(imp_adv) as imp_adv',
+				'sum(clics) as clics',
+				'sum(conv_api) as conv_api',
+				'sum(conv_adv) as conv_adv',
+				'sum(revenue) as revenue',
+				'sum(spend) as spend',
+				'sum(profit) as profit',
+				'round( avg(profit_percent), 2 ) as profit_percent',
+				'round( avg(click_through_rate), 2 ) as click_through_rate',
+				'round( avg(conversion_rate), 2 ) as conversion_rate',
+				'round( avg(eCPM), 2 ) as eCPM',
+				'round( avg(eCPC), 2 ) as eCPC',
+				'round( avg(eCPA), 2 ) as eCPA'
+				);
+		}
 
 		//$criteria->with = array( 'campaigns', 'networks' );
 
