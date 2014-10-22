@@ -410,8 +410,27 @@ class DailyReport extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-		
-		//sumas
+		$sumArray=array(
+					// Adding custom sort attributes
+		            'network_name'=>array(
+						'asc'  =>'networks.name',
+						'desc' =>'networks.name DESC',
+		            ),
+		            'account_manager'=>array(
+						'asc'  =>'accountManager.name',
+						'desc' =>'accountManager.name DESC',
+		            ),
+		            'campaign_name'=>array(
+						'asc'  =>'campaigns.id',
+						'desc' =>'campaigns.id DESC',
+		            ),
+		            'rate'=>array(
+						'asc'  =>'opportunities.rate',
+						'desc' =>'opportunities.rate DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        );
 		if($sum==1){
 			$criteria->group  = 'campaigns_id';
 			$criteria->select = array(
@@ -431,6 +450,63 @@ class DailyReport extends CActiveRecord
 				'round( avg(eCPC), 2 ) as eCPC',
 				'round( avg(eCPA), 2 ) as eCPA'
 				);
+
+			$sumArray['profit'] = array(
+					'asc'  =>'sum(profit)',
+					'desc' =>'sum(profit) DESC',
+	            );
+			$sumArray['imp'] = array(
+					'asc'  =>'sum(imp)',
+					'desc' =>'sum(imp) DESC',
+	            );
+			$sumArray['imp_adv'] = array(
+					'asc'  =>'sum(imp_adv)',
+					'desc' =>'sum(imp_adv) DESC',
+	            );
+			$sumArray['clics'] = array(
+					'asc'  =>'sum(clics)',
+					'desc' =>'sum(clics) DESC',
+	            );
+			$sumArray['conv_api'] = array(
+					'asc'  =>'sum(conv_api)',
+					'desc' =>'sum(conv_api) DESC',
+	            );
+			$sumArray['conv_adv'] = array(
+					'asc'  =>'sum(conv_adv)',
+					'desc' =>'sum(conv_adv) DESC',
+	            );
+			$sumArray['revenue'] = array(
+					'asc'  =>'sum(revenue)',
+					'desc' =>'sum(revenue) DESC',
+	            );
+			$sumArray['spend'] = array(
+					'asc'  =>'sum(spend)',
+					'desc' =>'sum(spend) DESC',
+	            );
+			$sumArray['profit_percent'] = array(
+					'asc'  =>'round( avg(profit_percent), 2 )',
+					'desc' =>'round( avg(profit_percent), 2 ) DESC',
+	            );
+			$sumArray['click_through_rate'] = array(
+					'asc'  =>'round( avg(click_through_rate), 2 )',
+					'desc' =>'round( avg(click_through_rate), 2 ) DESC',
+	            );
+			$sumArray['conversion_rate'] = array(
+					'asc'  =>'round( avg(conversion_rate), 2 )',
+					'desc' =>'round( avg(conversion_rate), 2 ) DESC',
+	            );
+			$sumArray['eCPM'] = array(
+					'asc'  =>'round( avg(eCPM), 2 )',
+					'desc' =>'round( avg(eCPM), 2 ) DESC',
+	            );
+			$sumArray['eCPC'] = array(
+					'asc'  =>'round( avg(eCPC), 2 )',
+					'desc' =>'round( avg(eCPC), 2 ) DESC',
+	            );
+			$sumArray['eCPA'] = array(
+					'asc'  =>'round( avg(eCPA), 2 )',
+					'desc' =>'round( avg(eCPA), 2 ) DESC',
+	            );
 		}
 
 		//search
@@ -485,27 +561,7 @@ class DailyReport extends CActiveRecord
             ),
 			'sort'=>array(
 				'defaultOrder' => 't.id DESC',
-				'attributes'   =>array(
-					// Adding custom sort attributes
-		            'network_name'=>array(
-						'asc'  =>'networks.name',
-						'desc' =>'networks.name DESC',
-		            ),
-		            'account_manager'=>array(
-						'asc'  =>'accountManager.name',
-						'desc' =>'accountManager.name DESC',
-		            ),
-		            'campaign_name'=>array(
-						'asc'  =>'campaigns.id',
-						'desc' =>'campaigns.id DESC',
-		            ),
-		            'rate'=>array(
-						'asc'  =>'opportunities.rate',
-						'desc' =>'opportunities.rate DESC',
-		            ),
-		            // Adding all the other default attributes
-		            '*',
-		        ),
+				'attributes'   =>$sumArray,
 		    ),
 		));
 	}
