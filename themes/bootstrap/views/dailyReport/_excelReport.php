@@ -67,6 +67,14 @@
         <br/>
         </div>
 
+        <div class="input-append">
+            <?php echo CHtml::label("SUM:", 'excel-dateEnd', array('class'=>'control-label')); ?>
+            <div class="controls">
+                <?php echo CHtml::checkBox('sum', 0, array('style'=>'vertical-align:bottom;')); ?>
+           </div>
+        <br/>
+       </div>
+
     <div class="form-actions">
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Download', 'htmlOptions' => array('name' => 'excel-report-daily'))); ?>
     </div>

@@ -9,12 +9,13 @@ $name = 'KickAds-DailyReport.xls';
 
 $dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
 $dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
+$sum       = isset($_POST['sum']) ? $_POST['sum'] : '0';
 
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
 
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel($dateStart, $dateEnd),
+    'dataProvider' => $model->excel($dateStart, $dateEnd, $sum),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
