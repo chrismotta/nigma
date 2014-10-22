@@ -11,7 +11,7 @@
  * @property string $percent_off
  * @property string $url
  * @property integer $has_api
- * @property integer $useVectors
+ * @property integer $use_vectors
  * @property string $query_string
  * @property string $token1
  * @property string $token2
@@ -43,7 +43,7 @@ class Networks extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('prefix, name, url', 'required'),
-			array('has_api, useVectors', 'numerical', 'integerOnly'=>true),
+			array('has_api, use_vectors', 'numerical', 'integerOnly'=>true),
 			array('prefix', 'length', 'max'=>45),
 			array('name, url', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>3),
@@ -52,7 +52,7 @@ class Networks extends CActiveRecord
 			array('token1, token2, token3', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, currency, percent_off, url, has_api, useVectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
+			array('id, prefix, name, currency, percent_off, url, has_api, use_vectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -85,7 +85,7 @@ class Networks extends CActiveRecord
 			'percent_off' => 'Percent Off',
 			'url' => 'Url',
 			'has_api' => 'Has Api',
-			'useVectors' => 'Use Vectors',
+			'use_vectors' => 'Use Vectors',
 			'query_string' => 'Query String',
 			'token1' => 'Token1',
 			'token2' => 'Token2',
@@ -118,7 +118,7 @@ class Networks extends CActiveRecord
 		$criteria->compare('percent_off',$this->percent_off,true);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('has_api',$this->has_api);
-		$criteria->compare('useVectors',$this->useVectors);
+		$criteria->compare('use_vectors',$this->use_vectors);
 		$criteria->compare('query_string',$this->query_string,true);
 		$criteria->compare('token1',$this->token1,true);
 		$criteria->compare('token2',$this->token2,true);
