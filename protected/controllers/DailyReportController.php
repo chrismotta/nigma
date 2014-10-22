@@ -104,7 +104,7 @@ class DailyReportController extends Controller
 
 		if ( isset($_POST['saveSubmit']) ) {
 			
-			if ( Networks::model()->findByPk($_POST['DailyReport']['networks_id'])->useVectors ) { // Is entry vectors
+			if ( Networks::model()->findByPk($_POST['DailyReport']['networks_id'])->use_vectors ) { // Is entry vectors
 				$attr = $_POST['DailyReport'];
 				$vector_id = $attr['campaigns_id'];
 				$campaigns = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid' => $vector_id));
