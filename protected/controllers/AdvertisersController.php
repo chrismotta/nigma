@@ -29,7 +29,7 @@ class AdvertisersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'externalForm', 'archived'),
+				'actions'=>array('index','view','create','update','admin','delete', 'externalForm', 'archived','viewAjax'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -48,6 +48,18 @@ class AdvertisersController extends Controller
 				'users'=>array('*'),
 			),
 		);
+	}
+/**
+	 * Displays a particular model by ajax.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionViewAjax($id)
+	{
+		$model = $this->loadModel($id);
+
+		$this->renderPartial('_view',array(
+			'model'=>$model,
+		), false, true);
 	}
 
 	/**

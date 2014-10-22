@@ -93,12 +93,17 @@ $('.search-form form').submit(function(){
 			'name'              => 'name',
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
+        array(
+			'name'  => 'networks_id',
+			'value' => '$data->networks->name',
+			//'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'buttons'           => array(
 				'addCampaign' => array(
-					'label' =>'Detail',
+					'label' =>'Manage Campaigns',
 					'icon'  =>'plus',
 					'click' =>'
 				    function(){

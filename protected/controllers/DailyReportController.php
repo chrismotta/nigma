@@ -104,29 +104,42 @@ class DailyReportController extends Controller
 
 		if ( isset($_POST['saveSubmit']) ) {
 			
-			$model=new DailyReport;
-			$model->attributes = $_POST['DailyReport'];
-			$model->is_from_api = 0;
-			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
-			$model->updateRevenue();
-			$model->setNewFields();
-				
-			// Validate if record has already been entry
-			$existingModel = DailyReport::model()->find('campaigns_id=:cid AND networks_id=:nid AND date=:date', array(':cid' => $model->campaigns_id, ':nid' => $model->networks_id, ':date' => $model->date));
-			if ( $existingModel ) {
-				$model->isNewRecord = false;
-				$model->id = $existingModel->id;
-			}
+			if ( Networks::model()->findByPk($_POST['DailyReport']['networks_id'])->use_vectors ) { // Is entry vectors
+				$attr = $_POST['DailyReport'];
+				$vector_id = $attr['campaigns_id'];
+				$campaigns = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid' => $vector_id));
 
-			$r = new stdClass();
-			$r->c_id = $model->campaigns_id;
-			if ( $model->save() ) {
-				$r->result = "OK";
-			} else {
-				$r->result = "ERROR";
-				$r->message = $model->getErrors();
+				if (empty($campaigns)) { // if vectors hasn't associated campaigns then exit
+					$r         = new stdClass();
+					$r->result = 'OK';
+					$r->c_id   = $vector_id;
+					echo json_encode($r);
+					Yii::app()->end();
+				}
+
+				$porc = count($campaigns);
+				$attr['imp']     = number_format($attr['imp']   / $porc, 0);
+				$attr['imp_adv'] = number_format($attr['imp_adv']   / $porc, 0);
+				$attr['clics']   = number_format($attr['clics'] / $porc, 0);
+				$attr['spend']   = number_format($attr['spend'] / $porc, 2);
+
+				foreach ($campaigns as $campaign) {
+					$model=new DailyReport;
+					$model->attributes = $attr;
+					$model->campaigns_id = $campaign->campaigns_id;
+					$r = $model->createByNetwork();
+					$r->c_id = $vector_id;
+					if ($r->result == 'ERROR') {
+						echo json_encode($r);
+						Yii::app()->end();
+					}
+				}
+				echo json_encode($r);
+			} else { // Is entry campaigns
+				$model=new DailyReport;
+				$model->attributes = $_POST['DailyReport'];
+				echo json_encode($model->createByNetwork());
 			}
-			echo json_encode($r);
 			Yii::app()->end();
 		}
 		
@@ -135,12 +148,16 @@ class DailyReportController extends Controller
 		$campaign = new Campaigns('search');
 		$campaign->unsetAttributes();  // clear any default values
 
+		$vector = new Vectors('search');
+		$vector->unsetAttributes();  // clear any default values
+
 		$daily = new DailyReport('search');
 		$daily->unsetAttributes();  // clear any default values
 
 		$this->render('createByNetwork', array(
 			'model'          => $daily,
 			'campaign'       => $campaign,
+			'vector'         => $vector,
 			'networks'       => $networks,
 			'date'           => $date,
 			'currentNetwork' => $currentNetwork,

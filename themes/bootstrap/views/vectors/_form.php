@@ -11,7 +11,7 @@
 
 <div class="modal-body">
 	<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-		'id'                   =>'vector-form',
+		'id'                   =>'vectors-form',
 		'type'                 =>'horizontal',
 		'htmlOptions'          =>array('class'=>'well'),
 		// to enable ajax validation
@@ -21,6 +21,7 @@
 	<fieldset>
 
 	<?php 
+		echo $form->dropDownListRow($model, 'networks_id', $networks, array('prompt' => 'Select a network'));
 		echo $form->textFieldRow($model, 'name', array('class'=>'span3')); 
 	?>
 

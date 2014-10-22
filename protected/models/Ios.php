@@ -270,97 +270,152 @@ class Ios extends CActiveRecord
 		$criteria->order='ios.commercial_name asc';
 	 */
 	
-// public function getClients($month,$year)
-// 	{
-// 		$data=array();	
-// 		$ios=self::model()->findAll();
-// 		$i=0;
-// 		foreach ($ios as $io) {
-// 			$data[$i]['id']=$io->id;
-// 			$data[$i]['name']=$io->commercial_name;
-// 			$data[$i]['currency']=$io->currency;
-// 			$data[$i]['entity']=$io->entity;
-// 			$data[$i]['model']=array();
 
-// 			$criteria=new CDbCriteria;
-// 			$criteria->addCondition('ios_id='.$io->id);
-// 			$criteria->group='ios_id,model_adv,rate';
-// 			$opportunities=Opportunities::model()->findAll($criteria);
-// 			foreach ($opportunities as $opportunitie) {
-// 				$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['conv']=0;
-// 				$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['rev']=0;
-
-// 				$criteria=new CDbCriteria;
-// 				$criteria->addCondition('opportunities_id='.$opportunitie->id);
-// 				$campaigns=Campaigns::model()->findAll($criteria);
-// 				foreach ($campaigns as $campaign) {
-// 					$criteria=new CDbCriteria;
-// 					$criteria->addCondition('campaigns_id='.$campaign->id);
-// 					$criteria->addCondition('MONTH(date)='.$month);
-// 					$criteria->addCondition('YEAR(date)='.$year);
-// 					$dailys=DailyReport::model()->findAll($criteria);
-// 					foreach ($dailys as $daily) {
-// 						$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['rev']+=$daily->revenue;
-// 						$data[$i]['model'][$opportunitie->model_adv][$opportunitie->rate]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
-// 					}
-// 				}
-// 			}
-			
-// 			$i++;
-// 		}
-// 		return $data;
-// 	}
-
-	public function getClients($month,$year)
+	public function getClients($month,$year,$entity=null)
 	{
 		$data=array();	
 		$ios=self::model()->findAll();
+		if($entity===0)$entity=null;
+		//echo "<script>alert('".$entity."')</script>";		
+		if($entity)
+		{
+			$criteria=new CDbCriteria;
+			$criteria->addCondition('entity="'.$entity.'"');
+			$ios=self::model()->findAll($criteria);
+		}
+		
 		$i=0;
 		foreach ($ios as $io) {
 
-			$criteria=new CDbCriteria;
-			$criteria->addCondition('ios_id='.$io->id);
-			$criteria->group='ios_id,model_adv,rate';
-			$opportunities=Opportunities::model()->findAll($criteria);
+			$criteria                       =new CDbCriteria;
+			$criteria->addCondition('ios_id ='.$io->id);
+			$criteria->group                ='ios_id,model_adv,rate';
+			$opportunities                  =Opportunities::model()->findAll($criteria);
 			foreach ($opportunities as $opportunitie) {
-
-				
-
-				$criteria=new CDbCriteria;
-				$criteria->addCondition('opportunities_id='.$opportunitie->id);
-				$campaigns=Campaigns::model()->findAll($criteria);
+				$criteria                                 =new CDbCriteria;
+				$criteria->addCondition('opportunities_id ='.$opportunitie->id);
+				$campaigns                                =Campaigns::model()->findAll($criteria);
 				foreach ($campaigns as $campaign) {
-					$criteria=new CDbCriteria;
-					$criteria->addCondition('campaigns_id='.$campaign->id);
-					$criteria->addCondition('MONTH(date)='.$month);
-					$criteria->addCondition('YEAR(date)='.$year);
+					$criteria                             =new CDbCriteria;
+					$criteria->addCondition('campaigns_id ='.$campaign->id);
+					$criteria->addCondition('MONTH(date)  ='.$month);
+					$criteria->addCondition('YEAR(date)   ='.$year);
 					$dailys=DailyReport::model()->findAll($criteria);
 					foreach ($dailys as $daily) {
 						if($daily->revenue>0)
 						{
-							$data[$i]['id']=$io->id;
-							$data[$i]['name']=$io->commercial_name;
-							$data[$i]['currency']=$io->currency;
-							$data[$i]['entity']=$io->entity;
-							$data[$i]['model']=$opportunitie->model_adv;
-							$data[$i]['rate']=$opportunitie->rate;
-							isset($data[$i]['conv']) ?  : $data[$i]['conv']=0;
-							isset($data[$i]['revenue']) ?  : $data[$i]['revenue']=0;
+							$data[$i]['id']                                       =$io->id;
+							$data[$i]['name']                                     =$io->commercial_name;
+							$data[$i]['currency']                                 =$io->currency;
+							$data[$i]['entity']                                   =$io->entity;
+							$data[$i]['model']                                    =$opportunitie->model_adv;
+							$data[$i]['rate']                                     =$opportunitie->rate;
+							$data[$i]['carrier']                                  =$opportunitie->carriers_id;
+							isset($data[$i]['conv']) ?  : $data[$i]['conv']       =0;
+							isset($data[$i]['revenue']) ?  : $data[$i]['revenue'] =0;
 							//!isset($data[$i]['rev']) ? $data[$i]['rev']=0 : ;
 
-							$data[$i]['revenue']+=$daily->revenue;
-							if($opportunitie->model_adv=='CPA')$data[$i]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
-							if($opportunitie->model_adv=='CPM')$data[$i]['conv']+=$daily->imp;
-							if($opportunitie->model_adv=='CPC')$data[$i]['conv']+=$daily->clics;
+							$data[$i]['revenue']        +=$daily->revenue;
+							if($opportunitie->model_adv =='CPA')$data[$i]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
+							if($opportunitie->model_adv =='CPM')$data[$i]['conv']+=$daily->imp;
+							if($opportunitie->model_adv =='CPC')$data[$i]['conv']+=$daily->clics;
 						}
 					}
 				}
 				$i++;
 			}
 
+			//$i++;
+		}
+		return $data;
+	}
+
+
+	public function getClientsByIo($month,$year,$io_id=null)
+	{
+		$data=array();	
+		$criteriaI=new CDbCriteria;
+		$criteriaI->addCondition('id='.$io_id);
+		$ios=self::model()->findAll($criteriaI);
+		$i=0;
+		foreach ($ios as $io) {
+
+			$criteria                       =new CDbCriteria;
+			$criteria->addCondition('ios_id ='.$io->id);
+			$criteria->group                ='ios_id,model_adv,rate';
+			$opportunities                  =Opportunities::model()->findAll($criteria);
+			foreach ($opportunities as $opportunitie) {
+				$criteria                                 =new CDbCriteria;
+				$criteria->addCondition('opportunities_id ='.$opportunitie->id);
+				$campaigns                                =Campaigns::model()->findAll($criteria);
+				foreach ($campaigns as $campaign) {
+					$criteria                             =new CDbCriteria;
+					$criteria->addCondition('campaigns_id ='.$campaign->id);
+					$criteria->addCondition('MONTH(date)  ='.$month);
+					$criteria->addCondition('YEAR(date)   ='.$year);
+					$dailys                               =DailyReport::model()->findAll($criteria);
+					foreach ($dailys as $daily) {
+						$criteria                                =new CDbCriteria;
+						$criteria->addCondition('daily_report_id ='.$daily->id);
+						$rates                                   =MultiRate::model()->findAll($criteria);
+						foreach ($rates as $rate) {
+							if($daily->revenue>0)
+							{
+								$data[$i]['id']                                       =$daily->id;
+								$data[$i]['name']                                     =$io->commercial_name;
+								$data[$i]['currency']                                 =$io->currency;
+								$data[$i]['entity']                                   =$io->entity;
+								$data[$i]['model']                                    =$opportunitie->model_adv;
+								$data[$i]['rate']                                     =$rate->rate;
+								$data[$i]['carrier']                                  =$opportunitie->carriers_id;
+								isset($data[$i]['conv']) ?  : $data[$i]['conv']       =0;
+								isset($data[$i]['revenue']) ?  : $data[$i]['revenue'] =0;
+								//!isset($data[$i]['rev']) ? $data[$i]['rev']=0 : ;
+
+								$data[$i]['revenue']        +=$daily->revenue;
+								if($opportunitie->model_adv =='CPA')$data[$i]['conv']+=$rate->conv;
+								if($opportunitie->model_adv =='CPM')$data[$i]['conv']+=$daily->imp;
+								if($opportunitie->model_adv =='CPC')$data[$i]['conv']+=$daily->clics;
+							}
+
+						$i++;
+						}
+					}
+				}
+			}
+
+			//$i++;
+		}
+		$result=array();
+		foreach ($data as $value) {
+			isset($result[$value['rate']]) ?  : $result[$value['rate']]=0;
+			$result[$value['rate']]+=$value['conv'];
+		}
+		$data=array();
+		$i=0;
+		foreach ($result as $rate => $conv) {
+			$data[$i]['id']=$i;
+			$data[$i]['rate']=$rate;
+			$data[$i]['conv']=$conv;
+			$data[$i]['revenue']=$rate*$conv;
 			$i++;
 		}
 		return $data;
 	}
 
+	public function findByAdvertisers($advertiser)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("advertisers_id=".$advertiser."");
+		return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(
+			            '*',
+			        ),
+			    ),
+
+			));
+	}
 }
