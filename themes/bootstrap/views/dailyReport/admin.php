@@ -27,11 +27,12 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php
-	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
-	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
-	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$networks   = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
@@ -233,7 +234,6 @@ $('.search-form form').submit(function(){
 		echo CHtml::dropDownList('opportunitie', $opportunitie, 
 	            $list,
 	            array('empty' => 'All opportunities',));
-
     }
 
     $models = Networks::model()->findAll( array('order' => 'name') );
@@ -242,9 +242,13 @@ $('.search-form form').submit(function(){
 	echo CHtml::dropDownList('networks', $networks, 
         $list,
         array('empty' => 'All networks',));
-	       
-		
 	?>
+	  
+	SUM 
+	<div class="input-append">
+	<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align:baseline;margin:6px 6px 0px 2px;')); ?>
+	</div>
+		
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
     </fieldset>
@@ -256,7 +260,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd,$accountManager,$opportunitie,$networks),
+	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
@@ -276,7 +280,7 @@ $('.search-form form').submit(function(){
 		),
         array(	
 			'name'        => 'comment',
-			'filter'      =>false,
+			'filter'      => false,
 			'class'       => 'bootstrap.widgets.TbEditableColumn',
 			'htmlOptions' => array('class'=>'editableField'),
 			'editable'    => array(
@@ -287,6 +291,7 @@ $('.search-form form').submit(function(){
 					$(this).html("<i class=\"icon-font\"></i>");
 				}'
             ),
+            'visible' => $sum ? false : true,
         ),
 		array(
 			'name'   =>	'network_name',
@@ -311,12 +316,13 @@ $('.search-form form').submit(function(){
 			'footer'            => $totals['imp_adv'],
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
 			'editable'          => array(
-				'title'     => 'Impressions',
-				'type'      => 'text',
-				'url'       => 'updateEditable/',
-				'emptytext' => 'Null',
-				'inputclass'=> 'input-mini',
-				'success' => 'js: function(response, newValue) {
+				'apply'      => $sum ? false : true,
+				'title'      => 'Impressions',
+				'type'       => 'text',
+				'url'        => 'updateEditable/',
+				'emptytext'  => 'Null',
+				'inputclass' => 'input-mini',
+				'success'    => 'js: function(response, newValue) {
 					  	if (!response.success) {
 							$.fn.yiiGridView.update("daily-report-grid");
 					  	}
@@ -337,20 +343,22 @@ $('.search-form form').submit(function(){
         ),
 		array(
 			'name'              => 'conv_adv',
+			'filterHtmlOptions' => array('colspan'=>'2'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
-			'cssClassExpression' => '$data->campaigns->opportunities->rate === NULL 
+			'cssClassExpression'=> '$data->campaigns->opportunities->rate === NULL 
 									&& $data->campaigns->opportunities->carriers_id === NULL ?
 									"notMultiCarrier" :
 									"multiCarrier"',
 			'editable'          => array(
-				'title'     => 'Conversions',
-				'type'      => 'text',
-				'url'       => 'updateEditable/',
-				'emptytext' => 'Null',
-				'inputclass'=> 'input-mini',
-				'success' => 'js: function(response, newValue) {
+				'apply'      => $sum ? false : true,
+				'title'      => 'Conversions',
+				'type'       => 'text',
+				'url'        => 'updateEditable/',
+				'emptytext'  => 'Null',
+				'inputclass' => 'input-mini',
+				'success'    => 'js: function(response, newValue) {
 					  	if (!response.success) {
 							$.fn.yiiGridView.update("daily-report-grid");
 					  	}
@@ -360,13 +368,13 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'              => 'mr',
-			'filter'			=> '',
+			'filter'			=> null,
 			'headerHtmlOptions' => array('class'=>'plusMR'),
-			'filterHtmlOptions' => array('class'=>'plusMR'),
+			//'filterHtmlOptions' => array('class'=>'plusMR'),
 			'htmlOptions'       => array('class'=>'plusMR'),
 			'type'              => 'raw',
 			'value'             =>	'
-				$data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL ?
+				$data->campaigns->opportunities->rate === NULL && $data->campaigns->opportunities->carriers_id === NULL && '.$sum.' == 0 ?
 					CHtml::link(
             				"<i class=\"icon-plus\"></i>",
 	            			"javascript:;",
@@ -380,7 +388,7 @@ $('.search-form form').submit(function(){
 											$(\"#modalDailyReport\").modal(\"toggle\");
 										}",
 									)),
-								"style"               => "width: 20px",
+								//"style"               => "width: 20px;pointer-events: none;cursor: default;",
 								"rel"                 => "tooltip",
 								"data-original-title" => "Update"
 								)
@@ -520,7 +528,7 @@ $('.search-form form').submit(function(){
 				),
 			),
 
-			'template' => '{updateCampaign} {updateAjax} {delete}',
+			'template' => $sum ? '{updateCampaign}' : '{updateCampaign} {updateAjax} {delete}',
 		),
 	),
 )); ?>
