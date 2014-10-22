@@ -408,7 +408,7 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
@@ -423,7 +423,10 @@ class DailyReport extends CActiveRecord
 
 		// external name
 		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
+		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
 		$criteria->compare('country.ISO2',$this->campaign_name,true,'OR');
+		$criteria->compare('advertisers.prefix',$this->campaign_name,true,'OR');
+		$criteria->compare('opportunities.product',$this->campaign_name,true,'OR');
 		$criteria->compare('campaigns.name',$this->campaign_name,true,'OR');
 		
 		FilterManager::model()->addUserFilter($criteria, 'daily');
