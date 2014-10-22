@@ -425,7 +425,6 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
 		$criteria->compare('country.ISO2',$this->campaign_name,true,'OR');
 		$criteria->compare('campaigns.name',$this->campaign_name,true,'OR');
-		$criteria->compare('advertisers.prefix',$this->campaign_name,true,'OR');
 		
 		FilterManager::model()->addUserFilter($criteria, 'daily');
 
