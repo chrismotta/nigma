@@ -85,6 +85,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 								$("#modalUser").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -106,6 +107,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 								$("#modalUser").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -127,6 +129,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 								$("#modalUser").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				)

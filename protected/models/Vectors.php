@@ -125,9 +125,7 @@ class Vectors extends CActiveRecord
 		}
 
 		$criteria->compare('t.status', 'Active');
-
-		FilterManager::model()->addUserFilter($criteria, 'vector.account');
-
+		
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			// Setting 'sort' property in order to add 
@@ -148,7 +146,8 @@ class Vectors extends CActiveRecord
 
 	public function getExternalName($id)
 	{
-		return $this->id . "-" . $this->name . " - Vector";
+		$model = Vectors::model()->findByPk($id);
+		return $model->id . "-" . $model->name . "-VEC";
 	}
 
 	/**

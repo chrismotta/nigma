@@ -70,7 +70,7 @@ $('.search-form form').submit(function(){
 
 <?php 
 	if ( $currentNetwork != NULL )
-		if ( Networks::model()->findByPk($currentNetwork)->useVectors )
+		if ( Networks::model()->findByPk($currentNetwork)->use_vectors )
 			$dataProvider = $vector->searchByNetworkAndDate($currentNetwork, $date);
 		else
 			$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
@@ -161,7 +161,6 @@ $('.search-form form').submit(function(){
 			'buttons'           => array(
 				'submit' => array(
 					'label' => 'Save',
-					'url'   => '"javascript:;"',
 					// 'icon'  => 'upload',
 					'options' => array('class' => 'label', 'rel' => '', 'id'=>'labelSubmit'),
 					'click' => '
@@ -209,6 +208,7 @@ $('.search-form form').submit(function(){
 							},
 							"json"
 						)
+						return false;
 				    }
 				    ',
 				),

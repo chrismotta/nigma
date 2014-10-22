@@ -120,6 +120,7 @@ $('.search-form form').submit(function(){
 								$("#modalVectors").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -141,6 +142,30 @@ $('.search-form form').submit(function(){
 								$("#modalVectors").html(data);
 							}
 						)
+						return false;
+				    }
+				    ',
+				),
+				'redirects' => array(
+					'label' =>'Redirects',
+					'icon'  =>'repeat',
+					'click' =>'
+				    function(){
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalVectors").html(dataInicial);
+						$("#modalVectors").modal("toggle");
+
+				    	$.post(
+						"redirectAjax/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalVectors").html(data);
+							}
+						)
 				    }
 				    ',
 				),
@@ -148,7 +173,7 @@ $('.search-form form').submit(function(){
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{addCampaign} {updateAjax} {delete}',
+			'template' => '{addCampaign} {updateAjax} {redirects} {delete}',
 		),
 	),
 

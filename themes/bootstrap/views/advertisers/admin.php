@@ -106,6 +106,7 @@ $('.search-form form').submit(function(){
 								$("#modalAdvertiser").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -127,6 +128,7 @@ $('.search-form form').submit(function(){
 								$("#modalAdvertiser").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -148,6 +150,7 @@ $('.search-form form').submit(function(){
 								$("#modalAdvertiser").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				)

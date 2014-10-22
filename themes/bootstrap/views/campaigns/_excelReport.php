@@ -24,46 +24,52 @@ $cid = isset($_GET['id']) ? $_GET['id'] : null;
     )); ?>
     <fieldset>
 
-        <div class="control-group">
-            <?php echo CHtml::label("From:", 'excel-dateStart', array('class'=>'control-label')); ?>
-            
-            <div class="controls">
-                <?php $this->widget('ext.rezvan.RDatePicker',array(
-                    'name'  => 'excel-dateStart',
-                    'value' => date('d-m-Y', strtotime($dateStart)),
-                    'htmlOptions' => array(
-                        'style' => 'width: 80px',
-                    ),
-                    'options' => array(
-                        'autoclose'      => true,
-                        'format'         => 'dd-mm-yyyy',
-                        'viewformat'     => 'dd-mm-yyyy',
-                        'placement'      => 'right',
-                    ),
-                )); ?>
-            </div>
+    <div class="input-append">
+        <?php echo CHtml::label("From:", 'excel-dateStart', array('class'=>'control-label')); ?>
+
+        <div class="controls">
+            <?php $this->widget('bootstrap.widgets.TbDatePicker',array(
+                'name'  => 'excel-dateStart',
+                'value' => date('d-m-Y', strtotime('yesterday')),
+                'htmlOptions' => array(
+                    'style' => 'width: 80px',
+                ),
+                'options' => array(
+                    'todayBtn'       => true,
+                    'autoclose'      => true,
+                    'todayHighlight' => true,
+                    'format'         => 'dd-mm-yyyy',
+                    'viewformat'     => 'dd-mm-yyyy',
+                    'placement'      => 'right',
+            ))); ?>
+            <span class="add-on"><i class="icon-calendar"></i></span>
         </div>
-            
-        <div class="control-group">
-            <input type="hidden" value="<?php echo $cid ?>" id="id" name="id">
-            <?php echo CHtml::label("To:", 'excel-dateEnd', array('class'=>'control-label')); ?>
-            
-            <div class="controls">
-                <?php $this->widget('ext.rezvan.RDatePicker',array(
-                    'name'  => 'excel-dateEnd',
-                    'value' => date('d-m-Y', strtotime($dateEnd)),
-                    'htmlOptions' => array(
-                        'style' => 'width: 80px',
-                    ),
-                    'options' => array(
-                        'autoclose'      => true,
-                        'format'         => 'dd-mm-yyyy',
-                        'viewformat'     => 'dd-mm-yyyy',
-                        'placement'      => 'right',
-                    ),
-                )); ?>
-            </div>
+    <br/>
+    </div>
+        
+    <div class="input-append">
+        <?php echo CHtml::label("To:", 'excel-dateEnd', array('class'=>'control-label')); ?>
+        
+        <div class="controls">
+            <?php $this->widget('bootstrap.widgets.TbDatePicker',array(
+                'name'  => 'excel-dateEnd',
+                'value' => date('d-m-Y', strtotime('yesterday')),
+                'htmlOptions' => array(
+                    'style' => 'width: 80px',
+                ),
+                'options' => array(
+                    'todayBtn'       => true,
+                    'autoclose'      => true,
+                    'todayHighlight' => true,
+                    'format'         => 'dd-mm-yyyy',
+                    'viewformat'     => 'dd-mm-yyyy',
+                    'placement'      => 'right',
+            ))); ?>
+            <span class="add-on"><i class="icon-calendar"></i></span>
         </div>
+    <br/>
+    </div>
+
 
     <div class="form-actions">
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Download', 'htmlOptions' => array('name' => 'excel-traffic'))); ?>

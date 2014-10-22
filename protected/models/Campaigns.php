@@ -177,7 +177,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		//We need to list all related tables in with property
-		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
+		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'vectors', 'networks');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
@@ -188,6 +188,9 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('t.id',$this->name,true);
 		$criteria->compare('country.ISO2',$this->name,true,'OR');
 		$criteria->compare('t.name',$this->name,true,'OR');
+		$criteria->compare('carriers.mobile_brand',$this->name,true,'OR');
+		$criteria->compare('advertisers.prefix',$this->name,true,'OR');
+		$criteria->compare('opportunities.product',$this->name,true,'OR');
 
 		// Filter depending if user has "media" or "commercial" role
 		if ( in_array('commercial', Yii::app()->authManager->getRoles(Yii::app()->user->id), true) )

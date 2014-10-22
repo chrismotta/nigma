@@ -383,12 +383,35 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null,$sum=0)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		
+		//sumas
+		if($sum==1){
+			$criteria->group  = 'campaigns_id';
+			$criteria->select = array(
+				'*', 
+				'sum(imp) as imp',
+				'sum(imp_adv) as imp_adv',
+				'sum(clics) as clics',
+				'sum(conv_api) as conv_api',
+				'sum(conv_adv) as conv_adv',
+				'sum(revenue) as revenue',
+				'sum(spend) as spend',
+				'sum(profit) as profit',
+				'round( avg(profit_percent), 2 ) as profit_percent',
+				'round( avg(click_through_rate), 2 ) as click_through_rate',
+				'round( avg(conversion_rate), 2 ) as conversion_rate',
+				'round( avg(eCPM), 2 ) as eCPM',
+				'round( avg(eCPC), 2 ) as eCPC',
+				'round( avg(eCPA), 2 ) as eCPA'
+				);
+		}
 
+		//search
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		if ( $networks == NULL) $criteria->compare('networks_id',$this->networks_id);
@@ -408,19 +431,26 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
 		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
-		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		if ( $accountManager != NULL) {
 			$criteria->compare('accountManager.id',$accountManager);
 		}
 		if ( $opportunitie != NULL) {
 			$criteria->compare('opportunities.id',$opportunitie);
 		}
+
+		// external name
+		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
+		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
+		$criteria->compare('country.ISO2',$this->campaign_name,true,'OR');
+		$criteria->compare('advertisers.prefix',$this->campaign_name,true,'OR');
+		$criteria->compare('opportunities.product',$this->campaign_name,true,'OR');
+		$criteria->compare('campaigns.name',$this->campaign_name,true,'OR');
 		
 		FilterManager::model()->addUserFilter($criteria, 'daily');
 
@@ -579,14 +609,14 @@ class DailyReport extends CActiveRecord
 	public function getCtr()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
-		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 2);
+		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 4);
 		return $r;
 	}
 
 	public function getConvRate()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
-		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 2 );
+		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 4 );
 		return $r;
 	}
 
