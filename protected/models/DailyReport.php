@@ -305,7 +305,7 @@ class DailyReport extends CActiveRecord
 		foreach ($r as $value) {
 			$spends[]=doubleval($value->getSpendUSD());
 			$revenues[]=doubleval($value->getRevenueUSD());
-			$profits[]=doubleval($value->getProfit());
+			$profits[]=doubleval($value->profit);
 			$campaigns[]=$value->campaigns->name;		
 			$campaigns_id[]=$value->campaigns->id;		
 		}
