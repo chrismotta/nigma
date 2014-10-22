@@ -27,7 +27,7 @@ class VectorsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived'),
+				'actions'=>array('index','view','redirectAjax','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived'),
 				'roles'=>array('admin', 'media_manager', 'business'),
 			),
 			array('deny',  // deny all users
@@ -113,7 +113,21 @@ class VectorsController extends Controller
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 
 	}
+	
+	/**
+	 * Generate redirects.
+	 */
+	public function actionRedirectAjax($id)
+	{
+		$vectorsModel    = $this->loadModel($id);
+		//$network = Networks::model()->findByPk($model->networks_id);
 
+		$this->renderPartial('_redirects',array(
+			'model'        => $vectorsModel,
+			//'network'      => $network,
+			'vectorName' => Vectors::model()->getExternalName($id),
+		), false, true);
+	}
 
 	/**
 	 * Add campaign to vector.

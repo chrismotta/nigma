@@ -23,7 +23,7 @@ $this->pageTitle=Yii::app()->name;
 		<?php 
 		    $this->widget('bootstrap.widgets.TbDatePicker',array(
 			'name'  => 'dateStart',
-			'value' => date('d-m-Y', strtotime('-1 week')),
+			'value' => isset($_GET['dateStart']) ? $_GET['dateStart'] : date('d-m-Y', strtotime('-1 week')),
 			'htmlOptions' => array(
 				'style' => 'width: 80px',
 			),
@@ -43,7 +43,7 @@ $this->pageTitle=Yii::app()->name;
 		<?php 
 		    $this->widget('bootstrap.widgets.TbDatePicker',array(
 			'name'        => 'dateEnd',
-			'value'       => date('d-m-Y', strtotime('today')),
+			'value'       => isset($_GET['dateEnd']) ? $_GET['dateEnd'] : date('d-m-Y', strtotime('yesterday')),
 			'htmlOptions' => array(
 				'style' => 'width: 80px',
 			),
