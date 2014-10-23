@@ -279,7 +279,7 @@ $this->pageTitle=Yii::app()->name;
 			        ),
 					array(
 						'name'   => 'Spends',
-			        	'value'  => '$data->getSpendUSD()',
+			        	'value'  => 'number_format($data->spend, 2)',
 						'htmlOptions' => array('style' => 'width: 50px'),
 			        ),
 			    ),
