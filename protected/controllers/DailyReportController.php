@@ -354,14 +354,6 @@ class DailyReportController extends Controller
 			if ( $model->save() ){
 				$this->redirect(array('admin'));
 			}else{
-				echo $model->getRevenueUSD();
-				echo '<br/>';
-				echo $model->getSpendUSD();
-				echo '<br/>';
-				echo $model->getProfit();
-				echo '<br/>';
-				echo $model->profit;
-				echo '<br/>';
 				var_dump($model->getErrors());
 			}
 		}
