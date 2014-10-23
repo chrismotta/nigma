@@ -358,6 +358,10 @@ class DailyReportController extends Controller
 				echo '<br/>';
 				echo $model->getSpendUSD();
 				echo '<br/>';
+				echo $model->getProfit();
+				echo '<br/>';
+				echo $model->profit;
+				echo '<br/>';
 				var_dump($model->getErrors());
 			}
 		}
