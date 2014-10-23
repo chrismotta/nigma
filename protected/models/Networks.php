@@ -177,6 +177,10 @@ class Networks extends CActiveRecord
 		$totals =array();		
 		$dataArray =array();		
 		$providers=DailyReport::model()->findAll($criteria);
+		$data['dataProvider'] = new CActiveDataProvider(new DailyReport, array(
+			'criteria'=>$criteria,
+		));	
+
 		$i=0;
 		foreach ($providers as $provider) {
 			$dataArray[$i]['id']            =$provider->id;
@@ -208,7 +212,7 @@ class Networks extends CActiveRecord
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
 		$filteredData=$filtersForm->filter($dataArray);
-		
+
 		$data['arrayProvider']=new CArrayDataProvider($filteredData, array(
 		    'id'=>'clients',
 		    'sort'=>array(
