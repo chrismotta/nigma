@@ -139,4 +139,95 @@ class Networks extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getProviders($month,$year)
+	{
+		// SELECT networks.id, 
+		// networks.name,
+		// networks.currency,
+		// sum(daily_report.clics) as clics,
+		// sum(daily_report.imp) as imp,
+		// networks.percent_off, 
+		// SUM(daily_report.spend) as subtotal,
+		// round(SUM(daily_report.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as off,
+		// SUM(daily_report.spend) - round(SUM(daily_report.spend) * if(isnull(networks.percent_off),1,networks.percent_off),2) as total
+		// FROM networks,daily_report 
+		// WHERE daily_report.networks_id=networks.id
+		// AND month(daily_report.date)=10
+		// AND year(daily_report.date)=2014
+		// group by networks.id;
+		$criteria = new CDbCriteria;
+		$criteria->select=array(
+			'networks.id as id',
+			'networks.name as network_name',
+			'networks.currency as currency',
+			'sum(t.clics) as clics',
+			'sum(t.imp) as imp',
+			'networks.percent_off as percent_off',
+			'SUM(t.spend) as spend',
+			'round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as off',
+			'SUM(t.spend) - round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as total',
+			 );
+		$criteria->with =array('networks');
+		$criteria->addCondition('month(t.date)='.$month);
+		$criteria->addCondition('year(t.date)='.$year);
+		$criteria->group ='networks.id';
+		$data   =array();		
+		$totals =array();		
+		$providers=DailyReport::model()->findAll($criteria);
+		foreach ($providers as $provider) {
+			$id[]           =$provider->id;
+			$network_name[] =$provider->network_name;
+			$currency[]     =$provider->currency;
+			$clics[]        =$provider->clics;
+			$imp[]          =$provider->imp;
+			$percent_off[]  =$provider->percent_off;
+			$spend[]        =intval($provider->spend);
+			$off[]          =$provider->off;
+			$total[]        =$provider->total;
+
+			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics'] =0;
+			isset($totals[$provider->currency]['imp']) ? : $totals[$provider->currency]['imp']     =0;
+			isset($totals[$provider->currency]['spend']) ? : $totals[$provider->currency]['spend'] =0;
+			isset($totals[$provider->currency]['off']) ? : $totals[$provider->currency]['off']     =0;
+			isset($totals[$provider->currency]['total']) ? : $totals[$provider->currency]['total'] =0;
+
+			$totals[$provider->currency]['clics']+=$provider->clics;
+			$totals[$provider->currency]['imp']+=$provider->imp;
+			$totals[$provider->currency]['spend']+=$provider->spend;
+			$totals[$provider->currency]['off']+=$provider->off;
+			$totals[$provider->currency]['total']+=$provider->total;
+		}
+
+		$i=0;
+			
+		$totalsData=array();
+		foreach ($totals as $key => $value) {
+			$totalsdata[$i]['id']       =$i;
+			$totalsdata[$i]['currency'] =$key;
+			$totalsdata[$i]['clics']    =$value['clics'];
+			$totalsdata[$i]['imp']      =$value['imp'];
+			$totalsdata[$i]['spend']    =$value['spend'];
+			$totalsdata[$i]['off']      =$value['off'];
+			$totalsdata[$i]['total']    =$value['total'];
+			$i++;
+		}
+		
+		$data['totalsDataProvider'] = new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','clics', 'imp', 'spend', 'off', 'total'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+		$data['dataProvider'] = new CActiveDataProvider(new DailyReport, array(
+			'criteria'=>$criteria,
+		));		
+		return $data;
+	}
 }

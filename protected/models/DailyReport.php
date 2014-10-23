@@ -43,6 +43,10 @@ class DailyReport extends CActiveRecord
 	public $convrate;
 	public $rate;
 	public $mr;
+	public $currency;
+	public $percent_off;
+	public $off;
+	public $total;
 
 	/**
 	 * @return string the associated database table name
@@ -117,6 +121,10 @@ class DailyReport extends CActiveRecord
 			'eCPA'               => 'eCPA',
 			'comment'            => 'Com.',
 			'mr'				 => '',
+			'currency'			 => 'Currency',
+			'percent_off'		 => 'Percent Off',
+			'off'		 		 => 'Off',
+			'total'		 		 => 'Total',
 		);
 	}
 
