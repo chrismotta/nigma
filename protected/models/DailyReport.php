@@ -333,18 +333,52 @@ class DailyReport extends CActiveRecord
 							'date, 
 							sum(profit) as profit'
 							);
-		if($order=='spend')$criteria->order='SUM(spend) DESC';
 		if($order=='profit')$criteria->order='SUM(profit) DESC';
 		$criteria->group='campaigns_id,networks_id';
+		
+		if($order=='spend') {
+			$select = "
+				*, sum(d.spend / 
+						(
+							SELECT (
+									CASE (
+										SELECT networks.currency
+										FROM networks
+										WHERE d.networks_id=networks.id
+									) WHEN 'USD' THEN (
+										SELECT 1
+									)"; 
+			$currencyModel = new Currency;
+			$currency = $currencyModel->attributes;
+			array_pop($currency); // remove id
+			array_pop($currency); // remove date
+			foreach ($currency as $key => $value) {
+				$select .= " WHEN '" . $key . "' THEN ( SELECT " . $key . ")";
+			}
+
+			$select .= 		" END
+								)
+							FROM currency c 
+							WHERE date(c.date)<=d.date
+							ORDER BY c.date DESC
+							LIMIT 1
+						)
+					) as spend";
+			$criteria->select    = $select;
+			$criteria->alias     = "d";
+			$criteria->condition = "date(d.date) BETWEEN '" . date('Y-m-d', strtotime($startDate)) . "' AND '" . date('Y-m-d', strtotime($endDate)) . "'";
+			$criteria->group     = "d.campaigns_id";
+			$criteria->order     = "spend DESC";
+		}
 		$criteria->limit=6;
 
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
-			$spends[]=doubleval($value->getSpendUSD());
-			$revenues[]=doubleval($value->getRevenueUSD());
-			$profits[]=doubleval($value->profit);
-			$campaigns[]=$value->campaigns->name;		
-			$campaigns_id[]=$value->campaigns->id;		
+			$spends[]       = doubleval($value->spend);
+			$revenues[]     = doubleval($value->getRevenueUSD());
+			$profits[]      = doubleval($value->profit);
+			$campaigns[]    = $value->campaigns->name;		
+			$campaigns_id[] = $value->campaigns->id;		
 		}
 		
 		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'campaigns' => $campaigns, 'campaigns_id' => $campaigns_id);
@@ -696,7 +730,7 @@ class DailyReport extends CActiveRecord
 
 	public function getProfit()
 	{
-		return $this->getRevenueUSD() - $this->getSpendUSD();
+		return number_format($this->getRevenueUSD() - $this->getSpendUSD(), 2);
 	}
 	public function getProfits()
 	{

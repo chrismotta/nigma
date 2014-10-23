@@ -351,8 +351,11 @@ class DailyReportController extends Controller
 
 			$model->updateRevenue();
 			$model->setNewFields();
-			if ( $model->save() )
+			if ( $model->save() ){
 				$this->redirect(array('admin'));
+			}else{
+				var_dump($model->getErrors());
+			}
 		}
 
 
