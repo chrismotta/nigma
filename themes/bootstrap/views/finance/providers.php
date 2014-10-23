@@ -88,64 +88,76 @@ $data=$model->getProviders($month,$year);
     </fieldset>
 
 <?php $this->endWidget(); ?>
+
+
 <?php 
 $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'advertisers-grid',
-	'dataProvider'             => $data['dataProvider'],
-	'filter'                   => new DailyReport,
+	'dataProvider'             => $data['arrayProvider'],
+	'filter'                   => $data['filtersForm'],
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data["id"])',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'=>array(
 		array(
-			'name'=>'id',
-			'value'=>'$data->id',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'id',
+			'value'       =>'$data["id"]',
+			'htmlOptions' =>array('style' => 'width: 100px'),
+			'header'      =>'ID',    
 		),
 		array(
-			'name'=>'network_name',
-			'value'=>'$data->network_name',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'networks_name',
+			'value'       =>'$data["networks_name"]',
+			'htmlOptions' =>array('style' => 'width: 100px'),
+			'header'      =>'Network Name',  
 		),
 		array(
-			'name'=>'currency',
-			'value'=>'$data->currency',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'currency',
+			'value'       =>'$data["currency"]',
+			'htmlOptions' =>array('style' => 'width: 100px'),
+			'header'      =>'Currency',  
 		),
 		array(
-			'name'=>'clics',
-			'value'=>'$data->clics',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'clics',
+			'value'       =>'$data["clics"]',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Clicks',  
 		),
 		array(
-			'name'=>'imp',
-			'value'=>'$data->imp',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'imp',
+			'value'       =>'$data["imp"]',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Imp.',  
 		),
 		array(
-			'name'=>'percent_off',
-			'value'=>'is_null($data->percent_off) ? "0%" : number_format($data->percent_off*100,0)."%"',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'percent_off',
+			'value'       =>'is_null($data["percent_off"]) ? "0%" : number_format($data["percent_off"]*100,0)."%"',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Percent Off',  
 		),
 		array(
-			'name'=>'spend',
-			'header'=>'Subtotal',
-			'value'=>'$data->spend',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'spend',
+			'header'      =>'Subtotal',
+			'value'       =>'$data["spend"]',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Spend',  
 		),
 		array(
-			'name'=>'off',
-			'value'=>'$data->off',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'off',
+			'value'       =>'$data["off"]',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Off',  
 		),
 		array(
-			'name'=>'total',
-			'value'=>'$data->total',
-			'htmlOptions'=>array('style' => 'width: 100px'),
+			'name'        =>'total',
+			'value'       =>'$data["total"]',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Total',  
 		),
 
 	),
 )); ?>
+
 
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(

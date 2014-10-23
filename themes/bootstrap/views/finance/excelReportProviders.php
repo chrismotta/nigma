@@ -17,48 +17,39 @@ $this->widget('EExcelWriter', array(
         array(
             'name'=>'id',
             'value'=>'$data->id',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'network_name',
             'value'=>'$data->network_name',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'currency',
             'value'=>'$data->currency',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'clics',
             'value'=>'$data->clics',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'imp',
             'value'=>'$data->imp',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'percent_off',
             'value'=>'is_null($data->percent_off) ? "0%" : number_format($data->percent_off*100,0)."%"',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'spend',
             'header'=>'Subtotal',
             'value'=>'$data->spend',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'off',
             'value'=>'$data->off',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
         array(
             'name'=>'total',
             'value'=>'$data->total',
-            'htmlOptions'=>array('style' => 'width: 100px'),
         ),
     ),
 ));

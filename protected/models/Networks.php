@@ -156,6 +156,7 @@ class Networks extends CActiveRecord
 		// AND month(daily_report.date)=10
 		// AND year(daily_report.date)=2014
 		// group by networks.id;
+		
 		$criteria = new CDbCriteria;
 		$criteria->select=array(
 			'networks.id as id',
@@ -174,17 +175,19 @@ class Networks extends CActiveRecord
 		$criteria->group ='networks.id';
 		$data   =array();		
 		$totals =array();		
+		$dataArray =array();		
 		$providers=DailyReport::model()->findAll($criteria);
+		$i=0;
 		foreach ($providers as $provider) {
-			$id[]           =$provider->id;
-			$network_name[] =$provider->network_name;
-			$currency[]     =$provider->currency;
-			$clics[]        =$provider->clics;
-			$imp[]          =$provider->imp;
-			$percent_off[]  =$provider->percent_off;
-			$spend[]        =intval($provider->spend);
-			$off[]          =$provider->off;
-			$total[]        =$provider->total;
+			$dataArray[$i]['id']            =$provider->id;
+			$dataArray[$i]['networks_name'] =$provider->network_name;
+			$dataArray[$i]['currency']      =$provider->currency;
+			$dataArray[$i]['clics']         =$provider->clics;
+			$dataArray[$i]['imp']           =$provider->imp;
+			$dataArray[$i]['percent_off']   =$provider->percent_off;
+			$dataArray[$i]['spend']         =intval($provider->spend);
+			$dataArray[$i]['off']           =$provider->off;
+			$dataArray[$i]['total']         =$provider->total;
 
 			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics'] =0;
 			isset($totals[$provider->currency]['imp']) ? : $totals[$provider->currency]['imp']     =0;
@@ -192,12 +195,32 @@ class Networks extends CActiveRecord
 			isset($totals[$provider->currency]['off']) ? : $totals[$provider->currency]['off']     =0;
 			isset($totals[$provider->currency]['total']) ? : $totals[$provider->currency]['total'] =0;
 
-			$totals[$provider->currency]['clics']+=$provider->clics;
-			$totals[$provider->currency]['imp']+=$provider->imp;
-			$totals[$provider->currency]['spend']+=$provider->spend;
-			$totals[$provider->currency]['off']+=$provider->off;
-			$totals[$provider->currency]['total']+=$provider->total;
+			$totals[$provider->currency]['clics'] +=$provider->clics;
+			$totals[$provider->currency]['imp']   +=$provider->imp;
+			$totals[$provider->currency]['spend'] +=$provider->spend;
+			$totals[$provider->currency]['off']   +=$provider->off;
+			$totals[$provider->currency]['total'] +=$provider->total;
+			$i++;
 		}
+
+		$filtersForm =new FiltersForm;
+		$data['filtersForm']=$filtersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+		$filteredData=$filtersForm->filter($dataArray);
+		
+		$data['arrayProvider']=new CArrayDataProvider($filteredData, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'networks_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
 
 		$i=0;
 			
@@ -225,9 +248,10 @@ class Networks extends CActiveRecord
 		    ),
 		));
 
-		$data['dataProvider'] = new CActiveDataProvider(new DailyReport, array(
-			'criteria'=>$criteria,
-		));		
+
+
+
+		
 		return $data;
 	}
 }
