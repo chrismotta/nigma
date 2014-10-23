@@ -1,7 +1,6 @@
 <?php 
 /* @var $this FinanceController */
 /* @var $model Finance */
-
 $path    = 'uploads/';
 $name    = 'KickAds-Providers.xls';
 $year    =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
@@ -9,7 +8,7 @@ $month   =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'
 //echo json_encode($model->getClients($month,$year));
 
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->getProviders($month,$year),
+    'dataProvider' => $model->getProviders($month,$year)['dataProvider'],
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
