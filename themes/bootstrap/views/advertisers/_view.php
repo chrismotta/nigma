@@ -35,7 +35,6 @@
 	),
 )); ?>
 
-</div>
 <h5>Ios</h5>
 <?php 
 
@@ -83,6 +82,7 @@
 		),
 	),
 )); ?>
+</div>
 <div class="modal-footer">
     Advertiser detail view.
 </div>
