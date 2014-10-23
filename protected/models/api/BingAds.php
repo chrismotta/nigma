@@ -335,7 +335,7 @@ class BingAds
 				
 				// get campaign ID used in KickAds Server, from the campaign name use in the external network
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($row[0]);
-$dailyReport->campaigns_id = 11;
+				//$dailyReport->campaigns_id = 11;//borrar harcodes por favor
 
 				if ( !$dailyReport->campaigns_id ) {
 					Yii::log("Invalid external campaign name: '" . $row[0], 'error', 'system.model.api.bingAds');
