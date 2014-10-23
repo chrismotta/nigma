@@ -354,6 +354,7 @@ class DailyReportController extends Controller
 			if ( $model->save() )
 				$this->redirect(array('admin'));
 			else
+				echo $model->profit;
 				var_dump($model->getErrors());
 		}
 
