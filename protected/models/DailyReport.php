@@ -688,7 +688,7 @@ class DailyReport extends CActiveRecord
 
 	public function getProfit()
 	{
-		return $this->getRevenueUSD() - $this->getSpendUSD();
+		return number_format($this->getRevenueUSD() - $this->getSpendUSD(), 2);
 	}
 	public function getProfits()
 	{
