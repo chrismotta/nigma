@@ -37,7 +37,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate'),
+				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders'),
 				'roles'=>array('admin', 'finance'),
 			),
 			array('deny',  // deny all users
@@ -118,6 +118,18 @@ class FinanceController extends Controller
 		));
 	}
 
+	public function actionProviders()
+	{
+		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$model       =new Networks;
+		$this->render('providers',array(			
+			// 'dataProvider' =>$model->getProviders($month, $year),
+			'model'			=>$model,
+		));
+	}
+
 	public function actionMultiRate()
 	{
 		$month=$_GET['month'];
@@ -161,4 +173,14 @@ class FinanceController extends Controller
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
 
+	public function actionExcelReportProviders()
+	{
+		if( isset($_POST['excel-providers-form']) ) {
+			$this->renderPartial('excelReportProviders', array(
+				'model' => new Networks,
+			));
+		}
+
+		$this->renderPartial('_excelReportProviders', array(), false, true);
+	}
 }
