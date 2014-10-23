@@ -317,7 +317,14 @@ class DailyReport extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->select='campaigns_id,networks_id, SUM(spend) as spend, SUM(revenue) revenue, date,sum(profit) as profit';
+		$criteria->select = array(
+							'campaigns_id', 
+							'networks_id', 
+							'SUM(spend) as spend', 
+							'SUM(revenue) revenue', 
+							'date, 
+							sum(profit) as profit'
+							);
 		if($order=='spend')$criteria->order='SUM(spend) DESC';
 		if($order=='profit')$criteria->order='SUM(profit) DESC';
 		$criteria->group='campaigns_id,networks_id';

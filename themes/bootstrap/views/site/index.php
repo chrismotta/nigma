@@ -351,7 +351,7 @@ $this->pageTitle=Yii::app()->name;
 			        ),
 					array(
 						'name'   => 'Prof',
-			        	'value'  => '$data->getProfit()',
+			        	'value'  => '$data->profit',
 						'htmlOptions' => array('style' => 'width: 50px'),
 			        ),
 			    ),
