@@ -353,6 +353,8 @@ class DailyReportController extends Controller
 			$model->setNewFields();
 			if ( $model->save() )
 				$this->redirect(array('admin'));
+			else
+				var_dump($model->getErrors());
 		}
 
 
