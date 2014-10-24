@@ -60,6 +60,9 @@ class ClicksLogController extends Controller
 			}
 		}
 
+		// levanto ntoken
+		$ntoken = isset($_GET['ntoken']) ? $_GET['ntoken'] : null;
+
 		// Get Campaign
 		if($cid){
 			if($campaign = Campaigns::model()->findByPk($cid)){
@@ -155,7 +158,12 @@ class ClicksLogController extends Controller
 		
 		if($model->save()){
 
-			$ktoken = md5($model->id);
+			if($ntoken){
+				$ktoken = $ntoken;
+			}else{
+				$ktoken = md5($model->id);
+			}
+				
 
 			/*
 			// descomentar para habilitar log
