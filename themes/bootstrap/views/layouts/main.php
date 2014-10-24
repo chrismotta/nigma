@@ -47,7 +47,7 @@
                 array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Clients', 'url'=>array('/finance/clients')),
-                    array('label'=>'Providers', 'url'=>'#'),
+                    array('label'=>'Providers', 'url'=>array('/finance/providers')),
                     //array('label'=>'Cierre Mes', 'url'=>'#'),
                     //array('label'=>'Invoices', 'url'=>'#'),
                     array('label'=>'Currency', 'url'=>'/currency/admin'),
@@ -59,6 +59,7 @@
                     array('label'=>'IOs', 'url'=>array('/ios/archived')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
+                    array('label'=>'Vectors', 'url'=>array('/vectors/archived')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 /*
                 array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 

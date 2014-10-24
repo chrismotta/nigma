@@ -122,7 +122,9 @@ Yii::app()->clientScript->registerScript('search', "
 				'style' => 'width: 80px',
 			),
 		    'options' => array(
-				'autoclose'      => true,
+				'todayBtn'       => true,
+                'autoclose'      => true,
+                'todayHighlight' => true,
 				'format'         => 'dd-mm-yyyy',
 				'viewformat'     => 'dd-mm-yyyy',
 				'placement'      => 'right',
@@ -141,7 +143,9 @@ Yii::app()->clientScript->registerScript('search', "
 				'style' => 'width: 80px',
 			),
 			'options'     => array(
-				'autoclose'      => true,
+				'todayBtn'       => true,
+                'autoclose'      => true,
+                'todayHighlight' => true,
 				'format'         => 'dd-mm-yyyy',
 				'viewformat'     => 'dd-mm-yyyy',
 				'placement'      => 'right',
@@ -333,6 +337,7 @@ Yii::app()->clientScript->registerScript('search', "
 						var dateStart = $("#dateStart").val();
 						var dateEnd = $("#dateEnd").val();						
 						window.location="graphicCampaign?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+						return false;
 				    }
 				    ',
 				),
@@ -352,7 +357,8 @@ Yii::app()->clientScript->registerScript('search', "
 						$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
 						 	$("#modalTraffic").html(data);
-						 });
+						});
+						return false;
 				    }
 				    ',
 				),
@@ -372,7 +378,8 @@ Yii::app()->clientScript->registerScript('search', "
 						$.post("excelReport?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
 						 .done(function(data){
 						 	$("#modalExcel").html(data);
-						 });
+						});
+						return false;
 				    }
 				    ',
 				),

@@ -112,8 +112,53 @@
 			'accountManager.username',
 		),
 	)); ?>
-</div>
+<h5>Campaigns</h5>
+<?php 
 
+	$campaign=new Campaigns;
+	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+	'id'                       => 'campaigns-grid',
+	'dataProvider'             => $campaign->findByOpportunities($model->id),
+	'type'                     => 'striped condensed',
+	'fixedHeader'              => true,
+	'headerOffset'             => 50,
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'template'                 =>'{items} {pager} {summary}',
+	
+	'columns'                  =>array(
+		array(
+			'name'  => 'account_manager',
+			'value' => '$data->opportunities->accountManager ? $data->opportunities->accountManager->lastname . " " . $data->opportunities->accountManager->name : ""',
+        	'htmlOptions'	=> array('style' => 'width: 120px'),
+		),
+		array(
+			'name'              => 'advertisers_name',
+			'value'             => '$data->opportunities->ios->advertisers->name',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+		array(
+			'name'              => 'ios_name',
+			'value'             => '$data->opportunities->ios->name',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
+        ),
+		array(
+			'name'              => 'name',
+			'value'             => '$data->getExternalName($data->id)',
+			'headerHtmlOptions' => array('style' => 'width: 300px'),
+        ),
+		array(
+			'name'              => 'net_currency',
+			'headerHtmlOptions' => array('style' => 'width: 20px'),
+			'value'             => '$data->networks->currency',
+        ),
+		array(
+			'name'              => 'cap',
+			'headerHtmlOptions' => array('style' => 'width: 60px'),
+			'value'             => '$data->cap',
+        ),
+	),
+)); ?>
+</div>
 <div class="modal-footer">
     Opportunity detail view.
 </div>

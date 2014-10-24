@@ -68,9 +68,19 @@ $('.search-form form').submit(function(){
 
 <hr>
 
+<?php 
+	if ( $currentNetwork != NULL )
+		if ( Networks::model()->findByPk($currentNetwork)->use_vectors )
+			$dataProvider = $vector->searchByNetworkAndDate($currentNetwork, $date);
+		else
+			$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
+	else
+		$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
+?>
+
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'massivecreate-grid',
-	'dataProvider'             => $campaign->searchByNetworkAndDate($currentNetwork, $date),
+	'dataProvider'             => $dataProvider,
 	// 'filter'                   => $campaign,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,
@@ -151,7 +161,6 @@ $('.search-form form').submit(function(){
 			'buttons'           => array(
 				'submit' => array(
 					'label' => 'Save',
-					'url'   => '"javascript:;"',
 					// 'icon'  => 'upload',
 					'options' => array('class' => 'label', 'rel' => '', 'id'=>'labelSubmit'),
 					'click' => '
@@ -199,6 +208,7 @@ $('.search-form form').submit(function(){
 							},
 							"json"
 						)
+						return false;
 				    }
 				    ',
 				),

@@ -122,7 +122,6 @@ $('.search-form form').submit(function(){
 				'viewAjax' => array(
 					'label' =>'Detail',
 					'icon'  =>'eye-open',
-					'url'   => '"javascript:;"',
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
@@ -136,13 +135,13 @@ $('.search-form form').submit(function(){
 								$("#modalIos").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
 				'updateAjax' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
-					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -162,13 +161,13 @@ $('.search-form form').submit(function(){
 								$("#modalIos").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
 				'duplicateAjax' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
-					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -188,6 +187,7 @@ $('.search-form form').submit(function(){
 								$("#modalIos").html(data);
 							}
 						)
+						return false;
 				    }
 				    ',
 				),
@@ -201,7 +201,6 @@ $('.search-form form').submit(function(){
 				'uploadPdf' => array(
 					'label' => 'Upload Signed IO',
 					'icon'  => 'upload',
-					'url'   => '"javascript:;"',
 					'click' => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -217,6 +216,7 @@ $('.search-form form').submit(function(){
 								$("#modalIos").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),

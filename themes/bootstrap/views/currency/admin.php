@@ -72,6 +72,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 								$("#modalCurrency").modal("toggle");
 							}
 						)
+						return false;
 				    }
 				    ',
 				),

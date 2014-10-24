@@ -11,43 +11,11 @@ $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
 );
-$year=isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-$month=isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-$totals['revenue']=0;
-$totals['rate']=0;
-$totals['conv']=0;
-foreach ($clients as $client) {
-	$totals['revenue']+=$client['revenue'];
-	$totals['rate']+=$client['rate'];
-	$totals['conv']+=$client['conv'];
-}
-?>
-<hr>
+$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 
-<div class="botonera">
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Excel Report',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalClients").html(dataInicial);
-					$("#modalClients").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalClients").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'excelReport'),
-		)
-	); ?>
-</div>
+?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'date-filter-form',
@@ -80,12 +48,44 @@ foreach ($clients as $client) {
 				$years[$year]=$year;
 			}
 
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true))));
-		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true))));
-		//echo CHtml::dropDownList($years,'year',$years);
+			$criteria=new CDbCriteria;
+			$criteria->select='entity';
+			$criteria->group='entity';
+			$criteria->addCondition('entity!=""');
+			$io=new Ios;
+			$entity=$io->findAll($criteria);
+			$entities[0]='All entities';
+			foreach ($entity as $value) {
+				$entities[$value->entity]=$value->entity;
+			}
+		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
+		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+		
 		            ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
-
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Excel Report',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'excelReport',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalClients").html(dataInicial);
+					$("#modalClients").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalClients").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'excelReport','style'=>'float:right'),
+		)
+	); ?>
 	</div>
     </fieldset>
 
@@ -110,7 +110,7 @@ foreach ($clients as $client) {
 			'header'            =>'ID',                           
 			),	
 		array(
-			'name'                =>'name',
+			'name'                =>'id',
 			'value'               =>'$data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'              =>'Commercial Name',
@@ -136,12 +136,44 @@ foreach ($clients as $client) {
 			),
 		array(
 			'name'              =>'rate',
-			'value'             =>'$data["rate"]',
+			'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			//'footer'			=> $totals['rate'],
 			'header'            =>'Rate',	
 		),	
+		array(
+			'name'              => 'mr',
+			'header'			=> '',
+			'filter'			=> '',
+			'headerHtmlOptions' => array('class'=>'plusMR'),
+			'filterHtmlOptions' => array('class'=>'plusMR'),
+			'htmlOptions'       => array('class'=>'plusMR'),
+			'type'              => 'raw',
+			'value'             =>	'
+				$data["rate"] === NULL && !isset($data["carrier"]) ?
+					CHtml::link(
+            				"<i class=\"icon-plus\"></i>",
+	            			"javascript:;",
+	        				array(
+	        					"onClick" => CHtml::ajax( array(
+									"type"    => "POST",
+									"url"     => "multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
+									"success" => "function( data )
+										{
+											$(\"#modalClients\").html(data);
+											$(\"#modalClients\").modal(\"toggle\");
+										}",
+									)),
+								"style"               => "width: 20px",
+								"rel"                 => "tooltip",
+								"data-original-title" => "Update"
+								)
+						) 
+				: null
+				'
+				,
+        ),
 		array(
 			'name'              =>'conv',
 			'header'            =>'Clics/Imp/Conv',
@@ -163,7 +195,7 @@ foreach ($clients as $client) {
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '40'),
-			'name'              =>	'name',
+			'name'              =>	'id',
 			'value'             =>'CHtml::ajaxLink(
 				"<i class=\"icon-eye-open\"></i>", 
 				"view/".$data["id"], 
@@ -184,7 +216,34 @@ foreach ($clients as $client) {
 	),
 	'mergeColumns' => array('id','name'),
 )); ?>
-
+<?php 
+	$this->widget('yiibooster.widgets.TbGroupGridView', array(
+	'id'                         => 'totals-grid',
+	//'fixedHeader'              => true,
+	//'headerOffset'             => 50,
+	'dataProvider'               => $totals,
+	//'filter'                     => $filtersForm,
+	//'filter'                   => $model,
+	'type'                       => 'striped condensed',	
+	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
+	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'template'                   => '{items} {pager}',
+	'columns'                    => array(
+		array(
+			'name'              =>	'currency',
+			'value'             =>'$data["currency"]',	
+			'headerHtmlOptions' => array('width' => '60'),
+			'header'            =>'Currency',                           
+			),	
+		array(
+			'name'                =>'total',
+			'value'               =>'$data["total"]',
+			//'htmlOptions'       => array('id'=>'alignLeft'),		
+			'header'              =>'Total',
+			//'footer'              =>'Totals:',      
+			),			
+		),
+)); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
 
 		<div class="modal-header"></div>
