@@ -486,7 +486,9 @@ class CampaignsController extends Controller
                     ->queryAll(false);
 		echo json_encode($q);
 	}
-	public function actionTraffic(){
+
+	public function actionTraffic()
+	{
 		$model=new Campaigns();
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Campaigns']))
@@ -497,6 +499,7 @@ class CampaignsController extends Controller
 		));
 		
 	}
+
 	public function actionGetOpportunities($id=null)
 	{
 		// comentado provisoriamente, generar permiso de admin
@@ -510,6 +513,7 @@ class CampaignsController extends Controller
 		echo $response;
 		Yii::app()->end();
 	}
+	
 	public function actionGraphic() {
 		if ( isset($_POST['c_id'])) {
 			$c_id = $_POST['c_id'];
