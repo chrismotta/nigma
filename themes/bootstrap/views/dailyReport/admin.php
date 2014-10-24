@@ -58,6 +58,8 @@ $('.search-form form').submit(function(){
 				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
 				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
 				array('name' => 'Spend','data' => $totalsGrap['spends'],),
+				array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
+				array('name' => 'Profit','data' => $totalsGrap['profits'],),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
