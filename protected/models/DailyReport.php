@@ -193,6 +193,7 @@ class DailyReport extends CActiveRecord
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
 			$dataTops[$date]['spends']=0;
 			$dataTops[$date]['revenues']=0;
+			$dataTops[$date]['profits']=0;
 			$dataTops[$date]['conversions']=0;
 			$dataTops[$date]['impressions']=0;
 			$dataTops[$date]['clics']=0;
@@ -212,6 +213,7 @@ class DailyReport extends CActiveRecord
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
 			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());
+			$dataTops[date('Y-m-d', strtotime($value->date))]['profits']+=doubleval($value->profit);
 			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
 			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
 			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
@@ -220,7 +222,7 @@ class DailyReport extends CActiveRecord
 		foreach ($dataTops as $date => $data) {
 			$spends[]=$data['spends'];
 			$revenues[]=$data['revenues'];
-			$profits[]=$data['revenues']-$data['spends'];
+			$profits[]=$data['profits'];
 			$impressions[]=$data['impressions'];
 			$conversions[]=$data['conversions'];
 			$clics[]=$data['clics'];
@@ -645,31 +647,39 @@ class DailyReport extends CActiveRecord
 			return "No results.";
 		} 
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
-			$dataTops[$date]['spends']=0;
-			$dataTops[$date]['conversions']=0;
-			$dataTops[$date]['impressions']=0;
-			$dataTops[$date]['clics']=0;
+			$dataTops[$date]['spends']      =0;
+			$dataTops[$date]['conversions'] =0;
+			$dataTops[$date]['impressions'] =0;
+			$dataTops[$date]['clics']       =0;
+			$dataTops[$date]['revenues']    =0;
+			$dataTops[$date]['profits']     =0;
 		}
 		foreach ($r as $value) {
-			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
-			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
-			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
-			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']      +=doubleval($value->getSpendUSD());	
+			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions'] +=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions'] +=$value->imp;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']       +=$value->clics;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']    +=doubleval($value->getRevenueUSD());
+			$dataTops[date('Y-m-d', strtotime($value->date))]['profits']     +=$value->profit;
 		}
 		
 		foreach ($dataTops as $date => $data) {
-			$spends[]=$data['spends'];
-			$impressions[]=$data['impressions'];
-			$conversions[]=$data['conversions'];
-			$clics[]=$data['clics'];
-			$dates[]=$date;
+			$spends[]      =$data['spends'];
+			$impressions[] =$data['impressions'];
+			$conversions[] =$data['conversions'];
+			$clics[]       =$data['clics'];
+			$profits[]     =$data['profits'];
+			$revenues[]    =$data['revenues'];
+			$dates[]       =$date;
 		}
 		$result = array(
-			'spend' => $spends, 
-			'conv'  => $conversions, 
-			'imp'   => $impressions, 
-			'click' => $clics, 
-			'date'  => $dates
+			'spend'    => $spends, 
+			'conv'    => $conversions, 
+			'imp'     => $impressions, 
+			'click'   => $clics, 
+			'date'    => $dates,
+			'revenue' => $revenues,
+			'profit'  => $profits,
 		);
 		return $result;
 	}
