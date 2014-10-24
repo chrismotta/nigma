@@ -80,6 +80,12 @@ class InMobi
 				return 0;
 			}
 		}
+
+		if ( !isset($newresponse->respList) ) { // validation add after initial implementation
+			Yii::log("Empty daily report ",'error', 'system.model.api.inmobi');
+			return 0;
+		}
+		
 		// Save campaigns information 
 		foreach ($newresponse->respList as $campaign) {
 
