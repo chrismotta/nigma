@@ -350,30 +350,6 @@ class Campaigns extends CActiveRecord
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
 		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
 	}
-
-	public function countClicks($dateStart=NULL, $dateEnd=NULL)
-	{	
-		if(!$dateStart)	$dateStart = 'today' ;
-		if(!$dateEnd) $dateEnd   = 'today';
-		
-		$dateStart = date('Y-m-d', strtotime($dateStart));
-		$dateEnd = date('Y-m-d', strtotime($dateEnd));
-		//echo $dateStart . ' - ' . $dateEnd;
-		$query = ClicksLog::model()->count("campaigns_id=:campaignid AND DATE(date)>=:dateStart AND DATE(date)<=:dateEnd", array(":campaignid"=>$this->id, ":dateStart"=>$dateStart, ":dateEnd"=>$dateEnd));
-		return $query;
-	}
-	
-	public function countConv($dateStart=NULL, $dateEnd=NULL)
-	{
-		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
-		$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-		if(!$dateStart)$dateStart = 'today';
-		if(!$dateEnd)$dateEnd = 'today';
-		$dateStart = date('Y-m-d', strtotime($dateStart));
-		$dateEnd = date('Y-m-d', strtotime($dateEnd));
-		$query = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)>=:dateStart AND DATE(date)<=:dateEnd", array(":campaignid"=>$this->id, ":dateStart"=>$dateStart, ":dateEnd"=>$dateEnd));
-		return $query;
-	}
 	
 	public function excel($startDate=NULL, $endDate=NULL, $id=null)
 	{
@@ -512,20 +488,43 @@ class Campaigns extends CActiveRecord
 		return $result;
 	}
 
-	public function searchTraffic($accountManager=NULL,$opportunitie=null,$networks=null)
+	public function searchTraffic($accountManager=NULL,$opportunitie=null,$networks=null,$dateStart='today',$dateEnd='today')
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-		$criteria->with = array('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'vectors', 'networks');
-		$criteria->compare('t.name',$this->name, true);
+		$criteria->with = array('opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers');
+		
+		// external name
+		$criteria->compare('t.id',$this->name,true);
+		$criteria->compare('country.ISO2',$this->name,true,'OR');
+		$criteria->compare('t.name',$this->name,true,'OR');
+		$criteria->compare('carriers.mobile_brand',$this->name,true,'OR');
+		$criteria->compare('advertisers.prefix',$this->name,true,'OR');
+		$criteria->compare('opportunities.product',$this->name,true,'OR');
+
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
 		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
 		if($networks!=null)$criteria->compare('t.networks_id',$networks);
-		//$criteria->order = 't.id desc';
+
+		$dateStart = date('Y-m-d', strtotime($dateStart)); 
+		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
+
+		// custom subselect columns
+		$countClicks = "(SELECT count(cl.id) FROM clicks_log cl WHERE cl.campaigns_id = t.id AND DATE(cl.date)>='" . $dateStart . "' AND DATE(cl.date)<='" . $dateEnd . "')";
+		$countConv = "(SELECT count(cv.id) FROM conv_log cv WHERE cv.campaign_id = t.id AND DATE(cv.date)>='" . $dateStart . "' AND DATE(cv.date)<='" . $dateEnd . "')";
+
+		$criteria->select = array(
+			'*',
+			$countClicks . " as clicks",
+			$countConv . " as conv",
+		);
+
+		$criteria->having = 'clicks != 0 AND conv != 0';
+
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
@@ -547,6 +546,14 @@ class Campaigns extends CActiveRecord
 		            'ios_name'=>array(
 						'asc'  =>'ios.name',
 						'desc' =>'ios.name DESC',
+		            ),
+		            'clicks'=>array(
+						'asc'  =>'clicks',
+						'desc' =>'clicks DESC',
+		            ),
+		            'conv'=>array(
+						'asc'  =>'conv',
+						'desc' =>'conv DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
