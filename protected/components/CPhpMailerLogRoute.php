@@ -4,14 +4,14 @@ class CPhpMailerLogRoute extends CEmailLogRoute
 {
 
     private $_config = array(
-        'From'       => 'matias.cerrotta@kickads.mobi',
-        'FromName'   => 'Kickads AdServer',
+        'From'       => 'no-reply@kickads.mobi',
+        'FromName'   => 'no-reply Kickads adServer',
         'Host'       => "email-smtp.us-east-1.amazonaws.com",
         'SMTPAuth'   => true,
         'SMTPSecure' => "tls",
         'Port'       => 25,
-        'Username'   => "AKIAIQTRLJHEZETZDRSQ",
-        'Password'   => "Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F",
+        'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
+        'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
         'CharSet'    => "UTF-8",
     ); // Default values
 
@@ -37,9 +37,18 @@ class CPhpMailerLogRoute extends CEmailLogRoute
      */
     public function send($emails, $subject, $message)
     {
-        foreach ($emails as $email) {
-            $this->sendEmail($email, $subject, $message);
+        switch ( $_SERVER['HTTP_HOST'] ) {
+            // amazon prod
+            case '54.88.85.63':
+            case 'ec2-54-88-85-63.compute-1.amazonaws.com':
+            case 'app.kickadserver.mobi':
+            case 'kickadserver.mobi':
+                foreach ($emails as $email) {
+                    $this->sendEmail($email, $subject, $message);
+                }
+            break;
         }
+
     }
 
 
