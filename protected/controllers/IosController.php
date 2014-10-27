@@ -39,6 +39,10 @@ class IosController extends Controller
 				'actions'=>array('index','view','redirect','admin'),
 				'roles'=>array('businness', 'finance'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('update'),
+				'roles'=>array('finance'),
+			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
