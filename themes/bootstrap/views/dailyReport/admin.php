@@ -32,6 +32,7 @@ $('.search-form form').submit(function(){
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$advertiser     = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
@@ -57,8 +58,8 @@ $('.search-form form').submit(function(){
 				array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
 				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
 				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
-				array('name' => 'Spend','data' => $totalsGrap['spends'],),
 				array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
+				array('name' => 'Spend','data' => $totalsGrap['spends'],),
 				array('name' => 'Profit','data' => $totalsGrap['profits'],),
 				),
 	        'legend' => array(
@@ -212,7 +213,7 @@ $('.search-form form').submit(function(){
 			$list   = CHtml::listData($models, 'id', 'virtualName');
 			echo CHtml::dropDownList('opportunitie', $opportunitie, 
 		            $list,
-		            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+		            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist','style' => "width: 140px; margin-left: 1em",));
 		}else{
 			$models = Opportunities::model()->with('ios')->findAll(
 				"account_manager_id=:accountManager", 
@@ -222,7 +223,7 @@ $('.search-form form').submit(function(){
 			$list   = CHtml::listData($models, 'id', 'virtualName');
 			echo CHtml::dropDownList('opportunitie', $opportunitie, 
 	            $list,
-	            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
+	            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist','style' => "width: 140px; margin-left: 1em",));
 		}
 
     }else{
@@ -235,7 +236,7 @@ $('.search-form form').submit(function(){
 	                'id', 'virtualName');
 		echo CHtml::dropDownList('opportunitie', $opportunitie, 
 	            $list,
-	            array('empty' => 'All opportunities',));
+	            array('empty' => 'All opportunities','style' => "width: 140px; margin-left: 1em",));
     }
 
     $models = Networks::model()->findAll( array('order' => 'name') );
@@ -243,7 +244,14 @@ $('.search-form form').submit(function(){
         'id', 'name');
 	echo CHtml::dropDownList('networks', $networks, 
         $list,
-        array('empty' => 'All networks',));
+        array('empty' => 'All networks','style' => "width: 140px; margin-left: 1em",));
+
+    $models = Advertisers::model()->findAll( array('order' => 'cat', 'group' => 'cat') );
+	$list = CHtml::listData($models, 
+        'cat', 'cat');
+	echo CHtml::dropDownList('advertiser', $advertiser, 
+        $list,
+        array('empty' => 'All advertisers','style' => "width: 140px; margin-left: 1em",));
 	?>
 	  
 	SUM 
@@ -262,7 +270,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum),
+	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum, $advertiser),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
