@@ -188,7 +188,12 @@ return array(
 					'class'   =>'CPhpMailerLogRoute',
 					'levels'  =>'error, mail',
 					'subject' =>'Automatic Mail Log',
-					'emails'  =>array('christian.motta@kickads.mobi', 'matias.cerrotta@kickads.mobi'),
+					'emails'  =>array(
+						'christian.motta@kickads.mobi',
+						'matias.cerrotta@kickads.mobi',
+						'santiago.mena@kickads.mobi',
+						'emilio.mallia@kickads.mobi',
+					),
 					'config'  =>array(
 						'From'       => 'no-reply@kickads.mobi',
 						'FromName'   => 'no-reply Kickads adServer',
