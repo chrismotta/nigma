@@ -185,11 +185,43 @@ return array(
 					'categories'   =>'system.*',
                 ),
                 array(
-					'class'    =>'CPhpMailerLogRoute',
-					'levels'   =>'error',
-					'subject'  =>'Log KickAds adServer',
-					'sentFrom' =>'KickAds adServer',
-					'emails'   =>'matias.cerrotta@kickads.mobi',
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'mail',
+					'subject' =>'Automatic Mail Log',
+					'emails'  =>array('christian.motta@kickads.mobi', 'matias.cerrotta@kickads.mobi'),
+					'config'  =>array(
+						'From'       => 'no-reply@kickads.mobi',
+						'FromName'   => 'Kickads adServer',
+						'Host'       => "email-smtp.us-east-1.amazonaws.com",
+						'SMTPAuth'   => true,
+						'SMTPSecure' => "tls",
+						'Port'       => 25,
+						'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
+						'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
+						'CharSet'    => "UTF-8",
+                    ),
+
+
+
+					// 'class'      => 'CPHPMailerLogRoute',
+     //                    'levels'     => 'error, warning',
+     //                    'emails'     => array('<name>@<domain>.com.br'),
+     //                    'categories' => 'exception.*, system.*',
+     //                    'sentFrom'   => '<name>@<domain>.com.br',
+     //                    'subject'    => 'Error',
+     //                    'config'     => array(
+     //                        'SMTP',
+     //                        'Host'       => "mail.<domain>.com.br",
+     //                        'SMTPAuth'   => true, // enable SMTP authentication
+     //                        'SMTPSecure' => "ssl", // sets the prefix to the server
+     //                         //   Attention: Remember to enable the SSL module in PHP
+     //                        'Host'       => "smtp.gmail.com", // sets GMAIL as the SMTP server
+     //                        'Port'       => <port>, // set the SMTP port for the GMAIL server
+     //                        'Username'   => "<name>@<domain>.com", // GMAIL username
+     //                        'Password'   => "<password>", // GMAIL password
+     //                        'CharSet'    => "UTF-8",
+     //                )
+
                 ),
         	),
         ),
