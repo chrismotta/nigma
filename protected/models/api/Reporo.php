@@ -69,7 +69,7 @@ class Reporo
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
 
 				if ( !$dailyReport->campaigns_id ) {
-					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'error', 'system.model.api.reporo');
+					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.reporo');
 					continue;
 				}
 

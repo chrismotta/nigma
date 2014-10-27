@@ -56,7 +56,7 @@ class BuzzCity
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->title);
 
 				if ( !$dailyReport->campaigns_id ) {
-					Yii::log("Invalid external campaign name: '" . $campaign->title, 'info', 'system.model.api.buzzCity');
+					Yii::log("Invalid external campaign name: '" . $campaign->title, 'warning', 'system.model.api.buzzCity');
 					continue;
 				}
 
