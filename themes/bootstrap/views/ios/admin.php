@@ -73,7 +73,7 @@ $('.search-form form').submit(function(){
 	?>
 	</div>
 <?php endif; ?>
-
+<br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'filter-form',
         'type'=>'search',
