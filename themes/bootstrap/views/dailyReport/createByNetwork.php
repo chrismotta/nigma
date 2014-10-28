@@ -36,33 +36,12 @@ $('.search-form form').submit(function(){
 		'clientOptions'        => array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
-	<fieldset>
-	Date: 
-	<div class="input-append">
-		<?php 
-		    $this->widget('bootstrap.widgets.TbDatePicker',array(
-			'name'  => 'date',
-			'value' => date('d-m-Y', strtotime($date)),
-			'htmlOptions' => array(
-				'style' => 'width: 80px',
-			),
-		    'options' => array(
-				'autoclose'      => true,
-				'todayHighlight' => true,
-				'format'         => 'dd-mm-yyyy',
-				'viewformat'     => 'dd-mm-yyyy',
-				'placement'      => 'right',
-		    ),
-		));
-		?>
-		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
-	Network: 
-	<?php echo CHtml::dropDownList('network', $currentNetwork, $networks, array('empty' => 'Select Network')); ?>
+<fieldset>
+	Date: <?php echo KHtml::datePicker('date', $date); ?>
+	Network: <?php echo KHtml::filterNetworks($currentNetwork, array('empty' => 'Select Network')); ?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'networkSubmit'))); ?>
-
-    </fieldset>
+</fieldset>
 
 <?php $this->endWidget(); ?>
 
@@ -170,7 +149,7 @@ $('.search-form form').submit(function(){
 						var params                      = new Object();
 						params.saveSubmit               = "";
 						params.DailyReport              = new Object();
-						params.DailyReport.networks_id  = $( "#network" ).val();
+						params.DailyReport.networks_id  = $( "#networks" ).val();
 						params.DailyReport.imp          = tr.find( "#row-imp" ).val();
 						params.DailyReport.imp_adv      = tr.find( "#row-imp_adv" ).val();
 						params.DailyReport.clics        = tr.find( "#row-clics" ).val();

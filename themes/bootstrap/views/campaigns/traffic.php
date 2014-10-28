@@ -112,114 +112,16 @@ Yii::app()->clientScript->registerScript('search', "
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 <fieldset>
-	From:
-	<div class="input-append">
-		<?php 
-		    $this->widget('bootstrap.widgets.TbDatePicker',array(
-			'name'  => 'dateStart',
-			'value' => date('d-m-Y', strtotime($dateStart)),
-			'htmlOptions' => array(
-				'style' => 'width: 80px',
-			),
-		    'options' => array(
-				'todayBtn'       => true,
-                'autoclose'      => true,
-                'todayHighlight' => true,
-				'format'         => 'dd-mm-yyyy',
-				'viewformat'     => 'dd-mm-yyyy',
-				'placement'      => 'right',
-		    ),
-		));
-		?>
-		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
-	To:
-	<div class="input-append">
-		<?php 
-		    $this->widget('bootstrap.widgets.TbDatePicker',array(
-			'name'        => 'dateEnd',
-			'value'       => date('d-m-Y', strtotime($dateEnd)),
-			'htmlOptions' => array(
-				'style' => 'width: 80px',
-			),
-			'options'     => array(
-				'todayBtn'       => true,
-                'autoclose'      => true,
-                'todayHighlight' => true,
-				'format'         => 'dd-mm-yyyy',
-				'viewformat'     => 'dd-mm-yyyy',
-				'placement'      => 'right',
-		    ),
-		));
-		?>
-		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
-	<?php
-	$roles = Yii::app()->authManager->getRoles(Yii::app()->user->id);
-	//Filtro por role
-	$filter = false;
-	foreach ($roles as $role => $value) {
-		if ( $role == 'admin' or $role == 'media_manager' or $role =='bussiness' or $role =='sem') {
-			$filter = true;
-			break;
-		}
-	}
-	if ( $filter ){
-	$models = Users::model()->findUsersByRole('media');
-	$list = CHtml::listData($models, 
-                'id', 'FullName');
-	echo CHtml::dropDownList('accountManager', $accountManager, 
-              $list,
-              array('empty' => 'All account managers','onChange' => '
-                  // if ( ! this.value) {
-                  //   return;
-                  // }
-                  $.post(
-                      "getOpportunities/"+this.value,
-                      "",
-                      function(data)
-                      {
-                          // alert(data);
-                        $(".opportunitie-dropdownlist").html(data);
-                      }
-                  )
-                  '));
-	if(!$accountManager){
-		$models = Opportunities::model()->findAll();
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	              $list,
-	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
-	}
-	else
-	{
-		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$accountManager) );
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	              $list,
-	              array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist',));
-	}
-       }
-       else{
-       		$models = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>Yii::app()->user->id) );
-			$list = CHtml::listData($models, 
-		                'id', 'virtualName');
-			echo CHtml::dropDownList('opportunitie', $opportunitie, 
-		              $list,
-		              array('empty' => 'All opportunities',));
-
-       }
-       $models = Networks::model()->findAll();
-		$list = CHtml::listData($models, 
-	                'id', 'name');
-		echo CHtml::dropDownList('networks', $networks, 
-	              $list,
-	              array('empty' => 'All networks',));
-	       
+	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
+	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+	<?php 
+		if (FilterManager::model()->isUserTotalAccess('daily'))
+			echo KHtml::filterAccountManagers($accountManager);
 		
+		echo KHtml::filterOpportunities($opportunitie, $accountManager);
+		echo KHtml::filterNetworks($networks);
 	?>
+
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 </fieldset>
 
