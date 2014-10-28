@@ -141,7 +141,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        return CHtml::dropDownList('advertiser', $value, KHtml::enumItem(new Advertisers, 'cat'), $htmlOptions);
+        return CHtml::dropDownList('cat', $value, KHtml::enumItem(new Advertisers, 'cat'), $htmlOptions);
     }
 
     /**
@@ -182,6 +182,22 @@ class KHtml extends CHtml
         $opps            = Opportunities::model()->findAll($criteria);
         $list            = CHtml::listData($opps, 'country.id_location', 'country.name');
         return CHtml::dropDownList('country', $value, $list, $htmlOptions);
+    }
+
+	/**
+     * Create dropdown of Entities
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterEntity($value, $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All entities',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        $entities = KHtml::enumItem(new Ios, 'entity');
+        return CHtml::dropDownList('entity', $value, $entities, $htmlOptions);
     }
 
 }

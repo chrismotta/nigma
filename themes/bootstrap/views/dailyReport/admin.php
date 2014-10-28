@@ -32,7 +32,7 @@ $('.search-form form').submit(function(){
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-	$advertiser     = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
+	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
