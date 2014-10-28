@@ -158,7 +158,7 @@
                     'class' => 'span3',
                 )),
                 array(
-                    'append' => '<i class="icon-calendar"></i>',
+                    'append' => '<label for="Opportunities_startDate"><i class="icon-calendar"></i></label>',
                 )
         );
       echo $form->datepickerRow($model, 'endDate', array(
@@ -174,7 +174,7 @@
                     'class' => 'span3',
                 )),
                 array(
-                    'append' => '<i class="icon-calendar"></i>',
+                    'append' => '<label for="Opportunities_endDate"><i class="icon-calendar"></i></label>',
                 )
         );
 
