@@ -11,6 +11,7 @@ class KHtml extends CHtml
             $value=str_replace("'",null,$value);
             $values[$value]=Yii::t('enumItem',$value);
         }
+        asort($values);
         return $values;
     } 
 
@@ -68,8 +69,8 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios');
-        $criteria->order = 'ios.name';
+        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->order = 'advertisers.name, country.ISO2';
 
         if ( $accountManagerId != NULL )
             $criteria->compare('account_manager_id', $accountManagerId);
