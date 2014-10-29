@@ -14,7 +14,6 @@ $this->menu=array(
 $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
-
 ?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -99,7 +98,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 	'filter'                     => $filtersForm,
 	//'filter'                   => $model,
 	'type'                       => 'striped condensed',	
-	'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
+	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
 	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                   => '{items} {pager} {summary}',
 	'columns'                    => array(
@@ -108,7 +107,13 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'value'             =>'$data["id"]',	
 			'headerHtmlOptions' => array('width' => '60'),
 			'header'            =>'ID',                           
-			),	
+			),
+		array(
+			'name'              =>	'id',
+			'value'             =>'$data["status"]',	
+			'headerHtmlOptions' => array('width' => '60'),
+			'header'            =>'ID',                           
+			),		
 		array(
 			'name'                =>'id',
 			'value'               =>'$data["name"]',
@@ -196,22 +201,49 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '40'),
 			'name'              =>	'id',
-			'value'             =>'CHtml::ajaxLink(
-				"<i class=\"icon-eye-open\"></i>", 
-				"view/".$data["id"], 
-			    array (
-			        "type"    => "POST",
-			        "beforeSend"=>"function(){
-		 				$(\"#modalClients\").modal(\"toggle\");
-	
-			        }",
-			        "success" => "function(data){
-			        	$(\"#modalClients\").html(data)
-			        	//alert(data);
-			        }"
-			    ), 
-			    array ()
-			);',		
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i class=\"icon-eye-open\"></i>", 
+					"view/".$data["id"], 
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ()
+				);
+		',		
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '40'),
+			'name'              =>	'id',
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i class=\"icon-eye-open\"></i>", 
+					"revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'", 
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ()
+				);
+		',		
 		),
 	),
 	'mergeColumns' => array('id','name'),

@@ -6,6 +6,18 @@ class ExternalFormsController extends Controller
 	{
 		$this->render('index');
 	}
+	public function accessRules()
+	{
+		return array(
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('revenueValidation'),
+				'roles'=>array('admin'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
 
 	// Uncomment the following methods and override them if needed
 	/*
@@ -33,10 +45,12 @@ class ExternalFormsController extends Controller
 		);
 	}
 	*/
-	public function revenueValidation()
+	public function actionRevenueValidation()
 	{
+		$token =isset($_GET['token']) ? $_GET['token'] : null;		
+		$model =new RevenueValidation;
 		$this->render('revenueValidation',array(
-			'model'=>$this->loadModel($id),
+			'model'=>$model->loadModelByToken($token),
 		));
 	}
 }

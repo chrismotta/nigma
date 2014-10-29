@@ -37,7 +37,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders'),
+				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','revenueValidation','sendMail'),
 				'roles'=>array('admin', 'finance'),
 			),
 			array('deny',  // deny all users
@@ -182,5 +182,53 @@ class FinanceController extends Controller
 		}
 
 		$this->renderPartial('_excelReportProviders', array(), false, true);
+	}	
+
+	public function actionRevenueValidation()
+	{
+		$model   =new Ios;
+		$year    =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month   =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$io      =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
+		$clients =$model->getClients($month,$year,null,$io->id);
+		$dataProvider=new CArrayDataProvider($clients, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+		            
+		if( isset($_POST['revenue-validation-form']) ) {
+			$this->renderPartial('sendMail', array(
+				'io_id' => $_POST['ios_id'],
+				'period' => $_POST['period'],
+			));
+		}
+
+		$this->renderPartial('_revenueValidation',
+		 array(
+				'month'        =>$month,
+				'year'         =>$year,
+				'io'           =>$io,
+				'dataProvider' =>$dataProvider
+		 	),
+		  false, true);
+
+	}
+
+	public function actionSendMail()
+	{
+		$this->renderPartial('sendMail',
+		 array(
+				'ios_id'=>$ios_id,
+				'period'=>$period
+		 	),
+		  true, true);
 	}
 }
