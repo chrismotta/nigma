@@ -39,6 +39,12 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
+<?php
+	$entity  = isset($_GET['entity']) ? $_GET['entity'] : NULL;
+	$cat     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
+	$country = isset($_GET['country']) ? $_GET['country'] : NULL;
+?>
+
 <?php if( !isset($isArchived) )  : ?>
 	<div class="botonera">
 	<?php
@@ -67,10 +73,30 @@ $('.search-form form').submit(function(){
 	?>
 	</div>
 <?php endif; ?>
+<br>
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/ios/admin',
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+<fieldset>
+	<?php
+		echo KHtml::filterEntity($entity);
+		echo KHtml::filterAdvertisersCategory($cat);
+		echo KHtml::filterCountries($country);
+	?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+</fieldset>
+<?php $this->endWidget(); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       =>'ios-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($entity, $cat, $country),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',

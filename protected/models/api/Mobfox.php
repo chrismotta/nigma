@@ -70,7 +70,7 @@ class Mobfox
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaignInfo['response']['report']['name']['value']);
 
 			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("ERROR - invalid external campaign name: '" . $campaignInfo['response']['report']['name']['value'] . "'", "error", "system.model.api.mobfox");
+				Yii::log("ERROR - invalid external campaign name: '" . $campaignInfo['response']['report']['name']['value'] . "'", "warning", "system.model.api.mobfox");
 				continue;
 			}
 			

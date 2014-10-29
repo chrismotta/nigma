@@ -51,7 +51,7 @@ class LeadBolt
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign_name);
 
 			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("Invalid external campaign name: '" . $campaign->campaign_name, 'error', 'system.model.api.leadBolt');
+				Yii::log("Invalid external campaign name: '" . $campaign->campaign_name, 'warning', 'system.model.api.leadBolt');
 				continue;
 			}
 

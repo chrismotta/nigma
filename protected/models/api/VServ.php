@@ -59,7 +59,7 @@ class VServ
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
 
 		if ( !$dailyReport->campaigns_id ) {
-			Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'info', 'system.model.api.vServ');
+			Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'warning', 'system.model.api.vServ');
 			continue;
 		}
 

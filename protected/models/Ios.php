@@ -151,7 +151,7 @@ class Ios extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($entity=NULL, $cat=NULL, $country_id=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -162,7 +162,7 @@ class Ios extends CActiveRecord
 		$criteria->compare('prospect',$this->prospect);
 		$criteria->compare('t.commercial_name',$this->commercial_name,true);
 		$criteria->compare('address',$this->address,true);
-		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('country_id',$country_id);
 		$criteria->compare('state',$this->state,true);
 		$criteria->compare('zip_code',$this->zip_code,true);
 		$criteria->compare('phone',$this->phone,true);
@@ -174,7 +174,7 @@ class Ios extends CActiveRecord
 		$criteria->compare('ret',$this->ret,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
-		$criteria->compare('entity',$this->entity,true);
+		$criteria->compare('entity',$entity,true);
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('advertisers_id',$this->advertisers_id);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
@@ -183,6 +183,7 @@ class Ios extends CActiveRecord
 
 		$criteria->with = array( 'advertisers', 'commercial', 'country');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
+		$criteria->compare('advertisers.cat', $cat, true);
 		$criteria->compare('commercial.name', $this->com_name, true);
 		$criteria->compare('commercial.lastname', $this->com_lastname, true);
 		$criteria->compare('country.name', $this->country_name, true);

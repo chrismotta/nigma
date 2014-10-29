@@ -32,7 +32,7 @@ $('.search-form form').submit(function(){
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-	$advertiser     = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
+	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
@@ -141,129 +141,28 @@ $('.search-form form').submit(function(){
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
-	<fieldset>
-	From: 
-	<div class="input-append">
-		<?php 
-		    $this->widget('bootstrap.widgets.TbDatePicker',array(
-			'name'  => 'dateStart',
-			'value' => date('d-m-Y', strtotime($dateStart)),
-			'htmlOptions' => array(
-				'style' => 'width: 80px',
-			),
-		    'options' => array(
-				'autoclose'  => true,
-				'todayHighlight' => true,
-				'format'     => 'dd-mm-yyyy',
-				'viewformat' => 'dd-mm-yyyy',
-				'placement'  => 'right',
-		    ),
-		));
-		?>
-		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
-	To:
-	<div class="input-append">
-		<?php 
-		    $this->widget('bootstrap.widgets.TbDatePicker',array(
-			'name'        => 'dateEnd',
-			'value'       => date('d-m-Y', strtotime($dateEnd)),
-			'htmlOptions' => array(
-				'style' => 'width: 80px',
-			),
-			'options'     => array(
-				'autoclose'      => true,
-				'todayHighlight' => true,
-				'format'         => 'dd-mm-yyyy',
-				'viewformat'     => 'dd-mm-yyyy',
-				'placement'      => 'right',
-		    ),
-		));
-		?>
-		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
-	<?php
-
-	$filter = FilterManager::model()->isUserTotalAccess('daily');
-
-	if ( $filter ){
-		$models = Users::model()->findUsersByRole('media');
-		$list = CHtml::listData($models, 'id', 'FullName');
-		echo CHtml::dropDownList('accountManager', $accountManager, 
-            $list,
-            array('empty' => 'All account managers','onChange' => '
-                // if ( ! this.value) {
-                //   return;
-                // }
-                $.post(
-                    "getOpportunities/"+this.value,
-                    "",
-                    function(data)
-                    {
-                        // alert(data);
-                        $(".opportunitie-dropdownlist").html(data);
-                    }
-                )
-                '));
-
-		if(!$accountManager){
-			$models = Opportunities::model()->with('ios')->findAll(
-				array('order' => 'ios.name')
-				);
-			$list   = CHtml::listData($models, 'id', 'virtualName');
-			echo CHtml::dropDownList('opportunitie', $opportunitie, 
-		            $list,
-		            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist','style' => "width: 140px; margin-left: 1em",));
-		}else{
-			$models = Opportunities::model()->with('ios')->findAll(
-				"account_manager_id=:accountManager", 
-				array(':accountManager'=>$accountManager),
-       			array('order' => 'ios.name')
-       			);
-			$list   = CHtml::listData($models, 'id', 'virtualName');
-			echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	            $list,
-	            array('empty' => 'All opportunities','class'=>'opportunitie-dropdownlist','style' => "width: 140px; margin-left: 1em",));
-		}
-
-    }else{
-   		$models = Opportunities::model()->with('ios')->findAll(
-   			"account_manager_id=:accountManager", 
-   			array(':accountManager'=>Yii::app()->user->id),
-   			array('order' => 'ios.name')
-   			);
-		$list = CHtml::listData($models, 
-	                'id', 'virtualName');
-		echo CHtml::dropDownList('opportunitie', $opportunitie, 
-	            $list,
-	            array('empty' => 'All opportunities','style' => "width: 140px; margin-left: 1em",));
-    }
-
-    $models = Networks::model()->findAll( array('order' => 'name') );
-	$list = CHtml::listData($models, 
-        'id', 'name');
-	echo CHtml::dropDownList('networks', $networks, 
-        $list,
-        array('empty' => 'All networks','style' => "width: 140px; margin-left: 1em",));
-
-    $models = Advertisers::model()->findAll( array('order' => 'cat', 'group' => 'cat') );
-	$list = CHtml::listData($models, 
-        'cat', 'cat');
-	echo CHtml::dropDownList('advertiser', $advertiser, 
-        $list,
-        array('empty' => 'All advertisers','style' => "width: 140px; margin-left: 1em",));
+<fieldset>
+	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
+	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+	<?php 
+		if (FilterManager::model()->isUserTotalAccess('daily'))
+			echo KHtml::filterAccountManagers($accountManager);
+		
+		echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
+		echo KHtml::filterNetworks($networks, array('style' => "width: 140px; margin-left: 1em"));
+		echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
 	?>
 	  
 	SUM 
 	<div class="input-append">
-	<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align:baseline;margin:6px 6px 0px 2px;')); ?>
+	<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
 	</div>
 		
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
-    </fieldset>
-
+</fieldset>
 <?php $this->endWidget(); ?>
+
 <?php 
 	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(

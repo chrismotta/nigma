@@ -18,6 +18,13 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
 				);
+				
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
+				);
 		break;
 	// iweb prod
 	case '70.38.54.231':
@@ -27,6 +34,13 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'root',
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
+				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
 				);
 		break;
 	// amazon prod
@@ -41,6 +55,29 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
 				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'error, mail',
+					'subject' =>'Automatic Mail Log',
+					'emails'  =>array(
+						'christian.motta@kickads.mobi',
+						'matias.cerrotta@kickads.mobi',
+						'santiago.mena@kickads.mobi',
+						'emilio.mallia@kickads.mobi',
+					),
+					'config'  =>array(
+						'From'       => 'no-reply@kickads.mobi',
+						'FromName'   => 'no-reply Kickads adServer',
+						'Host'       => "email-smtp.us-east-1.amazonaws.com",
+						'SMTPAuth'   => true,
+						'SMTPSecure' => "tls",
+						'Port'       => 25,
+						'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
+						'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
+						'CharSet'    => "UTF-8",
+                    ),
+                );
 		break;
 	// amazon test
 	case 'test.kickadserver.mobi':
@@ -50,6 +87,13 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
 				);
 		break;
 	
@@ -184,13 +228,7 @@ return array(
 					'levels'       =>'info, profile, error, warning',
 					'categories'   =>'system.*',
                 ),
-                array(
-					'class'    =>'CPhpMailerLogRoute',
-					'levels'   =>'error',
-					'subject'  =>'Log KickAds adServer',
-					'sentFrom' =>'KickAds adServer',
-					'emails'   =>'matias.cerrotta@kickads.mobi',
-                ),
+                $mailLog,
         	),
         ),
 	),

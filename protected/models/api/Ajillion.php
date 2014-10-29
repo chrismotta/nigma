@@ -76,7 +76,7 @@ class Ajillion
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign);
 
 			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("invalid external campaign name: '" . $campaign->campaign, 'error', 'system.model.api.ajillion');
+				Yii::log("invalid external campaign name: '" . $campaign->campaign, 'warning', 'system.model.api.ajillion');
 				continue;
 			}
 

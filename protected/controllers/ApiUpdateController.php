@@ -59,80 +59,132 @@ class ApiUpdateController extends Controller
 
 	public function actionAdWords()
 	{
-		$adWords = new AdWords;
-		$adWords->downloadInfo();
+		try {
+			$adWords = new AdWords;
+			$adWords->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionAirpush()
 	{
-		$airpush = new Airpush;
-		$airpush->downloadInfo();
+		try {
+			$airpush = new Airpush;
+			$airpush->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionAjillion()
 	{
-		$ajillion = new Ajillion;
-		$ajillion->downloadInfo();
+		try {
+			$ajillion = new Ajillion;
+			$ajillion->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');			
+		}
 	}
 
 	public function actionBuzzCity()
 	{
-		$buzzCity = new BuzzCity;
-		$buzzCity->downloadInfo();
+		try {
+			$buzzCity = new BuzzCity;
+			$buzzCity->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionLeadBolt()
 	{
-		$leadBolt = new LeadBolt;
-		$leadBolt->downloadInfo();
+		try {
+			$leadBolt = new LeadBolt;
+			$leadBolt->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionReporo()
 	{
-		$reporo = new Reporo;
-		$reporo->downloadInfo();
+		try {
+			$reporo = new Reporo;
+			$reporo->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionVServ()
 	{
-		$vServ = new VServ;
-		$vServ->downloadInfo();
+		try {
+			$vServ = new VServ;
+			$vServ->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionMobfox()
 	{
-		$mobfox = new Mobfox;
-		$mobfox->downloadInfo();
+		try {
+			$mobfox = new Mobfox;
+			$mobfox->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionEroAdvertising()
 	{
-		$eroAdvertising = new EroAdvertising;
-		$eroAdvertising->downloadInfo();
+		try {
+			$eroAdvertising = new EroAdvertising;
+			$eroAdvertising->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionInMobi()
 	{
-		$inMobi = new InMobi;
-		$inMobi->downloadInfo();
+		try {
+			$inMobi = new InMobi;
+			$inMobi->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionBingAds()
 	{
-		$bingAds = new BingAds;
-		$bingAds->downloadInfo();
+		try {
+			$bingAds = new BingAds;
+			$bingAds->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionSmaato()
 	{
-		$smaato = new Smaato;
-		$smaato->downloadInfo();	
+		try {
+			$smaato = new Smaato;
+			$smaato->downloadInfo();	
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionAdultmoda()
 	{
-		$adultmoda = new Adultmoda;
-		$adultmoda->downloadInfo();
+		try {
+			$adultmoda = new Adultmoda;
+			$adultmoda->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+		}
 	}
 
 	public function actionLog()

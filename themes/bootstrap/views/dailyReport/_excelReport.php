@@ -20,8 +20,7 @@
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?>
     <fieldset>
-
-        <div class="input-append">
+        <label><div class="input-append">
             <?php echo CHtml::label("From:", 'excel-dateStart', array('class'=>'control-label')); ?>
 
             <div class="controls">
@@ -42,9 +41,9 @@
                 <span class="add-on"><i class="icon-calendar"></i></span>
             </div>
         <br/>
-        </div>
+        </div></label>
             
-        <div class="input-append">
+        <label><div class="input-append">
             <?php echo CHtml::label("To:", 'excel-dateEnd', array('class'=>'control-label')); ?>
             
             <div class="controls">
@@ -65,7 +64,7 @@
                 <span class="add-on"><i class="icon-calendar"></i></span>
             </div>
         <br/>
-        </div>
+        </div></label>
 
         <div class="input-append">
             <?php echo CHtml::label("SUM:", 'excel-dateEnd', array('class'=>'control-label')); ?>
