@@ -523,7 +523,7 @@ class Campaigns extends CActiveRecord
 			$countConv . " as conv",
 		);
 
-		$criteria->having = 'clicks != 0 AND conv != 0';
+		$criteria->having = 'clicks != 0';
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
