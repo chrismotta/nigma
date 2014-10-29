@@ -95,14 +95,14 @@ class ConvLogController extends Controller
 		if($click = ClicksLog::model()->findByAttributes(
 			array('tid'=>$tid)
 			)){
-/*
+
 			if($conv = ConvLog::model()->findByAttributes(
 				array('tid'=>$tid)
 				)){
 
 				print "ConvLog: exists<hr/>";
 			}else{
-*/
+
 
 				$conv = new ConvLog();
 				$conv->tid = $tid;
@@ -172,7 +172,7 @@ class ConvLogController extends Controller
 				}
 				*/
 
-//			}
+			}
 
 		}else{
 			//print "ClicksLog: null<hr/>";
