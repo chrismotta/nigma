@@ -39,6 +39,8 @@ var selectionChangedDailyReport = function(id) {
 				chart.series[1].setData(data['conv']);	// Conv
 				chart.series[2].setData(data['imp']);	// Impressions
 				chart.series[3].setData(data['click']);	// Clicks
+				chart.series[3].setData(data['revenue']);	// Clicks
+				chart.series[3].setData(data['profit']);	// Clicks
 				chart.xAxis[0].setCategories(data['date']);	// xAxis
 				chart.redraw();
 				chart.hideLoading();

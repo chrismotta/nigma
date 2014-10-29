@@ -227,7 +227,7 @@ Yii::app()->clientScript->registerScript('search', "
 <!--### Traffic grid###-->
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'traffic-grid',
-	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks),
+	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks, $dateStart, $dateEnd),
 	'filter'                   => $model,
     'fixedHeader'			   => true,
     'headerOffset'			   => 50,
@@ -258,7 +258,7 @@ Yii::app()->clientScript->registerScript('search', "
         ),
         array(
 			'name'              => 'clicks',
-			'value'             => '$data->countClicks("' . $dateStart . '", "'.$dateEnd.'")',
+			'value'             => '$data->clicks',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
 			'filter'			=> '',
@@ -267,7 +267,7 @@ Yii::app()->clientScript->registerScript('search', "
         ),
         array(
 			'name'              => 'conv',
-			'value'             => '$data->countConv("' . $dateStart . '", "'.$dateEnd.'")',
+			'value'             => '$data->conv',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
 			'footerHtmlOptions' =>array('style'=>'text-align:right;'),
@@ -283,7 +283,7 @@ Yii::app()->clientScript->registerScript('search', "
         ),
         array(
 			'name'              => 'revenue',
-			'value'             => '($data->countConv("' . $dateStart . '", "'.$dateEnd.'")*$data->getRateUSD("'.$dateEnd.'"))',
+			'value'             => '($data->conv * $data->getRateUSD("'.$dateEnd.'"))',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'filter'            => '',
 			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),

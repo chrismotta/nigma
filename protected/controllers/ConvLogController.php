@@ -101,14 +101,34 @@ class ConvLogController extends Controller
 				)){
 
 				print "ConvLog: exists<hr/>";
-
 			}else{
+
 
 				$conv = new ConvLog();
 				$conv->tid = $tid;
 				$conv->campaign_id = $click->campaigns_id;
 				$conv->clicks_log_id = $click->id;
 				$conv->save();
+
+				// s4s (server for server)
+				
+				if($conv->campaign->networks->has_s2s){
+
+					$s4s_url = $conv->campaign->networks->callback . $tid;
+					echo $s4s_url;
+					echo '<hr/>';
+
+					$s4s_curl = curl_init($s4s_url); 
+		            curl_setopt($s4s_curl, CURLOPT_RETURNTRANSFER, TRUE); 
+		            $return = curl_exec($s4s_curl); 
+		            curl_close($s4s_curl); 
+					
+					var_dump($return);
+				}
+
+
+
+
 				
 				//var_dump($conv);
 
