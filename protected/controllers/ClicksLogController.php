@@ -106,6 +106,14 @@ class ClicksLogController extends Controller
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 		$model->redirect_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
 
+		// get macros if exists
+ 
+		$model->network_type = isset($_GET["g_net"]) ? $_GET["g_net"] : null;
+		$model->keyword      = isset($_GET["g_key"]) ? $_GET["g_key"] : null;
+		$model->creative     = isset($_GET["g_cre"]) ? $_GET["g_cre"] : null;
+		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
+		
+
 		$ts['model']         = microtime(true);
 		
 		
@@ -257,6 +265,13 @@ class ClicksLogController extends Controller
 	}
 
 
+	/**
+	 * Update columns for every register in clicks_log from date = $_GET['hourFrom'],
+	 * between $_GET['hourFrom'] and $_GET['hourTo'].
+	 * 
+	 * If $_GET['hourFrom'] and $_GET['hourTo'] are not provided update last from last hour o'clock
+	 * to current time.
+	 */
 	public function actionUpdateClicksData() 
 	{
 		date_default_timezone_set('UTC');
@@ -332,6 +347,11 @@ class ClicksLogController extends Controller
 			$click->os_version      = $device->getCapability('device_os_version');
 			$click->browser         = $device->getVirtualCapability('advertised_browser');
 			$click->browser_version = $device->getVirtualCapability('advertised_browser_version');
+
+			$tmp = array();
+			if (preg_match('/q=[^\&]*/', $click->referer, $tmp)) {
+				$click->query = urldecode(substr($tmp[0], 2));
+			}
 			
 			$click->device          === NULL ? $click->device = "" : null;
 			$click->device_model    === NULL ? $click->device_model = "" : null;

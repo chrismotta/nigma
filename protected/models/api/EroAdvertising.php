@@ -17,7 +17,7 @@ class EroAdvertising
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->title->value);
 
 		if ( !$dailyReport->campaigns_id ) {
-			Yii::log("EroAdvertising: ERROR - invalid external campaign name: ".$campaign->title->value, 'error', 'system.model.api.eroadvertising');
+			Yii::log("EroAdvertising: ERROR - invalid external campaign name: ".$campaign->title->value, 'warning', 'system.model.api.eroadvertising');
 			return;
 		}				
 		$dailyReport->date = $date;

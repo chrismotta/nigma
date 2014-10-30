@@ -19,7 +19,7 @@ class FilterManager
 
 	/**
 	 * Specify the scenario for user filtering. The scenarios indicate column to add the search criteria,
-	 * and the roles have complete access.
+	 * and the roles who have complete access.
 	 */
 	private $userScenarios = array(
 		'daily' => array( 

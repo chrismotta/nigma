@@ -76,7 +76,7 @@ class AdWords
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['campaign']);
 
 		if ( !$dailyReport->campaigns_id ) {
-			Yii::log("Invalid external campaign name: '" . $campaign['campaign'], 'error', 'system.model.api.adWords');
+			Yii::log("Invalid external campaign name: '" . $campaign['campaign'], 'warning', 'system.model.api.adWords');
 			return NULL;
 		}
 

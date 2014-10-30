@@ -72,7 +72,7 @@ class InMobi
 		if($newresponse->error=='true')
 		{
 			if($newresponse->errorList[0]->code==5001){
-				Yii::log("Empty daily report ",'error', 'system.model.api.inmobi');
+				Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
 				return 0;
 			}
 			else {
@@ -82,7 +82,7 @@ class InMobi
 		}
 
 		if ( !isset($newresponse->respList) ) { // validation add after initial implementation
-			Yii::log("Empty daily report ",'error', 'system.model.api.inmobi');
+			Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
 			return 0;
 		}
 		
@@ -99,7 +99,7 @@ class InMobi
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignName);
 
 			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("InMobi: ERROR - invalid external campaign name: '" . $campaign->campaignName, 'error', 'system.model.api.inmobi');
+				Yii::log("InMobi: invalid external campaign name: '" . $campaign->campaignName, 'warning', 'system.model.api.inmobi');
 				continue;
 			}
 

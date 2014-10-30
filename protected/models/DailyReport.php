@@ -456,7 +456,7 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null,$sum=0)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null,$sum=0,$advertiser=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -592,7 +592,9 @@ class DailyReport extends CActiveRecord
 		if ( $opportunitie != NULL) {
 			$criteria->compare('opportunities.id',$opportunitie);
 		}
-
+		if ( $advertiser != NULL ){
+			$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
+		}
 		// external name
 		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
 		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');

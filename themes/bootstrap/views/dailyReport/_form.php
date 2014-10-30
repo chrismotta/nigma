@@ -49,7 +49,7 @@
                     'class' => 'span3',
                 )),
                 array(
-                    'append' => '<i class="icon-calendar"></i>',
+                    'append' => '<label for="DailyReport_date"><i class="icon-calendar"></i></label>',
                 )
         );
 
