@@ -106,6 +106,14 @@ class ClicksLogController extends Controller
 		$model->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 		$model->redirect_url = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : null;
 
+		// get macros if exists
+ 
+		$model->network_type = isset($_GET["g_net"]) ? $_GET["g_net"] : null;
+		$model->keyword      = isset($_GET["g_key"]) ? $_GET["g_key"] : null;
+		$model->creative     = isset($_GET["g_cre"]) ? $_GET["g_cre"] : null;
+		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
+		
+
 		$ts['model']         = microtime(true);
 		
 		
