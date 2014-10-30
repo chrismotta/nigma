@@ -99,7 +99,7 @@ class DailyReportController extends Controller
 		// If date and network are submitted then get values
 		if ( isset($_GET['networkSubmit']) ) {
 			$date           = $_GET['date'];
-			$currentNetwork = $_GET['network'];
+			$currentNetwork = $_GET['networks'];
 		}
 
 		if ( isset($_POST['saveSubmit']) ) {

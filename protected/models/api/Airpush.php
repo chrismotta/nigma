@@ -48,7 +48,7 @@ class Airpush
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
 
 			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("Invalid external campaign name: '" . $campaign->campaignname, 'error', 'system.model.api.airpush');
+				Yii::log("Invalid external campaign name: '" . $campaign->campaignname, 'warning', 'system.model.api.airpush');
 				continue;
 			}
 

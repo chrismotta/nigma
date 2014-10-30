@@ -247,8 +247,8 @@ class VectorsController extends Controller
 	}
 
 	private function renderFormAjax($model)
-	{
-		$networks = CHtml::listData(Networks::model()->findAll(array('order' => 'name', 'condition' => 'use_vectors=1')), 'id', 'name');
+	{	// excepción comentada provisoriamente
+		$networks = CHtml::listData(Networks::model()->findAll(array('order' => 'name'/*, 'condition' => 'use_vectors=1'*/)), 'id', 'name');
 
 		$this->renderPartial('_form',array(
 			'model'    => $model,

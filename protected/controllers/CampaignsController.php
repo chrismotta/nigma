@@ -32,7 +32,7 @@ class CampaignsController extends Controller
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','graphicCampaign','trafficCampaignAjax','graphic'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','excelReport','graphicCampaign','trafficCampaignAjax','graphic'),
 				'roles'=>array('businness', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -169,14 +169,14 @@ class CampaignsController extends Controller
 		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
-			$opportunities = CHtml::listData(Opportunities::model()->with('ios')->findAll(
-				array('order'=>'ios.name')), 
+			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'advertisers.name, country.ISO2')), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);
 		} else {
-			$opportunities = CHtml::listData(Opportunities::model()->with('ios')->findAll(
-				array('order'=>'ios.name', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
+			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);

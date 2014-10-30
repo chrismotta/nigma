@@ -220,7 +220,7 @@ class OpportunitiesController extends Controller
 			// comentado provisoriamente, generar permiso de admin
 			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
 			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name' );
-			$ios = CHtml::listData(Ios::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id), array('order'=>'name') ), 'id', 'name');
+			$ios = CHtml::listData(Ios::model()->findAll( array('condition' => 'commercial_id=:c_id', 'params' => array( ':c_id'=>Yii::app()->user->id), 'order'=>'name') ), 'id', 'name');
 		} else {
 			// If update register, only show Opportunity's IO and Advertiser
 			$ios = Ios::model()->findByPk($model->ios_id);
@@ -258,7 +258,7 @@ class OpportunitiesController extends Controller
 	{
 		// comentado provisoriamente, generar permiso de admin
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
-		$ios = Ios::model()->findAll( "advertisers_id=:advertiser", array(':advertiser'=>$id) );
+		$ios = Ios::model()->findAll( array('condition' => "advertisers_id=:advertiser", 'params' => array(':advertiser'=>$id), 'order' => 'name' ));
 
 		$response='<option value="">Select an IOs</option>';
 		foreach ($ios as $io) {

@@ -338,7 +338,7 @@ class BingAds
 				//$dailyReport->campaigns_id = 11;//borrar harcodes por favor
 
 				if ( !$dailyReport->campaigns_id ) {
-					Yii::log("Invalid external campaign name: '" . $row[0], 'error', 'system.model.api.bingAds');
+					Yii::log("Invalid external campaign name: '" . $row[0], 'warning', 'system.model.api.bingAds');
 					continue;
 				}
 

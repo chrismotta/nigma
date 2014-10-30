@@ -35,12 +35,12 @@ var selectionChangedDailyReport = function(id) {
 		"c_id=" + c_id + "&net_id=" + net_id + "&endDate=" + endDate + "&startDate=" + startDate,
 		function(data) {
 				var chart = Highcharts.charts[0];
-				chart.series[0].setData(data['spend']);	// Spend
-				chart.series[1].setData(data['conv']);	// Conv
-				chart.series[2].setData(data['imp']);	// Impressions
-				chart.series[3].setData(data['click']);	// Clicks
+				chart.series[0].setData(data['imp']);	// Impressions
+				chart.series[1].setData(data['click']);	// Clicks
+				chart.series[2].setData(data['conv']);	// Conv
 				chart.series[3].setData(data['revenue']);	// Clicks
-				chart.series[3].setData(data['profit']);	// Clicks
+				chart.series[4].setData(data['spend']);	// Spend
+				chart.series[5].setData(data['profit']);	// Clicks
 				chart.xAxis[0].setCategories(data['date']);	// xAxis
 				chart.redraw();
 				chart.hideLoading();
