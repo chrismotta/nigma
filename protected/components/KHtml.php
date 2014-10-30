@@ -23,7 +23,7 @@ class KHtml extends CHtml
      * @param  array()  $htmlOptions
      * @return html for date picker
      */
-    public function datePicker($name, $initialDate, $options = array(), $htmlOptions = array())
+    public static function datePicker($name, $initialDate, $options = array(), $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
             'style' => 'width: 80px',
@@ -151,7 +151,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public function filterAdvertisers($value, $htmlOptions = array())
+    public static function filterAdvertisers($value, $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
             'empty' => 'All advertisers',
