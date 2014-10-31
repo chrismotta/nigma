@@ -117,7 +117,7 @@ class ClicksLogController extends Controller
 		$ts['model']         = microtime(true);
 		
 		
-		if($test){
+		if($test || $campaign->post_data == '1'){
 		
 			// Get ip data
 
@@ -211,9 +211,9 @@ class ClicksLogController extends Controller
 				$redirectURL.= $s2s."=".$ktoken;
 			}
 
-			//parametros para oneclick
-/*
-			if($campaign->post_data){
+			//enviar macros
+
+			if($campaign->post_data == '1'){
 				$redirectURL.= "&os=".$model->os;
 				$redirectURL.= "&device=".$model->device;
 				$redirectURL.= "&country=".$model->country;
@@ -221,7 +221,6 @@ class ClicksLogController extends Controller
 				$redirectURL.= "&referer=".$model->referer;
 				$redirectURL.= "&app=".$model->app;
 			}
-*/
 			
 			
 			// testing
