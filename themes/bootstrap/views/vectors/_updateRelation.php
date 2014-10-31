@@ -5,6 +5,43 @@
 /* @var $campaignsModel Campaigns[] */
 ?>
 
+<?php $customDeleteEvent = "
+    $('.customDelete').click(function(e){
+		e.preventDefault();
+		if ( !confirm('Are you sure you want to delete this item?') ) 
+			return false;
+
+		var cid = $(this).parents('tr').attr('data-row-cid');
+		var vid = $(this).parents('tr').attr('data-row-vid');
+
+		$.post(
+			'deleteRelation?cid='+cid+'&vid='+vid,
+			'',
+			function(data)
+				{
+					//alert(data);
+					$.fn.yiiGridView.update('update-relation-grid');
+				}
+		);
+    });
+	";
+
+Yii::app()->clientScript->registerScript('customDelete', $customDeleteEvent, CClientScript::POS_READY); ?>
+
+<?php Yii::app()->clientScript->registerScript('customAdd', "
+	$('#customAdd').click(function(e){
+	    e.preventDefault();
+	    $.post(
+	    	'', 
+	    	$('#update-relation-form').serialize(),
+	        function(data) 
+		        {
+		        	// alert(data);
+		        	$.fn.yiiGridView.update('update-relation-grid');
+		        }
+	    );
+	});
+", CClientScript::POS_READY); ?>
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
@@ -25,21 +62,9 @@
 	<fieldset>
 		<?php echo $form->dropDownListRow($campaignsModel, 'name', $campaigns, array('prompt' => 'Select a campaign')); ?>
 	
- 		<?php $this->widget('bootstrap.widgets.TbButton', array(
-			'buttonType'  => 'ajaxSubmit',
-			'type'        => 'primary',
-			'label'       => 'Add',
-			'htmlOptions' => array('name' => 'submit'),
-			'ajaxOptions' => array(
-					'type'   => 'post',
-					'data'   => "javascript:$('#update-relation-form').serialize();",
-					'success' => 'js:function(data){
-						// console.log(data);
-	                	$.fn.yiiGridView.update("update-relation-grid");
-	            	}',
-	        )
-
-		)); ?>
+		<?php 
+			echo CHtml::htmlButton('Add', array('id'=>'customAdd', 'name' => 'submit', 'class'=>'btn btn-primary'));
+		?>
 	</fieldset>
 
 <br/><hr/>
@@ -48,8 +73,9 @@
 		'id'                       => 'update-relation-grid',
 		'dataProvider'             => $campaignsModel->searchByVectors($vectorsModel->id),
 		'type'                     => 'striped condensed',
-		'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+		'rowHtmlOptionsExpression' => 'array("data-row-cid" => $data->id, "data-row-vid" => '.$vectorsModel->id.')',
 		'template'                 => '{items} {pager}',
+		'afterAjaxUpdate'          => "function(){ ". $customDeleteEvent . "}",
 		'columns'                  => array(
 			array(
 				'name' => 'Vector ID',
@@ -63,13 +89,17 @@
 				'name'  => 'Campaign External Name',
 				'value' => '$data->getExternalName($data->id)',
 	        ),
-	        array(
-				'class'             => 'bootstrap.widgets.TbButtonColumn',
-				'headerHtmlOptions' => array('style' => "width: 10px"),
-				'deleteButtonUrl'   => '$this->grid->controller->createUrl("deleteRelation", array("cid"=>$data->id, "vid"=>'.$vectorsModel->id.', "ajax"=>""))',
-				// 'buttons'           => array(),
-				'template' => '{delete}',
-			),
+			array(
+				'type'              =>'raw',
+				'header'            =>'',
+				'filter'            =>false,
+				'headerHtmlOptions' => array('width' => '40'),
+				'value'             =>'CHtml::ajaxLink("<i class=\"icon-trash\"></i>", "", array(), array(
+						"data-original-title" => "Delete",
+						"data-toggle"         => "tooltip",
+						"class"               => "customDelete"
+					))',
+	        ),
 		)
 	));	?>
 
