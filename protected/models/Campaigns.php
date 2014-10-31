@@ -156,13 +156,12 @@ class Campaigns extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($accountManager, $opportunitie, $networks, $advertiser)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 		$criteria->compare('t.id',$this->id);		
-		$criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('campaign_categories_id',$this->campaign_categories_id);
 		$criteria->compare('t.wifi',$this->wifi);
 		$criteria->compare('formats_id',$this->formats_id);
@@ -172,7 +171,6 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('devices_id',$this->devices_id);
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('t.status',$this->status);
-		$criteria->compare('opportunities_id',$this->opportunities_id);
 		$criteria->compare('post_data',$this->post_data);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
@@ -182,7 +180,12 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
-		$criteria->compare('accountManager.name',$this->account_manager, true);
+		
+		if ($accountManager != NULL)
+			$criteria->compare('accountManager.id',$accountManager, true);
+		$criteria->compare('opportunities_id',$opportunitie,true);
+		$criteria->compare('t.networks_id',$networks,true);
+		$criteria->compare('advertisers.cat',$advertiser,true);
 
 		//nomenclatura
 		$criteria->compare('t.id',$this->name,true);
