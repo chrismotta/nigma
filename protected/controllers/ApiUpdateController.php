@@ -49,7 +49,7 @@ class ApiUpdateController extends Controller
 		$this->actionEroAdvertising();
 		$this->actionInMobi();
 		$this->actionBingAds();
-		// $this->actionSmaato();
+		$this->actionSmaato();
 		$this->actionAdultmoda();
 	}
 
