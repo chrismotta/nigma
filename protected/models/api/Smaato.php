@@ -45,7 +45,7 @@ class Smaato
 		}
 
 		// Save campaigns information
-		if ($response['response']['report']['rows']['value'] == 1) {
+		if ( $response['response']['report']['rows']['value'] == 1 ) {
 			$this->saveDailyReport($response['response']['result']['campaign'], $date);
 		} else {
 			foreach ($response['response']['result']['campaign'] as $campaign) {
@@ -60,6 +60,7 @@ class Smaato
 
 	private function saveDailyReport($campaign, $date)
 	{
+		$dailyReport = new DailyReport;
 		// get campaign ID used in KickAds Server, from the campaign name use in the external network
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
 
@@ -78,7 +79,7 @@ class Smaato
 		$dailyReport->imp         = $data['impressions']['value'];
 		$dailyReport->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 		//$dailyReport->conv_adv    = 0;
-		$dailyReport->spend       = number_format($data['spendings']['value']);
+		$dailyReport->spend       = number_format($data['spendings']['value'], 2);
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();
 		if ( !$dailyReport->save() ) {

@@ -63,18 +63,16 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emails'  =>array(
 						'christian.motta@kickads.mobi',
 						'matias.cerrotta@kickads.mobi',
-						'santiago.mena@kickads.mobi',
-						'emilio.mallia@kickads.mobi',
 					),
 					'config'  =>array(
 						'From'       => 'no-reply@kickads.mobi',
 						'FromName'   => 'no-reply Kickads adServer',
-						'Host'       => "email-smtp.us-east-1.amazonaws.com",
-						'SMTPAuth'   => true,
-						'SMTPSecure' => "tls",
-						'Port'       => 25,
-						'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
-						'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
+						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
+						// 'SMTPAuth'   => true,
+						// 'SMTPSecure' => "tls",
+						// 'Port'       => 25,
+						// 'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
+						// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
 						'CharSet'    => "UTF-8",
                     ),
                 );
@@ -91,10 +89,24 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 
 				$mailLog = array(
 					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
+					'levels'  =>'error, mail',
+					'subject' =>'Automatic Mail Log',
+					'emails'  =>array(
+						'christian.motta@kickads.mobi',
+						'matias.cerrotta@kickads.mobi',
+					),
+					'config'  =>array(
+						'From'       => 'no-reply@kickads.mobi',
+						'FromName'   => 'no-reply Kickads adServer',
+						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
+						// 'SMTPAuth'   => true,
+						// 'SMTPSecure' => "tls",
+						// 'Port'       => 25,
+						// 'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
+						// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
+						'CharSet'    => "UTF-8",
+                    ),
+                );
 		break;
 	
 	default:
