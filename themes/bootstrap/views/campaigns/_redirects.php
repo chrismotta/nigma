@@ -45,7 +45,7 @@
     echo '<hr/>';
     
     // redirect old format
-    echo '<p>';
+    echo '<p style="color:#AAA">';
     echo '<strong>'.$network->name.' (old format): </strong>';
     echo 'http://kickadserver.mobi/clicksLog?';
     echo $redirect_old_query;
