@@ -94,7 +94,7 @@ class Mobfox
 				continue;
 			}
 		}
-		Yii::log("SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)), "error", "system.model.api.mobfox");
+		Yii::log("SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)), "info", "system.model.api.mobfox");
 		return 0;
 	}
 
