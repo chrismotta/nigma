@@ -63,8 +63,6 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emails'  =>array(
 						'christian.motta@kickads.mobi',
 						'matias.cerrotta@kickads.mobi',
-						'santiago.mena@kickads.mobi',
-						'emilio.mallia@kickads.mobi',
 					),
 					'config'  =>array(
 						'From'       => 'no-reply@kickads.mobi',
