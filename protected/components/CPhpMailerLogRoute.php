@@ -25,7 +25,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
             $mailer->$attribute = $value;
         }
 
-        $mailer->IsSMTP();
+        // $mailer->IsSMTP();
         $mailer->AddAddress($email);
         $mailer->Subject = $subject;
         $mailer->Body    = $message;
