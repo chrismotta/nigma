@@ -98,30 +98,24 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 	'dataProvider'               => $dataProvider,
 	'filter'                     => $filtersForm,
 	//'filter'                   => $model,
-	'type'                       => 'striped condensed',	
+	'type'                       => ' condensed',	
 	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
 	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                   => '{items} {pager} {summary}',
-	'columns'                    => array(
+	'columns'                    => array(		
 		array(
-			'name'              =>	'id',
-			'value'             =>'$data["id"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'ID',                           
-			),		
-		array(
-			'name'                =>'name',
-			'value'               =>'$data["name"]',
+			'name'              => 'name',
+			'value'             => '$data["id"] . " - " . $data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'              =>'Commercial Name',
-			//'footer'              =>'Totals:',      
+			'header'            => 'IO - Commercial Name',
+			//'footer'          => 'Totals:',      
 			),
 		array(
-			'name'              =>	'opportunitie',
-			'value'             =>'$data["opportunitie"]',	
+			'name'              => 'opportunitie',
+			'value'             => '$data["opportunitie"]',	
 			'htmlOptions'       => array('id'=>'alignLeft'),
 			//'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'Opportunitie',                           
+			'header'            => 'Opportunitie',                           
 			),	
 		array(
 			'name'              =>'model',
@@ -144,15 +138,16 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		array(
 			'name'              =>'rate',
 			'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
-			'headerHtmlOptions' => array('width' => '80'),	
+			'headerHtmlOptions' => array('width' => '80'),
+			//'filterHtmlOptions' => array('colspan' => '2'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			//'footer'			=> $totals['rate'],
 			'header'            =>'Rate',	
 		),	
 		array(
 			'name'              => 'mr',
-			'header'			=> '',
-			'filter'			=> '',
+			'header'			=> false,
+			'filter'			=> false,
 			'headerHtmlOptions' => array('class'=>'plusMR'),
 			'filterHtmlOptions' => array('class'=>'plusMR'),
 			'htmlOptions'       => array('class'=>'plusMR'),
@@ -200,31 +195,6 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'id',
-			'value'             =>'
-				CHtml::ajaxLink(
-					"<i class=\"icon-eye-open\"></i>", 
-					"view/".$data["id"], 
-				    array (
-				        "type"    => "POST",
-				        "beforeSend"=>"function(){
-			 				$(\"#modalClients\").modal(\"toggle\");
-		
-				        }",
-				        "success" => "function(data){
-				        	$(\"#modalClients\").html(data)
-				        	//alert(data);
-				        }"
-				    ), 
-				    array ()
-				);
-		',		
-		),
-		array(
-			'type'              =>'raw',
-			'header'            =>'',
-			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>'opportunitie',
 			'value'             =>'$data["status_opp"] == false ?
 				CHtml::ajaxLink(
@@ -243,7 +213,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 				    ), 
 				    array ()
 				) : null;
-		',		
+				',		
 		),
 		array(
 			'type'              =>'raw',
@@ -268,7 +238,32 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 				    ), 
 				    array ()
 				);
-		',		
+				',		
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'id',
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i class=\"icon-eye-open\"></i>", 
+					"view/".$data["id"], 
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ()
+				);
+				',		
 		),
 	),
 	'mergeColumns' => array('id','name','opportunitie'),
