@@ -14,6 +14,7 @@ $this->menu=array(
 $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
+//echo json_encode($clients);
 ?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -107,19 +108,20 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'value'             =>'$data["id"]',	
 			'headerHtmlOptions' => array('width' => '60'),
 			'header'            =>'ID',                           
-			),
-		array(
-			'name'              =>	'id',
-			'value'             =>'$data["status"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'ID',                           
 			),		
 		array(
-			'name'                =>'id',
+			'name'                =>'name',
 			'value'               =>'$data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'              =>'Commercial Name',
 			//'footer'              =>'Totals:',      
+			),
+		array(
+			'name'              =>	'opportunitie',
+			'value'             =>'$data["opportunitie"]',	
+			'htmlOptions'       => array('id'=>'alignLeft'),
+			//'headerHtmlOptions' => array('width' => '60'),
+			'header'            =>'Opportunitie',                           
 			),	
 		array(
 			'name'              =>'model',
@@ -157,24 +159,22 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'type'              => 'raw',
 			'value'             =>	'
 				$data["rate"] === NULL && !isset($data["carrier"]) ?
-					CHtml::link(
-            				"<i class=\"icon-plus\"></i>",
-	            			"javascript:;",
-	        				array(
-	        					"onClick" => CHtml::ajax( array(
-									"type"    => "POST",
-									"url"     => "multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
-									"success" => "function( data )
-										{
-											$(\"#modalClients\").html(data);
-											$(\"#modalClients\").modal(\"toggle\");
-										}",
-									)),
-								"style"               => "width: 20px",
-								"rel"                 => "tooltip",
-								"data-original-title" => "Update"
-								)
-						) 
+				CHtml::ajaxLink(
+					"<i class=\"icon-plus\"></i>", 
+					"multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ()
+				)
 				: null
 				'
 				,
@@ -199,7 +199,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '40'),
+			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'id',
 			'value'             =>'
 				CHtml::ajaxLink(
@@ -224,11 +224,36 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '40'),
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>'opportunitie',
+			'value'             =>'$data["status_opp"] == false ?
+				CHtml::ajaxLink(
+					"<i class=\"icon-ok\"></i>", 
+					"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ()
+				) : null;
+		',		
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'id',
 			'value'             =>'
 				CHtml::ajaxLink(
-					"<i class=\"icon-eye-open\"></i>", 
+					"<i class=\"icon-envelope\"></i>", 
 					"revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'", 
 				    array (
 				        "type"    => "POST",
@@ -246,7 +271,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		',		
 		),
 	),
-	'mergeColumns' => array('id','name'),
+	'mergeColumns' => array('id','name','opportunitie'),
 )); ?>
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
