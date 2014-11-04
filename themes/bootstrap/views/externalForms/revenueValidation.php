@@ -116,12 +116,10 @@ switch ($model->status) {
         ));
         ?>
     </div>
-    <div class="span6">
+    <div class="span12">
         <?php
-        echo CHtml::textArea('comment','',array('id'=>'comment','name'=>'comment','style'=>'width:80%;'));
+        echo CHtml::textArea('comment','',array('id'=>'comment','name'=>'comment','placeholder'=>'Comments...','style'=>'width:40%'));
         ?>
-        <div class="row">
-            <div class="offset1">
             <?php
             echo CHtml::htmlButton('Approved',array('id'=>'btnApproved','class'=>'btn btn-success'));
                  Yii::app()->clientScript->registerScript('revenueApproved', "
@@ -155,18 +153,12 @@ switch ($model->status) {
                     });
                 ", CClientScript::POS_READY);
             ?>
-            </div>
-        </div>
-    </div>
-    <div class="offset6">
+<hr>
+
         <p>Si no eres el responsable de esta información brindanos el e-mail del responsable</p>
-        <div class="row">
-            <div class="span4">
         	<?php
-            echo CHtml::textField('email_validation','',array('id'=>'email_validation','name'=>'email_validation', 'style'=>'width:90%;'));
+            echo CHtml::textField('email_validation','',array('id'=>'email_validation','name'=>'email_validation','style'=>'width:40%'));
             ?>
-            </div>
-            <div class="span1">
                 <?php
             	echo CHtml::htmlButton('Submit',array('id'=>'btnSubmit','class'=>'btn btn-success'));
                          Yii::app()->clientScript->registerScript('changeEmail', "
@@ -187,7 +179,5 @@ switch ($model->status) {
                             });
                         ", CClientScript::POS_READY);
                 ?>
-            </div>
-        </div>
     </div>
 </div>
