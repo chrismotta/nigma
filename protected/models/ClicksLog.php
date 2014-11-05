@@ -144,38 +144,22 @@ class ClicksLog extends CActiveRecord
 
 	public function searchSem($report_type, $dateStart='today', $dateEnd='today')
 	{
-		// @todo Please modify the following code to remove attributes that should not be searched.
-
 		$criteria=new CDbCriteria;
 
-		// $criteria->compare('id',$this->id);
-		// $criteria->compare('campaigns_id',$this->campaigns_id);
-		// $criteria->compare('networks_id',$this->networks_id);
-		// $criteria->compare('tid',$this->tid,true);
 		$criteria->addCondition('DATE(t.date)>=' . date('Y-m-d', strtotime($dateStart)));
 		$criteria->addCondition('DATE(t.date)<=' . date('Y-m-d', strtotime($dateEnd)));
-		// $criteria->compare('server_ip',$this->server_ip,true);
-		// $criteria->compare('user_agent',$this->user_agent,true);
-		// $criteria->compare('languaje',$this->languaje,true);
-		// $criteria->compare('referer',$this->referer,true);
-		// $criteria->compare('ip_forwarded',$this->ip_forwarded,true);
-		// $criteria->compare('country',$this->country,true);
-		// $criteria->compare('city',$this->city,true);
-		// $criteria->compare('carrier',$this->carrier,true);
-		// $criteria->compare('browser',$this->browser,true);
-		// $criteria->compare('device_type',$this->device_type,true);
-		// $criteria->compare('device',$this->device,true);
-		// $criteria->compare('os',$this->os,true);
-		// $criteria->compare('app',$this->app,true);
-		// $criteria->compare('redirect_url',$this->redirect_url,true);
+		$criteria->addCondition("t.keyword != ''");
+		$criteria->addCondition("t.keyword != '{keyword}'");
+
 		$criteria->select = array(
-			'campaigns_id', 
+			't.campaigns_id',
+			't.keyword',
 			'count(t.id) as totalClicks', 
 			'count(conv_log.id) as totalConv',
 		);
 
-		$criteria->join = 'LEFT JOIN conv_log ON conv_log.tid = t.tid';
-
+		$criteria->join = 'LEFT JOIN conv_log ON conv_log.clicks_log_id = t.id';
+		$criteria->order = 't.campaigns_id ASC, totalClicks DESC';
 		$criteria->group = 't.campaigns_id, t.keyword';
 
 		return new CActiveDataProvider($this, array(
