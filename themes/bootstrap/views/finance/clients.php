@@ -220,7 +220,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'id',
+			'name'              =>	'name',
 			'value'             =>'
 				CHtml::ajaxLink(
 					"<i class=\"icon-envelope\"></i>", 
@@ -245,7 +245,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'id',
+			'name'              =>	'name',
 			'value'             =>'
 				CHtml::ajaxLink(
 					"<i class=\"icon-eye-open\"></i>", 
@@ -266,7 +266,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 				',		
 		),
 	),
-	'mergeColumns' => array('id','name','opportunitie'),
+	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
