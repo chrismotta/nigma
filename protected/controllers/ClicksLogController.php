@@ -220,6 +220,7 @@ class ClicksLogController extends Controller
 				$redirectURL.= "&carrier=".$model->carrier;
 				$redirectURL.= "&referer=".$model->referer;
 				$redirectURL.= "&app=".$model->app;
+				$redirectURL.= "&kw=".$model->keyword;
 			}
 			
 			

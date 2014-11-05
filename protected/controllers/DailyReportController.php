@@ -118,10 +118,10 @@ class DailyReportController extends Controller
 				}
 
 				$porc = count($campaigns);
-				$attr['imp']     = number_format($attr['imp']   / $porc, 0);
-				$attr['imp_adv'] = number_format($attr['imp_adv']   / $porc, 0);
-				$attr['clics']   = number_format($attr['clics'] / $porc, 0);
-				$attr['spend']   = number_format($attr['spend'] / $porc, 2);
+				$attr['imp']     = round($attr['imp']   / $porc, 0);
+				$attr['imp_adv'] = round($attr['imp_adv']   / $porc, 0);
+				$attr['clics']   = round($attr['clics'] / $porc, 0);
+				$attr['spend']   = round($attr['spend'] / $porc, 2);
 
 				foreach ($campaigns as $campaign) {
 					$model=new DailyReport;
