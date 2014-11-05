@@ -21,6 +21,7 @@
 				{
 					//alert(data);
 					$.fn.yiiGridView.update('update-relation-grid');
+					$('#Campaigns_name').html(data);
 				}
 		);
     });
@@ -32,12 +33,13 @@ Yii::app()->clientScript->registerScript('customDelete', $customDeleteEvent, CCl
 	$('#customAdd').click(function(e){
 	    e.preventDefault();
 	    $.post(
-	    	'', 
+	    	'createRelation/".$vectorsModel->id."', 
 	    	$('#update-relation-form').serialize(),
 	        function(data) 
 		        {
 		        	// alert(data);
 		        	$.fn.yiiGridView.update('update-relation-grid');
+		        	$('#Campaigns_name').html(data);
 		        }
 	    );
 	});
@@ -54,7 +56,6 @@ Yii::app()->clientScript->registerScript('customDelete', $customDeleteEvent, CCl
 		'id'                   =>'update-relation-form',
 		'type'                 =>'inline',
 		'htmlOptions'          =>array('class'=>'well'),
-		'action'               =>$this->createUrl('vectors/createRelation/' . $vectorsModel->id),
 		// to enable ajax validation
 		'enableAjaxValidation' =>true,
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
