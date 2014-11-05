@@ -59,10 +59,22 @@ class FinanceController extends Controller
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat);
 		else
 			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat);
+		foreach ($clients as $opportunities) {			
+			foreach ($opportunities as $data) {
+				isset($sum[$data['id']]) ?  : $sum[$data['id']]=0;
+				$sum[$data['id']]+=$data['revenue'];
+			}
+		}
+		foreach ($clients as $opportunities) {			
+			foreach ($opportunities as $data) {
+				$data['total_revenue']=$sum[$data['id']];
+				$consolidated[]=$data;
+			}
+		}
 		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
-		 foreach ($clients as $client) {
+		 foreach ($consolidated as $client) {
 			isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']       =0;
 			isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']       =0;
 			isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue'] =0;
@@ -99,14 +111,14 @@ class FinanceController extends Controller
 		        'pageSize'=>30,
 		    ),
 		));
-		//Get rawData and create dataProvider
-		//$rawData=User::model()->findAll();
-		$filteredData=$filtersForm->filter($clients);
+		// Get rawData and create dataProvider
+		// $rawData=User::model()->findAll();
+		$filteredData=$filtersForm->filter($consolidated);
 		$dataProvider=new CArrayDataProvider($filteredData, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie'
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -118,6 +130,7 @@ class FinanceController extends Controller
 			'model'        =>$model,
 			'filtersForm'  =>$filtersForm,
 			'dataProvider' =>$dataProvider,
+			'clients'	=>$consolidated,
 			'totals'       =>$totalsDataProvider,
 		));
 	}

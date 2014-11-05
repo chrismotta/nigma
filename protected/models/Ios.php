@@ -411,27 +411,37 @@ class Ios extends CActiveRecord
 					foreach ($dailys as $daily) {
 						if($daily->revenue>0)
 						{
+							switch ($opportunitie->model_adv) {
+								case 'CPA':
+									$conv=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
+									break;
+								case 'CPM':
+									$conv=$daily->imp/1000;
+									break;
+								case 'CPC':
+									$conv=$daily->clics;
+									break;
+								
+							}
+							$rate=number_format($daily->revenue/$conv,2);
 							$opportunitiesValidation                              =new OpportunitiesValidation;
 							$iosValidation                                        =new IosValidation;
-							$data[$i]['id']                                       =$io->id;
-							$data[$i]['name']                                     =$io->commercial_name;
-							$data[$i]['opportunitie']                             =$opportunitie->getVirtualName();
-							$data[$i]['opportunitie_id']                          =$opportunitie->id;
-							$data[$i]['currency']                                 =$io->currency;
-							$data[$i]['entity']                                   =$io->entity;
-							$data[$i]['model']                                    =$opportunitie->model_adv;
-							$data[$i]['carrier']                                  =$opportunitie->carriers_id;
-							$data[$i]['status_opp']                               =$opportunitiesValidation->checkValidation($opportunitie->id,$year.'-'.$month.'-01');
+							$data[$opportunitie->id][$rate]['id']                                       =$io->id;
+							$data[$opportunitie->id][$rate]['name']                                     =$io->commercial_name;
+							$data[$opportunitie->id][$rate]['opportunitie']                             =$opportunitie->getVirtualName();
+							$data[$opportunitie->id][$rate]['opportunitie_id']                          =$opportunitie->id;
+							$data[$opportunitie->id][$rate]['currency']                                 =$io->currency;
+							$data[$opportunitie->id][$rate]['entity']                                   =$io->entity;
+							$data[$opportunitie->id][$rate]['model']                                    =$opportunitie->model_adv;
+							$data[$opportunitie->id][$rate]['carrier']                                  =$opportunitie->carriers_id;
+							$data[$opportunitie->id][$rate]['status_opp']                               =$opportunitiesValidation->checkValidation($opportunitie->id,$year.'-'.$month.'-01');
 							//$data[$i]['status_io']                                =$iosValidation->checkValidationOpportunities($io->id,$year.'-'.$month.'-01');
-							isset($data[$i]['conv']) ?  : $data[$i]['conv']       =0;
-							isset($data[$i]['revenue']) ?  : $data[$i]['revenue'] =0;
+							isset($data[$i]['conv']) ?  : $data[$opportunitie->id][$rate]['conv']       =0;
+							isset($data[$i]['revenue']) ?  : $data[$opportunitie->id][$rate]['revenue'] =0;
 							//!isset($data[$i]['rev']) ? $data[$i]['rev']         =0 : ;
-
-							$data[$i]['revenue']        +=$daily->revenue;
-							if($opportunitie->model_adv =='CPA')$data[$i]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
-							if($opportunitie->model_adv =='CPM')$data[$i]['conv']+=$daily->imp;
-							if($opportunitie->model_adv =='CPC')$data[$i]['conv']+=$daily->clics;
-							$data[$i]['rate']                                     =!$opportunitie->rate ? $opportunitie->rate : number_format($data[$i]['revenue']/$data[$i]['conv'],2);
+							$data[$opportunitie->id][$rate]['revenue'] +=$daily->revenue;
+							$data[$opportunitie->id][$rate]['conv']    +=$conv;
+							$data[$opportunitie->id][$rate]['rate']    =$rate;
 						}
 					}
 				}

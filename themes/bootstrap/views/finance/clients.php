@@ -15,7 +15,8 @@ $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
-//echo json_encode($clients);
+// echo json_encode($clients);
+// return;
 ?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -94,9 +95,9 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 	'dataProvider'               => $dataProvider,
 	'filter'                     => $filtersForm,
 	//'filter'                   => $model,
-	'type'                       => ' condensed',	
-	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'type'                       => 'condensed',	 
+	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => 1)',
+	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data["id"])',
 	'template'                   => '{items} {pager} {summary}',
 	'columns'                    => array(		
 		array(
@@ -108,7 +109,7 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 			),
 		array(
 			'name'              => 'opportunitie',
-			'value'             => '$data["opportunitie"]',	
+			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
 			'htmlOptions'       => array('id'=>'alignLeft'),
 			//'headerHtmlOptions' => array('width' => '60'),
 			'header'            => 'Opportunitie',                           
@@ -172,7 +173,7 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
         ),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Clics/Imp/Conv',
+			'header'            =>'Imp(m)/Clics/Conv',
 			'value'             =>'$data["conv"]',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
@@ -182,6 +183,15 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 			'name'              =>'revenue',
 			'header'            =>'Revenue',
 			'value'             =>'$data["revenue"]',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),		
+			//'footer'			=> $totals['revenue'],
+		),
+		array(
+			'name'              =>'name',
+			'header'            =>'Total Revenue',
+			'filter'			=>false,
+			'value'             =>'$data["total_revenue"]',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),		
 			//'footer'			=> $totals['revenue'],
