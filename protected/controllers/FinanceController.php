@@ -49,15 +49,16 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
-		$model       =new Ios;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$model  =new Ios;
 		//$clients     =$model->getClients($month,$year,$entity);
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
-			$clients =$model->getClients($month,$year,null,null);
+			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat);
 		else
-			$clients =$model->getClients($month,$year,null,null,Yii::App()->user->getId());
+			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat);
 		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];

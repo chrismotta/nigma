@@ -14,6 +14,7 @@ $this->menu=array(
 $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
+$cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 //echo json_encode($clients);
 ?>
 <br>
@@ -48,19 +49,14 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 				$years[$year]=$year;
 			}
 
-			$criteria=new CDbCriteria;
-			$criteria->select='entity';
-			$criteria->group='entity';
-			$criteria->addCondition('entity!=""');
-			$io=new Ios;
-			$entity=$io->findAll($criteria);
-			$entities[0]='All entities';
-			foreach ($entity as $value) {
-				$entities[$value->entity]=$value->entity;
-			}
+			$entities=KHtml::enumItem(new Ios,'entity');
+			$entities[0]='All Entities';
+			$categories=KHtml::enumItem(new Advertisers,'cat');
+			$categories[0]='All Categories';
 		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
 		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
 		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+		echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
 		
 		            ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>

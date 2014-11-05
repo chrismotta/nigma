@@ -364,19 +364,26 @@ class Ios extends CActiveRecord
 
 
 
-	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null)
+	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null)
 	{
 		$data=array();	
 		$ios=self::model()->findAll();
 		if($entity===0)$entity=null;
+		if($cat===0)$entity=null;
 		//echo "<script>alert('".$entity."')</script>";		
-		if($entity || $io)
+		if($entity || $io || $cat)
 		{
 			$criteria=new CDbCriteria;
 			if($entity)
 				$criteria->addCondition('entity="'.$entity.'"');
 			if($io)
 				$criteria->addCondition('id="'.$io.'"');
+			if($cat)
+			{
+				$criteria->with=array('advertisers');
+				$criteria->addCondition('advertisers.cat="'.$cat.'"');
+			}
+
 			$ios=self::model()->findAll($criteria);
 		}
 		
