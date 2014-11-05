@@ -138,6 +138,14 @@ class VectorsController extends Controller
 		$vhc->vectors_id   = $id;
 		$vhc->campaigns_id = $_POST['Campaigns']['name'];
 		$vhc->save();
+
+		$campaigns = $this->getCampaigns($id);
+
+		$response='<option value="">Select a campaign</option>';
+		foreach ($campaigns as $campaign) {
+			$response .= '<option value="' . $campaign->id . '">' . $campaign->getExternalName($campaign->id) . '</option>';
+		}
+		echo $response;
 	}
 
 	/**
@@ -146,17 +154,10 @@ class VectorsController extends Controller
 	 */
 	public function actionUpdateRelation($id)
 	{
-		$vectorsModel = $this->loadModel($id); 
+		$vectorsModel = $this->loadModel($id);
 
 		// Get campaigns available for adding to vector
-		$criteria = new CDbCriteria;
-		$criteria->with = array('vectors');
-		$criteria->addCondition("t.id NOT IN (SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id=". $id . ")");
-		$criteria->compare('t.networks_id', $vectorsModel->networks_id);
-		$criteria->compare('t.status', 'Active');
-		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
-
-		$campaigns = CHtml::listData( Campaigns::model()->findAll( $criteria ),
+		$campaigns = CHtml::listData( $this->getCampaigns($id),
 			'id', 
 			function($c) { return $c->getExternalName($c->id); } );
 
@@ -184,9 +185,16 @@ class VectorsController extends Controller
 			));
 		$model->delete();
 
+		$campaigns = $this->getCampaigns($model->vectors_id);
+		$response='<option value="">Select a campaign</option>';
+		foreach ($campaigns as $campaign) {
+			$response .= '<option value="' . $campaign->id . '">' . $campaign->getExternalName($campaign->id) . '</option>';
+		}
+		echo $response;
+
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
-		if(!isset($_GET['ajax']))
-			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
+		// if(!isset($_GET['ajax']))
+		// 	$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
 
 	/**
@@ -254,6 +262,20 @@ class VectorsController extends Controller
 			'model'    => $model,
 			'networks' => $networks,
 		), false, true);
+	}
+
+	private function getCampaigns($id)
+	{
+		$vectorsModel = $this->loadModel($id);
+
+		$criteria = new CDbCriteria;
+		$criteria->with = array('vectors');
+		$criteria->addCondition("t.id NOT IN (SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id=". $id . ")");
+		$criteria->compare('t.networks_id', $vectorsModel->networks_id);
+		$criteria->compare('t.status', 'Active');
+		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
+
+		return Campaigns::model()->findAll( $criteria );
 	}
 
 	/**
