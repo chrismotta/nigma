@@ -96,11 +96,11 @@ $('.search-form form').submit(function(){
         array(
 			'name'  => 'networks_id',
 			'value' => '$data->networks->name',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'headerHtmlOptions' => array('style' => 'width: 120px'),
         ),
         array(
-			'name'  => 'networks_id',
-			'value' => '$data->networks->name',
+			'name'  => 'campaigns_associated',
+			'value' => 'join(CHtml::listData(VectorsHasCampaigns::model()->findAll(array("condition"=>"vectors_id=".$data->id)), "campaigns_id", "campaigns_id")," - ")',
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
