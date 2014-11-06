@@ -96,6 +96,11 @@ $('.search-form form').submit(function(){
         array(
 			'name'  => 'networks_id',
 			'value' => '$data->networks->name',
+			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+        array(
+			'name'  => 'networks_id',
+			'value' => '$data->networks->name',
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
