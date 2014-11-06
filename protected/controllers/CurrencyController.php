@@ -29,6 +29,10 @@ class CurrencyController extends Controller
 				'actions'=>array('index','view','admin','create','update','delete'),
 				'roles'=>array('admin', 'business', 'finance'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('index','view','admin'),
+				'roles'=>array('media', 'media_manager'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
