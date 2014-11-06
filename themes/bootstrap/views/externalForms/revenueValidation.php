@@ -21,9 +21,12 @@ switch ($model->status) {
         break;
     
     default:
+        $log=new ValidationLog;
         $status='Viewed';
         $model->attributes=array('status'=>$status);
-        if(!$model->save())
+        if($model->save())            
+            $log->loadLog($model->id,$status);
+        else
             echo 'Error';
         break;
 }

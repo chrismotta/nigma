@@ -3,7 +3,7 @@
 /* @var $model ExternalForm */
 
 $status='Approved';
-
+$log=new ValidationLog;
 switch ($model->status) {
 	case 'Approved':
 		echo 'Revenue already approved';
@@ -16,7 +16,10 @@ switch ($model->status) {
 	default:
 		$model->attributes=array('status'=>$status,'comment'=>$comment);
 		if($model->save())
-			echo 'Revenue Approved';
+		{
+			echo 'Revenue Approved';			
+			$log->loadLog($model->id,$status);
+		}
 		else
 			print_r($model->getErrors());
 		break;

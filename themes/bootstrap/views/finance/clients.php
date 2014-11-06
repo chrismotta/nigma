@@ -15,6 +15,9 @@ $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
+$log=new ValidationLog;
+
+//echo $log->loadLog(26,'Sended');
 // echo json_encode($clients);
 // return;
 ?>
@@ -208,8 +211,16 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 				        	//alert(data);
 				        }"
 				    ), 
-				    array ()
-				) : "<i class=\"icon-ok\"></i>";
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verify")
+				) 
+				: 
+				CHtml::ajaxLink(
+					"<i class=\"icon-ok\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
+				)
+				;
 				',		
 		),
 		array(
@@ -251,7 +262,7 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 				        	//alert(data);
 				        }"
 				    ), 
-				    array ()
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
 				);
 				',		
 		),
@@ -276,7 +287,7 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 				        	//alert(data);
 				        }"
 				    ), 
-				    array ()
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"View IO")
 				);
 				',		
 		),

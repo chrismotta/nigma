@@ -2,6 +2,7 @@
 /* @var $this ExternalFormsController */
 /* @var $model ExternalForm */
 $status='Disputed';
+$log=new ValidationLog;
 
 switch ($model->status) {
 	case 'Disputed':
@@ -15,7 +16,10 @@ switch ($model->status) {
 	default:
 		$model->attributes=array('status'=>$status,'comment'=>$comment);
 		if($model->save())
+		{
 			echo 'Revenue Disputed';
+			$log->loadLog($model->id,$status);
+		}
 		else
 			print_r($model->getErrors());
 		break;
