@@ -423,7 +423,8 @@ class Ios extends CActiveRecord
 									break;
 								
 							}
-							$rate=number_format($daily->revenue/$conv,2);
+							
+							!$opportunitie->rate ? $rate=$opportunitie->rate : $rate=number_format($daily->revenue/$conv,2);
 							$opportunitiesValidation                              =new OpportunitiesValidation;
 							$iosValidation                                        =new IosValidation;
 							$data[$opportunitie->id][$rate]['id']                                       =$io->id;
@@ -435,7 +436,7 @@ class Ios extends CActiveRecord
 							$data[$opportunitie->id][$rate]['model']                                    =$opportunitie->model_adv;
 							$data[$opportunitie->id][$rate]['carrier']                                  =$opportunitie->carriers_id;
 							$data[$opportunitie->id][$rate]['status_opp']                               =$opportunitiesValidation->checkValidation($opportunitie->id,$year.'-'.$month.'-01');
-							//$data[$i]['status_io']                                =$iosValidation->checkValidationOpportunities($io->id,$year.'-'.$month.'-01');
+							$data[$opportunitie->id][$rate]['status_io']                                =$iosValidation->getStatusByIo($io->id,$year.'-'.$month.'-01');
 							isset($data[$i]['conv']) ?  : $data[$opportunitie->id][$rate]['conv']       =0;
 							isset($data[$i]['revenue']) ?  : $data[$opportunitie->id][$rate]['revenue'] =0;
 							//!isset($data[$i]['rev']) ? $data[$i]['rev']         =0 : ;

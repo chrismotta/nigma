@@ -188,15 +188,6 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 			//'footer'			=> $totals['revenue'],
 		),
 		array(
-			'name'              =>'name',
-			'header'            =>'Total Revenue',
-			'filter'			=>false,
-			'value'             =>'$data["total_revenue"]',
-			'headerHtmlOptions' => array('width' => '80'),
-			'htmlOptions'       => array('style'=>'text-align:right;'),		
-			//'footer'			=> $totals['revenue'],
-		),
-		array(
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
@@ -204,7 +195,7 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 			'name'              =>'opportunitie',
 			'value'             =>'$data["status_opp"] == false ?
 				CHtml::ajaxLink(
-					"<i class=\"icon-ok\"></i>", 
+					"<i class=\"icon-exclamation-sign\"></i>", 
 					"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
 				    array (
 				        "type"    => "POST",
@@ -218,8 +209,26 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 				        }"
 				    ), 
 				    array ()
-				) : null;
+				) : "<i class=\"icon-ok\"></i>";
 				',		
+		),
+		array(
+			'name'              =>'name',
+			'header'            =>'Total Revenue',
+			'filter'			=>false,
+			'value'             =>'$data["total_revenue"]',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),		
+			//'footer'			=> $totals['revenue'],
+		),
+		array(
+			'name'              =>'name',
+			'header'            =>'Status IO',
+			'filter'			=>false,
+			'value'             =>'$data["status_io"]',
+			'headerHtmlOptions' => array('width' => '40'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),		
+			//'footer'			=> $totals['revenue'],
 		),
 		array(
 			'type'              =>'raw',

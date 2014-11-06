@@ -116,15 +116,15 @@ class OpportunitiesValidation extends CActiveRecord
 			return false;
 	}
 
-	public function checkValidationIo($io,$period)
-	{
-		$check=false;
-		$ios=new Ios;
-		$opportunities = $ios->getClients($month,$year,null,$io);
-		foreach ($opportunities as $opportunitie) {
-			if(checkValidation($opportunitie['opportunitie'],$period)==true) $check=true;
-			else return false;
-		}
-		return $check;
-	}
+	// public function checkValidationIo($io,$period)
+	// {
+	// 	$check=false;
+	// 	$ios=new Ios;
+	// 	$opportunities = $ios->getClients($month,$year,null,$io);
+	// 	foreach ($opportunities as $opportunitie) {
+	// 		if(checkValidation($opportunitie['opportunitie'],$period)==true) $check=true;
+	// 		else return false;
+	// 	}
+	// 	return $check;
+	// }
 }

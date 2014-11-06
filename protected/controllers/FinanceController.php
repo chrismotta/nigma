@@ -65,6 +65,7 @@ class FinanceController extends Controller
 				$sum[$data['id']]+=$data['revenue'];
 			}
 		}
+		$consolidated=array();
 		foreach ($clients as $opportunities) {			
 			foreach ($opportunities as $data) {
 				$data['total_revenue']=$sum[$data['id']];
@@ -118,7 +119,7 @@ class FinanceController extends Controller
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue'
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -260,7 +261,12 @@ class FinanceController extends Controller
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		$clients =$model->getClients($month,$year,null,null,null,$op);
-		$dataProvider=new CArrayDataProvider($clients, array(
+		foreach ($clients as $opportunities) {			
+			foreach ($opportunities as $data) {
+				$consolidated[]=$data;
+			}
+		}
+		$dataProvider=new CArrayDataProvider($consolidated, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(

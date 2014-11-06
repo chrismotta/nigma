@@ -114,18 +114,6 @@ class IosValidation extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function getStatusByIo($id,$month,$year)
-	{
-		$criteria=new CDbCriteria;
-		$criteria->addCondition('ios_id='.$id);
-		$criteria->addCondition('MONTH(period)='.$month);
-		$criteria->addCondition('YEAR(period)='.$year);
-		if($validation = self::find($criteria))
-			return $validation->status;
-		else
-			return 'No Send';
-	}
-
 	public function loadModelByToken($token)
 	{
 		$criteria=new CDbCriteria;
@@ -157,7 +145,12 @@ class IosValidation extends CActiveRecord
 		$check=false;
 		$ios=new Ios;
 		$opportunitiesValidation=new OpportunitiesValidation;
-		$opportunities = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io);
+		$clients = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io);
+		foreach ($clients as $client) {			
+			foreach ($client as $data) {
+				$opportunities[]=$data;
+			}
+		}
 		foreach ($opportunities as $opportunitie) {
 			if($opportunitiesValidation->checkValidation($opportunitie['opportunitie_id'],$period)==true) $check=true;
 			else return false;
@@ -176,5 +169,17 @@ class IosValidation extends CActiveRecord
 			return true;
 		else
 			return false;
+	}
+	
+	public function getStatusByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::find($criteria))
+			return $validation->status;
+		else
+			return 'No Send';
 	}
 }
