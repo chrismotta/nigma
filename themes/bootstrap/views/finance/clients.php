@@ -98,14 +98,9 @@ $log=new ValidationLog;
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
 	'id'                         => 'clients-grid',
-	//'fixedHeader'              => true,
-	//'headerOffset'             => 50,
 	'dataProvider'               => $dataProvider,
 	'filter'                     => $filtersForm,
-	//'filter'                   => $model,
 	'type'                       => 'condensed',	 
-	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => 1)',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data["id"])',
 	'template'                   => '{items} {pager} {summary}',
 	'columns'                    => array(		
 		array(
@@ -113,13 +108,11 @@ $log=new ValidationLog;
 			'value'             => '$data["id"] . " - " . $data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'            => 'IO - Commercial Name',
-			//'footer'          => 'Totals:',      
 			),
 		array(
 			'name'              => 'opportunitie',
 			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
 			'htmlOptions'       => array('id'=>'alignLeft'),
-			//'headerHtmlOptions' => array('width' => '60'),
 			'header'            => 'Opportunitie',                           
 			),	
 		array(
@@ -144,9 +137,7 @@ $log=new ValidationLog;
 			'name'              =>'rate',
 			'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
 			'headerHtmlOptions' => array('width' => '80'),
-			//'filterHtmlOptions' => array('colspan' => '2'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
-			//'footer'			=> $totals['rate'],
 			'header'            =>'Rate',	
 		),	
 		array(
@@ -185,7 +176,6 @@ $log=new ValidationLog;
 			'value'             =>'$data["conv"]',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
-			//'footer'			=> $totals['conv'],
 		),
 		array(
 			'name'              =>'revenue',
@@ -193,7 +183,6 @@ $log=new ValidationLog;
 			'value'             =>'$data["revenue"]',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),		
-			//'footer'			=> $totals['revenue'],
 		),
 		array(
 			'type'              =>'raw',
@@ -234,8 +223,7 @@ $log=new ValidationLog;
 			'filter'			=>false,
 			'value'             =>'$data["total_revenue"]',
 			'headerHtmlOptions' => array('width' => '80'),
-			'htmlOptions'       => array('style'=>'text-align:right;'),		
-			//'footer'			=> $totals['revenue'],
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
 			'type'              =>'raw',
@@ -252,15 +240,6 @@ $log=new ValidationLog;
 				);
 				',		
 		),
-		// array(
-		// 	'name'              =>'name',
-		// 	'header'            =>'Status IO',
-		// 	'filter'			=>false,
-		// 	'value'             =>'$data["status_io"]',
-		// 	'headerHtmlOptions' => array('width' => '40'),
-		// 	'htmlOptions'       => array('style'=>'text-align:right;'),		
-		// 	//'footer'			=> $totals['revenue'],
-		// ),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
@@ -317,14 +296,8 @@ $log=new ValidationLog;
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
 	'id'                         => 'totals-grid',
-	//'fixedHeader'              => true,
-	//'headerOffset'             => 50,
 	'dataProvider'               => $totals,
-	//'filter'                     => $filtersForm,
-	//'filter'                   => $model,
 	'type'                       => 'striped condensed',	
-	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                   => '{items} {pager}',
 	'columns'                    => array(
 		array(
@@ -335,10 +308,8 @@ $log=new ValidationLog;
 			),	
 		array(
 			'name'                =>'total',
-			'value'               =>'$data["total"]',
-			//'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'              =>'Total',
-			//'footer'              =>'Totals:',      
+			'value'               =>'$data["total"]',	
+			'header'              =>'Total', 
 			),			
 		),
 )); ?>

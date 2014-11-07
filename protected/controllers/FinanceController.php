@@ -292,10 +292,13 @@ class FinanceController extends Controller
 	}
 
 	public function actionValidateOpportunitie()
-	{
+	{		
+		$modelOp=new Opportunities;
+		$opportunitie=$modelOp->findByPk($_POST['opportunities_id']);
 		$this->renderPartial('validateOpportunitie', array(
 				'opportunities_id' => $_POST['opportunities_id'],
 				'period' => $_POST['period'],
+				'opportunitie'=>$opportunitie
 			));
 	}
 	
