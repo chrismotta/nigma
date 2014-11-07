@@ -7,10 +7,16 @@ $name    = 'KickAds-Clients.xls';
 $year    =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 $month   =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
 $entity   =isset($_POST['entity']) ? $_POST['entity'] : null;
+$cat   =isset($_POST['cat']) ? $_POST['cat'] : null;
+$status   =isset($_POST['status']) ? $_POST['status'] : null;
 //echo json_encode($model->getClients($month,$year));
-$clients =Ios::getClients($month,$year,$entity);
-
-$dataProvider=new CArrayDataProvider($clients, array(
+$clients =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status);
+foreach ($clients as $opportunities) {          
+    foreach ($opportunities as $data) {
+        $consolidated[]=$data;
+    }
+}
+$dataProvider=new CArrayDataProvider($consolidated, array(
     'id'=>'clients',
     // 'sort'=>array(
     //     'attributes'=>array(

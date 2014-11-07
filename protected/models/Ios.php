@@ -364,9 +364,11 @@ class Ios extends CActiveRecord
 
 
 
-	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null)
+	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
 	{
-		$data=array();	
+		$data                    =array();	
+		$opportunitiesValidation =new OpportunitiesValidation;
+		$iosValidation           =new IosValidation;
 		$ios=self::model()->findAll();
 		if($entity===0)$entity=null;
 		if($cat===0)$entity=null;
@@ -389,7 +391,8 @@ class Ios extends CActiveRecord
 		
 		$i=0;
 		foreach ($ios as $io) {
-
+			if($status)
+				if($iosValidation->getStatusByIo($io->id,$year.'-'.$month.'-01') != $status) continue;
 			$criteria                       =new CDbCriteria;
 			$criteria->addCondition('ios_id ='.$io->id);
 			if($accountManager)
@@ -425,8 +428,6 @@ class Ios extends CActiveRecord
 							}
 							
 							!$opportunitie->rate ? $rate=$opportunitie->rate : $rate=number_format($daily->revenue/$conv,2);
-							$opportunitiesValidation                              =new OpportunitiesValidation;
-							$iosValidation                                        =new IosValidation;
 							$data[$opportunitie->id][$rate]['id']                                       =$io->id;
 							$data[$opportunitie->id][$rate]['name']                                     =$io->commercial_name;
 							$data[$opportunitie->id][$rate]['opportunitie']                             =$opportunitie->getVirtualName();

@@ -53,12 +53,13 @@ class FinanceController extends Controller
 		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status    =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
 		//$clients     =$model->getClients($month,$year,$entity);
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
-			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat);
+			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status);
 		else
-			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat);
+			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status);
 		foreach ($clients as $opportunities) {			
 			foreach ($opportunities as $data) {
 				isset($sum[$data['id']]) ?  : $sum[$data['id']]=0;

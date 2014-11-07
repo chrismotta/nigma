@@ -15,6 +15,7 @@ $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
+$stat =isset($_GET['status']) ? $_GET['status'] : null;
 $log=new ValidationLog;
 
 //echo $log->loadLog(26,'Sended');
@@ -57,10 +58,14 @@ $log=new ValidationLog;
 			$entities[0]='All Entities';
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
-		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
-		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
-		echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
+			$status=KHtml::enumItem(new IosValidation,'status');
+			$status['Not Sended']='Not Sended';
+			$status[0]='All Status';
+		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array($month=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
+		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+		echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
+		echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true))));
 		
 		            ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
@@ -69,7 +74,7 @@ $log=new ValidationLog;
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
+		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -198,7 +203,7 @@ $log=new ValidationLog;
 			'name'              =>'opportunitie',
 			'value'             =>'$data["status_opp"] == false ?
 				CHtml::ajaxLink(
-					"<i class=\"icon-exclamation-sign\"></i>", 
+					"<i id=\"icon-status\" class=\"not_verifed\"></i>", 
 					"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
 				    array (
 				        "type"    => "POST",
@@ -211,11 +216,11 @@ $log=new ValidationLog;
 				        	//alert(data);
 				        }"
 				    ), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verify")
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
 				) 
 				: 
 				CHtml::ajaxLink(
-					"<i class=\"icon-ok\"></i>", 
+					"<i id=\"icon-status\" class=\"verifed\"></i>", 
 					"javascript:void(0)", 
 				    array (), 
 				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
@@ -233,14 +238,29 @@ $log=new ValidationLog;
 			//'footer'			=> $totals['revenue'],
 		),
 		array(
-			'name'              =>'name',
-			'header'            =>'Status IO',
-			'filter'			=>false,
-			'value'             =>'$data["status_io"]',
-			'headerHtmlOptions' => array('width' => '40'),
-			'htmlOptions'       => array('style'=>'text-align:right;'),		
-			//'footer'			=> $totals['revenue'],
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>$data["status_io"])
+				);
+				',		
 		),
+		// array(
+		// 	'name'              =>'name',
+		// 	'header'            =>'Status IO',
+		// 	'filter'			=>false,
+		// 	'value'             =>'$data["status_io"]',
+		// 	'headerHtmlOptions' => array('width' => '40'),
+		// 	'htmlOptions'       => array('style'=>'text-align:right;'),		
+		// 	//'footer'			=> $totals['revenue'],
+		// ),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',

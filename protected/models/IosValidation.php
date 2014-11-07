@@ -180,6 +180,6 @@ class IosValidation extends CActiveRecord
 		if($validation = self::find($criteria))
 			return $validation->status;
 		else
-			return 'No Send';
+			return 'Not Sended';
 	}
 }
