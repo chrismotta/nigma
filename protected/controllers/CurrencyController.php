@@ -122,7 +122,7 @@ class CurrencyController extends Controller
 				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('create',array(
+		$this->renderPartial('_form',array(
 			'model'=>$model,
 		),false,true);
 	}
