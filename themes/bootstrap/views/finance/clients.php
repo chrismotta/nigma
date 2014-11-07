@@ -239,7 +239,7 @@ $log=new ValidationLog;
 				    array ("data-toggle"=>"tooltip", "data-original-title"=>$data["status_io"])
 				);
 				',		
-		),
+		), 
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
