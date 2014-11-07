@@ -28,7 +28,7 @@ class SemController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('keywords','placement'),
+				'actions'=>array('keyword','placement','creative'),
 				'roles'=>array('admin', 'sem'),
 			),
 			array('deny',  // deny all users
@@ -37,19 +37,41 @@ class SemController extends Controller
 		);
 	}
 
-	public function actionKeywords()
+
+	public function actionKeyword()
 	{
-		$this->renderPartial('report', array(
+		$this->render('report', array(
 			'model'  => new ClicksLog,
 			'report' => 'keyword',
-		), false, true);
+		));
 	}
+
 
 	public function actionPlacement()
 	{
-		$this->renderPartial('report', array(
+		$this->render('report', array(
 			'model'  => new ClicksLog,
 			'report' => 'placement',
-		), false, true);
+		));
 	}
+
+
+	public function actionCreative()
+	{
+		$this->render('report', array(
+			'model'  => new ClicksLog,
+			'report' => 'creative',
+		));
+	}
+
+	// public function actionExcelReport()
+	// {
+	// 	if( isset($_POST['excel-report-sem']) ) {
+	// 		$this->renderPartial('excelReport', array(
+	// 			'model' => new ClicksLog,
+	// 		));
+	// 	}
+
+	// 	$this->renderPartial('_excelReport', array(), false, true);
+	// }
 }
