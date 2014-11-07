@@ -201,6 +201,40 @@ class KHtml extends CHtml
         return CHtml::dropDownList('entity', $value, $entities, $htmlOptions);
     }
 
+    /**
+     * Create autocomplete input of campaigns
+     * @param  $value
+     * @param  $networks_id
+     * @param  $htmlOptions
+     * @return html for autocomplete
+     */
+    public static function filterCampaigns($value, $networks_id = array(), $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'placeholder' => 'All campaigns',
+            'class'       => 'span4',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+
+        if ( empty($networks_id) )
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
+        else
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => 'networks_id IN (' . join($networks_id, ', ') . ')') );
+
+        $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
+
+        return Yii::app()->controller->widget('zii.widgets.jui.CJuiAutoComplete', array(
+            'name'        =>'campaign',
+            'source'      =>$list,
+            'value'       =>$value,
+            // additional javascript options for the autocomplete plugin
+            'htmlOptions' =>$htmlOptions,
+            'options'     =>array(
+                'minLength' => '1',
+            ),
+        ), true);
+    }
+
 }
 
 ?>
