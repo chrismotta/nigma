@@ -8,7 +8,6 @@ class AdWords
 
 	public function downloadInfo()
 	{
-
 		if ( isset( $_GET['date']) ) {
 			$date =  date('Ymd', strtotime($_GET['date']));
 		} else {
@@ -21,8 +20,18 @@ class AdWords
 			return 2;
 		}
 
+		$this->downloadInfoByAccount('auth_adwords1.ini', $date);
+		$this->downloadInfoByAccount('auth_adwords2.ini', $date);
+
+		return 0;
+	}
+
+	public function downloadInfoByAccount($authenticationIniPath, $date)
+	{
+
 		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
-		$user = new AdWordsUser();
+		$authPath = Yii::app()->basePath . '/external/Google/Api/Ads/AdWords/';
+		$user = new AdWordsUser($authPath . $authenticationIniPath);
 
 		// Get all client customers ids
 		$customerService = $user->GetService('ManagedCustomerService', $this->adWords_version);
@@ -45,6 +54,8 @@ class AdWords
 			$result = ReportUtils::DownloadReportWithAwql($reportQuery, NULL, $user, 'XML', array('version' => $this->adWords_version));
 
 			$result = Utilities::xml2array($result);
+			echo json_encode($result);
+			echo '<hr/>';
 
 			if ( !isset($result['report']['table']['row']) ) {
 				Yii::log("Empty daily report, advertiser:  " . $advertiser->name, 'info', 'system.model.api.adWords');
@@ -62,8 +73,9 @@ class AdWords
 					continue;
 			}
 		}
+			echo '<hr/>';
 		
-		Yii::log("SUCCESS - Daily info download.", 'info', 'system.model.api.adWords');
+		Yii::log("SUCCESS - Daily info download - ".$authenticationIniPath, 'info', 'system.model.api.adWords');
 		return 0;
 	}
 

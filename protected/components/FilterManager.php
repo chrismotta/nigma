@@ -30,6 +30,7 @@ class FilterManager
 				'bussiness',
 				'finance',
 				'sem',
+				'finance',
 			)),
 		'campaign.account' => array( 
 			'column' => 'opportunities.account_manager_id', 

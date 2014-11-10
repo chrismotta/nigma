@@ -79,7 +79,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, ios_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -496,7 +496,7 @@ class Campaigns extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-		$criteria->with = array('opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers');
+		$criteria->with = array('opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers');
 		
 		// external name
 		$criteria->compare('t.id',$this->name,true);
@@ -507,6 +507,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('opportunities.product',$this->name,true,'OR');
 
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
+		$criteria->compare('ios.name',$this->ios_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
