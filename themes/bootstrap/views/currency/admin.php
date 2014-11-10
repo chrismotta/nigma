@@ -18,8 +18,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'type'    => 'POST',
 		'success' => 'function(data)
 			{
-                    console.log(this.url);
-	                //alert("create");
 					$("#modalCurrency").html(data);
 					$("#modalCurrency").modal("toggle");
 			}',

@@ -87,13 +87,20 @@ class UsersController extends Controller
 	public function actionUpdate($id)
 	{
 		$model=$this->loadModel($id);
+		$model->repeat_password = $model->password;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Users']))
-		{
-			$model->attributes=$_POST['Users'];
+		{	
+			$oldPassword = $model->password;
+           	$model->attributes = $_POST['Users'];
+           	if ($model->password != $oldPassword) {
+				$model->password        = sha1($model->password);
+				$model->repeat_password = sha1($model->repeat_password);
+           	}
+
 			if($model->save())
 				$this->redirect(array('admin'));
 		}

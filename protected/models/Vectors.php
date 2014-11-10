@@ -16,6 +16,8 @@
  */
 class Vectors extends CActiveRecord
 {
+	public $campaigns_associated;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -38,7 +40,7 @@ class Vectors extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, networks_id, name, status', 'safe', 'on'=>'search'),
+			array('id, networks_id, name, status, campaigns_associated', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,10 +64,11 @@ class Vectors extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'          => 'ID',
-			'networks_id' => 'Network',
-			'name'        => 'Name',
-			'status'      => 'Status',
+			'id'                   => 'ID',
+			'networks_id'          => 'Network',
+			'name'                 => 'Name',
+			'status'               => 'Status',
+			'campaigns_associated' => 'Campaigns',
 		);
 	}
 

@@ -40,6 +40,10 @@ class CampaignsController extends Controller
 				'users'=>array('*'),
 				
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('search'),
+				'roles'=>array('admin', 'media_manager', 'external'),
+			),
 			/*
 			array('allow', // allow authenticated user to perform 'create' and 'update' actions
 				'actions'=>array('create','update'),
@@ -489,7 +493,7 @@ class CampaignsController extends Controller
 
 	public function actionTraffic()
 	{
-		$model=new Campaigns();
+		$model=new Campaigns('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Campaigns']))
 			$model->attributes=$_GET['Campaigns'];
@@ -544,4 +548,16 @@ class CampaignsController extends Controller
 		Yii::app()->end();
 	}
 
+	/**
+	 * Record a conversion stamp
+	 * @return [type] [description]
+	 */
+	public function actionSearch($id)
+	{
+		$model = ClicksLog::model()->findByPk($id);
+
+		$this->render('search',array(
+			'model'=>$model,
+		));
+	}
 }
