@@ -216,4 +216,5 @@ fieldset hr {
 	overflow-y: auto;
 	/* prevent horizontal scrollbar */
 	overflow-x: hidden;
+	z-index: 1060!important;
 }
