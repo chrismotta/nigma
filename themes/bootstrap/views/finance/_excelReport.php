@@ -39,49 +39,20 @@
             foreach (range(date('Y'), 2014) as $year) {
                 $years[$year]=$year;
             }
-            $criteria=new CDbCriteria;
-            $criteria->select='entity';
-            $criteria->group='entity';
-            $criteria->addCondition('entity!=""');
-            $io=new Ios;
-            $entity=$io->findAll($criteria);
-            $entities[0]='All entities';
-            foreach ($entity as $value) {
-                $entities[$value->entity]=$value->entity;
-            }
-        echo $form->dropDownList(
-            new DailyReport,
-            'date',
-            $months,
-            array(
-                'name'=>'month', 
-                'style' => "width: 140px; margin-left: 1em",
-                'options' => array(
-                    isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true),
-                    )
-                )
-            );
-        echo $form->dropDownList(
-            new DailyReport,
-            'date',
-            $years,
-            array(
-                'name'=>'year',
-                'style' => "width: 140px; margin-left: 1em",
-                'options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true))
-                )
-            );
-        echo $form->dropDownList(
-            new Ios,
-            'entity',
-            $entities,
-            array(
-                'name'=>'entity',
-                'style' => "width: 140px; margin-left: 1em",
-                'options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))
-                )
-            );
-        //echo CHtml::dropDownList($years,'year',$years);
+
+            $entities=KHtml::enumItem(new Ios,'entity');
+            $entities[0]='All Entities';
+            $categories=KHtml::enumItem(new Advertisers,'cat');
+            $categories[0]='All Categories';
+            $status=KHtml::enumItem(new IosValidation,'status');
+            $status['Not Sended']='Not Sended';
+            $status[0]='All Status';
+        echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true)))) . "<br>";
+        echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true)))) . "<br>";
+        echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true)))) . "<br>";
+        echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true)))) . "<br>";
+        echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true)))) . "<br>";
+        
                     ?>
     
     <div class="form-actions">

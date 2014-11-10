@@ -14,7 +14,14 @@ $this->menu=array(
 $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
-
+$cat =isset($_GET['cat']) ? $_GET['cat'] : null;
+$stat =isset($_GET['status']) ? $_GET['status'] : null;
+$log=new ValidationLog;
+$ios=new Ios;
+// print_r($ios->getClientsNew($month,$year,null,19));
+//echo $log->loadLog(26,'Sended');
+// echo json_encode($clients);
+// return;
 ?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -22,7 +29,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
         'type'=>'search',
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
-        'enableAjaxValidation'=>true,
+        'enableAjaxValidation'=>false,
         'action' => Yii::app()->getBaseUrl() . '/finance/clients',
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
@@ -48,19 +55,18 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 				$years[$year]=$year;
 			}
 
-			$criteria=new CDbCriteria;
-			$criteria->select='entity';
-			$criteria->group='entity';
-			$criteria->addCondition('entity!=""');
-			$io=new Ios;
-			$entity=$io->findAll($criteria);
-			$entities[0]='All entities';
-			foreach ($entity as $value) {
-				$entities[$value->entity]=$value->entity;
-			}
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
-		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
-		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+			$entities=KHtml::enumItem(new Ios,'entity');
+			$entities[0]='All Entities';
+			$categories=KHtml::enumItem(new Advertisers,'cat');
+			$categories[0]='All Categories';
+			$status=KHtml::enumItem(new IosValidation,'status');
+			$status['Not Sended']='Not Sended';
+			$status[0]='All Status';
+		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array($month=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
+		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+		echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
+		echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true))));
 		
 		            ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
@@ -69,7 +75,7 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
+		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -93,28 +99,23 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
 	'id'                         => 'clients-grid',
-	//'fixedHeader'              => true,
-	//'headerOffset'             => 50,
 	'dataProvider'               => $dataProvider,
 	'filter'                     => $filtersForm,
-	//'filter'                   => $model,
-	'type'                       => 'striped condensed',	
-	'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'afterAjaxUpdate'=>'verifedIcon',
+	'type'                       => 'condensed',	 
 	'template'                   => '{items} {pager} {summary}',
-	'columns'                    => array(
+	'columns'                    => array(		
 		array(
-			'name'              =>	'id',
-			'value'             =>'$data["id"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'ID',                           
-			),	
-		array(
-			'name'                =>'id',
-			'value'               =>'$data["name"]',
+			'name'              => 'name',
+			'value'             => '$data["id"] . " - " . $data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'              =>'Commercial Name',
-			//'footer'              =>'Totals:',      
+			'header'            => 'IO - Commercial Name',
+			),
+		array(
+			'name'              => 'opportunitie',
+			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
+			'htmlOptions'       => array('id'=>'alignLeft'),
+			'header'            => 'Opportunitie',                           
 			),	
 		array(
 			'name'              =>'model',
@@ -137,50 +138,46 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		array(
 			'name'              =>'rate',
 			'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
-			'headerHtmlOptions' => array('width' => '80'),	
+			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
-			//'footer'			=> $totals['rate'],
 			'header'            =>'Rate',	
 		),	
 		array(
 			'name'              => 'mr',
-			'header'			=> '',
-			'filter'			=> '',
+			'header'			=> false,
+			'filter'			=> false,
 			'headerHtmlOptions' => array('class'=>'plusMR'),
 			'filterHtmlOptions' => array('class'=>'plusMR'),
 			'htmlOptions'       => array('class'=>'plusMR'),
 			'type'              => 'raw',
 			'value'             =>	'
 				$data["rate"] === NULL && !isset($data["carrier"]) ?
-					CHtml::link(
-            				"<i class=\"icon-plus\"></i>",
-	            			"javascript:;",
-	        				array(
-	        					"onClick" => CHtml::ajax( array(
-									"type"    => "POST",
-									"url"     => "multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
-									"success" => "function( data )
-										{
-											$(\"#modalClients\").html(data);
-											$(\"#modalClients\").modal(\"toggle\");
-										}",
-									)),
-								"style"               => "width: 20px",
-								"rel"                 => "tooltip",
-								"data-original-title" => "Update"
-								)
-						) 
+				CHtml::ajaxLink(
+					"<i class=\"icon-plus\"></i>", 
+					"multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ()
+				)
 				: null
 				'
 				,
         ),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Clics/Imp/Conv',
+			'header'            =>'Imp(m)/Clics/Conv',
 			'value'             =>'$data["conv"]',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
-			//'footer'			=> $totals['conv'],
 		),
 		array(
 			'name'              =>'revenue',
@@ -188,45 +185,145 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			'value'             =>'$data["revenue"]',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),		
-			//'footer'			=> $totals['revenue'],
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'TEST',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>'opportunitie',
+			'value'             =>'$data["status_opp"] == false ?
+				CHtml::link(
+					"<i class=\"not_verifed\" ></i>",
+					array("opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
+    				array("class"=>"btn_verifed", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+
+
+					)
+				: 
+				CHtml::ajaxLink(
+					"<i id=\"icon-status\" class=\"verifed\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
+				)
+				;
+				',		
+		),
+		// array(
+		// 	'type'              =>'raw',
+		// 	'header'            =>'',
+		// 	'filter'            =>false,
+		// 	'headerHtmlOptions' => array('width' => '20'),
+		// 	'name'              =>'opportunitie',
+		// 	'value'             =>'$data["status_opp"] == false ?
+		// 		CHtml::ajaxLink(
+		// 			"<i class=\"not_verifed\"></i>", 
+		// 			"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
+		// 		    array (
+		// 		        "type"    => "POST",
+		// 		        "beforeSend"=>"function(){
+		// 	 				$(\"#modalClients\").modal(\"toggle\");
+		
+		// 		        }",
+		// 		        "success" => "function(data){
+		// 		        	$(\"#modalClients\").html(data)
+		// 		        	//alert(data);
+		// 		        }"
+		// 		    ), 
+		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+		// 		) 
+		// 		: 
+		// 		CHtml::ajaxLink(
+		// 			"<i id=\"icon-status\" class=\"verifed\"></i>", 
+		// 			"javascript:void(0)", 
+		// 		    array (), 
+		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
+		// 		)
+		// 		;
+		// 		',		
+		// ),
+		array(
+			'name'              =>'name',
+			'header'            =>'Total Revenue',
+			'filter'			=>false,
+			'value'             =>'$data["total_revenue"]',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '40'),
-			'name'              =>	'id',
-			'value'             =>'CHtml::ajaxLink(
-				"<i class=\"icon-eye-open\"></i>", 
-				"view/".$data["id"], 
-			    array (
-			        "type"    => "POST",
-			        "beforeSend"=>"function(){
-		 				$(\"#modalClients\").modal(\"toggle\");
-	
-			        }",
-			        "success" => "function(data){
-			        	$(\"#modalClients\").html(data)
-			        	//alert(data);
-			        }"
-			    ), 
-			    array ()
-			);',		
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>$data["status_io"])
+				);
+				',		
+		), 
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i class=\"icon-envelope\"></i>", 
+					"revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'", 
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
+				);
+				',		
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'
+				CHtml::ajaxLink(
+					"<i class=\"icon-eye-open\"></i>", 
+					"view/".$data["id"], 
+				    array (
+				        "type"    => "POST",
+				        "beforeSend"=>"function(){
+			 				$(\"#modalClients\").modal(\"toggle\");
+		
+				        }",
+				        "success" => "function(data){
+				        	$(\"#modalClients\").html(data)
+				        	//alert(data);
+				        }"
+				    ), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"View IO")
+				);
+				',		
 		),
 	),
-	'mergeColumns' => array('id','name'),
+	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
 	'id'                         => 'totals-grid',
-	//'fixedHeader'              => true,
-	//'headerOffset'             => 50,
 	'dataProvider'               => $totals,
-	//'filter'                     => $filtersForm,
-	//'filter'                   => $model,
 	'type'                       => 'striped condensed',	
-	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                   => '{items} {pager}',
 	'columns'                    => array(
 		array(
@@ -237,10 +334,8 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 			),	
 		array(
 			'name'                =>'total',
-			'value'               =>'$data["total"]',
-			//'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'              =>'Total',
-			//'footer'              =>'Totals:',      
+			'value'               =>'$data["total"]',	
+			'header'              =>'Total', 
 			),			
 		),
 )); ?>
@@ -254,3 +349,38 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 
 <div class="row" id="blank-row">
 </div>
+
+<?php Yii::app()->clientScript->registerScript('verifedIcon', "
+						$('.btn_verifed').click(function(e){
+                            e.preventDefault();
+                            var that = $(this);
+							var link = that.attr('href');
+
+                           $.post( link, {})
+								.success(function( data ) {
+									$('#modalClients').html(data);
+									$('#modalClients').modal('toggle');
+                                }
+
+					
+                                );
+                            
+                        });
+					function verifedIcon(){
+                        $('.btn_verifed').click(function(e){
+                            e.preventDefault();
+                            var that = $(this);
+							var link = that.attr('href');
+
+                           $.post( link, {})
+								.success(function( data ) {
+									$('#modalClients').html(data);
+									$('#modalClients').modal('toggle');
+                                }
+
+					
+                                );
+                            
+                        });
+					}
+                    ", CClientScript::POS_READY); ?>

@@ -37,8 +37,8 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders'),
-				'roles'=>array('admin', 'finance'),
+				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie'),
+				'roles'=>array('admin', 'finance', 'media'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -49,15 +49,34 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
-		$model       =new Ios;
-		$clients     =$model->getClients($month,$year,$entity);
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status    =isset($_GET['status']) ? $_GET['status'] : null;
+		$model  =new Ios;
+		//$clients     =$model->getClients($month,$year,$entity);
+		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
+			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status);
+		else
+			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status);
+		foreach ($clients as $opportunities) {			
+			foreach ($opportunities as $data) {
+				isset($sum[$data['id']]) ?  : $sum[$data['id']]=0;
+				$sum[$data['id']]+=$data['revenue'];
+			}
+		}
+		$consolidated=array();
+		foreach ($clients as $opportunities) {			
+			foreach ($opportunities as $data) {
+				$data['total_revenue']=$sum[$data['id']];
+				$consolidated[]=$data;
+			}
+		}
 		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
-		 foreach ($clients as $client) {
+		 foreach ($consolidated as $client) {
 			isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']       =0;
 			isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']       =0;
 			isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue'] =0;
@@ -94,14 +113,14 @@ class FinanceController extends Controller
 		        'pageSize'=>30,
 		    ),
 		));
-		//Get rawData and create dataProvider
-		//$rawData=User::model()->findAll();
-		$filteredData=$filtersForm->filter($clients);
+		// Get rawData and create dataProvider
+		// $rawData=User::model()->findAll();
+		$filteredData=$filtersForm->filter($consolidated);
 		$dataProvider=new CArrayDataProvider($filteredData, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier'
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -113,7 +132,7 @@ class FinanceController extends Controller
 			'model'        =>$model,
 			'filtersForm'  =>$filtersForm,
 			'dataProvider' =>$dataProvider,
-			'clients'      =>$clients,
+			'clients'	=>$consolidated,
 			'totals'       =>$totalsDataProvider,
 		));
 	}
@@ -140,7 +159,7 @@ class FinanceController extends Controller
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'rate', 'conv','revenue'
+		             'id', 'rate', 'conv','revenue','mobileBrand','country'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -182,5 +201,115 @@ class FinanceController extends Controller
 		}
 
 		$this->renderPartial('_excelReportProviders', array(), false, true);
+	}	
+
+	public function actionRevenueValidation()
+	{
+		$model             =new Ios;
+		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
+		echo $_GET['io'];
+		$clients           =$model->getClientsNew($month,$year,null,$io->id);
+		$totals['revenue'] =0;
+		$totals['conv']    =0;
+		foreach ($clients as $ios) {
+			foreach ($ios as $carriers) {
+				foreach ($carriers as $data) {
+					$consolidated[]=$data;
+					$totals['revenue']+=$data['revenue'];
+					$totals['conv']+=$data['conv'];
+				}
+			}
+		}
+		$dataProvider=new CArrayDataProvider($consolidated, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','country','product','mobileBrand'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+		            
+		if( isset($_POST['revenue-validation-form']) ) {
+			$this->renderPartial('sendMail', array(
+				'io_id' => $_POST['ios_id'],
+				'period' => $_POST['period'],
+			));
+		}
+
+		$this->renderPartial('_revenueValidation',
+		 array(
+				'month'        =>$month,
+				'year'         =>$year,
+				'io'           =>$io,
+				'dataProvider' =>$dataProvider,
+				'totals'       =>$totals
+		 	),
+		  false, true);
+
+	}
+
+	public function actionOpportunitieValidation()
+	{
+		$year    =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month   =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$op      =isset($_GET['op']) ? $_GET['op'] : null;
+		$model   =new Ios;
+		$modelOp=new Opportunities;
+		$opportunitie=$modelOp->findByPk($op);
+		$clients =$model->getClients($month,$year,null,null,null,$op);
+		foreach ($clients as $opportunities) {			
+			foreach ($opportunities as $data) {
+				$consolidated[]=$data;
+			}
+		}
+		$dataProvider=new CArrayDataProvider($consolidated, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+		$this->renderPartial('_opportunitieValidation',
+		 array(
+				'month'        =>$month,
+				'year'         =>$year,
+				'op'           =>$op,
+				'dataProvider' =>$dataProvider,
+				'opportunitie'=>$opportunitie
+		 	),
+		  false, true);
+
+	}
+
+	public function actionValidateOpportunitie()
+	{		
+		$modelOp=new Opportunities;
+		$opportunitie=$modelOp->findByPk($_POST['opportunities_id']);
+		$this->renderPartial('validateOpportunitie', array(
+				'opportunities_id' => $_POST['opportunities_id'],
+				'period' => $_POST['period'],
+				'opportunitie'=>$opportunitie
+			));
+	}
+	
+	public function actionSendMail()
+	{
+		$this->renderPartial('sendMail',
+		 array(
+				'io_id'=> $_REQUEST['io_id'],
+				'period'=> $_REQUEST['period']
+		 	)
+			);
 	}
 }
