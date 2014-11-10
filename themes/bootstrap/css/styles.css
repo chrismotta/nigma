@@ -217,6 +217,10 @@ fieldset hr {
 	background-image: url(../img/sprite_status.png);
 }
 .not_verifed{
+	display: block;
+	width: 15px;
+	height: 15px;
+	background-image: url(../img/sprite_status.png);
 	background-position:-0px 0px;
 }
 .verifed{

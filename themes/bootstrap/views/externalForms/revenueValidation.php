@@ -1,6 +1,11 @@
 <?php
 /* @var $this ExternalFormsController */
 /* @var $model RevenueValidation */
+if(isset($error))
+{
+    echo "<script>alert('".$error."')</script>";
+    return;    
+}
 $io_id =$model->ios_id;
 $month =date('m', strtotime($model->period));
 $year  =date('Y', strtotime($model->period));

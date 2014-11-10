@@ -49,7 +49,12 @@ class ExternalFormsController extends Controller
 	{
 		$token =isset($_GET['token']) ? $_GET['token'] : null;		
 		$IosValidation =new IosValidation;
-		$model=$IosValidation->loadModelByToken($token);
+		if(!$model=$IosValidation->loadModelByToken($token))
+		{
+			$this->render('revenueValidation',array(
+			'error'        =>"Invalid token",
+		));
+		}
 		$consolidated=array();
 		$totals['revenue']=0;
 		$totals['conv']=0;

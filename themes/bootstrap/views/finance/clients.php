@@ -17,7 +17,8 @@ $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 $stat =isset($_GET['status']) ? $_GET['status'] : null;
 $log=new ValidationLog;
-
+$ios=new Ios;
+// print_r($ios->getClientsNew($month,$year,null,19));
 //echo $log->loadLog(26,'Sended');
 // echo json_encode($clients);
 // return;
@@ -28,7 +29,7 @@ $log=new ValidationLog;
         'type'=>'search',
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
-        'enableAjaxValidation'=>true,
+        'enableAjaxValidation'=>false,
         'action' => Yii::app()->getBaseUrl() . '/finance/clients',
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
@@ -100,6 +101,7 @@ $log=new ValidationLog;
 	'id'                         => 'clients-grid',
 	'dataProvider'               => $dataProvider,
 	'filter'                     => $filtersForm,
+	'afterAjaxUpdate'=>'verifedIcon',
 	'type'                       => 'condensed',	 
 	'template'                   => '{items} {pager} {summary}',
 	'columns'                    => array(		
@@ -186,27 +188,18 @@ $log=new ValidationLog;
 		),
 		array(
 			'type'              =>'raw',
-			'header'            =>'',
+			'header'            =>'TEST',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>'opportunitie',
 			'value'             =>'$data["status_opp"] == false ?
-				CHtml::ajaxLink(
-					"<i id=\"icon-status\" class=\"not_verifed\"></i>", 
-					"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
-				    array (
-				        "type"    => "POST",
-				        "beforeSend"=>"function(){
-			 				$(\"#modalClients\").modal(\"toggle\");
-		
-				        }",
-				        "success" => "function(data){
-				        	$(\"#modalClients\").html(data)
-				        	//alert(data);
-				        }"
-				    ), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
-				) 
+				CHtml::link(
+					"<i class=\"not_verifed\" ></i>",
+					array("opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
+    				array("class"=>"btn_verifed", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+
+
+					)
 				: 
 				CHtml::ajaxLink(
 					"<i id=\"icon-status\" class=\"verifed\"></i>", 
@@ -217,6 +210,39 @@ $log=new ValidationLog;
 				;
 				',		
 		),
+		// array(
+		// 	'type'              =>'raw',
+		// 	'header'            =>'',
+		// 	'filter'            =>false,
+		// 	'headerHtmlOptions' => array('width' => '20'),
+		// 	'name'              =>'opportunitie',
+		// 	'value'             =>'$data["status_opp"] == false ?
+		// 		CHtml::ajaxLink(
+		// 			"<i class=\"not_verifed\"></i>", 
+		// 			"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
+		// 		    array (
+		// 		        "type"    => "POST",
+		// 		        "beforeSend"=>"function(){
+		// 	 				$(\"#modalClients\").modal(\"toggle\");
+		
+		// 		        }",
+		// 		        "success" => "function(data){
+		// 		        	$(\"#modalClients\").html(data)
+		// 		        	//alert(data);
+		// 		        }"
+		// 		    ), 
+		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+		// 		) 
+		// 		: 
+		// 		CHtml::ajaxLink(
+		// 			"<i id=\"icon-status\" class=\"verifed\"></i>", 
+		// 			"javascript:void(0)", 
+		// 		    array (), 
+		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
+		// 		)
+		// 		;
+		// 		',		
+		// ),
 		array(
 			'name'              =>'name',
 			'header'            =>'Total Revenue',
@@ -323,3 +349,38 @@ $log=new ValidationLog;
 
 <div class="row" id="blank-row">
 </div>
+
+<?php Yii::app()->clientScript->registerScript('verifedIcon', "
+						$('.btn_verifed').click(function(e){
+                            e.preventDefault();
+                            var that = $(this);
+							var link = that.attr('href');
+
+                           $.post( link, {})
+								.success(function( data ) {
+									$('#modalClients').html(data);
+									$('#modalClients').modal('toggle');
+                                }
+
+					
+                                );
+                            
+                        });
+					function verifedIcon(){
+                        $('.btn_verifed').click(function(e){
+                            e.preventDefault();
+                            var that = $(this);
+							var link = that.attr('href');
+
+                           $.post( link, {})
+								.success(function( data ) {
+									$('#modalClients').html(data);
+									$('#modalClients').modal('toggle');
+                                }
+
+					
+                                );
+                            
+                        });
+					}
+                    ", CClientScript::POS_READY); ?>
