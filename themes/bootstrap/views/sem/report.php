@@ -3,6 +3,8 @@
 /* @var $model Users */
 /* @var $report_type String */
 
+set_time_limit(1000);
+
 $this->breadcrumbs=array(
 	'SEM'=>array('index'),
 	ucwords($report_type),
