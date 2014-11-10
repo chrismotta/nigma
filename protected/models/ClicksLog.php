@@ -190,7 +190,9 @@ class ClicksLog extends CActiveRecord
 	
 		return new CActiveDataProvider($this, array(
 			'criteria'   =>$criteria,
-			'pagination' =>false,
+			'pagination' =>array(
+                'pageSize'=>100,
+            ),
 			'sort'       =>array(
 				'defaultOrder'=>'totalClicks DESC',
 		        'attributes'=>array(
