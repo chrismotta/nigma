@@ -78,9 +78,43 @@ if(!$is_archived){
 }
 ?>
 
+<br>
+<?php
+	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
+?>
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/campaigns/admin',
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+
+<fieldset>
+	<?php 
+		if (FilterManager::model()->isUserTotalAccess('campaign.account'))
+			echo KHtml::filterAccountManagers($accountManager);
+		
+		echo KHtml::filterOpportunities($opportunitie, $accountManager);
+		echo KHtml::filterNetworks($networks);
+		echo KHtml::filterAdvertisersCategory($advertiser);
+	?>
+	  
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+
+</fieldset>
+<?php $this->endWidget(); ?>
+
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($accountManager, $opportunitie, $networks, $advertiser),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,

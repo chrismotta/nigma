@@ -19,6 +19,9 @@
  */
 class Users extends CActiveRecord
 {
+	// holds the password confirmation word
+    public $repeat_password;
+ 
 	/**
 	 * @return string the associated database table name
 	 */
@@ -35,12 +38,15 @@ class Users extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('username, password, email, name, lastname', 'required'),
+			array('username, password, repeat_password, email, name, lastname', 'required'),
 			array('username, password, email, name, lastname', 'length', 'max'=>128),
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, username, password, email, name, lastname, status', 'safe', 'on'=>'search'),
+            array('password, repeat_password', 'length', 'min'=>6, 'max'=>40),
+            array('repeat_password', 'compare', 'compareAttribute'=>'password'),
+
 		);
 	}
 
@@ -64,13 +70,14 @@ class Users extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'username' => 'Username',
-			'password' => 'Password',
-			'email' => 'Email',
-			'name' => 'Name',
-			'lastname' => 'Lastname',
-			'status' => 'Status',
+			'id'              => 'ID',
+			'username'        => 'Username',
+			'password'        => 'Password',
+			'repeat_password' => 'Repeat Password',
+			'email'           => 'Email',
+			'name'            => 'Name',
+			'lastname'        => 'Lastname',
+			'status'          => 'Status',
 		);
 	}
 

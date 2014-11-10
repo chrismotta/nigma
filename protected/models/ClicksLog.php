@@ -31,6 +31,10 @@ class ClicksLog extends CActiveRecord
 	/**
 	 * @return string the associated database table name
 	 */
+	public $totalClicks;
+	public $totalConv;
+	public $CTR;
+
 	public $clics;
 	public function tableName()
 	{
@@ -51,7 +55,7 @@ class ClicksLog extends CActiveRecord
 			array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -75,26 +79,30 @@ class ClicksLog extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'id'           => 'ID',
 			'campaigns_id' => 'Campaigns',
-			'networks_id' => 'Networks',
-			'tid' => 'Tid',
-			'date' => 'Date',
-			'server_ip' => 'Server Ip',
-			'user_agent' => 'User Agent',
-			'languaje' => 'Languaje',
-			'referer' => 'Referer',
+			'networks_id'  => 'Networks',
+			'tid'          => 'Tid',
+			'date'         => 'Date',
+			'server_ip'    => 'Server Ip',
+			'user_agent'   => 'User Agent',
+			'languaje'     => 'Languaje',
+			'referer'      => 'Referer',
 			'ip_forwarded' => 'Ip Forwarded',
-			'country' => 'Country',
-			'city' => 'City',
-			'carrier' => 'Carrier',
-			'browser' => 'Browser',
-			'device_type' => 'Device Type',
-			'device' => 'Device',
-			'os' => 'Os',
-			'app' => 'App',
-			'clics' => 'Clics',
+			'country'      => 'Country',
+			'city'         => 'City',
+			'carrier'      => 'Carrier',
+			'browser'      => 'Browser',
+			'device_type'  => 'Device Type',
+			'device'       => 'Device',
+			'os'           => 'Os',
+			'app'          => 'App',
+			'clics'        => 'Clics',
 			'redirect_url' => 'Redirect Url',
+			'totalClicks'  => 'Clicks',
+			'totalConv'    => 'Conversions',
+			'CTR'          => 'CTR',
+
 		);
 	}
 
@@ -140,6 +148,72 @@ class ClicksLog extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+
+	public function searchSem($report_type, $dateStart, $dateEnd, $campaign_id=NULL)
+	{
+		$criteria=new CDbCriteria;
+
+		$criteria->with = array('campaigns', 'campaigns.opportunities', 'campaigns.opportunities.country', 'campaigns.opportunities.carriers', 'campaigns.opportunities.ios.advertisers');
+		
+		// external campaign name
+		// $criteria->compare('campaigns_id',$this->campaigns_id,true);
+		// $criteria->compare('country.ISO2',$this->campaigns_id,true,'OR');
+		// $criteria->compare('campaigns.name',$this->campaigns_id,true,'OR');
+		// $criteria->compare('carriers.mobile_brand',$this->campaigns_id,true,'OR');
+		// $criteria->compare('advertisers.prefix',$this->campaigns_id,true,'OR');
+		// $criteria->compare('opportunities.product',$this->campaigns_id,true,'OR');
+
+		$criteria->compare('t.keyword',$this->keyword,true);
+		$criteria->compare('t.totalClicks',$this->totalClicks,true);
+		$criteria->compare('t.totalConv',$this->totalConv,true);
+		$criteria->compare('t.CTR',$this->CTR,true);
+
+		$criteria->compare('t.campaigns_id',$campaign_id);
+
+		$criteria->addCondition("DATE(t.date) BETWEEN '" . date('Y-m-d', strtotime($dateStart)) . "' AND '" . date('Y-m-d', strtotime($dateEnd)) . "'");
+
+		$criteria->addCondition("t." . $report_type . "!= ''");
+		$criteria->addCondition("t." . $report_type . "!= '{" . $report_type . "}'");
+
+		$criteria->select = array(
+			't.campaigns_id',
+			't.' . $report_type,
+			'count(t.id) as totalClicks', 
+			'count(conv_log.id) as totalConv',
+			'ROUND(count(conv_log.id) / count(t.id) * 100, 2) as CTR',
+		);
+
+		$criteria->join = 'LEFT JOIN conv_log ON conv_log.clicks_log_id = t.id';
+		
+		$criteria->group = 't.' . $report_type;
+	
+		return new CActiveDataProvider($this, array(
+			'criteria'   =>$criteria,
+			'pagination' =>false,
+			'sort'       =>array(
+				'defaultOrder'=>'totalClicks DESC',
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'totalClicks'=>array(
+						'asc'  =>'totalClicks',
+						'desc' =>'totalClicks DESC',
+		            ),
+		            'totalConv'=>array(
+						'asc'  =>'totalConv',
+						'desc' =>'totalConv DESC',
+		            ),
+		            'CTR'=>array(
+						'asc'  =>'CTR',
+						'desc' =>'CTR DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
+		));
+	}
+
 
 	/**
 	 * Returns the static model of the specified AR class.

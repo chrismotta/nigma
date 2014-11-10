@@ -36,6 +36,13 @@
                     array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Sem', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Creatives', 'url'=>array('/sem/creative')),
+                    array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
+                    array('label'=>'Placements', 'url'=>array('/sem/placement')),
+                    array('label'=>'Search Query', 'url'=>'#'),
+                ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),

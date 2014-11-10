@@ -30,9 +30,8 @@
     	echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'lastname', array('class'=>'span3'));
 
-        if ( $model->isNewRecord ) {
-            echo $form->textFieldRow($model, 'password', array('class'=>'span3'));
-        }
+        echo $form->passwordFieldRow($model, 'password', array('class'=>'span3'));
+        echo $form->passwordFieldRow($model, 'repeat_password', array('class'=>'span3'));
 
         echo $form->textFieldRow($model, 'email', array('class'=>'span3'));
         echo $form->radioButtonListRow($model, 'status', $status);
