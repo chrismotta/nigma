@@ -1,6 +1,6 @@
 <?php
 /* @var $this SemController */
-/* @var $model Users */
+/* @var $model ClicksLog */
 /* @var $report_type String */
 
 set_time_limit(1000);
