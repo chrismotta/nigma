@@ -213,6 +213,7 @@ class FinanceController extends Controller
 		$clients           =$model->getClientsNew($month,$year,null,$io->id);
 		$totals['revenue'] =0;
 		$totals['conv']    =0;
+		$consolidated=array();
 		foreach ($clients as $ios) {
 			foreach ($ios as $carriers) {
 				foreach ($carriers as $data) {

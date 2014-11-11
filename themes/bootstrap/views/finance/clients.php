@@ -188,7 +188,7 @@ $ios=new Ios;
 		),
 		array(
 			'type'              =>'raw',
-			'header'            =>'TEST',
+			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>'opportunitie',
@@ -196,7 +196,7 @@ $ios=new Ios;
 				CHtml::link(
 					"<i class=\"not_verifed\" ></i>",
 					array("opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
-    				array("class"=>"btn_verifed", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
 
 
 					)
@@ -273,24 +273,40 @@ $ios=new Ios;
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'name',
 			'value'             =>'
-				CHtml::ajaxLink(
-					"<i class=\"icon-envelope\"></i>", 
-					"revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'", 
-				    array (
-				        "type"    => "POST",
-				        "beforeSend"=>"function(){
-			 				$(\"#modalClients\").modal(\"toggle\");
-		
-				        }",
-				        "success" => "function(data){
-				        	$(\"#modalClients\").html(data)
-				        	//alert(data);
-				        }"
-				    ), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
-				);
+				CHtml::link(
+					"<i class=\"icon-envelope\"></i>",
+					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
+
+
+					);
 				',		
 		),
+		// array(
+		// 	'type'              =>'raw',
+		// 	'header'            =>'',
+		// 	'filter'            =>false,
+		// 	'headerHtmlOptions' => array('width' => '20'),
+		// 	'name'              =>	'name',
+		// 	'value'             =>'
+		// 		CHtml::ajaxLink(
+		// 			"<i class=\"icon-envelope\"></i>", 
+		// 			"revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'", 
+		// 		    array (
+		// 		        "type"    => "POST",
+		// 		        "beforeSend"=>"function(){
+		// 	 				$(\"#modalClients\").modal(\"toggle\");
+		
+		// 		        }",
+		// 		        "success" => "function(data){
+		// 		        	$(\"#modalClients\").html(data)
+		// 		        	//alert(data);
+		// 		        }"
+		// 		    ), 
+		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
+		// 		);
+		// 		',		
+		// ),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
@@ -298,24 +314,40 @@ $ios=new Ios;
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'name',
 			'value'             =>'
-				CHtml::ajaxLink(
-					"<i class=\"icon-eye-open\"></i>", 
-					"view/".$data["id"], 
-				    array (
-				        "type"    => "POST",
-				        "beforeSend"=>"function(){
-			 				$(\"#modalClients\").modal(\"toggle\");
-		
-				        }",
-				        "success" => "function(data){
-				        	$(\"#modalClients\").html(data)
-				        	//alert(data);
-				        }"
-				    ), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"View IO")
-				);
+				CHtml::link(
+					"<i class=\"icon-eye-open\"></i>",
+					array("finance/view/".$data["id"]),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View IO")
+
+
+					);
 				',		
 		),
+		// array(
+		// 	'type'              =>'raw',
+		// 	'header'            =>'',
+		// 	'filter'            =>false,
+		// 	'headerHtmlOptions' => array('width' => '20'),
+		// 	'name'              =>	'name',
+		// 	'value'             =>'
+		// 		CHtml::ajaxLink(
+		// 			"<i class=\"icon-eye-open\"></i>", 
+		// 			"view/".$data["id"], 
+		// 		    array (
+		// 		        "type"    => "POST",
+		// 		        "beforeSend"=>"function(){
+		// 	 				$(\"#modalClients\").modal(\"toggle\");
+		
+		// 		        }",
+		// 		        "success" => "function(data){
+		// 		        	$(\"#modalClients\").html(data)
+		// 		        	//alert(data);
+		// 		        }"
+		// 		    ), 
+		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"View IO")
+		// 		);
+		// 		',		
+		// ),
 	),
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
@@ -351,7 +383,7 @@ $ios=new Ios;
 </div>
 
 <?php Yii::app()->clientScript->registerScript('verifedIcon', "
-						$('.btn_verifed').click(function(e){
+						$('.link').click(function(e){
                             e.preventDefault();
                             var that = $(this);
 							var link = that.attr('href');
@@ -367,7 +399,7 @@ $ios=new Ios;
                             
                         });
 					function verifedIcon(){
-                        $('.btn_verifed').click(function(e){
+                        $('.link').click(function(e){
                             e.preventDefault();
                             var that = $(this);
 							var link = that.attr('href');
