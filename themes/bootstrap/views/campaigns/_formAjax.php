@@ -143,6 +143,11 @@ if($action == "Create"){ ?>
         echo '<hr/>';
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
 
+        if( FilterManager::model()->isUserTotalAccess('campaign.post_data') ) {
+            echo '<hr/>';
+            echo $form->checkboxRow($model, 'post_data');
+        }
+
         ?>
 
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
