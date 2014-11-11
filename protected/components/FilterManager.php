@@ -45,6 +45,12 @@ class FilterManager
 				'admin',
 				'media_manager',
 			)),
+		'campaign.post_data' => array(
+			'column' => '',
+			'roles' => array(
+				'admin',
+				'media_manager',
+			)),
 		);
 
     /**
