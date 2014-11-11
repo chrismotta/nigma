@@ -208,7 +208,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for autocomplete
      */
-    public static function filterCampaigns($value, $networks_id = array(), $htmlOptions = array())
+    public static function filterCampaigns($value, $networks_id = array(), $name = 'campaign', $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
             'placeholder' => 'All campaigns',
@@ -224,7 +224,7 @@ class KHtml extends CHtml
         $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
 
         return Yii::app()->controller->widget('zii.widgets.jui.CJuiAutoComplete', array(
-            'name'        =>'campaign',
+            'name'        =>$name,
             'source'      =>$list,
             'value'       =>$value,
             // additional javascript options for the autocomplete plugin

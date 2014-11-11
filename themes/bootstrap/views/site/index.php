@@ -19,7 +19,7 @@ $this->pageTitle=Yii::app()->name;
 
 	<fieldset>
 	From: 
-	<div class="input-append">
+	<label><div class="input-append">
 		<?php 
 		    $this->widget('bootstrap.widgets.TbDatePicker',array(
 			'name'  => 'dateStart',
@@ -37,9 +37,9 @@ $this->pageTitle=Yii::app()->name;
 		));
 		?>
 		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
+	</div></label>
 	To:
-	<div class="input-append">
+	<label><div class="input-append">
 		<?php 
 		    $this->widget('bootstrap.widgets.TbDatePicker',array(
 			'name'        => 'dateEnd',
@@ -57,7 +57,7 @@ $this->pageTitle=Yii::app()->name;
 		));
 		?>
 		<span class="add-on"><i class="icon-calendar"></i></span>
-	</div>
+	</div></label>
 	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 
     </fieldset>

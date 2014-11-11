@@ -28,7 +28,7 @@ class SemController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('keyword','placement','creative'),
+				'actions'=>array('keyword','placement','creative','excelReport'),
 				'roles'=>array('admin', 'sem'),
 			),
 			array('deny',  // deny all users
@@ -41,8 +41,8 @@ class SemController extends Controller
 	public function actionKeyword()
 	{
 		$this->render('report', array(
-			'model'  => new ClicksLog,
-			'report' => 'keyword',
+			'model'  => new ClicksLog('search'),
+			'report_type' => 'keyword',
 		));
 	}
 
@@ -50,8 +50,8 @@ class SemController extends Controller
 	public function actionPlacement()
 	{
 		$this->render('report', array(
-			'model'  => new ClicksLog,
-			'report' => 'placement',
+			'model'  => new ClicksLog('search'),
+			'report_type' => 'placement',
 		));
 	}
 
@@ -59,19 +59,25 @@ class SemController extends Controller
 	public function actionCreative()
 	{
 		$this->render('report', array(
-			'model'  => new ClicksLog,
-			'report' => 'creative',
+			'model'  => new ClicksLog('search'),
+			'report_type' => 'creative',
 		));
 	}
 
-	// public function actionExcelReport()
-	// {
-	// 	if( isset($_POST['excel-report-sem']) ) {
-	// 		$this->renderPartial('excelReport', array(
-	// 			'model' => new ClicksLog,
-	// 		));
-	// 	}
 
-	// 	$this->renderPartial('_excelReport', array(), false, true);
-	// }
+	public function actionExcelReport()
+	{
+		// generate excel report if submitted
+		if( isset($_POST['excel-report-sem']) ) {
+			$this->renderPartial('excelReport', array(
+				'model'       => new ClicksLog,
+				'report_type' => $_POST['excel-report'],
+			));
+		}
+
+		// render modal with config input information to generate excel report
+		$this->renderPartial('_excelReport', array(
+			'report_type' => $_POST['report_type'],
+		), false, true);
+	}
 }
