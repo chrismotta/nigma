@@ -148,6 +148,13 @@ class ClicksLogController extends Controller
 				$wurfl = WurflManager::loadWurfl();
 				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
 				
+				$click->device          = $device->getCapability('brand_name');
+				$click->device_model    = $device->getCapability('marketing_name');
+				$click->os              = $device->getCapability('device_os');
+				$click->os_version      = $device->getCapability('device_os_version');
+				$click->browser         = $device->getVirtualCapability('advertised_browser');
+				$click->browser_version = $device->getVirtualCapability('advertised_browser_version');
+
 				$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
 				$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
 			}
@@ -214,8 +221,8 @@ class ClicksLogController extends Controller
 			//enviar macros
 
 			if($campaign->post_data == '1'){
-				$redirectURL.= "&os=".$model->os;
-				$redirectURL.= "&device=".$model->device;
+				$redirectURL.= "&os=".$model->os."-".$model->os_version;
+				$redirectURL.= "&device=".$model->device."-".$model->device_model;
 				$redirectURL.= "&country=".$model->country;
 				$redirectURL.= "&carrier=".$model->carrier;
 				$redirectURL.= "&referer=".$model->referer;
