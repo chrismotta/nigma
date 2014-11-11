@@ -39,10 +39,8 @@ $this->breadcrumbs=array(
 <br/>
 
 <?php 
-	$tmp       = new DateTime('today');
-	$tmp       = $tmp->sub(new DateInterval('P1W'));
-	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : $tmp->format('Y-m-d') ;
-	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today' ;
+	$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday' ;
 	
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd   = date('Y-m-d', strtotime($dateEnd));
