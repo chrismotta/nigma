@@ -246,9 +246,9 @@ class ClicksLogController extends Controller
 
 				// redirect to campaign url
 				if($test){
+					die($redirectURL);
 					echo json_encode($ts);
 				}else{
-					//die($redirectURL);
 					//$this->redirect($redirectURL);
 					header("Location: ".$redirectURL);
 				}
