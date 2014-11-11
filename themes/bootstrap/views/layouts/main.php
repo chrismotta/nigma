@@ -41,7 +41,7 @@
                     array('label'=>'Creatives', 'url'=>array('/sem/creative')),
                     array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
                     array('label'=>'Placements', 'url'=>array('/sem/placement')),
-                    array('label'=>'Search Query', 'url'=>'#'),
+                    array('label'=>'Search Query', 'url'=>array('/sem/searchCriteria')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(

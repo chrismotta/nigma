@@ -28,7 +28,7 @@ class SemController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('keyword','placement','creative','excelReport'),
+				'actions'=>array('keyword','placement','creative','excelReport', 'searchCriteria'),
 				'roles'=>array('admin', 'sem'),
 			),
 			array('deny',  // deny all users
@@ -79,5 +79,13 @@ class SemController extends Controller
 		$this->renderPartial('_excelReport', array(
 			'report_type' => $_POST['report_type'],
 		), false, true);
+	}
+
+
+	public function actionSearchCriteria()
+	{
+		$this->render('searchCriteria', array(
+			'model' => new ClicksLog('search'),
+		));
 	}
 }
