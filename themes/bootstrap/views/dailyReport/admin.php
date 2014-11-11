@@ -149,7 +149,7 @@ $('.search-form form').submit(function(){
 			echo KHtml::filterAccountManagers($accountManager);
 		
 		echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
-		echo KHtml::filterNetworks($networks, array('style' => "width: 140px; margin-left: 1em"));
+		echo KHtml::filterNetworks($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
 		echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
 	?>
 	  

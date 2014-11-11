@@ -38,7 +38,7 @@ $('.search-form form').submit(function(){
 
 <fieldset>
 	Date: <?php echo KHtml::datePicker('date', $date); ?>
-	Network: <?php echo KHtml::filterNetworks($currentNetwork, array('empty' => 'Select Network')); ?>
+	Network: <?php echo KHtml::filterNetworks($currentNetwork, $networks, array('empty' => 'Select Network')); ?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'networkSubmit'))); ?>
 </fieldset>
