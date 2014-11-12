@@ -171,7 +171,7 @@ class Ios extends CActiveRecord
 		$criteria->compare('ret',$this->ret,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
-		$criteria->compare('entity',$entity,true);
+		$criteria->compare('entity',$entity);
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('advertisers_id',$this->advertisers_id);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
@@ -180,7 +180,7 @@ class Ios extends CActiveRecord
 
 		$criteria->with = array( 'advertisers', 'commercial', 'country');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
-		$criteria->compare('advertisers.cat', $cat, true);
+		$criteria->compare('advertisers.cat', $cat);
 		$criteria->compare('commercial.name', $this->com_name, true);
 		$criteria->compare('commercial.lastname', $this->com_lastname, true);
 		$criteria->compare('country.name', $this->country_name, true);
