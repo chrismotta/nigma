@@ -107,9 +107,7 @@
 
 	<footer>
         <div class="subnav navbar navbar-fixed-bottom">
-            <div class="easter-footer">
-                <?php echo CHtml::image(Yii::app()->theme->baseUrl.'/img/santa.gif', 'Felices Fiestas!!'); ?>
-            </div>
+            <div class="easter-footer"></div>
             <div class="navbar-inner">
                 <div class="container text-center">
                 	<small>Copyright &copy; <?php echo date('Y'); ?> All Rights Reserved. Powered by <a href="http://www.kickads.mobi" title="Kickads.mobi" target="_new">Kickads.mobi</a></small>

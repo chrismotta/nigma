@@ -4,14 +4,26 @@ $(document).ready(function(){
 	var easterCode = "";
 	$( "body" ).keypress(function(e) {
 		var keyCode = e.keyCode || e.which;
-		if(keyCode == "110") easterCode = "";
-		easterCode += keyCode;
-	    //console.log( "Handler: "+easterCode );
 
-	    if(easterCode=='1109711810510097100'){
-			$('.easter-footer').show();
-	    }
+		easterCode += keyCode;
+	    console.log( "Handler: "+easterCode );
+
+	    imageEgg('1109711810510097100', 'http://lh3.ggpht.com/-ONo0KPLOXN8/UJXkEBFppKI/AAAAAAAAV1g/p-l8Lo5__e0/papa1_thumb.gif?imgmax=800', 100);
+	    imageEgg('10511510497112112101110105110103', 'http://static1.gamespot.com/uploads/original/1188/11888561/2562405-6086807432-Happe.gif', 200);
+
+	    //styleEgg();
 	});
+
+	function imageEgg(word, image, height){
+		if(easterCode.indexOf(word) != -1){
+			$('.easter-footer').html('<img src="'+image+'" style="height:'+height+'px" />');
+			$('.easter-footer').show();
+			easterCode = "";
+	    }
+	}
+	function styleEgg(){
+
+	}
 });
 
 var selectionChangedDailyReport = function(id) {
