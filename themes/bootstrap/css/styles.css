@@ -225,4 +225,21 @@ fieldset hr {
 	height: 100px;
 	width: 100px;
 	/*background-color: #555*/
+
+/** Loading screen **/
+#page {
+    display: none;
+}
+#loader {
+	display            : block;
+	position           : fixed;
+	top                : 0;
+	left               : 0;
+	z-index            : 1000;
+	width              : 100vw;
+	height             : 100vh;
+	background-color   : rgba(255, 255, 255, 0.4);
+	background-image   : url("../img/loading.gif");
+	background-repeat  : no-repeat;
+	background-position: center;
 }

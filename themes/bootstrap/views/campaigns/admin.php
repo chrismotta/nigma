@@ -107,7 +107,7 @@ if(!$is_archived){
 		echo KHtml::filterAdvertisersCategory($advertiser);
 	?>
 	  
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
 </fieldset>
 <?php $this->endWidget(); ?>

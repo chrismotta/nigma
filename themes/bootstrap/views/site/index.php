@@ -58,7 +58,7 @@ $this->pageTitle=Yii::app()->name;
 		?>
 		<span class="add-on"><i class="icon-calendar"></i></span>
 	</div></label>
-	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
     </fieldset>
 

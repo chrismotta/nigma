@@ -1,6 +1,8 @@
 $(document).ready(function(){
+	hideLoading();
+	$(".showLoadingMenuItem, .showLoadingMenu li").click( showLoadingNewPage );
+	$(".showLoading").click( showLoading );
 
-	//$('.datepicker').datepicker();
 	var easterCode = "";
 	$( "body" ).keypress(function(e) {
 		var keyCode = e.keyCode || e.which;
@@ -13,6 +15,20 @@ $(document).ready(function(){
 	    }
 	});
 });
+
+function hideLoading() {
+	$('#page').css('display', 'block');
+	$('#loader').css('display', 'none');
+}
+
+function showLoadingNewPage() {
+	$('#page').css('display', 'none');
+	$('#loader').css('display', 'block');
+}
+
+function showLoading() {
+	$('#loader').css('display', 'block');
+}
 
 var selectionChangedDailyReport = function(id) {
 	var rowId = $.fn.yiiGridView.getSelection(id);
