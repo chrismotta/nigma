@@ -218,3 +218,11 @@ fieldset hr {
 	overflow-x: hidden;
 	z-index: 1060!important;
 }
+
+/* ester eggs */
+.easter-footer {
+	display: none;
+	height: 100px;
+	width: 100px;
+	/*background-color: #555*/
+}

@@ -1,7 +1,17 @@
 $(document).ready(function(){
 
 	//$('.datepicker').datepicker();
+	var easterCode = "";
+	$( "body" ).keypress(function(e) {
+		var keyCode = e.keyCode || e.which;
+		if(keyCode == "110") easterCode = "";
+		easterCode += keyCode;
+	    //console.log( "Handler: "+easterCode );
 
+	    if(easterCode=='1109711810510097100'){
+			$('.easter-footer').show();
+	    }
+	});
 });
 
 var selectionChangedDailyReport = function(id) {
