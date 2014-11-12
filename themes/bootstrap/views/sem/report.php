@@ -72,7 +72,7 @@ $this->breadcrumbs=array(
 
 	<?php echo KHtml::filterCampaigns($campaignName, array(4, 31)); ?>
 		
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 </fieldset>
 <?php $this->endWidget(); ?>
 
