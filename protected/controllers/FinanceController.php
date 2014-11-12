@@ -260,7 +260,6 @@ class FinanceController extends Controller
 		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
-		echo $_GET['io'];
 		$clients           =$model->getClientsNew($month,$year,null,$io->id);
 		$totals['revenue'] =0;
 		$totals['conv']    =0;
@@ -315,12 +314,12 @@ class FinanceController extends Controller
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		$clients =$model->getClients($month,$year,null,null,null,$op);
-		foreach ($clients as $opportunities) {			
-			foreach ($opportunities as $data) {
-				$consolidated[]=$data;
-			}
-		}
-		$dataProvider=new CArrayDataProvider($clients, array(
+		// foreach ($clients as $opportunities) {			
+		// 	foreach ($opportunities as $data) {
+		// 		$consolidated[]=$data;
+		// 	}
+		// }
+		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(

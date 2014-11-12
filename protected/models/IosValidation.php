@@ -151,7 +151,7 @@ class IosValidation extends CActiveRecord
 				$opportunities[]=$data;
 			}
 		}
-		foreach ($clients as $opportunitie) {
+		foreach ($clients['data'] as $opportunitie) {
 			if($opportunitiesValidation->checkValidation($opportunitie['opportunitie_id'],$period)==true) $check=true;
 			else return false;
 		}
