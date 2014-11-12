@@ -55,7 +55,7 @@ class ClicksLog extends CActiveRecord
 			array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -154,20 +154,9 @@ class ClicksLog extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 
-		// $criteria->with = array('campaigns', 'campaigns.opportunities', 'campaigns.opportunities.country', 'campaigns.opportunities.carriers', 'campaigns.opportunities.ios.advertisers');
-		
-		// external campaign name
-		// $criteria->compare('campaigns_id',$this->campaigns_id,true);
-		// $criteria->compare('country.ISO2',$this->campaigns_id,true,'OR');
-		// $criteria->compare('campaigns.name',$this->campaigns_id,true,'OR');
-		// $criteria->compare('carriers.mobile_brand',$this->campaigns_id,true,'OR');
-		// $criteria->compare('advertisers.prefix',$this->campaigns_id,true,'OR');
-		// $criteria->compare('opportunities.product',$this->campaigns_id,true,'OR');
-
 		$criteria->compare('t.keyword',$this->keyword,true);
-		$criteria->compare('t.totalClicks',$this->totalClicks,true);
-		$criteria->compare('t.totalConv',$this->totalConv,true);
-		$criteria->compare('t.CTR',$this->CTR,true);
+		$criteria->compare('t.placement',$this->placement,true);
+		$criteria->compare('t.creative',$this->creative,true);
 
 		$criteria->compare('t.campaigns_id',$campaign_id);
 
@@ -221,12 +210,6 @@ class ClicksLog extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 
-		// $criteria->with = array('campaigns', 'campaigns.opportunities', 'campaigns.opportunities.country', 'campaigns.opportunities.carriers', 'campaigns.opportunities.ios.advertisers');
-		
-		$criteria->compare('t.totalClicks',$this->totalClicks,true);
-		$criteria->compare('t.totalConv',$this->totalConv,true);
-		$criteria->compare('t.CTR',$this->CTR,true);
-
 		$criteria->compare('t.campaigns_id',$campaign_id);
 		$criteria->compare('t.query',$query,true);
 		$criteria->compare('t.query',$this->query,true);
@@ -236,6 +219,7 @@ class ClicksLog extends CActiveRecord
 
 		// discard invalid results, this implied showing only adWords
 		$criteria->addCondition("t.query != ''"); 
+		$criteria->addCondition("t.query IS NOT NULL"); 
 
 		$criteria->addCondition("DATE(t.date) BETWEEN '" . date('Y-m-d', strtotime($dateStart)) . "' AND '" . date('Y-m-d', strtotime($dateEnd)) . "'");
 

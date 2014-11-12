@@ -40,8 +40,14 @@ class SemController extends Controller
 
 	public function actionKeyword()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('report', array(
-			'model'  => new ClicksLog('search'),
+			'model'       => $model,
 			'report_type' => 'keyword',
 		));
 	}
@@ -49,8 +55,14 @@ class SemController extends Controller
 
 	public function actionPlacement()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('report', array(
-			'model'  => new ClicksLog('search'),
+			'model'       => $model,
 			'report_type' => 'placement',
 		));
 	}
@@ -58,8 +70,14 @@ class SemController extends Controller
 
 	public function actionCreative()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('report', array(
-			'model'  => new ClicksLog('search'),
+			'model'       => $model,
 			'report_type' => 'creative',
 		));
 	}
@@ -84,8 +102,14 @@ class SemController extends Controller
 
 	public function actionSearchCriteria()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('searchCriteria', array(
-			'model' => new ClicksLog('search'),
+			'model' => $model,
 		));
 	}
 }

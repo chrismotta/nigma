@@ -101,14 +101,17 @@ if ($submit) {	// if form not submitted then ignore gridview
 			),
 			array(
 				'name'        => 'totalClicks',
+				'filter'      => '',
 				'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),
 			),
 			array(
 				'name'        => 'totalConv',
+				'filter'      => '',
 				'htmlOptions' => array('class' => 'totalConv', 'style'=>'text-align:right; width: 100px;'),
 			),
 			array(
 				'name'        => 'CTR',
+				'filter'      => '',
 				'value'       => '$data->CTR . " %"',
 				'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),
 			),
