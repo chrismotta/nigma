@@ -224,7 +224,7 @@ return array(
 					'connectionID' =>'db',
 					'logTableName' =>'log',
 					'levels'       =>'info, profile, error, warning',
-					'categories'   =>'system.*',
+					'categories'   =>array('php.*', 'exception.*', 'system.*'),
                 ),
                 $mailLog,
         	),

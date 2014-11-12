@@ -148,8 +148,13 @@ class ClicksLogController extends Controller
 				$wurfl = WurflManager::loadWurfl();
 				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
 				
-				$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
-				$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+				$model->device          = $device->getCapability('brand_name');
+				$model->device_model    = $device->getCapability('marketing_name');
+				$model->os              = $device->getCapability('device_os');
+				$model->os_version      = $device->getCapability('device_os_version');
+				$model->browser         = $device->getVirtualCapability('advertised_browser');
+				$model->browser_version = $device->getVirtualCapability('advertised_browser_version');
+
 			}
 
 			$ts['wurfl'] = microtime(true);
@@ -214,13 +219,16 @@ class ClicksLogController extends Controller
 			//enviar macros
 
 			if($campaign->post_data == '1'){
-				$redirectURL.= "&os=".$model->os;
-				$redirectURL.= "&device=".$model->device;
-				$redirectURL.= "&country=".$model->country;
-				$redirectURL.= "&carrier=".$model->carrier;
-				$redirectURL.= "&referer=".$model->referer;
-				$redirectURL.= "&app=".$model->app;
-				$redirectURL.= "&kw=".$model->keyword;
+
+				$dataQuery['os']      = $model->os."-".$model->os_version;
+				$dataQuery['device']  = $model->device."-".$model->device_model;
+				$dataQuery['country'] = $model->country;
+				$dataQuery['carrier'] = $model->carrier;
+				$dataQuery['referer'] = $model->referer;
+				$dataQuery['app']     = $model->app;
+				$dataQuery['keyword'] = $model->keyword;
+
+				$redirectURL.= '&'.http_build_query($dataQuery, null, '&', PHP_QUERY_RFC3986);
 			}
 			
 			
@@ -238,11 +246,11 @@ class ClicksLogController extends Controller
 
 				// redirect to campaign url
 				if($test){
+					die($redirectURL);
 					echo json_encode($ts);
 				}else{
 					//$this->redirect($redirectURL);
 					header("Location: ".$redirectURL);
-					die();
 				}
 			}else{
 				echo "no redirect";
