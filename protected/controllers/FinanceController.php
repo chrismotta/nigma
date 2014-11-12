@@ -49,7 +49,7 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+			$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
@@ -60,61 +60,17 @@ class FinanceController extends Controller
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status);
 		else
 			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status);
-		foreach ($clients as $opportunities) {			
-			foreach ($opportunities as $data) {
-				isset($sum[$data['id']]) ?  : $sum[$data['id']]=0;
-				$sum[$data['id']]+=$data['revenue'];
-			}
-		}
 		$consolidated=array();
-		foreach ($clients as $opportunities) {			
-			foreach ($opportunities as $data) {
-				$data['total_revenue']=$sum[$data['id']];
-				$consolidated[]=$data;
-			}
+		foreach ($clients['data'] as $client) {
+			$client['total_revenue']=$clients['totals_io'][$client['id']];
+			$consolidated[]=$client;
 		}
+
+		$totalsdata=array();
 		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
-		 foreach ($consolidated as $client) {
-			isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']       =0;
-			isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']       =0;
-			isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue'] =0;
-			$totals[$client['currency']]['rate']    +=$client['rate'];
-			$totals[$client['currency']]['conv']    +=$client['conv'];
-			$totals[$client['currency']]['revenue'] +=$client['revenue'];
-		}
-		$i=0;
-			
-		
-		if(isset($totals))
-		{
-			foreach ($totals as $key => $value) {
-				$totalsdata[$i]['id']       =$i;
-				$totalsdata[$i]['currency'] =$key;
-				$totalsdata[$i]['total']    =$value['revenue'];
-				$i++;
-			}
-		}
-		else
-		{
-			$totalsdata[0]['id']       =null;
-			$totalsdata[0]['currency'] =null;
-			$totalsdata[0]['total']    =null;
-		}
-		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
-		    'id'=>'totals',
-		    'sort'=>array(
-		        'attributes'=>array(
-		             'id','currency','total',
-		        ),
-		    ),
-		    'pagination'=>array(
-		        'pageSize'=>30,
-		    ),
-		));
-		// Get rawData and create dataProvider
-		// $rawData=User::model()->findAll();
+
 		$filteredData=$filtersForm->filter($consolidated);
 		$dataProvider=new CArrayDataProvider($filteredData, array(
 		    'id'=>'clients',
@@ -127,12 +83,107 @@ class FinanceController extends Controller
 		        'pageSize'=>30,
 		    ),
 		));
+		$i=0;
+		if(isset($clients['totals']))
+		{
+			foreach ($clients['totals'] as $key => $value) {
+				$i++;
+				$totalsdata[$i]['id']       =$i;
+				$totalsdata[$i]['currency'] =$key;
+				$totalsdata[$i]['total']    =$value['revenue'];
+			}
+		}
+
+		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','total',
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+
+
+
+
+		// foreach ($clients as $opportunities) {			
+		// 	foreach ($opportunities as $data) {
+		// 		isset($sum[$data['id']]) ?  : $sum[$data['id']]=0;
+		// 		$sum[$data['id']]+=$data['revenue'];
+		// 	}
+		// }
+		// $consolidated=array();
+		// foreach ($clients as $opportunities) {			
+		// 	foreach ($opportunities as $data) {
+		// 		$data['total_revenue']=$sum[$data['id']];
+		// 		$consolidated[]=$data;
+		// 	}
+		// }
+		// $filtersForm =new FiltersForm;
+		// if (isset($_GET['FiltersForm']))
+		//     $filtersForm->filters=$_GET['FiltersForm'];
+		//  foreach ($consolidated as $client) {
+		// 	isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']       =0;
+		// 	isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']       =0;
+		// 	isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue'] =0;
+		// 	$totals[$client['currency']]['rate']    +=$client['rate'];
+		// 	$totals[$client['currency']]['conv']    +=$client['conv'];
+		// 	$totals[$client['currency']]['revenue'] +=$client['revenue'];
+		// }
+		// $i=0;
+			
+		
+		// if(isset($totals))
+		// {
+		// 	foreach ($totals as $key => $value) {
+		// 		$totalsdata[$i]['id']       =$i;
+		// 		$totalsdata[$i]['currency'] =$key;
+		// 		$totalsdata[$i]['total']    =$value['revenue'];
+		// 		$i++;
+		// 	}
+		// }
+		// else
+		// {
+		// 	$totalsdata[0]['id']       =null;
+		// 	$totalsdata[0]['currency'] =null;
+		// 	$totalsdata[0]['total']    =null;
+		// }
+		// $totalsDataProvider=new CArrayDataProvider($totalsdata, array(
+		//     'id'=>'totals',
+		//     'sort'=>array(
+		//         'attributes'=>array(
+		//              'id','currency','total',
+		//         ),
+		//     ),
+		//     'pagination'=>array(
+		//         'pageSize'=>30,
+		//     ),
+		// ));
+		// Get rawData and create dataProvider
+		// $rawData=User::model()->findAll();
+		// 
+		// $filteredData=$filtersForm->filter($consolidated);
+		// $dataProvider=new CArrayDataProvider($filteredData, array(
+		//     'id'=>'clients',
+		//     'sort'=>array(
+		//         'attributes'=>array(
+		//              'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io'
+		//         ),
+		//     ),
+		//     'pagination'=>array(
+		//         'pageSize'=>30,
+		//     ),
+		// ));
 		
 		$this->render('clients',array(
 			'model'        =>$model,
 			'filtersForm'  =>$filtersForm,
 			'dataProvider' =>$dataProvider,
-			'clients'	=>$consolidated,
+			'clients'      =>$consolidated,
 			'totals'       =>$totalsDataProvider,
 		));
 	}
@@ -269,7 +320,7 @@ class FinanceController extends Controller
 				$consolidated[]=$data;
 			}
 		}
-		$dataProvider=new CArrayDataProvider($consolidated, array(
+		$dataProvider=new CArrayDataProvider($clients, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(

@@ -361,10 +361,112 @@ class Ios extends CActiveRecord
 	}
 
 
-
-
-
 	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	{
+// 		select * from daily_report d 
+// inner join campaigns c on d.campaigns_id=c.id
+// inner join opportunities o on c.opportunities_id=o.id
+// inner join ios i on o.ios_id=i.id
+// WHERE MONTH(d.date)='10'
+// AND YEAR(d.date)='2014'
+		$opportunitiesValidation =new OpportunitiesValidation;
+		$iosValidation           =new IosValidation;
+		$geoLocation             =new GeoLocation;
+		$carriers                =new Carriers;
+		$opportunities=new Opportunities;
+		$totals_io=array();
+		$totals=array();
+		// $criteria=new CDbCriteria;
+		// $criteria->join="inner join campaigns on t.campaigns_id=campaigns.id inner join opportunities on campaigns.opportunities_id=opportunities.id inner join ios on opportunities.ios_id=ios.id";
+		// $criteria->addCondition('MONTH(t.date)='.$month);
+		// $criteria->addCondition('YEAR(t.date)='.$year);
+		// $criteria->addCondition('ios.id=2');
+		// $criteria->addCondition('t.revenue>0');
+		$query="select i.id as io_id,o.id as opp_id,o.model_adv as model,i.entity as entity,i.currency as currency,o.carriers_id as carrier, i.commercial_name as commercial_name,
+													ROUND(
+														IF(
+															ISNULL(o.rate),
+															o.rate,
+															d.revenue/
+															(
+																CASE o.model_adv
+																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPC' THEN d.clics
+																END 
+															)
+														),
+													2) as rate,
+													SUM(
+													CASE o.model_adv
+														when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+														when 'CPM' THEN (d.imp/1000)
+														when 'CPC' THEN d.clics
+													END 
+													) as conversions,
+													sum(d.revenue) as revenue
+													from daily_report d 
+													inner join campaigns c on d.campaigns_id=c.id
+													inner join opportunities o on c.opportunities_id=o.id
+													inner join ios i on o.ios_id=i.id
+													inner join advertisers a on i.advertisers_id=a.id
+													WHERE MONTH(d.date)='".$month."'
+													AND YEAR(d.date)='".$year."'
+													AND d.revenue>0 ";
+		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
+		if($io)	$query                 .=			"AND i.id='".$io."' ";										
+		if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
+		if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
+		if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
+		$query.=									"group by i.id,o.id,ROUND(
+														IF(
+															ISNULL(o.rate),
+															o.rate,
+															d.revenue/
+															(
+																CASE o.model_adv
+																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPC' THEN d.clics
+																END 
+															)
+														),
+													2)";
+		$dailys=DailyReport::model()->findAllBySql($query);
+		$i=0;
+		foreach ($dailys as $daily) {
+				$data[$i]['id']                          =$daily->io_id;
+				$data[$i]['name']                                     =$daily->commercial_name;
+				$data[$i]['opportunitie']                             =$opportunities->findByPk($daily->opp_id)->getVirtualName();
+				$data[$i]['opportunitie_id']                          =$daily->opp_id;
+				$data[$i]['currency']                                 =$daily->currency;
+				$data[$i]['entity']                                   =$daily->entity;
+				$data[$i]['model']                                    =$daily->model;
+				$data[$i]['carrier']                                  =$daily->carrier;
+				$data[$i]['status_opp']                               =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
+				$data[$i]['status_io']                                =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');
+				
+				$data[$i]['revenue'] =$daily->revenue;
+				$data[$i]['conv']    =$daily->conversions;
+				$data[$i]['rate']    =$daily->rate;
+
+
+				isset($totals_io[$daily->io_id]) ?  : $totals_io[$daily->io_id] =0;
+				$totals_io[$daily->io_id]+=$daily->revenue;
+
+				isset($totals[$daily->currency]) ?  : $totals[$daily->currency]['revenue'] =0;
+				$totals[$daily->currency]['revenue']+=$daily->revenue;
+				
+				$i++;
+		}
+		$result=array('data' => $data, 'totals_io' => $totals_io, 'totals' => $totals);				
+		return $result;
+	}
+
+
+
+
+	public function getClients2($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
 	{
 		$data                    =array();	
 		$opportunitiesValidation =new OpportunitiesValidation;
