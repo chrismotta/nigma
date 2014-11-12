@@ -84,11 +84,8 @@ $this->breadcrumbs=array(
 <?php $this->endWidget(); ?>
 
 <?php 
-	if (!$submit)	// if form not submitted then ignore gridview
-		return;
-?>
-
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
+if ($submit) {	// if form not submitted then ignore gridview
+	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 		'id'                       => 'search-query-grid',
 		'fixedHeader'              => true,
 		'headerOffset'             => 50,
@@ -143,4 +140,5 @@ $this->breadcrumbs=array(
 				'htmlOptions' => array('class' => 'eCPA', 'style'=>'text-align:right; width: 100px;'),
 			),
 		),
-)) ?>
+	));
+} ?>
