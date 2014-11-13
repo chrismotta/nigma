@@ -11,12 +11,12 @@ $cat   =isset($_POST['cat']) ? $_POST['cat'] : null;
 $status   =isset($_POST['status']) ? $_POST['status'] : null;
 //echo json_encode($model->getClients($month,$year));
 $clients =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status);
-foreach ($clients as $opportunities) {          
-    foreach ($opportunities as $data) {
-        $consolidated[]=$data;
-    }
-}
-$dataProvider=new CArrayDataProvider($consolidated, array(
+// foreach ($clients as $opportunities) {          
+//     foreach ($opportunities as $data) {
+//         $consolidated[]=$data;
+//     }
+// }
+$dataProvider=new CArrayDataProvider($clients['data'], array(
     'id'=>'clients',
     // 'sort'=>array(
     //     'attributes'=>array(

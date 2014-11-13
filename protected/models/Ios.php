@@ -268,9 +268,8 @@ class Ios extends CActiveRecord
 													inner join advertisers a on i.advertisers_id=a.id
 													inner join multi_rate m on d.id=m.daily_report_id
 													inner join carriers ca on m.carriers_id_carrier=ca.id_carrier
-													inner join geo_location g on ca.id_country=g.id_location
-													WHERE MONTH(d.date)='".$month."'
-													AND YEAR(d.date)='".$year."'
+													inner join geo_location g on ca.id_country=g.id_location													
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
 													AND d.revenue>0 
 													AND m.conv>0 ";
 		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
@@ -281,7 +280,8 @@ class Ios extends CActiveRecord
 		$query.=									"group by i.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
 		if($dailys=DailyReport::model()->findAllBySql($query)){
 			$i=0;
-			foreach ($dailys as $daily) {
+			foreach ($dailys as $daily) {				
+				//if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['id']                          =$daily->io_id;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['name']                                     =$daily->commercial_name;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['opportunitie']                             =$opportunities->findByPk($daily->opp_id)->getVirtualName();
@@ -339,9 +339,8 @@ class Ios extends CActiveRecord
 													inner join ios i on o.ios_id=i.id
 													inner join advertisers a on i.advertisers_id=a.id
 													left join carriers ca on o.carriers_id=ca.id_carrier
-													left join geo_location g on ca.id_country=g.id_location
-													WHERE MONTH(d.date)='".$month."'
-													AND YEAR(d.date)='".$year."'
+													left join geo_location g on ca.id_country=g.id_location													
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
 													AND d.revenue>0 
 													AND NOT(ISNULL(o.rate)) ";
 		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
@@ -365,7 +364,8 @@ class Ios extends CActiveRecord
 													2)";
 		if($dailys=DailyReport::model()->findAllBySql($query)){
 		$i=0;
-			foreach ($dailys as $daily) {
+			foreach ($dailys as $daily) {				
+				//if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['id']                          =$daily->io_id;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['name']                                     =$daily->commercial_name;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['opportunitie']                             =$opportunities->findByPk($daily->opp_id)->getVirtualName();
@@ -561,6 +561,7 @@ class Ios extends CActiveRecord
 		$opportunities=new Opportunities;
 		$totals_io=array();
 		$totals=array();
+		$data=array();
 		// $criteria=new CDbCriteria;
 		// $criteria->join="inner join campaigns on t.campaigns_id=campaigns.id inner join opportunities on campaigns.opportunities_id=opportunities.id inner join ios on opportunities.ios_id=ios.id";
 		// $criteria->addCondition('MONTH(t.date)='.$month);
@@ -597,8 +598,7 @@ class Ios extends CActiveRecord
 													inner join opportunities o on c.opportunities_id=o.id
 													inner join ios i on o.ios_id=i.id
 													inner join advertisers a on i.advertisers_id=a.id
-													WHERE MONTH(d.date)='".$month."'
-													AND YEAR(d.date)='".$year."'
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
 													AND d.revenue>0 ";
 		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
 		if($io)	$query                 .=			"AND i.id='".$io."' ";										
@@ -619,32 +619,35 @@ class Ios extends CActiveRecord
 															)
 														),
 													2)";
-		$dailys=DailyReport::model()->findAllBySql($query);
-		$i=0;
-		foreach ($dailys as $daily) {
-				$data[$i]['id']                          =$daily->io_id;
-				$data[$i]['name']                                     =$daily->commercial_name;
-				$data[$i]['opportunitie']                             =$opportunities->findByPk($daily->opp_id)->getVirtualName();
-				$data[$i]['opportunitie_id']                          =$daily->opp_id;
-				$data[$i]['currency']                                 =$daily->currency;
-				$data[$i]['entity']                                   =$daily->entity;
-				$data[$i]['model']                                    =$daily->model;
-				$data[$i]['carrier']                                  =$daily->carrier;
-				$data[$i]['status_opp']                               =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
-				$data[$i]['status_io']                                =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');
-				
-				$data[$i]['revenue'] =$daily->revenue;
-				$data[$i]['conv']    =$daily->conversions;
-				$data[$i]['rate']    =$daily->rate;
+		if($dailys=DailyReport::model()->findAllBySql($query)){
+			$i=0;
+			foreach ($dailys as $daily) {
+				if($status)
+					if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
+					$data[$i]['id']                         			  =$daily->io_id;
+					$data[$i]['name']                                     =$daily->commercial_name;
+					$data[$i]['opportunitie']                             =$opportunities->findByPk($daily->opp_id)->getVirtualName();
+					$data[$i]['opportunitie_id']                          =$daily->opp_id;
+					$data[$i]['currency']                                 =$daily->currency;
+					$data[$i]['entity']                                   =$daily->entity;
+					$data[$i]['model']                                    =$daily->model;
+					$data[$i]['carrier']                                  =$daily->carrier;
+					$data[$i]['status_opp']                               =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
+					$data[$i]['status_io']                                =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');
+					
+					$data[$i]['revenue'] =$daily->revenue;
+					$data[$i]['conv']    =$daily->conversions;
+					$data[$i]['rate']    =$daily->rate;
 
 
-				isset($totals_io[$daily->io_id]) ?  : $totals_io[$daily->io_id] =0;
-				$totals_io[$daily->io_id]+=$daily->revenue;
+					isset($totals_io[$daily->io_id]) ?  : $totals_io[$daily->io_id] =0;
+					$totals_io[$daily->io_id]+=$daily->revenue;
 
-				isset($totals[$daily->currency]) ?  : $totals[$daily->currency]['revenue'] =0;
-				$totals[$daily->currency]['revenue']+=$daily->revenue;
-				
-				$i++;
+					isset($totals[$daily->currency]) ?  : $totals[$daily->currency]['revenue'] =0;
+					$totals[$daily->currency]['revenue']+=$daily->revenue;
+					
+					$i++;
+			}
 		}
 		$result=array('data' => $data, 'totals_io' => $totals_io, 'totals' => $totals);				
 		return $result;

@@ -153,22 +153,13 @@ $ios=new Ios;
 			'type'              => 'raw',
 			'value'             =>	'
 				$data["rate"] === NULL && !isset($data["carrier"]) ?
-				CHtml::ajaxLink(
-					"<i class=\"icon-plus\"></i>", 
-					"multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
-				    array (
-				        "type"    => "POST",
-				        "beforeSend"=>"function(){
-			 				$(\"#modalClients\").modal(\"toggle\");
-		
-				        }",
-				        "success" => "function(data){
-				        	$(\"#modalClients\").html(data)
-				        	//alert(data);
-				        }"
-				    ), 
-				    array ()
-				)
+				CHtml::link(
+					"<i class=\"icon-plus\"></i>",
+					array("multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View Rate")
+
+
+					)
 				: null
 				'
 				,
