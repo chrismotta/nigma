@@ -117,7 +117,7 @@ class ClicksLogController extends Controller
 		$ts['model']         = microtime(true);
 		
 		
-		if($test || $campaign->post_data == '1'){
+		// if($test || $campaign->post_data == '1'){
 		
 			// Get ip data
 
@@ -159,7 +159,7 @@ class ClicksLogController extends Controller
 
 			$ts['wurfl'] = microtime(true);
 
-		}
+		// }
 		
 
 		//var_dump($model);
@@ -246,8 +246,8 @@ class ClicksLogController extends Controller
 
 				// redirect to campaign url
 				if($test){
-					die($redirectURL);
 					echo json_encode($ts);
+					die($redirectURL);
 				}else{
 					//$this->redirect($redirectURL);
 					header("Location: ".$redirectURL);
