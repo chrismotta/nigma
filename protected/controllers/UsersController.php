@@ -115,6 +115,10 @@ class UsersController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		foreach ( Yii::app()->authManager->getRoles($id) as $role => $value ) {
+			Yii::app()->authManager->revoke($role, $id);
+		}
+
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
