@@ -92,7 +92,7 @@ $('.search-form form').submit(function(){
 	echo KHtml::filterCountries($country);	  
 	?>
 
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
     </fieldset>
 

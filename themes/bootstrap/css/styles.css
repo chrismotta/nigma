@@ -218,3 +218,26 @@ fieldset hr {
 	overflow-x: hidden;
 	z-index: 1060!important;
 }
+
+/* ester eggs */
+.easter-footer {
+	display: none;
+}
+
+/** Loading screen **/
+#page {
+    display: none;
+}
+#loader {
+	display            : block;
+	position           : fixed;
+	top                : 0;
+	left               : 0;
+	z-index            : 1000;
+	width              : 100vw;
+	height             : 100vh;
+	background-color   : rgba(255, 255, 255, 0.4);
+	background-image   : url("../img/loading.gif");
+	background-repeat  : no-repeat;
+	background-position: center;
+}

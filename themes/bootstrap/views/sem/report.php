@@ -1,6 +1,6 @@
 <?php
 /* @var $this SemController */
-/* @var $model Users */
+/* @var $model ClicksLog */
 /* @var $report_type String */
 
 set_time_limit(1000);
@@ -72,7 +72,7 @@ $this->breadcrumbs=array(
 
 	<?php echo KHtml::filterCampaigns($campaignName, array(4, 31)); ?>
 		
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 </fieldset>
 <?php $this->endWidget(); ?>
 
@@ -90,14 +90,17 @@ $this->breadcrumbs=array(
 		),
 		array(
 			'name'        => 'totalClicks',
+			'filter'      => '',
 			'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),
 		),
 		array(
 			'name'        => 'totalConv',
+			'filter'      => '',
 			'htmlOptions' => array('class' => 'totalConv', 'style'=>'text-align:right; width: 100px;'),
 		),
 		array(
 			'name'        => 'CTR',
+			'filter'      => '',
 			'value'       => '$data->CTR . " %"',
 			'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),
 		),
