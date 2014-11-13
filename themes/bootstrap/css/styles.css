@@ -241,3 +241,8 @@ fieldset hr {
 	background-repeat  : no-repeat;
 	background-position: center;
 }
+
+.input-condensed input {
+	margin-bottom: 0px!important;
+	height: 15px!important;
+}
