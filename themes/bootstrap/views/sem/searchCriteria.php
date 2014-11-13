@@ -117,7 +117,7 @@ if ($submit) {	// if form not submitted then ignore gridview
 			),
 			array(
 				'header'      => 'Spend',
-				'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),
+				'htmlOptions' => array('style'=>'text-align:right; width: 100px;', 'class' => 'input-condensed'),
 				'type'        =>	'raw',
 				'value'       => 'CHtml::textField("row-spend-" . $row, 0, array(
 									"style"    => "width:30px; text-align:right; font-size: 11px;", 
