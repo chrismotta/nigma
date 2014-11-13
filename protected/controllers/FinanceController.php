@@ -105,7 +105,7 @@ class FinanceController extends Controller
 		        ),
 		    ),
 		    'pagination'=>array(
-		        'pageSize'=>30,
+		        'pageSize'=>100,
 		    ),
 		));
 		
