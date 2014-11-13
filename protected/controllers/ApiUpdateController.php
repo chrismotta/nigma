@@ -63,7 +63,7 @@ class ApiUpdateController extends Controller
 			$adWords = new AdWords;
 			$adWords->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -73,7 +73,7 @@ class ApiUpdateController extends Controller
 			$airpush = new Airpush;
 			$airpush->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -83,7 +83,7 @@ class ApiUpdateController extends Controller
 			$ajillion = new Ajillion;
 			$ajillion->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');			
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
 		}
 	}
 
@@ -93,7 +93,7 @@ class ApiUpdateController extends Controller
 			$buzzCity = new BuzzCity;
 			$buzzCity->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -103,7 +103,7 @@ class ApiUpdateController extends Controller
 			$leadBolt = new LeadBolt;
 			$leadBolt->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -113,7 +113,7 @@ class ApiUpdateController extends Controller
 			$reporo = new Reporo;
 			$reporo->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -123,7 +123,7 @@ class ApiUpdateController extends Controller
 			$vServ = new VServ;
 			$vServ->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -133,7 +133,7 @@ class ApiUpdateController extends Controller
 			$mobfox = new Mobfox;
 			$mobfox->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -143,7 +143,7 @@ class ApiUpdateController extends Controller
 			$eroAdvertising = new EroAdvertising;
 			$eroAdvertising->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -153,7 +153,7 @@ class ApiUpdateController extends Controller
 			$inMobi = new InMobi;
 			$inMobi->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -163,7 +163,7 @@ class ApiUpdateController extends Controller
 			$bingAds = new BingAds;
 			$bingAds->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -173,7 +173,7 @@ class ApiUpdateController extends Controller
 			$smaato = new Smaato;
 			$smaato->downloadInfo();	
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
@@ -183,7 +183,7 @@ class ApiUpdateController extends Controller
 			$adultmoda = new Adultmoda;
 			$adultmoda->downloadInfo();
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.controllers.apiUpdate');
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
 
