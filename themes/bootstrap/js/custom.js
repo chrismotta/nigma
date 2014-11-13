@@ -8,12 +8,13 @@ $(document).ready(function(){
 		var keyCode = e.keyCode || e.which;
 
 		easterCode += keyCode;
-	    console.log( "Handler: "+easterCode );
+	    //console.log( "Handler: "+easterCode );
 
 	    imageEgg('1109711810510097100', 'http://lh3.ggpht.com/-ONo0KPLOXN8/UJXkEBFppKI/AAAAAAAAV1g/p-l8Lo5__e0/papa1_thumb.gif?imgmax=800', 100);
 	    imageEgg('10511510497112112101110105110103', 'http://static1.gamespot.com/uploads/original/1188/11888561/2562405-6086807432-Happe.gif', 200);
+	    imageEgg('101109105108105111', 'http://www.100pies.net/Gifs/Nombres-Animados/E/Emilio/Emilio-17.gif', 100);
 
-	    //styleEgg();
+	    styleEgg('102108105112', 'body', {transform: 'scale(-1, 1)'});
 	});
 
 	function imageEgg(word, image, height){
@@ -23,8 +24,11 @@ $(document).ready(function(){
 			easterCode = "";
 	    }
 	}
-	function styleEgg(){
-
+	function styleEgg(word, selector, styles){
+		if(easterCode.indexOf(word) != -1){
+			$(selector).css(styles);
+			easterCode = "";
+		}
 	}
 });
 
