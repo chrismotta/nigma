@@ -55,6 +55,7 @@ class DailyReport extends CActiveRecord
 	public $entity;
 	public $commercial_name;
 	public $product;
+	public $country;
 
 	/**
 	 * @return string the associated database table name

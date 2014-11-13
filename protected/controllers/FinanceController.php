@@ -260,20 +260,22 @@ class FinanceController extends Controller
 		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
-		$clients           =$model->getClientsNew($month,$year,null,$io->id);
-		$totals['revenue'] =0;
-		$totals['conv']    =0;
+		$clients           =$model->getClientsNew2($month,$year,null,$io->id);
+		// echo json_encode($clients['data']);
+		// return;
+		// $totals['revenue'] =0;
+		// $totals['conv']    =0;
 		$consolidated=array();
-		foreach ($clients as $ios) {
-			foreach ($ios as $carriers) {
-				foreach ($carriers as $data) {
-					$consolidated[]=$data;
-					$totals['revenue']+=$data['revenue'];
-					$totals['conv']+=$data['conv'];
-				}
-			}
-		}
-		$dataProvider=new CArrayDataProvider($consolidated, array(
+		// foreach ($clients as $ios) {
+		// 	foreach ($ios as $carriers) {
+		// 		foreach ($carriers as $data) {
+		// 			$consolidated[]=$data;
+		// 			$totals['revenue']+=$data['revenue'];
+		// 			$totals['conv']+=$data['conv'];
+		// 		}
+		// 	}
+		// }
+		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
@@ -299,7 +301,7 @@ class FinanceController extends Controller
 				'year'         =>$year,
 				'io'           =>$io,
 				'dataProvider' =>$dataProvider,
-				'totals'       =>$totals
+				'totals'       =>$clients['totals']
 		 	),
 		  false, true);
 

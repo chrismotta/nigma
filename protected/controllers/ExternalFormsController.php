@@ -59,17 +59,17 @@ class ExternalFormsController extends Controller
 		$totals['revenue']=0;
 		$totals['conv']=0;
 		$IosModel=new Ios;
-		$clients = $IosModel->getClientsNew(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id);
-		foreach ($clients as $ios) {
-			foreach ($ios as $carriers) {
-				foreach ($carriers as $data) {
-					$consolidated[]=$data;
-					$totals['revenue']+=$data['revenue'];
-					$totals['conv']+=$data['conv'];
-				}
-			}
-		}
-		$dataProvider=new CArrayDataProvider($consolidated, array(
+		$clients = $IosModel->getClientsNew2(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id);
+		// foreach ($clients as $ios) {
+		// 	foreach ($ios as $carriers) {
+		// 		foreach ($carriers as $data) {
+		// 			$consolidated[]=$data;
+		// 			$totals['revenue']+=$data['revenue'];
+		// 			$totals['conv']+=$data['conv'];
+		// 		}
+		// 	}
+		// }
+		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'consolidated',
 		    'sort'=>array(
 		        'attributes'=>array(
@@ -85,7 +85,7 @@ class ExternalFormsController extends Controller
 		$this->render('revenueValidation',array(
 			'model'        =>$model,
 			'dataProvider' =>$dataProvider,
-			'totals'       =>$totals,
+			'totals'       =>$clients['totals'],
 		));
 	}
 

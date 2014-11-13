@@ -18,9 +18,10 @@ $cat =isset($_GET['cat']) ? $_GET['cat'] : null;
 $stat =isset($_GET['status']) ? $_GET['status'] : null;
 $log=new ValidationLog;
 $ios=new Ios;
-// print_r($ios->getClientsNew($month,$year,null,19));
-//echo $log->loadLog(26,'Sended');
-// echo json_encode($clients);
+// $clients           =$model->getClientsNew2($month,$year,null,9);
+// // print_r($ios->getClientsNew($month,$year,null,19));
+// //echo $log->loadLog(26,'Sended');
+// echo $clients['data'];
 // return;
 ?>
 <br>
