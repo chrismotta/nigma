@@ -15,55 +15,50 @@ class InMobi
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			print "InMobi: WARNING - Information already downloaded. <br>";
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.inmobi');
 			return 2;
 		}
 
 		// Get json from InMobi API.
 		$network = Networks::model()->findbyPk($this->network_id);
-		$apikey = $network->token3;
-		$user = $network->token1;
-		$pass = $network->token2;
-		$apiurl = $network->url;
-		
+		$apikey  = $network->token3;
+		$user    = $network->token1;
+		$pass    = $network->token2;
+		$apiurl  = $network->url;
 
+		// Create Session
+		$ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
+		curl_setopt($ch, CURLOPT_URL,"https://api.inmobi.com/v1.0/generatesession/generate");
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER,array ('secretKey:'.$apikey,'userName:'.$user,'password:'.$pass));
+		$response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
 
+		// Json to array
+		$newresponse = json_decode($response); 
+		$sessionId   = $newresponse->respList[0]->sessionId; // guardo  el id de la session
+		$accountId   = $newresponse->respList[0]->accountId; // guardo  el id de la cuenta
 
+		curl_close($ch);
 
-	// Create Session
-	   $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
-	   curl_setopt($ch, CURLOPT_URL,"https://api.inmobi.com/v1.0/generatesession/generate");
-	   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	   curl_setopt($ch, CURLOPT_HTTPHEADER,array ('secretKey:'.$apikey,'userName:'.$user,'password:'.$pass));
-	   $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
+		// get data Json
+		$getReportJson = '{"reportRequest": 
+								{
+									"timeFrame":"'.$date.':'.$date.'",
+									"groupBy":["campaign"],
+								}
 
-	// Json to array
-	   $newresponse = json_decode($response); 
-	   $sessionId = $newresponse->respList[0]->sessionId; // guardo  el id de la session
-	   $accountId = $newresponse->respList[0]->accountId; // guardo  el id de la cuenta
-	   
-	   curl_close($ch);
-	   
-	// get data Json
-	   $getReportJson = '{"reportRequest": 
-	   						{
-	   							"timeFrame":"'.$date.':'.$date.'",
-	   							"groupBy":["campaign","date"],
-	   							"orderBy":["date"]
-	   						}
-
-	   					 }'; // fields filter
-	   $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
-	   curl_setopt($ch, CURLOPT_URL,$apiurl);
-	   curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	   curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	   //curl_setopt($ch, CURLOPT_TIMEOUT, 300);
-	   curl_setopt($ch, CURLOPT_HTTPHEADER, Array("accountId:$accountId","secretKey:$apikey","sessionId:$sessionId","Content-Type:application/json"));
-	   curl_setopt($ch, CURLOPT_POST,true);
-	   curl_setopt($ch, CURLOPT_POSTFIELDS, $getReportJson);
-	   $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
-	   $newresponse = json_decode($response);
+							 }'; // fields filter
+		$ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
+		curl_setopt($ch, CURLOPT_URL,$apiurl);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		//curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, Array("accountId:$accountId","secretKey:$apikey","sessionId:$sessionId","Content-Type:application/json"));
+		curl_setopt($ch, CURLOPT_POST,true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $getReportJson);
+		$response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
+		$newresponse = json_decode($response);
 		if (!$newresponse) {
 			Yii::log("InMobi: ERROR - decoding json. ".curl_error(), 'error', 'system.model.api.inmobi');
 			return 1;
@@ -85,7 +80,7 @@ class InMobi
 			Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
 			return 0;
 		}
-		
+
 		// Save campaigns information 
 		foreach ($newresponse->respList as $campaign) {
 
@@ -103,13 +98,13 @@ class InMobi
 				continue;
 			}
 
-			$dailyReport->date = $date;
+			$dailyReport->date        = $date;
 			$dailyReport->networks_id = $this->network_id;
-			$dailyReport->imp = $campaign->impressions;
-			$dailyReport->clics = $campaign->clicks;
-			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-			//$dailyReport->conv_adv = 0;
-			$dailyReport->spend = $campaign->adSpend;
+			$dailyReport->imp         = $campaign->impressions;
+			$dailyReport->clics       = $campaign->clicks;
+			$dailyReport->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+			//$dailyReport->conv_adv  = 0;
+			$dailyReport->spend       = $campaign->adSpend;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
 			if ( !$dailyReport->save() ) {
