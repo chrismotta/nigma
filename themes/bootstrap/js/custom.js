@@ -15,7 +15,9 @@ $(document).ready(function(){
 	    imageEgg('101109105108105111', 'http://www.100pies.net/Gifs/Nombres-Animados/E/Emilio/Emilio-17.gif', 100);
 	    imageEgg('97118101110103101114115', 'http://img4.wikia.nocookie.net/__cb20140718002257/marvel/es/images/8/80/Ultron_Render.png', 600);
 
-	    styleEgg('102108105112', 'body', {transform: 'scale(-1, 1)'});
+	    styleEgg('102108105112', 'body', {'transform': 'scale(-1, 1)'});
+	    styleEgg('10397116111', 'body', {'background-image': 'url(http://i1-news.softpedia-static.com/images/extra/LINUX/large/ubuntu1204ltswallpapers-large_009.jpg)'});
+	    //http://i1-news.softpedia-static.com/images/extra/LINUX/large/ubuntu1204ltswallpapers-large_009.jpg
 	});
 
 	function imageEgg(word, image, height){
