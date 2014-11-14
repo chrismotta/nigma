@@ -17,6 +17,10 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'root',
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET GLOBAL time_zone = '-3:00'",
+					),
+
 				);
 				
 				$mailLog = array(
@@ -34,6 +38,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'root',
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET GLOBAL time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -54,6 +61,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET GLOBAL time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -85,6 +95,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET GLOBAL time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
