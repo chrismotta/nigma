@@ -13,14 +13,8 @@
         <?php 
             $this->widget('yiibooster.widgets.TbGroupGridView', array(
             'id'                         => 'revenue-validation-grid',
-            //'fixedHeader'              => true,
-            //'headerOffset'             => 50,
             'dataProvider'               => $dataProvider,
-            //'filter'                     => $filtersForm,
-            //'filter'                   => $model,
             'type'                       => 'striped condensed',    
-            //'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-            //'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
             'template'                   => '{items} {pager}',
             'columns'                    => array(
                 array(
@@ -47,7 +41,7 @@
                     'value'             =>'$data["model"]', 
                     'headerHtmlOptions' => array('width' => '80'),
                     'header'            =>'Model',    
-                    'footer'            =>'Totals:'  
+                    //'footer'            =>'Totals:'  
                     ),
                 array(
                     'name'              =>'entity',
@@ -69,38 +63,6 @@
                     //'footer'          => $totals['rate'],
                     'header'            =>'Rate',   
                 ),  
-                // array(
-                //     'name'              => 'mr',
-                //     'header'            => '',
-                //     'filter'            => '',
-                //     'headerHtmlOptions' => array('class'=>'plusMR'),
-                //     'filterHtmlOptions' => array('class'=>'plusMR'),
-                //     'htmlOptions'       => array('class'=>'plusMR'),
-                //     'type'              => 'raw',
-                //     'value'             =>  '
-                //         $data["rate"] === NULL && !isset($data["carrier"]) ?
-                //             CHtml::link(
-                //                     "<i class=\"icon-plus\"></i>",
-                //                     "javascript:;",
-                //                     array(
-                //                         "onClick" => CHtml::ajax( array(
-                //                             "type"    => "POST",
-                //                             "url"     => "multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'" ,
-                //                             "success" => "function( data )
-                //                                 {
-                //                                     $(\"#modalClients\").html(data);
-                //                                     $(\"#modalClients\").modal(\"toggle\");
-                //                                 }",
-                //                             )),
-                //                         "style"               => "width: 20px",
-                //                         "rel"                 => "tooltip",
-                //                         "data-original-title" => "Update"
-                //                         )
-                //                 ) 
-                //         : null
-                //         '
-                //         ,
-                // ),
                 array(
                     'name'              =>'conv',
                     'header'            =>'Clics/Imp/Conv',
@@ -127,17 +89,23 @@
                 <?php
                 $period=date('Y-m-d', strtotime($year.'-'.$month.'-01'));
 
-                echo CHtml::htmlButton('Send Mail',array('id'=>'btnRev','class'=>'btn btn-success'));
-                     Yii::app()->clientScript->registerScript('register_script_name', "
-                        $('#btnRev').click(function(e){
-                            e.preventDefault();
-                           $.post( 'sendMail', { 'io_id': ".$io->id.", 'period': '".$period."' })
-                                .success(function( data ) {
-                                alert(data );
-                                });
-                            
-                        });
-                    ", CClientScript::POS_READY);
+
+                $revenueValidation= new IosValidation;
+                if($revenueValidation->checkValidationOpportunities($io->id,$period))
+                    echo CHtml::htmlButton('Send Mail',array('id'=>'btnRev','class'=>'btn btn-success'));
+                else 
+                    echo "Opportunities not been validated yet";
+
+                Yii::app()->clientScript->registerScript('register_script_name', "
+                    $('#btnRev').click(function(e){
+                        e.preventDefault();
+                       $.post( 'sendMail', { 'io_id': ".$io->id.", 'period': '".$period."' })
+                            .success(function( data ) {
+                            alert(data );
+                            });
+                        
+                    });
+                ", CClientScript::POS_READY);
 
                  ?>
                  <br>

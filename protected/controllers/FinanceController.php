@@ -107,78 +107,6 @@ class FinanceController extends Controller
 		));
 
 
-
-
-
-		// foreach ($clients as $opportunities) {			
-		// 	foreach ($opportunities as $data) {
-		// 		isset($sum[$data['id']]) ?  : $sum[$data['id']]=0;
-		// 		$sum[$data['id']]+=$data['revenue'];
-		// 	}
-		// }
-		// $consolidated=array();
-		// foreach ($clients as $opportunities) {			
-		// 	foreach ($opportunities as $data) {
-		// 		$data['total_revenue']=$sum[$data['id']];
-		// 		$consolidated[]=$data;
-		// 	}
-		// }
-		// $filtersForm =new FiltersForm;
-		// if (isset($_GET['FiltersForm']))
-		//     $filtersForm->filters=$_GET['FiltersForm'];
-		//  foreach ($consolidated as $client) {
-		// 	isset($totals[$client['currency']]['conv']) ? : $totals[$client['currency']]['conv']       =0;
-		// 	isset($totals[$client['currency']]['rate']) ? : $totals[$client['currency']]['rate']       =0;
-		// 	isset($totals[$client['currency']]['revenue']) ? : $totals[$client['currency']]['revenue'] =0;
-		// 	$totals[$client['currency']]['rate']    +=$client['rate'];
-		// 	$totals[$client['currency']]['conv']    +=$client['conv'];
-		// 	$totals[$client['currency']]['revenue'] +=$client['revenue'];
-		// }
-		// $i=0;
-			
-		
-		// if(isset($totals))
-		// {
-		// 	foreach ($totals as $key => $value) {
-		// 		$totalsdata[$i]['id']       =$i;
-		// 		$totalsdata[$i]['currency'] =$key;
-		// 		$totalsdata[$i]['total']    =$value['revenue'];
-		// 		$i++;
-		// 	}
-		// }
-		// else
-		// {
-		// 	$totalsdata[0]['id']       =null;
-		// 	$totalsdata[0]['currency'] =null;
-		// 	$totalsdata[0]['total']    =null;
-		// }
-		// $totalsDataProvider=new CArrayDataProvider($totalsdata, array(
-		//     'id'=>'totals',
-		//     'sort'=>array(
-		//         'attributes'=>array(
-		//              'id','currency','total',
-		//         ),
-		//     ),
-		//     'pagination'=>array(
-		//         'pageSize'=>30,
-		//     ),
-		// ));
-		// Get rawData and create dataProvider
-		// $rawData=User::model()->findAll();
-		// 
-		// $filteredData=$filtersForm->filter($consolidated);
-		// $dataProvider=new CArrayDataProvider($filteredData, array(
-		//     'id'=>'clients',
-		//     'sort'=>array(
-		//         'attributes'=>array(
-		//              'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io'
-		//         ),
-		//     ),
-		//     'pagination'=>array(
-		//         'pageSize'=>30,
-		//     ),
-		// ));
-		
 		$this->render('clients',array(
 			'model'        =>$model,
 			'filtersForm'  =>$filtersForm,
@@ -205,12 +133,13 @@ class FinanceController extends Controller
 		$month=$_GET['month'];
 		$year=$_GET['year'];
 		$id=$_GET['id'];
-		$data=Ios::model()->getClientsByIo($month,$year,$id);
+		//$data=Ios::model()->getClientsByIo($month,$year,$id);
+		$data=Ios::model()->getClientsByIo($month,$year,null,$id);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'rate', 'conv','revenue','mobileBrand','country'
+		             'id', 'rate', 'conv','revenue','mobileBrand','country','product'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -261,20 +190,7 @@ class FinanceController extends Controller
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
 		$clients           =$model->getClientsNew2($month,$year,null,$io->id);
-		// echo json_encode($clients['data']);
-		// return;
-		// $totals['revenue'] =0;
-		// $totals['conv']    =0;
 		$consolidated=array();
-		// foreach ($clients as $ios) {
-		// 	foreach ($ios as $carriers) {
-		// 		foreach ($carriers as $data) {
-		// 			$consolidated[]=$data;
-		// 			$totals['revenue']+=$data['revenue'];
-		// 			$totals['conv']+=$data['conv'];
-		// 		}
-		// 	}
-		// }
 		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -316,11 +232,6 @@ class FinanceController extends Controller
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		$clients =$model->getClients($month,$year,null,null,null,$op);
-		// foreach ($clients as $opportunities) {			
-		// 	foreach ($opportunities as $data) {
-		// 		$consolidated[]=$data;
-		// 	}
-		// }
 		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'clients',
 		    'sort'=>array(
