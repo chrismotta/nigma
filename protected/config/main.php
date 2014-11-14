@@ -96,7 +96,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
-			           "SET GLOBAL time_zone = '-3:00'",
+			           "SET time_zone = '-3:00'",
 					),
 				);
 
