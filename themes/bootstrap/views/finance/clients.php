@@ -202,39 +202,6 @@ $ios=new Ios;
 				;
 				',		
 		),
-		// array(
-		// 	'type'              =>'raw',
-		// 	'header'            =>'',
-		// 	'filter'            =>false,
-		// 	'headerHtmlOptions' => array('width' => '20'),
-		// 	'name'              =>'opportunitie',
-		// 	'value'             =>'$data["status_opp"] == false ?
-		// 		CHtml::ajaxLink(
-		// 			"<i class=\"not_verifed\"></i>", 
-		// 			"opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'", 
-		// 		    array (
-		// 		        "type"    => "POST",
-		// 		        "beforeSend"=>"function(){
-		// 	 				$(\"#modalClients\").modal(\"toggle\");
-		
-		// 		        }",
-		// 		        "success" => "function(data){
-		// 		        	$(\"#modalClients\").html(data)
-		// 		        	//alert(data);
-		// 		        }"
-		// 		    ), 
-		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
-		// 		) 
-		// 		: 
-		// 		CHtml::ajaxLink(
-		// 			"<i id=\"icon-status\" class=\"verifed\"></i>", 
-		// 			"javascript:void(0)", 
-		// 		    array (), 
-		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
-		// 		)
-		// 		;
-		// 		',		
-		// ),
 		array(
 			'name'              =>'name',
 			'header'            =>'Total Revenue',
@@ -274,31 +241,6 @@ $ios=new Ios;
 					);
 				',		
 		),
-		// array(
-		// 	'type'              =>'raw',
-		// 	'header'            =>'',
-		// 	'filter'            =>false,
-		// 	'headerHtmlOptions' => array('width' => '20'),
-		// 	'name'              =>	'name',
-		// 	'value'             =>'
-		// 		CHtml::ajaxLink(
-		// 			"<i class=\"icon-envelope\"></i>", 
-		// 			"revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'", 
-		// 		    array (
-		// 		        "type"    => "POST",
-		// 		        "beforeSend"=>"function(){
-		// 	 				$(\"#modalClients\").modal(\"toggle\");
-		
-		// 		        }",
-		// 		        "success" => "function(data){
-		// 		        	$(\"#modalClients\").html(data)
-		// 		        	//alert(data);
-		// 		        }"
-		// 		    ), 
-		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
-		// 		);
-		// 		',		
-		// ),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
@@ -315,31 +257,6 @@ $ios=new Ios;
 					);
 				',		
 		),
-		// array(
-		// 	'type'              =>'raw',
-		// 	'header'            =>'',
-		// 	'filter'            =>false,
-		// 	'headerHtmlOptions' => array('width' => '20'),
-		// 	'name'              =>	'name',
-		// 	'value'             =>'
-		// 		CHtml::ajaxLink(
-		// 			"<i class=\"icon-eye-open\"></i>", 
-		// 			"view/".$data["id"], 
-		// 		    array (
-		// 		        "type"    => "POST",
-		// 		        "beforeSend"=>"function(){
-		// 	 				$(\"#modalClients\").modal(\"toggle\");
-		
-		// 		        }",
-		// 		        "success" => "function(data){
-		// 		        	$(\"#modalClients\").html(data)
-		// 		        	//alert(data);
-		// 		        }"
-		// 		    ), 
-		// 		    array ("data-toggle"=>"tooltip", "data-original-title"=>"View IO")
-		// 		);
-		// 		',		
-		// ),
 	),
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
