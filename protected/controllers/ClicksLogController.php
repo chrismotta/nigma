@@ -13,11 +13,11 @@ class ClicksLogController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData'),
+				'actions'=>array('updateClicksData', 'updateQuery'),
 				'roles'=>array('admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData'),
+				'actions'=>array('updateClicksData', 'updateQuery'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
@@ -112,7 +112,12 @@ class ClicksLogController extends Controller
 		$model->keyword      = isset($_GET["g_key"]) ? $_GET["g_key"] : null;
 		$model->creative     = isset($_GET["g_cre"]) ? $_GET["g_cre"] : null;
 		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
-		
+
+		$tmp = array();
+		if (preg_match('/q=[^\&]*/', $model->referer, $tmp)) {
+			$model->query = urldecode(substr($tmp[0], 2));
+		}
+
 
 		$ts['model']         = microtime(true);
 		
@@ -375,6 +380,57 @@ class ClicksLogController extends Controller
 			else
 				$click->device_type = 'Desktop';
 
+			$click->save();
+			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
+		}
+		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
+
+	}
+
+	public function actionUpdateQuery() 
+	{
+		set_time_limit(1000000);
+
+		if (isset($_GET['useUTC'])) {
+			date_default_timezone_set('UTC');
+		}
+
+		if (isset($_GET['date']) && isset($_GET['hourFrom']) && isset($_GET['hourTo'])) {
+			$date     = $_GET['date'];
+			$hourFrom = $_GET['hourFrom'];
+			$hourTo   = $_GET['hourTo'];
+		} else {
+			echo "Missing parameters: date, hourFrom, hourTo";
+			return;
+		}
+
+		$timestampFrom = new DateTime($date . ' ' . $hourFrom . ':00');
+		$timestampTo   = new DateTime($date . ' ' . $hourTo . ':00');
+
+		$criteria=new CDbCriteria;
+		$criteria->compare('date', '>=' . $timestampFrom->format('Y-m-d H:i:s'));
+		$criteria->compare('date', '<=' . $timestampTo->format('Y-m-d H:i:s'));
+		// $criteria->compare('networks_id', '4');
+		// $criteria->addCondition('query IS NULL');
+		$dataProvider = new CActiveDataProvider("ClicksLog", array(
+			'criteria' => $criteria,
+			'pagination' => array(
+                'pageSize' => 100,
+            ),
+		));
+		$iterator = new CDataProviderIterator($dataProvider);
+
+		echo 'total: '.count($iterator).'<hr/>';
+		$timeBegin = time();
+		$countClicks = 0;
+		foreach ($iterator as $click) {
+			$countClicks++;
+			
+			$tmp = array();
+			if (preg_match('/q=[^\&]*/', $click->referer, $tmp)) {
+				$click->query = urldecode(substr($tmp[0], 2));
+			}
+			
 			$click->save();
 			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
 		}
