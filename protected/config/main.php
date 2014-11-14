@@ -18,7 +18,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
-			           "SET GLOBAL time_zone = '-3:00'",
+			           "SET SESSION time_zone = '-3:00'",
 					),
 
 				);
@@ -39,7 +39,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
-			           "SET GLOBAL time_zone = '-3:00'",
+			           "SET SESSION time_zone = '-3:00'",
 					),
 				);
 
@@ -62,7 +62,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
-			           "SET GLOBAL time_zone = '-3:00'",
+			           "SET SESSION time_zone = '-3:00'",
 					),
 				);
 
@@ -96,7 +96,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
-			           "SET time_zone = '-3:00'",
+			           "SET SESSION time_zone = '-3:00'",
 					),
 				);
 
