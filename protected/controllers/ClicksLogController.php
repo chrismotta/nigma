@@ -410,10 +410,10 @@ class ClicksLogController extends Controller
 		$criteria=new CDbCriteria;
 		$criteria->compare('date', '>=' . $timestampFrom->format('Y-m-d H:i:s'));
 		$criteria->compare('date', '<=' . $timestampTo->format('Y-m-d H:i:s'));
-		// $criteria->compare('networks_id', '4');
+		$criteria->compare('networks_id', '4');
 		// $criteria->addCondition('query IS NULL');
 		$dataProvider = new CActiveDataProvider("ClicksLog", array(
-			'criteria' => $criteria,
+			'criteria'   => $criteria,
 			'pagination' => array(
                 'pageSize' => 100,
             ),
@@ -425,14 +425,19 @@ class ClicksLogController extends Controller
 		$countClicks = 0;
 		foreach ($iterator as $click) {
 			$countClicks++;
-			
+
+			if ( $click->query !== NULL ) {
+				echo $countClicks . " - " . $click->date . " - " . $click->id . " - " . $click->query . "<br/>";
+				continue;
+			}
+
 			$tmp = array();
 			if (preg_match('/q=[^\&]*/', $click->referer, $tmp)) {
 				$click->query = urldecode(substr($tmp[0], 2));
 			}
 			
 			$click->save();
-			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
+			echo $countClicks . " - " . $click->date . " - " . $click->id . " - " . $click->query . " - updated<br/>";
 		}
 		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
 
