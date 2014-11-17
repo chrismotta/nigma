@@ -330,7 +330,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'              => 'profit_percent',
-			'value'             => '$data->getProfitPerc() * 100 . "%"',
+			'value'             => '$data->profit / $data->getRevenueUSD() * 100 . "%"',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['profitperc']*100)."%",
