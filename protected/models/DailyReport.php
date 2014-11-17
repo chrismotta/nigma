@@ -503,7 +503,7 @@ class DailyReport extends CActiveRecord
 				'sum(revenue) as revenue',
 				'sum(spend) as spend',
 				'sum(profit) as profit',
-				'round( avg(profit_percent), 2 ) as profit_percent',
+				// 'revenue as profit_percent',
 				'round( avg(click_through_rate), 2 ) as click_through_rate',
 				'round( avg(conversion_rate), 2 ) as conversion_rate',
 				'round( avg(eCPM), 2 ) as eCPM',
@@ -717,9 +717,12 @@ class DailyReport extends CActiveRecord
 				$this->revenue = $this->imp_adv != NULL ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
 				break;
 			case 'CPC':
+			case 'CPV':
 				$this->revenue = $this->clics * $rate;
 				break;
 			case 'CPA':
+			case 'CPL':
+			case 'CPI':
 				$this->revenue = $this->conv_adv != NULL ? $this->conv_adv * $rate : $this->conv_api * $rate;
 				break;
 		}
