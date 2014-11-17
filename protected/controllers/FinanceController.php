@@ -231,8 +231,12 @@ class FinanceController extends Controller
 		$model   =new Ios;
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
-		$clients =$model->getClients($month,$year,null,null,null,$op);
-		$dataProvider=new CArrayDataProvider($clients['data'], array(
+		if(is_null($opportunitie->rate))
+			$clients =$model->getClientsByIo($month,$year,null,$opportunitie->ios_id);
+		else
+			$clients =$model->getClients($month,$year,null,null,null,$op)['data'];
+		
+		$dataProvider=new CArrayDataProvider($clients, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(

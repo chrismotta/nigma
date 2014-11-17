@@ -16,7 +16,7 @@
 
     <?php 
         $this->widget('bootstrap.widgets.TbGridView', array(
-            'type'         =>'striped condensed',
+            'type'         =>'striped bordered',
             'dataProvider' => $dataProvider,
             'template'     => "{items}",
             'columns'      =>array(

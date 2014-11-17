@@ -772,6 +772,9 @@ class Ios extends CActiveRecord
 				$data[$i]['revenue']     =$daily->revenue;
 				$data[$i]['product']     =$daily->product;
 				$data[$i]['country']     =$daily->country;
+				$data[$i]['model']     =$daily->model;
+				$data[$i]['entity']     =$daily->entity;
+				$data[$i]['currency']     =$daily->currency;
 				$data[$i]['mobileBrand'] =$carriers->getMobileBrandById($daily->carrier);
 				$i++;
 			}
