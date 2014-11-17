@@ -18,22 +18,17 @@ $cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 $stat   =isset($_GET['status']) ? $_GET['status'] : null;
 $log    =new ValidationLog;
 $ios    =new Ios;
-// $clients           =$model->getClientsNew2($month,$year,null,9);
-// // print_r($ios->getClientsNew($month,$year,null,19));
-// //echo $log->loadLog(26,'Sended');
-// echo $clients['data'];
-// return;
 ?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>false,
-        'action' => Yii::app()->getBaseUrl() . '/finance/clients',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		'id'                   =>'date-filter-form',
+		'type'                 =>'search',
+		'htmlOptions'          =>array('class'=>'well'),
+		// to enable ajax validation
+		'enableAjaxValidation' =>false,
+		'action'               => Yii::app()->getBaseUrl() . '/finance/clients',
+		'method'               => 'GET',
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
 	<fieldset>
@@ -63,13 +58,13 @@ $ios    =new Ios;
 			$status=KHtml::enumItem(new IosValidation,'status');
 			$status['Not Sended']='Not Sended';
 			$status[0]='All Status';
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array($month=>array('selected'=>true))));
-		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
-		echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
-		echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
-		echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true))));
+			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array($month=>array('selected'=>true))));
+			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
+			echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+			echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
+			echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true))));
 		
-		            ?>
+	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',

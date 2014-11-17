@@ -20,10 +20,10 @@
             'dataProvider' => $dataProvider,
             'template'     => "{items}",
             'columns'      =>array(
-                array('name'=>'revenue', 'type' => 'raw', 'header'=>'Profile','value'=>'$data["country"]." - ".$data["mobileBrand"]." - ".$data["product"]'),
-                array('name'=>'rate', 'type' => 'raw', 'header'=>'Rate'),
-                array('name'=>'conv', 'type' => 'raw', 'header'=>'Conv.'),
-                array('name'=>'revenue', 'type' => 'raw', 'header'=>'Revenue'),
+                array('name' =>'revenue', 'type' => 'raw', 'header'=>'Profile','value'=>'$data["country"]." - ".$data["mobileBrand"]." - ".$data["product"]'),
+                array('name' =>'rate', 'type' => 'raw', 'header'=>'Rate'),
+                array('name' =>'conv', 'type' => 'raw', 'header'=>'Conv.'),
+                array('name' =>'revenue', 'type' => 'raw', 'header'=>'Revenue'),
             ),
         ));
         ?>

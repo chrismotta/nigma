@@ -6,33 +6,6 @@ class FinanceController extends Controller
 	{
 		$this->render('index');
 	}
-
-	// Uncomment the following methods and override them if needed
-	/*
-	public function filters()
-	{
-		// return the filter configuration for this controller, e.g.:
-		return array(
-			'inlineFilterName',
-			array(
-				'class'=>'path.to.FilterClass',
-				'propertyName'=>'propertyValue',
-			),
-		);
-	}
-
-	public function actions()
-	{
-		// return external action classes, e.g.:
-		return array(
-			'action1'=>'path.to.ActionClass',
-			'action2'=>array(
-				'class'=>'path.to.AnotherActionClass',
-				'propertyName'=>'propertyValue',
-			),
-		);
-	}
-	*/
 	public function accessRules()
 	{
 		return array(
@@ -49,13 +22,12 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-			$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
-		//$clients     =$model->getClients($month,$year,$entity);
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status);
 		else
@@ -123,19 +95,17 @@ class FinanceController extends Controller
 		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$model       =new Networks;
 		$this->render('providers',array(			
-			// 'dataProvider' =>$model->getProviders($month, $year),
 			'model'			=>$model,
 		));
 	}
 
 	public function actionMultiRate()
 	{
-		$month=$_GET['month'];
-		$year=$_GET['year'];
-		$id=$_GET['id'];
-		$op=Opportunities::model()->findByPk($id);
-		//$data=Ios::model()->getClientsByIo($month,$year,$id);
-		$data=Ios::model()->getClientsByIo($month,$year,null,null,null,$id);
+		$month =$_GET['month'];
+		$year  =$_GET['year'];
+		$id    =$_GET['id'];
+		$op    =Opportunities::model()->findByPk($id);
+		$data  =Ios::model()->getClientsByIo($month,$year,null,null,null,$id);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -255,7 +225,7 @@ class FinanceController extends Controller
 				'year'         =>$year,
 				'op'           =>$op,
 				'dataProvider' =>$dataProvider,
-				'opportunitie'=>$opportunitie
+				'opportunitie' =>$opportunitie
 		 	),
 		  false, true);
 
@@ -263,12 +233,12 @@ class FinanceController extends Controller
 
 	public function actionValidateOpportunitie()
 	{		
-		$modelOp=new Opportunities;
-		$opportunitie=$modelOp->findByPk($_POST['opportunities_id']);
+		$modelOp      =new Opportunities;
+		$opportunitie =$modelOp->findByPk($_POST['opportunities_id']);
 		$this->renderPartial('validateOpportunitie', array(
 				'opportunities_id' => $_POST['opportunities_id'],
-				'period' => $_POST['period'],
-				'opportunitie'=>$opportunitie
+				'period'           => $_POST['period'],
+				'opportunitie'     =>$opportunitie
 			));
 	}
 	
@@ -276,9 +246,9 @@ class FinanceController extends Controller
 	{
 		$this->renderPartial('sendMail',
 		 array(
-				'io_id'=> $_REQUEST['io_id'],
-				'period'=> $_REQUEST['period']
+				'io_id'  => $_REQUEST['io_id'],
+				'period' => $_REQUEST['period']
 		 	)
-			);
+		);
 	}
 }

@@ -47,14 +47,8 @@ switch ($model->status) {
         <?php
             $this->widget('yiibooster.widgets.TbGroupGridView', array(
             'id'                         => 'revenue-validation-grid',
-            //'fixedHeader'              => true,
-            //'headerOffset'             => 50,
             'dataProvider'               => $dataProvider,
-            //'filter'                     => $filtersForm,
-            //'filter'                   => $model,
             'type'                       => 'striped condensed',    
-            //'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-            //'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
             'template'                   => '{items} {pager}',
             'columns'                    => array(
                 array(
@@ -99,7 +93,6 @@ switch ($model->status) {
                     'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
                     'headerHtmlOptions' => array('width' => '80', 'style'=>'text-align:right;'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'), 
-                    //'footer'          => $totals['rate'],
                     'header'            =>'Rate',   
                 ),  
                 array(

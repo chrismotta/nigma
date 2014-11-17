@@ -41,7 +41,6 @@
                     'value'             =>'$data["model"]', 
                     'headerHtmlOptions' => array('width' => '80'),
                     'header'            =>'Model',    
-                    //'footer'            =>'Totals:'  
                     ),
                 array(
                     'name'              =>'entity',
@@ -60,7 +59,6 @@
                     'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'), 
-                    //'footer'          => $totals['rate'],
                     'header'            =>'Rate',   
                 ),  
                 array(
@@ -82,7 +80,6 @@
                     'footer'            => $totals['revenue'],
                 ),
             ),
-            //'mergeColumns' => array('id','name'),
         )); ?>
         <div class="form-actions">
             <div class="offset2">

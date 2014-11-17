@@ -15,29 +15,10 @@
         <?php 
             $this->widget('yiibooster.widgets.TbExtendedGridView', array(
             'id'                         => 'revenue-validation-grid',
-            //'fixedHeader'              => true,
-            //'headerOffset'             => 50,
             'dataProvider'               => $dataProvider,
-            //'filter'                     => $filtersForm,
-            //'filter'                   => $model,
             'type'                       => 'striped bordered',    
-            //'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-            //'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
             'template'                   => '{items} {pager} {summary}',
             'columns'                    => array(
-                // array(
-                //     'name'              =>  'id',
-                //     'value'             =>'$data["id"]',    
-                //     'headerHtmlOptions' => array('width' => '60'),
-                //     'header'            =>'ID',                           
-                //     ),     
-                // array(
-                //     'name'                =>'id',
-                //     'value'               =>'$data["name"]',
-                //     'htmlOptions'       => array('id'=>'alignLeft'),        
-                //     'header'              =>'Commercial Name',
-                //     //'footer'              =>'Totals:',      
-                //     ),  
                 array(
                     'name'              =>'model',
                     'value'             =>'$data["model"]', 
@@ -61,7 +42,6 @@
                     'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'), 
-                    //'footer'          => $totals['rate'],
                     'header'            =>'Rate',   
                 ),  
                 array(
@@ -70,7 +50,6 @@
                     'value'             =>'$data["conv"]',  
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'), 
-                    //'footer'          => $totals['conv'],
                 ),
                 array(
                     'name'              =>'revenue',
@@ -78,10 +57,8 @@
                     'value'             =>'$data["revenue"]',
                     'headerHtmlOptions' => array('width' => '80'),
                     'htmlOptions'       => array('style'=>'text-align:right;'),     
-                    //'footer'          => $totals['revenue'],
                 ),
             ),
-            //'mergeColumns' => array('id','name'),
         )); ?>
 
             <div class="form-actions">
