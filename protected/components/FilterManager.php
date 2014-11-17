@@ -51,6 +51,13 @@ class FilterManager
 				'admin',
 				'media_manager',
 			)),
+		'finance.clients' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'finance',
+			)),
 		);
 
     /**

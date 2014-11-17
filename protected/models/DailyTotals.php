@@ -134,14 +134,14 @@ class DailyTotals extends CActiveRecord
 		$clics          =array();
 		$clics_redirect =array();
 		$dates          =array();
-		if(!$dateStart)	$dateStart = 'today' ;
-		if(!$dateEnd) $dateEnd   = 'today';
-		$dateStart = date('Y-m-d', strtotime($dateStart));
-		$dateEnd = date('Y-m-d', strtotime($dateEnd));
-		$criteria = new CDbCriteria;
-		$criteria->addCondition("date>='".$dateStart."' AND date<='".$dateEnd."'");
-		$criteria->order='date ASC';
-		$totals=self::model()->findAll($criteria);
+		if(!$dateStart)	$dateStart    = 'today' ;
+		if(!$dateEnd) $dateEnd        = 'today';
+		$dateStart                    = date('Y-m-d', strtotime($dateStart));
+		$dateEnd                      = date('Y-m-d', strtotime($dateEnd));
+		$criteria                     = new CDbCriteria;
+		$criteria->addCondition("date >='".$dateStart."' AND date<='".$dateEnd."'");
+		$criteria->order              ='date ASC';
+		$totals                       =self::model()->findAll($criteria);
 		foreach ($totals as $total) {
 			$spends[]         =doubleval($total->spend);
 			$revenues[]       =doubleval($total->revenue);

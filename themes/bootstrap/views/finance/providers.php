@@ -11,20 +11,20 @@ $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
 );
-$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-$data=$model->getProviders($month,$year);
+$year  =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+$month =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+$data  =$model->getProviders($month,$year);
 ?>
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/finance/providers',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		'id'                   =>'date-filter-form',
+		'type'                 =>'search',
+		'htmlOptions'          =>array('class'=>'well'),
+		// to enable ajax validation
+		'enableAjaxValidation' =>true,
+		'action'               => Yii::app()->getBaseUrl() . '/finance/providers',
+		'method'               => 'GET',
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
 	<fieldset>
@@ -47,13 +47,13 @@ $data=$model->getProviders($month,$year);
 				$years[$year]=$year;
 			}
 
-			$criteria=new CDbCriteria;
-			$criteria->select='entity';
-			$criteria->group='entity';
-			$criteria->addCondition('entity!=""');
-			$io=new Ios;
-			$entity=$io->findAll($criteria);
-			$entities[0]='All entities';
+			$criteria                       =new CDbCriteria;
+			$criteria->select               ='entity';
+			$criteria->group                ='entity';
+			$criteria->addCondition('entity !=""');
+			$io                             =new Ios;
+			$entity                         =$io->findAll($criteria);
+			$entities[0]                    ='All entities';
 			foreach ($entity as $value) {
 				$entities[$value->entity]=$value->entity;
 			}
@@ -162,14 +162,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
 	'id'                         => 'totals-grid',
-	//'fixedHeader'              => true,
-	//'headerOffset'             => 50,
 	'dataProvider'               => $data['totalsDataProvider'],
-	//'filter'                     => $filtersForm,
-	//'filter'                   => $model,
 	'type'                       => 'striped condensed',	
-	//'rowHtmlOptionsExpression'   => 'array("data-row-id" => "1")',
-	//'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                   => '{items} {pager}',
 	'columns'                    => array(
 		array(
@@ -193,9 +187,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 		array(
 			'name'                =>'total',
 			'value'               =>'$data["total"]',
-			//'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'              =>'Total',
-			//'footer'              =>'Totals:',      
 			),			
 		),
 )); ?>
