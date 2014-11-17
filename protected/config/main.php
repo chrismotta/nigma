@@ -134,6 +134,7 @@ return array(
 	'import' =>array(
 		'application.models.*',
 		'application.models.api.*',
+		'application.models.api.publisher.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',

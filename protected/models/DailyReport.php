@@ -503,7 +503,7 @@ class DailyReport extends CActiveRecord
 				'sum(revenue) as revenue',
 				'sum(spend) as spend',
 				'sum(profit) as profit',
-				'round( avg(profit_percent), 2 ) as profit_percent',
+				// 'revenue as profit_percent',
 				'round( avg(click_through_rate), 2 ) as click_through_rate',
 				'round( avg(conversion_rate), 2 ) as conversion_rate',
 				'round( avg(eCPM), 2 ) as eCPM',

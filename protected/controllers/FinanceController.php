@@ -105,7 +105,7 @@ class FinanceController extends Controller
 		$year  =$_GET['year'];
 		$id    =$_GET['id'];
 		$op    =Opportunities::model()->findByPk($id);
-		$data  =Ios::model()->getClientsByIo($month,$year,null,null,null,$id);
+		$data  =Ios::model()->getClientsMultiRate($month,$year,null,null,null,$id);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -160,7 +160,7 @@ class FinanceController extends Controller
 		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
-		$clients           =$model->getClientsNew2($month,$year,null,$io->id);
+		$clients           =$model->getClientsProfile($month,$year,null,$io->id);
 		$consolidated=array();
 		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'clients',
@@ -203,7 +203,7 @@ class FinanceController extends Controller
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		if(is_null($opportunitie->rate))
-			$clients =$model->getClientsByIo($month,$year,null,$opportunitie->ios_id);
+			$clients =$model->getClientsMultiRate($month,$year,null,$opportunitie->ios_id);
 		else
 			$clients =$model->getClients($month,$year,null,null,null,$op)['data'];
 		

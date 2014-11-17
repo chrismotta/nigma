@@ -231,11 +231,8 @@ class Ios extends CActiveRecord
 		return parent::model($className);
 	}
 
-
-
-
 	#Function to get clients group by ios,carriers and rate
-	public function getClientsNew2($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	public function getClientsProfile($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
 	{
 		#Instance of models to use
 		$opportunitiesValidation =new OpportunitiesValidation;
@@ -603,7 +600,7 @@ class Ios extends CActiveRecord
 		}
 		return $data;
 	}
-	public function getClientsByIo($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	public function getClientsMultiRate($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
 	{
 		$carriers=new Carriers;
 		$data                        =array();	
