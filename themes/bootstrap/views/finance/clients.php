@@ -14,10 +14,10 @@ $this->menu=array(
 $year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 $month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 $entity =isset($_GET['entity']) ? $_GET['entity'] : null;
-$cat =isset($_GET['cat']) ? $_GET['cat'] : null;
-$stat =isset($_GET['status']) ? $_GET['status'] : null;
-$log=new ValidationLog;
-$ios=new Ios;
+$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
+$stat   =isset($_GET['status']) ? $_GET['status'] : null;
+$log    =new ValidationLog;
+$ios    =new Ios;
 // $clients           =$model->getClientsNew2($month,$year,null,9);
 // // print_r($ios->getClientsNew($month,$year,null,19));
 // //echo $log->loadLog(26,'Sended');
@@ -155,7 +155,7 @@ $ios=new Ios;
 				$data["rate"] === NULL && !isset($data["carrier"]) ?
 				CHtml::link(
 					"<i class=\"icon-plus\"></i>",
-					array("multiRate?id=" . $data["id"] ."&month='.$month.'&year='.$year.'"),
+					array("multiRate?id=" . $data["opportunitie_id"] ."&month='.$month.'&year='.$year.'"),
     				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View Rate")
 
 

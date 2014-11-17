@@ -133,8 +133,9 @@ class FinanceController extends Controller
 		$month=$_GET['month'];
 		$year=$_GET['year'];
 		$id=$_GET['id'];
+		$op=Opportunities::model()->findByPk($id);
 		//$data=Ios::model()->getClientsByIo($month,$year,$id);
-		$data=Ios::model()->getClientsByIo($month,$year,null,$id);
+		$data=Ios::model()->getClientsByIo($month,$year,null,null,null,$id);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -147,7 +148,7 @@ class FinanceController extends Controller
 		    ),
 		));
 		$this->renderPartial('_multiRate', array(
-			'id'       => $id,
+			'opportunitie'       => $op,
 			'dataProvider' => $dataProvider,
 		), false, false);
 	}
