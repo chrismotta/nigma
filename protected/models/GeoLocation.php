@@ -129,6 +129,13 @@ class GeoLocation extends CActiveRecord
 		return isset(self::model()->find($criteria)->name) ? self::model()->find($criteria)->name : "Other";
 	}
 
+	public function getNameFromId($id)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->addCondition("id_location='".$id."'");
+		return isset(self::model()->find($criteria)->name) ? self::model()->find($criteria)->name : "Other";
+	}
+
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);

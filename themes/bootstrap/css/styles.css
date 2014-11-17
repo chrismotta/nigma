@@ -246,3 +246,38 @@ fieldset hr {
 	margin-bottom: 0px!important;
 	height: 15px!important;
 }
+	
+#icon-status{
+	display: block;
+	width: 15px;
+	height: 15px;
+	background-image: url(../img/sprite_status.png);
+}
+.not_verifed{
+	display: block;
+	width: 15px;
+	height: 15px;
+	background-image: url(../img/sprite_status.png);
+	background-position:-0px 0px;
+}
+.verifed{
+	background-position:-20px 0px;
+}
+.not_sended{
+	background-position:-40px 0px;
+}
+.sended{
+	background-position:-60px 0px;
+}
+.viewed{
+	background-position:-80px 0px;
+}
+.approved{
+	background-position:-100px 0px;
+}
+.disputed{
+	background-position:-120px 0px;
+}
+.expired{
+	background-position:-139px 0px;
+}

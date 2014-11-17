@@ -17,6 +17,7 @@
  * @property string $email_com
  * @property string $contact_adm
  * @property string $email_adm
+ * @property string $email_validation
  * @property string $currency
  * @property string $ret
  * @property string $tax_id
@@ -47,6 +48,7 @@ class Ios extends CActiveRecord
 	public $model;
 	public $buttons;
 	public $name;
+	public $email_validation;
 
 	/**
 	 * @return string the associated database table name
@@ -66,7 +68,7 @@ class Ios extends CActiveRecord
 		return array(
 			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, contact_com, email_com, contact_adm, email_adm, commercial_id, entity, net_payment, advertisers_id', 'required'),
 			array('prospect, country_id, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
-			array('email_com, email_adm','email'),
+			array('email_com, email_adm, email_validation','email'),
 			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
 			array('entity', 'length', 'max'=>3),
@@ -99,39 +101,40 @@ class Ios extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'              => 'ID',
-			'name'            => 'Name',
-			'commercial_name' => 'Legal Name',
-			'address'         => 'Address',
-			'prospect'        => 'Prospect',
-			'country_id'      => 'Country',
-			'state'           => 'State',
-			'zip_code'        => 'Zip Code',
-			'phone'           => 'Phone',
-			'contact_com'     => 'Com Contact Name',
-			'email_com'       => 'Com Contact Email',
-			'contact_adm'     => 'Adm Contact Name',
-			'email_adm'       => 'Adm Contact Email',
-			'currency'        => 'Currency',
-			'ret'             => 'Retentions',
-			'tax_id'          => 'Tax ID',
-			'commercial_id'   => 'Commercial',
-			'entity'          => 'Entity',
-			'net_payment'     => 'Net Payment',
-			'advertisers_id'  => 'Advertisers',
-			'pdf_name'        => 'Pdf Name',
+			'id'               => 'ID',
+			'name'             => 'Name',
+			'commercial_name'  => 'Legal Name',
+			'address'          => 'Address',
+			'prospect'         => 'Prospect',
+			'country_id'       => 'Country',
+			'state'            => 'State',
+			'zip_code'         => 'Zip Code',
+			'phone'            => 'Phone',
+			'contact_com'      => 'Com Contact Name',
+			'email_com'        => 'Com Contact Email',
+			'contact_adm'      => 'Adm Contact Name',
+			'email_adm'        => 'Adm Contact Email',
+			'currency'         => 'Currency',
+			'ret'              => 'Retentions',
+			'tax_id'           => 'Tax ID',
+			'commercial_id'    => 'Commercial',
+			'entity'           => 'Entity',
+			'net_payment'      => 'Net Payment',
+			'advertisers_id'   => 'Advertisers',
+			'pdf_name'         => 'Pdf Name',
 			// Custom attributes
-			'country_name'    => 'Country',
-			'com_name'        => 'Commercial',
-			'com_lastname'    => 'Commercial',
-			'advertiser_name' => 'Advertiser',
-			'rate'            => 'Rate',
-			'conv'            => 'Conv.',
-			'revenue'         => 'Revenue',
-			'model'           => 'Model',
-			'name'			  => 'Name',
-			'status'          => 'Status',
-			'description'     => 'Description',
+			'country_name'     => 'Country',
+			'com_name'         => 'Commercial',
+			'com_lastname'     => 'Commercial',
+			'advertiser_name'  => 'Advertiser',
+			'rate'             => 'Rate',
+			'conv'             => 'Conv.',
+			'revenue'          => 'Revenue',
+			'model'            => 'Model',
+			'name'             => 'Name',
+			'status'           => 'Status',
+			'description'      => 'Description',
+			'email_validation' => 'Email Validation',
 
 		);
 	}
@@ -177,6 +180,7 @@ class Ios extends CActiveRecord
 		$criteria->compare('pdf_name',$this->pdf_name,true);
 		$criteria->compare('t.status',$this->status,true);
 		$criteria->compare('t.description',$this->description,true);
+		$criteria->compare('t.email_validation',$this->email_validation,true);
 
 		$criteria->with = array( 'advertisers', 'commercial', 'country');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
@@ -226,75 +230,332 @@ class Ios extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-	// public function getClients($month,$year)
-	// {
-	// 	//select ios.commercial_name, ios.currency, ios.entity, opportunities.rate 
-	// 	//from ios, daily_report, campaigns, opportunities 
-	// 	//where daily_report.campaigns_id=campaigns.id AND campaigns.opportunities_id=opportunities.id group by ios.id,opportunities.rate
-	// 	$criteria = new CDbCriteria;
-	// 	$criteria->with=array('campaigns','campaigns.opportunities','campaigns.opportunities.ios');
-	// 	$criteria->select='CASE WHEN ISNULL(t.conv_adv) THEN t.conv_api ELSE t.conv_adv END as conversions, t.revenue as revenue';
-	// 	$criteria->addCondition('MONTH(t.date)='.$month);
-	// 	$criteria->addCondition('YEAR(t.date)='.$year);
-	// 	// $criteria->addCondition('t.campaigns_id=campaigns.id');
-	// 	// $criteria->addCondition('campaigns.opportunities_id=opportunities.id');
-	// 	//$criteria->group='t.id';
-	// 	//$criteria->order='ios.commercial_name asc';
-	// 	$dailyReport=DailyReport::model()->findAll($criteria);
-	// 	foreach ($dailyReport as $daily) {
-	// 		$io[$daily->campaigns->opportunities->ios->id]['name']=$daily->campaigns->opportunities->ios->commercial_name;
-	// 		$io[$daily->campaigns->opportunities->ios->id]['currency']=$daily->campaigns->opportunities->ios->currency;
-	// 		$io[$daily->campaigns->opportunities->ios->id]['entity']=$daily->campaigns->opportunities->ios->entity;
-	// 		if (isset($io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['conv']))
-	// 			$io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['conv']+=$daily->conversions;
-	// 		else 
-	// 			$io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['conv']=0;
-	// 		if(isset($io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['rev']))
-	// 			$io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['rev']+=$daily->revenue;
-	// 		else
-	// 			$io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['rev']=0;
-	// 		//$io[$daily->campaigns->opportunities->ios->id]['rate'][$daily->campaigns->opportunities->rate]['rev']+=$daily->revenue;
-	// 	}
-	// 	return $io;
-	// }
 
-	/*
-	$criteria->select='SUM(
-								CASE WHEN ISNULL(t.conv_adv)
-								THEN t.conv_api ELSE t.conv_adv END) as conversions, 
-							sum(t.revenue) as revenue,
-							sum(t.conv_adv) as conv_adv,
-							sum(t.conv_api) as conv_api';
-		$criteria->addCondition('MONTH(t.date)='.$month);
-		$criteria->addCondition('YEAR(t.date)='.$year);
-		$criteria->group='opportunities.id,opportunities.rate';
-		$criteria->order='ios.commercial_name asc';
-	 */
-	
 
-	public function getClients($month,$year,$entity=null)
+
+
+	#Function to get clients group by ios,carriers and rate
+	public function getClientsNew2($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
 	{
-		$data=array();	
+		#Instance of models to use
+		$opportunitiesValidation =new OpportunitiesValidation;
+		$iosValidation           =new IosValidation;
+		$geoLocation             =new GeoLocation;
+		$carriers                =new Carriers;
+		$opportunities           =new Opportunities;
+
+		#Declare arrays to use
+		$totals_io =array();
+		$totals    =array();
+		$data      =array();
+
+		#Query to find clients with multi rate
+		$query="select i.id as io_id,o.id as opp_id,o.model_adv as model,i.entity as entity,i.currency as currency,m.carriers_id_carrier as carrier, i.commercial_name as commercial_name,g.name,
+													o.product as product,m.rate as rate,
+													sum(m.conv) as conversions,
+													sum(m.rate*m.conv) as revenue
+													from daily_report d 
+													inner join campaigns c on d.campaigns_id=c.id
+													inner join opportunities o on c.opportunities_id=o.id
+													inner join ios i on o.ios_id=i.id
+													inner join advertisers a on i.advertisers_id=a.id
+													inner join multi_rate m on d.id=m.daily_report_id
+													inner join carriers ca on m.carriers_id_carrier=ca.id_carrier
+													inner join geo_location g on ca.id_country=g.id_location													
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
+													AND d.revenue>0 
+													AND m.conv>0 ";
+		#Add filters to query
+		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
+		if($io)	$query                 .=			"AND i.id=".$io." ";										
+		if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
+		if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
+		if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
+		$query.=									"group by i.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
+		#If query find results
+		if($dailys=DailyReport::model()->findAllBySql($query)){
+			#Save results to array group by io,carrier and date
+			foreach ($dailys as $daily) {				
+				//if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['id']              =$daily->io_id;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['name']            =$daily->commercial_name;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['opportunitie']    =$opportunities->findByPk($daily->opp_id)->getVirtualName();
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['opportunitie_id'] =$daily->opp_id;						
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['product']         =$daily->product;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['currency']        =$daily->currency;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['entity']          =$daily->entity;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['model']           =$daily->model;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['carrier']         =$daily->carrier;				
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['mobileBrand']     =$carriers->getMobileBrandById($daily->carrier);
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['country']         =$geoLocation->getNameFromId($carriers->getCountryById($daily->carrier));
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']         =$daily->revenue;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['conv']            =$daily->conversions;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['rate']            =$daily->rate;
+					
+					#This array have totals
+					isset($totals['revenue']) ?  : $totals['revenue'] =0;
+					isset($totals['conv']) ?  : $totals['conv']       =0;
+					#Sum totals
+					$totals['revenue'] +=$daily->revenue;
+					$totals['conv']    +=$daily->conversions;					
+			}
+
+		}
+
+		#Query to find clients without multi rate
+		$query="select i.id as io_id,o.id as opp_id,o.model_adv as model,i.entity as entity,i.currency as currency,o.carriers_id as carrier, i.commercial_name as commercial_name,g.name as country,o.product as product,
+													ROUND(
+														IF(
+															ISNULL(o.rate),
+															o.rate,
+															d.revenue/
+															(
+																CASE o.model_adv
+																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPC' THEN d.clics
+																END 
+															)
+														),
+													2) as rate,
+													SUM(
+													CASE o.model_adv
+														when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+														when 'CPM' THEN (d.imp/1000)
+														when 'CPC' THEN d.clics
+													END 
+													) as conversions,
+													sum(d.revenue) as revenue
+													from daily_report d 
+													inner join campaigns c on d.campaigns_id=c.id
+													inner join opportunities o on c.opportunities_id=o.id
+													inner join ios i on o.ios_id=i.id
+													inner join advertisers a on i.advertisers_id=a.id
+													left join carriers ca on o.carriers_id=ca.id_carrier
+													left join geo_location g on ca.id_country=g.id_location													
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
+													AND d.revenue>0 
+													AND NOT(ISNULL(o.rate)) ";
+		#Add filters to query
+		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
+		if($io)	$query                 .=			"AND i.id='".$io."' ";										
+		if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
+		if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
+		if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
+		$query.=									"group by i.id,o.id,o.carriers_id,ROUND(
+														IF(
+															ISNULL(o.rate),
+															o.rate,
+															d.revenue/
+															(
+																CASE o.model_adv
+																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPC' THEN d.clics
+																END 
+															)
+														),
+													2)";
+		#If query find results
+		if($dailys=DailyReport::model()->findAllBySql($query)){
+			#Save results to array group by io,carrier and date
+			foreach ($dailys as $daily) {				
+				//if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['id']              =$daily->io_id;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['name']            =$daily->commercial_name;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['opportunitie']    =$opportunities->findByPk($daily->opp_id)->getVirtualName();
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['opportunitie_id'] =$daily->opp_id;						
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['product']         =$daily->product;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['currency']        =$daily->currency;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['entity']          =$daily->entity;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['model']           =$daily->model;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['carrier']         =$daily->carrier;				
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['mobileBrand']     =$carriers->getMobileBrandById($daily->carrier);
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['country']         =$daily->country;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+					#If isset, set arrays (conv,revenue) and sum
+					isset($data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']) ? : $data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']=0;
+					isset($data[$daily->io_id][$daily->carrier][$daily->rate]['conv']) ? : $data[$daily->io_id][$daily->carrier][$daily->rate]['conv']=0;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']         +=$daily->revenue;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['conv']            +=$daily->conversions;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['rate']            =$daily->rate;
+
+					#This array have totals
+					isset($totals['revenue']) ?  : $totals['revenue'] =0;
+					isset($totals['conv']) ?  : $totals['conv'] =0;
+					$totals['revenue']+=$daily->revenue;
+					$totals['conv']+=$daily->conversions;
+			}
+		}
+
+
+		#Make array like CArrayDataProvider
+		$consolidated=array();
+		foreach ($data as $ios) {
+			foreach ($ios as $rates) {
+				foreach ($rates as $rate) {
+					$consolidated[]=$rate;
+				}
+			}
+		}
+
+		#Return clients, totals by io and totals
+		$result=array('data' => $consolidated, 'totals_io' => $totals_io, 'totals' => $totals);				
+		return $result;
+	}
+
+	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	{
+		#Instance of models to use
+		$opportunitiesValidation =new OpportunitiesValidation;
+		$iosValidation           =new IosValidation;
+		$geoLocation             =new GeoLocation;
+		$carriers                =new Carriers;
+		$opportunities           =new Opportunities;
+
+		#Declare arrays to use
+		$totals_io =array();
+		$totals    =array();
+		$data      =array();
+
+		#Query to get clients group by ios, opportunities and rate
+		$query="select i.id as io_id,o.id as opp_id,o.model_adv as model,i.entity as entity,i.currency as currency,o.carriers_id as carrier, i.commercial_name as commercial_name,
+													ROUND(
+														IF(
+															ISNULL(o.rate),
+															o.rate,
+															d.revenue/
+															(
+																CASE o.model_adv
+																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPC' THEN d.clics
+																END 
+															)
+														),
+													2) as rate,
+													ROUND(
+														SUM(
+														CASE o.model_adv
+															when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+															when 'CPM' THEN (d.imp/1000)
+															when 'CPC' THEN d.clics
+														END 
+														)
+													) as conversions,
+													sum(d.revenue) as revenue
+													from daily_report d 
+													inner join campaigns c on d.campaigns_id=c.id
+													inner join opportunities o on c.opportunities_id=o.id
+													inner join ios i on o.ios_id=i.id
+													inner join advertisers a on i.advertisers_id=a.id
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
+													AND d.revenue>0 ";
+		#Add filters to query
+		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
+		if($io)	$query                 .=			"AND i.id='".$io."' ";										
+		if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
+		if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
+		if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
+		$query.=									"group by i.id,o.id,ROUND(
+														IF(
+															ISNULL(o.rate),
+															o.rate,
+															d.revenue/
+															(
+																CASE o.model_adv
+																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPC' THEN d.clics
+																END 
+															)
+														),
+													2)";
+		#If query find results
+		if($dailys=DailyReport::model()->findAllBySql($query)){
+			$i=0;
+			foreach ($dailys as $daily) {
+				#Add filter status
+				if($status)
+					if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
+					$data[$i]['id']              =$daily->io_id;
+					$data[$i]['name']            =$daily->commercial_name;
+					$data[$i]['opportunitie']    =$opportunities->findByPk($daily->opp_id)->getVirtualName();
+					$data[$i]['opportunitie_id'] =$daily->opp_id;
+					$data[$i]['currency']        =$daily->currency;
+					$data[$i]['entity']          =$daily->entity;
+					$data[$i]['model']           =$daily->model;
+					$data[$i]['carrier']         =$daily->carrier;
+					$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
+					$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');
+					
+					$data[$i]['revenue']         =$daily->revenue;
+					$data[$i]['conv']            =$daily->conversions;
+					$data[$i]['rate']            =$daily->rate;
+
+					#Array sum by io
+					isset($totals_io[$daily->io_id]) ?  : $totals_io[$daily->io_id] =0;
+					$totals_io[$daily->io_id]+=$daily->revenue;
+					#Array totals all 
+					isset($totals[$daily->currency]) ?  : $totals[$daily->currency]['revenue'] =0;
+					$totals[$daily->currency]['revenue']+=$daily->revenue;
+					
+					$i++;
+			}
+		}
+		#Return array clients, totals by io and totals
+		$result=array('data' => $data, 'totals_io' => $totals_io, 'totals' => $totals);				
+		return $result;
+	}
+
+
+
+
+	public function getClients2($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	{
+		$data                    =array();	
+		$opportunitiesValidation =new OpportunitiesValidation;
+		$iosValidation           =new IosValidation;
 		$ios=self::model()->findAll();
 		if($entity===0)$entity=null;
+		if($cat===0)$entity=null;
 		//echo "<script>alert('".$entity."')</script>";		
-		if($entity)
+		if($entity || $io || $cat)
 		{
 			$criteria=new CDbCriteria;
-			$criteria->addCondition('entity="'.$entity.'"');
+			if($entity)
+				$criteria->addCondition('entity="'.$entity.'"');
+			if($io)
+				$criteria->addCondition('id="'.$io.'"');
+			if($cat)
+			{
+				$criteria->with=array('advertisers');
+				$criteria->addCondition('advertisers.cat="'.$cat.'"');
+			}
+
 			$ios=self::model()->findAll($criteria);
 		}
 		
 		$i=0;
 		foreach ($ios as $io) {
-
+			if($status)
+				if($iosValidation->getStatusByIo($io->id,$year.'-'.$month.'-01') != $status) continue;
 			$criteria                       =new CDbCriteria;
 			$criteria->addCondition('ios_id ='.$io->id);
+
+			if($accountManager)
+				$criteria->addCondition('account_manager_id='.$accountManager);				
+			if($opportunitie_id)
+				$criteria->addCondition('id ='.$opportunitie_id);		
+					
 			$criteria->group                ='ios_id,model_adv,rate';
 			$opportunities                  =Opportunities::model()->findAll($criteria);
 			foreach ($opportunities as $opportunitie) {
 				$criteria                                 =new CDbCriteria;
-				$criteria->addCondition('opportunities_id ='.$opportunitie->id);
+				$criteria->addCondition('opportunities_id ='.$opportunitie->id);				
 				$campaigns                                =Campaigns::model()->findAll($criteria);
 				foreach ($campaigns as $campaign) {
 					$criteria                             =new CDbCriteria;
@@ -305,102 +566,89 @@ class Ios extends CActiveRecord
 					foreach ($dailys as $daily) {
 						if($daily->revenue>0)
 						{
-							$data[$i]['id']                                       =$io->id;
-							$data[$i]['name']                                     =$io->commercial_name;
-							$data[$i]['currency']                                 =$io->currency;
-							$data[$i]['entity']                                   =$io->entity;
-							$data[$i]['model']                                    =$opportunitie->model_adv;
-							$data[$i]['rate']                                     =$opportunitie->rate;
-							$data[$i]['carrier']                                  =$opportunitie->carriers_id;
-							isset($data[$i]['conv']) ?  : $data[$i]['conv']       =0;
-							isset($data[$i]['revenue']) ?  : $data[$i]['revenue'] =0;
-							//!isset($data[$i]['rev']) ? $data[$i]['rev']=0 : ;
-
-							$data[$i]['revenue']        +=$daily->revenue;
-							if($opportunitie->model_adv =='CPA')$data[$i]['conv']+=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
-							if($opportunitie->model_adv =='CPM')$data[$i]['conv']+=$daily->imp;
-							if($opportunitie->model_adv =='CPC')$data[$i]['conv']+=$daily->clics;
+							switch ($opportunitie->model_adv) {
+								case 'CPA':
+									$conv=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
+									break;
+								case 'CPM':
+									$conv=$daily->imp/1000;
+									break;
+								case 'CPC':
+									$conv=$daily->clics;
+									break;
+								
+							}
+							
+							!$opportunitie->rate ? $rate=$opportunitie->rate : $rate=number_format($daily->revenue/$conv,2);
+							$data[$opportunitie->id][$rate]['id']                                       =$io->id;
+							$data[$opportunitie->id][$rate]['name']                                     =$io->commercial_name;
+							$data[$opportunitie->id][$rate]['opportunitie']                             =$opportunitie->getVirtualName();
+							$data[$opportunitie->id][$rate]['opportunitie_id']                          =$opportunitie->id;
+							$data[$opportunitie->id][$rate]['currency']                                 =$io->currency;
+							$data[$opportunitie->id][$rate]['entity']                                   =$io->entity;
+							$data[$opportunitie->id][$rate]['model']                                    =$opportunitie->model_adv;
+							$data[$opportunitie->id][$rate]['carrier']                                  =$opportunitie->carriers_id;
+							$data[$opportunitie->id][$rate]['status_opp']                               =$opportunitiesValidation->checkValidation($opportunitie->id,$year.'-'.$month.'-01');
+							$data[$opportunitie->id][$rate]['status_io']                                =$iosValidation->getStatusByIo($io->id,$year.'-'.$month.'-01');
+							isset($data[$i]['conv']) ?  : $data[$opportunitie->id][$rate]['conv']       =0;
+							isset($data[$i]['revenue']) ?  : $data[$opportunitie->id][$rate]['revenue'] =0;
+							$data[$opportunitie->id][$rate]['revenue']                                  +=$daily->revenue;
+							$data[$opportunitie->id][$rate]['conv']                                     +=$conv;
+							$data[$opportunitie->id][$rate]['rate']                                     =$rate;
 						}
 					}
 				}
 				$i++;
 			}
-
-			//$i++;
 		}
 		return $data;
 	}
-
-
-	public function getClientsByIo($month,$year,$io_id=null)
+	public function getClientsByIo($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
 	{
-		$data=array();	
-		$criteriaI=new CDbCriteria;
-		$criteriaI->addCondition('id='.$io_id);
-		$ios=self::model()->findAll($criteriaI);
-		$i=0;
-		foreach ($ios as $io) {
-
-			$criteria                       =new CDbCriteria;
-			$criteria->addCondition('ios_id ='.$io->id);
-			$criteria->group                ='ios_id,model_adv,rate';
-			$opportunities                  =Opportunities::model()->findAll($criteria);
-			foreach ($opportunities as $opportunitie) {
-				$criteria                                 =new CDbCriteria;
-				$criteria->addCondition('opportunities_id ='.$opportunitie->id);
-				$campaigns                                =Campaigns::model()->findAll($criteria);
-				foreach ($campaigns as $campaign) {
-					$criteria                             =new CDbCriteria;
-					$criteria->addCondition('campaigns_id ='.$campaign->id);
-					$criteria->addCondition('MONTH(date)  ='.$month);
-					$criteria->addCondition('YEAR(date)   ='.$year);
-					$dailys                               =DailyReport::model()->findAll($criteria);
-					foreach ($dailys as $daily) {
-						$criteria                                =new CDbCriteria;
-						$criteria->addCondition('daily_report_id ='.$daily->id);
-						$rates                                   =MultiRate::model()->findAll($criteria);
-						foreach ($rates as $rate) {
-							if($daily->revenue>0)
-							{
-								$data[$i]['id']                                       =$daily->id;
-								$data[$i]['name']                                     =$io->commercial_name;
-								$data[$i]['currency']                                 =$io->currency;
-								$data[$i]['entity']                                   =$io->entity;
-								$data[$i]['model']                                    =$opportunitie->model_adv;
-								$data[$i]['rate']                                     =$rate->rate;
-								$data[$i]['carrier']                                  =$opportunitie->carriers_id;
-								isset($data[$i]['conv']) ?  : $data[$i]['conv']       =0;
-								isset($data[$i]['revenue']) ?  : $data[$i]['revenue'] =0;
-								//!isset($data[$i]['rev']) ? $data[$i]['rev']=0 : ;
-
-								$data[$i]['revenue']        +=$daily->revenue;
-								if($opportunitie->model_adv =='CPA')$data[$i]['conv']+=$rate->conv;
-								if($opportunitie->model_adv =='CPM')$data[$i]['conv']+=$daily->imp;
-								if($opportunitie->model_adv =='CPC')$data[$i]['conv']+=$daily->clics;
-							}
-
-						$i++;
-						}
-					}
-				}
+		$carriers=new Carriers;
+		$data                        =array();	
+		#Query to find clients with multi rate
+		$query="select i.id as io_id,o.id as opp_id,o.model_adv as model,i.entity as entity,i.currency as currency,m.carriers_id_carrier as carrier, i.commercial_name as commercial_name,g.name country,
+													o.product as product,m.rate as rate,
+													sum(m.conv) as conversions,
+													sum(m.rate*m.conv) as revenue
+													from daily_report d 
+													inner join campaigns c on d.campaigns_id=c.id
+													inner join opportunities o on c.opportunities_id=o.id
+													inner join ios i on o.ios_id=i.id
+													inner join advertisers a on i.advertisers_id=a.id
+													inner join multi_rate m on d.id=m.daily_report_id
+													inner join carriers ca on m.carriers_id_carrier=ca.id_carrier
+													inner join geo_location g on ca.id_country=g.id_location													
+													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
+													AND d.revenue>0 
+													AND m.conv>0 ";
+		#Add filters to query
+		if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
+		if($io)	$query                 .=			"AND i.id=".$io." ";										
+		if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
+		if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
+		if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
+		$query.=									"group by i.id,g.id_location,m.rate,m.rate";
+		#If query find results
+		$i                           =0;
+		if($dailys=DailyReport::model()->findAllBySql($query)){
+			foreach ($dailys as $daily) {
+				$data[$i]['id']			 =$i;
+				$data[$i]['rate']        =$daily->rate;
+				$data[$i]['carrier']     =$daily->carrier;
+				$data[$i]['conv']        =$daily->conversions;					
+				$data[$i]['revenue']     =$daily->revenue;
+				$data[$i]['product']     =$daily->product;
+				$data[$i]['country']     =$daily->country;
+				$data[$i]['model']     =$daily->model;
+				$data[$i]['entity']     =$daily->entity;
+				$data[$i]['currency']     =$daily->currency;
+				$data[$i]['mobileBrand'] =$carriers->getMobileBrandById($daily->carrier);
+				$i++;
 			}
+		}
 
-			//$i++;
-		}
-		$result=array();
-		foreach ($data as $value) {
-			isset($result[$value['rate']]) ?  : $result[$value['rate']]=0;
-			$result[$value['rate']]+=$value['conv'];
-		}
-		$data=array();
-		$i=0;
-		foreach ($result as $rate => $conv) {
-			$data[$i]['id']=$i;
-			$data[$i]['rate']=$rate;
-			$data[$i]['conv']=$conv;
-			$data[$i]['revenue']=$rate*$conv;
-			$i++;
-		}
 		return $data;
 	}
 
@@ -419,4 +667,5 @@ class Ios extends CActiveRecord
 
 			));
 	}
+
 }

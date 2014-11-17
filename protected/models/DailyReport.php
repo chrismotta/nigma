@@ -48,6 +48,15 @@ class DailyReport extends CActiveRecord
 	public $off;
 	public $total;
 
+	public $io_id;
+	public $opp_id;
+	public $model;
+	public $carrier;
+	public $entity;
+	public $commercial_name;
+	public $product;
+	public $country;
+
 	/**
 	 * @return string the associated database table name
 	 */
