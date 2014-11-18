@@ -33,12 +33,12 @@ $('.search-form form').submit(function(){
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 	$opportunities   = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
+	$adv_categories     = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart = date('Y-m-d', strtotime($dateStart));
 	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunitie,$networks);
+	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -152,8 +152,13 @@ $('.search-form form').submit(function(){
 
 		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
 		//echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
-		echo KHtml::filterNetworks($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
-		echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
+		KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
+		
+
+
+		//echo KHtml::filterNetworks($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
+		//echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
+		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em"));
 	?>
 	  
 	SUM 
@@ -167,12 +172,12 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 
 <?php 
-	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
+	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks);
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum, $advertiser, $opportunities),
+	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

@@ -181,6 +181,57 @@ class KHtml extends CHtml
     }
 
     /**
+     * Create dropdown of networks
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'networks-select', 
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        if ( !$networks ) {
+            $networks = Networks::model()->findAll( array('order' => 'name') );
+            $networks = CHtml::listData($networks, 'id', 'name');
+        }
+
+        
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'networks',
+                'data' => $networks,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Networks',
+                    'width' => '20%',
+                ),
+            )
+        );
+
+
+
+
+
+        // $defaultHtmlOptions = array(
+        //     'empty' => 'All networks',
+        // );
+        // $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+
+        // if ( !$networks ) {
+        //     $networks = Networks::model()->findAll( array('order' => 'name') );
+        //     $networks = CHtml::listData($networks, 'id', 'name');
+        // }
+            
+        // return CHtml::dropDownList('networks', $value, $networks, $htmlOptions);
+    }
+
+    /**
      * Create dropdown of Advertisers Category
      * @param  $value
      * @param  $htmlOptions
@@ -194,6 +245,38 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         return CHtml::dropDownList('cat', $value, KHtml::enumItem(new Advertisers, 'cat'), $htmlOptions);
+    }
+
+    /**
+     * Create dropdown of Advertisers Category
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAdvertisersCategoryMulti($value, $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'advertisers-cat-select', 
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        $categories=KHtml::enumItem(new Advertisers, 'cat');
+
+        
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'advertisers-cat',
+                'data' => $categories,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Categories',
+                    'width' => '20%',
+                ),
+            )
+        );
     }
 
     /**

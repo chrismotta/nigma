@@ -184,7 +184,7 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunitie=null,$networks=null) {
+	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunities=null,$networks=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -211,13 +211,50 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
-		if ( $networks != NULL)$criteria->addCondition('networks.id ='.$networks);
+		if ( $networks != NULL) {
+			if(is_array($networks))
+			{
+				$query="(";
+				$i=0;
+				foreach ($networks as $net) {	
+					if($i==0)			
+						$query.="networks.id=".$net;
+					else
+						$query.=" OR networks.id=".$net;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('networks.id',$networks);
+			}
+		}
 		if ( $accountManager != NULL) {
 					$criteria->addCondition('accountManager.id ='.$accountManager);
 				}
-		if ( $opportunitie != NULL) {
-					$criteria->addCondition('opportunities.id ='.$opportunitie);
+		
+		if ( $opportunities != NULL) {
+			if(is_array($opportunities))
+			{
+				$query="(";
+				$i=0;
+				foreach ($opportunities as $opp) {	
+					if($i==0)			
+						$query.="opportunities.id=".$opp;
+					else
+						$query.=" OR opportunities.id=".$opp;
+					$i++;
 				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('opportunities.id',$opportunities);
+			}
+		}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
@@ -242,7 +279,7 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunitie=null,$networks=null) {
+	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunities=null,$networks=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate     = 'today';
@@ -269,13 +306,48 @@ class DailyReport extends CActiveRecord
 		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
 		
 		if ( $networks != NULL) {
-			$criteria->addCondition('networks.id ='.$networks);
+			if(is_array($networks))
+			{
+				$query="(";
+				$i=0;
+				foreach ($networks as $net) {	
+					if($i==0)			
+						$query.="networks.id=".$net;
+					else
+						$query.=" OR networks.id=".$net;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('networks.id',$networks);
+			}
 		}
 		if ( $accountManager != NULL) {
 			$criteria->addCondition('accountManager.id ='.$accountManager);
 		}
-		if ( $opportunitie != NULL) {
-			$criteria->addCondition('opportunities.id ='.$opportunitie);
+		
+		if ( $opportunities != NULL) {
+			if(is_array($opportunities))
+			{
+				$query="(";
+				$i=0;
+				foreach ($opportunities as $opp) {	
+					if($i==0)			
+						$query.="opportunities.id=".$opp;
+					else
+						$query.=" OR opportunities.id=".$opp;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('opportunities.id',$opportunities);
+			}
 		}
 
 		$r = DailyReport::model()->findAll( $criteria );
@@ -465,7 +537,7 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null,$sum=0,$advertiser=null,$opportunities=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -572,7 +644,7 @@ class DailyReport extends CActiveRecord
 		//search
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
-		if ( $networks == NULL) $criteria->compare('networks_id',$this->networks_id);
+		//if ( $networks == NULL) $criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('imp',$this->imp);
 		$criteria->compare('imp_adv',$this->imp_adv);
 		$criteria->compare('clics',$this->clics);
@@ -593,30 +665,80 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('networks.name',$this->network_name, true);
 		$criteria->compare('networks.has_api',$this->network_hasApi, true);
-		if ( $networks != NULL)$criteria->compare('networks.id',$networks);
+		//if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		if ( $accountManager != NULL) {
 			$criteria->compare('accountManager.id',$accountManager);
 		}
+
+
+
 		if ( $opportunities != NULL) {
-			$query="(";
-			$i=0;
-			foreach ($opportunities as $opp) {	
-				if($i==0)			
-					$query.="opportunities.id=".$opp;
-				else
-					$query.=" OR opportunities.id=".$opp;
-				$i++;
+			if(is_array($opportunities))
+			{
+				$query="(";
+				$i=0;
+				foreach ($opportunities as $opp) {	
+					if($i==0)			
+						$query.="opportunities.id=".$opp;
+					else
+						$query.=" OR opportunities.id=".$opp;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
 			}
-			$query.=")";
-			$criteria->addCondition($query);
+			else
+			{
+				$criteria->compare('opportunities.id',$opportunities);
+			}
 		}
-		if ( $opportunitie != NULL) {
-			$criteria->compare('opportunities.id',$opportunitie);
+
+		if ( $networks != NULL) {
+			if(is_array($networks))
+			{
+				$query="(";
+				$i=0;
+				foreach ($networks as $net) {	
+					if($i==0)			
+						$query.="networks.id=".$net;
+					else
+						$query.=" OR networks.id=".$net;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('networks.id',$networks);
+			}
 		}
-		if ( $advertiser != NULL ){
-			$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
+
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
 		}
+
+		// if ( $advertiser != NULL ){
+		// 	$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
+		// }
 		// external name
 		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
 		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
