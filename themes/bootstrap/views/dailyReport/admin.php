@@ -330,39 +330,42 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'              => 'profit_percent',
-			'value'             => $sum ? '$data->revenue == 0 ? "0%" : round($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'round($data->profit_percent*100)."%"',
+			'value'             => $sum ? '$data->revenue == 0 ? "0%" : number_format($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'number_format($data->profit_percent*100)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['profitperc']*100)."%",
 		),
 		array(
 			'name'              => 'click_through_rate',
-			'value'             => 'number_format($data->click_through_rate * 100, 2) . "%"',
+			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['ctr']*100)."%",
 		),
 		array(
 			'name'              => 'conversion_rate',
-			'value'             => 'number_format($data->conversion_rate * 100, 2) . "%"',
+			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => ($totals['cr']*100)."%",
 		),
 		array(
 			'name'              => 'eCPM',
+			'value'             => $sum ? 'number_format($data->getECPM(), 2)' : '$data->eCPM', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['ecpm'],
 		),
 		array(
 			'name'              => 'eCPC',
+			'value'             => $sum ? 'number_format($data->getECPC(), 2)' : '$data->eCPC', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['ecpc'],
 		),
 		array(
 			'name'              => 'eCPA',
+			'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['ecpa'],
