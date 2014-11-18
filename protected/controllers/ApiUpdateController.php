@@ -23,11 +23,11 @@ class ApiUpdateController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher'),
 				'roles'=>array('admin', 'media_manager'),
 			),
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
@@ -184,6 +184,16 @@ class ApiUpdateController extends Controller
 			$adultmoda->downloadInfo();
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
+		}
+	}
+
+	public function actionAjillionPublisher()
+	{
+		try {
+			$ajillion = new AjillionPublisher;
+			$ajillion->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.publisher');			
 		}
 	}
 

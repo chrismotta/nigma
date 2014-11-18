@@ -82,7 +82,7 @@
                 */
                 array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Profile', 'url'=>'#'),
+                    array('label'=>'Profile', 'url'=>array('/users/profile')),
                     array('label'=>'Users', 'url'=>array('/users/admin')),
                     array('label'=>'Configuration', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),

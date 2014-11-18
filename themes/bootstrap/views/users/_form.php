@@ -24,7 +24,7 @@
         <?php 
 
         if ( ! $model->isNewRecord ) {
-    		echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
+    		echo $form->hiddenField($model, 'id');
     	}
     	echo $form->textFieldRow($model, 'username', array('class'=>'span3'));
     	echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
