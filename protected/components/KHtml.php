@@ -105,7 +105,7 @@ class KHtml extends CHtml
             $accountManagerId=Yii::app()->user->id;
 
         if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManager);
+            $criteria->compare('account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
         $data=array();
