@@ -66,11 +66,11 @@ class Smaato
 
 		if ( !$dailyReport->campaigns_id ) {
 			Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'warning', 'system.model.api.smaato');
-			continue;
+			return;
 		}
 		$data = $campaign['country']['data'];
 		if ( $data['impressions']['value'] == 0 && $data['clicks']['value'] == 0 ) { // if no impressions dismiss campaign
-			continue;
+			return;
 		}
 
 		$dailyReport->date        = $date;
@@ -84,7 +84,7 @@ class Smaato
 		$dailyReport->setNewFields();
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $campaign['attr']['name'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.smaato');
-			continue;
+			return;
 		}
 	}
 }
