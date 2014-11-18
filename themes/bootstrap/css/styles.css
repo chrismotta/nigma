@@ -91,10 +91,15 @@ rect[Attributes Style] {
 }
 /* GRAFICOS BARRAS */
 
+/*gutter*/
+/*
 [class*="span"] {
 	margin: 0px;
 }
-
+.row {
+	margin-left: 0px;
+}
+*/
 #page {
     padding-top: 60px;
 }
@@ -110,9 +115,6 @@ footer .navbar-inner small {
 }
 #blank-row {
 	height: 50px;
-}
-.row {
-	margin-left: 0px;
 }
 
 .grid-view .button-column {
@@ -280,4 +282,12 @@ fieldset hr {
 }
 .expired{
 	background-position:-139px 0px;
+}
+
+/* totals-bar */
+.totals-bar {
+}
+.totals-bar h3 {
+	line-height: 20px;
+	margin: 0px;
 }

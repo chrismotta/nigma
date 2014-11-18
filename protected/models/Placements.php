@@ -105,6 +105,18 @@ class Placements extends CActiveRecord
 		));
 	}
 
+	public function findByPublisherId($id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->compare("t.publishers_id", $id);
+		
+		return new CActiveDataProvider($this, array(
+			'criteria'   =>$criteria,
+			'pagination' =>false,
+		));
+	
+	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
