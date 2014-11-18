@@ -2,21 +2,17 @@
 /* @var $this FinanceController */
 /* @var $model Finance */
 
-$path    = 'uploads/';
-$name    = 'KickAds-Clients.xls';
-$year    =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
-$month   =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
-$entity   =isset($_POST['entity']) ? $_POST['entity'] : null;
-//echo json_encode($model->getClients($month,$year));
-$clients =Ios::getClients($month,$year,$entity);
+$path         = 'uploads/';
+$name         = 'KickAds-Clients.xls';
+$year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
+$month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
+$entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
+$cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
+$status       =isset($_POST['status']) ? $_POST['status'] : null;
+$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status);
 
-$dataProvider=new CArrayDataProvider($clients, array(
+$dataProvider =new CArrayDataProvider($clients['data'], array(
     'id'=>'clients',
-    // 'sort'=>array(
-    //     'attributes'=>array(
-    //          'id', 'username', 'email',
-    //     ),
-    // ),
     'pagination'=>array(
         'pageSize'=>30,
     ),

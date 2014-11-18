@@ -28,8 +28,13 @@ class UsersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles'),
+				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles','profile'),
 				'roles'=>array('admin'),
+			),
+			array('allow', 
+				'actions'=>array('profile'),
+				//'roles'=>array('admin'),
+				'users'=>array('@'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
@@ -115,6 +120,10 @@ class UsersController extends Controller
 	 */
 	public function actionDelete($id)
 	{
+		foreach ( Yii::app()->authManager->getRoles($id) as $role => $value ) {
+			Yii::app()->authManager->revoke($role, $id);
+		}
+
 		$this->loadModel($id)->delete();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
@@ -219,6 +228,32 @@ class UsersController extends Controller
 		$this->renderPartial('_form',array(
 			'model'        =>$model,
 			'status'       =>$status,
+		), false, true);
+	}
+
+	public function actionProfile()
+	{
+		$model=$this->loadModel(Yii::App()->user->getId());
+		$model->repeat_password = $model->password;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+
+		if(isset($_POST['Users']))
+		{	
+			$oldPassword = $model->password;
+           	$model->attributes = $_POST['Users'];
+           	if ($model->password != $oldPassword) {
+				$model->password        = sha1($model->password);
+				$model->repeat_password = sha1($model->repeat_password);
+           	}
+
+			if($model->save())
+				$this->redirect(array('profile'));
+		}
+
+		$this->render('profile',array(
+			'model'        =>$model,
 		), false, true);
 	}
 }

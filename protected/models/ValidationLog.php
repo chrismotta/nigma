@@ -1,29 +1,26 @@
 <?php
 
 /**
- * This is the model class for table "carriers".
+ * This is the model class for table "validation_log".
  *
- * The followings are the available columns in table 'carriers':
- * @property integer $id_carrier
+ * The followings are the available columns in table 'validation_log':
+ * @property integer $id
  * @property string $status
- * @property integer $id_country
- * @property string $mobile_brand
- * @property string $isp
- * @property string $domain
+ * @property string $date
+ * @property string $ip
+ * @property integer $ios_validation_id
  *
  * The followings are the available model relations:
- * @property GeoLocation $idCountry
- * @property Opportunities[] $opportunities
- * @property MultiRate[] $multiRates
+ * @property IosValidation $iosValidation
  */
-class Carriers extends CActiveRecord
+class ValidationLog extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'carriers';
+		return 'validation_log';
 	}
 
 	/**
@@ -34,14 +31,13 @@ class Carriers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('status', 'required'),
-			array('id_country', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>8),
-			array('mobile_brand, domain', 'length', 'max'=>128),
-			array('isp', 'length', 'max'=>255),
+			array('date', 'required'),
+			array('ios_validation_id', 'numerical', 'integerOnly'=>true),
+			array('status', 'length', 'max'=>13),
+			array('ip', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id_carrier, status, id_country, mobile_brand, isp, domain', 'safe', 'on'=>'search'),
+			array('id, status, date, ip, ios_validation_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,9 +49,7 @@ class Carriers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'idCountry' => array(self::BELONGS_TO, 'GeoLocation', 'id_country'),
-			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'carriers_id'),
-			'multiRates' => array(self::HAS_MANY, 'MultiRate', 'carriers_id_carrier'),
+			'iosValidation' => array(self::BELONGS_TO, 'IosValidation', 'ios_validation_id'),
 		);
 	}
 
@@ -65,12 +59,11 @@ class Carriers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id_carrier' => 'Id Carrier',
+			'id' => 'ID',
 			'status' => 'Status',
-			'id_country' => 'Id Country',
-			'mobile_brand' => 'Mobile Brand',
-			'isp' => 'Isp',
-			'domain' => 'Domain',
+			'date' => 'Date',
+			'ip' => 'Ip',
+			'ios_validation_id' => 'Ios Validation',
 		);
 	}
 
@@ -92,37 +85,37 @@ class Carriers extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id_carrier',$this->id_carrier);
+		$criteria->compare('id',$this->id);
 		$criteria->compare('status',$this->status,true);
-		$criteria->compare('id_country',$this->id_country);
-		$criteria->compare('mobile_brand',$this->mobile_brand,true);
-		$criteria->compare('isp',$this->isp,true);
-		$criteria->compare('domain',$this->domain,true);
+		$criteria->compare('date',$this->date,true);
+		$criteria->compare('ip',$this->ip,true);
+		$criteria->compare('ios_validation_id',$this->ios_validation_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
 	}
-	public function getCountryById($id)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->addCondition("id_carrier='".$id."'");
-		return self::model()->find($criteria)->id_country;
-	}
-	public function getMobileBrandById($id)
-	{
-		$criteria = new CDbCriteria;
-		$criteria->addCondition("id_carrier='".$id."'");
-		return self::model()->find($criteria)->mobile_brand;
-	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Carriers the static model class
+	 * @return ValidationLog the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function loadLog($ios_validation_id,$status)
+	{
+		$date =date('Y-m-d H:i:s', strtotime('NOW'));
+		$ip   =$_SERVER['REMOTE_ADDR'];
+		$log = new Self;
+		$log->attributes=array('ios_validation_id'=>$ios_validation_id,'status'=>$status,'date'=>$date,'ip'=>$ip);
+		if($log->save())
+			return true;
+		else
+			return false;
 	}
 }

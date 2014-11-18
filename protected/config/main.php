@@ -17,6 +17,10 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'root',
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
+
 				);
 				
 				$mailLog = array(
@@ -34,6 +38,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'root',
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -54,6 +61,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -85,6 +95,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -121,6 +134,7 @@ return array(
 	'import' =>array(
 		'application.models.*',
 		'application.models.api.*',
+		'application.models.api.publisher.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',
@@ -224,7 +238,7 @@ return array(
 					'connectionID' =>'db',
 					'logTableName' =>'log',
 					'levels'       =>'info, profile, error, warning',
-					'categories'   =>'system.*',
+					'categories'   =>array('php.*', 'exception.*', 'system.*'),
                 ),
                 $mailLog,
         	),

@@ -13,11 +13,11 @@ class ClicksLogController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData'),
+				'actions'=>array('updateClicksData', 'updateQuery'),
 				'roles'=>array('admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData'),
+				'actions'=>array('updateClicksData', 'updateQuery'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
@@ -112,12 +112,17 @@ class ClicksLogController extends Controller
 		$model->keyword      = isset($_GET["g_key"]) ? $_GET["g_key"] : null;
 		$model->creative     = isset($_GET["g_cre"]) ? $_GET["g_cre"] : null;
 		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
-		
+
+		$tmp = array();
+		if (preg_match('/q=[^\&]*/', $model->referer, $tmp)) {
+			$model->query = urldecode(substr($tmp[0], 2));
+		}
+
 
 		$ts['model']         = microtime(true);
 		
 		
-		if($test || $campaign->post_data == '1'){
+		// if($test || $campaign->post_data == '1'){
 		
 			// Get ip data
 
@@ -148,13 +153,18 @@ class ClicksLogController extends Controller
 				$wurfl = WurflManager::loadWurfl();
 				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
 				
-				$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
-				$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+				$model->device          = $device->getCapability('brand_name');
+				$model->device_model    = $device->getCapability('marketing_name');
+				$model->os              = $device->getCapability('device_os');
+				$model->os_version      = $device->getCapability('device_os_version');
+				$model->browser         = $device->getVirtualCapability('advertised_browser');
+				$model->browser_version = $device->getVirtualCapability('advertised_browser_version');
+
 			}
 
 			$ts['wurfl'] = microtime(true);
 
-		}
+		// }
 		
 
 		//var_dump($model);
@@ -214,13 +224,16 @@ class ClicksLogController extends Controller
 			//enviar macros
 
 			if($campaign->post_data == '1'){
-				$redirectURL.= "&os=".$model->os;
-				$redirectURL.= "&device=".$model->device;
-				$redirectURL.= "&country=".$model->country;
-				$redirectURL.= "&carrier=".$model->carrier;
-				$redirectURL.= "&referer=".$model->referer;
-				$redirectURL.= "&app=".$model->app;
-				$redirectURL.= "&kw=".$model->keyword;
+
+				$dataQuery['os']      = $model->os."-".$model->os_version;
+				$dataQuery['device']  = $model->device."-".$model->device_model;
+				$dataQuery['country'] = $model->country;
+				$dataQuery['carrier'] = $model->carrier;
+				$dataQuery['referer'] = $model->referer;
+				$dataQuery['app']     = $model->app;
+				$dataQuery['keyword'] = $model->keyword;
+
+				$redirectURL.= '&'.http_build_query($dataQuery, null, '&', PHP_QUERY_RFC3986);
 			}
 			
 			
@@ -239,10 +252,10 @@ class ClicksLogController extends Controller
 				// redirect to campaign url
 				if($test){
 					echo json_encode($ts);
+					die($redirectURL);
 				}else{
 					//$this->redirect($redirectURL);
 					header("Location: ".$redirectURL);
-					die();
 				}
 			}else{
 				echo "no redirect";
@@ -369,6 +382,62 @@ class ClicksLogController extends Controller
 
 			$click->save();
 			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
+		}
+		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
+
+	}
+
+	public function actionUpdateQuery() 
+	{
+		set_time_limit(1000000);
+
+		if (isset($_GET['useUTC'])) {
+			date_default_timezone_set('UTC');
+		}
+
+		if (isset($_GET['date']) && isset($_GET['hourFrom']) && isset($_GET['hourTo'])) {
+			$date     = $_GET['date'];
+			$hourFrom = $_GET['hourFrom'];
+			$hourTo   = $_GET['hourTo'];
+		} else {
+			echo "Missing parameters: date, hourFrom, hourTo";
+			return;
+		}
+
+		$timestampFrom = new DateTime($date . ' ' . $hourFrom . ':00');
+		$timestampTo   = new DateTime($date . ' ' . $hourTo . ':00');
+
+		$criteria=new CDbCriteria;
+		$criteria->compare('date', '>=' . $timestampFrom->format('Y-m-d H:i:s'));
+		$criteria->compare('date', '<=' . $timestampTo->format('Y-m-d H:i:s'));
+		$criteria->compare('networks_id', '4');
+		// $criteria->addCondition('query IS NULL');
+		$dataProvider = new CActiveDataProvider("ClicksLog", array(
+			'criteria'   => $criteria,
+			'pagination' => array(
+                'pageSize' => 100,
+            ),
+		));
+		$iterator = new CDataProviderIterator($dataProvider);
+
+		echo 'total: '.count($iterator).'<hr/>';
+		$timeBegin = time();
+		$countClicks = 0;
+		foreach ($iterator as $click) {
+			$countClicks++;
+
+			if ( $click->query !== NULL ) {
+				echo $countClicks . " - " . $click->date . " - " . $click->id . " - " . $click->query . "<br/>";
+				continue;
+			}
+
+			$tmp = array();
+			if (preg_match('/q=[^\&]*/', $click->referer, $tmp)) {
+				$click->query = urldecode(substr($tmp[0], 2));
+			}
+			
+			$click->save();
+			echo $countClicks . " - " . $click->date . " - " . $click->id . " - " . $click->query . " - updated<br/>";
 		}
 		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
 

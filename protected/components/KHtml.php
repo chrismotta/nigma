@@ -117,16 +117,19 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterNetworks($value, $htmlOptions = array())
+    public static function filterNetworks($value, $networks=NULL, $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
             'empty' => 'All networks',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        $networks = Networks::model()->findAll( array('order' => 'name') );
-        $list     = CHtml::listData($networks, 'id', 'name');
-        return CHtml::dropDownList('networks', $value, $list, $htmlOptions);
+        if ( !$networks ) {
+            $networks = Networks::model()->findAll( array('order' => 'name') );
+            $networks = CHtml::listData($networks, 'id', 'name');
+        }
+            
+        return CHtml::dropDownList('networks', $value, $networks, $htmlOptions);
     }
 
     /**

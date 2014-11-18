@@ -71,7 +71,7 @@ class Campaigns extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, networks_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
-			array('networks_id, campaign_categories_id, wifi, formats_id, ip, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
+			array('networks_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			array('cap', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
@@ -184,7 +184,7 @@ class Campaigns extends CActiveRecord
 		if ($accountManager != NULL)
 			$criteria->compare('accountManager.id',$accountManager, true);
 		$criteria->compare('opportunities_id',$opportunitie,true);
-		$criteria->compare('t.networks_id',$networks,true);
+		$criteria->compare('t.networks_id',$networks);
 		$criteria->compare('advertisers.cat',$advertiser,true);
 
 		//nomenclatura
