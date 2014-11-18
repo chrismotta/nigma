@@ -464,13 +464,15 @@ class CampaignsController extends Controller
 	
 	public function actionExcelReport()
 	{
+		$id= isset($_GET['id']) ? $_GET['id'] : NULL;
 		if( isset($_POST['excel-traffic']) ) {
 			$this->renderPartial('excelReport', array(
-				'model' => new Campaigns,
-			));
+					'model' => new Campaigns,
+					//'id'	=> $id
+				));	
 		}
 
-		$this->renderPartial('_excelReport', array(), false, true);
+		$this->renderPartial('_excelReport', array('id'=>$id), false, true);
 	}
 	
 	public function actionFetchCampaigns()
