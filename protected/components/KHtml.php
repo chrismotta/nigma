@@ -80,6 +80,53 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
+   /**
+     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
+     * @param  $value
+     * @param  $accountManagerId 
+     * @param  $accountManagerId 
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterOpportunitiesMulti($value, $accountManagerId=NULL, $htmlOptions = array())
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'opportunities-select', 
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->order = 'advertisers.name, country.ISO2';
+
+
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManagerId=Yii::app()->user->id;
+
+        if ( $accountManagerId != NULL )
+            $criteria->compare('account_manager_id', $accountManager);
+
+        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $data=array();
+        foreach ($opps as $opp) {
+            $data[$opp->id]=$opp->getVirtualName();
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'opportunities',
+                'data' => $data,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Opportunities',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+
     /**
      * Create dropdown of Account Managers
      * @param  $value
@@ -101,6 +148,7 @@ class KHtml extends CHtml
                     {
                         // alert(data);
                         $(".opportunitie-dropdownlist").html(data);
+                        $("#opportunities-select").html(data);
                     }
                 )'
         );

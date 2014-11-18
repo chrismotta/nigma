@@ -31,6 +31,7 @@ $('.search-form form').submit(function(){
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$opportunities   = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
@@ -147,8 +148,10 @@ $('.search-form form').submit(function(){
 	<?php 
 		if (FilterManager::model()->isUserTotalAccess('daily'))
 			echo KHtml::filterAccountManagers($accountManager);
-		
-		echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
+
+
+		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
+		//echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
 		echo KHtml::filterNetworks($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
 		echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
 	?>
@@ -169,7 +172,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum, $advertiser),
+	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum, $advertiser, $opportunities),
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

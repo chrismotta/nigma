@@ -465,7 +465,7 @@ class DailyReport extends CActiveRecord
 		return $dataDash;
 	}
 
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null,$sum=0,$advertiser=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunitie=null,$networks=null,$sum=0,$advertiser=null,$opportunities=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -597,6 +597,19 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		if ( $accountManager != NULL) {
 			$criteria->compare('accountManager.id',$accountManager);
+		}
+		if ( $opportunities != NULL) {
+			$query="(";
+			$i=0;
+			foreach ($opportunities as $opp) {	
+				if($i==0)			
+					$query.="opportunities.id=".$opp;
+				else
+					$query.=" OR opportunities.id=".$opp;
+				$i++;
+			}
+			$query.=")";
+			$criteria->addCondition($query);
 		}
 		if ( $opportunitie != NULL) {
 			$criteria->compare('opportunities.id',$opportunitie);
