@@ -232,9 +232,25 @@ class DailyReport extends CActiveRecord
 			}
 		}
 		if ( $accountManager != NULL) {
-					$criteria->addCondition('accountManager.id ='.$accountManager);
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
 				}
-		
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
 		if ( $opportunities != NULL) {
 			if(is_array($opportunities))
 			{
@@ -326,9 +342,25 @@ class DailyReport extends CActiveRecord
 			}
 		}
 		if ( $accountManager != NULL) {
-			$criteria->addCondition('accountManager.id ='.$accountManager);
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
 		}
-		
 		if ( $opportunities != NULL) {
 			if(is_array($opportunities))
 			{
@@ -668,10 +700,25 @@ class DailyReport extends CActiveRecord
 		//if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		if ( $accountManager != NULL) {
-			$criteria->compare('accountManager.id',$accountManager);
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
 		}
-
-
 
 		if ( $opportunities != NULL) {
 			if(is_array($opportunities))
