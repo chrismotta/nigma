@@ -80,53 +80,6 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
-   /**
-     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
-     * @param  $value
-     * @param  $accountManagerId 
-     * @param  $accountManagerId 
-     * @param  $htmlOptions
-     * @return html for dropdown
-     */
-    public static function filterOpportunitiesMulti($value, $accountManagerId=NULL, $htmlOptions = array())
-    {
-
-        $defaultHtmlOptions = array(
-            'multiple' => 'multiple',
-            'id' => 'opportunities-select', 
-        );
-        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
-        $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers', 'country');
-        $criteria->order = 'advertisers.name, country.ISO2';
-
-
-        if (FilterManager::model()->isUserTotalAccess('media'))
-            $accountManagerId=Yii::app()->user->id;
-
-        if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
-
-        $opps = Opportunities::model()->with('ios')->findAll($criteria);
-        $data=array();
-        foreach ($opps as $opp) {
-            $data[$opp->id]=$opp->getVirtualName();
-        }
-        return Yii::app()->controller->widget(
-                'yiibooster.widgets.TbSelect2',
-                array(
-                'name' => 'opportunities',
-                'data' => $data,
-                'value'=>$value,
-                'htmlOptions' => $htmlOptions,
-                'options' => array(
-                    'placeholder' => 'All Opportunities',
-                    'width' => '20%',
-                ),
-            )
-        );
-    }
-
     /**
      * Create dropdown of Account Managers
      * @param  $value
@@ -181,57 +134,6 @@ class KHtml extends CHtml
     }
 
     /**
-     * Create dropdown of networks
-     * @param  $value
-     * @param  $htmlOptions
-     * @return html for dropdown
-     */
-    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array())
-    {
-        $defaultHtmlOptions = array(
-            'multiple' => 'multiple',
-            'id' => 'networks-select', 
-        );
-        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
-        
-        if ( !$networks ) {
-            $networks = Networks::model()->findAll( array('order' => 'name') );
-            $networks = CHtml::listData($networks, 'id', 'name');
-        }
-
-        
-        return Yii::app()->controller->widget(
-                'yiibooster.widgets.TbSelect2',
-                array(
-                'name' => 'networks',
-                'data' => $networks,
-                'value'=>$value,
-                'htmlOptions' => $htmlOptions,
-                'options' => array(
-                    'placeholder' => 'All Networks',
-                    'width' => '20%',
-                ),
-            )
-        );
-
-
-
-
-
-        // $defaultHtmlOptions = array(
-        //     'empty' => 'All networks',
-        // );
-        // $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
-
-        // if ( !$networks ) {
-        //     $networks = Networks::model()->findAll( array('order' => 'name') );
-        //     $networks = CHtml::listData($networks, 'id', 'name');
-        // }
-            
-        // return CHtml::dropDownList('networks', $value, $networks, $htmlOptions);
-    }
-
-    /**
      * Create dropdown of Advertisers Category
      * @param  $value
      * @param  $htmlOptions
@@ -245,38 +147,6 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         return CHtml::dropDownList('cat', $value, KHtml::enumItem(new Advertisers, 'cat'), $htmlOptions);
-    }
-
-    /**
-     * Create dropdown of Advertisers Category
-     * @param  $value
-     * @param  $htmlOptions
-     * @return html for dropdown
-     */
-    public static function filterAdvertisersCategoryMulti($value, $htmlOptions = array())
-    {
-        $defaultHtmlOptions = array(
-            'multiple' => 'multiple',
-            'id' => 'advertisers-cat-select', 
-        );
-        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
-        
-        $categories=KHtml::enumItem(new Advertisers, 'cat');
-
-        
-        return Yii::app()->controller->widget(
-                'yiibooster.widgets.TbSelect2',
-                array(
-                'name' => 'advertisers-cat',
-                'data' => $categories,
-                'value'=>$value,
-                'htmlOptions' => $htmlOptions,
-                'options' => array(
-                    'placeholder' => 'All Categories',
-                    'width' => '20%',
-                ),
-            )
-        );
     }
 
     /**
@@ -369,6 +239,163 @@ class KHtml extends CHtml
         ), true);
     }
 
-}
+//Filters select2
 
+   /**
+     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
+     * @param  $value
+     * @param  $accountManagerId 
+     * @param  $accountManagerId 
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterOpportunitiesMulti($value, $accountManagerId=NULL, $htmlOptions = array())
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'opportunities-select', 
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->order = 'advertisers.name, country.ISO2';
+
+
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManagerId=Yii::app()->user->id;
+
+        if ( $accountManagerId != NULL )
+            $criteria->compare('account_manager_id', $accountManagerId);
+
+        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $data=array();
+        foreach ($opps as $opp) {
+            $data[$opp->id]=$opp->getVirtualName();
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'opportunities',
+                'data' => $data,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Opportunities',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }    
+
+    /**
+     * Create dropdown of Advertisers Category
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAdvertisersCategoryMulti($value, $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'advertisers-cat-select', 
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        $categories=KHtml::enumItem(new Advertisers, 'cat');
+
+        
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'advertisers-cat',
+                'data' => $categories,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Categories',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+
+    /**
+     * Create dropdown of networks
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'networks-select', 
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        if ( !$networks ) {
+            $networks = Networks::model()->findAll( array('order' => 'name') );
+            $networks = CHtml::listData($networks, 'id', 'name');
+        }
+
+        
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'networks',
+                'data' => $networks,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Networks',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+    
+    /**
+     * Create dropdown of Account Managers
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAccountManagersMulti($value, $htmlOptions = array())
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'id' => 'accountManager-select', 
+            'onChange' => '
+                $.post(
+                    "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities/?"+$("#accountManager-select").serialize(),
+                    "",
+                    function(data)
+                    {
+                        $("#opportunities-select").html(data);
+                    }
+                )'
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        $medias = Users::model()->findUsersByRole('media');
+        $list   = CHtml::listData($medias, 'id', 'FullName');
+
+        
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name' => 'accountManager',
+                'data' => $list,
+                'value'=>$value,
+                'htmlOptions' => $htmlOptions,
+                'options' => array(
+                    'placeholder' => 'All Managers',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+
+}
 ?>

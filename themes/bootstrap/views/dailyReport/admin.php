@@ -147,17 +147,9 @@ $('.search-form form').submit(function(){
 	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
 	<?php 
 		if (FilterManager::model()->isUserTotalAccess('daily'))
-			echo KHtml::filterAccountManagers($accountManager);
-
-
+			KHtml::filterAccountManagersMulti($accountManager);
 		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
-		//echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
 		KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
-		
-
-
-		//echo KHtml::filterNetworks($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
-		//echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
 		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em"));
 	?>
 	  
