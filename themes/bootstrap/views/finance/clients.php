@@ -6,7 +6,28 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
+?>
+
+<div class="row totals-bar ">
+<?php
+$span = floor( 12 / count($totals->getData()) );
+$alert = array('error', 'info', 'success', 'warning', 'muted');
+$i = 0;
+foreach($totals->getData() as $total){
+	echo '
+	<div class="span'.$span.'">
+		<div class="alert alert-'.$alert[$i].'">
+			<small >TOTAL</small>
+			<h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+		</div>
+	</div>
+	';
+	$i++;
+}
+?>
+</div>
 		
+<?php
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
@@ -19,7 +40,7 @@ $stat   =isset($_GET['status']) ? $_GET['status'] : null;
 $log    =new ValidationLog;
 $ios    =new Ios;
 ?>
-<br>
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
@@ -255,26 +276,7 @@ $ios    =new Ios;
 	),
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
-<?php 
-	$this->widget('yiibooster.widgets.TbGroupGridView', array(
-	'id'                         => 'totals-grid',
-	'dataProvider'               => $totals,
-	'type'                       => 'striped condensed',	
-	'template'                   => '{items} {pager}',
-	'columns'                    => array(
-		array(
-			'name'              =>	'currency',
-			'value'             =>'$data["currency"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'Currency',                           
-			),	
-		array(
-			'name'                =>'total',
-			'value'               =>'$data["total"]',	
-			'header'              =>'Total', 
-			),			
-		),
-)); ?>
+
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
 
 		<div class="modal-header"></div>
