@@ -138,7 +138,7 @@ class DailyReport extends CActiveRecord
 	}
 
 
-	public function excel($startDate=NULL, $endDate=NULL, $sum=0)
+	public function excel($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		$criteria=new CDbCriteria;
 		//$criteria->compare('t.id',$this->id);
@@ -146,7 +146,86 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 	    }
-
+	    if ( $networks != NULL) {
+			if(is_array($networks))
+			{
+				$query="(";
+				$i=0;
+				foreach ($networks as $net) {	
+					if($i==0)			
+						$query.="networks.id=".$net;
+					else
+						$query.=" OR networks.id=".$net;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('networks.id',$networks);
+			}
+		}
+		if ( $accountManager != NULL) {
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
+		if ( $opportunities != NULL) {
+			if(is_array($opportunities))
+			{
+				$query="(";
+				$i=0;
+				foreach ($opportunities as $opp) {	
+					if($i==0)			
+						$query.="opportunities.id=".$opp;
+					else
+						$query.=" OR opportunities.id=".$opp;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('opportunities.id',$opportunities);
+			}
+		}
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
 		//sumas
 		if($sum==1){
 			$criteria->group  = 'campaigns_id';
@@ -184,7 +263,7 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunities=null,$networks=null) {
+	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunities=null,$networks=null,$adv_categories=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -210,7 +289,7 @@ class DailyReport extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		if ( $networks != NULL) {
 			if(is_array($networks))
 			{
@@ -271,6 +350,26 @@ class DailyReport extends CActiveRecord
 				$criteria->compare('opportunities.id',$opportunities);
 			}
 		}
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
@@ -282,20 +381,20 @@ class DailyReport extends CActiveRecord
 		}
 		
 		foreach ($dataTops as $date => $data) {
-			$spends[]=$data['spends'];
-			$revenues[]=$data['revenues'];
-			$profits[]=$data['profits'];
-			$impressions[]=$data['impressions'];
-			$conversions[]=$data['conversions'];
-			$clics[]=$data['clics'];
-			$dates[]=$date;
+			$spends[]      =$data['spends'];
+			$revenues[]    =$data['revenues'];
+			$profits[]     =$data['profits'];
+			$impressions[] =$data['impressions'];
+			$conversions[] =$data['conversions'];
+			$clics[]       =$data['clics'];
+			$dates[]       =$date;
 		}
 		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'impressions' => $impressions, 'conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
 		
 		return $result;
 	}
 
-	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunities=null,$networks=null) {
+	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunities=null,$networks=null,$adv_categories=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate     = 'today';
@@ -319,7 +418,7 @@ class DailyReport extends CActiveRecord
 		$criteria = new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		
 		if ( $networks != NULL) {
 			if(is_array($networks))
@@ -381,7 +480,26 @@ class DailyReport extends CActiveRecord
 				$criteria->compare('opportunities.id',$opportunities);
 			}
 		}
-
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
 		$r = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$imp      += $value->imp;
@@ -394,14 +512,14 @@ class DailyReport extends CActiveRecord
 			$profit   += $value->profit;
 		}
 
-		$impt = $imp_adv == 0 ? $imp : $imp_adv;
-		$convt = $conv_adv == 0 ? $conv_s2s : $conv_adv;
-		$ctr = $impt == 0 ? 0 : number_format($clics / $impt, 2);
-		$cr=$clics == 0 ? 0 : number_format( $convt / $clics, 2 );
-		$profitperc=$revenue == 0 ? 0 : number_format($profit / $revenue, 2);
-		$ecpm=$impt == 0 ? 0 : number_format($spend * 1000 / $impt, 2);
-		$ecpc=$clics == 0 ? 0 : number_format($spend / $clics, 2);
-		$ecpa=$convt == 0 ? 0 : number_format($spend / $convt, 2);
+		$impt       = $imp_adv == 0 ? $imp : $imp_adv;
+		$convt      = $conv_adv == 0 ? $conv_s2s : $conv_adv;
+		$ctr        = $impt == 0 ? 0 : number_format($clics / $impt, 2);
+		$cr         =$clics == 0 ? 0 : number_format( $convt / $clics, 2 );
+		$profitperc =$revenue == 0 ? 0 : number_format($profit / $revenue, 2);
+		$ecpm       =$impt == 0 ? 0 : number_format($spend * 1000 / $impt, 2);
+		$ecpc       =$clics == 0 ? 0 : number_format($spend / $clics, 2);
+		$ecpa       =$convt == 0 ? 0 : number_format($spend / $convt, 2);
 
 		$result=array(
 			'imp'		=> $imp,

@@ -7,15 +7,21 @@ set_time_limit(1000);
 $path = 'uploads/';
 $name = 'KickAds-DailyReport.xls';
 
-$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
-$dateEnd   = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
-$sum       = isset($_POST['sum']) ? $_POST['sum'] : '0';
+$dateStart      = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
+$dateEnd        = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
+$accountManager = isset($_POST['excel-accountManager']) ? $_POST['excel-accountManager'] : NULL;
+$opportunitie   = isset($_POST['excel-opportunitie']) ? $_POST['excel-opportunitie'] : NULL;
+$opportunities  = isset($_POST['excel-opportunities']) ? $_POST['excel-opportunities'] : NULL;
+$networks       = isset($_POST['excel-networks']) ? $_POST['excel-networks'] : NULL;
+$adv_categories = isset($_POST['excel-advertisers-cat']) ? $_POST['excel-advertisers-cat'] : NULL;
+$sum            = isset($_POST['sum']) ? $_POST['sum'] : 0;
+
 
 $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
 
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel($dateStart, $dateEnd, $sum),
+    'dataProvider' => $model->excel($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
@@ -65,10 +71,10 @@ $this->widget('EExcelWriter', array(
         'imp',
         'imp_adv',
         'clics',        
-        array(
-            'name'  => 'clics_redirect',
-            'value' => 'Campaigns::model()->getClicksRedirect($data->date, $data->date, $data->campaigns_id)',
-        ),
+        // array(
+        //     'name'  => 'clics_redirect',
+        //     'value' => 'Campaigns::model()->getClicksRedirect($data->date, $data->date, $data->campaigns_id)',
+        // ),
         'conv_api',
         'conv_adv',
         array(

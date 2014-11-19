@@ -254,7 +254,6 @@ class KHtml extends CHtml
 
         $defaultHtmlOptions = array(
             'multiple' => 'multiple',
-            'id' => 'opportunities-select', 
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
@@ -294,11 +293,10 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAdvertisersCategoryMulti($value, $htmlOptions = array())
+    public static function filterAdvertisersCategoryMulti($value, $htmlOptions = array(),$name)
     {
         $defaultHtmlOptions = array(
             'multiple' => 'multiple',
-            'id' => 'advertisers-cat-select', 
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
@@ -308,7 +306,7 @@ class KHtml extends CHtml
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
-                'name' => 'advertisers-cat',
+                'name' => $name,
                 'data' => $categories,
                 'value'=>$value,
                 'htmlOptions' => $htmlOptions,
@@ -326,11 +324,10 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array())
+    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array(),$name)
     {
         $defaultHtmlOptions = array(
             'multiple' => 'multiple',
-            'id' => 'networks-select', 
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
@@ -343,7 +340,7 @@ class KHtml extends CHtml
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
-                'name' => 'networks',
+                'name' => $name,
                 'data' => $networks,
                 'value'=>$value,
                 'htmlOptions' => $htmlOptions,
@@ -354,25 +351,24 @@ class KHtml extends CHtml
             )
         );
     }
-    
+
     /**
      * Create dropdown of Account Managers
      * @param  $value
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAccountManagersMulti($value, $htmlOptions = array())
+    public static function filterAccountManagersMulti($value, $htmlOptions = array(), $dropdownLoad,$name)
     {
         $defaultHtmlOptions = array(
             'multiple' => 'multiple',
-            'id' => 'accountManager-select', 
             'onChange' => '
                 $.post(
                     "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities/?"+$("#accountManager-select").serialize(),
                     "",
                     function(data)
                     {
-                        $("#opportunities-select").html(data);
+                        $("#'.$dropdownLoad.'").html(data);
                     }
                 )'
         );
@@ -385,7 +381,7 @@ class KHtml extends CHtml
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
-                'name' => 'accountManager',
+                'name' => $name,
                 'data' => $list,
                 'value'=>$value,
                 'htmlOptions' => $htmlOptions,
