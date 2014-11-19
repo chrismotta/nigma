@@ -71,10 +71,10 @@ $this->widget('EExcelWriter', array(
         'imp',
         'imp_adv',
         'clics',        
-        // array(
-        //     'name'  => 'clics_redirect',
-        //     'value' => 'Campaigns::model()->getClicksRedirect($data->date, $data->date, $data->campaigns_id)',
-        // ),
+        array(
+            'name'  => 'clics_redirect',
+            'value' => '$data->getClicksRedirect()',
+        ),
         'conv_api',
         'conv_adv',
         array(

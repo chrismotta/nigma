@@ -1181,4 +1181,13 @@ class DailyReport extends CActiveRecord
 	{
 		return VectorsHasCampaigns::model()->exists('campaigns_id=:cid', array(':cid'=>$this->campaigns_id));
 	}
+
+	public function getClicksRedirect()
+	{
+		$criteria=new CDbCriteria;
+		$criteria->select                        ='count(*) as clics';
+		$criteria->addCondition("DATE(date) = '".$this->date."' AND campaigns_id=".$this->campaigns_id);
+		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
+		return $clicksLogs;
+	}
 }
