@@ -76,7 +76,7 @@ class KHtml extends CHtml
             $criteria->compare('account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
-        $list   = CHtml::listData($opps, 'id', 'virtualName');
+        $list = CHtml::listData($opps, 'id', 'virtualName');
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
@@ -161,9 +161,9 @@ class KHtml extends CHtml
             'empty' => 'All advertisers',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);    
-
-        $advs = Advertisers::model()->findAll( array('order' => 'name') );
-        $list   = CHtml::listData($advs, 'id', 'name');
+        
+        $advs        = Advertisers::model()->findAll( array('order' => 'name') );
+        $list        = CHtml::listData($advs, 'id', 'name');
         return CHtml::dropDownList('advertiser', $value, $list, $htmlOptions);
     }
 
@@ -201,7 +201,7 @@ class KHtml extends CHtml
             'empty' => 'All entities',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
-        $entities = KHtml::enumItem(new Ios, 'entity');
+        $entities    = KHtml::enumItem(new Ios, 'entity');
         return CHtml::dropDownList('entity', $value, $entities, $htmlOptions);
     }
 
@@ -249,7 +249,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterOpportunitiesMulti($value, $accountManagerId=NULL, $htmlOptions = array())
+    public static function filterOpportunitiesMulti($value, $accountManagerId=NULL, $htmlOptions = array(),$name)
     {
 
         $defaultHtmlOptions = array(
@@ -275,13 +275,13 @@ class KHtml extends CHtml
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
-                'name' => 'opportunities',
-                'data' => $data,
-                'value'=>$value,
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
-                'options' => array(
+                'options'     => array(
                     'placeholder' => 'All Opportunities',
-                    'width' => '20%',
+                    'width'       => '20%',
                 ),
             )
         );
@@ -304,13 +304,13 @@ class KHtml extends CHtml
 
         
         return Yii::app()->controller->widget(
-                'yiibooster.widgets.TbSelect2',
-                array(
-                'name' => $name,
-                'data' => $categories,
-                'value'=>$value,
+        'yiibooster.widgets.TbSelect2',
+            array(
+                'name'        => $name,
+                'data'        => $categories,
+                'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
-                'options' => array(
+                'options'     => array(
                     'placeholder' => 'All Categories',
                     'width' => '20%',
                 ),
@@ -338,13 +338,13 @@ class KHtml extends CHtml
 
         
         return Yii::app()->controller->widget(
-                'yiibooster.widgets.TbSelect2',
-                array(
-                'name' => $name,
-                'data' => $networks,
-                'value'=>$value,
+        'yiibooster.widgets.TbSelect2',
+            array(
+                'name'        => $name,
+                'data'        => $networks,
+                'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
-                'options' => array(
+                'options'     => array(
                     'placeholder' => 'All Networks',
                     'width' => '20%',
                 ),
@@ -379,13 +379,13 @@ class KHtml extends CHtml
 
         
         return Yii::app()->controller->widget(
-                'yiibooster.widgets.TbSelect2',
-                array(
-                'name' => $name,
-                'data' => $list,
-                'value'=>$value,
+        'yiibooster.widgets.TbSelect2',
+            array(
+                'name'        => $name,
+                'data'        => $list,
+                'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
-                'options' => array(
+                'options'     => array(
                     'placeholder' => 'All Managers',
                     'width' => '20%',
                 ),

@@ -30,7 +30,6 @@ $('.search-form form').submit(function(){
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	//$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
 	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
@@ -107,6 +106,7 @@ $('.search-form form').submit(function(){
 		)
 	); ?>
 	<?php 
+	//Create link to load filters in modal
 	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
 	if(isset($accountManager))
 	{
@@ -186,20 +186,20 @@ $('.search-form form').submit(function(){
 
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/dailyReport/admin',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		'id'                   =>'date-filter-form',
+		'type'                 =>'search',
+		'htmlOptions'          =>array('class'=>'well'),
+		'enableAjaxValidation' =>true,
+		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/admin',
+		'method'               => 'GET',
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
 <fieldset>
 	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
 	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
 	<?php 
+		//Load Filters
 		if (FilterManager::model()->isUserTotalAccess('daily'))
 			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager');
 		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
@@ -250,9 +250,9 @@ $('.search-form form').submit(function(){
 			'class'       => 'bootstrap.widgets.TbEditableColumn',
 			'htmlOptions' => array('class'=>'editableField'),
 			'editable'    => array(
-				'title'     => 'Comment',
-				'type'      => 'textarea',
-				'url'       => 'updateEditable/',
+				'title'   => 'Comment',
+				'type'    => 'textarea',
+				'url'     => 'updateEditable/',
 				'display' => 'js:function(value, source){
 					$(this).html("<i class=\"icon-font\"></i>");
 				}'
@@ -425,12 +425,12 @@ $('.search-form form').submit(function(){
 			'footer'            => $totals['ecpa'],
 		),
 		array(
-			'name'        => 'date',
-			'value'       => 'date("d-m-Y", strtotime($data->date))',
+			'name'              => 'date',
+			'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 30px"),
-			'htmlOptions' => array(
-				'class' => 'date', 
-				'style'=>'text-align:right;'
+			'htmlOptions'       => array(
+					'class' => 'date', 
+					'style' =>'text-align:right;'
 				),
 			'filter'      => false,
         ),

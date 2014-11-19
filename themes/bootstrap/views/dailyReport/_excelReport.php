@@ -84,7 +84,7 @@ $sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
         <div class="input-append">
             <?php echo CHtml::label("SUM:", 'excel-dateEnd', array('class'=>'control-label')); ?>
             <div class="controls">
-                <?php echo CHtml::checkBox('sum', 0, array('style'=>'vertical-align:bottom;')); ?>
+                <?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align:bottom;')); ?>
            </div>
         <br/>
        </div>
