@@ -100,6 +100,13 @@ rect[Attributes Style] {
 	margin-left: 0px;
 }
 */
+.row-bottom {
+	margin-bottom: 20px;
+}
+.row-bottom .grid-view {
+	padding-top: 0px;
+}
+
 #page {
     padding-top: 60px;
 }
@@ -171,9 +178,18 @@ fieldset hr {
 	color: #666;
 }
 
+/* top chart */
 .top-chart {
-	padding-top: 18px;
+	/*padding-top: 18px;*/
+	margin-bottom: 20px;
 }
+.top-chart .top-gridview {
+	overflow: hidden;
+	height: 20px;
+	display: block;
+}
+
+
 .errorCap {
 	color: red;
 }
