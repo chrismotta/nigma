@@ -36,7 +36,7 @@ class IosController extends Controller
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','redirect','admin'),
+				'actions'=>array('index','view','redirect','admin','archived'),
 				'roles'=>array('businness', 'finance'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
