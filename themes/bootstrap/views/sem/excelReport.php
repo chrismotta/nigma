@@ -5,7 +5,7 @@
 set_time_limit(1000);
 
 $path = 'uploads/';
-$name = 'KickAds-SEM.xls';
+$name = 'KickAds-SEM-' . $report_type . '.xls';
 
 $report_type  = $_POST['excel-report'];
 $campaignName = $_POST['excel-campaign'] != '' ? $_POST['excel-campaign'] : NULL;
