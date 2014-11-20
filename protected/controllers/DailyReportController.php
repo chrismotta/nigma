@@ -472,7 +472,8 @@ class DailyReportController extends Controller
 			}
 		}
 		$opps =Opportunities::model()->findAll($criteria);
-		$response='<option value="">All opportunities</option>';
+		$response='';
+		// $response='<option value="">All opportunities</option>';
 		foreach ($opps as $op) {
 			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
 		}

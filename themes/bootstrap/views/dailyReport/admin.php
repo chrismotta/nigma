@@ -30,15 +30,14 @@ $('.search-form form').submit(function(){
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$opportunities   = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
+	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-	$adv_categories     = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
+	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
-	$dateStart = date('Y-m-d', strtotime($dateStart));
-	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks);
+	$dateStart  = date('Y-m-d', strtotime($dateStart));
+	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
+	$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -106,12 +105,67 @@ $('.search-form form').submit(function(){
 		'htmlOptions' => array('id' => 'createAjax'),
 		)
 	); ?>
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
+	<?php 
+	//Create link to load filters in modal
+	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
+	if(isset($accountManager))
+	{
+		if(is_array($accountManager))
+		{
+			foreach ($accountManager as $id) {
+				$link.='&accountManager[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&accountManager='.$accountManager;
+		}
+	}
+	if(isset($opportunities))
+	{
+		if(is_array($opportunities))
+		{
+			foreach ($opportunities as $id) {
+				$link.='&opportunities[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&opportunities='.$opportunities;
+		}
+	}	
+	if(isset($networks))
+	{
+		if(is_array($networks))
+		{
+			foreach ($networks as $id) {
+				$link.='&networks[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&networks='.$networks;
+		}
+	}
+	if(isset($adv_categories))
+	{
+		if(is_array($adv_categories))
+		{
+			foreach ($adv_categories as $id) {
+				$link.='&advertisers-cat[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&advertisers-cat='.$adv_categories;
+		}
+	}
+	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
+		'url'         => $link,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -132,25 +186,25 @@ $('.search-form form').submit(function(){
 
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/dailyReport/admin',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		'id'                   =>'date-filter-form',
+		'type'                 =>'search',
+		'htmlOptions'          =>array('class'=>'well'),
+		'enableAjaxValidation' =>true,
+		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/admin',
+		'method'               => 'GET',
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
 <fieldset>
 	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
 	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
 	<?php 
+		//Load Filters
 		if (FilterManager::model()->isUserTotalAccess('daily'))
-			KHtml::filterAccountManagersMulti($accountManager);
-		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
-		KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 140px; margin-left: 1em"));
-		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em"));
+			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager');
+		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
+		KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'networks-select'),'networks');
+		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
 	?>
 	  
 	SUM 
@@ -164,7 +218,7 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 
 <?php 
-	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks);
+	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
@@ -196,9 +250,9 @@ $('.search-form form').submit(function(){
 			'class'       => 'bootstrap.widgets.TbEditableColumn',
 			'htmlOptions' => array('class'=>'editableField'),
 			'editable'    => array(
-				'title'     => 'Comment',
-				'type'      => 'textarea',
-				'url'       => 'updateEditable/',
+				'title'   => 'Comment',
+				'type'    => 'textarea',
+				'url'     => 'updateEditable/',
 				'display' => 'js:function(value, source){
 					$(this).html("<i class=\"icon-font\"></i>");
 				}'
@@ -371,12 +425,12 @@ $('.search-form form').submit(function(){
 			'footer'            => $totals['ecpa'],
 		),
 		array(
-			'name'        => 'date',
-			'value'       => 'date("d-m-Y", strtotime($data->date))',
+			'name'              => 'date',
+			'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 30px"),
-			'htmlOptions' => array(
-				'class' => 'date', 
-				'style'=>'text-align:right;'
+			'htmlOptions'       => array(
+					'class' => 'date', 
+					'style' =>'text-align:right;'
 				),
 			'filter'      => false,
         ),

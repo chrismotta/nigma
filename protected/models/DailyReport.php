@@ -92,9 +92,9 @@ class DailyReport extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
-			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
-			'multiRates' => array(self::HAS_MANY, 'MultiRate', 'daily_report_id'),
+			'networks'     => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'campaigns'    => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
+			'multiRates'   => array(self::HAS_MANY, 'MultiRate', 'daily_report_id'),
 			'dailyVectors' => array(self::HAS_MANY, 'DailyVectors', 'daily_report_id'),
 		);
 	}
@@ -138,7 +138,7 @@ class DailyReport extends CActiveRecord
 	}
 
 
-	public function excel($startDate=NULL, $endDate=NULL, $sum=0)
+	public function excel($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		$criteria=new CDbCriteria;
 		//$criteria->compare('t.id',$this->id);
@@ -146,7 +146,86 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 	    }
-
+	    if ( $networks != NULL) {
+			if(is_array($networks))
+			{
+				$query="(";
+				$i=0;
+				foreach ($networks as $net) {	
+					if($i==0)			
+						$query.="networks.id=".$net;
+					else
+						$query.=" OR networks.id=".$net;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('networks.id',$networks);
+			}
+		}
+		if ( $accountManager != NULL) {
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
+		if ( $opportunities != NULL) {
+			if(is_array($opportunities))
+			{
+				$query="(";
+				$i=0;
+				foreach ($opportunities as $opp) {	
+					if($i==0)			
+						$query.="opportunities.id=".$opp;
+					else
+						$query.=" OR opportunities.id=".$opp;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('opportunities.id',$opportunities);
+			}
+		}
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
 		//sumas
 		if($sum==1){
 			$criteria->group  = 'campaigns_id';
@@ -184,33 +263,33 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunities=null,$networks=null) {
+	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunities=null,$networks=null,$adv_categories=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
-		if(!$endDate) $endDate   = 'today';
-		$startDate = date('Y-m-d', strtotime($startDate));
-		$endDate = date('Y-m-d', strtotime($endDate));
-		$dataTops=array();
-		$spends=array();
-		$revenues=array();
-		$profits=array();
-		$conversions=array();
-		$impressions=array();
-		$clics=array();
-		$dates=array();
+		if(!$endDate) $endDate     = 'today';
+		$startDate                 = date('Y-m-d', strtotime($startDate));
+		$endDate                   = date('Y-m-d', strtotime($endDate));
+		$dataTops                  =array();
+		$spends                    =array();
+		$revenues                  =array();
+		$profits                   =array();
+		$conversions               =array();
+		$impressions               =array();
+		$clics                     =array();
+		$dates                     =array();
 
 		foreach (Utilities::dateRange($startDate,$endDate) as $date) {
-			$dataTops[$date]['spends']=0;
-			$dataTops[$date]['revenues']=0;
-			$dataTops[$date]['profits']=0;
-			$dataTops[$date]['conversions']=0;
-			$dataTops[$date]['impressions']=0;
-			$dataTops[$date]['clics']=0;
+			$dataTops[$date]['spends']      =0;
+			$dataTops[$date]['revenues']    =0;
+			$dataTops[$date]['profits']     =0;
+			$dataTops[$date]['conversions'] =0;
+			$dataTops[$date]['impressions'] =0;
+			$dataTops[$date]['clics']       =0;
 		}
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		if ( $networks != NULL) {
 			if(is_array($networks))
 			{
@@ -271,55 +350,75 @@ class DailyReport extends CActiveRecord
 				$criteria->compare('opportunities.id',$opportunities);
 			}
 		}
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
-			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']+=doubleval($value->getSpendUSD());	
-			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']+=doubleval($value->getRevenueUSD());
-			$dataTops[date('Y-m-d', strtotime($value->date))]['profits']+=doubleval($value->profit);
-			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']+=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
-			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions']+=$value->imp;
-			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']+=$value->clics;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['spends']      +=doubleval($value->getSpendUSD());	
+			$dataTops[date('Y-m-d', strtotime($value->date))]['revenues']    +=doubleval($value->getRevenueUSD());
+			$dataTops[date('Y-m-d', strtotime($value->date))]['profits']     +=doubleval($value->profit);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['conversions'] +=$value->conv_adv ? intval($value->conv_adv) : intval($value->conv_api);
+			$dataTops[date('Y-m-d', strtotime($value->date))]['impressions'] +=$value->imp;
+			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']       +=$value->clics;
 		}
 		
 		foreach ($dataTops as $date => $data) {
-			$spends[]=$data['spends'];
-			$revenues[]=$data['revenues'];
-			$profits[]=$data['profits'];
-			$impressions[]=$data['impressions'];
-			$conversions[]=$data['conversions'];
-			$clics[]=$data['clics'];
-			$dates[]=$date;
+			$spends[]      =$data['spends'];
+			$revenues[]    =$data['revenues'];
+			$profits[]     =$data['profits'];
+			$impressions[] =$data['impressions'];
+			$conversions[] =$data['conversions'];
+			$clics[]       =$data['clics'];
+			$dates[]       =$date;
 		}
 		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'impressions' => $impressions, 'conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
 		
 		return $result;
 	}
 
-	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunities=null,$networks=null) {
+	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunities=null,$networks=null,$adv_categories=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate     = 'today';
-		$startDate = date('Y-m-d', strtotime($startDate));
-		$endDate   = date('Y-m-d', strtotime($endDate));
-		$imp       = 0;
-		$imp_adv   = 0;
-		$clics     = 0;
-		$conv_s2s  = 0;
-		$conv_adv  = 0;
-		$spend     = 0;
-		$revenue   = 0;
-		$profit    = 0;
-		$ctr    = 0;
-		$cr    = 0;
-		$profitperc    = 0;
-		$ecpm    = 0;
-		$ecpc    = 0;
-		$ecpa    = 0;
+		$startDate  = date('Y-m-d', strtotime($startDate));
+		$endDate    = date('Y-m-d', strtotime($endDate));
+		$imp        = 0;
+		$imp_adv    = 0;
+		$clics      = 0;
+		$conv_s2s   = 0;
+		$conv_adv   = 0;
+		$spend      = 0;
+		$revenue    = 0;
+		$profit     = 0;
+		$ctr        = 0;
+		$cr         = 0;
+		$profitperc = 0;
+		$ecpm       = 0;
+		$ecpc       = 0;
+		$ecpa       = 0;
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->with = array( 'networks', 'campaigns' ,'campaigns.opportunities.accountManager' );
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		
 		if ( $networks != NULL) {
 			if(is_array($networks))
@@ -381,7 +480,26 @@ class DailyReport extends CActiveRecord
 				$criteria->compare('opportunities.id',$opportunities);
 			}
 		}
-
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
 		$r = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
 			$imp      += $value->imp;
@@ -394,14 +512,14 @@ class DailyReport extends CActiveRecord
 			$profit   += $value->profit;
 		}
 
-		$impt = $imp_adv == 0 ? $imp : $imp_adv;
-		$convt = $conv_adv == 0 ? $conv_s2s : $conv_adv;
-		$ctr = $impt == 0 ? 0 : number_format($clics / $impt, 2);
-		$cr=$clics == 0 ? 0 : number_format( $convt / $clics, 2 );
-		$profitperc=$revenue == 0 ? 0 : number_format($profit / $revenue, 2);
-		$ecpm=$impt == 0 ? 0 : number_format($spend * 1000 / $impt, 2);
-		$ecpc=$clics == 0 ? 0 : number_format($spend / $clics, 2);
-		$ecpa=$convt == 0 ? 0 : number_format($spend / $convt, 2);
+		$impt       = $imp_adv == 0 ? $imp : $imp_adv;
+		$convt      = $conv_adv == 0 ? $conv_s2s : $conv_adv;
+		$ctr        = $impt == 0 ? 0 : number_format($clics / $impt, 2);
+		$cr         =$clics == 0 ? 0 : number_format( $convt / $clics, 2 );
+		$profitperc =$revenue == 0 ? 0 : number_format($profit / $revenue, 2);
+		$ecpm       =$impt == 0 ? 0 : number_format($spend * 1000 / $impt, 2);
+		$ecpc       =$clics == 0 ? 0 : number_format($spend / $clics, 2);
+		$ecpa       =$convt == 0 ? 0 : number_format($spend / $convt, 2);
 
 		$result=array(
 			'imp'		=> $imp,
@@ -426,16 +544,16 @@ class DailyReport extends CActiveRecord
 	public function getTops($startDate=null, $endDate=null,$order) {
 			
 		if(!$startDate)	$startDate = 'today' ;
-		if(!$endDate) $endDate   = 'today';
-		$startDate = date('Y-m-d', strtotime($startDate));
-		$endDate = date('Y-m-d', strtotime($endDate));
-
-		$dataTops=array();
-		$spends=array();
-		$revenues=array();
-		$profits=array();
-		$campaigns=array();	
-		$campaigns_id=array();
+		if(!$endDate) $endDate     = 'today';
+		$startDate    = date('Y-m-d', strtotime($startDate));
+		$endDate      = date('Y-m-d', strtotime($endDate));
+		
+		$dataTops     =array();
+		$spends       =array();
+		$revenues     =array();
+		$profits      =array();
+		$campaigns    =array();	
+		$campaigns_id =array();
 
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
@@ -496,11 +614,17 @@ class DailyReport extends CActiveRecord
 			$campaigns_id[] = $value->campaigns->id;		
 		}
 		
-		$result=array('spends' => $spends, 'revenues' => $revenues, 'profits' => $profits, 'campaigns' => $campaigns, 'campaigns_id' => $campaigns_id);
-		$dataTops['array']= $result;
-		$dataTops['dataProvider']= new CActiveDataProvider($this, array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
+		$result=array(
+			'spends'       => $spends,
+			'revenues'     => $revenues, 
+			'profits'      => $profits, 
+			'campaigns'    => $campaigns, 
+			'campaigns_id' => $campaigns_id
+			);
+		$dataTops['array']        = $result;
+		$dataTops['dataProvider'] = new CActiveDataProvider($this, array(
+				'criteria'   =>$criteria,
+				'pagination' =>false,
 				'sort'=>array(
 					'attributes'   =>array(
 			            // Adding all the other default attributes
@@ -515,15 +639,6 @@ class DailyReport extends CActiveRecord
 	public function getDataDash($startDate=NULL, $endDate=NULL, $order)
 	{
 		$criteria=new CDbCriteria;
-		//$criteria->select=array('COUNT(t.conv_adv) as conv_adv');
-		//$criteria->compare('t.id',$this->id);
-		////SELECT campaigns_id,
-		// case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions
-		// FROM `daily_report` 
-		// WHERE DATE(date)>='2014-09-01' 
-		// AND DATE(date)<='2014-09-21'
-		// GROUP BY campaigns_id
-		// ORDER BY conversions
 		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
 						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
 		if ( $startDate != NULL && $endDate != NULL ) {
@@ -536,36 +651,35 @@ class DailyReport extends CActiveRecord
 		$criteria->with=array('campaigns', );
 		$criteria->limit=6;
 		$dataDash=array();
-		// if($type=='array')
-		// {
-			$campaigns=array();
-			$conversions=array();
-			$campaigns_id=array();
-			$conversions_rate=array();
-			$r         = self::model()->findAll($criteria);
+			$campaigns        =array();
+			$conversions      =array();
+			$campaigns_id     =array();
+			$conversions_rate =array();
+			$r                = self::model()->findAll($criteria);
 			
 			foreach ($r as $value) {
-				$conversions[]=intval($value->conversions);
-				$conversions_rate[]=intval($value->convrate);
-				$campaigns[]=$value->campaigns->name;	
-				$campaigns_id[]=$value->campaigns->id;
+				$conversions[]      =intval($value->conversions);
+				$conversions_rate[] =intval($value->convrate);
+				$campaigns[]        =$value->campaigns->name;	
+				$campaigns_id[]     =$value->campaigns->id;
 			}
-			$result=array('conversions' => $conversions,'campaigns_id' => $campaigns_id, 'campaigns' => $campaigns, 'conversions_rate' => $conversions_rate);
-			//return $result;
+			$result=array(
+				'conversions'      => $conversions,
+				'campaigns_id'     => $campaigns_id, 
+				'campaigns'        => $campaigns, 
+				'conversions_rate' => $conversions_rate
+				);
 			$dataDash['array']=$result;
-		// }
-		// else{
 			$dataDash['dataProvider']= new CActiveDataProvider($this, array(
-				'criteria'=>$criteria,
-				'pagination'=>false,
-				'sort'=>array(
+				'criteria'   =>$criteria,
+				'pagination' =>false,
+				'sort'       =>array(
 					'attributes'   =>array(
 			            '*',
 			        ),
 			    ),
 
 			));
-		//}
 		return $dataDash;
 	}
 
@@ -1022,9 +1136,9 @@ class DailyReport extends CActiveRecord
 
 	public function getRateUSD()
 	{
-		$opportunitie=Campaigns::model()->findByPk($this->campaigns_id)->opportunities_id;
-		$rate = Opportunities::model()->findByPk($opportunitie)->rate;
-		$io_currency = Ios::model()->findByPk(Opportunities::model()->findByPk($opportunitie)->ios_id)->currency;
+		$opportunitie =Campaigns::model()->findByPk($this->campaigns_id)->opportunities_id;
+		$rate         = Opportunities::model()->findByPk($opportunitie)->rate;
+		$io_currency  = Ios::model()->findByPk(Opportunities::model()->findByPk($opportunitie)->ios_id)->currency;
 
 		if ($io_currency == 'USD') // if currency is USD dont apply type change
 			return $rate;
@@ -1066,5 +1180,14 @@ class DailyReport extends CActiveRecord
 	public function isFromVector()
 	{
 		return VectorsHasCampaigns::model()->exists('campaigns_id=:cid', array(':cid'=>$this->campaigns_id));
+	}
+
+	public function getClicksRedirect()
+	{
+		$criteria=new CDbCriteria;
+		$criteria->select                        ='count(*) as clics';
+		$criteria->addCondition("DATE(date) = '".$this->date."' AND campaigns_id=".$this->campaigns_id);
+		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
+		return $clicksLogs;
 	}
 }
