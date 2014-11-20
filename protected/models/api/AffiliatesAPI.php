@@ -33,7 +33,7 @@ class AffiliatesAPI
 				$dailyReport->imp          = 0;
 				$dailyReport->clics        = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
 				$dailyReport->conv_api     = ConvLog::model()->count("campaign_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
-				$dailyReport->spend        = $dailyReport->conv_api * $afilliate->rate;
+				$dailyReport->spend        = $dailyReport->conv_api * $affiliate->rate;
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				if ( !$dailyReport->save() ) {
