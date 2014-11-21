@@ -76,7 +76,7 @@ class KHtml extends CHtml
             $criteria->compare('account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
-        $list   = CHtml::listData($opps, 'id', 'virtualName');
+        $list = CHtml::listData($opps, 'id', 'virtualName');
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
@@ -101,6 +101,7 @@ class KHtml extends CHtml
                     {
                         // alert(data);
                         $(".opportunitie-dropdownlist").html(data);
+                        $("#opportunities-select").html(data);
                     }
                 )'
         );
@@ -160,9 +161,9 @@ class KHtml extends CHtml
             'empty' => 'All advertisers',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);    
-
-        $advs = Advertisers::model()->findAll( array('order' => 'name') );
-        $list   = CHtml::listData($advs, 'id', 'name');
+        
+        $advs        = Advertisers::model()->findAll( array('order' => 'name') );
+        $list        = CHtml::listData($advs, 'id', 'name');
         return CHtml::dropDownList('advertiser', $value, $list, $htmlOptions);
     }
 
@@ -200,7 +201,7 @@ class KHtml extends CHtml
             'empty' => 'All entities',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
-        $entities = KHtml::enumItem(new Ios, 'entity');
+        $entities    = KHtml::enumItem(new Ios, 'entity');
         return CHtml::dropDownList('entity', $value, $entities, $htmlOptions);
     }
 
@@ -238,6 +239,159 @@ class KHtml extends CHtml
         ), true);
     }
 
-}
+//Filters select2
 
+   /**
+     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
+     * @param  $value
+     * @param  $accountManagerId 
+     * @param  $accountManagerId 
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterOpportunitiesMulti($value, $accountManagerId=NULL, $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->order = 'advertisers.name, country.ISO2';
+
+
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManagerId=Yii::app()->user->id;
+
+        if ( $accountManagerId != NULL )
+            $criteria->compare('account_manager_id', $accountManagerId);
+
+        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $data=array();
+        foreach ($opps as $opp) {
+            $data[$opp->id]=$opp->getVirtualName();
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Opportunities',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }    
+
+    /**
+     * Create dropdown of Advertisers Category
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAdvertisersCategoryMulti($value, $htmlOptions = array(),$name)
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        $categories=KHtml::enumItem(new Advertisers, 'cat');
+
+        
+        return Yii::app()->controller->widget(
+        'yiibooster.widgets.TbSelect2',
+            array(
+                'name'        => $name,
+                'data'        => $categories,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Categories',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+
+    /**
+     * Create dropdown of networks
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array(),$name)
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        if ( !$networks ) {
+            $networks = Networks::model()->findAll( array('order' => 'name') );
+            $networks = CHtml::listData($networks, 'id', 'name');
+        }
+
+        
+        return Yii::app()->controller->widget(
+        'yiibooster.widgets.TbSelect2',
+            array(
+                'name'        => $name,
+                'data'        => $networks,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Networks',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+
+    /**
+     * Create dropdown of Account Managers
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAccountManagersMulti($value, $htmlOptions = array(), $dropdownLoad,$name)
+    {
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+            'onChange' => '
+                $.post(
+                    "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities/?"+$("#accountManager-select").serialize(),
+                    "",
+                    function(data)
+                    {
+                        $("#'.$dropdownLoad.'").html(data);
+                    }
+                )'
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        
+        $medias = Users::model()->findUsersByRole('media');
+        $list   = CHtml::listData($medias, 'id', 'FullName');
+
+        
+        return Yii::app()->controller->widget(
+        'yiibooster.widgets.TbSelect2',
+            array(
+                'name'        => $name,
+                'data'        => $list,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Managers',
+                    'width' => '20%',
+                ),
+            )
+        );
+    }
+
+}
 ?>

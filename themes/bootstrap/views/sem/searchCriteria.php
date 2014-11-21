@@ -78,6 +78,7 @@ $this->breadcrumbs=array(
 
 	<div class="form-actions">
     	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('name' => 'submit', 'class' => 'showLoading'))); ?>
+    	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Download Excel', 'htmlOptions' => array('name' => 'submit-excel'))); ?>
     </div>
 
 </fieldset>

@@ -108,6 +108,12 @@ class SemController extends Controller
 		if(isset($_GET['ClicksLog']))
 			$model->attributes=$_GET['ClicksLog'];
 
+		if (isset($_GET['submit-excel'])) {
+			$this->renderpartial('excelSearchQuery', array(
+				'model' => $model,
+			));
+		} 
+
 		$this->render('searchCriteria', array(
 			'model' => $model,
 		));
