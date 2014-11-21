@@ -126,10 +126,10 @@ $('.search-form form').submit(function(){
 
 <?php 
 	// $totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
-	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                       => 'daily-report-grid',
-	'fixedHeader'              => true,
-	'headerOffset'             => 50,
+	// 'fixedHeader'              => true,
+	// 'headerOffset'             => 50,
 	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, $affiliate->networks_id),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
@@ -139,12 +139,13 @@ $('.search-form form').submit(function(){
 	// 'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'      =>array(
                 //array('name' =>'id'),
-                array('name' =>'name'),
                 array('name' =>'date'),
+                array('name' =>'name'),
                 array('name' =>'rate'),
                 array('name' =>'conv'),
                 array('name' =>'spend', 'header'=>'Revenue'),
             ),
+	'mergeColumns' => array('date'),
 	)
 ); ?>
 
