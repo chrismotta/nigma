@@ -17,30 +17,6 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
-// $criteria=new CDbCriteria;
-// $criteria->select=array(
-// 	'c.id',
-// 	'ROUND(
-// 		t.spend/IF(
-// 			ISNULL(t.conv_adv),t.conv_api,t.conv_adv),
-// 		2) as rate',
-// 	'sum(
-// 		IF(
-// 			ISNULL(t.conv_adv),
-// 			 t.conv_api, t.conv_adv)
-// 		) as conversions',
-// 	'sum(t.spend) as spend',
-// 	'DATE(l.date) as date'
-// );
-// //$criteria->whith('daily_report d');
-// $criteria->join='inner join campaigns c on t.campaigns_id=c.id inner join networks n on c.networks_id=n.id inner join conv_log l on l.campaign_id=c.id inner join affiliates a on a.networks_id=n.id';
-// $criteria->addCondition("t.date BETWEEN '2014-11-01' AND '2014-11-01'");
-// $criteria->addCondition('DATE(t.date) = DATE(t.date)');
-// $criteria->group='c.id,DATE(l.date),ROUND(t.spend/IF(ISNULL(t.conv_adv),t.conv_api,t.conv_adv),2)';
-// $dailys = DailyReport::model()->findAll($criteria);
-// foreach ($dailys as $daily) {
-// 	echo json_encode($daily);
-// }
 ?>
 
 <?php
