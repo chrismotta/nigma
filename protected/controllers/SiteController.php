@@ -70,6 +70,9 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
+		if(FilterManager::model()->isUserTotalAccess('affiliate'))
+			$this->redirect(Yii::app()->baseUrl.'/affiliates/index');
+
 		$dataProvider =new CActiveDataProvider('Campaigns');
 		$model        =new DailyReport;
 		$totals       =new DailyTotals;

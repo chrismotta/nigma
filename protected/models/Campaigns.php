@@ -54,6 +54,7 @@ class Campaigns extends CActiveRecord
 	public $profit_percent;
 	public $format;
 	public $clics_redirect;
+	public $date;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -131,16 +132,17 @@ class Campaigns extends CActiveRecord
 			'post_data'              => 'Post Data',
 			'banner_sizes_id'        => 'Banner Sizes',
 			'net_currency'           => 'Net Currency',
-			'clicks'           		 => 'Clicks Log',
-			'conv'		           	 => 'Convertions Log',
-			'account_manager' 		 => 'Account Manager',
-			'rate'					 => 'Rate',
-			'revenue'				 => 'Revenue',
-			'profit'				 => 'Profit',
-			'spend'					 => 'Spend',
-			'profit_percent'		 => 'Profit %',
-			'format'				 => 'Format',
-			'clics_redirect'		 => 'Clics Redirect',
+			'clicks'                 => 'Clicks Log',
+			'conv'                   => 'Convertions Log',
+			'account_manager'        => 'Account Manager',
+			'rate'                   => 'Rate',
+			'revenue'                => 'Revenue',
+			'profit'                 => 'Profit',
+			'spend'                  => 'Spend',
+			'profit_percent'         => 'Profit %',
+			'format'                 => 'Format',
+			'clics_redirect'         => 'Clics Redirect',
+			'date'                   => 'Date',
 		);
 	}
 
@@ -779,5 +781,87 @@ class Campaigns extends CActiveRecord
 			    ),
 
 			));
+	}
+
+	public function getAffiliates($dateStart,$dateEnd,$affiliate)
+	{
+		$data=array();
+		$i=0;
+		if(date('Y-m-d', strtotime($dateStart))!=date('Y-m-d', strtotime('today')))
+		{
+			$end=date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today'))? date('Y-m-d', strtotime('-1 day',strtotime($dateEnd))) : date('Y-m-d', strtotime($dateEnd));
+			
+			$sql="select c.id,
+				ROUND(
+					d.spend/
+							IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
+				) as rate,
+				sum(
+					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
+				) as conv,
+				sum(d.spend) as spend,
+				DATE(l.date) as date
+				from daily_report d 
+				inner join campaigns c on d.campaigns_id=c.id
+				inner join networks n on c.networks_id=n.id 
+				inner join conv_log l on l.campaign_id=c.id
+				inner join affiliates a on a.networks_id=n.id
+				WHERE d.date BETWEEN :dateStart AND :dateEnd
+				AND DATE(l.date)=DATE(d.date)
+				group by c.id,DATE(l.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
+			$command->bindParam(":dateEnd", $end, PDO::PARAM_STR);
+			$affiliates=$command->queryAll();
+			foreach ($affiliates as $affiliate) {
+				$data[$i]['id']    =$affiliate['id'];
+				$data[$i]['rate']  =$affiliate['rate'];
+				$data[$i]['conv']  =$affiliate['conv'];
+				$data[$i]['spend'] =$affiliate['spend'];
+				$data[$i]['date']  =$affiliate['date'];
+				$data[$i]['name']  =Self::getExternalName($affiliate['id']);
+				$i++;
+			}
+		}
+		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
+		{
+			$date=date('Y-m-d', strtotime('today'));
+			$sql="select c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
+				from campaigns c
+				inner join networks n on c.networks_id=n.id 
+				inner join conv_log l on l.campaign_id=c.id
+				inner join affiliates a on a.networks_id=n.id
+				WHERE DATE(l.date)=DATE(:date)
+				group by c.id,DATE(l.date)";
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(":date", $date, PDO::PARAM_STR);
+			$affiliates=$command->queryAll();
+			foreach ($affiliates as $affiliate) {
+				$data[$i]['id']    =$affiliate['id'];
+				$data[$i]['rate']  =$affiliate['rate'];
+				$data[$i]['conv']  =$affiliate['conv'];
+				$data[$i]['spend'] =$affiliate['spend'];
+				$data[$i]['date']  =$affiliate['date'];
+				$data[$i]['name']  =Self::getExternalName($affiliate['id']);				
+				$i++;
+			}
+		}
+		$filtersForm =new FiltersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+
+		$filteredData=$filtersForm->filter($data);
+		return new CArrayDataProvider($filteredData, array(
+		    'id'=>'affiliates',
+		    'sort'=>array(
+				'defaultOrder' => 'date DESC',
+		        'attributes'=>array(
+		             'id', 'rate', 'conv', 'spend', 'date','name'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
 	}
 }

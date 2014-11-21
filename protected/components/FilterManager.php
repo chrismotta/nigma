@@ -63,6 +63,11 @@ class FilterManager
 			'roles'  => array( 
 				'media',
 			)),
+		'affiliate' => array( 
+			'column' => 'affiliates.id', 
+			'roles'  => array( 
+				'affiliate',
+			)),
 		);
 
     /**
