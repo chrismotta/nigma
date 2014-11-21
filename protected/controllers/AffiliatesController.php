@@ -2,6 +2,19 @@
 
 class AffiliatesController extends Controller
 {
+	public function accessRules()
+	{
+		return array(
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('index'),
+				'roles'=>array('admin', 'affiliate'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
+
 	public function actionIndex()
 	{
 		// $model=new DailyReport('search');

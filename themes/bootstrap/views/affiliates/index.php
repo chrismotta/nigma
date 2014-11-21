@@ -44,8 +44,8 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php
-	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
-	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
