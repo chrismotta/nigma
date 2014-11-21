@@ -17,15 +17,6 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
-// Yii::app()->authManager->getRoles(Yii::app()->user->id);
-// 			if($roles=Yii::app()->authManager->getRoles(Yii::app()->user->id))
-// 				foreach ($roles as $role) {
-// 					print_r($role);
-// 				}
-if($roles=Yii::app()->authManager->getRoles(Yii::app()->user->id))
-				foreach ($roles as $role => $key) {
-					echo ($key->name);
-				}
 ?>
 
 <?php
