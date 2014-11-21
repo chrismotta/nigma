@@ -800,16 +800,14 @@ class Campaigns extends CActiveRecord
 					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
 				) as conv,
 				sum(d.spend) as spend,
-				DATE(l.date) as date
+				DATE(d.date) as date
 				from daily_report d 
 				inner join campaigns c on d.campaigns_id=c.id
 				inner join networks n on c.networks_id=n.id 
-				inner join conv_log l on l.campaign_id=c.id
 				inner join affiliates a on a.networks_id=n.id
 				WHERE d.date BETWEEN :dateStart AND :dateEnd
 				AND n.id = ".$affiliate_id."
-				AND DATE(l.date)=DATE(d.date)
-				group by c.id,DATE(l.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
+				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
 			$command->bindParam(":dateEnd", $end, PDO::PARAM_STR);
