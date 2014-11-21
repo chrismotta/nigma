@@ -195,9 +195,14 @@ $('.search-form form').submit(function(){
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
-<fieldset>
-	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
-	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+<fieldset class="formfilter">
+	<div class="formfilter-date">
+		<p>From:</p> 
+		<?php echo KHtml::datePicker('dateStart', $dateStart); ?>
+		
+		<p>To:</p> 
+		<?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+	</div>
 	<?php 
 		//Load Filters
 		if (FilterManager::model()->isUserTotalAccess('daily'))
@@ -206,13 +211,14 @@ $('.search-form form').submit(function(){
 		KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'networks-select'),'networks');
 		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
 	?>
-	  
-	SUM 
-	<div class="input-append">
-	<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
-	</div>
-		
+	<hr>
+	<div class="formfilter-submit">
+		SUM
+		<div class="input-append">
+			<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
+		</div>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+	</div>
 
 </fieldset>
 <?php $this->endWidget(); ?>
