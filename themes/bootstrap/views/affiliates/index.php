@@ -17,6 +17,15 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+// Yii::app()->authManager->getRoles(Yii::app()->user->id);
+// 			if($roles=Yii::app()->authManager->getRoles(Yii::app()->user->id))
+// 				foreach ($roles as $role) {
+// 					print_r($role);
+// 				}
+if($roles=Yii::app()->authManager->getRoles(Yii::app()->user->id))
+				foreach ($roles as $role => $key) {
+					echo ($key->name);
+				}
 ?>
 
 <?php
@@ -185,7 +194,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, 1),
+	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, $affiliate->networks_id),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

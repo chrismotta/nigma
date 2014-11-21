@@ -24,11 +24,14 @@ class AffiliatesController extends Controller
 
 		$model=new Campaigns;
 		$networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
-
-		$this->render('index',array(
-			'model'=>$model,
-			'networks_names' => $networks,
-		));
+		if($affiliate=Affiliates::model()->findByUser(Yii::app()->user->id))
+		{
+			$this->render('index',array(
+				'model'=>$model,
+				'affiliate' => $affiliate,
+			));
+			
+		}
 	}
 
 	// Uncomment the following methods and override them if needed

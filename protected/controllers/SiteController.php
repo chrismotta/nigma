@@ -70,6 +70,9 @@ class SiteController extends Controller
 	 */
 	public function actionIndex()
 	{
+		if(FilterManager::model()->isUserTotalAccess('affiliate'))
+			$this->redirect(Yii::app()->baseUrl.'/affiliates/index');
+
 		$dataProvider =new CActiveDataProvider('Campaigns');
 		$model        =new DailyReport;
 		$totals       =new DailyTotals;
@@ -144,8 +147,6 @@ class SiteController extends Controller
 		if(isset($_POST['LoginForm']))
 		{
 			$model->attributes=$_POST['LoginForm'];
-			if (FilterManager::model()->isUserTotalAccess('affiliate'))
-				Yii::app()->user->setReturnUrl(Yii::app()->baseUrl.'/affiliates/index');
 			// validate user input and redirect to the previous page if valid
 			if($model->validate() && $model->login())
 				$this->redirect(Yii::app()->user->returnUrl);
