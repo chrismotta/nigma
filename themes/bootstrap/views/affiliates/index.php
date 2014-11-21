@@ -118,10 +118,6 @@ $('.search-form form').submit(function(){
 <fieldset>
 	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
 	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
-	SUM 
-	<div class="input-append">
-	<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
-	</div>
 		
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
