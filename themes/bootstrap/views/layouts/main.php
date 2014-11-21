@@ -32,7 +32,7 @@
                     array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Publishers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Publishers', 'url'=>array('/publishers/admin')),
                     array('label'=>'Placements', 'url'=>array('/placements/admin')),

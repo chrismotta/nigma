@@ -307,3 +307,17 @@ fieldset hr {
 	line-height: 20px;
 	margin: 0px;
 }
+
+/* Filter forms */
+.formfilter .select2-choices {
+	height: 64px!important;
+	overflow-y: scroll;
+}
+.formfilter .select2-container {
+	vertical-align: top!important;
+}
+
+.formfilter-date { display: inline-block; width: 200px; }
+.formfilter-date p { display: inline-block; width: 50px; }
+
+.formfilter-submit { float: right; }
