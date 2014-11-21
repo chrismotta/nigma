@@ -17,6 +17,7 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+//echo Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
 ?>
 
 <?php
@@ -30,6 +31,7 @@ $('.search-form form').submit(function(){
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
+	$affiliate=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
 	//$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
 ?>
 <div class="row">
@@ -130,7 +132,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	// 'fixedHeader'              => true,
 	// 'headerOffset'             => 50,
-	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, $affiliate->networks_id),
+	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, $affiliate),
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

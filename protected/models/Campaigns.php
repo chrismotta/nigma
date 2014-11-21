@@ -783,7 +783,7 @@ class Campaigns extends CActiveRecord
 			));
 	}
 
-	public function getAffiliates($dateStart,$dateEnd,$affiliate)
+	public function getAffiliates($dateStart,$dateEnd,$affiliate_id)
 	{
 		$data=array();
 		$i=0;
@@ -807,11 +807,13 @@ class Campaigns extends CActiveRecord
 				inner join conv_log l on l.campaign_id=c.id
 				inner join affiliates a on a.networks_id=n.id
 				WHERE d.date BETWEEN :dateStart AND :dateEnd
+				AND n.id = ".$affiliate_id."
 				AND DATE(l.date)=DATE(d.date)
 				group by c.id,DATE(l.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
 			$command->bindParam(":dateEnd", $end, PDO::PARAM_STR);
+			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
 			$affiliates=$command->queryAll();
 			foreach ($affiliates as $affiliate) {
 				$data[$i]['id']    =$affiliate['id'];
@@ -832,9 +834,11 @@ class Campaigns extends CActiveRecord
 				inner join conv_log l on l.campaign_id=c.id
 				inner join affiliates a on a.networks_id=n.id
 				WHERE DATE(l.date)=DATE(:date)
+				AND n.id = ".$affiliate_id."
 				group by c.id,DATE(l.date)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":date", $date, PDO::PARAM_STR);
+			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
 			$affiliates=$command->queryAll();
 			foreach ($affiliates as $affiliate) {
 				$data[$i]['id']    =$affiliate['id'];
