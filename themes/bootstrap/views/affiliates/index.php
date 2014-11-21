@@ -79,80 +79,29 @@ $('.search-form form').submit(function(){
 	<?php 
 	//Create link to load filters in modal
 	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
-	if(isset($accountManager))
-	{
-		if(is_array($accountManager))
-		{
-			foreach ($accountManager as $id) {
-				$link.='&accountManager[]='.$id;
-			}			
-		}
-		else
-		{
-			$link.='&accountManager='.$accountManager;
-		}
-	}
-	if(isset($opportunities))
-	{
-		if(is_array($opportunities))
-		{
-			foreach ($opportunities as $id) {
-				$link.='&opportunities[]='.$id;
-			}			
-		}
-		else
-		{
-			$link.='&opportunities='.$opportunities;
-		}
-	}	
-	if(isset($networks))
-	{
-		if(is_array($networks))
-		{
-			foreach ($networks as $id) {
-				$link.='&networks[]='.$id;
-			}			
-		}
-		else
-		{
-			$link.='&networks='.$networks;
-		}
-	}
-	if(isset($adv_categories))
-	{
-		if(is_array($adv_categories))
-		{
-			foreach ($adv_categories as $id) {
-				$link.='&advertisers-cat[]='.$id;
-			}			
-		}
-		else
-		{
-			$link.='&advertisers-cat='.$adv_categories;
-		}
-	}
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Excel Report',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => $link,
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalDailyReport").html(dataInicial);
-					$("#modalDailyReport").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalDailyReport").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'excelReport'),
-		)
-	); ?>
+	// $this->widget('bootstrap.widgets.TbButton', array(
+	// 	'type'        => 'info',
+	// 	'label'       => 'Excel Report',
+	// 	'block'       => false,
+	// 	'buttonType'  => 'ajaxButton',
+	// 	'url'         => $link,
+	// 	'ajaxOptions' => array(
+	// 		'type'    => 'POST',
+	// 		'beforeSend' => 'function(data)
+	// 			{
+	// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+	// 				$("#modalDailyReport").html(dataInicial);
+	// 				$("#modalDailyReport").modal("toggle");
+	// 			}',
+	// 		'success' => 'function(data)
+	// 			{
+	// 				$("#modalDailyReport").html(data);
+	// 			}',
+	// 		),
+	// 	'htmlOptions' => array('id' => 'excelReport'),
+	// 	)
+	// ); 
+	?>
 </div>
 
 <br>
