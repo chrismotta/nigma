@@ -1024,6 +1024,12 @@ class DailyReport extends CActiveRecord
 		}
 	}
 
+	public function updateSpendAffiliates()
+	{
+		$rateAffiliate = Affiliates::model()->find("networks_id=:net", array(':net' => $this->networks_id))->rate;
+		$this->spend = $this->conv_adv != NULL ? $this->conv_adv * $rateAffiliate : $this->conv_api * $rateAffiliate;	
+	}
+
 	public function getRevenueUSD()
 	{
 		$camp         = Campaigns::model()->findByPk($this->campaigns_id);
@@ -1125,6 +1131,10 @@ class DailyReport extends CActiveRecord
 	
 	public function setNewFields()
 	{
+		// update spend only for affiliates
+		if ( Affiliates::model()->exists('networks_id=:nid', array(':nid'=>$this->networks_id)) ) 
+			$this->updateSpendAffiliates();
+
 		$this->profit             = $this->getProfit();
 		$this->profit_percent     = $this->getProfitPerc();
 		$this->click_through_rate = $this->getCtr();
