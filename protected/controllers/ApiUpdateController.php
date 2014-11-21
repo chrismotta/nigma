@@ -23,11 +23,11 @@ class ApiUpdateController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates'),
 				'roles'=>array('admin', 'media_manager'),
 			),
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
@@ -51,6 +51,7 @@ class ApiUpdateController extends Controller
 		$this->actionBingAds();
 		$this->actionSmaato();
 		$this->actionAdultmoda();
+		$this->actionAffiliates();
 	}
 
 	public function actionBingCode(){
@@ -194,6 +195,16 @@ class ApiUpdateController extends Controller
 			$ajillion->downloadInfo();
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.publisher');			
+		}
+	}
+
+	public function actionAffiliates()
+	{
+		try {
+			$affiliates = new AffiliatesAPI;
+			$affiliates->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.affiliates');			
 		}
 	}
 

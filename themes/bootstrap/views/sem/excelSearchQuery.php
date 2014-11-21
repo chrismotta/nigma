@@ -33,7 +33,7 @@ $this->widget('EExcelWriter', array(
 	'columns'      => array(
 		array(
 			'name'        => 'query',
-			'value'       => 'str_replace("http://", "", $data->query)',
+			'value'       => 'str_replace("http", "", $data->query)',
 			'htmlOptions' => array('style'=>'width: 800px;'),
 		),
 		array(

@@ -759,8 +759,8 @@ class Campaigns extends CActiveRecord
 		$dateEnd                                 =date('Y-m-d', strtotime($dateEnd));
 		$criteria                                =new CDbCriteria;
 		$criteria->select                        ='count(*) as clics';
-		if($campaign !=null)$criteria->addCondition("DATE(date)>='".$dateStart."' AND DATE(date)<='".$dateEnd."' AND campaigns_id=".$campaign);
-		else $criteria->addCondition("DATE(date) >='".$dateStart."' AND DATE(date)<='".$dateEnd."'");
+		if($campaign !=null)$criteria->addCondition("date BETWEEN '".$dateStart."' AND '".$dateEnd."' AND campaigns_id=".$campaign);
+		else return 0;
 		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
 		return $clicksLogs;
 	}

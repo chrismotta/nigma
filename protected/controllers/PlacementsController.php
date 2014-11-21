@@ -1,6 +1,6 @@
 <?php
 
-class PublishersController extends Controller
+class PlacementsController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -55,19 +55,16 @@ class PublishersController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Publishers;
-		$model->account_manager_id = Yii::app()->user->id;
+		$model=new Placements;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['Publishers']))
+		if(isset($_POST['Placements']))
 		{
-			$model->attributes=$_POST['Publishers'];
+			$model->attributes=$_POST['Placements'];
 			if($model->save())
 				$this->redirect(array('admin'));
-			else
-				echo json_encode($model->getErrors());
 		}
 
 		$this->renderFormAjax($model);
@@ -85,9 +82,9 @@ class PublishersController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['Publishers']))
+		if(isset($_POST['Placements']))
 		{
-			$model->attributes=$_POST['Publishers'];
+			$model->attributes=$_POST['Placements'];
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -102,19 +99,18 @@ class PublishersController extends Controller
 	 */
 	public function actionDelete($id)
 	{
-
 		$model = $this->loadModel($id);
 		switch ($model->status) {
 			case 'Active':
-				if ( Placements::model()->count("publishers_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
-					echo "To remove this item must delete the placements associated with it.";
-					Yii::app()->end();
-				} else {
-					$model->status = 'Archived';
-				}
+				$model->status = 'Archived';
 				break;
 			case 'Archived':
-				$model->status = 'Active';
+				if ($model->publishers->status == 'Active') {
+					$model->status = 'Active';
+				} else {
+					echo "To restore this item must restore the publisher associated with it.";
+					Yii::app()->end();
+				}
 				break;
 		}
 
@@ -130,7 +126,7 @@ class PublishersController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Publishers');
+		$dataProvider=new CActiveDataProvider('Placements');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -141,11 +137,11 @@ class PublishersController extends Controller
 	 */
 	public function actionAdmin()
 	{
-		$model=new Publishers('search');
+		$model=new Placements('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Active';
-		if(isset($_GET['Publishers']))
-			$model->attributes=$_GET['Publishers'];
+		if(isset($_GET['Placements']))
+			$model->attributes=$_GET['Placements'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -157,11 +153,11 @@ class PublishersController extends Controller
 	 */
 	public function actionArchived()
 	{
-		$model=new Publishers('search');
+		$model=new Placements('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Archived';
-		if(isset($_GET['Publishers']))
-			$model->attributes=$_GET['Publishers'];
+		if(isset($_GET['Placements']))
+			$model->attributes=$_GET['Placements'];
 
 		$this->render('admin',array(
 			'model'      => $model,
@@ -173,12 +169,12 @@ class PublishersController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Publishers the loaded model
+	 * @return Placements the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
 	{
-		$model=Publishers::model()->findByPk($id);
+		$model=Placements::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -186,11 +182,11 @@ class PublishersController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Publishers $model the model to be validated
+	 * @param Placements $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='publishers-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='placements-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
@@ -199,19 +195,15 @@ class PublishersController extends Controller
 
 	private function renderFormAjax($model) 
 	{
-		$currency   = KHtml::enumItem($model, 'currency');
-		$entity     = KHtml::enumItem($model, 'entity');
-		$model_publ = KHtml::enumItem($model, 'model');
-
-		// Get countries and carriers with status "Active"
-		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
+		$sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
+		$exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$publishers = CHtml::listData( Publishers::model()->findAll(array('order'=>'name', 'condition' => "status='Active'")), 'id', 'name');
 
 		$this->renderPartial('_form', array(
 			'model'      => $model,
-			'currency'   => $currency,
-			'model_publ' => $model_publ,
-			'country'    => $country,
-			'entity'     => $entity,
+			'sizes'      => $sizes,
+			'exchanges'  => $exchanges,
+			'publishers' => $publishers,
 		), false, true);
 	}
 }

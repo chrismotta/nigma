@@ -445,14 +445,35 @@ class DailyReportController extends Controller
 		), false, true);
 	}
 
-
-	public function actionGetOpportunities($id=null)
+	public function actionGetOpportunities()
 	{
 		// comentado provisoriamente, generar permiso de admin
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
-		if($id)$opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
-		else $opps =Opportunities::model()->findAll();
-		$response='<option value="">All opportunities</option>';
+		$criteria=new CDbCriteria;
+		$ids = isset($_GET['accountManager']) ? $_GET['accountManager'] : null;
+		if ( $ids != NULL) {
+			if(is_array($ids))
+			{
+				$query="(";
+				$i=0;
+				foreach ($ids as $id) {	
+					if($i==0)			
+						$query.="account_manager_id='".$id."'";
+					else
+						$query.=" OR account_manager_id='".$id."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('account_manager_id',$ids);
+			}
+		}
+		$opps =Opportunities::model()->findAll($criteria);
+		$response='';
+		// $response='<option value="">All opportunities</option>';
 		foreach ($opps as $op) {
 			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
 		}
