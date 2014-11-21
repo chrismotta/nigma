@@ -18,7 +18,20 @@ $(document).ready(function(){
 	    styleEgg('102108105112', 'body', {'transform': 'scale(-1, 1)'});
 	    styleEgg('10397116111', 'body', {'background-image': 'url(http://i1-news.softpedia-static.com/images/extra/LINUX/large/ubuntu1204ltswallpapers-large_009.jpg)'});
 	    //http://i1-news.softpedia-static.com/images/extra/LINUX/large/ubuntu1204ltswallpapers-large_009.jpg
+
+		if(easterCode == '11411111697114') {
+	    	$("body").animateRotate(720, 4000);
+		}
 	});
+
+	$.fn.animateRotate = function(angle, duration) {
+	  return this.each(function() {
+	    $(this).animate({deg: angle}, {
+	      duration: duration,
+	      step: function(now) { $(this).css({ transform: 'rotate(' + now + 'deg)' }); },
+	    });
+	  });
+	};
 
 	function imageEgg(word, image, height){
 		if(easterCode.indexOf(word) != -1){
@@ -57,8 +70,7 @@ var selectionChangedDailyReport = function(id) {
 		return;
 	}
 
-	var c_id   = $( "#" + id + " table tbody .selected" ).attr("data-row-c-id");
-	var net_id = $( "#" + id + " table tbody .selected" ).attr("data-row-net-id");
+	var c_id   = $( "#" + id + " t4ble tbody .selected" ).attr("data-row-c-id");
 
 	// parsing data into corresponding format "Y-m-d"
 	var tmp    = $( "#dateEnd").attr('value');
