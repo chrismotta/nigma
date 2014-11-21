@@ -19,7 +19,7 @@ $(document).ready(function(){
 	    styleEgg('10397116111', 'body', {'background-image': 'url(http://i1-news.softpedia-static.com/images/extra/LINUX/large/ubuntu1204ltswallpapers-large_009.jpg)'});
 	    //http://i1-news.softpedia-static.com/images/extra/LINUX/large/ubuntu1204ltswallpapers-large_009.jpg
 
-		if(easterCode == '11411111697114') {
+		if(easterCode.indexOf('11411111697114') != -1) {
 	    	$("body").animateRotate(720, 4000);
 		}
 	});
@@ -34,7 +34,7 @@ $(document).ready(function(){
 	};
 
 	function imageEgg(word, image, height){
-		if(easterCode.indexOf(word) != -1){
+		if(easterCode.indexOf(word) != -1) {
 			$('.easter-footer').html('<img src="'+image+'" style="height:'+height+'px" />');
 			$('.easter-footer').show();
 			easterCode = "";
