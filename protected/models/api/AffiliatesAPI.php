@@ -26,13 +26,19 @@ class AffiliatesAPI
 			$campaigns = Campaigns::model()->findAll( 'networks_id=:nid', array(':nid' => $affiliate->networks_id) );
 
 			foreach ($campaigns as $campaign) {
+				$conv   = ConvLog::model()->count("campaign_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
+				$clicks = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
+
+				if ($conv == 0 && $clicks == 0)
+					continue;
+
 				$dailyReport               = new DailyReport();
 				$dailyReport->campaigns_id = $campaign->id;
 				$dailyReport->date         = $date;
 				$dailyReport->networks_id  = $affiliate->networks_id;
 				$dailyReport->imp          = 0;
-				$dailyReport->clics        = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
-				$dailyReport->conv_api     = ConvLog::model()->count("campaign_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
+				$dailyReport->clics        = $clicks;
+				$dailyReport->conv_api     = $conv;
 				$dailyReport->spend        = $dailyReport->conv_api * $affiliate->rate;
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
