@@ -17,6 +17,30 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
+// $criteria=new CDbCriteria;
+// $criteria->select=array(
+// 	'c.id',
+// 	'ROUND(
+// 		t.spend/IF(
+// 			ISNULL(t.conv_adv),t.conv_api,t.conv_adv),
+// 		2) as rate',
+// 	'sum(
+// 		IF(
+// 			ISNULL(t.conv_adv),
+// 			 t.conv_api, t.conv_adv)
+// 		) as conversions',
+// 	'sum(t.spend) as spend',
+// 	'DATE(l.date) as date'
+// );
+// //$criteria->whith('daily_report d');
+// $criteria->join='inner join campaigns c on t.campaigns_id=c.id inner join networks n on c.networks_id=n.id inner join conv_log l on l.campaign_id=c.id inner join affiliates a on a.networks_id=n.id';
+// $criteria->addCondition("t.date BETWEEN '2014-11-01' AND '2014-11-01'");
+// $criteria->addCondition('DATE(t.date) = DATE(t.date)');
+// $criteria->group='c.id,DATE(l.date),ROUND(t.spend/IF(ISNULL(t.conv_adv),t.conv_api,t.conv_adv),2)';
+// $dailys = DailyReport::model()->findAll($criteria);
+// foreach ($dailys as $daily) {
+// 	echo json_encode($daily);
+// }
 ?>
 
 <?php
@@ -30,44 +54,44 @@ $('.search-form form').submit(function(){
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
+	//$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
 
-	$this->Widget('ext.highcharts.HighchartsWidget', array(
-		'options'=>array(
-			'chart' => array('type' => 'area'),
-			'title' => array('text' => ''),
-			'xAxis' => array(
-				'categories' => $totalsGrap['dates']
-				),
-			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-			'yAxis' => array(
-				'title' => array('text' => '')
-				),
-			'series' => array(
-				array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
-				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
-				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
-				array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
-				array('name' => 'Spend','data' => $totalsGrap['spends'],),
-				array('name' => 'Profit','data' => $totalsGrap['profits'],),
-				),
-	        'legend' => array(
-	            'layout' => 'vertical',
-	            'align' =>  'left',
-	            'verticalAlign' =>  'top',
-	            'x' =>  40,
-	            'y' =>  3,
-	            'floating' =>  true,
-	            'borderWidth' =>  1,
-	            'backgroundColor' => '#FFFFFF'
-	        	)
-			),
-		)
-	);
+	// $this->Widget('ext.highcharts.HighchartsWidget', array(
+	// 	'options'=>array(
+	// 		'chart' => array('type' => 'area'),
+	// 		'title' => array('text' => ''),
+	// 		'xAxis' => array(
+	// 			'categories' => $totalsGrap['dates']
+	// 			),
+	// 		'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
+	// 		'yAxis' => array(
+	// 			'title' => array('text' => '')
+	// 			),
+	// 		'series' => array(
+	// 			array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
+	// 			array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
+	// 			array('name' => 'Conv','data' => $totalsGrap['conversions'],),
+	// 			array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
+	// 			array('name' => 'Spend','data' => $totalsGrap['spends'],),
+	// 			array('name' => 'Profit','data' => $totalsGrap['profits'],),
+	// 			),
+	//         'legend' => array(
+	//             'layout' => 'vertical',
+	//             'align' =>  'left',
+	//             'verticalAlign' =>  'top',
+	//             'x' =>  40,
+	//             'y' =>  3,
+	//             'floating' =>  true,
+	//             'borderWidth' =>  1,
+	//             'backgroundColor' => '#FFFFFF'
+	//         	)
+	// 		),
+	// 	)
+	// );
 	?>
 			
 	</div>
@@ -161,7 +185,7 @@ $('.search-form form').submit(function(){
 		'type'                 =>'search',
 		'htmlOptions'          =>array('class'=>'well'),
 		'enableAjaxValidation' =>true,
-		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/admin',
+		'action'               => Yii::app()->getBaseUrl() . '/affiliates/index',
 		'method'               => 'GET',
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -180,95 +204,28 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 
 <?php 
-	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
+	// $totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories),
+	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, 1),
 	'filter'                   => $model,
-	'selectionChanged'         => 'js:selectionChangedDailyReport',
+	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	// 'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
-	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
-	'columns'                  => array(
-		array(
-			'name'               =>	'id',
-			'footer'             => 'Totals:',
-			'cssClassExpression' => '$data->isFromVector() ? "isFromVector" : NULL',
-			'htmlOptions'        => array('style' => 'padding-left: 10px; height: 70px;'),
-			'headerHtmlOptions'  => array('style' => 'border-left: medium solid #FFF;'),
-		),
-		array(
-			'name'        => 'campaign_name',
-			'value'       => 'Campaigns::model()->getExternalName($data->campaigns_id)',
-			'headerHtmlOptions' => array('width' => '200'),
-			'htmlOptions' => array('style'=>'word-wrap:break-word;'),
-		),
-		array(
-			'name'        => 'rate',
-			'value'       => '$data->getRateUSD() ? $data->getRateUSD() : 0',
-			'htmlOptions' => array('style'=>'text-align:right;'),
-		),
-        array(
-			'name'              => 'conv_api',
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['conv_s2s'],
-        ),
-		array(
-			'name'              => 'conv_adv',
-			'filterHtmlOptions' => array('colspan'=>'2'),
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'class'             => 'bootstrap.widgets.TbEditableColumn',
-			'cssClassExpression'=> '$data->campaigns->opportunities->rate === NULL 
-									&& $data->campaigns->opportunities->carriers_id === NULL ?
-									"notMultiCarrier" :
-									"multiCarrier"',
-			'editable'          => array(
-				'apply'      => $sum ? false : true,
-				'title'      => 'Conversions',
-				'type'       => 'text',
-				'url'        => 'updateEditable/',
-				'emptytext'  => 'Null',
-				'inputclass' => 'input-mini',
-				'success'    => 'js: function(response, newValue) {
-					  	if (!response.success) {
-							$.fn.yiiGridView.update("daily-report-grid");
-					  	}
-					}',
+	// 'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	'columns'      =>array(
+                //array('name' =>'id'),
+                array('name' =>'name'),
+                array('name' =>'date'),
+                array('name' =>'rate'),
+                array('name' =>'conv'),
+                array('name' =>'spend', 'header'=>'Revenue'),
             ),
-			'footer' => $totals['conv_adv'],
-		),
-   //      array(
-			// 'name'              => 'revenue',
-			// 'value'             => '$data->getRevenueUSD()',
-			// 'htmlOptions'       => array('style'=>'text-align:right;'),
-			// 'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			// 'footer'            => $totals['revenue'],
-   //      ),
-		array(
-			'name'              => 'spend',
-			'value'             => '$data->getSpendUSD()',
-			'header'			=> 'Revenue',
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['spend'],
-        ),
-		array(
-			'name'              => 'date',
-			'value'             => 'date("d-m-Y", strtotime($data->date))',
-			'headerHtmlOptions' => array('style' => "width: 30px"),
-			'htmlOptions'       => array(
-					'class' => 'date', 
-					'style' =>'text-align:right;'
-				),
-			'filter'      => false,
-        ),
-	),
-)); ?>
+	)
+); ?>
 
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalDailyReport')); ?>
 

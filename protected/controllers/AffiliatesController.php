@@ -4,11 +4,12 @@ class AffiliatesController extends Controller
 {
 	public function actionIndex()
 	{
-		$model=new DailyReport('search');
-		$model->unsetAttributes();  // clear any default values
-		if(isset($_GET['DailyReport']))
-			$model->attributes=$_GET['DailyReport'];
+		// $model=new DailyReport('search');
+		// $model->unsetAttributes();  // clear any default values
+		// if(isset($_GET['DailyReport']))
+		// 	$model->attributes=$_GET['DailyReport'];
 
+		$model=new Campaigns;
 		$networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
 
 		$this->render('index',array(
