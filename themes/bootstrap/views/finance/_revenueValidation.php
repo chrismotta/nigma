@@ -7,7 +7,6 @@
     <h4><?php echo $io->commercial_name; ?></h4>
 </div>
 <div class="modal-body">
-    <div class="row">
         <h5>Commercial Contact: <?php echo $io->contact_com; ?></h5>
         <h5>Administrative Contact: <?php echo $io->contact_adm; ?></h5>
         <?php 
@@ -108,7 +107,6 @@
                  <br>
             </div>
         </div>
-    </div>
 </div>
 
 <div class="modal-footer">
