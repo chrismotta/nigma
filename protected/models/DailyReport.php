@@ -1146,9 +1146,23 @@ class DailyReport extends CActiveRecord
 
 	public function getRateUSD()
 	{
-		$opportunitie =Campaigns::model()->findByPk($this->campaigns_id)->opportunities_id;
-		$rate         = Opportunities::model()->findByPk($opportunitie)->rate;
-		$io_currency  = Ios::model()->findByPk(Opportunities::model()->findByPk($opportunitie)->ios_id)->currency;
+		$campaign =Campaigns::model()->findByPk($this->campaigns_id);
+		$opportunitie =Opportunities::model()->findByPk($campaign->opportunities_id);
+		$rate         = Opportunities::model()->findByPk($opportunitie->id)->rate;
+		$io_currency  = Ios::model()->findByPk($opportunitie->ios_id)->currency;
+		switch ($opportunitie->model_adv) 
+		{
+			case 'CPA':
+				$rate=$this->getConv()!=0 ? number_format($this->revenue/$this->getConv(), 2) : $opportunitie->rate;
+				break;
+			case 'CPM':
+				$rate=$this->imp!=0 ? number_format($this->revenue/$this->imp, 2) : $opportunitie->rate;
+				break;
+			case 'CPC':
+				$rate=$this->clics!= 0 ? number_format($this->revenue/$this->clics, 2) : $opportunitie->rate;
+				break;
+			
+		}
 
 		if ($io_currency == 'USD') // if currency is USD dont apply type change
 			return $rate;
