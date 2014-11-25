@@ -1040,7 +1040,7 @@ class DailyReport extends CActiveRecord
 			return $this->revenue;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? number_format($this->revenue / $currency[$ios_currency], 2) : 'Currency ERROR!';
+		return $currency ? round($this->revenue / $currency[$ios_currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getSpendUSD()
@@ -1051,12 +1051,12 @@ class DailyReport extends CActiveRecord
 			return $this->spend;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? number_format($this->spend / $currency[$net_currency], 2) : 'Currency ERROR!';
+		return $currency ? round($this->spend / $currency[$net_currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getProfit()
 	{
-		return number_format($this->getRevenueUSD() - $this->getSpendUSD(), 2);
+		return round($this->getRevenueUSD() - $this->getSpendUSD(), 2);
 	}
 	public function getProfits()
 	{
@@ -1065,41 +1065,41 @@ class DailyReport extends CActiveRecord
 	public function getCtr()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
-		$r = $imp == 0 ? 0 : number_format($this->clics / $imp, 4);
+		$r = $imp == 0 ? 0 : round($this->clics / $imp, 4);
 		return $r;
 	}
 
 	public function getConvRate()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
-		$r = $this->clics == 0 ? 0 : number_format( $conv / $this->clics, 4 );
+		$r = $this->clics == 0 ? 0 : round( $conv / $this->clics, 4 );
 		return $r;
 	}
 
 	public function getProfitPerc()
 	{
 		$revenue = $this->getRevenueUSD();
-		$r = $revenue == 0 ? 0 : number_format($this->getProfit() / $revenue, 2);
+		$r = $revenue == 0 ? 0 : round($this->getProfit() / $revenue, 2);
 		return $r;
 	}
 
 	public function getECPM()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
-		$r = $imp == 0 ? 0 : number_format($this->getSpendUSD() * 1000 / $imp, 2);
+		$r = $imp == 0 ? 0 : round($this->getSpendUSD() * 1000 / $imp, 2);
 		return $r;
 	}
 
 	public function getECPC()
 	{
-		$r = $this->clics == 0 ? 0 : number_format($this->getSpendUSD() / $this->clics, 2);
+		$r = $this->clics == 0 ? 0 : round($this->getSpendUSD() / $this->clics, 2);
 		return $r;
 	}
 
 	public function getECPA()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
-		$r = $conv == 0 ? 0 : number_format($this->getSpendUSD() / $conv, 2);
+		$r = $conv == 0 ? 0 : round($this->getSpendUSD() / $conv, 2);
 		return $r;
 	}
 
@@ -1116,7 +1116,7 @@ class DailyReport extends CActiveRecord
 			return $cap;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? number_format($cap / $currency[$net_currency], 2) : 'Currency ERROR!';
+		return $currency ? round($cap / $currency[$net_currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getCapStatus()
@@ -1154,7 +1154,7 @@ class DailyReport extends CActiveRecord
 			return $rate;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
+		return $currency ? round($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getConv()
