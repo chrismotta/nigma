@@ -1146,12 +1146,29 @@ class DailyReport extends CActiveRecord
 
 	public function getRateUSD()
 	{
-		$opportunitie =Campaigns::model()->findByPk($this->campaigns_id)->opportunities_id;
-		$rate         = Opportunities::model()->findByPk($opportunitie)->rate;
-		$io_currency  = Ios::model()->findByPk(Opportunities::model()->findByPk($opportunitie)->ios_id)->currency;
+		$campaign =Campaigns::model()->findByPk($this->campaigns_id);
+		$opportunitie =Opportunities::model()->findByPk($campaign->opportunities_id);
+		$rate         = Opportunities::model()->findByPk($opportunitie->id)->rate;
+		$io_currency  = Ios::model()->findByPk($opportunitie->ios_id)->currency;
+		switch ($opportunitie->model_adv) 
+		{	
+			case 'CPI':
+			case 'CPL':
+			case 'CPA':
+				$rate=$this->getConv()!=0 ? round($this->revenue/$this->getConv(), 2) : $opportunitie->rate;
+				break;
+			case 'CPM':
+				$rate=$this->imp!=0 ? round($this->revenue/($this->imp/1000), 2) : $opportunitie->rate;
+				break;
+			case 'CPV':
+			case 'CPC':
+				$rate=$this->clics!= 0 ? round($this->revenue/$this->clics, 2) : $opportunitie->rate;
+				break;
+			
+		}
 
 		if ($io_currency == 'USD') // if currency is USD dont apply type change
-			return $rate;
+			return round($rate,2);
 
 		$currency = Currency::model()->findByDate($this->date);
 		return $currency ? round($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
@@ -1160,6 +1177,11 @@ class DailyReport extends CActiveRecord
 	public function getConv()
 	{
 		return $this->conv_adv==null ? $this->conv_api : $this->conv_adv; 
+	}
+
+	public function getImp()
+	{
+		return $this->imp_adv==null ? $this->imp : $this->imp_adv; 
 	}
 
 	public function createByNetwork()

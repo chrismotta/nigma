@@ -95,7 +95,7 @@ class KHtml extends CHtml
                 //   return;
                 // }
                 $.post(
-                    "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities/"+this.value,
+                    "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities?accountManager="+this.value,
                     "",
                     function(data)
                     {
