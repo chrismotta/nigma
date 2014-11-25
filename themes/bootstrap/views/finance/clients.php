@@ -251,7 +251,7 @@ $ios    =new Ios;
 				CHtml::link(
 					"<i class=\"icon-envelope\"></i>",
 					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Resend Mail")
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
 
 
 					);

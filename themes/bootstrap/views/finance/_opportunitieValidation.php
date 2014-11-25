@@ -8,8 +8,6 @@
 </div>
 
 <div class="modal-body">
-
-    <div class="row">
         <h5>Carrier: <?php //echo $opportunitie->carriers->mobile_brand ? $opportunitie->carriers->mobile_brand  : ""; ?></h5>
         <h5>Country: <?php echo $opportunitie->country->name; ?></h5>
         <?php 
@@ -82,7 +80,6 @@
                      ?>
                 </div>
             </div>
-        </div>
 
 </div>
 
