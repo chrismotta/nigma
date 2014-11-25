@@ -793,10 +793,12 @@ class Campaigns extends CActiveRecord
 			$end=date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today'))? date('Y-m-d', strtotime('-1 day',strtotime($dateEnd))) : date('Y-m-d', strtotime($dateEnd));
 			
 			$sql="select c.id,
-				ROUND(
-					d.spend/
-							IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
-				) as rate,
+				IF(ISNULL(d.conv_adv) and ISNULL(d.conv_api),
+					ROUND(
+						d.spend/
+								IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
+					),
+				a.rate) as rate,
 				sum(
 					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
 				) as conv,
@@ -864,6 +866,9 @@ class Campaigns extends CActiveRecord
 		}
 		$i=0;
 		$totalGraphic=array();
+		$totalGraphic['dates']=array();
+		$totalGraphic['convs']=array();
+		$totalGraphic['spends']=array();
 		foreach ($graphic as $key => $value) {
 			$totalGraphic['dates'][$i]  =$key;
 			$totalGraphic['convs'][$i]  =$value['conv'];
@@ -888,7 +893,6 @@ class Campaigns extends CActiveRecord
 		        'pageSize'=>30,
 		    ),
 		));
-
 		$result['graphic'] = $totalGraphic;
 		return $result;
 	}
