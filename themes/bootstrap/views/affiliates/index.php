@@ -31,45 +31,57 @@ $('.search-form form').submit(function(){
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-	// $affiliate=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
-	//$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
+	$data = $model->getAffiliates($dateStart, $dateEnd, $network);
+$alert = array('error', 'info', 'success', 'warning', 'muted');
 ?>
+<div class="row totals-bar ">
+	<div class="span6">
+		<div class="alert alert-error">
+			<small >TOTAL</small>
+			<h3 class="">Conversions: <?php echo array_sum($data['graphic']['convs']) ?></h3>
+			<br>
+		</div>
+	</div>
+	<div class="span6">
+		<div class="alert alert-info">
+			<small >TOTAL</small>
+			<h3 class="">Revenue: $<?php echo array_sum($data['graphic']['spends']) ?></h3>
+			<br>
+		</div>
+	</div>
+</div>
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
 
-	// $this->Widget('ext.highcharts.HighchartsWidget', array(
-	// 	'options'=>array(
-	// 		'chart' => array('type' => 'area'),
-	// 		'title' => array('text' => ''),
-	// 		'xAxis' => array(
-	// 			'categories' => $totalsGrap['dates']
-	// 			),
-	// 		'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-	// 		'yAxis' => array(
-	// 			'title' => array('text' => '')
-	// 			),
-	// 		'series' => array(
-	// 			array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
-	// 			array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
-	// 			array('name' => 'Conv','data' => $totalsGrap['conversions'],),
-	// 			array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
-	// 			array('name' => 'Spend','data' => $totalsGrap['spends'],),
-	// 			array('name' => 'Profit','data' => $totalsGrap['profits'],),
-	// 			),
-	//         'legend' => array(
-	//             'layout' => 'vertical',
-	//             'align' =>  'left',
-	//             'verticalAlign' =>  'top',
-	//             'x' =>  40,
-	//             'y' =>  3,
-	//             'floating' =>  true,
-	//             'borderWidth' =>  1,
-	//             'backgroundColor' => '#FFFFFF'
-	//         	)
-	// 		),
-	// 	)
-	// );
+	$this->Widget('ext.highcharts.HighchartsWidget', array(
+		'options'=>array(
+			'chart' => array('type' => 'area'),
+			'title' => array('text' => ''),
+			'xAxis' => array(
+				'categories' => $data['graphic']['dates']
+				),
+			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
+			'yAxis' => array(
+				'title' => array('text' => '')
+				),
+			'series' => array(
+				array('name' => 'Revenues', 'data' => $data['graphic']['spends'],),
+				array('name' => 'Conversions', 'data' => $data['graphic']['convs'],),
+				),
+	        'legend' => array(
+	            'layout' => 'vertical',
+	            'align' =>  'left',
+	            'verticalAlign' =>  'top',
+	            'x' =>  40,
+	            'y' =>  3,
+	            'floating' =>  true,
+	            'borderWidth' =>  1,
+	            'backgroundColor' => '#FFFFFF'
+	        	)
+			),
+		)
+	);
 	?>
 			
 	</div>
@@ -81,28 +93,6 @@ $('.search-form form').submit(function(){
 	<?php 
 	//Create link to load filters in modal
 	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
-	// $this->widget('bootstrap.widgets.TbButton', array(
-	// 	'type'        => 'info',
-	// 	'label'       => 'Excel Report',
-	// 	'block'       => false,
-	// 	'buttonType'  => 'ajaxButton',
-	// 	'url'         => $link,
-	// 	'ajaxOptions' => array(
-	// 		'type'    => 'POST',
-	// 		'beforeSend' => 'function(data)
-	// 			{
-	// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-	// 				$("#modalDailyReport").html(dataInicial);
-	// 				$("#modalDailyReport").modal("toggle");
-	// 			}',
-	// 		'success' => 'function(data)
-	// 			{
-	// 				$("#modalDailyReport").html(data);
-	// 			}',
-	// 		),
-	// 	'htmlOptions' => array('id' => 'excelReport'),
-	// 	)
-	// ); 
 	?>
 </div>
 
@@ -127,27 +117,28 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 
 <?php 
-	// $totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
 	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                       => 'daily-report-grid',
-	// 'fixedHeader'              => true,
-	// 'headerOffset'             => 50,
-	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, $network),
+	'dataProvider'             => $data['dataProvider'],
 	'filter'                   => $model,
-	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	// 'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
-	// 'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	'extraRowColumns'=> array('firstLetter'),
+	'extraRowExpression' => '"<b style=\"font-size: 3em; color: #333;\">".$data["date"]."</b>"',
+	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
 	'columns'      =>array(
-                //array('name' =>'id'),
                 array('name' =>'date'),
                 array('name' =>'name'),
                 array('name' =>'rate'),
                 array('name' =>'conv'),
                 array('name' =>'spend', 'header'=>'Revenue'),
+                array(
+					'name' => 'firstLetter',
+					'value' => '$data["date"]',
+					'headerHtmlOptions' => array('style'=>'display:none'),
+					'htmlOptions' =>array('style'=>'display:none')
+					),
             ),
-	'mergeColumns' => array('date'),
 	)
 ); ?>
 
