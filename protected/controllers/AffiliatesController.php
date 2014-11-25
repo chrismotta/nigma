@@ -23,14 +23,20 @@ class AffiliatesController extends Controller
 		// 	$model->attributes=$_GET['DailyReport'];
 
 		$model=new Campaigns;
-		$networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
-		$affiliate=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
-		
+		// $networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
+		if(Yii::app()->user->id)
+		{
+			$network=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
 			$this->render('index',array(
 				'model'=>$model,
-				'affiliate' => $affiliate,
+				'network' => $network,
 			));
-			
+		}
+		else
+		{			
+			$this->redirect(Yii::app()->baseUrl);
+		}
+		
 		
 	}
 
