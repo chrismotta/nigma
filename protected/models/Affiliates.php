@@ -7,8 +7,10 @@
  * @property integer $id
  * @property integer $networks_id
  * @property string $rate
+ * @property integer $users_id
  *
  * The followings are the available model relations:
+ * @property Users $users
  * @property Networks $networks
  */
 class Affiliates extends CActiveRecord
@@ -30,11 +32,11 @@ class Affiliates extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('networks_id', 'required'),
-			array('networks_id', 'numerical', 'integerOnly'=>true),
+			array('networks_id, users_id', 'numerical', 'integerOnly'=>true),
 			array('rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, networks_id, rate', 'safe', 'on'=>'search'),
+			array('id, networks_id, rate, users_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -46,6 +48,7 @@ class Affiliates extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'users' => array(self::BELONGS_TO, 'Users', 'users_id'),
 			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
 		);
 	}
@@ -56,9 +59,10 @@ class Affiliates extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'          => 'ID',
+			'id' => 'ID',
 			'networks_id' => 'Networks',
-			'rate'        => 'Rate',
+			'rate' => 'Rate',
+			'users_id' => 'Users',
 		);
 	}
 
@@ -83,6 +87,7 @@ class Affiliates extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('networks_id',$this->networks_id);
 		$criteria->compare('rate',$this->rate,true);
+		$criteria->compare('users_id',$this->users_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -98,5 +103,13 @@ class Affiliates extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+	
+	public function findByUser($id)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('users_id='.$id);
+		if($user=Self::model()->find($criteria))
+			return $user;
 	}
 }
