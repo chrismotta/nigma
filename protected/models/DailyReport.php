@@ -1168,7 +1168,7 @@ class DailyReport extends CActiveRecord
 		}
 
 		if ($io_currency == 'USD') // if currency is USD dont apply type change
-			return $rate;
+			return round($rate,2);
 
 		$currency = Currency::model()->findByDate($this->date);
 		return $currency ? round($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
