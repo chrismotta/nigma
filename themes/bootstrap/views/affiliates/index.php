@@ -31,45 +31,57 @@ $('.search-form form').submit(function(){
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-	// $affiliate=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
-	//$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
+	$data = $model->getAffiliates($dateStart, $dateEnd, $network);
+$alert = array('error', 'info', 'success', 'warning', 'muted');
 ?>
+<div class="row totals-bar ">
+	<div class="span6">
+		<div class="alert alert-error">
+			<small >TOTAL</small>
+			<h3 class="">Conversions: <?php echo array_sum($data['graphic']['convs']) ?></h3>
+			<br>
+		</div>
+	</div>
+	<div class="span6">
+		<div class="alert alert-info">
+			<small >TOTAL</small>
+			<h3 class="">Revenue: $<?php echo array_sum($data['graphic']['spends']) ?></h3>
+			<br>
+		</div>
+	</div>
+</div>
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
 
-	// $this->Widget('ext.highcharts.HighchartsWidget', array(
-	// 	'options'=>array(
-	// 		'chart' => array('type' => 'area'),
-	// 		'title' => array('text' => ''),
-	// 		'xAxis' => array(
-	// 			'categories' => $totalsGrap['dates']
-	// 			),
-	// 		'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-	// 		'yAxis' => array(
-	// 			'title' => array('text' => '')
-	// 			),
-	// 		'series' => array(
-	// 			array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
-	// 			array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
-	// 			array('name' => 'Conv','data' => $totalsGrap['conversions'],),
-	// 			array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
-	// 			array('name' => 'Spend','data' => $totalsGrap['spends'],),
-	// 			array('name' => 'Profit','data' => $totalsGrap['profits'],),
-	// 			),
-	//         'legend' => array(
-	//             'layout' => 'vertical',
-	//             'align' =>  'left',
-	//             'verticalAlign' =>  'top',
-	//             'x' =>  40,
-	//             'y' =>  3,
-	//             'floating' =>  true,
-	//             'borderWidth' =>  1,
-	//             'backgroundColor' => '#FFFFFF'
-	//         	)
-	// 		),
-	// 	)
-	// );
+	$this->Widget('ext.highcharts.HighchartsWidget', array(
+		'options'=>array(
+			'chart' => array('type' => 'area'),
+			'title' => array('text' => ''),
+			'xAxis' => array(
+				'categories' => $data['graphic']['dates']
+				),
+			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
+			'yAxis' => array(
+				'title' => array('text' => '')
+				),
+			'series' => array(
+				array('name' => 'Revenues', 'data' => $data['graphic']['spends'],),
+				array('name' => 'Conversions', 'data' => $data['graphic']['convs'],),
+				),
+	        'legend' => array(
+	            'layout' => 'vertical',
+	            'align' =>  'left',
+	            'verticalAlign' =>  'top',
+	            'x' =>  40,
+	            'y' =>  3,
+	            'floating' =>  true,
+	            'borderWidth' =>  1,
+	            'backgroundColor' => '#FFFFFF'
+	        	)
+			),
+		)
+	);
 	?>
 			
 	</div>
@@ -132,7 +144,7 @@ $('.search-form form').submit(function(){
 	'id'                       => 'daily-report-grid',
 	// 'fixedHeader'              => true,
 	// 'headerOffset'             => 50,
-	'dataProvider'             => $model->getAffiliates($dateStart, $dateEnd, $network),
+	'dataProvider'             => $data['dataProvider'],
 	'filter'                   => $model,
 	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',

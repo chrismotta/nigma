@@ -785,7 +785,8 @@ class Campaigns extends CActiveRecord
 
 	public function getAffiliates($dateStart,$dateEnd,$affiliate_id)
 	{
-		$data=array();
+		$data    =array();
+		$graphic =array();
 		$i=0;
 		if(date('Y-m-d', strtotime($dateStart))!=date('Y-m-d', strtotime('today')))
 		{
@@ -806,11 +807,12 @@ class Campaigns extends CActiveRecord
 				inner join networks n on c.networks_id=n.id 
 				inner join affiliates a on a.networks_id=n.id
 				WHERE d.date BETWEEN :dateStart AND :dateEnd
-				AND n.id = ".$affiliate_id."
+				AND n.id = :affiliate
 				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
 			$command->bindParam(":dateEnd", $end, PDO::PARAM_STR);
+			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
 			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
 			$affiliates=$command->queryAll();
 			foreach ($affiliates as $affiliate) {
@@ -820,6 +822,12 @@ class Campaigns extends CActiveRecord
 				$data[$i]['spend'] =$affiliate['spend'];
 				$data[$i]['date']  =$affiliate['date'];
 				$data[$i]['name']  =Self::getExternalName($affiliate['id']);
+
+				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
+				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
+				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
+
 				$i++;
 			}
 		}
@@ -844,16 +852,31 @@ class Campaigns extends CActiveRecord
 				$data[$i]['conv']  =$affiliate['conv'];
 				$data[$i]['spend'] =$affiliate['spend'];
 				$data[$i]['date']  =$affiliate['date'];
-				$data[$i]['name']  =Self::getExternalName($affiliate['id']);				
+				$data[$i]['name']  =Self::getExternalName($affiliate['id']);		
+				
+				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
+				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
+				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
+
 				$i++;
 			}
 		}
+		$i=0;
+		$totalGraphic=array();
+		foreach ($graphic as $key => $value) {
+			$totalGraphic['dates'][$i]  =$key;
+			$totalGraphic['convs'][$i]  =$value['conv'];
+			$totalGraphic['spends'][$i] =$value['spend'];
+			$i++;
+		}
+
 		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
 
 		$filteredData=$filtersForm->filter($data);
-		return new CArrayDataProvider($filteredData, array(
+		$result['dataProvider'] =  new CArrayDataProvider($filteredData, array(
 		    'id'=>'affiliates',
 		    'sort'=>array(
 				'defaultOrder' => 'date DESC',
@@ -865,5 +888,8 @@ class Campaigns extends CActiveRecord
 		        'pageSize'=>30,
 		    ),
 		));
+
+		$result['graphic'] = $totalGraphic;
+		return $result;
 	}
 }
