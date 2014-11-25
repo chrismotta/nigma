@@ -58,6 +58,16 @@ class FilterManager
 				'media_manager',
 				'finance',
 			)),
+		'media' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'media',
+			)),
+		'affiliate' => array( 
+			'column' => 'affiliates.id', 
+			'roles'  => array( 
+				'affiliate',
+			)),
 		);
 
     /**

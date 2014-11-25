@@ -1,6 +1,15 @@
 <?php 
 /* @var $this DailyReportController */
 /* @var $form CActiveForm */
+Yii::app()->clientscript->scriptMap['*.js'] = false;
+$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
+$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
+$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 ?>
 
 <div class="modal-header">
@@ -26,7 +35,7 @@
             <div class="controls">
                 <?php $this->widget('bootstrap.widgets.TbDatePicker',array(
                     'name'  => 'excel-dateStart',
-                    'value' => date('d-m-Y', strtotime('yesterday')),
+                    'value' => date('d-m-Y', strtotime($dateStart)),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
                     ),
@@ -49,7 +58,7 @@
             <div class="controls">
                 <?php $this->widget('bootstrap.widgets.TbDatePicker',array(
                     'name'  => 'excel-dateEnd',
-                    'value' => date('d-m-Y', strtotime('yesterday')),
+                    'value' => date('d-m-Y', strtotime($dateEnd)),
                     'htmlOptions' => array(
                         'style' => 'width: 80px',
                     ),
@@ -65,11 +74,17 @@
             </div>
         <br/>
         </div></label>
-
+        <?php
+       if (FilterManager::model()->isUserTotalAccess('daily'))
+            KHtml::filterAccountManagersMulti($accountManager,array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-accountManager-select'),'excel-opportunities-select','excel-accountManager');
+        KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-opportunities-select'),'excel-opportunities');
+        KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-networks-select'),'excel-networks');
+        KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-advertisers-cat-select'),'excel-advertisers-cat');
+        ?>
         <div class="input-append">
             <?php echo CHtml::label("SUM:", 'excel-dateEnd', array('class'=>'control-label')); ?>
             <div class="controls">
-                <?php echo CHtml::checkBox('sum', 0, array('style'=>'vertical-align:bottom;')); ?>
+                <?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align:bottom;')); ?>
            </div>
         <br/>
        </div>
