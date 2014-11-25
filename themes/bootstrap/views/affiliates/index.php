@@ -93,28 +93,6 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<?php 
 	//Create link to load filters in modal
 	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
-	// $this->widget('bootstrap.widgets.TbButton', array(
-	// 	'type'        => 'info',
-	// 	'label'       => 'Excel Report',
-	// 	'block'       => false,
-	// 	'buttonType'  => 'ajaxButton',
-	// 	'url'         => $link,
-	// 	'ajaxOptions' => array(
-	// 		'type'    => 'POST',
-	// 		'beforeSend' => 'function(data)
-	// 			{
-	// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-	// 				$("#modalDailyReport").html(dataInicial);
-	// 				$("#modalDailyReport").modal("toggle");
-	// 			}',
-	// 		'success' => 'function(data)
-	// 			{
-	// 				$("#modalDailyReport").html(data);
-	// 			}',
-	// 		),
-	// 	'htmlOptions' => array('id' => 'excelReport'),
-	// 	)
-	// ); 
 	?>
 </div>
 
@@ -139,27 +117,28 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 <?php $this->endWidget(); ?>
 
 <?php 
-	// $totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
 	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                       => 'daily-report-grid',
-	// 'fixedHeader'              => true,
-	// 'headerOffset'             => 50,
 	'dataProvider'             => $data['dataProvider'],
 	'filter'                   => $model,
-	// 'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	// 'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
-	// 'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	'extraRowColumns'=> array('firstLetter'),
+	'extraRowExpression' => '"<b style=\"font-size: 3em; color: #333;\">".$data["date"]."</b>"',
+	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
 	'columns'      =>array(
-                //array('name' =>'id'),
                 array('name' =>'date'),
                 array('name' =>'name'),
                 array('name' =>'rate'),
                 array('name' =>'conv'),
                 array('name' =>'spend', 'header'=>'Revenue'),
+                array(
+					'name' => 'firstLetter',
+					'value' => '$data["date"]',
+					'headerHtmlOptions' => array('style'=>'display:none'),
+					'htmlOptions' =>array('style'=>'display:none')
+					),
             ),
-	'mergeColumns' => array('date'),
 	)
 ); ?>
 
