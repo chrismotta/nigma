@@ -28,6 +28,7 @@ $this->menu=array(
 	array('label'=>'Create Campaigns', 'url'=>array('create')),
 );
 */
+echo json_encode(DailyReport::model()->getTops('01-11-2014','01-11-2014','profit'));
 ?>
 
 <!--h2>Manage Campaigns</h2-->

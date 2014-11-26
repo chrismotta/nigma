@@ -204,33 +204,33 @@ function printTopChart($model, array $options){
 		'tittle'             => 'Top Conversions',
 		'data'               => $dataTopConversions,
 		'gridviewFieldName'  => 'Conv',
-		'gridviewFieldValue' => '$data->conversions',
+		'gridviewFieldValue' => '$data->total',
 		'chartFieldName'     => 'Conversions',
-		'chartFieldValue'    => 'conversions',
+		'chartFieldValue'    => 'totals',
 		)); ?>
 	<?php printTopChart($this, array(
 		'tittle'             => 'Top Conversion Rate',
 		'data'               => $dataTopConversionsRate,
 		'gridviewFieldName'  => 'CR',
-		'gridviewFieldValue' => '$data->convrate."%"',
+		'gridviewFieldValue' => '$data->total."%"',
 		'chartFieldName'     => 'Conversions Rate',
-		'chartFieldValue'    => 'conversions_rate',
+		'chartFieldValue'    => 'totals',
 		)); ?>
 	<?php printTopChart($this, array(
 		'tittle'             => 'Top Spend',
 		'data'               => $dataTops,
 		'gridviewFieldName'  => 'Spends',
-		'gridviewFieldValue' => 'number_format($data->spend, 2)',
+		'gridviewFieldValue' => 'number_format($data->total, 2)',
 		'chartFieldName'     => 'Spends',
-		'chartFieldValue'    => 'spends',
+		'chartFieldValue'    => 'totals',
 		)); ?>
 	<?php printTopChart($this, array(
 		'tittle'             => 'Top Profit',
 		'data'               => $dataTopProfit,
 		'gridviewFieldName'  => 'Prof',
-		'gridviewFieldValue' => '$data->profit',
+		'gridviewFieldValue' => 'number_format($data->total, 2)',
 		'chartFieldName'     => 'Profit',
-		'chartFieldValue'    => 'profits',
+		'chartFieldValue'    => 'totals',
 		)); ?>
 </div>
 

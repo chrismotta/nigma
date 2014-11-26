@@ -541,43 +541,28 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	public function getTops($startDate=null, $endDate=null,$order) {
-			
+	public function getTops($startDate=null, $endDate=null,$order) {			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate     = 'today';
 		$startDate    = date('Y-m-d', strtotime($startDate));
 		$endDate      = date('Y-m-d', strtotime($endDate));
 		
 		$dataTops     =array();
-		$spends       =array();
-		$revenues     =array();
-		$profits      =array();
-		$campaigns    =array();	
+		$totals       =array();
 		$campaigns_id =array();
 
 		$criteria=new CDbCriteria;
-		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
-		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->select = array(
-							'campaigns_id', 
-							'networks_id', 
-							'SUM(spend) as spend', 
-							'SUM(revenue) revenue', 
-							'date, 
-							sum(profit) as profit'
-							);
-		if($order=='profit')$criteria->order='SUM(profit) DESC';
-		$criteria->group='campaigns_id,networks_id';
-		
-		if($order=='spend') {
-			$select = "
-				*, sum(d.spend / 
+		$criteria->condition = "date(t.date) BETWEEN '" . date('Y-m-d', strtotime($startDate)) . "' AND '" . date('Y-m-d', strtotime($endDate)) . "'";
+		switch ($order) {
+			case 'spend':
+				$select="campaigns_id, ";
+				$orderby = "sum(t.spend / 
 						(
 							SELECT (
 									CASE (
 										SELECT networks.currency
 										FROM networks
-										WHERE d.networks_id=networks.id
+										WHERE t.networks_id=networks.id
 									) WHEN 'USD' THEN (
 										SELECT 1
 									)"; 
@@ -586,39 +571,56 @@ class DailyReport extends CActiveRecord
 			array_pop($currency); // remove id
 			array_pop($currency); // remove date
 			foreach ($currency as $key => $value) {
-				$select .= " WHEN '" . $key . "' THEN ( SELECT " . $key . ")";
+				$orderby .= " WHEN '" . $key . "' THEN ( SELECT " . $key . ")";
 			}
 
-			$select .= 		" END
+			$orderby .= 		" END
 								)
 							FROM currency c 
-							WHERE date(c.date)<=d.date
+							WHERE date(c.date)<=t.date
 							ORDER BY c.date DESC
 							LIMIT 1
 						)
-					) as spend";
+					)";
+			$select.=$orderby." as total";
 			$criteria->select    = $select;
-			$criteria->alias     = "d";
-			$criteria->condition = "date(d.date) BETWEEN '" . date('Y-m-d', strtotime($startDate)) . "' AND '" . date('Y-m-d', strtotime($endDate)) . "'";
-			$criteria->group     = "d.campaigns_id";
-			$criteria->order     = "spend DESC";
+			//$criteria->alias     = "d";
+			$criteria->group     = "t.campaigns_id";
+			$criteria->order     = $orderby." DESC";
+				break;
+
+			case 'profit':
+				$criteria->select = array(
+							'campaigns_id', 
+							'sum(profit) as total'
+							);
+				$criteria->order='SUM(profit) DESC';
+				$criteria->group='campaigns_id,networks_id';
+				break;
+
+			case 'conversions':
+				$criteria->select='campaigns_id, case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as total';
+				$criteria->order='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end DESC';
+		$criteria->group='campaigns_id';
+				break;
+
+			case 'convrate':				
+				$criteria->select='campaigns_id, ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as total';
+				$criteria->order='ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) DESC';
+		$criteria->group='campaigns_id';
+				break;
 		}
+
 		$criteria->limit=6;
 
 		$r         = DailyReport::model()->findAll( $criteria );
 		foreach ($r as $value) {
-			$spends[]       = doubleval($value->spend);
-			$revenues[]     = doubleval($value->getRevenueUSD());
-			$profits[]      = doubleval($value->profit);
-			$campaigns[]    = $value->campaigns->name;		
+			$totals[]       = doubleval($value->total);	
 			$campaigns_id[] = $value->campaigns->id;		
 		}
 		
 		$result=array(
-			'spends'       => $spends,
-			'revenues'     => $revenues, 
-			'profits'      => $profits, 
-			'campaigns'    => $campaigns, 
+			'totals'    => $totals, 
 			'campaigns_id' => $campaigns_id
 			);
 		$dataTops['array']        = $result;
@@ -635,54 +637,7 @@ class DailyReport extends CActiveRecord
 			));
 		return $dataTops;
 	}
-
-	public function getDataDash($startDate=NULL, $endDate=NULL, $order)
-	{
-		$criteria=new CDbCriteria;
-		$criteria->select='case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end as conversions,
-						  ROUND(((case SUM(conv_adv) when 0 then SUM(conv_api) else SUM(conv_adv) end/SUM(clics))*100)) as convrate';
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-		}
-		$criteria->group='campaigns_id';
-		if($order=='conversions')$criteria->order='conversions DESC';
-		if($order=='convrate')$criteria->order='convrate DESC';
-		$criteria->with=array('campaigns', );
-		$criteria->limit=6;
-		$dataDash=array();
-			$campaigns        =array();
-			$conversions      =array();
-			$campaigns_id     =array();
-			$conversions_rate =array();
-			$r                = self::model()->findAll($criteria);
-			
-			foreach ($r as $value) {
-				$conversions[]      =intval($value->conversions);
-				$conversions_rate[] =intval($value->convrate);
-				$campaigns[]        =$value->campaigns->name;	
-				$campaigns_id[]     =$value->campaigns->id;
-			}
-			$result=array(
-				'conversions'      => $conversions,
-				'campaigns_id'     => $campaigns_id, 
-				'campaigns'        => $campaigns, 
-				'conversions_rate' => $conversions_rate
-				);
-			$dataDash['array']=$result;
-			$dataDash['dataProvider']= new CActiveDataProvider($this, array(
-				'criteria'   =>$criteria,
-				'pagination' =>false,
-				'sort'       =>array(
-					'attributes'   =>array(
-			            '*',
-			        ),
-			    ),
-
-			));
-		return $dataDash;
-	}
-
+	
 	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
