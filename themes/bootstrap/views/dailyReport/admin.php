@@ -272,7 +272,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'        => 'rate',
-			'value'       => '$data->getRateUSD() ? $data->getRateUSD() : 0',
+			'value'       => '$data->getRateUSD() ? number_format($data->getRateUSD(),2) : 0.".00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
 		),
 		array(	
