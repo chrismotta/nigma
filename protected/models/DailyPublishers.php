@@ -126,4 +126,51 @@ class DailyPublishers extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getTops($startDate=NULL, $endDate=NULL, $order)
+	{
+		if( !$startDate )	
+			$startDate = 'today' ;
+		if( !$endDate ) 
+			$endDate = 'today';
+		
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate   = date('Y-m-d', strtotime($endDate));
+
+		$criteria = new CDbCriteria;
+		$criteria->addCondition( "DATE(date)>='" . $startDate . "'" );
+		$criteria->addCondition( "DATE(date)<='" . $endDate . "'" );
+		$criteria->with = array('placements', 'placements.publishers');
+		
+		switch ($order) {
+			case 'imp':
+				$topColumn = 'case SUM(imp_adv) when 0 then SUM(imp) else SUM(imp_adv) end';
+				break;
+			case 'spend':
+				break;
+			case 'profit':
+				break;
+			
+			default:
+				# code...
+				break;
+		}
+
+		$criteria->select = array(
+			'*',
+			$topColumn . 'as tops',
+		);
+		
+		$criteria->order = 'tops DESC';
+		$criteria->limit = 6;
+
+
+
+		$return['array']        = $result;
+		$return['dataProvider'] = new CActiveDataProvider($this, array(
+			'criteria'   =>$criteria,
+			'pagination' =>false,
+		));
+		return $return;
+	}
 }
