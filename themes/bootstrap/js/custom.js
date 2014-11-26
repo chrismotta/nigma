@@ -70,7 +70,8 @@ var selectionChangedDailyReport = function(id) {
 		return;
 	}
 
-	var c_id   = $( "#" + id + " t4ble tbody .selected" ).attr("data-row-c-id");
+	var c_id   = $( "#" + id + " table tbody .selected" ).attr("data-row-c-id");
+	var net_id = $( "#" + id + " table tbody .selected" ).attr("data-row-net-id");
 
 	// parsing data into corresponding format "Y-m-d"
 	var tmp    = $( "#dateEnd").attr('value');
