@@ -81,11 +81,11 @@ class SiteController extends Controller
 		$startDate = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week';
 		$endDate   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 		$this->render('index',array(
-			'dataTopConversions'     =>$model->getDataDash($startDate,$endDate,'conversions'),
-			'dataTopConversionsRate' =>$model->getDataDash($startDate,$endDate,'convrate'),
-			'dataHighchart'          =>$totals->getTotals($startDate,$endDate),
+			'dataTopConversions'     =>$model->getTops($startDate,$endDate,'conversions'),
+			'dataTopConversionsRate' =>$model->getTops($startDate,$endDate,'convrate'),
 			'dataTops'               =>$model->getTops($startDate,$endDate,'spend'),
 			'dataTopProfit'          =>$model->getTops($startDate,$endDate,'profit'),
+			'dataHighchart'          =>$totals->getTotals($startDate,$endDate),
 		));
 	}
 
