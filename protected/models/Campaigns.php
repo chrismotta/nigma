@@ -77,6 +77,7 @@ class Campaigns extends CActiveRecord
 			array('cap', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>256),
+			array('url', 'url'),
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
