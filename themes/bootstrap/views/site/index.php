@@ -151,7 +151,7 @@ function printTopChart($model, array $options){
 			'title' => array('text' => ''),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
 			'xAxis' => array(
-				'categories' => $options['data']['array']['campaigns_id'],
+				'categories' => $options['data']['array']['ids'],
 				'labels' => array(
                     'rotation' => -45,
                     'align' => 'right',

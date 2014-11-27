@@ -620,8 +620,9 @@ class DailyReport extends CActiveRecord
 		}
 		
 		$result=array(
-			'totals'    => $totals, 
-			'campaigns_id' => $campaigns_id
+			'totals' => $totals, 
+			'ids'    => $campaigns_id,
+			'types'  => 'campaign',
 			);
 		$dataTops['array']        = $result;
 		$dataTops['dataProvider'] = new CActiveDataProvider($this, array(

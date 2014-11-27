@@ -21,18 +21,7 @@ $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
 	$breadcrumbs['title'],
 );
-
-/*
-$this->menu=array(
-	//array('label'=>'List Campaigns', 'url'=>array('index')),
-	array('label'=>'Create Campaigns', 'url'=>array('create')),
-);
-*/
-echo json_encode(DailyReport::model()->getTops('01-11-2014','01-11-2014','profit'));
 ?>
-
-<!--h2>Manage Campaigns</h2-->
-
 <?php
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
