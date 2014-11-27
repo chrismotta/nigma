@@ -115,6 +115,16 @@ class ConvLogController extends Controller
 				if($conv->campaign->networks->has_s2s){
 
 					$s4s_url = $conv->campaign->networks->callback . $tid;
+					
+					if ( isset($click->custom_params) && $click->custom_params != NULL ) {
+						if( strpos($s4s_url, "?") ){
+							$s4s_url.= "&";
+						} else {
+							$s4s_url.= "?";
+						}
+						$s4s_url.=$click->custom_params;
+					}
+
 					echo $s4s_url;
 					echo '<hr/>';
 
