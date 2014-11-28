@@ -282,11 +282,21 @@ class OpportunitiesController extends Controller
 
 	public function actionManagersDistribution()
 	{
+
+		$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+		$advertisers    = isset($_GET['advertisers']) ? $_GET['advertisers'] : NULL;
+		$countries      = isset($_GET['advertisersCountry']) ? $_GET['advertisersCountry'] : NULL;
+		$models         = isset($_GET['modelAdvertisers']) ? $_GET['modelAdvertisers'] : NULL;
+
 		$model=new Opportunities;
-		$dataProvider=$model->getManagersDistribution();
+		$dataProvider=$model->getManagersDistribution($accountManager,$advertisers,$countries,$models);
 		$this->render('managersDistribution',array(
-			'model'=>$model,
-			'dataProvider'=>$dataProvider
+			'model'          =>$model,
+			'dataProvider'   =>$dataProvider,
+			'accountManager' =>$accountManager,
+			'advertisers'    =>$advertisers,
+			'countries'      =>$countries,
+			'models'         =>$models
 		));
 	}
 

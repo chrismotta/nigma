@@ -280,7 +280,7 @@ class Opportunities extends CActiveRecord
 			));
 	}
 
-	public function getManagersDistribution()
+	public function getManagersDistribution($accountManager=NULL,$advertisers=NULL,$countries=NULL,$models=NULL)
 	{
 		/*
 		
@@ -291,8 +291,94 @@ class Opportunities extends CActiveRecord
 		inner join geo_location g on o.country_id=g.id_location
 		group by o.id
 		 */
+
 		$criteria=new CDbCriteria;
 		$criteria->with=array('accountManager','country','ios','ios.advertisers');
+
+
+		if ( $accountManager != NULL) {
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
+
+		if ( $advertisers != NULL) {
+			if(is_array($advertisers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($advertisers as $id) {	
+					if($i==0)			
+						$query.="ios.advertisers_id=".$id;
+					else
+						$query.=" OR ios.advertisers_id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('ios.advertisers_id',$advertisers);
+			}
+		}
+
+		if ( $countries != NULL) {
+			if(is_array($countries))
+			{
+				$query="(";
+				$i=0;
+				foreach ($countries as $id) {	
+					if($i==0)			
+						$query.="t.country_id=".$id;
+					else
+						$query.=" OR t.country_id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('t.country_id',$countries);
+			}
+		}
+
+		if ( $models != NULL) {
+			if(is_array($models))
+			{
+				$query="(";
+				$i=0;
+				foreach ($models as $id) {	
+					if($i==0)			
+						$query.="t.model_adv='".$id."'";
+					else
+						$query.=" OR t.model_adv='".$id."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('t.model_adv',$models);
+			}
+		}
 		// $criteria->compare('advertisers.name', $this->advertiser_name, true);
 		return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
