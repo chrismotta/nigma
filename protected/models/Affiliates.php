@@ -15,6 +15,10 @@
  */
 class Affiliates extends CActiveRecord
 {
+	public $date;
+	public $name;
+	public $conv;
+	public $spend;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -111,5 +115,119 @@ class Affiliates extends CActiveRecord
 		$criteria->addCondition('users_id='.$id);
 		if($user=Self::model()->find($criteria))
 			return $user;
+	}
+
+	public function getAffiliates($dateStart,$dateEnd,$affiliate_id)
+	{
+		$data    =array();
+		$graphic =array();
+		$i=0;
+		if(date('Y-m-d', strtotime($dateStart))!=date('Y-m-d', strtotime('today')))
+		{
+			$end=date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today'))? date('Y-m-d', strtotime('-1 day',strtotime($dateEnd))) : date('Y-m-d', strtotime($dateEnd));
+			
+			$sql="select c.id,
+				IF(ISNULL(d.conv_adv) and ISNULL(d.conv_api),
+					ROUND(
+						d.spend/
+								IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
+					),
+				a.rate) as rate,
+				sum(
+					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
+				) as conv,
+				sum(d.spend) as spend,
+				DATE(d.date) as date
+				from daily_report d 
+				inner join campaigns c on d.campaigns_id=c.id
+				inner join networks n on c.networks_id=n.id 
+				inner join affiliates a on a.networks_id=n.id
+				WHERE d.date BETWEEN :dateStart AND :dateEnd
+				AND n.id = :affiliate
+				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
+			$command->bindParam(":dateEnd", $end, PDO::PARAM_STR);
+			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
+			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
+			$affiliates=$command->queryAll();
+			foreach ($affiliates as $affiliate) {
+				$data[$i]['id']    =$affiliate['id'];
+				$data[$i]['rate']  =$affiliate['rate'];
+				$data[$i]['conv']  =$affiliate['conv'];
+				$data[$i]['spend'] =$affiliate['spend'];
+				$data[$i]['date']  =$affiliate['date'];
+				$data[$i]['name']  =Campaigns::getExternalName($affiliate['id']);
+
+				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
+				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
+				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
+
+				$i++;
+			}
+		}
+		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
+		{
+			$date=date('Y-m-d', strtotime('today'));
+			$sql="select c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
+				from campaigns c
+				inner join networks n on c.networks_id=n.id 
+				inner join conv_log l on l.campaign_id=c.id
+				inner join affiliates a on a.networks_id=n.id
+				WHERE DATE(l.date)=DATE(:date)
+				AND n.id = :affiliate
+				group by c.id,DATE(l.date)";
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(":date", $date, PDO::PARAM_STR);
+			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
+			$affiliates=$command->queryAll();
+			foreach ($affiliates as $affiliate) {
+				$data[$i]['id']    =$affiliate['id'];
+				$data[$i]['rate']  =$affiliate['rate'];
+				$data[$i]['conv']  =$affiliate['conv'];
+				$data[$i]['spend'] =$affiliate['spend'];
+				$data[$i]['date']  =$affiliate['date'];
+				$data[$i]['name']  =Campaigns::getExternalName($affiliate['id']);		
+				
+				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
+				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
+				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
+
+				$i++;
+			}
+		}
+		$i=0;
+		$totalGraphic=array();
+		$totalGraphic['dates']=array();
+		$totalGraphic['convs']=array();
+		$totalGraphic['spends']=array();
+		foreach ($graphic as $key => $value) {
+			$totalGraphic['dates'][$i]  =$key;
+			$totalGraphic['convs'][$i]  =$value['conv'];
+			$totalGraphic['spends'][$i] =$value['spend'];
+			$i++;
+		}
+
+		$filtersForm =new FiltersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+
+		$filteredData=$filtersForm->filter($data);
+		$result['dataProvider'] =  new CArrayDataProvider($filteredData, array(
+		    'id'=>'affiliates',
+		    'sort'=>array(
+				'defaultOrder' => 'date DESC',
+		        'attributes'=>array(
+		             'id', 'rate', 'conv', 'spend', 'date','name'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		$result['graphic'] = $totalGraphic;
+		return $result;
 	}
 }

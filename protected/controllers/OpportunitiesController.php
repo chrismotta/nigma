@@ -35,6 +35,10 @@ class OpportunitiesController extends Controller
 				'actions'=>array('index','view','redirect','admin','archived'),
 				'roles'=>array('businness', 'finance'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('managersDistribution','getOpportunities'),
+				'roles'=>array('media'),
+			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
@@ -283,7 +287,10 @@ class OpportunitiesController extends Controller
 	public function actionManagersDistribution()
 	{
 
-		$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+		if (FilterManager::model()->isUserTotalAccess('daily'))
+			$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+		else
+			$accountManager = Yii::app()->user->getId();
 		$advertisers    = isset($_GET['advertisers']) ? $_GET['advertisers'] : NULL;
 		$countries      = isset($_GET['advertisersCountry']) ? $_GET['advertisersCountry'] : NULL;
 		$models         = isset($_GET['modelAdvertisers']) ? $_GET['modelAdvertisers'] : NULL;

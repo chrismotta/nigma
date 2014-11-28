@@ -19,7 +19,7 @@ class AffiliatesController extends Controller
 	{
 		if(Yii::app()->user->id)
 		{
-			$model=new Campaigns;
+			$model=new Affiliates;
 			$network=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
 
 			$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
