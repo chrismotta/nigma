@@ -300,7 +300,7 @@ class DailyPublishers extends CActiveRecord
 			return $this->revenue;
 
 		$currencys = Currency::model()->findByDate($this->date);
-		return $currency ? round($this->revenue / $currencys[$currency], 2) : 'Currency ERROR!';
+		return $currencys ? round($this->revenue / $currencys[$currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getRevenueUSD()
