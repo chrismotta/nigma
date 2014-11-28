@@ -47,6 +47,7 @@ class Opportunities extends CActiveRecord
 	public $open_budget;
 	public $multi_carrier;
 	public $multi_rate;
+	public $name;
 
 	/**
 	 * @return string the associated database table name
@@ -131,6 +132,7 @@ class Opportunities extends CActiveRecord
 			'advertiser_name'          => 'Advertiser',
 			'currency'                 => 'Currency',
 			'status'                   => 'Status',
+			'name'                     => 'Opportunitie',
 		);
 	}
 
@@ -271,6 +273,40 @@ class Opportunities extends CActiveRecord
 				'pagination'=>false,
 				'sort'=>array(
 					'attributes'   =>array(
+			            '*',
+			        ),
+			    ),
+
+			));
+	}
+
+	public function getManagersDistribution()
+	{
+		/*
+		
+		SELECT u.username,a.name,o.id,g.name,o.model_adv FROM opportunities o 
+		inner join users u on o.account_manager_id=u.id
+		inner join ios i on o.ios_id=i.id
+		inner join advertisers a on i.advertisers_id=a.id
+		inner join geo_location g on o.country_id=g.id_location
+		group by o.id
+		 */
+		$criteria=new CDbCriteria;
+		$criteria->with=array('accountManager','country','ios','ios.advertisers');
+		// $criteria->compare('advertisers.name', $this->advertiser_name, true);
+		return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(						
+			            'advertiser_name'=>array(
+							'asc'  =>'advertisers.name',
+							'desc' =>'advertisers.name DESC',
+			            ),				
+			            'name'=>array(
+							'asc'  =>'advertisers.name',
+							'desc' =>'advertisers.name DESC',
+			            ),
 			            '*',
 			        ),
 			    ),

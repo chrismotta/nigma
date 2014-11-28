@@ -29,7 +29,7 @@ class AdvertisersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'externalForm', 'archived','viewAjax'),
+				'actions'=>array('index','view','create','update','admin','delete', 'externalForm', 'archived','viewAjax','getAdvertisers'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -272,5 +272,44 @@ class AdvertisersController extends Controller
 			'categories' =>$cat,
 			'commercial' =>$commercial,
 		), false, true);
+	}
+
+	public function actionGetAdvertisers()
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		$criteria=new CDbCriteria;
+        $criteria->with  = array('ios', 'ios.advertisers');
+        $criteria->order = 'advertisers.name';
+        $criteria->group = 'advertisers.name';
+		$ids = isset($_GET['accountManager']) ? $_GET['accountManager'] : null;
+		if ( $ids != NULL) {
+			if(is_array($ids))
+			{
+				$query="(";
+				$i=0;
+				foreach ($ids as $id) {	
+					if($i==0)			
+						$query.="account_manager_id='".$id."'";
+					else
+						$query.=" OR account_manager_id='".$id."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('account_manager_id',$ids);
+			}
+		}
+		$opps =Opportunities::model()->findAll($criteria);
+		$response='';
+		// $response='<option value="">All opportunities</option>';
+		foreach ($opps as $op) {
+			$response .= '<option value="' . $op->ios->advertisers->id . '">' . $op->ios->advertisers->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 }
