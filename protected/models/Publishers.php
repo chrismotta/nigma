@@ -56,6 +56,7 @@ class Publishers extends CActiveRecord
 			array('country_id, account_manager_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>8),
 			array('name, commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
+			array('email_com, email_adm', 'email'),
 			array('currency, entity, model', 'length', 'max'=>3),
 			array('RS_perc, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
@@ -72,8 +73,8 @@ class Publishers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'placements' => array(self::HAS_MANY, 'Placements', 'publishers_id'),
-			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'placements'     => array(self::HAS_MANY, 'Placements', 'publishers_id'),
+			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 		);
 	}
