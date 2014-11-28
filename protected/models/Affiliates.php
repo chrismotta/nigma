@@ -48,7 +48,7 @@ class Affiliates extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'users' => array(self::BELONGS_TO, 'Users', 'users_id'),
+			'users'    => array(self::BELONGS_TO, 'Users', 'users_id'),
 			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
 		);
 	}
@@ -59,10 +59,10 @@ class Affiliates extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'id'          => 'ID',
 			'networks_id' => 'Networks',
-			'rate' => 'Rate',
-			'users_id' => 'Users',
+			'rate'        => 'Rate',
+			'users_id'    => 'Users',
 		);
 	}
 

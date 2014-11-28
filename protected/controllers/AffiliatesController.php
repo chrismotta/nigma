@@ -17,19 +17,34 @@ class AffiliatesController extends Controller
 
 	public function actionIndex()
 	{
-		// $model=new DailyReport('search');
-		// $model->unsetAttributes();  // clear any default values
-		// if(isset($_GET['DailyReport']))
-		// 	$model->attributes=$_GET['DailyReport'];
-
-		$model=new Campaigns;
-		// $networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
 		if(Yii::app()->user->id)
 		{
+			$model=new Campaigns;
 			$network=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
+
+			$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+			$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+			$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+			$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
+			$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+			$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
+			$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
+
+			$dateStart  = date('Y-m-d', strtotime($dateStart));
+			$dateEnd    = date('Y-m-d', strtotime($dateEnd));
+			$data = $model->getAffiliates($dateStart, $dateEnd, $network);
+
 			$this->render('index',array(
-				'model'=>$model,
-				'network' => $network,
+				'model'          =>$model,
+				'network'        => $network,
+				'dateStart'      =>$dateStart,
+				'dateEnd'        =>$dateEnd,
+				'accountManager' =>$accountManager,
+				'opportunities'  =>$opportunities,
+				'networks'       =>$networks,
+				'adv_categories' =>$adv_categories,
+				'sum'            =>$sum,
+				'data'           =>$data
 			));
 		}
 		else
