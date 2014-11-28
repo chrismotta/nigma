@@ -23,9 +23,9 @@ $this->breadcrumbs=array(
 if (FilterManager::model()->isUserTotalAccess('daily'))
 		KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'advertisers-select','accountManager','advertisers');
 	
-	KHtml::filterAdvertisersMulti($advertisers,NULL,array('id'      => 'advertisers-select'),'advertisers');
-	KHtml::filterAdvertisersCountryMulti($countries,NULL,array('id' => 'advertisersCountry-select'),'advertisersCountry');
-	KHtml::filterModelAdvertisersMulti($models,NULL,array('id'      => 'modelAdvertisers-select'),'modelAdvertisers');
+	KHtml::filterAdvertisersMulti($advertisers,$accountManager,array('id'      => 'advertisers-select'),'advertisers');
+	KHtml::filterAdvertisersCountryMulti($countries,array('id' => 'advertisersCountry-select'),'advertisersCountry');
+	KHtml::filterModelAdvertisersMulti($models,array('id'      => 'modelAdvertisers-select'),'modelAdvertisers');
 
 ?>
 <hr>

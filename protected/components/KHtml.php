@@ -422,7 +422,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAdvertisersMulti($value, $accountManagerId=NULL, $htmlOptions = array(),$name)
+    public static function filterAdvertisersMulti($value, $accountManager=NULL, $htmlOptions = array(),$name)
     {
 
         $defaultHtmlOptions = array(
@@ -430,15 +430,33 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers');
+        $criteria->with  = array('ios', 'ios.advertisers','accountManager');
         $criteria->order = 'advertisers.name';
 
 
         if (FilterManager::model()->isUserTotalAccess('media'))
-            $accountManagerId=Yii::app()->user->id;
+            $accountManager=Yii::app()->user->id;
 
-        if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
+        if ( $accountManager != NULL) {
+            if(is_array($accountManager))
+            {
+                $query="(";
+                $i=0;
+                foreach ($accountManager as $id) {  
+                    if($i==0)           
+                        $query.="accountManager.id=".$id;
+                    else
+                        $query.=" OR accountManager.id=".$id;
+                    $i++;
+                }
+                $query.=")";
+                $criteria->addCondition($query);                
+            }
+            else
+            {
+                $criteria->compare('accountManager.id',$accountManager);
+            }
+        }
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
         $data=array();
@@ -468,7 +486,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAdvertisersCountryMulti($value, $accountManagerId=NULL, $htmlOptions = array(),$name)
+    public static function filterAdvertisersCountryMulti($value, $htmlOptions = array(),$name)
     {
 
         $defaultHtmlOptions = array(
@@ -478,13 +496,6 @@ class KHtml extends CHtml
         $criteria = new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers','country');
         $criteria->order = 'country.name';
-
-
-        if (FilterManager::model()->isUserTotalAccess('media'))
-            $accountManagerId=Yii::app()->user->id;
-
-        if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
         $data=array();
@@ -513,7 +524,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterModelAdvertisersMulti($value, $accountManagerId=NULL, $htmlOptions = array(),$name)
+    public static function filterModelAdvertisersMulti($value, $htmlOptions = array(),$name)
     {
 
         $defaultHtmlOptions = array(
@@ -522,13 +533,6 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
         $criteria->order = 'model_adv';
-
-
-        if (FilterManager::model()->isUserTotalAccess('media'))
-            $accountManagerId=Yii::app()->user->id;
-
-        if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->findAll($criteria);
         $data=array();
