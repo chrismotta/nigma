@@ -96,6 +96,18 @@ class ClicksLogController extends Controller
 		$model->networks_id  = $nid;
 		//$model->date       = 0;
 
+		// Get custom parameters
+		
+		if ( $model->networks->has_s2s ) {
+			foreach ($_GET as $key => $value) {
+				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'ntoken', 'nid', 'cid', 'ts', 'id');
+				if ( !in_array($key, $ignore_params) ) {
+					$model->custom_params != NULL ? $model->custom_params .= '&' : NULL ;
+					$model->custom_params .= $key . '=' . $value;
+				}
+			}
+		}
+
 		// Get visitor parameters
 		
 		$model->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;

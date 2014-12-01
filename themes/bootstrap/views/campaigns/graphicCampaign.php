@@ -32,48 +32,11 @@ $dateEnd=$_GET['dateEnd'];
     )); ?> 
 
     <fieldset>
-    From: 
-    <div class="input-append">
-        <?php 
-            $this->widget('bootstrap.widgets.TbDatePicker',array(
-            'name'  => 'dateStart',
-            'value' => date('d-m-Y', strtotime($dateStart)),
-            'htmlOptions' => array(
-                'style' => 'width: 80px',
-            ),
-            'options' => array(
-                'autoclose'  => true,
-                'todayHighlight' => true,
-                'format'     => 'dd-mm-yyyy',
-                'viewformat' => 'dd-mm-yyyy',
-                'placement'  => 'right',
-            ),
-        ));
-        ?>
-        <span class="add-on"><i class="icon-calendar"></i></span>
-    </div>
-    To:
-    <div class="input-append">
-        <?php 
-            $this->widget('bootstrap.widgets.TbDatePicker',array(
-            'name'        => 'dateEnd',
-            'value'       => date('d-m-Y', strtotime($dateEnd)),
-            'htmlOptions' => array(
-                'style' => 'width: 80px',
-            ),
-            'options'     => array(
-                'autoclose'      => true,
-                'todayHighlight' => true,
-                'format'         => 'dd-mm-yyyy',
-                'viewformat'     => 'dd-mm-yyyy',
-                'placement'      => 'right',
-            ),
-        ));
-        ?>
-        <span class="add-on"><i class="icon-calendar"></i></span>
-    </div>
+    From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
+    To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+    
     <?php echo $form->hiddenField($model, 'id', array('name'=>'id')) ?>
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
     </fieldset>
 
