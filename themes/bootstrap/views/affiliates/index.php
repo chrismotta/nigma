@@ -45,7 +45,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<div class="span6">
 		<div class="alert alert-info">
 			<small >TOTAL</small>
-			<h3 class="">Revenue: $<?php echo array_sum($data['graphic']['spends']) ?></h3>
+			<h3 class="">Revenue: <?php echo Networks::model()->findByPk($network)->currency . " " . number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
 			<br>
 		</div>
 	</div>
@@ -127,16 +127,33 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	'extraRowExpression' => '"<b style=\"font-size: 3em; color: #333;\">".$data["date"]."</b>"',
 	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
 	'columns'      =>array(
-                array('name' =>'date'),
-                array('name' =>'name'),
-                array('name' =>'rate'),
-                array('name' =>'conv'),
-                array('name' =>'spend', 'header'=>'Revenue'),
                 array(
-					'name' => 'firstLetter',
-					'value' => '$data["date"]',
+					'name'   =>'date', 
+					'header' =>'Date',
+					'htmlOptions' => array('style' => 'width: 200px;') ,
+                ),
+                array(
+					'name'        =>'name', 
+					'header'      =>'Name', 
+					'htmlOptions' => array('style' => 'width: 600px;') ,
+                ),
+                array(
+					'name'   =>'rate', 
+					'header' =>'Rate',
+                ),
+                array(
+					'name'   =>'conv', 
+					'header' =>'Conv',
+                ),
+                array(
+					'name'   =>'spend', 
+					'header' =>'Revenue',
+                ),
+                array(
+					'name'              => 'firstLetter',
+					'value'             => '$data["date"]',
 					'headerHtmlOptions' => array('style'=>'display:none'),
-					'htmlOptions' =>array('style'=>'display:none')
+					'htmlOptions'       =>array('style'=>'display:none')
 					),
             ),
 	)
