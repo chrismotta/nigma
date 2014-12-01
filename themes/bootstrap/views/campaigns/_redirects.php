@@ -25,11 +25,13 @@
         $redirect_old['g_key'] = '{keyword}';
         $redirect_old['g_cre'] = '{creative}';
         $redirect_old['g_pla'] = '{placement}';
+        $redirect_old['g_mty'] = '{matchtype}';
 
         $redirect_new['g_net'] = '{network}';
         $redirect_new['g_key'] = '{keyword}';
         $redirect_new['g_cre'] = '{creative}';
         $redirect_new['g_pla'] = '{placement}';
+        $redirect_new['g_mty'] = '{matchtype}';
     }
 
     if($network->has_s2s){

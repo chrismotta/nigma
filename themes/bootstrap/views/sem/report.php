@@ -89,6 +89,12 @@ $this->breadcrumbs=array(
 			'htmlOptions' => array('style'=>'width: 500px;'),
 		),
 		array(
+			'name'        => 'match_type',
+			'value'       => '$data->getMatchType()',
+			'htmlOptions' => array('style'=>'width: 100px;'),
+			'visible'     => $report_type == 'keyword' ? true : false,
+		),
+		array(
 			'name'        => 'totalClicks',
 			'filter'      => '',
 			'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),

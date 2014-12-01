@@ -42,6 +42,12 @@ $this->widget('EExcelWriter', array(
             'htmlOptions' => array('style'=>'width: 400px;'),
         ),
         array(
+            'name'        => 'match_type',
+            'value'       => '$data->getMatchType()',
+            'htmlOptions' => array('style'=>'width: 100px;'),
+            'visible'     => $report_type == 'keyword' ? true : false,
+        ),
+        array(
             'name'        => 'totalClicks',
             'htmlOptions' => array('style'=>'text-align:right; width: 100px;'),
         ),
