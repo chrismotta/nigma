@@ -353,8 +353,12 @@ class Campaigns extends CActiveRecord
 		if ( $model->formats_id !== NULL )
 			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
 		
+		$alternativeConventionName = '';
+		if ($model->networks->use_alternative_convention_name)
+			$alternativeConventionName = '-' . $model->id;
+
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
-		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
+		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name . $alternativeConventionName;
 	}
 	
 	public function excel($startDate=NULL, $endDate=NULL, $id=null)
