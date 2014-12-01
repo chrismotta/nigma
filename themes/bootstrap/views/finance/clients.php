@@ -10,19 +10,21 @@ $this->breadcrumbs=array(
 
 <div class="row totals-bar ">
 <?php
-$span = floor( 12 / count($totals->getData()) );
-$alert = array('error', 'info', 'success', 'warning', 'muted');
-$i = 0;
-foreach($totals->getData() as $total){
-	echo '
-	<div class="span'.$span.'">
-		<div class="alert alert-'.$alert[$i].'">
-			<small >TOTAL</small>
-			<h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+if($totals->getData()){
+	$span = floor( 12 / count($totals->getData()) );
+	$alert = array('error', 'info', 'success', 'warning', 'muted');
+	$i = 0;
+	foreach($totals->getData() as $total){
+		echo '
+		<div class="span'.$span.'">
+			<div class="alert alert-'.$alert[$i].'">
+				<small >TOTAL</small>
+				<h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+			</div>
 		</div>
-	</div>
-	';
-	$i++;
+		';
+		$i++;
+	}
 }
 ?>
 </div>

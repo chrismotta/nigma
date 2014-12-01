@@ -174,7 +174,8 @@ class Networks extends CActiveRecord
 		$criteria->addCondition('year(t.date)='.$year);
 		$criteria->group ='networks.id';
 		$data   =array();		
-		$totals =array();		
+		$totals =array();	
+			
 		$dataArray =array();		
 		$providers=DailyReport::model()->findAll($criteria);
 		$data['dataProvider'] = new CActiveDataProvider(new DailyReport, array(
@@ -228,7 +229,7 @@ class Networks extends CActiveRecord
 
 		$i=0;
 			
-		$totalsData=array();
+		$totalsdata=array();
 		foreach ($totals as $key => $value) {
 			$totalsdata[$i]['id']       =$i;
 			$totalsdata[$i]['currency'] =$key;
