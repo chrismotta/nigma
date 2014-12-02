@@ -11,6 +11,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// local
 	case '127.0.0.1':
 	case 'localhost':
+				defined('YII_DEBUG') or define('YII_DEBUG',true);
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
@@ -89,6 +90,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 		break;
 	// amazon test
 	case 'test.kickadserver.mobi':
+				defined('YII_DEBUG') or define('YII_DEBUG',true);
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
 					'emulatePrepare'   => true,
