@@ -4,7 +4,7 @@
 /* @var $model DailyReport */
 $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
-	'View Traffic',
+	'Mannagers Distribution',
 );
 ?>
 <br>
@@ -40,7 +40,7 @@ if (FilterManager::model()->isUserTotalAccess('daily'))
 	'id'                       => 'managersDistribution-grid',
 	'dataProvider'             => $dataProvider,
 	'filter'                   => $model,
-	'type'                     => 'striped condensed',
+	'type'                     => 'condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 =>'{items} {pager} {summary}',
 	

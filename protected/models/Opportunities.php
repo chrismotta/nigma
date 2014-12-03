@@ -379,6 +379,9 @@ class Opportunities extends CActiveRecord
 				$criteria->compare('t.model_adv',$models);
 			}
 		}
+
+		$criteria->order = 'accountManager.lastname ASC, advertisers.name ASC';
+
 		// $criteria->compare('advertisers.name', $this->advertiser_name, true);
 		return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
