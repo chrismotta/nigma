@@ -77,6 +77,7 @@ class Campaigns extends CActiveRecord
 			array('cap', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>256),
+			array('url', 'url'),
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -320,40 +321,44 @@ class Campaigns extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function getExternalName($id)
+	public function getExternalName($id=NULL)
 	{
-		$model = Campaigns::model()->findByPk($id);
-		$opportunity = Opportunities::model()->findByPk($model->opportunities_id);
-		$ios = Ios::model()->findByPk($opportunity->ios_id);
-		$adv = Advertisers::model()->findByPk($ios->advertisers_id)->prefix;
+		$model = Campaigns::model()->with('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'networks', 'devices', 'formats')->findByPk($id);
+
+		$opportunity = $model->opportunities;
+		$adv = $model->opportunities->ios->advertisers->prefix;
 
 		$country = '';
 		if ( $opportunity->country_id !== NULL )
-			$country = '-' . GeoLocation::model()->findByPk($opportunity->country_id)->ISO2;
+			$country = '-' . $model->opportunities->country->ISO2;
 
 		$carrier = '-MUL';
 		if ( $opportunity->carriers_id !== NULL )
-			$carrier = '-' . substr( Carriers::model()->findByPk($opportunity->carriers_id)->mobile_brand , 0 , 3);
+			$carrier = '-' . substr( $model->opportunities->carriers->mobile_brand , 0 , 3);
 
 		$wifi_ip = $model->wifi ? '-WIFI' : '';
 		$wifi_ip .= $model->ip ? '-IP' : '';
 		
 		$device = '';
 		if ( $model->devices_id !== NULL )
-			$device = '-' . Devices::model()->findByPk($model->devices_id)->prefix;
+			$device = '-' . $model->devices->prefix;
 
 		$network = '';
 		if ( $model->networks_id !== NULL )
-			$network = '-' . Networks::model()->findByPk($model->networks_id)->prefix;
+			$network = '-' . $model->networks->prefix;
 		
 		$product = $opportunity->product ? '-' . $opportunity->product : '';
 
 		$format = '';
 		if ( $model->formats_id !== NULL )
-			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
+			$format = '-' . $model->formats->prefix;
 		
+		$alternativeConventionName = '';
+		if ($model->networks->use_alternative_convention_name)
+			$alternativeConventionName = '-' . $model->id;
+
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
-		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name;
+		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name . $alternativeConventionName;
 	}
 	
 	public function excel($startDate=NULL, $endDate=NULL, $id=null)
@@ -783,117 +788,4 @@ class Campaigns extends CActiveRecord
 			));
 	}
 
-	public function getAffiliates($dateStart,$dateEnd,$affiliate_id)
-	{
-		$data    =array();
-		$graphic =array();
-		$i=0;
-		if(date('Y-m-d', strtotime($dateStart))!=date('Y-m-d', strtotime('today')))
-		{
-			$end=date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today'))? date('Y-m-d', strtotime('-1 day',strtotime($dateEnd))) : date('Y-m-d', strtotime($dateEnd));
-			
-			$sql="select c.id,
-				IF(ISNULL(d.conv_adv) and ISNULL(d.conv_api),
-					ROUND(
-						d.spend/
-								IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
-					),
-				a.rate) as rate,
-				sum(
-					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
-				) as conv,
-				sum(d.spend) as spend,
-				DATE(d.date) as date
-				from daily_report d 
-				inner join campaigns c on d.campaigns_id=c.id
-				inner join networks n on c.networks_id=n.id 
-				inner join affiliates a on a.networks_id=n.id
-				WHERE d.date BETWEEN :dateStart AND :dateEnd
-				AND n.id = :affiliate
-				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
-			$command = Yii::app()->db->createCommand($sql);
-			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
-			$command->bindParam(":dateEnd", $end, PDO::PARAM_STR);
-			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
-			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
-			$affiliates=$command->queryAll();
-			foreach ($affiliates as $affiliate) {
-				$data[$i]['id']    =$affiliate['id'];
-				$data[$i]['rate']  =$affiliate['rate'];
-				$data[$i]['conv']  =$affiliate['conv'];
-				$data[$i]['spend'] =$affiliate['spend'];
-				$data[$i]['date']  =$affiliate['date'];
-				$data[$i]['name']  =Self::getExternalName($affiliate['id']);
-
-				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
-				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
-				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
-				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
-
-				$i++;
-			}
-		}
-		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
-		{
-			$date=date('Y-m-d', strtotime('today'));
-			$sql="select c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
-				from campaigns c
-				inner join networks n on c.networks_id=n.id 
-				inner join conv_log l on l.campaign_id=c.id
-				inner join affiliates a on a.networks_id=n.id
-				WHERE DATE(l.date)=DATE(:date)
-				AND n.id = ".$affiliate_id."
-				group by c.id,DATE(l.date)";
-			$command = Yii::app()->db->createCommand($sql);
-			$command->bindParam(":date", $date, PDO::PARAM_STR);
-			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
-			$affiliates=$command->queryAll();
-			foreach ($affiliates as $affiliate) {
-				$data[$i]['id']    =$affiliate['id'];
-				$data[$i]['rate']  =$affiliate['rate'];
-				$data[$i]['conv']  =$affiliate['conv'];
-				$data[$i]['spend'] =$affiliate['spend'];
-				$data[$i]['date']  =$affiliate['date'];
-				$data[$i]['name']  =Self::getExternalName($affiliate['id']);		
-				
-				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
-				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
-				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
-				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
-
-				$i++;
-			}
-		}
-		$i=0;
-		$totalGraphic=array();
-		$totalGraphic['dates']=array();
-		$totalGraphic['convs']=array();
-		$totalGraphic['spends']=array();
-		foreach ($graphic as $key => $value) {
-			$totalGraphic['dates'][$i]  =$key;
-			$totalGraphic['convs'][$i]  =$value['conv'];
-			$totalGraphic['spends'][$i] =$value['spend'];
-			$i++;
-		}
-
-		$filtersForm =new FiltersForm;
-		if (isset($_GET['FiltersForm']))
-		    $filtersForm->filters=$_GET['FiltersForm'];
-
-		$filteredData=$filtersForm->filter($data);
-		$result['dataProvider'] =  new CArrayDataProvider($filteredData, array(
-		    'id'=>'affiliates',
-		    'sort'=>array(
-				'defaultOrder' => 'date DESC',
-		        'attributes'=>array(
-		             'id', 'rate', 'conv', 'spend', 'date','name'
-		        ),
-		    ),
-		    'pagination'=>array(
-		        'pageSize'=>30,
-		    ),
-		));
-		$result['graphic'] = $totalGraphic;
-		return $result;
-	}
 }

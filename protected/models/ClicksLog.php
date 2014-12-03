@@ -158,6 +158,7 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('t.placement',$this->placement,true);
 		$criteria->compare('t.creative',$this->creative,true);
 
+		$criteria->compare('t.match_type',$this->match_type,true);
 		$criteria->compare('t.campaigns_id',$campaign_id);
 
 		$criteria->addCondition("DATE(t.date) BETWEEN '" . date('Y-m-d', strtotime($dateStart)) . "' AND '" . date('Y-m-d', strtotime($dateEnd)) . "'");
@@ -169,6 +170,7 @@ class ClicksLog extends CActiveRecord
 		$criteria->select = array(
 			't.campaigns_id',
 			't.' . $report_type,
+			't.match_type',
 			'count(t.id) as totalClicks', 
 			'count(conv_log.id) as totalConv',
 			'ROUND(count(conv_log.id) / count(t.id) * 100, 2) as CTR',
@@ -176,7 +178,7 @@ class ClicksLog extends CActiveRecord
 
 		$criteria->join = 'LEFT JOIN conv_log ON conv_log.clicks_log_id = t.id';
 		
-		$criteria->group = 't.' . $report_type;
+		$criteria->group = 't.' . $report_type . ", t.match_type";
 	
 		return new CActiveDataProvider($this, array(
 			'criteria'   =>$criteria,
@@ -263,6 +265,18 @@ class ClicksLog extends CActiveRecord
 		));
 	}
 
+
+	public function getMatchType()
+	{
+		switch ($this->match_type) {
+			case 'e':
+				return 'exact';
+			case 'p':
+				return 'phrase';
+			case 'b':
+				return 'broad';
+		}
+	}
 
 	/**
 	 * Returns the static model of the specified AR class.

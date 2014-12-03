@@ -18,7 +18,7 @@ class Utilities {
 	    return $range;
 	}
 
-	public static function parseCampaignID($campaignname)
+	public static function parseCampaignID($campaignname, $useAlternativeName = false)
 	{
 		$campaignname = strip_tags($campaignname);
 		
@@ -44,6 +44,12 @@ class Utilities {
 				$return = NULL;
 				break;
 		}
+
+		if ($useAlternativeName) {
+			$id_begin = strrpos($campaignname, '-');
+			$return   = substr($campaignname, $id_begin + 1);
+		}
+
 		if ( is_numeric($return) ) {
 			if ( !Campaigns::model()->isValidId($return) )
 				return NULL;

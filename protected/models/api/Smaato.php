@@ -46,10 +46,10 @@ class Smaato
 
 		// Save campaigns information
 		if ( $response['response']['report']['rows']['value'] == 1 ) {
-			$this->saveDailyReport($response['response']['result']['campaign'], $date);
+			$this->saveDailyReport($response['response']['result']['campaign'], $date, $network->use_alternative_convention_name);
 		} else {
 			foreach ($response['response']['result']['campaign'] as $campaign) {
-				$this->saveDailyReport($campaign, $date);
+				$this->saveDailyReport($campaign, $date, $network->use_alternative_convention_name);
 			}
 		}
 
@@ -58,11 +58,11 @@ class Smaato
 	}
 
 
-	private function saveDailyReport($campaign, $date)
+	private function saveDailyReport($campaign, $date, $useAlternativeName)
 	{
 		$dailyReport = new DailyReport;
 		// get campaign ID used in KickAds Server, from the campaign name use in the external network
-		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
+		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name'], $useAlternativeName);
 
 		if ( !$dailyReport->campaigns_id ) {
 			Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'warning', 'system.model.api.smaato');

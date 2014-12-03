@@ -40,7 +40,7 @@ $('.search-form form').submit(function(){
 	Date: <?php echo KHtml::datePicker('date', $date); ?>
 	Network: <?php echo KHtml::filterNetworks($currentNetwork, $networks, array('empty' => 'Select Network')); ?>
 
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'networkSubmit'))); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'networkSubmit', 'class' => 'showLoading'))); ?>
 </fieldset>
 
 <?php $this->endWidget(); ?>

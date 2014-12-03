@@ -95,7 +95,7 @@ class KHtml extends CHtml
                 //   return;
                 // }
                 $.post(
-                    "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities?accountManager="+this.value,
+                    "' . Yii::app()->getBaseUrl() . '/opportunities/getOpportunities/?accountManager="+this.value,
                     "",
                     function(data)
                     {
@@ -358,20 +358,42 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAccountManagersMulti($value, $htmlOptions = array(), $dropdownLoad,$name)
+    public static function filterAccountManagersMulti($value, $htmlOptions = array(), $dropdownLoad,$name,$onChange=null)
     {
         $defaultHtmlOptions = array(
-            'multiple' => 'multiple',
-            'onChange' => '
-                $.post(
-                    "' . Yii::app()->getBaseUrl() . '/dailyReport/getOpportunities/?"+$("#accountManager-select").serialize(),
-                    "",
-                    function(data)
-                    {
-                        $("#'.$dropdownLoad.'").html(data);
-                    }
-                )'
+            'multiple' => 'multiple'
         );
+        if($onChange=='opportunities')      
+            $defaultHtmlOptions = array_merge($defaultHtmlOptions, 
+                array(                    
+                'onChange' => '
+                    $.post(
+                        "' . Yii::app()->getBaseUrl() . '/opportunities/getOpportunities/?"+$("#accountManager-select").serialize(),
+                        "",
+                        function(data)
+                        {
+                            $("#'.$dropdownLoad.'").html(data);
+                        }
+                    )'
+                    )
+                );
+        if($onChange=='advertisers')      
+            $defaultHtmlOptions = array_merge($defaultHtmlOptions, 
+                array(                    
+                'onChange' => '
+                    $.post(
+                        "' . Yii::app()->getBaseUrl() . '/advertisers/getAdvertisers/?"+$("#accountManager-select").serialize(),
+                        "",
+                        function(data)
+                        {
+                            $("#'.$dropdownLoad.'").html(data);
+                        }
+                    )'
+                    )
+                );
+
+
+
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
         $medias = Users::model()->findUsersByRole('media');
@@ -392,6 +414,145 @@ class KHtml extends CHtml
             )
         );
     }
+   /**
+     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
+     * @param  $value
+     * @param  $accountManagerId 
+     * @param  $accountManagerId 
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAdvertisersMulti($value, $accountManager=NULL, $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('ios', 'ios.advertisers','accountManager');
+        $criteria->order = 'advertisers.name';
+
+
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManager=Yii::app()->user->id;
+
+        if ( $accountManager != NULL) {
+            if(is_array($accountManager))
+            {
+                $query="(";
+                $i=0;
+                foreach ($accountManager as $id) {  
+                    if($i==0)           
+                        $query.="accountManager.id=".$id;
+                    else
+                        $query.=" OR accountManager.id=".$id;
+                    $i++;
+                }
+                $query.=")";
+                $criteria->addCondition($query);                
+            }
+            else
+            {
+                $criteria->compare('accountManager.id',$accountManager);
+            }
+        }
+
+        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $data=array();
+        foreach ($opps as $opp) {
+            $data[$opp->ios->advertisers->id]=$opp->ios->advertisers->name;
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Advertisers',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }    
+
+   /**
+     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
+     * @param  $value
+     * @param  $accountManagerId 
+     * @param  $accountManagerId 
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterAdvertisersCountryMulti($value, $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('ios', 'ios.advertisers','country');
+        $criteria->order = 'country.name';
+
+        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $data=array();
+        foreach ($opps as $opp) {
+            $data[$opp->country->id_location]=$opp->country->name;
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Countriess',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    } 
+   /**
+     * Create Dropdown of Opportunities filtering by accountMangerId if not NULL
+     * @param  $value
+     * @param  $accountManagerId 
+     * @param  $accountManagerId 
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterModelAdvertisersMulti($value, $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+        $criteria = new CDbCriteria;
+        $criteria->order = 'model_adv';
+
+        $opps = Opportunities::model()->findAll($criteria);
+        $data=array();
+        foreach ($opps as $opp) {
+            $data[$opp->model_adv]=$opp->model_adv;
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All Models',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    } 
 
 }
 ?>
