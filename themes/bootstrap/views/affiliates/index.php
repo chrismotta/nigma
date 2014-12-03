@@ -17,21 +17,7 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
-//echo Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
-?>
 
-<?php
-	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
-	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
-	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
-	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
-
-	$dateStart  = date('Y-m-d', strtotime($dateStart));
-	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-	$data = $model->getAffiliates($dateStart, $dateEnd, $network);
 $alert = array('error', 'info', 'success', 'warning', 'muted');
 ?>
 <div class="row totals-bar ">

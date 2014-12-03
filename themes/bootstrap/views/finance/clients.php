@@ -10,19 +10,21 @@ $this->breadcrumbs=array(
 
 <div class="row totals-bar ">
 <?php
-$span = floor( 12 / count($totals->getData()) );
-$alert = array('error', 'info', 'success', 'warning', 'muted');
-$i = 0;
-foreach($totals->getData() as $total){
-	echo '
-	<div class="span'.$span.'">
-		<div class="alert alert-'.$alert[$i].'">
-			<small >TOTAL</small>
-			<h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+if($totals->getData()){
+	$span = floor( 12 / count($totals->getData()) );
+	$alert = array('error', 'info', 'success', 'warning', 'muted');
+	$i = 0;
+	foreach($totals->getData() as $total){
+		echo '
+		<div class="span'.$span.'">
+			<div class="alert alert-'.$alert[$i].'">
+				<small >TOTAL</small>
+				<h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+			</div>
 		</div>
-	</div>
-	';
-	$i++;
+		';
+		$i++;
+	}
 }
 ?>
 </div>
@@ -86,7 +88,7 @@ $ios    =new Ios;
 			echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true))));
 		
 	?>
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('name' => 'networkSubmit', 'class' => 'showLoading'))); ?>
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',

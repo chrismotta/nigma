@@ -19,6 +19,8 @@ class Reporo
 			return 2;
 		}
 
+		$network = Networks::model()->findbyPk($this->network_id);
+
 		// --- setting actions for requests
 		$actions = array(
 			"adv"		=> "?action=inventory/advertiser",
@@ -66,7 +68,7 @@ class Reporo
 				
 				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
 				// get campaign ID used in KickAds Server, from the campaign name use in the external network
-				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
+				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name, $network->use_alternative_convention_name);
 
 				if ( !$dailyReport->campaigns_id ) {
 					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.reporo');

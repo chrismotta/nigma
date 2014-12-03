@@ -31,6 +31,7 @@
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
                     array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
+                    array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
@@ -69,6 +70,8 @@
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/archived')),
+                    array('label'=>'Publishers', 'url'=>array('/publishers/archived')),
+                    array('label'=>'Placements', 'url'=>array('/placements/archived')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 /*
                 array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 

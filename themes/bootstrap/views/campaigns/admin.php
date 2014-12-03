@@ -21,17 +21,7 @@ $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
 	$breadcrumbs['title'],
 );
-
-/*
-$this->menu=array(
-	//array('label'=>'List Campaigns', 'url'=>array('index')),
-	array('label'=>'Create Campaigns', 'url'=>array('create')),
-);
-*/
 ?>
-
-<!--h2>Manage Campaigns</h2-->
-
 <?php
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){

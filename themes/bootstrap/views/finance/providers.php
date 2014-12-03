@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	'Finance'=>'#',	
-	'Clients',
+	'Providers',
 );
 
 $this->menu=array(
@@ -61,7 +61,7 @@ $data  =$model->getProviders($month,$year);
 		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
 		
 		            ?>
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('name' => 'networkSubmit', 'class' => 'showLoading'))); ?>
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',

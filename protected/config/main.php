@@ -11,14 +11,16 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// local
 	case '127.0.0.1':
 	case 'localhost':
-				defined('YII_DEBUG') or define('YII_DEBUG',true);
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
-					'emulatePrepare'   => true,
-					'username'         => 'root',
-					'password'         => 'pernambuco',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
+					'connectionString'   => 'mysql:host=localhost;dbname=kickads_appserver',
+					'emulatePrepare'     => true,
+					'username'           => 'root',
+					'password'           => 'pernambuco',
+					'charset'            => 'utf8',
+					// Uncomment to show db log
+					// 'enableParamLogging' =>true,
+					// 'enableProfiling'    =>true,
+					'initSQLs'           => array(
 			           "SET SESSION time_zone = '-3:00'",
 					),
 
@@ -240,8 +242,13 @@ return array(
 					'connectionID' =>'db',
 					'logTableName' =>'log',
 					'levels'       =>'info, profile, error, warning',
+					'except' 	   =>'system.db.CDbCommand.*',
 					'categories'   =>array('php.*', 'exception.*', 'system.*'),
                 ),
+				array( 
+			 	    'class'	=>'CProfileLogRoute', 
+			 	    'report'=>'callstack',  /* summary or callstack */ 
+			 	), 
                 $mailLog,
         	),
         ),
