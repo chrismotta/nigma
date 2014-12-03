@@ -321,37 +321,37 @@ class Campaigns extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function getExternalName($id)
+	public function getExternalName($id=NULL)
 	{
-		$model = Campaigns::model()->findByPk($id);
-		$opportunity = Opportunities::model()->findByPk($model->opportunities_id);
-		$ios = Ios::model()->findByPk($opportunity->ios_id);
-		$adv = Advertisers::model()->findByPk($ios->advertisers_id)->prefix;
+		$model = Campaigns::model()->with('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'networks', 'devices', 'formats')->findByPk($id);
+
+		$opportunity = $model->opportunities;
+		$adv = $model->opportunities->ios->advertisers->prefix;
 
 		$country = '';
 		if ( $opportunity->country_id !== NULL )
-			$country = '-' . GeoLocation::model()->findByPk($opportunity->country_id)->ISO2;
+			$country = '-' . $model->opportunities->country->ISO2;
 
 		$carrier = '-MUL';
 		if ( $opportunity->carriers_id !== NULL )
-			$carrier = '-' . substr( Carriers::model()->findByPk($opportunity->carriers_id)->mobile_brand , 0 , 3);
+			$carrier = '-' . substr( $model->opportunities->carriers->mobile_brand , 0 , 3);
 
 		$wifi_ip = $model->wifi ? '-WIFI' : '';
 		$wifi_ip .= $model->ip ? '-IP' : '';
 		
 		$device = '';
 		if ( $model->devices_id !== NULL )
-			$device = '-' . Devices::model()->findByPk($model->devices_id)->prefix;
+			$device = '-' . $model->devices->prefix;
 
 		$network = '';
 		if ( $model->networks_id !== NULL )
-			$network = '-' . Networks::model()->findByPk($model->networks_id)->prefix;
+			$network = '-' . $model->networks->prefix;
 		
 		$product = $opportunity->product ? '-' . $opportunity->product : '';
 
 		$format = '';
 		if ( $model->formats_id !== NULL )
-			$format = '-' . Formats::model()->findByPk($model->formats_id)->prefix;
+			$format = '-' . $model->formats->prefix;
 		
 		$alternativeConventionName = '';
 		if ($model->networks->use_alternative_convention_name)
