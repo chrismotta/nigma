@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	'Finance'=>'#',	
-	'Clients',
+	'Providers',
 );
 
 $this->menu=array(
