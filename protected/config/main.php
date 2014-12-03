@@ -18,8 +18,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'           => 'pernambuco',
 					'charset'            => 'utf8',
 					// Uncomment to show db log
-					'enableParamLogging' =>true,
-					'enableProfiling'    =>true,
+					// 'enableParamLogging' =>true,
+					// 'enableProfiling'    =>true,
 					'initSQLs'           => array(
 			           "SET SESSION time_zone = '-3:00'",
 					),
