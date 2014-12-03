@@ -18,8 +18,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'password'           => 'pernambuco',
 					'charset'            => 'utf8',
 					// Uncomment to show db log
-					// 'enableParamLogging' =>true,
-					// 'enableProfiling'    =>true,
+					'enableParamLogging' =>true,
+					'enableProfiling'    =>true,
 					'initSQLs'           => array(
 			           "SET SESSION time_zone = '-3:00'",
 					),
@@ -242,7 +242,7 @@ return array(
 					'connectionID' =>'db',
 					'logTableName' =>'log',
 					'levels'       =>'info, profile, error, warning',
-					'except' 	   =>'system.db.CDbCommand.query',
+					'except' 	   =>'system.db.CDbCommand.*',
 					'categories'   =>array('php.*', 'exception.*', 'system.*'),
                 ),
 				array( 
