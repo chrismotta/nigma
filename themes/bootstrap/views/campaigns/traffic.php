@@ -51,7 +51,7 @@ Yii::app()->clientScript->registerScript('search', "
 				'categories' => $totalsGrap['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-			'yAxis' => array(
+			'yAxis'   => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
@@ -59,14 +59,14 @@ Yii::app()->clientScript->registerScript('search', "
 				array('name' => 'Conversions', 'data' => $totalsGrap['conversions_s2s'],),
 				),
 	        'legend' => array(
-	            'layout' => 'vertical',
-	            'align' =>  'left',
-	            'verticalAlign' =>  'top',
-	            'x' =>  40,
-	            'y' =>  3,
-	            'floating' =>  true,
-	            'borderWidth' =>  1,
-	            'backgroundColor' => '#FFFFFF'
+				'layout'          => 'vertical',
+				'align'           =>  'left',
+				'verticalAlign'   =>  'top',
+				'x'               =>  40,
+				'y'               =>  3,
+				'floating'        =>  true,
+				'borderWidth'     =>  1,
+				'backgroundColor' => '#FFFFFF'
 	        	)
 			),
 		)
