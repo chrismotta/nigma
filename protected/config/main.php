@@ -242,7 +242,7 @@ return array(
 					'connectionID' =>'db',
 					'logTableName' =>'log',
 					'levels'       =>'info, profile, error, warning',
-					'except' 	   =>'system.db.CDbCommand.query',
+					'except' 	   =>'system.db.CDbCommand.*',
 					'categories'   =>array('php.*', 'exception.*', 'system.*'),
                 ),
 				array( 
