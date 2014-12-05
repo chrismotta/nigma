@@ -311,7 +311,7 @@ class ClicksLog extends CActiveRecord
 		return isset($match[0]) ? $match[0] : '';
 	}
 
-	public static function haveMacro($url)
+	public function haveMacro($url)
 	{
 		preg_match('%\{[a-z \_]+\}%', $url, $match);
 		return isset($match[0]) ? true : false;
