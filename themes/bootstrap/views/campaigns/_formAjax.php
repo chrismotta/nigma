@@ -142,7 +142,14 @@ if($action == "Create"){ ?>
         echo $form->radioButtonListRow($model, 'model', $campModel);
         echo '<hr/>';
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
-
+        ?>
+        <div style='width: 50%;'>
+        <?php
+        foreach (ClicksLog::model()->macros() as $key => $value) {
+            echo CHtml::label($key, $key, array('class'=>'label')).' ';
+        }?>
+        </div>
+        <?php
         if( FilterManager::model()->isUserTotalAccess('campaign.post_data') ) {
             echo '<hr/>';
             echo $form->checkboxRow($model, 'post_data');
