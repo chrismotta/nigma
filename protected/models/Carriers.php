@@ -111,6 +111,9 @@ class Carriers extends CActiveRecord
 	}
 	public function getMobileBrandById($id)
 	{
+		if ($id == NULL) {
+			return 'MULTI';
+		}
 		$criteria = new CDbCriteria;
 		$criteria->addCondition("id_carrier='".$id."'");
 		return self::model()->find($criteria)->mobile_brand;
