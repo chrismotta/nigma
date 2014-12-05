@@ -4,19 +4,13 @@
 
 $this->breadcrumbs=array(
 	'Finance'=>'#',	
-	'Clients',
+	'Providers',
 );
-
-$this->menu=array(
-	array('label'=>'Create Ios', 'url'=>array('create')),
-	array('label'=>'Manage Ios', 'url'=>array('admin')),
-);
-$year  =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-$month =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-$data  =$model->getProviders($month,$year);
 ?>
-<br>
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+<?php 
+//Totals
+echo KHtml::currencyTotals($totals->getData());
+	$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
 		'htmlOptions'          =>array('class'=>'well'),
@@ -93,8 +87,8 @@ $data  =$model->getProviders($month,$year);
 <?php 
 $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'advertisers-grid',
-	'dataProvider'             => $data['arrayProvider'],
-	'filter'                   => $data['filtersForm'],
+	'dataProvider'             => $arrayProvider,
+	'filter'                   => $filtersForm,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data["id"])',
 	'template'                 => '{items} {pager} {summary}',
@@ -158,39 +152,6 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	),
 )); ?>
 
-
-<?php 
-	$this->widget('yiibooster.widgets.TbGroupGridView', array(
-	'id'                         => 'totals-grid',
-	'dataProvider'               => $data['totalsDataProvider'],
-	'type'                       => 'striped condensed',	
-	'template'                   => '{items} {pager}',
-	'columns'                    => array(
-		array(
-			'name'              =>	'currency',
-			'value'             =>'$data["currency"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'Currency',                           
-			),	
-		array(
-			'name'              =>	'spend',
-			'value'             =>'$data["spend"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'Subtotal',                           
-			),
-		array(
-			'name'              =>	'off',
-			'value'             =>'$data["off"]',	
-			'headerHtmlOptions' => array('width' => '60'),
-			'header'            =>'Off',                           
-			),
-		array(
-			'name'                =>'total',
-			'value'               =>'$data["total"]',
-			'header'              =>'Total',
-			),			
-		),
-)); ?>
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalProviders')); ?>
 
 		<div class="modal-header"></div>
