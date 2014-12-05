@@ -65,7 +65,7 @@ class FinanceController extends Controller
 				$totalsdata[$i]['total']    =$value['revenue'];
 			}
 		}
-
+		
 		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
 		    'id'=>'totals',
 		    'sort'=>array(
@@ -85,6 +85,11 @@ class FinanceController extends Controller
 			'dataProvider' =>$dataProvider,
 			'clients'      =>$consolidated,
 			'totals'       =>$totalsDataProvider,
+			'month'        =>$month,
+			'year'         =>$year,
+			'stat'         =>$status,
+			'entity'       =>$entity,
+			'cat'          =>$cat
 		));
 	}
 
@@ -94,8 +99,15 @@ class FinanceController extends Controller
 		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$model       =new Networks;
+		$data  =$model->getProviders($month,$year);
 		$this->render('providers',array(			
 			'model'			=>$model,
+			'year'=>$year,
+			'month'=>$month,
+			'arrayProvider'=>$data['arrayProvider'],
+			'filtersForm'=>$data['filtersForm'],
+			'totals'=>$data['totalsDataProvider']
+
 		));
 	}
 
