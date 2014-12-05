@@ -267,7 +267,7 @@ class KHtml extends CHtml
         if ( $accountManagerId != NULL )
             $criteria->compare('account_manager_id', $accountManagerId);
 
-        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $opps = Opportunities::model()->with('ios.advertisers', 'carriers')->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
             $data[$opp->id]=$opp->getVirtualName();
