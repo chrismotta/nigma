@@ -947,7 +947,7 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
-	public function updateRevenue()
+	public function updateRevenue($custom_rate=NULL)
 	{
 		$c    = Campaigns::model()->findByPk($this->campaigns_id);
 		$opp  = Opportunities::model()->findByPk($c->opportunities_id);
@@ -963,7 +963,7 @@ class DailyReport extends CActiveRecord
 		}
 
 		// update revenue for single rate
-		$rate = $opp->rate;
+		$rate = $custom_rate == NULL ? $opp->rate : $custom_rate;
 		switch ($opp->model_adv) {
 			case 'CPM':
 				$this->revenue = $this->imp_adv != NULL ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
