@@ -68,15 +68,12 @@
 	'data'=>$model,
 	'attributes'=>array(
 		'opportunities.id',
-		array(
-			'label' => 'Country',
-			'name'  => 'opportunities.carriers.mobile_brand',
-		),
+		'opportunities.country.name',
+		'opportunities.carriers.mobile_brand',
 		'opportunities.rate',
 		'opportunities.model_adv',
 		'opportunities.product',
 		'opportunities.comment',
-		'opportunities.country.name',
 		array(
 			'label' => 'Wifi',
 			'name' => 'opportunities.wifi',
