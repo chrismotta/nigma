@@ -447,7 +447,12 @@ class DailyReportController extends Controller
 
 	public function actionSetNewFields($id){
 
+		$new_rate = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
+
 		if($model = DailyReport::model()->findByPk($id)){
+			if ( $new_rate )
+				$model->updateRevenue($new_rate);
+
 			$model->setNewFields();
 			$model->save();
 			echo $id . " - updated";
@@ -459,15 +464,33 @@ class DailyReportController extends Controller
 	public function actionSetAllNewFields(){
 
 		set_time_limit(100000);
-		if(isset($_GET['date'])){
-			$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
+
+		$opp_id   = isset($_GET['opp']) ? $_GET['opp'] : NULL;
+		if ($opp_id) {
+			$new_rate = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
+		} else { // not allow update rate if opp_id isn't specified.
+			echo "newRate value is present but no opportunity id is specified.";
+			return;
+		}
+
+		if( isset($_GET['dateStart']) && isset($_GET['dateEnd']) ){
+			$criteria = new CDbCriteria;
+			$criteria->with = array('campaigns.opportunities');
+			$criteria->compare('date', '>=' . $_GET['dateStart']);
+			$criteria->compare('date', '<=' . $_GET['dateEnd']);
+			$criteria->compare('opportunities.id', $opp_id);
+
+			$list = DailyReport::model()->findAll( $criteria );
 			foreach ($list as $model) {
+				if ( $new_rate )
+					$model->updateRevenue($new_rate);
+
 				$model->setNewFields();
 				$model->save();
 				echo $model->id . " - updated<br/>";
 			}
 		}else{
-			echo "no date seted";
+			echo "no date setted";
 		}
 	}
 

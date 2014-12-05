@@ -272,7 +272,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'        => 'rate',
-			'value'       => '$data->getRateUSD() ? number_format($data->getRateUSD(),2) : 0.".00"',
+			'value'       => '$data->getRateUSD() ? number_format($data->getRateUSD(),2) : "0.00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
 		),
 		array(	
@@ -370,7 +370,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'revenue',
-			'value'             => '$data->getRevenueUSD()',
+			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['revenue'],
