@@ -465,11 +465,11 @@ class DailyReportController extends Controller
 
 		set_time_limit(100000);
 
-		$opp_id   = isset($_GET['oppId']) ? $_GET['oppId'] : NULL;
+		$opp_id   = isset($_GET['opp']) ? $_GET['opp'] : NULL;
 		if ($opp_id) {
 			$new_rate = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
 		} else { // not allow update rate if opp_id isn't specified.
-			echo "newRate value is present but no opp_id is specified.";
+			echo "newRate value is present but no opportunity id is specified.";
 			return;
 		}
 
