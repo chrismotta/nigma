@@ -142,7 +142,19 @@ if($action == "Create"){ ?>
         echo $form->radioButtonListRow($model, 'model', $campModel);
         echo '<hr/>';
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
-
+        ?>
+        <div id='macros'>
+        <?php
+        foreach (ClicksLog::model()->macros() as $key => $value) {
+            echo CHtml::label($key, $key, array('class'=>'label')).' ';
+            Yii::app()->clientScript->registerScript('register_script_name', "
+                $('#macros label').click(function(){
+                   $('#Campaigns_url').val( $('#Campaigns_url').val() + $(this).text());
+                });
+            ", CClientScript::POS_READY);
+        }?>
+        </div>
+        <?php
         if( FilterManager::model()->isUserTotalAccess('campaign.post_data') ) {
             echo '<hr/>';
             echo $form->checkboxRow($model, 'post_data');

@@ -165,7 +165,6 @@ class ClicksLogController extends Controller
 
 				$wurfl = WurflManager::loadWurfl();
 				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
-				
 				$model->device          = $device->getCapability('brand_name');
 				$model->device_model    = $device->getCapability('marketing_name');
 				$model->os              = $device->getCapability('device_os');
@@ -235,7 +234,9 @@ class ClicksLogController extends Controller
 			}
 
 			//enviar macros
-
+			if($model->haveMacro($redirectURL))
+				$redirectURL = $model->replaceMacro($redirectURL);
+			
 			if($campaign->post_data == '1'){
 
 				$dataQuery['os']      = $model->os."-".$model->os_version;
