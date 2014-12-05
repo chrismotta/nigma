@@ -370,7 +370,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'revenue',
-			'value'             => '$data->getRevenueUSD()',
+			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['revenue'],
