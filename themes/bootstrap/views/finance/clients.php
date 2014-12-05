@@ -8,37 +8,14 @@ $this->breadcrumbs=array(
 );
 ?>
 
-<div class="row totals-bar ">
 <?php
-if($totals->getData()){
-	$span = floor( 12 / count($totals->getData()) );
-	$alert = array('error', 'info', 'success', 'warning', 'muted');
-	$i = 0;
-	foreach($totals->getData() as $total){
-		echo '
-		<div class="span'.$span.'">
-			<div class="alert alert-'.$alert[$i].'">
-				<small >TOTAL</small>
-				<h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
-			</div>
-		</div>
-		';
-		$i++;
-	}
-}
-?>
-</div>
-		
-<?php
+//Totals
+echo KHtml::currencyTotals($totals->getData());
+
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
 );
-$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
-$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
-$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
-$stat   =isset($_GET['status']) ? $_GET['status'] : null;
 $log    =new ValidationLog;
 $ios    =new Ios;
 ?>
@@ -117,13 +94,13 @@ $ios    =new Ios;
 <?php $this->endWidget(); ?>
 <?php 
 	$this->widget('yiibooster.widgets.TbGroupGridView', array(
-	'id'                         => 'clients-grid',
-	'dataProvider'               => $dataProvider,
-	'filter'                     => $filtersForm,
-	'afterAjaxUpdate'=>'verifedIcon',
-	'type'                       => 'condensed',	 
-	'template'                   => '{items} {pager} {summary}',
-	'columns'                    => array(		
+	'id'              => 'clients-grid',
+	'dataProvider'    => $dataProvider,
+	'filter'          => $filtersForm,
+	'afterAjaxUpdate' =>'verifedIcon',
+	'type'            => 'condensed',	 
+	'template'        => '{items} {pager} {summary}',
+	'columns'         => array(		
 		array(
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
