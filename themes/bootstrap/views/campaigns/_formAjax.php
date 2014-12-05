@@ -143,10 +143,15 @@ if($action == "Create"){ ?>
         echo '<hr/>';
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
         ?>
-        <div style='width: 50%;'>
+        <div id='macros'>
         <?php
         foreach (ClicksLog::model()->macros() as $key => $value) {
             echo CHtml::label($key, $key, array('class'=>'label')).' ';
+            Yii::app()->clientScript->registerScript('register_script_name', "
+                $('#macros label').click(function(){
+                   $('#Campaigns_url').val( $('#Campaigns_url').val() + $(this).text());
+                });
+            ", CClientScript::POS_READY);
         }?>
         </div>
         <?php
