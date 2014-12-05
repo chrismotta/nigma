@@ -36,6 +36,22 @@ class ClicksLog extends CActiveRecord
 	public $CTR;
 
 	public $clics;
+
+
+	public function macros()
+	{
+		return array(
+			'{referer_domain}' => self::getDomain($this->referer),
+			'{os}'             => $this->os!=' ' ? urlencode($this->os."-".$this->os_version) : '',
+			'{device}'         => $this->device!=' ' ? urlencode($this->device."-".$this->device_model) : '',
+			'{country}'        => $this->country ? urlencode($this->country) : '',
+			'{carrier}'        => $this->carrier!='-' ? urlencode($this->carrier) : '',
+			'{referer}'        => $this->referer ? urlencode($this->referer) : '',
+			'{app}'            => $this->app ? urlencode($this->app) : '',
+			'{keyword}'        => $this->keyword ? urlencode($this->keyword) : '',
+			);
+	}
+
 	public function tableName()
 	{
 		return 'clicks_log';
@@ -287,5 +303,22 @@ class ClicksLog extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public static function getDomain($url)
+	{		
+		preg_match('%[^http,https\:\/\/][^\/]+%', $url, $match);
+		return isset($match[0]) ? $match[0] : '';
+	}
+
+	public static function haveMacro($url)
+	{
+		preg_match('%\{[a-z \_]+\}%', $url, $match);
+		return isset($match[0]) ? true : false;
+	}
+
+	public function replaceMacro($url)
+	{	
+		return str_replace(array_keys(self::macros()),array_values(self::macros()),$url);
 	}
 }
