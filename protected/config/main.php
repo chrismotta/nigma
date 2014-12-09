@@ -92,8 +92,25 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 		break;
 	// amazon test
 	case 'test.kickadserver.mobi':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=kickads-db-2.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'emulatePrepare'   => true,
+					'username'         => 'www-data',
+					'password'         => 'k1ck4ds3rv3r',
+					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
+				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
+				);
+		break;
 	case 'tmp.kickadserver.mobi':
-				defined('YII_DEBUG') or define('YII_DEBUG',true);
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
 					'emulatePrepare'   => true,
