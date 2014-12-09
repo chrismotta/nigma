@@ -92,6 +92,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 		break;
 	// amazon test
 	case 'test.kickadserver.mobi':
+	case 'tmp.kickadserver.mobi':
 				defined('YII_DEBUG') or define('YII_DEBUG',true);
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
