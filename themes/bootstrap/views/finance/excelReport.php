@@ -32,6 +32,10 @@ $this->widget('EExcelWriter', array(
             'name'   =>  'commercial_name',
             'value'  =>'$data["name"]',      
             'footer' =>'Totals:',
+            ),
+        array(
+            'name'              => 'opportunitie',
+            'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',  
             ),  
         array(
             'name'  =>  'model',
