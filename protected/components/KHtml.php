@@ -267,7 +267,7 @@ class KHtml extends CHtml
         if ( $accountManagerId != NULL )
             $criteria->compare('account_manager_id', $accountManagerId);
 
-        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $opps = Opportunities::model()->with('ios.advertisers', 'carriers')->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
             $data[$opp->id]=$opp->getVirtualName();
@@ -554,5 +554,28 @@ class KHtml extends CHtml
         );
     } 
 
+    public static function currencyTotals($totals=array())
+    {
+        $rowTotals='<div class="row totals-bar ">';
+        if(count($totals)>0)
+        {
+            $span = floor( 12 / count($totals) );
+            $alert = array('error', 'info', 'success', 'warning', 'muted');
+            $i = 0;
+            foreach($totals as $total){
+                $rowTotals.= '
+                <div class="span'.$span.'">
+                    <div class="alert alert-'.$alert[$i].'">
+                        <small >TOTAL</small>
+                        <h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+                    </div>
+                </div>
+                ';
+                $i++;
+            }
+        }
+        $rowTotals.='</div>';
+        return $rowTotals;
+    }
 }
 ?>

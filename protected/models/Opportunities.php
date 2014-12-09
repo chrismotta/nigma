@@ -245,17 +245,17 @@ class Opportunities extends CActiveRecord
 
 	public function getVirtualName()
 	{
-		$adv = Advertisers::model()->findByPk( Ios::model()->findByPk($this->ios_id)->advertisers_id)->name;
+		$adv = $this->ios->advertisers->name;
 		
 		$country = '';
 		if ( $this->country_id !== NULL )
-			$country = '-' . GeoLocation::model()->findByPk($this->country_id)->ISO2;
+			$country = '-' . $this->country->ISO2;
 
 		$carrier = '';
 		if ( $this->carriers_id === NULL ) {
 			$carrier = '-MULTI';
 		} else {
-			$carrier = '-' . Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
+			$carrier = '-' . $this->carriers->mobile_brand;
 		}
 
 		$product = '';
