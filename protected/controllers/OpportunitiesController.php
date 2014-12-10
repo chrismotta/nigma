@@ -312,6 +312,7 @@ class OpportunitiesController extends Controller
 		// comentado provisoriamente, generar permiso de admin
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$criteria=new CDbCriteria;
+		$criteria->compare('t.status', 'Active');
 		$ids = isset($_GET['accountManager']) ? $_GET['accountManager'] : null;
 		if ( $ids != NULL) {
 			if(is_array($ids))

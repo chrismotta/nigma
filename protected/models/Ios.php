@@ -331,7 +331,7 @@ class Ios extends CActiveRecord
 													inner join ios i on o.ios_id=i.id
 													inner join advertisers a on i.advertisers_id=a.id
 													left join carriers ca on o.carriers_id=ca.id_carrier
-													left join geo_location g on ca.id_country=g.id_location													
+													left join geo_location g on o.country_id=g.id_location													
 													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
 													AND d.revenue>0 
 													AND NOT(ISNULL(o.rate)) ";
