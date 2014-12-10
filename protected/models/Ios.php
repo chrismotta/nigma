@@ -376,7 +376,7 @@ class Ios extends CActiveRecord
 					#If isset, set arrays (conv,revenue) and sum
 					isset($data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']) ? : $data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']=0;
 					isset($data[$daily->io_id][$daily->carrier][$daily->rate]['conv']) ? : $data[$daily->io_id][$daily->carrier][$daily->rate]['conv']=0;
-					$data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']         +=$daily->revenue;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']         +=$daily->conversions*$daily->rate;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['conv']            +=$daily->conversions;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['rate']            =$daily->rate;
 
