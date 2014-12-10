@@ -33,7 +33,7 @@ class CampaignsController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','excelReport','graphicCampaign','trafficCampaignAjax','graphic'),
-				'roles'=>array('businness', 'sem'),
+				'roles'=>array('businness', 'sem', 'finance'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('fetchCampaigns'),
