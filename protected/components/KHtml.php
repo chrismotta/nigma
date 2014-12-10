@@ -70,6 +70,7 @@ class KHtml extends CHtml
 
         $criteria = new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->compare('t.status', 'Active');
         $criteria->order = 'advertisers.name, country.ISO2';
 
         if ( $accountManagerId != NULL )

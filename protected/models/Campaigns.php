@@ -185,10 +185,10 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 		
 		if ($accountManager != NULL)
-			$criteria->compare('accountManager.id',$accountManager, true);
-		$criteria->compare('opportunities_id',$opportunitie,true);
+			$criteria->compare('accountManager.id',$accountManager);
+		$criteria->compare('opportunities_id',$opportunitie);
 		$criteria->compare('t.networks_id',$networks);
-		$criteria->compare('advertisers.cat',$advertiser,true);
+		$criteria->compare('advertisers.cat',$advertiser);
 
 		//nomenclatura
 		$criteria->compare('t.id',$this->name,true);
