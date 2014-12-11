@@ -155,7 +155,11 @@ class DailyReport extends CActiveRecord
 		$criteria = new CDbCriteria;
 		$criteria->select = array(
 						't.date as date', 
-						'sum(t.imp) as imp',
+						'sum(CASE 
+				           WHEN t.imp > 0 
+				           THEN t.imp 
+				           ELSE ROUND(clics * 100 / 1.5) 
+				        END) as imp',
 						'sum(t.clics) as clics', 
 						'sum(t.conv_api) as conv_api', 
 						); 
