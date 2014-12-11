@@ -50,6 +50,7 @@ class ExternalFormsController extends Controller
 			// echo $value['imp'] .' - ';
 			// echo $value['clics'] .' - ';
 			// echo $value['conv_api'] .' - ';
+			// echo $value['campaigns']['opportunities_id'];
 			// echo '<hr/>';
 			// var_dump($value);
 			// echo '<hr/><hr/>';

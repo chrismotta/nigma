@@ -149,19 +149,19 @@ class DailyReport extends CActiveRecord
 	{	
 		// get opportunities id from hash
 		$oppModel   = Opportunities::model()->find('md5(id*id)="'.$hash.'"');
-		$oppID      = $oppModel->id;
+		$oppID      = isset($oppModel->id) ? $oppModel->id : 0;
 
 		// make a criteria from opportunities_id
 		$criteria = new CDbCriteria;
 		$criteria->select = array(
-						'date', 
+						't.date as date', 
 						'sum(t.imp) as imp',
 						'sum(t.clics) as clics', 
 						'sum(t.conv_api) as conv_api', 
 						); 
+		$criteria->addCondition('date(t.date) BETWEEN "'.$startDate.'" AND "'.$endDate.'"');
 		$criteria->with = array('campaigns');
 		$criteria->compare('campaigns.opportunities_id', $oppID);
-		$criteria->condition = 'date(t.date) BETWEEN "'.$startDate.'" AND "'.$endDate.'"';
 		$criteria->group = 't.date, campaigns.url';
 		$criteria->order = 't.date asc, campaigns.url asc';
 
