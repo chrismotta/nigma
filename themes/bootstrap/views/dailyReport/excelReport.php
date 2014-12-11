@@ -12,7 +12,7 @@ $dateEnd        = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'ye
 $accountManager = isset($_POST['excel-accountManager']) ? $_POST['excel-accountManager'] : NULL;
 $opportunitie   = isset($_POST['excel-opportunitie']) ? $_POST['excel-opportunitie'] : NULL;
 $opportunities  = isset($_POST['excel-opportunities']) ? $_POST['excel-opportunities'] : NULL;
-$networks       = isset($_POST['excel-networks']) ? $_POST['excel-networks'] : NULL;
+$providers      = isset($_POST['excel-providers']) ? $_POST['excel-providers'] : NULL;
 $adv_categories = isset($_POST['excel-advertisers-cat']) ? $_POST['excel-advertisers-cat'] : NULL;
 $sum            = isset($_POST['sum']) ? $_POST['sum'] : 0;
 
@@ -21,7 +21,7 @@ $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
 
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories),
+    'dataProvider' => $model->excel($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
@@ -60,8 +60,8 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->campaigns->opportunities->ios->advertisers->cat',
         ),
         array(
-            'name'  => 'network_name',
-            'value' => '$data->networks->name',
+            'name'  => 'providers_name',
+            'value' => '$data->providers->name',
         ),
         array(
             'header'  => 'rate',
