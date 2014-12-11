@@ -200,9 +200,12 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'              =>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>' =>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'          =>'<controller>/<action>',
+				'<controller:\w+>/<id:\d+>'                           =>'<controller>/view',
+				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
+				// custom parameters //
+				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),
 		'eexcelwriter'=>array(
