@@ -118,11 +118,11 @@ class CampaignsController extends Controller
 	public function actionRedirectAjax($id)
 	{
 		$model    = $this->loadModel($id);
-		$network = Networks::model()->findByPk($model->networks_id);
+		$provider = Providers::model()->findByPk($model->providers_id);
 
 		$this->renderPartial('_redirects',array(
 			'model'        => $model,
-			'network'     => $network,
+			'provider'     => $provider,
 			'campaignName' => Campaigns::model()->getExternalName($id),
 		), false, true);
 	}
@@ -186,7 +186,7 @@ class CampaignsController extends Controller
 			);
 		}
 		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$providers     = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel     = KHtml::enumItem($model, 'model');
@@ -195,7 +195,7 @@ class CampaignsController extends Controller
 			//'modelOpp'    => $modelOpp,
 			'opportunities' => $opportunities,
 			'categories'    => $categories,
-			'networks'      => $networks,
+			'providers'      => $providers,
 			'devices'       => $devices,
 			'formats'       => $formats,
 			'campModel'     => $campModel,
@@ -226,7 +226,7 @@ class CampaignsController extends Controller
 		// use listData in order to send a list of categories to the view
 		//$opportunities = CHtml::listData(Opportunities::model()->findAll(array('order'=>'id')), 'id', 'ios.name');
 		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$providers     = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel     = KHtml::enumItem($model, 'model');
@@ -235,7 +235,7 @@ class CampaignsController extends Controller
 			//'modelOpp'    => $modelOpp,
 			//'opportunities' => $opportunities,
 			'categories'    => $categories,
-			'networks'      => $networks,
+			'providers'     => $providers,
 			'devices'       => $devices,
 			'formats'       => $formats,
 			'campModel'     => $campModel,
@@ -264,7 +264,7 @@ class CampaignsController extends Controller
 		} 
 		$model=$new;
 		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$providers     = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel     = KHtml::enumItem($model, 'model');
@@ -273,7 +273,7 @@ class CampaignsController extends Controller
 			//'modelOpp'    => $modelOpp,
 			//'opportunities' => $opportunities,
 			'categories'    => $categories,
-			'networks'      => $networks,
+			'providers'     => $providers,
 			'devices'       => $devices,
 			'formats'       => $formats,
 			'campModel'     => $campModel,
@@ -310,7 +310,7 @@ class CampaignsController extends Controller
 			'dateStart' 		=> $_GET['dateStart'],
 			'dateEnd' 			=> $_GET['dateEnd'],
 			// 'categories'    => $categories,
-			// 'networks'      => $networks,
+			// 'providers'     => $providers,
 			// 'devices'       => $devices,
 			// 'formats'       => $formats,
 			// 'campModel'     => $campModel,
@@ -487,7 +487,7 @@ class CampaignsController extends Controller
 		*/
 	
 		$q = Yii::app()->db->createCommand()
-                    ->select('id, networks_id, url')
+                    ->select('id, providers_id, url')
                     ->from("campaigns")
                     ->queryAll(false);
 		echo json_encode($q);
