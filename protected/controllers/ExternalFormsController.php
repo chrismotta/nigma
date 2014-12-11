@@ -30,7 +30,7 @@ class ExternalFormsController extends Controller
 	 */
 	public function actionTrafficReport($hash=null){
 		if(!$hash) die('ERROR: Hash needed!');
-		
+
 		$startDate = isset($_GET['date-start']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
 		$endDate   = isset($_GET['date-end'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
 
@@ -43,6 +43,7 @@ class ExternalFormsController extends Controller
 			$row['date']  = $value['date'];
 			$row['url']   = $value['campaigns']['url'];
 			$row['imp']   = $value['imp'];
+			$row['imp_true']   = $value['imp_adv'];
 			$row['click'] = $value['clics'];
 			$row['conv']  = $value['conv_api'];
 			$return[]     = $row;

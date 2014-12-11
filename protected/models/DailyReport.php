@@ -160,6 +160,7 @@ class DailyReport extends CActiveRecord
 				           THEN t.imp 
 				           ELSE ROUND(clics * 100 / 1.5) 
 				        END) as imp',
+						'sum(imp) as imp_true',
 						'sum(t.clics) as clics', 
 						'sum(t.conv_api) as conv_api', 
 						); 
