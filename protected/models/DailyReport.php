@@ -148,7 +148,7 @@ class DailyReport extends CActiveRecord
 	public function trafficReport($hash, $startDate, $endDate)
 	{	
 		// get opportunities id from hash
-		$oppModel   = Opportunities::model()->find('md5(id + ios_id)="'.$hash.'"');
+		$oppModel   = Opportunities::model()->find('md5(id*id)="'.$hash.'"');
 		$oppID      = $oppModel->id;
 
 		// make a criteria from opportunities_id
@@ -163,7 +163,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('campaigns.opportunities_id', $oppID);
 		$criteria->condition = 'date(t.date) BETWEEN "'.$startDate.'" AND "'.$endDate.'"';
 		$criteria->group = 't.date, campaigns.url';
-		$criteria->order = 't.date asc, campaigns.id asc';
+		$criteria->order = 't.date asc, campaigns.url asc';
 
 		return $this::model()->findAll($criteria);
 	}
