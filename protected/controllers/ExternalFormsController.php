@@ -43,6 +43,7 @@ class ExternalFormsController extends Controller
 			$row['date']  = $value['date'];
 			$row['url']   = $value['campaigns']['url'];
 			$row['imp']   = $value['imp'];
+			$row['imp_fake']   = $value['conv_adv'];
 			$row['imp_true']   = $value['imp_adv'];
 			$row['click'] = $value['clics'];
 			$row['conv']  = $value['conv_api'];
