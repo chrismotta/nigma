@@ -29,8 +29,8 @@ class ExternalFormsController extends Controller
 	 * @return [type] JSon  [description] traffic report in json format
 	 */
 	public function actionTrafficReport($hash){
-		$startDate = isset($_GET['start-date']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
-		$endDate   = isset($_GET['end-date'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
+		$startDate = isset($_GET['date-start']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
+		$endDate   = isset($_GET['date-end'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
 
 		//$return = array($oppID, $startDate, $endDate);
 		$model = new DailyReport();
@@ -54,7 +54,11 @@ class ExternalFormsController extends Controller
 			// var_dump($value);
 			// echo '<hr/><hr/>';
 		}
-		echo json_encode($return);
+		if(isset($return)){
+			echo json_encode($return);
+		}else{
+			echo json_encode(array('no data available'));
+		}
 	}
 
 	// Uncomment the following methods and override them if needed

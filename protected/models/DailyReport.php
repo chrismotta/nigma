@@ -161,6 +161,7 @@ class DailyReport extends CActiveRecord
 						); 
 		$criteria->with = array('campaigns');
 		$criteria->compare('campaigns.opportunities_id', $oppID);
+		$criteria->condition = 'date(t.date) BETWEEN "'.$startDate.'" AND "'.$endDate.'"';
 		$criteria->group = 't.date, campaigns.url';
 		$criteria->order = 't.date asc, campaigns.id asc';
 
