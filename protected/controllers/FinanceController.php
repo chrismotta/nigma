@@ -29,9 +29,9 @@ class FinanceController extends Controller
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
-			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status);
+			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 		else
-			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status);
+			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status,null);
 		$consolidated=array();
 		foreach ($clients['data'] as $client) {
 			$client['total_revenue']=$clients['totals_io'][$client['id']];
@@ -84,6 +84,7 @@ class FinanceController extends Controller
 			'filtersForm'  =>$filtersForm,
 			'dataProvider' =>$dataProvider,
 			'clients'      =>$consolidated,
+			'clients2'      =>$clients,
 			'totals'       =>$totalsDataProvider,
 			'month'        =>$month,
 			'year'         =>$year,
@@ -117,7 +118,7 @@ class FinanceController extends Controller
 		$year  =$_GET['year'];
 		$id    =$_GET['id'];
 		$op    =Opportunities::model()->findByPk($id);
-		$data  =Ios::model()->getClientsMultiRate($month,$year,null,null,null,$id);
+		$data  =Ios::model()->getClientsMulti($month,$year,null,null,null,$id,null,null,false);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -172,7 +173,7 @@ class FinanceController extends Controller
 		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
-		$clients           =$model->getClientsProfile($month,$year,null,$io->id);
+		$clients           =$model->getClients($month,$year,null,$io->id,null,null,null,null,'profile');
 		$consolidated=array();
 		$dataProvider=new CArrayDataProvider($clients['data'], array(
 		    'id'=>'clients',
@@ -200,6 +201,7 @@ class FinanceController extends Controller
 				'year'         =>$year,
 				'io'           =>$io,
 				'dataProvider' =>$dataProvider,
+				'clients' =>$clients['data'],
 				'totals'       =>$clients['totals']
 		 	),
 		  false, true);
@@ -215,10 +217,9 @@ class FinanceController extends Controller
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		if(is_null($opportunitie->rate))
-			$clients =$model->getClientsMultiRate($month,$year,null,$opportunitie->ios_id);
+			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->ios_id,null,null,true);
 		else
-			$clients =$model->getClients($month,$year,null,null,null,$op)['data'];
-		
+			$clients =$model->getClients($month,$year,null,null,null,null,null,'otro')['data'];		
 		$dataProvider=new CArrayDataProvider($clients, array(
 		    'id'=>'clients',
 		    'sort'=>array(
