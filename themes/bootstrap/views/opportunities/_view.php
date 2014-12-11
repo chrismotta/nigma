@@ -149,7 +149,7 @@
 		array(
 			'name'              => 'net_currency',
 			'headerHtmlOptions' => array('style' => 'width: 20px'),
-			'value'             => '$data->networks->currency',
+			'value'             => '$data->providers->currency',
         ),
 		array(
 			'name'              => 'cap',
