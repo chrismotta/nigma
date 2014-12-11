@@ -146,7 +146,7 @@ class CurrencyController extends Controller
 				$this->redirect(array('admin'));
 		}
 
-		$this->renderPartial('update',array(
+		$this->renderPartial('_form',array(
 			'model'=>$model,
 		),false,true);
 	}
