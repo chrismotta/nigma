@@ -132,7 +132,7 @@ class Campaigns extends CActiveRecord
 			'opportunities_carrier'  => 'Carrier',
 			'post_data'              => 'Post Data',
 			'banner_sizes_id'        => 'Banner Sizes',
-			'net_currency'           => 'Net Currency',
+			'net_currency'           => 'Prov Currency',
 			'clicks'                 => 'Clicks Log',
 			'conv'                   => 'Convertions Log',
 			'account_manager'        => 'Account Manager',
