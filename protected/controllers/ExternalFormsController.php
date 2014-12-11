@@ -40,14 +40,14 @@ class ExternalFormsController extends Controller
 		// $this->widget('bootstrap.widgets.TbGridView', array(
 
 		foreach ($data as $key => $value) {
-			$row['date']  = $value['date'];
-			$row['url']   = $value['campaigns']['url'];
-			$row['imp']   = $value['imp'];
-			$row['imp_fake']   = $value['conv_adv'];
-			$row['imp_true']   = $value['imp_adv'];
-			$row['click'] = $value['clics'];
-			$row['conv']  = $value['conv_api'];
-			$return[]     = $row;
+			$row['date']       = $value['date'];
+			$row['url']        = $value['campaigns']['url'];
+			$row['imp']        = $value['imp'];
+			//$row['imp_fake'] = $value['conv_adv'];
+			//$row['imp_true'] = $value['imp_adv'];
+			$row['click']      = $value['clics'];
+			$row['conv']       = $value['conv_api'];
+			$return[]          = $row;
 			
 			// echo $value['date'] .' - ';
 			// echo $value['campaigns']['url'] .' - ';
