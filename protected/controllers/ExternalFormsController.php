@@ -28,7 +28,9 @@ class ExternalFormsController extends Controller
 	 * @param  [type] $hash [description] md5 (id + ios_id)
 	 * @return [type] JSon  [description] traffic report in json format
 	 */
-	public function actionTrafficReport($hash){
+	public function actionTrafficReport($hash=null){
+		if(!$hash) die('ERROR: Hash needed!');
+		
 		$startDate = isset($_GET['date-start']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
 		$endDate   = isset($_GET['date-end'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
 
