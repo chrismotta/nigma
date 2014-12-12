@@ -3,7 +3,7 @@
 class AdWords
 {  
 
-	private $nprovider_id = 4;
+	private $provider_id = 4;
 	private $adWords_version = 'v201406';
 
 	public function downloadInfo()
@@ -54,8 +54,6 @@ class AdWords
 			$result = ReportUtils::DownloadReportWithAwql($reportQuery, NULL, $user, 'XML', array('version' => $this->adWords_version));
 
 			$result = Utilities::xml2array($result);
-			echo json_encode($result);
-			echo '<hr/>';
 
 			if ( !isset($result['report']['table']['row']) ) {
 				Yii::log("Empty daily report, advertiser:  " . $advertiser->name, 'info', 'system.model.api.adWords');
@@ -73,7 +71,6 @@ class AdWords
 					continue;
 			}
 		}
-			echo '<hr/>';
 		
 		Yii::log("SUCCESS - Daily info download - ".$authenticationIniPath, 'info', 'system.model.api.adWords');
 		return 0;
