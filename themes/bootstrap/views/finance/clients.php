@@ -133,7 +133,7 @@ $ios    =new Ios;
 			),
 		array(
 			'name'              =>'rate',
-			'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
+			'value'             =>'$data["multi"] === 1 ? $data["rate"] : "Multi"',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			'header'            =>'Rate',	
@@ -147,7 +147,7 @@ $ios    =new Ios;
 			'htmlOptions'       => array('class'=>'plusMR'),
 			'type'              => 'raw',
 			'value'             =>	'
-				$data["rate"] === NULL && !isset($data["carrier"]) ?
+				$data["multi"] === 0 ?
 				CHtml::link(
 					"<i class=\"icon-plus\"></i>",
 					array("multiRate?id=" . $data["opportunitie_id"] ."&month='.$month.'&year='.$year.'"),
