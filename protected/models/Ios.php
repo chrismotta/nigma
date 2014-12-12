@@ -370,25 +370,25 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 		{
 			#Save results to array group by io,carrier and date
 			foreach ($dailys as $daily) {				
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['id']              =$daily['id'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['name']            =$daily['name'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['opportunitie']    =$daily['opportunitie'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['opportunitie_id'] =$daily['opportunitie_id'];						
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['product']         =$daily['product'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['currency']        =$daily['currency'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['entity']          =$daily['entity'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['model']           =$daily['model'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['carrier']         =$daily['carrier'];				
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['mobileBrand']     =$daily['mobileBrand'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['status_opp']      =$daily['status_opp'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['country']         =$daily['country'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['status_io']       =$daily['status_io'];				
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['id']              =$daily['id'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['name']            =$daily['name'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['opportunitie']    =$daily['opportunitie'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['opportunitie_id'] =$daily['opportunitie_id'];						
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['product']         =$daily['product'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['currency']        =$daily['currency'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['entity']          =$daily['entity'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['model']           =$daily['model'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['carrier']         =$daily['carrier'];				
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['mobileBrand']     =$daily['mobileBrand'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_opp']      =$daily['status_opp'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['country']         =$daily['country'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_io']       =$daily['status_io'];				
 					#If isset, set arrays (conv,revenue) and sum
-					isset($data[$daily['id']][$daily['carrier']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['rate']]['revenue']=0;
-					isset($data[$daily['id']][$daily['carrier']][$daily['rate']]['conv']) ? : $data[$daily['id']][$daily['carrier']][$daily['rate']]['conv']=0;
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['revenue']         +=$daily['conv']*$daily['rate'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['conv']            +=$daily['conv'];
-					$data[$daily['id']][$daily['carrier']][$daily['rate']]['rate']            =$daily['rate'];
+					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']=0;
+					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']=0;
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']         +=$daily['conv']*$daily['rate'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']            +=$daily['conv'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['rate']            =$daily['rate'];
 
 					#This array have totals
 					isset($totals['revenue']) ?  : $totals['revenue'] =0;
@@ -400,9 +400,11 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 			#Make array like CArrayDataProvider
 			$consolidated=array();
 			foreach ($data as $ios) {
-				foreach ($ios as $rates) {
-					foreach ($rates as $rate) {
-						$consolidated[]=$rate;
+				foreach ($ios as $products) {
+					foreach ($products as $rates) {
+						foreach ($rates as $rate) {
+							$consolidated[]=$rate;
+						}
 					}
 				}
 			}
