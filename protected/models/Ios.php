@@ -281,7 +281,7 @@ class Ios extends CActiveRecord
 															(
 																CASE o.model_adv
 																	WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-																	WHEN 'CPM' THEN (d.imp/1000)
+																	WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
 																	WHEN 'CPC' THEN d.clics
 																END 
 															)
@@ -290,7 +290,7 @@ class Ios extends CActiveRecord
 													SUM(
 													CASE o.model_adv
 														WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-														WHEN 'CPM' THEN (d.imp/1000)
+														WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
 														WHEN 'CPC' THEN d.clics
 													END 
 													) as conversions,
@@ -319,7 +319,7 @@ class Ios extends CActiveRecord
 																(
 																	CASE o.model_adv
 																		when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-																		when 'CPM' THEN (d.imp/1000)
+																		when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
 																		when 'CPC' THEN d.clics
 																	END 
 																)

@@ -224,12 +224,14 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 
 <?php 
-	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunities,$networks, $adv_categories);
+//yess
+	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories);
+	$totals=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories,true)->data[0];
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories),
+	'dataProvider'             => $dataProvider,
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
@@ -279,7 +281,7 @@ $('.search-form form').submit(function(){
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp'],
+			'footer'            => $totals->imp,
         ),
         array(	
 			'name'              => 'imp_adv',
@@ -305,13 +307,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'clics',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['clics'],
+			'footer'            => $totals->clics,
         ),
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['conv_s2s'],
+			'footer'            => $totals->conv_api,
         ),
 		array(
 			'name'              => 'conv_adv',
@@ -336,7 +338,7 @@ $('.search-form form').submit(function(){
 					  	}
 					}',
             ),
-			'footer' => $totals['conv_adv'],
+			'footer' => $totals->conv_adv,
 		),
 		array(
 			'name'              => 'mr',
@@ -373,62 +375,62 @@ $('.search-form form').submit(function(){
 			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['revenue'],
+			'footer'            => $totals->revenue,
         ),
 		array(
 			'name'              => 'spend',
 			'value'             => '$data->getSpendUSD()',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['spend'],
+			'footer'            => $totals->spend,
         ),
 		array(
 			'name'              => 'profit',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['profit'],
+			'footer'            => $totals->profit,
 		),
 		array(
 			'name'              => 'profit_percent',
 			'value'             => $sum ? '$data->revenue == 0 ? "0%" : number_format($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'number_format($data->profit_percent*100)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => ($totals['profitperc']*100)."%",
+			'footer'            => (number_format($totals->profit / $totals->revenue * 100))."%",
 		),
 		array(
 			'name'              => 'click_through_rate',
 			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => ($totals['ctr']*100)."%",
+			'footer'            => (round($totals->clics / $totals->imp, 4))."%",
 		),
 		array(
 			'name'              => 'conversion_rate',
 			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => ($totals['cr']*100)."%",
+			'footer'            => (round( $totals->conv_adv / $totals->clics, 4 ))."%",
 		),
 		array(
 			'name'              => 'eCPM',
 			'value'             => $sum ? 'number_format($data->getECPM(), 2)' : '$data->eCPM', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['ecpm'],
+			'footer'            => round($totals->spend * 1000 / $totals->imp, 2),
 		),
 		array(
 			'name'              => 'eCPC',
 			'value'             => $sum ? 'number_format($data->getECPC(), 2)' : '$data->eCPC', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['ecpc'],
+			'footer'            => round($totals->spend / $totals->clics, 2),
 		),
 		array(
 			'name'              => 'eCPA',
 			'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['ecpa'],
+			'footer'            => round($totals->spend / $totals->conv_adv, 2),
 		),
 		array(
 			'name'              => 'date',
