@@ -3,7 +3,7 @@
 class Mobfox
 { 
 
-	private $network_id = 22;
+	private $provider_id = 22;
 
 	public function downloadInfo()
 	{
@@ -14,13 +14,13 @@ class Mobfox
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("WARNING - Information already downloaded.", "warning", "system.model.api.mobfox");
 			return 2;
 		}
 
 		// Get json from Mobfox API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$apiuser = $network->token1;
 		$apikey = $network->token2;
 		$apiurl = $network->url;
@@ -81,7 +81,7 @@ class Mobfox
 			}
 
 			$dailyReport->date = $date;
-			$dailyReport->networks_id = $this->network_id;
+			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaignInfo['response']['report']['statistics']['impressions']['value'];
 			$dailyReport->clics = $campaignInfo['response']['report']['statistics']['clicks']['value'];
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

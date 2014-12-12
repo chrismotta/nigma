@@ -3,7 +3,7 @@
 class Ajillion
 { 
 
-	private $network_id = 3;
+	private $provider_id = 3;
 
 	public function downloadInfo()
 	{
@@ -24,9 +24,9 @@ class Ajillion
 
 		// validate if info have't been dowloaded already.
 		if ( isset($cid) )
-			$alreadyExist = DailyReport::model()->exists("networks_id=:network AND campaigns_id=:campaign_id AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date, ":campaign_id" => $cid));
+			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND campaigns_id=:campaign_id AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date, ":campaign_id" => $cid));
 		else 
-			$alreadyExist = DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date));
+			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date));
 		if ( $alreadyExist ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
 			return 2;
@@ -72,7 +72,7 @@ class Ajillion
 			// Save campaign information
 			$dailyReport = new DailyReport();
 			
-			// get campaign ID used in KickAds Server, from the campaign name use in the external network
+			// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign);
 
 			if ( !$dailyReport->campaigns_id ) {
@@ -89,7 +89,7 @@ class Ajillion
 			}
 
 			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
-			$dailyReport->networks_id = $this->network_id;
+			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->hits;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
@@ -112,7 +112,7 @@ class Ajillion
 	private function getResponse($method, $params = array() ) {
 
 		// Get json from Ajillion API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$apiurl = $network->url;
 		$user = $network->token1;
 		$pass = $network->token2;

@@ -3,7 +3,7 @@
 class Airpush
 { 
 
-	private $network_id = 1;
+	private $provider_id = 1;
 
 	public function downloadInfo()
 	{
@@ -14,13 +14,13 @@ class Airpush
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.airpush');
 			return 2;
 		}
 
 		// Get json from Airpush API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$apikey = $network->token1;
 		$apiurl = $network->url;
 		$url = $apiurl . "?apikey=" . $apikey . "&startDate=" . $date . "&endDate=" . $date;
@@ -44,7 +44,7 @@ class Airpush
 
 			$dailyReport = new DailyReport();
 			
-			// get campaign ID used in KickAds Server, from the campaign name use in the external network
+			// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
 
 			if ( !$dailyReport->campaigns_id ) {
@@ -53,7 +53,7 @@ class Airpush
 			}
 
 			$dailyReport->date = $date;
-			$dailyReport->networks_id = $this->network_id;
+			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaign->impression;
 			$dailyReport->clics = $campaign->clicks;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
