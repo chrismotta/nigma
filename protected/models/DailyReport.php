@@ -948,12 +948,14 @@ class DailyReport extends CActiveRecord
 		// 	$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
 		// }
 		// external name
-		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
-		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
-		$criteria->compare('country.ISO2',$this->campaign_name,true,'OR');
-		$criteria->compare('advertisers.prefix',$this->campaign_name,true,'OR');
-		$criteria->compare('opportunities.product',$this->campaign_name,true,'OR');
-		$criteria->compare('campaigns.name',$this->campaign_name,true,'OR');
+		$tmp = new CDbCriteria;
+		$tmp->compare('t.campaigns_id',$this->campaign_name,true);
+		$tmp->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
+		$tmp->compare('country.ISO2',$this->campaign_name,true,'OR');
+		$tmp->compare('advertisers.prefix',$this->campaign_name,true,'OR');
+		$tmp->compare('opportunities.product',$this->campaign_name,true,'OR');
+		$tmp->compare('campaigns.name',$this->campaign_name,true,'OR');
+		$criteria->mergeWith($tmp);
 		
 		FilterManager::model()->addUserFilter($criteria, 'daily');
 

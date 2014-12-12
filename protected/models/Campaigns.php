@@ -191,12 +191,14 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('advertisers.cat',$advertiser);
 
 		//nomenclatura
-		$criteria->compare('t.id',$this->name,true);
-		$criteria->compare('country.ISO2',$this->name,true,'OR');
-		$criteria->compare('t.name',$this->name,true,'OR');
-		$criteria->compare('carriers.mobile_brand',$this->name,true,'OR');
-		$criteria->compare('advertisers.prefix',$this->name,true,'OR');
-		$criteria->compare('opportunities.product',$this->name,true,'OR');
+		$tmp = new CDbCriteria;
+		$tmp->compare('t.id',$this->name,true);
+		$tmp->compare('country.ISO2',$this->name,true,'OR');
+		$tmp->compare('t.name',$this->name,true,'OR');
+		$tmp->compare('carriers.mobile_brand',$this->name,true,'OR');
+		$tmp->compare('advertisers.prefix',$this->name,true,'OR');
+		$tmp->compare('opportunities.product',$this->name,true,'OR');
+		$criteria->mergeWith($tmp);
 
 		// Filter depending if user has "media" or "commercial" role
 		if ( in_array('commercial', Yii::app()->authManager->getRoles(Yii::app()->user->id), true) )
@@ -506,12 +508,14 @@ class Campaigns extends CActiveRecord
 		$criteria->with = array('opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers');
 		
 		// external name
-		$criteria->compare('t.id',$this->name,true);
-		$criteria->compare('country.ISO2',$this->name,true,'OR');
-		$criteria->compare('t.name',$this->name,true,'OR');
-		$criteria->compare('carriers.mobile_brand',$this->name,true,'OR');
-		$criteria->compare('advertisers.prefix',$this->name,true,'OR');
-		$criteria->compare('opportunities.product',$this->name,true,'OR');
+		$tmp = new CDbCriteria;
+		$tmp->compare('t.id',$this->name,true);
+		$tmp->compare('country.ISO2',$this->name,true,'OR');
+		$tmp->compare('t.name',$this->name,true,'OR');
+		$tmp->compare('carriers.mobile_brand',$this->name,true,'OR');
+		$tmp->compare('advertisers.prefix',$this->name,true,'OR');
+		$tmp->compare('opportunities.product',$this->name,true,'OR');
+		$criteria->mergeWith($tmp);
 
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('ios.name',$this->ios_name, true);
