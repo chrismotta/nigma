@@ -1,6 +1,6 @@
 <?php
 
-class Ajillion
+class MobAds
 { 
 
 	private $network_id = 38;

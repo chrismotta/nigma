@@ -376,7 +376,7 @@ class Ios extends CActiveRecord
 					#If isset, set arrays (conv,revenue) and sum
 					isset($data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']) ? : $data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']=0;
 					isset($data[$daily->io_id][$daily->carrier][$daily->rate]['conv']) ? : $data[$daily->io_id][$daily->carrier][$daily->rate]['conv']=0;
-					$data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']         +=$daily->revenue;
+					$data[$daily->io_id][$daily->carrier][$daily->rate]['revenue']         +=$daily->conversions*$daily->rate;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['conv']            +=$daily->conversions;
 					$data[$daily->io_id][$daily->carrier][$daily->rate]['rate']            =$daily->rate;
 
@@ -428,7 +428,7 @@ class Ios extends CActiveRecord
 															(
 																CASE o.model_adv
 																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
 																	when 'CPC' THEN d.clics
 																END 
 															)
@@ -438,7 +438,7 @@ class Ios extends CActiveRecord
 														SUM(
 														CASE o.model_adv
 															when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-															when 'CPM' THEN (d.imp/1000)
+															when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
 															when 'CPC' THEN d.clics
 														END 
 														)
@@ -465,7 +465,7 @@ class Ios extends CActiveRecord
 															(
 																CASE o.model_adv
 																	when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-																	when 'CPM' THEN (d.imp/1000)
+																	when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
 																	when 'CPC' THEN d.clics
 																END 
 															)

@@ -148,21 +148,34 @@ class DailyReport extends CActiveRecord
 	public function trafficReport($hash, $startDate, $endDate)
 	{	
 		// get opportunities id from hash
-		$oppModel   = Opportunities::model()->find('md5(id + ios_id)="'.$hash.'"');
-		$oppID      = $oppModel->id;
+		$oppModel   = Opportunities::model()->find('md5(id*id)="'.$hash.'"');
+		$oppID      = isset($oppModel->id) ? $oppModel->id : 0;
 
 		// make a criteria from opportunities_id
 		$criteria = new CDbCriteria;
 		$criteria->select = array(
-						'date', 
-						'sum(t.imp) as imp',
+						't.date as date', 
+						'sum(CASE 
+				           WHEN t.imp > 0 
+				           THEN t.imp 
+				           ELSE ROUND(clics * 100 / 1.5) 
+				        END) as imp',
+						/*
+						'sum(CASE 
+				           WHEN t.imp > 0 
+				           THEN 0 
+				           ELSE ROUND(clics * 100 / 1.5) 
+				        END) as conv_adv',
+						'sum(t.imp) as imp_adv',
+						 */
 						'sum(t.clics) as clics', 
 						'sum(t.conv_api) as conv_api', 
 						); 
+		$criteria->addCondition('date(t.date) BETWEEN "'.$startDate.'" AND "'.$endDate.'"');
 		$criteria->with = array('campaigns');
 		$criteria->compare('campaigns.opportunities_id', $oppID);
 		$criteria->group = 't.date, campaigns.url';
-		$criteria->order = 't.date asc, campaigns.id asc';
+		$criteria->order = 't.date asc, campaigns.url asc';
 
 		return $this::model()->findAll($criteria);
 	}
@@ -935,12 +948,14 @@ class DailyReport extends CActiveRecord
 		// 	$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
 		// }
 		// external name
-		$criteria->compare('t.campaigns_id',$this->campaign_name,true);
-		$criteria->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
-		$criteria->compare('country.ISO2',$this->campaign_name,true,'OR');
-		$criteria->compare('advertisers.prefix',$this->campaign_name,true,'OR');
-		$criteria->compare('opportunities.product',$this->campaign_name,true,'OR');
-		$criteria->compare('campaigns.name',$this->campaign_name,true,'OR');
+		$tmp = new CDbCriteria;
+		$tmp->compare('t.campaigns_id',$this->campaign_name,true);
+		$tmp->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
+		$tmp->compare('country.ISO2',$this->campaign_name,true,'OR');
+		$tmp->compare('advertisers.prefix',$this->campaign_name,true,'OR');
+		$tmp->compare('opportunities.product',$this->campaign_name,true,'OR');
+		$tmp->compare('campaigns.name',$this->campaign_name,true,'OR');
+		$criteria->mergeWith($tmp);
 		
 		FilterManager::model()->addUserFilter($criteria, 'daily');
 

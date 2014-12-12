@@ -28,9 +28,11 @@ class ExternalFormsController extends Controller
 	 * @param  [type] $hash [description] md5 (id + ios_id)
 	 * @return [type] JSon  [description] traffic report in json format
 	 */
-	public function actionTrafficReport($hash){
-		$startDate = isset($_GET['start-date']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
-		$endDate   = isset($_GET['end-date'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
+	public function actionTrafficReport($hash=null){
+		if(!$hash) die('ERROR: Hash needed!');
+
+		$startDate = isset($_GET['date-start']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
+		$endDate   = isset($_GET['date-end'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
 
 		//$return = array($oppID, $startDate, $endDate);
 		$model = new DailyReport();
@@ -38,23 +40,30 @@ class ExternalFormsController extends Controller
 		// $this->widget('bootstrap.widgets.TbGridView', array(
 
 		foreach ($data as $key => $value) {
-			$row['date']  = $value['date'];
-			$row['url']   = $value['campaigns']['url'];
-			$row['imp']   = $value['imp'];
-			$row['click'] = $value['clics'];
-			$row['conv']  = $value['conv_api'];
-			$return[]     = $row;
+			$row['date']       = $value['date'];
+			$row['url']        = $value['campaigns']['url'];
+			$row['imp']        = $value['imp'];
+			//$row['imp_fake'] = $value['conv_adv'];
+			//$row['imp_true'] = $value['imp_adv'];
+			$row['click']      = $value['clics'];
+			$row['conv']       = $value['conv_api'];
+			$return[]          = $row;
 			
 			// echo $value['date'] .' - ';
 			// echo $value['campaigns']['url'] .' - ';
 			// echo $value['imp'] .' - ';
 			// echo $value['clics'] .' - ';
 			// echo $value['conv_api'] .' - ';
+			// echo $value['campaigns']['opportunities_id'];
 			// echo '<hr/>';
 			// var_dump($value);
 			// echo '<hr/><hr/>';
 		}
-		echo json_encode($return);
+		if(isset($return)){
+			echo json_encode($return);
+		}else{
+			echo json_encode(array('no data available'));
+		}
 	}
 
 	// Uncomment the following methods and override them if needed
