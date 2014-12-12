@@ -137,7 +137,60 @@ class DailyReport extends CActiveRecord
 		);
 	}
 
+	/**
+	 * Returns a list of daily rows with the amount of impresions, clicks and conversions
+	 * for one click opportunities campaigns
+	 * @param  [type] $hash      [description] md5(opportunities_id + ios_id)
+	 * @param  [type] $startDate [description] query start date
+	 * @param  [type] $endDate   [description] query end date
+	 * @return [type] Array      [description] 
+	 */
+	public function trafficReport($hash, $startDate, $endDate)
+	{	
+		// get opportunities id from hash
+		$oppModel   = Opportunities::model()->find('md5(id*id)="'.$hash.'"');
+		$oppID      = isset($oppModel->id) ? $oppModel->id : 0;
 
+		// make a criteria from opportunities_id
+		$criteria = new CDbCriteria;
+		$criteria->select = array(
+						't.date as date', 
+						'sum(CASE 
+				           WHEN t.imp > 0 
+				           THEN t.imp 
+				           ELSE ROUND(clics * 100 / 1.5) 
+				        END) as imp',
+						/*
+						'sum(CASE 
+				           WHEN t.imp > 0 
+				           THEN 0 
+				           ELSE ROUND(clics * 100 / 1.5) 
+				        END) as conv_adv',
+						'sum(t.imp) as imp_adv',
+						 */
+						'sum(t.clics) as clics', 
+						'sum(t.conv_api) as conv_api', 
+						); 
+		$criteria->addCondition('date(t.date) BETWEEN "'.$startDate.'" AND "'.$endDate.'"');
+		$criteria->with = array('campaigns');
+		$criteria->compare('campaigns.opportunities_id', $oppID);
+		$criteria->group = 't.date, campaigns.url';
+		$criteria->order = 't.date asc, campaigns.url asc';
+
+		return $this::model()->findAll($criteria);
+	}
+
+	/**
+	 * [excel description]
+	 * @param  [type]  $startDate      [description]
+	 * @param  [type]  $endDate        [description]
+	 * @param  [type]  $accountManager [description]
+	 * @param  [type]  $opportunities  [description]
+	 * @param  [type]  $networks       [description]
+	 * @param  integer $sum            [description]
+	 * @param  [type]  $adv_categories [description]
+	 * @return [type]                  [description]
+	 */
 	public function excel($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		$criteria=new CDbCriteria;
@@ -263,6 +316,16 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
+	/**
+	 * [getTotals description]
+	 * @param  [type] $startDate      [description]
+	 * @param  [type] $endDate        [description]
+	 * @param  [type] $accountManager [description]
+	 * @param  [type] $opportunities  [description]
+	 * @param  [type] $networks       [description]
+	 * @param  [type] $adv_categories [description]
+	 * @return [type]                 [description]
+	 */
 	public function getTotals($startDate=null, $endDate=null,$accountManager=NULL,$opportunities=null,$networks=null,$adv_categories=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
@@ -394,6 +457,16 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
+	/**
+	 * [getDailyTotals description]
+	 * @param  [type] $startDate      [description]
+	 * @param  [type] $endDate        [description]
+	 * @param  [type] $accountManager [description]
+	 * @param  [type] $opportunities  [description]
+	 * @param  [type] $networks       [description]
+	 * @param  [type] $adv_categories [description]
+	 * @return [type]                 [description]
+	 */
 	public function getDailyTotals($startDate=null, $endDate=null, $accountManager=NULL,$opportunities=null,$networks=null,$adv_categories=null) {
 			
 		if(!$startDate)	$startDate = 'today' ;
@@ -541,6 +614,13 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
+	/**
+	 * [getTops description]
+	 * @param  [type] $startDate [description]
+	 * @param  [type] $endDate   [description]
+	 * @param  [type] $order     [description]
+	 * @return [type]            [description]
+	 */
 	public function getTops($startDate=null, $endDate=null,$order) {			
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate     = 'today';
@@ -639,6 +719,17 @@ class DailyReport extends CActiveRecord
 		return $dataTops;
 	}
 	
+	/**
+	 * [search description]
+	 * @param  [type]  $startDate      [description]
+	 * @param  [type]  $endDate        [description]
+	 * @param  [type]  $accountManager [description]
+	 * @param  [type]  $opportunities  [description]
+	 * @param  [type]  $networks       [description]
+	 * @param  integer $sum            [description]
+	 * @param  [type]  $adv_categories [description]
+	 * @return [type]                  [description]
+	 */
 	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
@@ -947,6 +1038,11 @@ class DailyReport extends CActiveRecord
 		return $result;
 	}
 
+	/**
+	 * [updateRevenue description]
+	 * @param  [type] $custom_rate [description]
+	 * @return [type]              [description]
+	 */
 	public function updateRevenue($custom_rate=NULL)
 	{
 		$c    = Campaigns::model()->findByPk($this->campaigns_id);
@@ -980,12 +1076,20 @@ class DailyReport extends CActiveRecord
 		}
 	}
 
+	/**
+	 * [updateSpendAffiliates description]
+	 * @return [type] [description]
+	 */
 	public function updateSpendAffiliates()
 	{
 		$rateAffiliate = Affiliates::model()->find("networks_id=:net", array(':net' => $this->networks_id))->rate;
 		$this->spend = $this->conv_adv != NULL ? $this->conv_adv * $rateAffiliate : $this->conv_api * $rateAffiliate;	
 	}
 
+	/**
+	 * [getRevenueUSD description]
+	 * @return [type] [description]
+	 */
 	public function getRevenueUSD()
 	{
 		$camp         = Campaigns::model()->findByPk($this->campaigns_id);
@@ -999,6 +1103,10 @@ class DailyReport extends CActiveRecord
 		return $currency ? round($this->revenue / $currency[$ios_currency], 2) : 'Currency ERROR!';
 	}
 
+	/**
+	 * [getSpendUSD description]
+	 * @return [type] [description]
+	 */
 	public function getSpendUSD()
 	{
 		$net_currency = Networks::model()->findByPk($this->networks_id)->currency;
@@ -1010,14 +1118,28 @@ class DailyReport extends CActiveRecord
 		return $currency ? round($this->spend / $currency[$net_currency], 2) : 'Currency ERROR!';
 	}
 
+	/**
+	 * [getProfit description]
+	 * @return [type] [description]
+	 */
 	public function getProfit()
 	{
 		return round($this->getRevenueUSD() - $this->getSpendUSD(), 2);
 	}
+
+	/**
+	 * [getProfits description]
+	 * @return [type] [description]
+	 */
 	public function getProfits()
 	{
 		return $this->profit;
 	}
+
+	/**
+	 * [getCtr description]
+	 * @return [type] [description]
+	 */
 	public function getCtr()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
@@ -1025,6 +1147,10 @@ class DailyReport extends CActiveRecord
 		return $r;
 	}
 
+	/**
+	 * [getConvRate description]
+	 * @return [type] [description]
+	 */
 	public function getConvRate()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
@@ -1032,6 +1158,10 @@ class DailyReport extends CActiveRecord
 		return $r;
 	}
 
+	/**
+	 * [getProfitPerc description]
+	 * @return [type] [description]
+	 */
 	public function getProfitPerc()
 	{
 		$revenue = $this->getRevenueUSD();
@@ -1039,6 +1169,10 @@ class DailyReport extends CActiveRecord
 		return $r;
 	}
 
+	/**
+	 * [getECPM description]
+	 * @return [type] [description]
+	 */
 	public function getECPM()
 	{
 		$imp = $this->imp_adv == 0 ? $this->imp : $this->imp_adv;
@@ -1046,12 +1180,20 @@ class DailyReport extends CActiveRecord
 		return $r;
 	}
 
+	/**
+	 * [getECPC description]
+	 * @return [type] [description]
+	 */
 	public function getECPC()
 	{
 		$r = $this->clics == 0 ? 0 : round($this->getSpendUSD() / $this->clics, 2);
 		return $r;
 	}
 
+	/**
+	 * [getECPA description]
+	 * @return [type] [description]
+	 */
 	public function getECPA()
 	{
 		$conv = $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
@@ -1059,11 +1201,19 @@ class DailyReport extends CActiveRecord
 		return $r;
 	}
 
+	/**
+	 * [getConversions description]
+	 * @return [type] [description]
+	 */
 	public function getConversions()
 	{		
 		return $this->conv_adv == 0 ? $this->conv_api : $this->conv_adv;
 	}
 
+	/**
+	 * [getCapUSD description]
+	 * @return [type] [description]
+	 */
 	public function getCapUSD()
 	{
 		$net_currency = Networks::model()->findByPk(Campaigns::model()->findByPk($this->campaigns_id)->networks_id)->currency;
@@ -1075,6 +1225,10 @@ class DailyReport extends CActiveRecord
 		return $currency ? round($cap / $currency[$net_currency], 2) : 'Currency ERROR!';
 	}
 
+	/**
+	 * [getCapStatus description]
+	 * @return [type] [description]
+	 */
 	public function getCapStatus()
 	{
 		if(strtotime($this->date) == strtotime('yesterday') || $this->network_name=='Adwords')
@@ -1084,7 +1238,10 @@ class DailyReport extends CActiveRecord
 		}
 		else return false;
 	}
-	
+
+	/**
+	 * [setNewFields description]
+	 */
 	public function setNewFields()
 	{
 		// update spend only for affiliates
@@ -1100,6 +1257,10 @@ class DailyReport extends CActiveRecord
 		$this->eCPA               = $this->getECPA();
 	}
 
+	/**
+	 * [getRateUSD description]
+	 * @return [type] [description]
+	 */
 	public function getRateUSD()
 	{
 		$campaign =Campaigns::model()->findByPk($this->campaigns_id);
@@ -1130,16 +1291,28 @@ class DailyReport extends CActiveRecord
 		return $currency ? round($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
 	}
 
+	/**
+	 * [getConv description]
+	 * @return [type] [description]
+	 */
 	public function getConv()
 	{
 		return $this->conv_adv==null ? $this->conv_api : $this->conv_adv; 
 	}
 
+	/**
+	 * [getImp description]
+	 * @return [type] [description]
+	 */
 	public function getImp()
 	{
 		return $this->imp_adv==null ? $this->imp : $this->imp_adv; 
 	}
 
+	/**
+	 * [createByNetwork description]
+	 * @return [type] [description]
+	 */
 	public function createByNetwork()
 	{
 		$this->is_from_api = 0;
@@ -1165,11 +1338,19 @@ class DailyReport extends CActiveRecord
 		return $r;
 	}
 
+	/**
+	 * [isFromVector description]
+	 * @return boolean [description]
+	 */
 	public function isFromVector()
 	{
 		return VectorsHasCampaigns::model()->exists('campaigns_id=:cid', array(':cid'=>$this->campaigns_id));
 	}
 
+	/**
+	 * [getClicksRedirect description]
+	 * @return [type] [description]
+	 */
 	public function getClicksRedirect()
 	{
 		$criteria=new CDbCriteria;

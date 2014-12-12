@@ -38,6 +38,7 @@ class FilterManager
 				'admin',
 				'media_manager',
 				'sem',
+				'finance',
 			)),
 		'campaign.commercial' => array( 
 			'column' => 'opportunities.ios.commercial_id', 
