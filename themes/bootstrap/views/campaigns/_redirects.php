@@ -34,7 +34,7 @@
         $redirect_new['g_mty'] = '{matchtype}';
     }
 
-    if( $provider->isNetwork() && $provider->networks->has_s2s ) {
+    if( $provider->isNetwork() && $provider->networks->has_token ) {
         $redirect_old['ntoken'] = $provider->networks->placeholder;
         $redirect_new['ntoken'] = $provider->networks->placeholder;
     }
