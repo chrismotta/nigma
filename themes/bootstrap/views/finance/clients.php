@@ -206,6 +206,22 @@ $ios    =new Ios;
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'
+				CHtml::link(
+					"<i class=\"icon-pencil\"></i>",
+					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Arqueo?")
+
+
+					);
+				',		
+		),
+		array(
 			'name'              =>'name',
 			'header'            =>'Total Transaction',
 			'filter'			=>false,
