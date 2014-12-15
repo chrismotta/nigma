@@ -513,7 +513,8 @@ class DailyReportController extends Controller
 
 		$list = DailyReport::model()->findAll( $criteria );
 		foreach ($list as $model) {
-			$model->updateSpendAffiliates();
+			// $model->updateSpendAffiliates();
+			$model->setNewFields();
 			$model->save();
 			echo $model->id . " - updated<br/>";
 		}
