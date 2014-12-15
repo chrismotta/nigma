@@ -504,10 +504,14 @@ class DailyReportController extends Controller
 		if ($affiliate) { // update one affiliate
 			$criteria->compare('networks_id', $affiliate);
 		} else { // update all affiliate
-			$affiliates = Yii::app()->db->createCommand()
+			$q = Yii::app()->db->createCommand()
 			    ->select('networks_id')
 			    ->from('affiliates')
-			    ->queryAll();
+			    ->queryAll(false);
+
+			foreach ($q as $nid)
+	        	$affiliates[] = $nid[0];
+
 			$criteria->addInCondition('networks_id', $affiliates);
 		}
 
