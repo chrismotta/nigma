@@ -290,7 +290,7 @@ class Ios extends CActiveRecord
 													SUM(
 													CASE o.model_adv
 														WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-														WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
+														WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)
 														WHEN 'CPC' THEN d.clics
 													END 
 													) as conversions,
@@ -347,7 +347,7 @@ class Ios extends CActiveRecord
 				$data[$i]['country']         =$geoLocation->getNameFromId($carriers->getCountryById($daily->carrier));
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
-				$data[$i]['conv']            =intval($daily->conversions);
+				$data[$i]['conv']            =round($daily->conversions,2);
 				$data[$i]['rate']            =$daily->rate;		
 				$data[$i]['multi']           =$multi==true ? 1 : 0;		
 				$i++;		
@@ -386,14 +386,14 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 					#If isset, set arrays (conv,revenue) and sum
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']=0;
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']=0;
-					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']         +=$daily['conv']*$daily['rate'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']         +=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']            +=$daily['conv'];
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['rate']            =$daily['rate'];
 
 					#This array have totals
 					isset($totals['revenue']) ?  : $totals['revenue'] =0;
 					isset($totals['conv']) ?  : $totals['conv'] =0;
-					$totals['revenue']+=$daily['revenue'];
+					$totals['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 					$totals['conv']+=$daily['conv'];
 			}
 
@@ -412,39 +412,42 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 		else
 		{
 			foreach ($dailys as $daily) {
-				$data[$daily['id']][$daily['opportunitie_id']]['id']              =$daily['id'];
-				$data[$daily['id']][$daily['opportunitie_id']]['name']            =$daily['name'];
-				$data[$daily['id']][$daily['opportunitie_id']]['opportunitie']    =$daily['opportunitie'];
-				$data[$daily['id']][$daily['opportunitie_id']]['opportunitie_id'] =$daily['opportunitie_id'];						
-				$data[$daily['id']][$daily['opportunitie_id']]['product']         =$daily['product'];
-				$data[$daily['id']][$daily['opportunitie_id']]['currency']        =$daily['currency'];
-				$data[$daily['id']][$daily['opportunitie_id']]['entity']          =$daily['entity'];
-				$data[$daily['id']][$daily['opportunitie_id']]['model']           =$daily['model'];
-				$data[$daily['id']][$daily['opportunitie_id']]['carrier']         =$daily['carrier'];				
-				$data[$daily['id']][$daily['opportunitie_id']]['mobileBrand']     =$daily['mobileBrand'];
-				$data[$daily['id']][$daily['opportunitie_id']]['status_opp']      =$daily['status_opp'];
-				$data[$daily['id']][$daily['opportunitie_id']]['country']         =$daily['country'];
-				$data[$daily['id']][$daily['opportunitie_id']]['status_io']       =$daily['status_io'];				
-				$data[$daily['id']][$daily['opportunitie_id']]['multi']           =$daily['multi'];				
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['id']              =$daily['id'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['name']            =$daily['name'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['opportunitie']    =$daily['opportunitie'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['opportunitie_id'] =$daily['opportunitie_id'];						
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['product']         =$daily['product'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['currency']        =$daily['currency'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['entity']          =$daily['entity'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['model']           =$daily['model'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['carrier']         =$daily['carrier'];				
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['mobileBrand']     =$daily['mobileBrand'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_opp']      =$daily['status_opp'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['country']         =$daily['country'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_io']       =$daily['status_io'];				
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['multi']           =$daily['multi'];				
 				#If isset, set arrays (conv,revenue) and sum
-				isset($data[$daily['id']][$daily['opportunitie_id']]['revenue']) ? : $data[$daily['id']][$daily['opportunitie_id']]['revenue']=0;
-				isset($data[$daily['id']][$daily['opportunitie_id']]['conv']) ? : $data[$daily['id']][$daily['opportunitie_id']]['conv']=0;
-				$data[$daily['id']][$daily['opportunitie_id']]['revenue']         +=$daily['conv']*$daily['rate'];
-				$data[$daily['id']][$daily['opportunitie_id']]['conv']            +=$daily['conv'];
-				$data[$daily['id']][$daily['opportunitie_id']]['rate']            =$daily['rate'];
+				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']=0;
+				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']=0;
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']         +=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']            +=$daily['conv'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['rate']            =$daily['rate'];
 
 				#This array have totals
 				isset($totals[$daily['currency']]) ?  : $totals[$daily['currency']]['revenue'] =0;
-					$totals[$daily['currency']]['revenue']+=$daily['conv']*$daily['rate'];
+					$totals[$daily['currency']]['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 
 				isset($totals_io[$daily['id']]) ?  : $totals_io[$daily['id']] =0;
-					$totals_io[$daily['id']]+=$daily['revenue'];
+					$totals_io[$daily['id']]+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 			}
 			#Make array like CArrayDataProvider
 			$consolidated=array();
 			foreach ($data as $ios) {
 				foreach ($ios as $opportunities) {
-					$consolidated[]=$opportunities;
+					foreach ($opportunities as $rate) {
+						$consolidated[]=$rate;
+					
+					}
 					
 				}
 			}
