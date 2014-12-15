@@ -290,7 +290,7 @@ class Ios extends CActiveRecord
 													SUM(
 													CASE o.model_adv
 														WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-														WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
+														WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)
 														WHEN 'CPC' THEN d.clics
 													END 
 													) as conversions,
@@ -347,7 +347,7 @@ class Ios extends CActiveRecord
 				$data[$i]['country']         =$geoLocation->getNameFromId($carriers->getCountryById($daily->carrier));
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
-				$data[$i]['conv']            =intval($daily->conversions);
+				$data[$i]['conv']            =round($daily->conversions,2);
 				$data[$i]['rate']            =$daily->rate;		
 				$data[$i]['multi']           =$multi==true ? 1 : 0;		
 				$i++;		

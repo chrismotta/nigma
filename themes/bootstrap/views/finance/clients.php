@@ -162,14 +162,14 @@ $ios    =new Ios;
 		array(
 			'name'              =>'conv',
 			'header'            =>'Imp(m)/Clics/Conv',
-			'value'             =>'$data["conv"]',	
+			'value'             =>'number_format($data["conv"])',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
 			'name'              =>'revenue',
 			'header'            =>'Revenue',
-			'value'             =>'$data["revenue"]',
+			'value'             =>'number_format($data["revenue"])',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),		
 		),
