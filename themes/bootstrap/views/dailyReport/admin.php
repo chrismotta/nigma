@@ -397,7 +397,7 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? '$data->revenue == 0 ? "0%" : number_format($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'number_format($data->profit_percent*100)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			//'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? number_format( $totals['profit'] / $totals['revenue'] * 100 )."%" : 0,
+			'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? number_format(($totals['profit'] / $totals['revenue']) * 100)."%" : 0,
 		),
 		array(
 			'name'              => 'click_through_rate',
