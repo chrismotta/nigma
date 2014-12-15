@@ -380,13 +380,14 @@ $('.search-form form').submit(function(){
         ),
 		array(
 			'name'              => 'spend',
-			'value'             => '$data->getSpendUSD()',
+			'value'             => 'number_format($data->getSpendUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['spend'],
         ),
 		array(
 			'name'              => 'profit',
+			'value'             => 'number_format($data->profit, 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => $totals['profit'],
