@@ -18,6 +18,7 @@
  */
 class TransactionCount extends CActiveRecord
 {
+	public $total;
 	/**
 	 * @return string the associated database table name
 	 */

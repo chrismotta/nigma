@@ -10,7 +10,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie'),
+				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction'),
 				'roles'=>array('admin', 'finance', 'media'),
 			),
 			array('deny',  // deny all users
@@ -33,12 +33,8 @@ class FinanceController extends Controller
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 		else
 			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status,null);
+		
 		$consolidated=array();
-
-		foreach ($clients['data'] as $client) {
-			$client['total_revenue']=$clients['totals_io'][$client['id']];
-			$consolidated[]=$client;
-		}
 		foreach ($clients['data'] as $client) {
 			$client['total_revenue']=$clients['totals_io'][$client['id']];
 			$client['total_transaction']=$transactions->getTotalTransactions($client['opportunitie_id'],$year.'-'.$month.'-01');
