@@ -226,10 +226,8 @@ $('.search-form form').submit(function(){
 <?php 
 //yess
 	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories);
-	if(isset($model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories,true)->data[0]))
-		$totals=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories,true)->data[0];
-	// else 
-	// 	$totals= new ArrayObject;
+	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories);
+
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
@@ -284,13 +282,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->imp) ? $totals->imp : 0,
+			'footer'            => $totals['imp'],
         ),
         array(	
 			'name'              => 'imp_adv',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->imp_adv) ? $totals->imp_adv : 0,
+			'footer'            => $totals['imp_adv'],
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
 			'editable'          => array(
 				'apply'      => $sum ? false : true,
@@ -310,13 +308,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'clics',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->clics) ? $totals->clics : 0,
+			'footer'            => $totals['clics'],
         ),
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->conv_api) ? $totals->conv_api : 0,
+			'footer'            => $totals['conv_api'],
         ),
 		array(
 			'name'              => 'conv_adv',
@@ -341,7 +339,7 @@ $('.search-form form').submit(function(){
 					  	}
 					}',
             ),
-			'footer' => isset($totals->conv_adv) ? $totals->conv_adv : 0,
+			'footer' => $totals['conv_adv'],
 		),
 		array(
 			'name'              => 'mr',
@@ -378,62 +376,62 @@ $('.search-form form').submit(function(){
 			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->revenue) ? $totals->revenue : 0,
+			'footer'            => $totals['revenue'],
         ),
 		array(
 			'name'              => 'spend',
 			'value'             => '$data->getSpendUSD()',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->spend) ? $totals->spend : 0,
+			'footer'            => $totals['spend'],
         ),
 		array(
 			'name'              => 'profit',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->profit) ? $totals->profit : 0,
+			'footer'            => $totals['profit'],
 		),
 		array(
 			'name'              => 'profit_percent',
 			'value'             => $sum ? '$data->revenue == 0 ? "0%" : number_format($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'number_format($data->profit_percent*100)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->revenue) && $totals->revenue!=0 ? (number_format($totals->profit / $totals->revenue) * 100)."%" : 0,
+			'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? (number_format($totals['profit'] / $totals['revenue']) * 100)."%" : 0,
 		),
 		array(
 			'name'              => 'click_through_rate',
 			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->imp) && $totals->imp!=0  ? (round($totals->clics / $totals->imp, 4))."%" : 0,
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4))."%" : 0,
 		),
 		array(
 			'name'              => 'conversion_rate',
 			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->clics) && $totals->clics!=0 ? (round( $totals->conv_adv / $totals->clics, 4 ))."%" : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 ))."%" : 0,
 		),
 		array(
 			'name'              => 'eCPM',
 			'value'             => $sum ? 'number_format($data->getECPM(), 2)' : '$data->eCPM', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->imp) && $totals->imp!=0 ? round($totals->spend * 1000 / $totals->imp, 2) : 0,
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0 ? round($totals['spend'] * 1000 / $totals['imp'], 2) : 0,
 		),
 		array(
 			'name'              => 'eCPC',
 			'value'             => $sum ? 'number_format($data->getECPC(), 2)' : '$data->eCPC', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->clics) && $totals->clics!=0 ? round($totals->spend / $totals->clics, 2) : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? round($totals['spend'] / $totals['clics'], 2) : 0,
 		),
 		array(
 			'name'              => 'eCPA',
 			'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals->conv_adv) && $totals->conv_adv!=0 ? round($totals->spend / $totals->conv_adv, 2) : 0,
+			'footer'            => isset($totals['conv_adv']) && $totals['conv_adv']!=0 ? round($totals['spend'] / $totals['conv_adv'], 2) : 0,
 		),
 		array(
 			'name'              => 'date',
