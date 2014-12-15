@@ -386,14 +386,14 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 					#If isset, set arrays (conv,revenue) and sum
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']=0;
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']=0;
-					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']         +=$daily['conv']*$daily['rate'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']         +=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']            +=$daily['conv'];
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['rate']            =$daily['rate'];
 
 					#This array have totals
 					isset($totals['revenue']) ?  : $totals['revenue'] =0;
 					isset($totals['conv']) ?  : $totals['conv'] =0;
-					$totals['revenue']+=$daily['conv']*$daily['rate'];
+					$totals['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 					$totals['conv']+=$daily['conv'];
 			}
 
@@ -429,16 +429,16 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 				#If isset, set arrays (conv,revenue) and sum
 				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']=0;
 				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']=0;
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']         +=$daily['conv']*$daily['rate'];
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']         +=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']            +=$daily['conv'];
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['rate']            =$daily['rate'];
 
 				#This array have totals
 				isset($totals[$daily['currency']]) ?  : $totals[$daily['currency']]['revenue'] =0;
-					$totals[$daily['currency']]['revenue']+=$daily['conv']*$daily['rate'];
+					$totals[$daily['currency']]['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 
 				isset($totals_io[$daily['id']]) ?  : $totals_io[$daily['id']] =0;
-					$totals_io[$daily['id']]+=$daily['conv']*$daily['rate'];
+					$totals_io[$daily['id']]+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 			}
 			#Make array like CArrayDataProvider
 			$consolidated=array();
