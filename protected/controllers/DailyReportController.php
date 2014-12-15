@@ -36,7 +36,7 @@ class DailyReportController extends Controller
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('setNewFields','setAllNewFields'),
+				'actions'=>array('setNewFields','setAllNewFields', 'updateSpendAffiliates'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -496,6 +496,37 @@ class DailyReportController extends Controller
 			}
 		}else{
 			echo "no date setted";
+		}
+	}
+
+	public function actionUpdateSpendAffiliates()
+	{
+		$date      = isset($_GET['date']) ? $_GET['date'] : date('d-m-Y', strtotime('today'));
+		$affiliate = isset($_GET['affiliate']) ? $_GET['affiliate'] : NULL;
+		$newRate   = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
+
+		$criteria = new CDbCriteria;
+		$criteria->compare('date', $date);
+		if ($affiliate) { // update one affiliate
+			$criteria->compare('networks_id', $affiliate);
+		} else { // update all affiliate
+			$q = Yii::app()->db->createCommand()
+			    ->select('networks_id')
+			    ->from('affiliates')
+			    ->queryAll(false);
+
+			foreach ($q as $nid)
+	        	$affiliates[] = $nid[0];
+
+			$criteria->addInCondition('networks_id', $affiliates);
+		}
+
+		$list = DailyReport::model()->findAll( $criteria );
+		foreach ($list as $model) {
+			$model->updateSpendAffiliates($newRate);
+			$model->setNewFields();
+			$model->save();
+			echo $model->id . " - updated<br/>";
 		}
 	}
 

@@ -145,12 +145,12 @@ class IosValidation extends CActiveRecord
 		$check=false;
 		$ios=new Ios;
 		$opportunitiesValidation=new OpportunitiesValidation;
-		$clients = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io);
-		foreach ($clients as $client) {			
-			foreach ($client as $data) {
-				$opportunities[]=$data;
-			}
-		}
+		$clients = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io,null,null,null,null,'otro');
+		// foreach ($clients as $client) {			
+		// 	foreach ($client as $data) {
+		// 		$opportunities[]=$data;
+		// 	}
+		// }
 		foreach ($clients['data'] as $opportunitie) {
 			if($opportunitiesValidation->checkValidation($opportunitie['opportunitie_id'],$period)==true) $check=true;
 			else return false;

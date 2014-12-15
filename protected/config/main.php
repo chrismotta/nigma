@@ -58,6 +58,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
 	case 'app.kickadserver.mobi':
 	case 'kickadserver.mobi':
+	case 'www.kickadserver.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
@@ -200,9 +201,12 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'              =>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>' =>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'          =>'<controller>/<action>',
+				'<controller:\w+>/<id:\d+>'                           =>'<controller>/view',
+				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
+				// custom parameters //
+				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),
 		'eexcelwriter'=>array(
