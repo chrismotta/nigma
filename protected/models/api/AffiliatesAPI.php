@@ -40,6 +40,7 @@ class AffiliatesAPI
 				$dailyReport->clics        = $clicks;
 				$dailyReport->conv_api     = $conv;
 				$dailyReport->spend        = $dailyReport->conv_api * $affiliate->rate;
+				$dailyReport->updateSpendAffiliates();
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				if ( !$dailyReport->save() ) {

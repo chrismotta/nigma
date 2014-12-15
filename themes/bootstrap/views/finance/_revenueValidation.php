@@ -1,6 +1,9 @@
 <?php 
 /* @var $this FinanceController */
 /* @var $form CActiveForm */
+// $clients=array_merge(Ios::model()->getClientsMulti(11,2014,null,null,null,null,null,null,false),Ios::model()->getClientsMulti(11,2014,null,null,null,null,null,null,true));
+// echo json_encode(Ios::model()->getClientsProfile2(11,2014,null,29,null,null,null,null,'profile')['data']);
+// return;
  ?>
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
@@ -63,20 +66,20 @@
                 array(
                     'name'              =>'conv',
                     'header'            =>'Clics/Imp/Conv',
-                    'value'             =>'$data["conv"]',  
+                    'value'             =>'number_format($data["conv"])',  
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'),
                     'footerHtmlOptions' => array('style'=>'text-align:right;'),   
-                    'footer'            => $totals['conv'],
+                    'footer'            => number_format($totals['conv']),
                 ),
                 array(
                     'name'              =>'revenue',
                     'header'            =>'Revenue',
-                    'value'             =>'$data["revenue"]',
+                    'value'             =>'number_format($data["revenue"],2)',
                     'headerHtmlOptions' => array('width' => '80'),
                     'htmlOptions'       => array('style'=>'text-align:right;'),   
                     'footerHtmlOptions' => array('style'=>'text-align:right;'),    
-                    'footer'            => $totals['revenue'],
+                    'footer'            => number_format($totals['revenue'],2),
                 ),
             ),
         )); ?>

@@ -730,7 +730,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null,$totals=false)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -756,8 +756,9 @@ class DailyReport extends CActiveRecord
 		            // Adding all the other default attributes
 		            '*',
 		        );
-		if($sum==1){
-			$criteria->group  = 'campaigns_id';
+		if($sum==1 || $totals==true){
+			if($totals==false)
+				$criteria->group  = 'campaigns_id';
 			$criteria->select = array(
 				'*', 
 				'sum(imp) as imp',
@@ -1082,9 +1083,13 @@ class DailyReport extends CActiveRecord
 	 * [updateSpendAffiliates description]
 	 * @return [type] [description]
 	 */
-	public function updateSpendAffiliates()
+	public function updateSpendAffiliates($custom_rate=NULL)
 	{
-		$rateAffiliate = Affiliates::model()->find("networks_id=:net", array(':net' => $this->networks_id))->rate;
+		if ($custom_rate == NULL)
+			$rateAffiliate = Affiliates::model()->find("networks_id=:net", array(':net' => $this->networks_id))->rate;
+		else 
+			$rateAffiliate = $custom_rate;
+
 		$this->spend = $this->conv_adv != NULL ? $this->conv_adv * $rateAffiliate : $this->conv_api * $rateAffiliate;	
 	}
 
@@ -1247,8 +1252,8 @@ class DailyReport extends CActiveRecord
 	public function setNewFields()
 	{
 		// update spend only for affiliates
-		if ( Affiliates::model()->exists('networks_id=:nid', array(':nid'=>$this->networks_id)) ) 
-			$this->updateSpendAffiliates();
+		// if ( Affiliates::model()->exists('networks_id=:nid', array(':nid'=>$this->networks_id)) ) 
+		// 	$this->updateSpendAffiliates();
 
 		$this->profit             = $this->getProfit();
 		$this->profit_percent     = $this->getProfitPerc();
