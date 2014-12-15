@@ -206,6 +206,22 @@ $ios    =new Ios;
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
+			'name'              =>'name',
+			'header'            =>'Total Transaction',
+			'filter'			=>false,
+			'value'             =>'$data["total_transaction"]',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
+		array(
+			'name'              =>'name',
+			'header'            =>'Total',
+			'filter'			=>false,
+			'value'             =>'$data["total"]',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
+		array(
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
