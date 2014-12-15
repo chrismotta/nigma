@@ -498,6 +498,7 @@ class DailyReportController extends Controller
 	{
 		$date      = isset($_GET['date']) ? $_GET['date'] : date('d-m-Y', strtotime('today'));
 		$affiliate = isset($_GET['affiliate']) ? $_GET['affiliate'] : NULL;
+		$newRate   = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
 
 		$criteria = new CDbCriteria;
 		$criteria->compare('date', $date);
@@ -517,7 +518,7 @@ class DailyReportController extends Controller
 
 		$list = DailyReport::model()->findAll( $criteria );
 		foreach ($list as $model) {
-			// $model->updateSpendAffiliates();
+			$model->updateSpendAffiliates($newRate);
 			$model->setNewFields();
 			$model->save();
 			echo $model->id . " - updated<br/>";
