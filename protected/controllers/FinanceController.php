@@ -28,13 +28,21 @@ class FinanceController extends Controller
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
+		$transactions=new TransactionCount;
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 		else
 			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status,null);
 		$consolidated=array();
+
 		foreach ($clients['data'] as $client) {
 			$client['total_revenue']=$clients['totals_io'][$client['id']];
+			$consolidated[]=$client;
+		}
+		foreach ($clients['data'] as $client) {
+			$client['total_revenue']=$clients['totals_io'][$client['id']];
+			$client['total_transaction']=$transactions->getTotalTransactions($client['opportunitie_id'],$year.'-'.$month.'-01');
+			$client['total']=$client['total_revenue']+$client['total_transaction'];
 			$consolidated[]=$client;
 		}
 
@@ -263,5 +271,31 @@ class FinanceController extends Controller
 				'period' => $_REQUEST['period']
 		 	)
 		);
+	}
+
+	public function actionTransaction()
+	{
+		$period   =isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
+		$id      =isset($_GET['id']) ? $_GET['id'] : null;
+		$model=new TransactionCount;
+
+		$this->renderPartial('_form',array(
+			'id'    => $id,
+			'period'=>$period,
+			'model'=>$model,
+		), false, true);
+	}
+
+	public function actionAddTransaction()
+	{
+		$transaction                   = new TransactionCount;
+		$transaction->opportunities_id =$_POST['opportunitie'];
+		$transaction->period           =$_POST['TransactionCount']['period'];
+		$transaction->volume           =$_POST['TransactionCount']['volume'];
+		$transaction->rate             =$_POST['TransactionCount']['rate'];
+		$transaction->users_id         =$_POST['TransactionCount']['users_id'];
+		$transaction->date             =$_POST['TransactionCount']['date'];
+		$transaction->save();
+
 	}
 }
