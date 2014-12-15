@@ -730,7 +730,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null,$totals=false)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -756,8 +756,9 @@ class DailyReport extends CActiveRecord
 		            // Adding all the other default attributes
 		            '*',
 		        );
-		if($sum==1){
-			$criteria->group  = 'campaigns_id';
+		if($sum==1 || $totals==true){
+			if($totals==false)
+				$criteria->group  = 'campaigns_id';
 			$criteria->select = array(
 				'*', 
 				'sum(imp) as imp',
