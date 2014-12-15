@@ -727,12 +727,12 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $endDate        [description]
 	 * @param  [type]  $accountManager [description]
 	 * @param  [type]  $opportunities  [description]
-	 * @param  [type]  $networks       [description]
+	 * @param  [type]  $providers      [description]
 	 * @param  integer $sum            [description]
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -976,16 +976,16 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
+	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 		$sumArray=array(
 					// Adding custom sort attributes
-		            'network_name'=>array(
-						'asc'  =>'networks.name',
-						'desc' =>'networks.name DESC',
+		            'providers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
 		            ),
 		            'account_manager'=>array(
 						'asc'  =>'accountManager.name',
@@ -1100,10 +1100,10 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		$criteria->compare('opportunities.rate',$this->rate);
-		$criteria->compare('networks.name',$this->network_name, true);
-		$criteria->compare('networks.has_api',$this->network_hasApi, true);
+		$criteria->compare('providers.name',$this->providers_name, true);
+		// $criteria->compare('providers.has_api',$this->network_hasApi, true);
 		//if ( $networks != NULL)$criteria->compare('networks.id',$networks);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		if ( $accountManager != NULL) {
@@ -1148,16 +1148,16 @@ class DailyReport extends CActiveRecord
 			}
 		}
 
-		if ( $networks != NULL) {
-			if(is_array($networks))
+		if ( $providers != NULL) {
+			if(is_array($providers))
 			{
 				$query="(";
 				$i=0;
-				foreach ($networks as $net) {	
+				foreach ($providers as $net) {	
 					if($i==0)			
-						$query.="networks.id=".$net;
+						$query.="providers.id=".$net;
 					else
-						$query.=" OR networks.id=".$net;
+						$query.=" OR providers.id=".$net;
 					$i++;
 				}
 				$query.=")";
@@ -1165,7 +1165,7 @@ class DailyReport extends CActiveRecord
 			}
 			else
 			{
-				$criteria->compare('networks.id',$networks);
+				$criteria->compare('providers.id',$providers);
 			}
 		}
 
