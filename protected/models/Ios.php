@@ -393,7 +393,7 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 					#This array have totals
 					isset($totals['revenue']) ?  : $totals['revenue'] =0;
 					isset($totals['conv']) ?  : $totals['conv'] =0;
-					$totals['revenue']+=$daily['revenue'];
+					$totals['revenue']+=$daily['conv']*$daily['rate'];
 					$totals['conv']+=$daily['conv'];
 			}
 
@@ -438,7 +438,7 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 					$totals[$daily['currency']]['revenue']+=$daily['conv']*$daily['rate'];
 
 				isset($totals_io[$daily['id']]) ?  : $totals_io[$daily['id']] =0;
-					$totals_io[$daily['id']]+=$daily['revenue'];
+					$totals_io[$daily['id']]+=$daily['conv']*$daily['rate'];
 			}
 			#Make array like CArrayDataProvider
 			$consolidated=array();
