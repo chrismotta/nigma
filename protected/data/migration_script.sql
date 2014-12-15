@@ -2,7 +2,7 @@
 -- Insert elements into providers --
 -- ------------------------------ --
 INSERT INTO providers SELECT id, prefix, name, currency FROM networks;
-INSERT INTO providers SELECT id, prefix, name, currency FROM providers;
+INSERT INTO providers SELECT id, prefix, name, currency FROM publishers;
 
 
 -- ------------------------------ --
