@@ -160,8 +160,8 @@ class Networks extends CActiveRecord
 		
 		$criteria = new CDbCriteria;
 		$criteria->select=array(
-			't.providers_id as id',
-			'providers.name as network_name',
+			'providers.id as id',
+			'providers.name as providers_name',
 			'providers.currency as currency',
 			'sum(t.clics) as clics',
 			'sum(t.imp) as imp',
@@ -173,7 +173,7 @@ class Networks extends CActiveRecord
 		$criteria->with =array('providers', 'providers.networks');
 		$criteria->addCondition('month(t.date)='.$month);
 		$criteria->addCondition('year(t.date)='.$year);
-		$criteria->group ='t.providers_id';
+		$criteria->group ='providers.id';
 		$data   =array();		
 		$totals =array();	
 			
@@ -186,7 +186,7 @@ class Networks extends CActiveRecord
 		$i=0;
 		foreach ($providers as $provider) {
 			$dataArray[$i]['id']            =$provider->id;
-			$dataArray[$i]['networks_name'] =$provider->providers_name;
+			$dataArray[$i]['providers_name']=$provider->providers_name;
 			$dataArray[$i]['currency']      =$provider->currency;
 			$dataArray[$i]['clics']         =$provider->clics;
 			$dataArray[$i]['imp']           =$provider->imp;
@@ -219,7 +219,7 @@ class Networks extends CActiveRecord
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'networks_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total'
+		             'id', 'providers_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total'
 		        ),
 		    ),
 		    'pagination'=>array(
