@@ -161,7 +161,7 @@ $ios    =new Ios;
         ),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Imp(m)/Clics/Conv',
+			'header'            =>'Imp/Clics/Conv',
 			'value'             =>'number_format($data["conv"])',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
@@ -169,7 +169,7 @@ $ios    =new Ios;
 		array(
 			'name'              =>'revenue',
 			'header'            =>'Revenue',
-			'value'             =>'number_format($data["revenue"])',
+			'value'             =>'number_format($data["revenue"],2)',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),		
 		),
@@ -201,7 +201,7 @@ $ios    =new Ios;
 			'name'              =>'name',
 			'header'            =>'Total Revenue',
 			'filter'			=>false,
-			'value'             =>'$data["total_revenue"]',
+			'value'             =>'number_format($data["total_revenue"],2)',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
