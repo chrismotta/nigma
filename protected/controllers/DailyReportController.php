@@ -498,22 +498,28 @@ class DailyReportController extends Controller
 	{
 		$date      = isset($_GET['date']) ? $_GET['date'] : date('d-m-Y', strtotime('today'));
 		$affiliate = isset($_GET['affiliate']) ? $_GET['affiliate'] : NULL;
+		$newRate   = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
 
 		$criteria = new CDbCriteria;
 		$criteria->compare('date', $date);
 		if ($affiliate) { // update one affiliate
 			$criteria->compare('networks_id', $affiliate);
 		} else { // update all affiliate
-			$affiliates = Yii::app()->db->createCommand()
+			$q = Yii::app()->db->createCommand()
 			    ->select('networks_id')
 			    ->from('affiliates')
-			    ->queryAll();
+			    ->queryAll(false);
+
+			foreach ($q as $nid)
+	        	$affiliates[] = $nid[0];
+
 			$criteria->addInCondition('networks_id', $affiliates);
 		}
 
 		$list = DailyReport::model()->findAll( $criteria );
 		foreach ($list as $model) {
-			$model->updateSpendAffiliates();
+			$model->updateSpendAffiliates($newRate);
+			$model->setNewFields();
 			$model->save();
 			echo $model->id . " - updated<br/>";
 		}
