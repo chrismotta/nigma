@@ -4,7 +4,7 @@
  * This is the model class for table "publishers".
  *
  * The followings are the available columns in table 'publishers':
- * @property integer $id
+ * @property integer $providers_id
  * @property string $status
  * @property string $name
  * @property string $commercial_name
@@ -13,7 +13,6 @@
  * @property string $zip_code
  * @property string $address
  * @property string $phone
- * @property string $currency
  * @property string $contact_com
  * @property string $email_com
  * @property string $contact_adm
@@ -27,7 +26,7 @@
  * @property string $rate
  *
  * The followings are the available model relations:
- * @property Placements[] $placements
+ * @property Providers $providers
  * @property GeoLocation $country
  * @property Users $accountManager
  */
@@ -61,7 +60,7 @@ class Publishers extends CActiveRecord
 			array('RS_perc, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, status, name, commercial_name, country_id, state, zip_code, address, phone, currency, contact_com, email_com, contact_adm, email_adm, entity, tax_id, net_payment, account_manager_id, model, RS_perc, rate', 'safe', 'on'=>'search'),
+			array('providers_id, status, name, commercial_name, country_id, state, zip_code, address, phone, currency, contact_com, email_com, contact_adm, email_adm, entity, tax_id, net_payment, account_manager_id, model, RS_perc, rate', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -76,6 +75,7 @@ class Publishers extends CActiveRecord
 			'placements'     => array(self::HAS_MANY, 'Placements', 'publishers_id'),
 			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
+			'providers'      => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 		);
 	}
 
@@ -128,8 +128,9 @@ class Publishers extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+		$criteria->with = array('country', 'accountManager', 'providers');
 
-		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.providers_id',$this->providers_id);
 		$criteria->compare('t.status',$this->status,true);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('country_id',$this->country_id);
@@ -137,7 +138,7 @@ class Publishers extends CActiveRecord
 		$criteria->compare('zip_code',$this->zip_code,true);
 		$criteria->compare('address',$this->address,true);
 		$criteria->compare('phone',$this->phone,true);
-		$criteria->compare('currency',$this->currency,true);
+		// $criteria->compare('providers.currency',$this->currency,true);
 		$criteria->compare('contact_com',$this->contact_com,true);
 		$criteria->compare('email_com',$this->email_com,true);
 		$criteria->compare('contact_adm',$this->contact_adm,true);
@@ -149,8 +150,6 @@ class Publishers extends CActiveRecord
 		$criteria->compare('model',$this->model,true);
 		$criteria->compare('RS_perc',$this->RS_perc,true);
 		$criteria->compare('rate',$this->rate,true);
-
-		$criteria->with = array('country', 'accountManager');
 
 		$criteria->compare('country.name',$this->country_name);
 		$criteria->compare('accountManager.name',$this->account_name,true);
