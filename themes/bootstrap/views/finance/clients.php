@@ -161,8 +161,8 @@ $ios    =new Ios;
         ),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Imp(m)/Clics/Conv',
-			'value'             =>'number_format($data["conv"],2)',	
+			'header'            =>'Imp/Clics/Conv',
+			'value'             =>'number_format($data["conv"])',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
