@@ -730,7 +730,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null,$totals=false)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -756,9 +756,8 @@ class DailyReport extends CActiveRecord
 		            // Adding all the other default attributes
 		            '*',
 		        );
-		if($sum==1 || $totals==true){
-			if($totals==false)
-				$criteria->group  = 'campaigns_id';
+		if($sum==1){
+			$criteria->group  = 'campaigns_id';
 			$criteria->select = array(
 				'*', 
 				'sum(imp) as imp',
@@ -972,6 +971,260 @@ class DailyReport extends CActiveRecord
 				'attributes'   =>$sumArray,
 		    ),
 		));
+	}
+
+	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$networks=null,$sum=0,$adv_categories=null)
+	{
+		// @todo Please modify the following code to remove attributes that should not be searched.
+
+		$criteria=new CDbCriteria;
+		$sumArray=array(
+					// Adding custom sort attributes
+		            'network_name'=>array(
+						'asc'  =>'networks.name',
+						'desc' =>'networks.name DESC',
+		            ),
+		            'account_manager'=>array(
+						'asc'  =>'accountManager.name',
+						'desc' =>'accountManager.name DESC',
+		            ),
+		            'campaign_name'=>array(
+						'asc'  =>'campaigns.id',
+						'desc' =>'campaigns.id DESC',
+		            ),
+		            'rate'=>array(
+						'asc'  =>'opportunities.rate',
+						'desc' =>'opportunities.rate DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        );
+		if($sum==1){
+			$criteria->group  = 'campaigns_id';
+			$criteria->select = array(
+				'*', 
+				'sum(imp) as imp',
+				'sum(imp_adv) as imp_adv',
+				'sum(clics) as clics',
+				'sum(conv_api) as conv_api',
+				'sum(conv_adv) as conv_adv',
+				'sum(revenue) as revenue',
+				'sum(spend) as spend',
+				'sum(profit) as profit',
+				// 'revenue as profit_percent',
+				'round( avg(click_through_rate), 2 ) as click_through_rate',
+				'round( avg(conversion_rate), 2 ) as conversion_rate',
+				'round( avg(eCPM), 2 ) as eCPM',
+				'round( avg(eCPC), 2 ) as eCPC',
+				'round( avg(eCPA), 2 ) as eCPA'
+				);
+
+			$sumArray['profit'] = array(
+					'asc'  =>'sum(profit)',
+					'desc' =>'sum(profit) DESC',
+	            );
+			$sumArray['imp'] = array(
+					'asc'  =>'sum(imp)',
+					'desc' =>'sum(imp) DESC',
+	            );
+			$sumArray['imp_adv'] = array(
+					'asc'  =>'sum(imp_adv)',
+					'desc' =>'sum(imp_adv) DESC',
+	            );
+			$sumArray['clics'] = array(
+					'asc'  =>'sum(clics)',
+					'desc' =>'sum(clics) DESC',
+	            );
+			$sumArray['conv_api'] = array(
+					'asc'  =>'sum(conv_api)',
+					'desc' =>'sum(conv_api) DESC',
+	            );
+			$sumArray['conv_adv'] = array(
+					'asc'  =>'sum(conv_adv)',
+					'desc' =>'sum(conv_adv) DESC',
+	            );
+			$sumArray['revenue'] = array(
+					'asc'  =>'sum(revenue)',
+					'desc' =>'sum(revenue) DESC',
+	            );
+			$sumArray['spend'] = array(
+					'asc'  =>'sum(spend)',
+					'desc' =>'sum(spend) DESC',
+	            );
+			$sumArray['profit_percent'] = array(
+					'asc'  =>'round( avg(profit_percent), 2 )',
+					'desc' =>'round( avg(profit_percent), 2 ) DESC',
+	            );
+			$sumArray['click_through_rate'] = array(
+					'asc'  =>'round( avg(click_through_rate), 2 )',
+					'desc' =>'round( avg(click_through_rate), 2 ) DESC',
+	            );
+			$sumArray['conversion_rate'] = array(
+					'asc'  =>'round( avg(conversion_rate), 2 )',
+					'desc' =>'round( avg(conversion_rate), 2 ) DESC',
+	            );
+			$sumArray['eCPM'] = array(
+					'asc'  =>'round( avg(eCPM), 2 )',
+					'desc' =>'round( avg(eCPM), 2 ) DESC',
+	            );
+			$sumArray['eCPC'] = array(
+					'asc'  =>'round( avg(eCPC), 2 )',
+					'desc' =>'round( avg(eCPC), 2 ) DESC',
+	            );
+			$sumArray['eCPA'] = array(
+					'asc'  =>'round( avg(eCPA), 2 )',
+					'desc' =>'round( avg(eCPA), 2 ) DESC',
+	            );
+		}
+
+		//search
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('campaigns_id',$this->campaigns_id);
+		//if ( $networks == NULL) $criteria->compare('networks_id',$this->networks_id);
+		$criteria->compare('imp',$this->imp);
+		$criteria->compare('imp_adv',$this->imp_adv);
+		$criteria->compare('clics',$this->clics);
+		$criteria->compare('conv_api',$this->conv_api);
+		$criteria->compare('conv_adv',$this->conv_adv);
+		$criteria->compare('spend',$this->spend,true);
+		$criteria->compare('revenue',$this->revenue);
+		$criteria->compare('is_from_api',$this->is_from_api);
+		//$criteria->compare('comment',$this->comment);
+
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+		
+		// Related search criteria items added (use only table.columnName)
+		$criteria->with = array( 'networks', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->compare('opportunities.rate',$this->rate);
+		$criteria->compare('networks.name',$this->network_name, true);
+		$criteria->compare('networks.has_api',$this->network_hasApi, true);
+		//if ( $networks != NULL)$criteria->compare('networks.id',$networks);
+		$criteria->compare('accountManager.name',$this->account_manager, true);
+		if ( $accountManager != NULL) {
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
+
+		if ( $opportunities != NULL) {
+			if(is_array($opportunities))
+			{
+				$query="(";
+				$i=0;
+				foreach ($opportunities as $opp) {	
+					if($i==0)			
+						$query.="opportunities.id=".$opp;
+					else
+						$query.=" OR opportunities.id=".$opp;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('opportunities.id',$opportunities);
+			}
+		}
+
+		if ( $networks != NULL) {
+			if(is_array($networks))
+			{
+				$query="(";
+				$i=0;
+				foreach ($networks as $net) {	
+					if($i==0)			
+						$query.="networks.id=".$net;
+					else
+						$query.=" OR networks.id=".$net;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('networks.id',$networks);
+			}
+		}
+
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}
+
+		// if ( $advertiser != NULL ){
+		// 	$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
+		// }
+		// external name
+		$tmp = new CDbCriteria;
+		$tmp->compare('t.campaigns_id',$this->campaign_name,true);
+		$tmp->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');
+		$tmp->compare('country.ISO2',$this->campaign_name,true,'OR');
+		$tmp->compare('advertisers.prefix',$this->campaign_name,true,'OR');
+		$tmp->compare('opportunities.product',$this->campaign_name,true,'OR');
+		$tmp->compare('campaigns.name',$this->campaign_name,true,'OR');
+		$criteria->mergeWith($tmp);
+		
+		FilterManager::model()->addUserFilter($criteria, 'daily');
+
+		$totals             =array();
+		$totals['imp']      =0;
+		$totals['imp_adv']  =0;
+		$totals['clics']    =0;
+		$totals['conv_api'] =0;
+		$totals['conv_adv'] =0;
+		$totals['revenue']  =0;
+		$totals['spend']    =0;
+		$totals['profit']    =0;
+		if($dailys=Self::model()->findAll($criteria))
+		{			
+			foreach ($dailys as $data) {
+				$totals['imp']      +=$data->imp;
+				$totals['imp_adv']  +=$data->imp_adv;
+				$totals['clics']    +=$data->clics;
+				$totals['conv_api'] +=$data->conv_api;
+				$totals['conv_adv'] +=$data->conv_adv;
+				$totals['revenue']  +=$data->getRevenueUSD();
+				$totals['spend']    +=$data->getSpendUSD();
+				$totals['profit']   +=$data->getProfit();
+			}
+		}
+		return $totals;
 	}
 
 	/**
@@ -1365,5 +1618,32 @@ class DailyReport extends CActiveRecord
 		$criteria->addCondition("DATE(date) = '".$this->date."' AND campaigns_id=".$this->campaigns_id);
 		$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
 		return $clicksLogs;
+	}
+
+	public static function getTotalsData($dataProvider)
+	{
+		$totals             =array();
+		$totals['imp']      =0;
+		$totals['imp_adv']  =0;
+		$totals['clics']    =0;
+		$totals['conv_api'] =0;
+		$totals['conv_adv'] =0;
+		$totals['revenue']  =0;
+		$totals['spend']    =0;
+		$totals['profit']    =0;
+		if($dataProvider->getData())
+		{			
+			foreach ($dataProvider->getData() as $data) {
+				$totals['imp']      +=$data->imp;
+				$totals['imp_adv']  +=$data->imp_adv;
+				$totals['clics']    +=$data->clics;
+				$totals['conv_api'] +=$data->conv_api;
+				$totals['conv_adv'] +=$data->conv_adv;
+				$totals['revenue']  +=$data->getRevenueUSD();
+				$totals['spend']    +=$data->getSpendUSD();
+				$totals['profit']   +=$data->getProfit();
+			}
+		}
+		return $totals;
 	}
 }
