@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'clicks_log':
  * @property integer $id
  * @property integer $campaigns_id
- * @property integer $networks_id
+ * @property integer $providers_id
  * @property string $tid
  * @property string $date
  * @property string $server_ip
@@ -24,7 +24,7 @@
  * The followings are the available model relations:
  * @property Campaigns $campaigns
  * @property ConvLog[] $convLogs
- * @property Networks $networks
+ * @property Providers $providers
  */
 class ClicksLog extends CActiveRecord
 {
@@ -65,13 +65,13 @@ class ClicksLog extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			//array('campaigns_id, networks_id', 'required'),
-			array('campaigns_id, networks_id', 'numerical', 'integerOnly'=>true),
+			//array('campaigns_id, providers_id', 'required'),
+			array('campaigns_id, providers_id', 'numerical', 'integerOnly'=>true),
 			array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app, redirect_url', 'length', 'max'=>255),
 			array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, networks_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,7 +83,7 @@ class ClicksLog extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
 			'convLogs' => array(self::HAS_MANY, 'ConvLog', 'clicks_log_id'),
 		);
@@ -97,7 +97,7 @@ class ClicksLog extends CActiveRecord
 		return array(
 			'id'           => 'ID',
 			'campaigns_id' => 'Campaigns',
-			'networks_id'  => 'Networks',
+			'providers_id' => 'Providers',
 			'tid'          => 'Tid',
 			'date'         => 'Date',
 			'server_ip'    => 'Server Ip',
@@ -142,7 +142,7 @@ class ClicksLog extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
-		$criteria->compare('networks_id',$this->networks_id);
+		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('tid',$this->tid,true);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('server_ip',$this->server_ip,true);
