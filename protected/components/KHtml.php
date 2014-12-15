@@ -81,6 +81,29 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
+    public static function filterOpportunitiesDate($value, $accountManagerId=NULL, $htmlOptions = array(),$io_id,$startDate,$endDate)
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All opportunities',
+            'class' => 'opportunitie-dropdownlist',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('campaigns','campaigns.dailyReports');
+        $criteria->addCondition('dailyReports.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"');
+        $criteria->addCondition('dailyReports.revenue>0');
+        if ( $accountManagerId != NULL )
+            $criteria->compare('t.account_manager_id', $accountManagerId);
+        
+        if ( $io_id != NULL )
+            $criteria->compare('t.ios_id', $io_id);
+
+        $opps = Opportunities::model()->findAll($criteria);
+        $list   = CHtml::listData($opps, 'id', 'virtualName');
+        return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
+    }
+
     /**
      * Create dropdown of Account Managers
      * @param  $value

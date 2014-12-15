@@ -70,6 +70,7 @@ class TransactionCount extends CActiveRecord
 			'users_id' => 'Users',
 			'date' => 'Date',
 			'opportunities_id' => 'Opportunities',
+			'total' => 'Total',
 		);
 	}
 
@@ -127,12 +128,15 @@ class TransactionCount extends CActiveRecord
 			));
 	}
 
-	public function getTotalTransactions($opportunities_id,$period)
+	public function getTotalTransactions($ios_id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->select='sum(rate*volume) as total';
-		$criteria->compare('opportunities_id',$opportunities_id);
-		$criteria->compare('period',$period);
-		return self::model()->find($criteria)->total ? self::model()->find($criteria)->total : 0;
+		$criteria->select='sum(t.rate*t.volume) as total';
+		$criteria->with=array('opportunities');
+		$criteria->addCondition('t.opportunities_id=opportunities.id');
+		$criteria->addCondition('opportunities.ios_id='.$ios_id);
+		$criteria->compare('t.period',$period);
+		return self::model()->find($criteria) ? number_format(self::model()->find($criteria)['total'],2) : 0;
+		
 	}
 }

@@ -37,7 +37,7 @@ class FinanceController extends Controller
 		$consolidated=array();
 		foreach ($clients['data'] as $client) {
 			$client['total_revenue']=$clients['totals_io'][$client['id']];
-			$client['total_transaction']=$transactions->getTotalTransactions($client['opportunitie_id'],$year.'-'.$month.'-01');
+			$client['total_transaction']=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 			$client['total']=$client['total_revenue']+$client['total_transaction'];
 			$consolidated[]=$client;
 		}
