@@ -70,7 +70,7 @@
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'),
                     'footerHtmlOptions' => array('style'=>'text-align:right;'),   
-                    'footer'            => $totals['conv'],
+                    'footer'            => number_format($totals['conv'],2),
                 ),
                 array(
                     'name'              =>'revenue',
@@ -79,7 +79,7 @@
                     'headerHtmlOptions' => array('width' => '80'),
                     'htmlOptions'       => array('style'=>'text-align:right;'),   
                     'footerHtmlOptions' => array('style'=>'text-align:right;'),    
-                    'footer'            => $totals['revenue'],
+                    'footer'            => number_format($totals['revenue'],2),
                 ),
             ),
         )); ?>
