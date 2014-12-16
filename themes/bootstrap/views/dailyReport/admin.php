@@ -404,14 +404,14 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4))."%" : 0,
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4)*100)."%" : 0,
 		),
 		array(
 			'name'              => 'conversion_rate',
 			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 ))."%" : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 )*100)."%" : 0,
 		),
 		array(
 			'name'              => 'eCPM',
