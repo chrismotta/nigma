@@ -60,7 +60,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'kickadserver.mobi':
 	case 'www.kickadserver.mobi':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
@@ -94,7 +94,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// amazon test
 	case 'test.kickadserver.mobi':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
