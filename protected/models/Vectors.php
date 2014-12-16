@@ -5,13 +5,13 @@
  *
  * The followings are the available columns in table 'vectors':
  * @property integer $id
- * @property integer $networks_id
+ * @property integer $providers_id
  * @property string $name
  * @property string $status
  *
  * The followings are the available model relations:
  * @property DailyVectors[] $dailyVectors
- * @property Networks $networks
+ * @property Providers $providers
  * @property Campaigns[] $campaigns
  */
 class Vectors extends CActiveRecord
@@ -34,13 +34,13 @@ class Vectors extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('networks_id, name', 'required'),
-			array('networks_id', 'numerical', 'integerOnly'=>true),
+			array('providers_id, name', 'required'),
+			array('providers_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, networks_id, name, status, campaigns_associated', 'safe', 'on'=>'search'),
+			array('id, providers_id, name, status, campaigns_associated', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,7 +53,7 @@ class Vectors extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'dailyVectors' => array(self::HAS_MANY, 'DailyVectors', 'vectors_id'),
-			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 			'campaigns' => array(self::MANY_MANY, 'Campaigns', 'vectors_has_campaigns(vectors_id, campaigns_id)'),
 		);
 	}
@@ -65,7 +65,7 @@ class Vectors extends CActiveRecord
 	{
 		return array(
 			'id'                   => 'ID',
-			'networks_id'          => 'Network',
+			'providers_id'         => 'Provider',
 			'name'                 => 'Name',
 			'status'               => 'Status',
 			'campaigns_associated' => 'Campaigns',
@@ -105,29 +105,29 @@ class Vectors extends CActiveRecord
 	}
 
 	/**
-	 * Retrieves a list of models for specified network and date. Ignore the vectors that had already info entry.
+	 * Retrieves a list of models for specified provider and date. Ignore the vectors that had already info entry.
 	 *
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function searchByNetworkAndDate($network_id, $date)
+	public function searchByProviderAndDate($provider_id, $date)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 		$criteria->with = array('campaigns');
 
-		if ( $network_id ) {
-			$criteria->compare('t.networks_id', $network_id);
+		if ( $provider_id ) {
+			$criteria->compare('t.providers_id', $provider_id);
 			$criteria->addCondition("t.id NOT IN (
-				SELECT v.id FROM vectors v WHERE v.networks_id=". $network_id . " AND EXISTS (
-					SELECT d.campaigns_id FROM daily_report d WHERE d.networks_id=". $network_id . " AND d.date='" . date('Y-m-d', strtotime($date)) . "' AND d.campaigns_id IN (
+				SELECT v.id FROM vectors v WHERE v.providers_id=". $provider_id . " AND EXISTS (
+					SELECT d.campaigns_id FROM daily_report d WHERE d.providers_id=". $provider_id . " AND d.date='" . date('Y-m-d', strtotime($date)) . "' AND d.campaigns_id IN (
 						SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id = v.id
 						)
 					)
 				)");
 		} else {
-			$criteria->compare('t.networks_id', -1); // Select none
+			$criteria->compare('t.providers_id', -1); // Select none
 		}
 
 		$criteria->compare('t.status', 'Active');

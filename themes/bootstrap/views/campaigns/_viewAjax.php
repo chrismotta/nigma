@@ -106,8 +106,8 @@
 		'id',
 		'name',
 		array(
-			'label' => $model->getAttributeLabel('networks_id'),
-			'name'  => 'networks.name',
+			'label' => $model->getAttributeLabel('providers_id'),
+			'name'  => 'providers.name',
 		),
 		array(
 			'label' => $model->getAttributeLabel('campaign_categories_id'),

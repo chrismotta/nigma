@@ -3,7 +3,7 @@
 class LeadBolt
 { 
 
-	private $network_id = 6;
+	private $provider_id = 6;
 
 	public function downloadInfo()
 	{
@@ -15,7 +15,7 @@ class LeadBolt
 		$dateOrig = $date;
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.leadBolt');
 			return 2;
 		}
@@ -23,7 +23,7 @@ class LeadBolt
 		$date = str_replace('-', '', $date); // Leadbolt api use YYYYMMDD date format
 		
 		// Get json from Loadbolt API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$advertiserid = $network->token1;
 		$secretkey	= $network->token2;
 		$apiurl = $network->url;
@@ -47,7 +47,7 @@ class LeadBolt
 			
 			$dailyReport = new DailyReport();
 			
-			// get campaign ID used in KickAds Server, from the campaign name use in the external network
+			// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign_name);
 
 			if ( !$dailyReport->campaigns_id ) {
@@ -56,7 +56,7 @@ class LeadBolt
 			}
 
 			$dailyReport->date = $dateOrig;
-			$dailyReport->networks_id = $this->network_id;
+			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->clicks;
 			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

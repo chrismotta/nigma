@@ -3,7 +3,7 @@
 class InMobi
 { 
 
-	private $network_id = 12;
+	private $provider_id = 12;
 
 	public function downloadInfo()
 	{
@@ -14,13 +14,13 @@ class InMobi
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.inmobi');
 			return 2;
 		}
 
 		// Get json from InMobi API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$apikey  = $network->token3;
 		$user    = $network->token1;
 		$pass    = $network->token2;
@@ -90,7 +90,7 @@ class InMobi
 
 			$dailyReport = new DailyReport();
 			
-			// get campaign ID used in KickAds Server, from the campaign name use in the external network
+			// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignName);
 
 			if ( !$dailyReport->campaigns_id ) {
@@ -99,7 +99,7 @@ class InMobi
 			}
 
 			$dailyReport->date        = $date;
-			$dailyReport->networks_id = $this->network_id;
+			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp         = $campaign->impressions;
 			$dailyReport->clics       = $campaign->clicks;
 			$dailyReport->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

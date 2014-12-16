@@ -1,14 +1,14 @@
 <?php
 /* @var $this DailyReportController */
 /* @var $model DailyReport */
-/* @var $networks Networks[] */
+/* @var $providers Providers[] */
 /* @var $campaign Campaign */
 /* @var $date Date */
-/* @var $currentNetwork network_id */
+/* @var $currentProvider providers_id */
 
 $this->breadcrumbs=array(
 	'Daily Reports'=>array('index'),
-	'Create By Network',
+	'Create By Provider',
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -26,21 +26,21 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-		'id'                   => 'network-filter-form',
+		'id'                   => 'providers-filter-form',
 		'type'                 => 'search',
 		'htmlOptions'          => array('class'=>'well'),
 		// to enable ajax validation
 		'enableAjaxValidation' => true,
-		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/createByNetwork',
+		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/createByProvider',
 		'method'               => 'GET',
 		'clientOptions'        => array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
 <fieldset>
 	Date: <?php echo KHtml::datePicker('date', $date); ?>
-	Network: <?php echo KHtml::filterNetworks($currentNetwork, $networks, array('empty' => 'Select Network')); ?>
+	Provider: <?php echo KHtml::filterProviders($currentProvider, $providers, array('empty' => 'Select Provider')); ?>
 
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'networkSubmit', 'class' => 'showLoading'))); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'providersSubmit', 'class' => 'showLoading'))); ?>
 </fieldset>
 
 <?php $this->endWidget(); ?>
@@ -48,13 +48,15 @@ $('.search-form form').submit(function(){
 <hr>
 
 <?php 
-	if ( $currentNetwork != NULL )
-		if ( Networks::model()->findByPk($currentNetwork)->use_vectors )
-			$dataProvider = $vector->searchByNetworkAndDate($currentNetwork, $date);
+	if ( $currentProvider != NULL ) {
+		$tmp = Providers::model()->findByPk($currentProvider);
+		if ( $tmp->isNetwork() && $tmp->networks->use_vectors )
+			$dataProvider = $vector->searchByProviderAndDate($currentProvider, $date);
 		else
-			$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
-	else
-		$dataProvider = $campaign->searchByNetworkAndDate($currentNetwork, $date);
+			$dataProvider = $campaign->searchByProviderAndDate($currentProvider, $date);
+	} else {
+		$dataProvider = $campaign->searchByProviderAndDate($currentProvider, $date);
+	}
 ?>
 
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
@@ -149,7 +151,7 @@ $('.search-form form').submit(function(){
 						var params                      = new Object();
 						params.saveSubmit               = "";
 						params.DailyReport              = new Object();
-						params.DailyReport.networks_id  = $( "#networks" ).val();
+						params.DailyReport.providers_id  = $( "#providers" ).val();
 						params.DailyReport.imp          = tr.find( "#row-imp" ).val();
 						params.DailyReport.imp_adv      = tr.find( "#row-imp_adv" ).val();
 						params.DailyReport.clics        = tr.find( "#row-clics" ).val();
@@ -166,7 +168,7 @@ $('.search-form form').submit(function(){
 
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
-							"createByNetwork",
+							"createByProvider",
 							params,
 							function(data) {
 								if (data.result == "OK") {

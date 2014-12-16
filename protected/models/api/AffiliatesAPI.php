@@ -15,15 +15,15 @@ class AffiliatesAPI
 
 		// Download api for every affiliate
 		foreach ($affiliates as $affiliate) {
-			$network = Networks::model()->findByPk($affiliate->networks_id);
+			$provider = Providers::model()->findByPk($affiliate->providers_id);
 
 			// validate if info have't been dowloaded already.
-			if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$affiliate->networks_id, ":date"=>$date)) ) {
-				Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $network->name);
+			if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$affiliate->providers_id, ":date"=>$date)) ) {
+				Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->affiliate->name);
 				continue;
 			}
 
-			$campaigns = Campaigns::model()->findAll( 'networks_id=:nid', array(':nid' => $affiliate->networks_id) );
+			$campaigns = Campaigns::model()->findAll( 'providers_id=:pid', array(':pid' => $affiliate->providers_id) );
 
 			foreach ($campaigns as $campaign) {
 				$conv   = ConvLog::model()->count("campaign_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
@@ -35,7 +35,7 @@ class AffiliatesAPI
 				$dailyReport               = new DailyReport();
 				$dailyReport->campaigns_id = $campaign->id;
 				$dailyReport->date         = $date;
-				$dailyReport->networks_id  = $affiliate->networks_id;
+				$dailyReport->providers_id = $affiliate->providers_id;
 				$dailyReport->imp          = 0;
 				$dailyReport->clics        = $clicks;
 				$dailyReport->conv_api     = $conv;
@@ -44,11 +44,11 @@ class AffiliatesAPI
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				if ( !$dailyReport->save() ) {
-					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $network->name);
+					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->affiliate->name);
 					continue;
 				}
 			}
-			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $network->name);
+			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->affiliate->name);
 		}
 		Yii::log("SUCCESS - Daily info downloaded for all affiliates", 'info', 'system.model.api.affiliate');
 		return 0;

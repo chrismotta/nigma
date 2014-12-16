@@ -31,13 +31,13 @@ $('.search-form form').submit(function(){
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
-	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$networks, $adv_categories);
+	$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$providers, $adv_categories);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -51,7 +51,7 @@ $('.search-form form').submit(function(){
 				'categories' => $totalsGrap['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-			'yAxis' => array(
+			'yAxis'   => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
@@ -63,14 +63,14 @@ $('.search-form form').submit(function(){
 				array('name' => 'Profit','data' => $totalsGrap['profits'],),
 				),
 	        'legend' => array(
-	            'layout' => 'vertical',
-	            'align' =>  'left',
-	            'verticalAlign' =>  'top',
-	            'x' =>  40,
-	            'y' =>  3,
-	            'floating' =>  true,
-	            'borderWidth' =>  1,
-	            'backgroundColor' => '#FFFFFF'
+				'layout'          => 'vertical',
+				'align'           =>  'left',
+				'verticalAlign'   =>  'top',
+				'x'               =>  40,
+				'y'               =>  3,
+				'floating'        =>  true,
+				'borderWidth'     =>  1,
+				'backgroundColor' => '#FFFFFF'
 	        	)
 			),
 		)
@@ -134,17 +134,17 @@ $('.search-form form').submit(function(){
 			$link.='&opportunities='.$opportunities;
 		}
 	}	
-	if(isset($networks))
+	if(isset($providers))
 	{
-		if(is_array($networks))
+		if(is_array($providers))
 		{
-			foreach ($networks as $id) {
-				$link.='&networks[]='.$id;
+			foreach ($providers as $id) {
+				$link.='&providers[]='.$id;
 			}			
 		}
 		else
 		{
-			$link.='&networks='.$networks;
+			$link.='&providers='.$providers;
 		}
 	}
 	if(isset($adv_categories))
@@ -208,7 +208,7 @@ $('.search-form form').submit(function(){
 		if (FilterManager::model()->isUserTotalAccess('daily'))
 			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
 		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
-		KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'networks-select'),'networks');
+		KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
 		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
 	?>
 	<hr>
@@ -225,8 +225,8 @@ $('.search-form form').submit(function(){
 
 <?php 
 //yess
-	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories);
-	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $networks, $sum, $adv_categories);
+	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
+	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
 
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
@@ -236,7 +236,7 @@ $('.search-form form').submit(function(){
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
 	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
@@ -269,9 +269,9 @@ $('.search-form form').submit(function(){
             'visible' => $sum ? false : true,
         ),
 		array(
-			'name'   =>	'network_name',
-			'value'  =>	'$data->networks->name',
-			'filter' => $networks_names,
+			'name'   =>	'providers_name',
+			'value'  =>	'$data->providers->name',
+			'filter' => $providers_names,
 		),
 		array(
 			'name'        => 'rate',
@@ -404,14 +404,14 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4))."%" : 0,
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4)*100)."%" : 0,
 		),
 		array(
 			'name'              => 'conversion_rate',
 			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 ))."%" : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 )*100)."%" : 0,
 		),
 		array(
 			'name'              => 'eCPM',

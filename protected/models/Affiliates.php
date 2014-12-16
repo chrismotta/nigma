@@ -126,7 +126,7 @@ class Affiliates extends CActiveRecord
 		{
 			$end=date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today'))? date('Y-m-d', strtotime('-1 day',strtotime($dateEnd))) : date('Y-m-d', strtotime($dateEnd));
 			
-			$sql="select c.id,
+			$sql="SELECT c.id,
 				IF(ISNULL(d.conv_adv) and ISNULL(d.conv_api),
 					ROUND(
 						d.spend/
@@ -140,10 +140,10 @@ class Affiliates extends CActiveRecord
 				DATE(d.date) as date
 				from daily_report d 
 				inner join campaigns c on d.campaigns_id=c.id
-				inner join networks n on c.networks_id=n.id 
-				inner join affiliates a on a.networks_id=n.id
+				inner join networks n on c.providers_id=n.providers_id 
+				inner join affiliates a on a.networks_id=n.providers_id
 				WHERE d.date BETWEEN :dateStart AND :dateEnd
-				AND n.id = :affiliate
+				AND n.providers_id = :affiliate
 				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
@@ -172,11 +172,11 @@ class Affiliates extends CActiveRecord
 			$date=date('Y-m-d', strtotime('today'));
 			$sql="select c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
 				from campaigns c
-				inner join networks n on c.networks_id=n.id 
+				inner join networks n on c.providers_id=n.providers_id 
 				inner join conv_log l on l.campaign_id=c.id
-				inner join affiliates a on a.networks_id=n.id
+				inner join affiliates a on a.networks_id=n.providers_id
 				WHERE DATE(l.date)=DATE(:date)
-				AND n.id = :affiliate
+				AND n.providers_id = :affiliate
 				group by c.id,DATE(l.date)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":date", $date, PDO::PARAM_STR);
