@@ -100,8 +100,8 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 			'header'      =>'ID',    
 		),
 		array(
-			'name'        =>'networks_name',
-			'value'       =>'$data["networks_name"]',
+			'name'        =>'providers_name',
+			'value'       =>'$data["providers_name"]',
 			'htmlOptions' =>array('style' => 'width: 100px'),
 			'header'      =>'Network Name',  
 		),

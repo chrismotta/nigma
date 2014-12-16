@@ -26,7 +26,7 @@ use BingAds\Proxy\ClientProxy;
 
 class BingAds
 { 
-	private $network_id = 20;
+	private $provider_id = 20;
 	private $path = 'uploads/';
 	private $name = 'API_BingAds_DailyReport.zip';
 
@@ -38,7 +38,7 @@ class BingAds
 			$dateGet = date('Y-m-d', strtotime('yesterday'));
 		}
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$dateGet)) ) {
+		if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$dateGet)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.bingAds');
 			return 2;
 		}
@@ -48,7 +48,7 @@ class BingAds
 		ini_set("soap.wsdl_cache_ttl", "0");
 
 		// Config values
-		$network         = Networks::model()->findbyPk($this->network_id);
+		$network         = Networks::model()->findbyPk($this->provider_id);
 		$tmp             = explode(',', $network->token1);
 		$ClientID        = $tmp[0];
 		$ClientSecretKey = $tmp[1];
@@ -271,7 +271,7 @@ class BingAds
 
 		curl_close($curl);
 
-		$network         = Networks::model()->findbyPk($this->network_id);
+		$network         = Networks::model()->findbyPk($this->provider_id);
 		$network->token3 = $result->refresh_token;
 
 		if ( !$network->save() ) {
@@ -333,7 +333,7 @@ class BingAds
 
 				$dailyReport = new DailyReport();
 				
-				// get campaign ID used in KickAds Server, from the campaign name use in the external network
+				// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($row[0]);
 				//$dailyReport->campaigns_id = 11;//borrar harcodes por favor
 
@@ -343,7 +343,7 @@ class BingAds
 				}
 
 				$dailyReport->date = $date;
-				$dailyReport->networks_id = $this->network_id;
+				$dailyReport->providers_id = $this->provider_id;
 				$dailyReport->imp = $row[1];
 				$dailyReport->clics = $row[2];
 				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

@@ -68,7 +68,7 @@ class ClicksLogController extends Controller
 			if($campaign = Campaigns::model()->findByPk($cid)){
 				$redirectURL          = $campaign->url;
 				if($nid==NULL){
-					$nid              = $campaign->networks_id;
+					$nid              = $campaign->providers_id;
 				}
 				$ts['campaign']       = microtime(true);
 				
@@ -93,12 +93,12 @@ class ClicksLogController extends Controller
 		$model = new ClicksLog();
 		//$model->id         = 2;
 		$model->campaigns_id = $cid;
-		$model->networks_id  = $nid;
+		$model->providers_id = $nid;
 		//$model->date       = 0;
 
 		// Get custom parameters
 		
-		if ( $model->networks->has_s2s ) {
+		if ( Providers::model()->findByPk($nid)->isNetwork() && $model->providers->networks->has_s2s ) {
 			foreach ($_GET as $key => $value) {
 				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'ntoken', 'nid', 'cid', 'ts', 'id');
 				if ( !in_array($key, $ignore_params) ) {
@@ -424,7 +424,7 @@ class ClicksLogController extends Controller
 		$criteria=new CDbCriteria;
 		$criteria->compare('date', '>=' . $timestampFrom->format('Y-m-d H:i:s'));
 		$criteria->compare('date', '<=' . $timestampTo->format('Y-m-d H:i:s'));
-		$criteria->compare('networks_id', '4');
+		$criteria->compare('providers_id', '4');
 		// $criteria->addCondition('query IS NULL');
 		$dataProvider = new CActiveDataProvider("ClicksLog", array(
 			'criteria'   => $criteria,

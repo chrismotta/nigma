@@ -70,13 +70,6 @@ $('.search-form form').submit(function(){
 	</div>
 <?php endif; ?>
 
-<?php // echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
-
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'                       => 'vectors-grid',
 	'dataProvider'             => $model->search(),
@@ -94,8 +87,8 @@ $('.search-form form').submit(function(){
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
-			'name'  => 'networks_id',
-			'value' => '$data->networks->name',
+			'name'  => 'providers_id',
+			'value' => '$data->providers->name',
 			'headerHtmlOptions' => array('style' => 'width: 120px'),
         ),
         array(

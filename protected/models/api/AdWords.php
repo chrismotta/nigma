@@ -3,7 +3,7 @@
 class AdWords
 {  
 
-	private $network_id = 4;
+	private $provider_id = 4;
 	private $adWords_version = 'v201406';
 
 	public function downloadInfo()
@@ -15,7 +15,7 @@ class AdWords
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.adWords');
 			return 2;
 		}
@@ -54,8 +54,6 @@ class AdWords
 			$result = ReportUtils::DownloadReportWithAwql($reportQuery, NULL, $user, 'XML', array('version' => $this->adWords_version));
 
 			$result = Utilities::xml2array($result);
-			echo json_encode($result);
-			echo '<hr/>';
 
 			if ( !isset($result['report']['table']['row']) ) {
 				Yii::log("Empty daily report, advertiser:  " . $advertiser->name, 'info', 'system.model.api.adWords');
@@ -73,7 +71,6 @@ class AdWords
 					continue;
 			}
 		}
-			echo '<hr/>';
 		
 		Yii::log("SUCCESS - Daily info download - ".$authenticationIniPath, 'info', 'system.model.api.adWords');
 		return 0;
@@ -84,7 +81,7 @@ class AdWords
 	{
 		$dailyReport = new DailyReport();
 				
-		// get campaign ID used in KickAds Server, from the campaign name use in the external network
+		// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['campaign']);
 
 		if ( !$dailyReport->campaigns_id ) {
@@ -93,7 +90,7 @@ class AdWords
 		}
 
 		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
-		$dailyReport->networks_id = $this->network_id;
+		$dailyReport->providers_id = $this->provider_id;
 		$dailyReport->imp = $campaign['impressions'];
 		$dailyReport->clics = $campaign['clicks'];
 		$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

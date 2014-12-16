@@ -25,8 +25,8 @@ $this->widget('EExcelWriter', array(
             'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
         ),
         array(
-            'name'   => 'Network',
-            'value'  => '$data->clicksLog->networks->name',           
+            'name'   => 'Provider',
+            'value'  => '$data->clicksLog->providers->name',           
         ),
         array(
             'name'   => 'IP',

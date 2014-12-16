@@ -64,11 +64,12 @@ class Networks extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'apiCronLogs' => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
-			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
-			'clicksLogs' => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
+			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
+			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
+			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'networks_id'),
-			'vectors' => array(self::HAS_MANY, 'Vectors', 'networks_id'),
+			'vectors'      => array(self::HAS_MANY, 'Vectors', 'networks_id'),
+			'providers'    => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 		);
 	}
 
@@ -159,9 +160,9 @@ class Networks extends CActiveRecord
 		
 		$criteria = new CDbCriteria;
 		$criteria->select=array(
-			'networks.id as id',
-			'networks.name as network_name',
-			'networks.currency as currency',
+			'providers.id as id',
+			'providers.name as providers_name',
+			'providers.currency as currency',
 			'sum(t.clics) as clics',
 			'sum(t.imp) as imp',
 			'networks.percent_off as percent_off',
@@ -169,10 +170,10 @@ class Networks extends CActiveRecord
 			'round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as off',
 			'SUM(t.spend) - round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as total',
 			 );
-		$criteria->with =array('networks');
+		$criteria->with =array('providers', 'providers.networks');
 		$criteria->addCondition('month(t.date)='.$month);
 		$criteria->addCondition('year(t.date)='.$year);
-		$criteria->group ='networks.id';
+		$criteria->group ='providers.id';
 		$data   =array();		
 		$totals =array();	
 			
@@ -185,7 +186,7 @@ class Networks extends CActiveRecord
 		$i=0;
 		foreach ($providers as $provider) {
 			$dataArray[$i]['id']            =$provider->id;
-			$dataArray[$i]['networks_name'] =$provider->network_name;
+			$dataArray[$i]['providers_name']=$provider->providers_name;
 			$dataArray[$i]['currency']      =$provider->currency;
 			$dataArray[$i]['clics']         =$provider->clics;
 			$dataArray[$i]['imp']           =$provider->imp;
@@ -218,7 +219,7 @@ class Networks extends CActiveRecord
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'networks_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total'
+		             'id', 'providers_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total'
 		        ),
 		    ),
 		    'pagination'=>array(

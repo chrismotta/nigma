@@ -26,7 +26,7 @@
                 array('label'=>'Dashboard', 'url'=>array('/site/index'), 'itemOptions' => array('class'=>'showLoadingMenuItem'), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByNetwork')),
+                    array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
                     array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
                     array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
