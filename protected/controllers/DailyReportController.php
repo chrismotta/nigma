@@ -503,7 +503,7 @@ class DailyReportController extends Controller
 		$criteria = new CDbCriteria;
 		$criteria->compare('date', $date);
 		if ($affiliate) { // update one affiliate
-			$criteria->compare('networks_id', $affiliate);
+			$criteria->compare('providers_id', $affiliate);
 		} else { // update all affiliate
 			$q = Yii::app()->db->createCommand()
 			    ->select('networks_id')
