@@ -170,7 +170,7 @@ class Affiliates extends CActiveRecord
 		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
 		{
 			$date=date('Y-m-d', strtotime('today'));
-			$sql="select c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
+			$sql="SELECT c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
 				from campaigns c
 				inner join networks n on c.providers_id=n.providers_id 
 				inner join conv_log l on l.campaign_id=c.id
