@@ -1208,9 +1208,10 @@ class DailyReport extends CActiveRecord
 		$totals['clics']    =0;
 		$totals['conv_api'] =0;
 		$totals['conv_adv'] =0;
+		$totals['conv']     =0;
 		$totals['revenue']  =0;
 		$totals['spend']    =0;
-		$totals['profit']    =0;
+		$totals['profit']   =0;
 		if($dailys=Self::model()->findAll($criteria))
 		{			
 			foreach ($dailys as $data) {
@@ -1219,6 +1220,7 @@ class DailyReport extends CActiveRecord
 				$totals['clics']    +=$data->clics;
 				$totals['conv_api'] +=$data->conv_api;
 				$totals['conv_adv'] +=$data->conv_adv;
+				$totals['conv']     +=$data->getConv();
 				$totals['revenue']  +=$data->getRevenueUSD();
 				$totals['spend']    +=$data->getSpendUSD();
 				$totals['profit']   +=$data->getProfit();

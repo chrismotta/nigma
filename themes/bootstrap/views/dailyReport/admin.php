@@ -411,7 +411,7 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 )*100)."%" : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv'] / $totals['clics'], 4 )*100)."%" : 0,
 		),
 		array(
 			'name'              => 'eCPM',
@@ -432,7 +432,7 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['conv_adv']) && $totals['conv_adv']!=0 ? round($totals['spend'] / $totals['conv_adv'], 2) : 0,
+			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? round($totals['spend'] / $totals['conv'], 2) : 0,
 		),
 		array(
 			'name'              => 'date',
