@@ -58,8 +58,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
 	case 'app.kickadserver.mobi':
 	case 'kickadserver.mobi':
+	case 'www.kickadserver.mobi':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
@@ -92,9 +93,27 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 		break;
 	// amazon test
 	case 'test.kickadserver.mobi':
-				defined('YII_DEBUG') or define('YII_DEBUG',true);
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
+					'emulatePrepare'   => true,
+					'username'         => 'www-data',
+					'password'         => 'k1ck4ds3rv3r',
+					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
+				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
+				);
+		break;
+	case 'tmp.kickadserver.mobi':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
@@ -182,9 +201,12 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'              =>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>' =>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'          =>'<controller>/<action>',
+				'<controller:\w+>/<id:\d+>'                           =>'<controller>/view',
+				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
+				// custom parameters //
+				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),
 		'eexcelwriter'=>array(

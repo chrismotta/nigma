@@ -31,7 +31,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<div class="span6">
 		<div class="alert alert-info">
 			<small >TOTAL</small>
-			<h3 class="">Revenue: <?php echo Networks::model()->findByPk($network)->currency . " " . number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
+			<h3 class="">Revenue: <?php echo /*Providers::model()->findByPk($network)->currency . " " . */ number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
 			<br>
 		</div>
 	</div>

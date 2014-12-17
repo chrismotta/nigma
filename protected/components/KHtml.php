@@ -137,24 +137,24 @@ class KHtml extends CHtml
     }
 
     /**
-     * Create dropdown of networks
+     * Create dropdown of providers
      * @param  $value
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterNetworks($value, $networks=NULL, $htmlOptions = array())
+    public static function filterProviders($value, $providers=NULL, $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
-            'empty' => 'All networks',
+            'empty' => 'All providers',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        if ( !$networks ) {
-            $networks = Networks::model()->findAll( array('order' => 'name') );
-            $networks = CHtml::listData($networks, 'id', 'name');
+        if ( !$providers ) {
+            $providers = Providers::model()->findAll( array('order' => 'name') );
+            $providers = CHtml::listData($providers, 'id', 'name');
         }
             
-        return CHtml::dropDownList('networks', $value, $networks, $htmlOptions);
+        return CHtml::dropDownList('providers', $value, $providers, $htmlOptions);
     }
 
     /**
@@ -232,11 +232,11 @@ class KHtml extends CHtml
     /**
      * Create autocomplete input of campaigns
      * @param  $value
-     * @param  $networks_id
+     * @param  $providers_id
      * @param  $htmlOptions
      * @return html for autocomplete
      */
-    public static function filterCampaigns($value, $networks_id = array(), $name = 'campaign', $htmlOptions = array())
+    public static function filterCampaigns($value, $providers_id = array(), $name = 'campaign', $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
             'placeholder' => 'All campaigns',
@@ -244,10 +244,10 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        if ( empty($networks_id) )
+        if ( empty($providers_id) )
             $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
         else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => 'networks_id IN (' . join($networks_id, ', ') . ')') );
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => 'providers_id IN (' . join($providers_id, ', ') . ')') );
 
         $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
 
@@ -343,21 +343,21 @@ class KHtml extends CHtml
     }
 
     /**
-     * Create dropdown of networks
+     * Create dropdown of providers
      * @param  $value
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterNetworksMulti($value, $networks=NULL, $htmlOptions = array(),$name)
+    public static function filterProvidersMulti($value, $providers=NULL, $htmlOptions = array(),$name)
     {
         $defaultHtmlOptions = array(
             'multiple' => 'multiple',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
-        if ( !$networks ) {
-            $networks = Networks::model()->findAll( array('order' => 'name') );
-            $networks = CHtml::listData($networks, 'id', 'name');
+        if ( !$providers ) {
+            $providers = Providers::model()->findAll( array('order' => 'name') );
+            $providers = CHtml::listData($providers, 'id', 'name');
         }
 
         
@@ -365,11 +365,11 @@ class KHtml extends CHtml
         'yiibooster.widgets.TbSelect2',
             array(
                 'name'        => $name,
-                'data'        => $networks,
-                'value'       =>$value,
+                'data'        => $providers,
+                'value'       => $value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Networks',
+                    'placeholder' => 'All Providers',
                     'width' => '20%',
                 ),
             )

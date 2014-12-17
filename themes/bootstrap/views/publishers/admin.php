@@ -82,7 +82,7 @@ $('.search-form form').submit(function(){
 		// 'contact_adm',
 		// 'email_adm',
 		array(
-			'name' => 'id',
+			'name' => 'providers_id',
 		),
 		array(
 			'name' => 'name',

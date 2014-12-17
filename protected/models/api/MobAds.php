@@ -1,9 +1,9 @@
 <?php
 
-class Reporo
+class MobAds
 { 
 
-	private $provider_id = 2;
+	private $provider_id = 38;
 
 	public function downloadInfo()
 	{
@@ -15,7 +15,7 @@ class Reporo
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.reporo');
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.mobads');
 			return 2;
 		}
 
@@ -37,7 +37,7 @@ class Reporo
 		$groups = $this->getResponse($actions["adv"]);
 
 		if (!$groups) { 
-			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.reporo');
+			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.mobads');
 			return 1;
 		}
 
@@ -46,7 +46,7 @@ class Reporo
 
 			// check if campaign group has activities for the date specified
 			if ( ! $this->getResponse($actions["group_stats"] . $group_id . $params) ) {
-				// print "Reporo: INFO - Campaign group: $group_id without activity in the date specified. <br>";
+				// print "mobads: INFO - Campaign group: $group_id without activity in the date specified. <br>";
 				continue;
 			}
 
@@ -71,7 +71,7 @@ class Reporo
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name, $network->use_alternative_convention_name);
 
 				if ( !$dailyReport->campaigns_id ) {
-					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.reporo');
+					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.mobads');
 					continue;
 				}
 
@@ -85,55 +85,56 @@ class Reporo
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				if ( !$dailyReport->save() ) {
-					Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.reporo');
+					Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.mobads');
 					continue;
 				}
 			}
 			// --- end getting compaigns ids from campaign_group id
 		}
 		// --- end getting compaign_groups ids
-		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.reporo');
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.mobads');
 		return 0;
 	}
 
+
 	/**
-	 * Make the request throw Reporo API with the @param and @return the
+	 * Make the request throw mobads API with the @param and @return the
 	 * object response.
 	 *
 	 * @param params: parameters after de url link (must include ?)
 	 * @return the object created from de json's response. Or NULL if error.
 	 */
 	private function getResponse($params) {
-		$network = Networks::model()->findbyPk($this->provider_id);
-		$reporoApiKey = $network->token1;
-		$reporoSecretKey = $network->token2;
-		$reporoGateway = $network->url;
+		$network         = Networks::model()->findbyPk($this->provider_id);
+		$mobadsApiKey    = $network->token1;
+		$mobadsSecretKey = $network->token2;
+		$mobadsGateway   = $network->url;
 		
-		$reporoReqEpoch = time();
-		$reporoReqHash = hash("sha256", $reporoReqEpoch . $reporoSecretKey);
+		$mobadsReqEpoch = time();
+		$mobadsReqHash = hash("sha256", $mobadsReqEpoch . $mobadsSecretKey);
 		
 		$options = array(
 		    'http' => array(
 		        'method' => 'GET',
 		        'header' =>
 		        "accept: application/xml" . "\r\n" .
-		        "x-reporo-key: $reporoApiKey" . "\r\n" .
-		        "x-reporo-epoch: $reporoReqEpoch" . "\r\n" .
-		        "x-reporo-mash: $reporoReqHash" . "\r\n"
+		        "x-mobads-key: $mobadsApiKey" . "\r\n" .
+		        "x-mobads-epoch: $mobadsReqEpoch" . "\r\n" .
+		        "x-mobads-mash: $mobadsReqHash" . "\r\n"
 			    )
 		);
 		$context = stream_context_create($options);
-		$response = file_get_contents($reporoGateway . $params, false, $context);
+		$response = file_get_contents($mobadsGateway . $params, false, $context);
 
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
-			Yii::log("ERROR - json is empty", 'info', 'system.model.api.reporo');
+			Yii::log("ERROR - json is empty", 'info', 'system.model.api.mobads');
 			return NULL;
 		}
 
 		if ( ! $obj ) {
-			Yii::log("ERROR - decoding json", 'info', 'system.model.api.reporo');
+			Yii::log("ERROR - decoding json", 'info', 'system.model.api.mobads');
 			return NULL;
 		}
 		

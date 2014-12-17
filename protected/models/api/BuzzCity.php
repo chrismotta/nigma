@@ -3,7 +3,7 @@
 class BuzzCity
 { 
 
-	private $networks_ids = array(7, 8, 9, 10);
+	private $providers_ids = array(7, 8, 9, 10);
 
 	public function downloadInfo()
 	{
@@ -13,20 +13,20 @@ class BuzzCity
 			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
-		foreach ($this->networks_ids as $network_id) {
+		foreach ($this->providers_ids as $provider_id) {
 
 			// validate if info have't been dowloaded already.
-			if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$network_id, ":date"=>$date)) ) {
+			if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$provider_id, ":date"=>$date)) ) {
 				Yii::log("Information already downloaded.", 'warning', 'system.model.api.buzzCity');
 				continue;
 			}
 
 			// Get json from BuzzCity API.
-			$network = Networks::model()->findbyPk($network_id);
+			$network   = Networks::model()->findbyPk($provider_id);
 			$partnerid = $network->token1;
-			$hash = $network->token2;
-			$apiurl = $network->url;
-			$url = $apiurl . "?partnerid=" . $partnerid . "&hash=" . $hash . "&reporttype=campaign&datefrom=" . $date . "&dateto=" . $date . "&fmt=json&consolidated=1";
+			$hash      = $network->token2;
+			$apiurl    = $network->url;
+			$url       = $apiurl . "?partnerid=" . $partnerid . "&hash=" . $hash . "&reporttype=campaign&datefrom=" . $date . "&dateto=" . $date . "&fmt=json&consolidated=1";
 
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -61,7 +61,7 @@ class BuzzCity
 				}
 
 				$dailyReport->date = $date;
-				$dailyReport->networks_id = $network_id;
+				$dailyReport->providers_id = $provider_id;
 				$dailyReport->imp = $campaign->exposures;
 				$dailyReport->clics = $campaign->clicks;
 				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

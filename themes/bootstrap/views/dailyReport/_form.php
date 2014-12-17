@@ -2,7 +2,7 @@
 /* @var $this DailyReportController */
 /* @var $model DailyReport */
 /* @var $form CActiveForm */
-/* @var $networks */
+/* @var $providers */
 /* @var $campaigns */
 ?>
 
@@ -30,7 +30,7 @@
         else
             echo $form->dropDownListRow($model, 'campaigns_id', $campaigns, array('prompt' => 'Select campaign', 'disabled' => 'disabled'));
 
-        //echo $form->hiddenField($model, 'networks_id', array('type'=>"hidden") );
+        //echo $form->hiddenField($model, 'providers_id', array('type'=>"hidden") );
         echo '<hr>';
         echo $form->textFieldRow($model, 'imp', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'imp_adv', array('class'=>'span3'));

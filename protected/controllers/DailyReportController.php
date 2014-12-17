@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByNetwork', 'updateConvs2s', 'updateEditable'),
+				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByProvider', 'updateConvs2s', 'updateEditable'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -36,7 +36,7 @@ class DailyReportController extends Controller
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('setNewFields','setAllNewFields'),
+				'actions'=>array('setNewFields','setAllNewFields', 'updateSpendAffiliates'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -80,7 +80,7 @@ class DailyReportController extends Controller
 			$model->attributes  = $_POST['DailyReport'];
 			
 			$modelCampaign      = Campaigns::model()->findByPk($model->campaigns_id);
-			$model->networks_id = $modelCampaign->networks_id;
+			$model->providers_id = $modelCampaign->providers_id;
 			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
@@ -91,20 +91,20 @@ class DailyReportController extends Controller
 		$this->renderFormAjax($model);
 	}
 
-	public function actionCreateByNetwork()
+	public function actionCreateByProvider()
 	{
 		$date = date('Y-m-d', strtotime('yesterday'));
-		$currentNetwork = NULL;
+		$currentProvider = NULL;
 
-		// If date and network are submitted then get values
-		if ( isset($_GET['networkSubmit']) ) {
-			$date           = $_GET['date'];
-			$currentNetwork = $_GET['networks'];
+		// If date and provider are submitted then get values
+		if ( isset($_GET['providersSubmit']) ) {
+			$date            = $_GET['date'];
+			$currentProvider = $_GET['providers'];
 		}
 
 		if ( isset($_POST['saveSubmit']) ) {
-			
-			if ( Networks::model()->findByPk($_POST['DailyReport']['networks_id'])->use_vectors ) { // Is entry vectors
+			$tmp = Providers::model()->findByPk($_POST['DailyReport']['providers_id']);
+			if ( $tmp->isNetwork() && $tmp->networks->use_vectors ) { // Is entry vectors
 				$attr = $_POST['DailyReport'];
 				$vector_id = $attr['campaigns_id'];
 				$campaigns = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid' => $vector_id));
@@ -127,7 +127,7 @@ class DailyReportController extends Controller
 					$model=new DailyReport;
 					$model->attributes = $attr;
 					$model->campaigns_id = $campaign->campaigns_id;
-					$r = $model->createByNetwork();
+					$r = $model->createByProvider();
 					$r->c_id = $vector_id;
 					if ($r->result == 'ERROR') {
 						echo json_encode($r);
@@ -138,12 +138,16 @@ class DailyReportController extends Controller
 			} else { // Is entry campaigns
 				$model=new DailyReport;
 				$model->attributes = $_POST['DailyReport'];
-				echo json_encode($model->createByNetwork());
+				echo json_encode($model->createByProvider());
 			}
 			Yii::app()->end();
 		}
 		
-		$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name', 'condition' => 'has_api=0')), 'id', 'name');
+		$criteria        = new CDbCriteria;
+		$criteria->join  = 'LEFT JOIN networks ON t.id=networks.providers_id';
+		$criteria->order = 'name';
+		$criteria->compare('networks.has_api',0);
+		$providers = CHtml::listData(Providers::model()->findAll($criteria), 'id', 'name');
 
 		$campaign = new Campaigns('search');
 		$campaign->unsetAttributes();  // clear any default values
@@ -154,13 +158,13 @@ class DailyReportController extends Controller
 		$daily = new DailyReport('search');
 		$daily->unsetAttributes();  // clear any default values
 
-		$this->render('createByNetwork', array(
-			'model'          => $daily,
-			'campaign'       => $campaign,
-			'vector'         => $vector,
-			'networks'       => $networks,
-			'date'           => $date,
-			'currentNetwork' => $currentNetwork,
+		$this->render('createByProvider', array(
+			'model'           => $daily,
+			'campaign'        => $campaign,
+			'vector'          => $vector,
+			'providers'       => $providers,
+			'date'            => $date,
+			'currentProvider' => $currentProvider,
 		));
 	}
 
@@ -224,11 +228,11 @@ class DailyReportController extends Controller
 		if(isset($_GET['DailyReport']))
 			$model->attributes=$_GET['DailyReport'];
 
-		$networks = CHtml::listData(Networks::model()->findAll(), 'name', 'name');
+		$providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
 
 		$this->render('admin',array(
 			'model'=>$model,
-			'networks_names' => $networks,
+			'providers_names' => $providers,
 		));
 	}
 
@@ -426,21 +430,22 @@ class DailyReportController extends Controller
 
 	public function renderFormAjax($model)
 	{
-		//$networks = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campaigns = CHtml::listData(
-			Campaigns::model()->with(array('networks','opportunities.ios'))->findAll(
-				array('order'=>'ios.name', 'condition'=>'t.status = "Active" AND has_api = 0')
-				), 
-			'id',
-			function($camp) { return $camp->getExternalName($camp->id); }
-			);
+		//$providers = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$criteria       = new CDbCriteria;
+		$criteria->with = array('providers', 'opportunities.ios');
+		$criteria->join = 'LEFT JOIN networks ON t.providers_id=networks.providers_id';
+		$criteria->compare('networks.has_api',0);
+		$criteria->compare('t.status','Active');
+		$criteria->order = 'ios.name';
+		$campaigns = CHtml::listData(Campaigns::model()->findAll($criteria), 'id',
+			function($camp) { return $camp->getExternalName($camp->id); } );
 
 		if ( $model->isNewRecord )
 			$model->is_from_api = 0;
 
 		$this->renderPartial('_form', array(
 			'model'     => $model,
-			//'networks'  => $networks,
+			//'providers'  => $providers,
 			'campaigns' => $campaigns, 
 		), false, true);
 	}
@@ -491,6 +496,37 @@ class DailyReportController extends Controller
 			}
 		}else{
 			echo "no date setted";
+		}
+	}
+
+	public function actionUpdateSpendAffiliates()
+	{
+		$date      = isset($_GET['date']) ? $_GET['date'] : date('d-m-Y', strtotime('today'));
+		$affiliate = isset($_GET['affiliate']) ? $_GET['affiliate'] : NULL;
+		$newRate   = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
+
+		$criteria = new CDbCriteria;
+		$criteria->compare('date', $date);
+		if ($affiliate) { // update one affiliate
+			$criteria->compare('providers_id', $affiliate);
+		} else { // update all affiliate
+			$q = Yii::app()->db->createCommand()
+			    ->select('networks_id')
+			    ->from('affiliates')
+			    ->queryAll(false);
+
+			foreach ($q as $nid)
+	        	$affiliates[] = $nid[0];
+
+			$criteria->addInCondition('networks_id', $affiliates);
+		}
+
+		$list = DailyReport::model()->findAll( $criteria );
+		foreach ($list as $model) {
+			$model->updateSpendAffiliates($newRate);
+			$model->setNewFields();
+			$model->save();
+			echo $model->id . " - updated<br/>";
 		}
 	}
 
