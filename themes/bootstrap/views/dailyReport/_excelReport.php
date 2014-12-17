@@ -7,7 +7,7 @@ $dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 $opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
-$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 $adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 $sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 ?>
@@ -78,7 +78,7 @@ $sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
        if (FilterManager::model()->isUserTotalAccess('daily'))
             KHtml::filterAccountManagersMulti($accountManager,array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-accountManager-select'),'excel-opportunities-select','excel-accountManager');
         KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-opportunities-select'),'excel-opportunities');
-        KHtml::filterNetworksMulti($networks, NULL, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-networks-select'),'excel-networks');
+        KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-providers-select'),'excel-providers');
         KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 40%; margin-left: 1em",'id' => 'excel-advertisers-cat-select'),'excel-advertisers-cat');
         ?>
         <div class="input-append">

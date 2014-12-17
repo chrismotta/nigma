@@ -28,13 +28,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 ?>
 </div>
 
-<?php // echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
-
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'                       => 'currency-grid',
 	'dataProvider'             => $model->search(),

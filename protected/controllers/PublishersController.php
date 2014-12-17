@@ -199,7 +199,7 @@ class PublishersController extends Controller
 
 	private function renderFormAjax($model) 
 	{
-		$currency   = KHtml::enumItem($model, 'currency');
+		// $currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
 		$model_publ = KHtml::enumItem($model, 'model');
 
@@ -208,7 +208,7 @@ class PublishersController extends Controller
 
 		$this->renderPartial('_form', array(
 			'model'      => $model,
-			'currency'   => $currency,
+			// 'currency'   => $currency,
 			'model_publ' => $model_publ,
 			'country'    => $country,
 			'entity'     => $entity,

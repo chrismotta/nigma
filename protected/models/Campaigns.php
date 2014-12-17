@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'campaigns':
  * @property integer $id
  * @property string $name
- * @property integer $networks_id
+ * @property integer $providers_id
  * @property integer $campaign_categories_id
  * @property integer $wifi
  * @property integer $formats_id
@@ -20,7 +20,7 @@
  * @property boolean $post_data
  *
  * The followings are the available model relations:
- * @property Networks $networks
+ * @property Providers $providers
  * @property Devices $devices
  * @property Formats $formats
  * @property CampaignCategories $campaignCategories
@@ -71,8 +71,8 @@ class Campaigns extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, networks_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
-			array('networks_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
+			array('name, providers_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
+			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			array('cap', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
@@ -81,7 +81,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, ios_name, opportunities_rate, opportunities_carrie, networks_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, ios_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,7 +93,7 @@ class Campaigns extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'networks'           => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'providers'           => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 			'devices'            => array(self::BELONGS_TO, 'Devices', 'devices_id'),
 			'formats'            => array(self::BELONGS_TO, 'Formats', 'formats_id'),
 			'campaignCategories' => array(self::BELONGS_TO, 'CampaignCategories', 'campaign_categories_id'),
@@ -115,7 +115,7 @@ class Campaigns extends CActiveRecord
 		return array(
 			'id'                     => 'ID',
 			'name'                   => 'Name',
-			'networks_id'            => 'Networks',
+			'providers_id'           => 'Providers',
 			'campaign_categories_id' => 'Campaign Categories',
 			'wifi'                   => 'Wifi',
 			'formats_id'             => 'Formats',
@@ -132,7 +132,7 @@ class Campaigns extends CActiveRecord
 			'opportunities_carrier'  => 'Carrier',
 			'post_data'              => 'Post Data',
 			'banner_sizes_id'        => 'Banner Sizes',
-			'net_currency'           => 'Net Currency',
+			'net_currency'           => 'Prov Currency',
 			'clicks'                 => 'Clicks Log',
 			'conv'                   => 'Convertions Log',
 			'account_manager'        => 'Account Manager',
@@ -159,7 +159,7 @@ class Campaigns extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search($accountManager, $opportunitie, $networks, $advertiser)
+	public function search($accountManager, $opportunitie, $providers, $advertiser)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -178,7 +178,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		//We need to list all related tables in with property
-		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'vectors', 'networks');
+		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'vectors', 'providers');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
@@ -187,7 +187,7 @@ class Campaigns extends CActiveRecord
 		if ($accountManager != NULL)
 			$criteria->compare('accountManager.id',$accountManager);
 		$criteria->compare('opportunities_id',$opportunitie);
-		$criteria->compare('t.networks_id',$networks);
+		$criteria->compare('t.providers_id',$providers);
 		$criteria->compare('advertisers.cat',$advertiser);
 
 		//nomenclatura
@@ -207,7 +207,7 @@ class Campaigns extends CActiveRecord
 			FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 
 		$criteria->compare('ios.name',$this->ios_name, true);
-		$criteria->compare('networks.currency',$this->net_currency, true);
+		$criteria->compare('providers.currency',$this->net_currency, true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
 
 		return new CActiveDataProvider($this, array(
@@ -241,8 +241,8 @@ class Campaigns extends CActiveRecord
 						'desc' =>'ios.id DESC',
 		            ),
 		            'net_currency'=>array(
-						'asc'  =>'networks.currency',
-						'desc' =>'networks.currency DESC',
+						'asc'  =>'providers.currency',
+						'desc' =>'providers.currency DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
@@ -252,20 +252,20 @@ class Campaigns extends CActiveRecord
 	}
 
 	/**
-	 * Retrieves a list of models for specified network and date. Ignore the campaigns that had already info entry.
+	 * Retrieves a list of models for specified provider and date. Ignore the campaigns that had already info entry.
 	 *
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function searchByNetworkAndDate($network_id, $date)
+	public function searchByProviderAndDate($provider_id, $date)
 	{
 		$criteria=new CDbCriteria;
 
-		if ( $network_id ) {
-			$criteria->compare('networks_id', $network_id);
-			$criteria->addCondition("t.id NOT IN (SELECT d.campaigns_id FROM daily_report d WHERE d.networks_id=". $network_id . " AND d.date='". date('Y-m-d', strtotime($date)) . "')");
+		if ( $provider_id ) {
+			$criteria->compare('providers_id', $provider_id);
+			$criteria->addCondition("t.id NOT IN (SELECT d.campaigns_id FROM daily_report d WHERE d.providers_id=". $provider_id . " AND d.date='". date('Y-m-d', strtotime($date)) . "')");
 		} else {
-			$criteria->compare('networks_id', -1); // Select none
+			$criteria->compare('providers_id', -1); // Select none
 		}
 
 		$criteria->with = array('opportunities', 'opportunities.country');
@@ -325,7 +325,7 @@ class Campaigns extends CActiveRecord
 
 	public function getExternalName($id=NULL)
 	{
-		$model = Campaigns::model()->with('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'networks', 'devices', 'formats')->findByPk($id);
+		$model = Campaigns::model()->with('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'providers', 'devices', 'formats')->findByPk($id);
 
 		$opportunity = $model->opportunities;
 		$adv = $model->opportunities->ios->advertisers->prefix;
@@ -345,9 +345,9 @@ class Campaigns extends CActiveRecord
 		if ( $model->devices_id !== NULL )
 			$device = '-' . $model->devices->prefix;
 
-		$network = '';
-		if ( $model->networks_id !== NULL )
-			$network = '-' . $model->networks->prefix;
+		$providers = '';
+		if ( $model->providers_id !== NULL )
+			$providers = '-' . $model->providers->prefix;
 		
 		$product = $opportunity->product ? '-' . $opportunity->product : '';
 
@@ -356,17 +356,17 @@ class Campaigns extends CActiveRecord
 			$format = '-' . $model->formats->prefix;
 		
 		$alternativeConventionName = '';
-		if ($model->networks->use_alternative_convention_name)
+		if ( $model->providers->isNetwork() && $model->providers->networks->use_alternative_convention_name )
 			$alternativeConventionName = '-' . $model->id;
 
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
-		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $network . $product . $format . '-' . $model->name . $alternativeConventionName;
+		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $providers . $product . $format . '-' . $model->name . $alternativeConventionName;
 	}
 	
 	public function excel($startDate=NULL, $endDate=NULL, $id=null)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->with=array('clicksLog', 'clicksLog.networks');
+		$criteria->with=array('clicksLog', 'clicksLog.providers');
 		if($id) $criteria->addCondition('t.campaign_id='.$id);
 		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
 		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");
@@ -401,7 +401,7 @@ class Campaigns extends CActiveRecord
 	    return $charts;
 	    
 	}
-	public function getTotals($startDate=NULL, $endDate=NULL,$campaign=NULL,$accountManager=NULL,$opportunitie=null,$networks=null)
+	public function getTotals($startDate=NULL, $endDate=NULL,$campaign=NULL,$accountManager=NULL,$opportunitie=null,$providers=null)
 	{
 		if(!$startDate)	$startDate = 'today' ;
 		if(!$endDate) $endDate   = 'today';
@@ -419,14 +419,14 @@ class Campaigns extends CActiveRecord
 		}
 
 		$criteria=new CDbCriteria;
-		//$criteria->with('opportunities','networks');
-		$criteria->with = array('opportunities','opportunities.accountManager','networks');
+		//$criteria->with('opportunities','providers');
+		$criteria->with = array('opportunities','opportunities.accountManager','providers');
 		if($campaign!=null)$criteria->compare('t.id',$campaign);
 		else
 		{
 			if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
 			if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
-			if($networks!=null)$criteria->compare('t.networks_id',$networks);
+			if($providers!=null)$criteria->compare('t.providers_id',$providers);
 		}
 		$campaigns=self::model()->findAll($criteria);
 		foreach ($campaigns as $campaign) 
@@ -500,7 +500,7 @@ class Campaigns extends CActiveRecord
 		return $result;
 	}
 
-	public function searchTraffic($accountManager=NULL,$opportunitie=null,$networks=null,$dateStart='today',$dateEnd='today')
+	public function searchTraffic($accountManager=NULL,$opportunitie=null,$providers=null,$dateStart='today',$dateEnd='today')
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -523,7 +523,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
 		if($opportunitie!=null)$criteria->compare('opportunities.id',$opportunitie);
-		if($networks!=null)$criteria->compare('t.networks_id',$networks);
+		if($providers!=null)$criteria->compare('t.providers_id',$providers);
 
 		$dateStart = date('Y-m-d', strtotime($dateStart)); 
 		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
