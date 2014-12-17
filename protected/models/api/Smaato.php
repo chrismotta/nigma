@@ -3,7 +3,7 @@
 class Smaato
 { 
 
-	private $network_id = 28;
+	private $provider_id = 28;
 
 	public function downloadInfo()
 	{
@@ -14,13 +14,13 @@ class Smaato
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.smaato');
 			return 2;
 		}
 
 		// Get json from Smaato API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$apiurl = $network->url;
 		$username = $network->token1;
 		$password = $network->token2;
@@ -61,7 +61,7 @@ class Smaato
 	private function saveDailyReport($campaign, $date, $useAlternativeName)
 	{
 		$dailyReport = new DailyReport;
-		// get campaign ID used in KickAds Server, from the campaign name use in the external network
+		// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name'], $useAlternativeName);
 
 		if ( !$dailyReport->campaigns_id ) {
@@ -74,7 +74,7 @@ class Smaato
 		}
 
 		$dailyReport->date        = $date;
-		$dailyReport->networks_id = $this->network_id;
+		$dailyReport->providers_id = $this->provider_id;
 		$dailyReport->clics       = $data['clicks']['value'];
 		$dailyReport->imp         = $data['impressions']['value'];
 		$dailyReport->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));

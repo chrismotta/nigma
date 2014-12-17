@@ -120,11 +120,11 @@ class VectorsController extends Controller
 	public function actionRedirectAjax($id)
 	{
 		$vectorsModel    = $this->loadModel($id);
-		//$network = Networks::model()->findByPk($model->networks_id);
+		//$provider = Providers::model()->findByPk($model->providers_id);
 
 		$this->renderPartial('_redirects',array(
 			'model'        => $vectorsModel,
-			//'network'      => $network,
+			//'provider'      => $provider,
 			'vectorName' => Vectors::model()->getExternalName($id),
 		), false, true);
 	}
@@ -256,11 +256,15 @@ class VectorsController extends Controller
 
 	private function renderFormAjax($model)
 	{	// excepción comentada provisoriamente
-		$networks = CHtml::listData(Networks::model()->findAll(array('order' => 'name', 'condition' => 'use_vectors=1')), 'id', 'name');
+		$criteria        = new CDbCriteria;
+		$criteria->join  = 'LEFT JOIN networks ON networks.providers_id=t.id';
+		$criteria->compare('networks.use_vectors',1);
+		$criteria->order = 'name';
+		$providers = CHtml::listData(Providers::model()->findAll($criteria), 'id', 'name');
 
 		$this->renderPartial('_form',array(
 			'model'    => $model,
-			'networks' => $networks,
+			'providers' => $providers,
 		), false, true);
 	}
 
@@ -271,7 +275,7 @@ class VectorsController extends Controller
 		$criteria = new CDbCriteria;
 		$criteria->with = array('vectors');
 		$criteria->addCondition("t.id NOT IN (SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id=". $id . ")");
-		$criteria->compare('t.networks_id', $vectorsModel->networks_id);
+		$criteria->compare('t.providers_id', $vectorsModel->providers_id);
 		$criteria->compare('t.status', 'Active');
 		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 

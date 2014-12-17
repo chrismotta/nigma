@@ -26,7 +26,7 @@
 	<?php 
 
         if ( ! $model->isNewRecord ) {
-    		echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
+    		echo $form->textFieldRow($model, 'providers_d', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
     	}
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
@@ -41,7 +41,7 @@
         echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
-        echo $form->dropDownListRow($model, 'currency', $currency, array('prompt' => 'Select a currency'));
+        // echo $form->dropDownListRow($model, 'currency', $currency, array('prompt' => 'Select a currency'));
         echo $form->hiddenField($model, 'account_manager_id', array('type'=>"hidden") );
         echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
         echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));

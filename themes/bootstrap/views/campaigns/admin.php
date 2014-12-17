@@ -72,7 +72,7 @@ if(!$is_archived){
 <?php
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$providers       = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
 ?>
 
@@ -93,7 +93,7 @@ if(!$is_archived){
 			echo KHtml::filterAccountManagers($accountManager);
 		
 		echo KHtml::filterOpportunities($opportunitie, $accountManager);
-		echo KHtml::filterNetworks($networks);
+		echo KHtml::filterProviders($providers);
 		echo KHtml::filterAdvertisersCategory($advertiser);
 	?>
 	  
@@ -104,7 +104,7 @@ if(!$is_archived){
 
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
-	'dataProvider'             => $model->search($accountManager, $opportunitie, $networks, $advertiser),
+	'dataProvider'             => $model->search($accountManager, $opportunitie, $providers, $advertiser),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,
@@ -165,7 +165,7 @@ if(!$is_archived){
 		array(
 			'name'              => 'net_currency',
 			'headerHtmlOptions' => array('style' => 'width: 20px'),
-			'value'             => '$data->networks->currency',
+			'value'             => '$data->providers->currency',
         ),
 		array(
 			'name'              => 'cap',

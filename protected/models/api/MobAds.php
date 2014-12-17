@@ -3,7 +3,7 @@
 class MobAds
 { 
 
-	private $network_id = 38;
+	private $provider_id = 38;
 
 	public function downloadInfo()
 	{
@@ -14,12 +14,12 @@ class MobAds
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.mobads');
 			return 2;
 		}
 
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 
 		// --- setting actions for requests
 		$actions = array(
@@ -67,7 +67,7 @@ class MobAds
 				$dailyReport = new DailyReport();
 				
 				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
-				// get campaign ID used in KickAds Server, from the campaign name use in the external network
+				// get campaign ID used in KickAds Server, from the campaign name use in the external provider
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name, $network->use_alternative_convention_name);
 
 				if ( !$dailyReport->campaigns_id ) {
@@ -76,7 +76,7 @@ class MobAds
 				}
 
 				$dailyReport->date = $date;
-				$dailyReport->networks_id = $this->network_id;
+				$dailyReport->providers_id = $this->provider_id;
 				$dailyReport->imp = $campaign_stats[0]->impressions;
 				$dailyReport->clics = $campaign_stats[0]->clicks;
 				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
@@ -105,7 +105,7 @@ class MobAds
 	 * @return the object created from de json's response. Or NULL if error.
 	 */
 	private function getResponse($params) {
-		$network         = Networks::model()->findbyPk($this->network_id);
+		$network         = Networks::model()->findbyPk($this->provider_id);
 		$mobadsApiKey    = $network->token1;
 		$mobadsSecretKey = $network->token2;
 		$mobadsGateway   = $network->url;

@@ -131,7 +131,7 @@ if($action == "Create"){ ?>
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo '<hr/>';
-        echo $form->dropDownListRow($model, 'networks_id', $networks, array('prompt' => 'Select a network'));
+        echo $form->dropDownListRow($model, 'providers_id', $providers, array('prompt' => 'Select a provider'));
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));
         echo $form->checkboxRow($model, 'wifi');
         echo $form->checkboxRow($model, 'ip');
