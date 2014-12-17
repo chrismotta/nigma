@@ -19,7 +19,7 @@ class AffiliatesAPI
 
 			// validate if info have't been dowloaded already.
 			if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$affiliate->providers_id, ":date"=>$date)) ) {
-				Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->affiliate->name);
+				Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->affiliates->name);
 				continue;
 			}
 
@@ -44,11 +44,11 @@ class AffiliatesAPI
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				if ( !$dailyReport->save() ) {
-					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->affiliate->name);
+					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->affiliates->name);
 					continue;
 				}
 			}
-			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->affiliate->name);
+			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->affiliates->name);
 		}
 		Yii::log("SUCCESS - Daily info downloaded for all affiliates", 'info', 'system.model.api.affiliate');
 		return 0;
