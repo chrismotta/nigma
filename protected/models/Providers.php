@@ -56,14 +56,14 @@ class Providers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'affiliates' => array(self::HAS_ONE, 'Affiliates', 'providers_id'),
-			'apiCronLogs' => array(self::HAS_MANY, 'ApiCronLog', 'providers_id'),
-			'campaigns' => array(self::HAS_MANY, 'Campaigns', 'providers_id'),
-			'clicksLogs' => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
+			'affiliates'   => array(self::HAS_ONE, 'Affiliates', 'providers_id'),
+			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'providers_id'),
+			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'providers_id'),
+			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'providers_id'),
-			'networks' => array(self::HAS_ONE, 'Networks', 'providers_id'),
-			'publishers' => array(self::HAS_ONE, 'Publishers', 'providers_id'),
-			'vectors' => array(self::HAS_MANY, 'Vectors', 'providers_id'),
+			'networks'     => array(self::HAS_ONE, 'Networks', 'providers_id'),
+			'publishers'   => array(self::HAS_ONE, 'Publishers', 'providers_id'),
+			'vectors'      => array(self::HAS_MANY, 'Vectors', 'providers_id'),
 		);
 	}
 
@@ -73,9 +73,9 @@ class Providers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'prefix' => 'Prefix',
-			'name' => 'Name',
+			'id'       => 'ID',
+			'prefix'   => 'Prefix',
+			'name'     => 'Name',
 			'currency' => 'Currency',
 		);
 	}
