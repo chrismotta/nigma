@@ -282,13 +282,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp'],
+			'footer'            => number_format($totals['imp']),
         ),
         array(	
 			'name'              => 'imp_adv',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp_adv'],
+			'footer'            => number_format($totals['imp_adv']),
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
 			'editable'          => array(
 				'apply'      => $sum ? false : true,
@@ -308,13 +308,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'clics',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['clics'],
+			'footer'            => number_format($totals['clics']),
         ),
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['conv_api'],
+			'footer'            => number_format($totals['conv_api']),
         ),
 		array(
 			'name'              => 'conv_adv',
@@ -339,7 +339,7 @@ $('.search-form form').submit(function(){
 					  	}
 					}',
             ),
-			'footer' => $totals['conv_adv'],
+			'footer' => number_format($totals['conv_adv']),
 		),
 		array(
 			'name'              => 'mr',
@@ -376,21 +376,21 @@ $('.search-form form').submit(function(){
 			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['revenue'],
+			'footer'            => number_format($totals['revenue'],2),
         ),
 		array(
 			'name'              => 'spend',
 			'value'             => 'number_format($data->getSpendUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['spend'],
+			'footer'            => number_format($totals['spend'],2),
         ),
 		array(
 			'name'              => 'profit',
 			'value'             => 'number_format($data->profit, 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['profit'],
+			'footer'            => number_format($totals['profit'],2),
 		),
 		array(
 			'name'              => 'profit_percent',
