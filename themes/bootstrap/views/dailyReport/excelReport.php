@@ -33,7 +33,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'  => 'commercial_name',
-            'value' => '$data->campaigns->opportunities->ios->commercial->lastname . " " .$data->campaigns->opportunities->ios->commercial->lastname',
+            'value' => '$data->campaigns->opportunities->ios->commercial->lastname . " " .$data->campaigns->opportunities->ios->commercial->name',
         ),
         array(
             'name'  => 'campaign_name',
