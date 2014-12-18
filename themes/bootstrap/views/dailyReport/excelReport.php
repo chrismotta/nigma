@@ -32,6 +32,10 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name',
         ),
         array(
+            'name'  => 'commercial_name',
+            'value' => '$data->campaigns->opportunities->ios->commercial->lastname . " " .$data->campaigns->opportunities->ios->commercial->lastname',
+        ),
+        array(
             'name'  => 'campaign_name',
             'value' => 'Campaigns::model()->getExternalName($data->campaigns_id)',
         ),
