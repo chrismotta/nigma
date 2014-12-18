@@ -207,7 +207,8 @@ class ConvLogController extends Controller
 						ORDER BY id ASC 
 						LIMIT 0,300000';
 
-		$deleteRows	  = 'DELETE FROM conv_log WHERE id <= (
+		$deleteRows	  = 'DELETE FROM conv_log 
+						WHERE id <= (
 							SELECT id FROM conv_log_storage 
 							ORDER BY id DESC 
 							LIMIT 0,1

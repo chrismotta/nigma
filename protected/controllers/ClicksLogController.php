@@ -13,11 +13,11 @@ class ClicksLogController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData', 'updateQuery'),
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
 				'roles'=>array('admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData', 'updateQuery'),
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
