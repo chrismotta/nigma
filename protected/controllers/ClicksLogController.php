@@ -27,7 +27,7 @@ class ClicksLogController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
-				'ips'=>array('54.88.85.13'),
+				'ips'=>array('54.88.85.63'),
 			),
 			array('allow', 
 				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
