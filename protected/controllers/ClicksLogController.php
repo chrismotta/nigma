@@ -457,6 +457,38 @@ class ClicksLogController extends Controller
 
 	}
 
+	/**
+	 * Store clicks_log data from 1 month ago in clicks_log_storage_2
+	 * @return string Transaction status
+	 */
+	public function actionStorage()
+	{
+		$copyRows     = 'INSERT INTO clicks_log_storage_2 
+						SELECT * FROM clicks_log WHERE id < (
+							SELECT id FROM clicks_log 
+							WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL 1 MONTH)) 
+							ORDER BY id ASC 
+							LIMIT 0,1
+							) 
+						ORDER BY id 
+						ASC LIMIT 0,300000';
+
+		$deleteRows	 = 'DELETE FROM clicks_log 
+						WHERE id <= (
+							SELECT id FROM clicks_log_storage_2 
+							ORDER BY id DESC 
+							LIMIT 0,1
+							) 
+						ORDER BY id ASC';
+		
+		$result['action'] = 'ClicksLogStorage';
+		$command = Yii::app()->db->createCommand($copyRows);
+		$result['inserted'] = $command->execute();
+		$command = Yii::app()->db->createCommand($deleteRows);
+		$result['deleted'] = $command->execute();
+		echo json_encode($result);
+	}
+
 	// Uncomment the following methods and override them if needed
 	/*
 	public function filters()

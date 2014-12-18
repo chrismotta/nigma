@@ -192,4 +192,34 @@ class ConvLogController extends Controller
 
 	}
 
+	/**
+	 * Store conv_log data from 1 month ago in conv_lof_storage
+	 * @return string Transaction status
+	 */
+	public function actionStorage()
+	{
+		$copyRows     = 'INSERT INTO conv_log_storage 
+						SELECT * FROM conv_log WHERE id < (
+							SELECT id FROM conv_log 
+							WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL 1 MONTH)) 
+							ORDER BY id ASC 
+							LIMIT 0,1) 
+						ORDER BY id ASC 
+						LIMIT 0,300000';
+
+		$deleteRows	  = 'DELETE FROM conv_log WHERE id <= (
+							SELECT id FROM conv_log_storage 
+							ORDER BY id DESC 
+							LIMIT 0,1
+							) 
+						ORDER BY id ASC';
+		
+		$result['action'] = 'ConvLogStorage';
+		$command = Yii::app()->db->createCommand($copyRows);
+		$result['inserted']  = $command->execute();
+		$command = Yii::app()->db->createCommand($deleteRows);
+		$result['deleted']  = $command->execute();
+		echo json_encode($result);
+	}
+
 }
