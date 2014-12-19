@@ -127,7 +127,7 @@ class Affiliates extends CActiveRecord
 			$end=date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today'))? date('Y-m-d', strtotime('-1 day',strtotime($dateEnd))) : date('Y-m-d', strtotime($dateEnd));
 			
 			$sql="SELECT c.id,
-				IF(ISNULL(d.conv_adv) and ISNULL(d.conv_api),
+				IF((d.conv_adv IS NOT NULL) OR (d.conv_api IS NOT NULL),
 					ROUND(
 						d.spend/
 								IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
