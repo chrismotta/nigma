@@ -35,7 +35,7 @@ class IosValidation extends CActiveRecord
 		return array(
 			array('period, date, validation_token', 'required'),
 			array('ios_id', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>8),
+			array('status', 'length', 'max'=>255),
 			array('comment', 'length', 'max'=>255),
 			array('validation_token', 'length', 'max'=>45),
 			// The following rule is used by search().
@@ -181,5 +181,16 @@ class IosValidation extends CActiveRecord
 			return $validation->status;
 		else
 			return 'Not Sended';
+	}
+
+	public function loadByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::model()->find($criteria))
+			return $validation;
+		else return 'Load error';
 	}
 }
