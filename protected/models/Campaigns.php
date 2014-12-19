@@ -73,9 +73,9 @@ class Campaigns extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, providers_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
-			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id, external_rate', 'numerical', 'integerOnly'=>true),
+			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
-			array('cap', 'length', 'max'=>11),
+			array('cap, external_rate', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>256),
 			array('url', 'url'),

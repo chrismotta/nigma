@@ -20,31 +20,23 @@ class AffiliatesController extends Controller
 		if(Yii::app()->user->id)
 		{
 			$model=new Affiliates;
-			$network=Affiliates::model()->findByUser(Yii::app()->user->id)->networks_id;
+			$provider=Affiliates::model()->findByUser(Yii::app()->user->id)->providers_id;
 
 			$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
 			$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-			$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-			$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
-			$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-			$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 			$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
-
+			
 			$dateStart  = date('Y-m-d', strtotime($dateStart));
 			$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-			$data = $model->getAffiliates($dateStart, $dateEnd, $network);
+			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
 
 			$this->render('index',array(
-				'model'          =>$model,
-				'network'        => $network,
-				'dateStart'      =>$dateStart,
-				'dateEnd'        =>$dateEnd,
-				'accountManager' =>$accountManager,
-				'opportunities'  =>$opportunities,
-				'networks'       =>$networks,
-				'adv_categories' =>$adv_categories,
-				'sum'            =>$sum,
-				'data'           =>$data
+				'model'     =>$model,
+				'provider'  =>$provider,
+				'dateStart' =>$dateStart,
+				'dateEnd'   =>$dateEnd,
+				'sum'       =>$sum,
+				'data'      =>$data
 			));
 		}
 		else

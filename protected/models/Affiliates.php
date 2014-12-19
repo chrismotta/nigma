@@ -4,21 +4,35 @@
  * This is the model class for table "affiliates".
  *
  * The followings are the available columns in table 'affiliates':
- * @property integer $id
- * @property integer $networks_id
- * @property string $rate
+ * @property integer $providers_id
  * @property integer $users_id
+ * @property integer $country_id
+ * @property string $name
+ * @property string $commercial_name
+ * @property string $state
+ * @property string $zip_code
+ * @property string $address
+ * @property string $phone
+ * @property string $contact_com
+ * @property string $email_com
+ * @property string $contact_adm
+ * @property string $email_adm
+ * @property string $entity
+ * @property string $tax_id
+ * @property string $net_payment
  *
  * The followings are the available model relations:
+ * @property GeoLocation $country
+ * @property Providers $providers
  * @property Users $users
- * @property Networks $networks
  */
 class Affiliates extends CActiveRecord
 {
-	public $date;
-	public $name;
+	public $rate;
 	public $conv;
 	public $spend;
+	public $date;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -35,12 +49,13 @@ class Affiliates extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('networks_id', 'required'),
-			array('networks_id, users_id', 'numerical', 'integerOnly'=>true),
-			array('rate', 'length', 'max'=>11),
+			array('providers_id, name, commercial_name, state, zip_code, address, entity, tax_id', 'required'),
+			array('providers_id, users_id, country_id', 'numerical', 'integerOnly'=>true),
+			array('name, commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
+			array('entity', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, networks_id, rate, users_id', 'safe', 'on'=>'search'),
+			array('providers_id, users_id, country_id, name, commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, entity, tax_id, net_payment', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -52,8 +67,9 @@ class Affiliates extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'users'    => array(self::BELONGS_TO, 'Users', 'users_id'),
-			'networks' => array(self::BELONGS_TO, 'Networks', 'networks_id'),
+			'country'   => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
+			'users'     => array(self::BELONGS_TO, 'Users', 'users_id'),
 		);
 	}
 
@@ -63,10 +79,25 @@ class Affiliates extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'          => 'ID',
-			'networks_id' => 'Networks',
-			'rate'        => 'Rate',
-			'users_id'    => 'Users',
+			'providers_id'    => 'Providers',
+			'users_id'        => 'Users',
+			'country_id'      => 'Country',
+			'name'            => 'Name',
+			'commercial_name' => 'Commercial Name',
+			'state'           => 'State',
+			'zip_code'        => 'Zip Code',
+			'address'         => 'Address',
+			'phone'           => 'Phone',
+			'contact_com'     => 'Contact Com',
+			'email_com'       => 'Email Com',
+			'contact_adm'     => 'Contact Adm',
+			'email_adm'       => 'Email Adm',
+			'entity'          => 'Entity',
+			'tax_id'          => 'Tax',
+			'net_payment'     => 'Net Payment',
+			'rate'            => 'Rate',
+			'conv'            => 'Conv',
+			'spend'           => 'Revenue',
 		);
 	}
 
@@ -88,10 +119,22 @@ class Affiliates extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('networks_id',$this->networks_id);
-		$criteria->compare('rate',$this->rate,true);
+		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('users_id',$this->users_id);
+		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('name',$this->name,true);
+		$criteria->compare('commercial_name',$this->commercial_name,true);
+		$criteria->compare('state',$this->state,true);
+		$criteria->compare('zip_code',$this->zip_code,true);
+		$criteria->compare('address',$this->address,true);
+		$criteria->compare('phone',$this->phone,true);
+		$criteria->compare('contact_com',$this->contact_com,true);
+		$criteria->compare('email_com',$this->email_com,true);
+		$criteria->compare('contact_adm',$this->contact_adm,true);
+		$criteria->compare('email_adm',$this->email_adm,true);
+		$criteria->compare('entity',$this->entity,true);
+		$criteria->compare('tax_id',$this->tax_id,true);
+		$criteria->compare('net_payment',$this->net_payment,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -132,7 +175,7 @@ class Affiliates extends CActiveRecord
 						d.spend/
 								IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2
 					),
-				a.rate) as rate,
+				c.external_rate) as rate,
 				sum(
 					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
 				) as conv,
@@ -140,10 +183,10 @@ class Affiliates extends CActiveRecord
 				DATE(d.date) as date
 				from daily_report d 
 				inner join campaigns c on d.campaigns_id=c.id
-				inner join networks n on c.providers_id=n.providers_id 
-				inner join affiliates a on a.networks_id=n.providers_id
+				inner join providers p on c.providers_id=p.id 
+				inner join affiliates a on a.providers_id=p.id
 				WHERE d.date BETWEEN :dateStart AND :dateEnd
-				AND n.providers_id = :affiliate
+				AND p.id = :affiliate
 				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":dateStart", $dateStart, PDO::PARAM_STR);
@@ -170,13 +213,13 @@ class Affiliates extends CActiveRecord
 		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
 		{
 			$date=date('Y-m-d', strtotime('today'));
-			$sql="SELECT c.id,count(l.id) as conv, a.rate as rate, (count(l.id)*a.rate) as spend, DATE(l.date) as date
+			$sql="SELECT c.id,count(l.id) as conv, c.external_rate as rate, (count(l.id)*c.external_rate) as spend, DATE(l.date) as date
 				from campaigns c
-				inner join networks n on c.providers_id=n.providers_id 
+				inner join providers p on c.providers_id=p.id 
 				inner join conv_log l on l.campaign_id=c.id
-				inner join affiliates a on a.networks_id=n.providers_id
+				inner join affiliates a on a.providers_id=p.id
 				WHERE DATE(l.date)=DATE(:date)
-				AND n.providers_id = :affiliate
+				AND p.id = :affiliate
 				group by c.id,DATE(l.date)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":date", $date, PDO::PARAM_STR);

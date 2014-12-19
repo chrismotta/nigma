@@ -31,7 +31,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<div class="span6">
 		<div class="alert alert-info">
 			<small >TOTAL</small>
-			<h3 class="">Revenue: <?php echo /*Providers::model()->findByPk($network)->currency . " " . */ number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
+			<h3 class="">Revenue: <?php echo Providers::model()->findByPk($provider)->currency . " " . number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
 			<br>
 		</div>
 	</div>
@@ -124,28 +124,32 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 					'htmlOptions' => array('style' => 'width: 600px;') ,
                 ),
                 array(
-					'name'   =>'rate', 
-					'header' =>'Rate',
+					'name'        =>'rate', 
+					'header'      =>'Rate',
+					'htmlOptions' =>array('style'=>'text-align: right')
                 ),
                 array(
-					'name'   =>'conv', 
-					'header' =>'Conv',
+					'name'        =>'conv', 
+					'header'      =>'Conv',
+					'htmlOptions' =>array('style'=>'text-align: right')
                 ),
                 array(
-					'name'   =>'spend', 
-					'header' =>'Revenue',
+					'name'        =>'spend', 
+					'header'      =>'Revenue',
+					'value'       =>'number_format($data["spend"], 2)',
+					'htmlOptions' =>array('style'=>'text-align:right')
                 ),
                 array(
-					'name'              => 'firstLetter',
-					'value'             => '$data["date"]',
-					'headerHtmlOptions' => array('style'=>'display:none'),
+					'name'              =>'firstLetter',
+					'value'             =>'$data["date"]',
+					'headerHtmlOptions' =>array('style'=>'display:none'),
 					'htmlOptions'       =>array('style'=>'display:none')
 					),
             ),
 	)
 ); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalDailyReport')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalAffiliates')); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
