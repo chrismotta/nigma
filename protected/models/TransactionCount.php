@@ -19,6 +19,7 @@
 class TransactionCount extends CActiveRecord
 {
 	public $total;
+	public $currency;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -63,14 +64,15 @@ class TransactionCount extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'period' => 'Period',
-			'volume' => 'Volume',
-			'rate' => 'Rate',
-			'users_id' => 'Users',
-			'date' => 'Date',
+			'id'               => 'ID',
+			'period'           => 'Period',
+			'volume'           => 'Volume',
+			'rate'             => 'Rate',
+			'users_id'         => 'Users',
+			'date'             => 'Date',
 			'opportunities_id' => 'Opportunities',
-			'total' => 'Total',
+			'total'            => 'Total',
+			'currency'         => 'Currency',
 		);
 	}
 
@@ -138,5 +140,36 @@ class TransactionCount extends CActiveRecord
 		$criteria->compare('t.period',$period);
 		return self::model()->find($criteria) ? number_format(self::model()->find($criteria)['total'],2) : 0;
 		
+	}
+
+	public function getTotalsCurrency($period)
+	{
+		// SELECT sum(t.rate*t.volume),i.currency FROM transaction_count t
+		// inner join opportunities o on t.opportunities_id=o.id
+		// inner join ios i on o.ios_id=i.id
+		// group by i.currency;
+
+		$criteria         =new CDbCriteria;
+		$criteria->with  =array('opportunities','opportunities.ios');
+		$criteria->compare('t.period',$period);		
+		$criteria->select ='sum(t.rate*t.volume) as total, ios.currency as currency';
+		$criteria->group  ='ios.currency';
+		return Self::model()->findAll($criteria);
+	}
+
+	public function getTotalsInvoicedCurrency($period)
+	{
+		// SELECT sum(t.rate*t.volume),i.currency FROM transaction_count t
+		// inner join opportunities o on t.opportunities_id=o.id
+		// inner join ios i on o.ios_id=i.id
+		// group by i.currency;
+
+		$criteria         =new CDbCriteria;
+		$criteria->with  =array('opportunities','opportunities.ios','opportunities.ios.iosValidation');
+		$criteria->compare('t.period',$period);		
+		$criteria->compare('iosValidation.status','Invoiced');
+		$criteria->select ='sum(t.rate*t.volume) as total, ios.currency as currency';
+		$criteria->group  ='ios.currency';
+		return Self::model()->findAll($criteria);
 	}
 }
