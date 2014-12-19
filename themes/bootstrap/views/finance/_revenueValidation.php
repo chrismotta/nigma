@@ -101,6 +101,7 @@
                        $.post( 'sendMail', { 'io_id': ".$io->id.", 'period': '".$period."' })
                             .success(function( data ) {
                             alert(data );
+                            window.location = document.URL;
                             });
                         
                     });
