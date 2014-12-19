@@ -92,6 +92,7 @@ class Ios extends CActiveRecord
 			'advertisers'   => array(self::BELONGS_TO, 'Advertisers', 'advertisers_id'),
 			'commercial'    => array(self::BELONGS_TO, 'Users', 'commercial_id'),
 			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'ios_id'),
+			'iosValidation' => array(self::HAS_MANY, 'IosValidation', 'ios_id'),
 		);
 	}
 
@@ -362,7 +363,7 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 		$totals_io    =array();
 		$totals    =array();
 		$data      =array();
-
+		$totals_invoiced=array();
 		$dailysNoMulti=Ios::model()->getClientsMulti($month,$year,$entity,$io,$accountManager,$opportunitie_id,$cat,$status,false);
 		$dailysMulti=Ios::model()->getClientsMulti($month,$year,$entity,$io,$accountManager,$opportunitie_id,$cat,$status,true);
 		$dailys=array_merge($dailysNoMulti,$dailysMulti);
@@ -433,6 +434,11 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']            +=$daily['conv'];
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['rate']            =$daily['rate'];
 
+				isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
+					if($daily['status_io']=='Invoiced')
+					$totals_invoiced[$daily['currency']]+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+
+
 				#This array have totals
 				isset($totals[$daily['currency']]) ?  : $totals[$daily['currency']]['revenue'] =0;
 					$totals[$daily['currency']]['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
@@ -454,7 +460,7 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 
 		}	
 		#Return clients, totals by io and totals
-		$result=array('data' => $consolidated, 'totals_io' => $totals_io, 'totals' => $totals);				
+		$result=array('data' => $consolidated, 'totals_io' => $totals_io, 'totals' => $totals, 'totals_invoiced' => $totals_invoiced);				
 		return $result;
 	}
 
