@@ -23,11 +23,11 @@ class MobAds
 
 		// --- setting actions for requests
 		$actions = array(
-			"adv"		=> "?action=inventory/advertiser",
-			"group"		=> "?action=inventory/advertiser/campaign_group/",
-			"group_stats"	=> "?action=statistics/advertiser/campaign_group/",
-			"campaign"		=> "?action=inventory/advertiser/campaign/",
-			"campaign_stats"=> "?action=statistics/advertiser/campaign/"
+			"adv"            => "?action=inventory/advertiser",
+			"group"          => "?action=inventory/advertiser/campaign_group/",
+			"group_stats"    => "?action=statistics/advertiser/campaign_group/",
+			"campaign"       => "?action=inventory/advertiser/campaign/",
+			"campaign_stats" => "?action=statistics/advertiser/campaign/"
 			);
 
 		$params = '&from=' . $date .'&to=' . $date;

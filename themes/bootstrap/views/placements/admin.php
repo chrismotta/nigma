@@ -45,12 +45,17 @@ $('.search-form form').submit(function(){
 		'url'         => 'create',
 		'ajaxOptions' => array(
 			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalPlacements").html(dataInicial);
+					$("#modalPlacements").modal("toggle");
+				}',
 			'success' => 'function(data)
 				{
 	                    // console.log(this.url);
 		                //alert("create");
 						$("#modalPlacements").html(data);
-						$("#modalPlacements").modal("toggle");
 				}',
 			),
 		'htmlOptions' => array('id' => 'create'),
