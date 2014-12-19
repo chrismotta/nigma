@@ -131,7 +131,36 @@ if($action == "Create"){ ?>
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo '<hr/>';
-        echo $form->dropDownListRow($model, 'providers_id', $providers, array('prompt' => 'Select a provider'));
+
+        echo '<div class="control-group">';
+        echo CHtml::label('Provider Type <span class="required">*</span>', '', array('class' => 'control-label'));
+        echo '<div class="controls">';
+        echo CHtml::dropDownList('', NULL, $providers_type, array(
+            'prompt'   => 'Select a provider type',
+            'onChange' => '
+                if ( ! this.value)
+                    return;
+
+                if (this.value == 1)
+                    $(".external-rate").show();
+                else
+                    $(".external-rate").hide();
+
+                $.post(
+                    "getProviders/"+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                      $(".providers-dropdownlist").html(data);
+                    }
+                  )
+                '
+        ));
+        echo '</div>'; echo '</div>';
+
+        echo $form->dropDownListRow($model, 'providers_id', array(), array('class'=>'providers-dropdownlist', 'prompt' => 'Select a provider'));
+        echo '<div style="display: none;" class="external-rate">' . $form->textFieldRow($model, 'external_rate', array()) . '</div>';
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));
         echo $form->checkboxRow($model, 'wifi');
         echo $form->checkboxRow($model, 'ip');
