@@ -4,30 +4,26 @@
 $date    =date('Y-m-d H:i:s', strtotime('NOW'));
 $status  ="Invoiced";
 
-$revenueValidation= new IosValidation;
 $log=new ValidationLog;
-// if($revenueValidation->checkValidationOpportunities($io_id,$period))
-// {
-	$status=$revenueValidation->loadByIo($io_id,$period)->status;
-	if($status=='Approved' || $status=='Expired')
+if($revenueValidation= IosValidation::model()->loadByIo($io_id,$period))
+{
+	if($revenueValidation->status=='Approved' || $revenueValidation->status=='Expired')
 	{
-		$ioValidation=$revenueValidation->loadByIo($io_id,$period);
-		$ioValidation->attributes=array('status'=>$status);
-		// $revenueValidation->attributes=array('ios_id'=>$io_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
-		if($ioValidation->save())
+		$revenueValidation->attributes=array('status'=>$status);
+		if($revenueValidation->save())
 		{
 			//ENVIAR MAIL AQUI
-		    echo 'Io #'.$ioValidation->ios_id.' invoiced';
-			$log->loadLog($ioValidation->id,$status);
+		    echo 'Io #'.$revenueValidation->ios_id.' invoiced';
+			$log->loadLog($revenueValidation->id,$status);
 		}
 		else 
-		    print_r($ioValidation->getErrors());
+		    print_r($revenueValidation->getErrors());
 	}
 	elseif($status=='Invoiced')
 	    echo 'IO already invoiced';		
 	else
-		echo 'IO no approved yet '
-// }
-// else
-// 	echo 'Las opperaciones aun no han sido validadas';
+		echo 'IO no approved yet ';
+}
+else
+ 	echo 'Las opperaciones aun no han sido validadas';
 ?>
