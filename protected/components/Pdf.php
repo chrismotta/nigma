@@ -48,6 +48,7 @@ class Pdf extends EPdfFactoryDoc
         $i = 1;
 		foreach ($opps as $opp) {
 			$this->printTitle($pdf, 'Campaign #' . $i);
+            $values[$opp->getAttributeLabel('country_id')] = $opp->country ? $opp->country->name : '';
 			$values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers ? $opp->carriers->mobile_brand : '';
             $values[$opp->getAttributeLabel('rate')] = $opp->rate;
 			$values[$opp->getAttributeLabel('model_adv')] = $opp->model_adv;
