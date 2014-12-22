@@ -40,7 +40,16 @@ class FinanceController extends Controller
 			$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 			$client['total']             =$client['total_revenue']+$client['total_transaction'];
 			$consolidated[]              =$client;
+			isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
+			$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 		}
+		isset($totalCount) ? : $totalCount=array();;
+		foreach ($totalCount as $key => $value) {
+			$currency=Ios::model()->findByPk($key)->currency;
+			isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
+			$totalCountCurrency[$currency]+=$value;
+		}
+
 
 		$totalsdata=array();
 		$filtersForm =new FiltersForm;
@@ -78,9 +87,10 @@ class FinanceController extends Controller
 				$totalsdata[$i]['id']          =$i;
 				$totalsdata[$i]['currency']    =$key;
 				$totalsdata[$i]['sub_total']   =$value['revenue'];
-				$totalsdata[$i]['total_count'] =isset($totalsTransactions[$key]) ? $totalsTransactions[$key] : 0;
+				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
+				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
 				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
-				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				isset($totalsdata[$i]['total_invoiced']) ? : $totalsdata[$i]['total_invoiced']=0;
 				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
@@ -109,7 +119,7 @@ class FinanceController extends Controller
 			'year'         =>$year,
 			'stat'         =>$status,
 			'entity'       =>$entity,
-			'cat'          =>$cat
+			'cat'          =>$cat,
 		));
 	}
 
