@@ -522,18 +522,22 @@ class CampaignsController extends Controller
 		$formats        = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$devices        = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel      = KHtml::enumItem($model, 'model');
-		$providers_type = array(
-			1=>'Affiliates', 
-			2=>'Networks', 
-			3=>'Publishers',
-		);
 		
+		
+		$current_type = NULL;
+		if ($action == 'Update')
+			$current_type   = Providers::model()->findByPk($model->providers_id)->getType();
+		
+		$providers      = CHtml::listData(Providers::model()->findAllByType($current_type), 'providers_id', 'name');
+		$providers_type = Providers::model()->getAllTypes();
+
 		$this->renderPartial('_formAjax',array(
 			'model'            => $model,
 			'opportunities'    => $opportunities,
 			'categories'       => $categories,
 			'providers_type'   => $providers_type,
-			'providers'        => array(),
+			'current_type'     => $current_type,
+			'providers'        => $providers,
 			'devices'          => $devices,
 			'formats'          => $formats,
 			'campModel'        => $campModel,

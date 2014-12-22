@@ -116,7 +116,7 @@ class Campaigns extends CActiveRecord
 		return array(
 			'id'                     => 'ID',
 			'name'                   => 'Name',
-			'providers_id'           => 'Providers',
+			'providers_id'           => 'Traffic Source',
 			'campaign_categories_id' => 'Campaign Categories',
 			'wifi'                   => 'Wifi',
 			'formats_id'             => 'Formats',
