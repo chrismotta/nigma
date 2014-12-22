@@ -278,8 +278,8 @@ class FinanceController extends Controller
 	{
 		$this->renderPartial('invoice',
 		 array(
-				'io_id'  => $_REQUEST['io_id'],
-				'period' => $_REQUEST['period']
+				'io_id'  => $_POST['io_id'],
+				'period' => $_POST['period']
 		 	)
 		);
 	}
@@ -288,8 +288,8 @@ class FinanceController extends Controller
 	{
 		$this->renderPartial('sendMail',
 		 array(
-				'io_id'  => $_REQUEST['io_id'],
-				'period' => $_REQUEST['period']
+				'io_id'  => $_POST['io_id'],
+				'period' => $_POST['period']
 		 	)
 		);
 	}
