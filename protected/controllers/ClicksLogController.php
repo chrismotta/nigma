@@ -4,21 +4,34 @@ class ClicksLogController extends Controller
 {
 
 	/**
-	 * Record a click stamp and redirect
-	 * to the appropriate landing
-	 * @return [type] [description]
+	 * @return array action filters
 	 */
-	
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete', // we only allow deletion via POST request
+		);
+	}
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData', 'updateQuery'),
-				'roles'=>array('admin'),
+			array('allow',
+				'actions'=>array('index', 'tracking', 'vector'),
+				'users'=>array('*'),
 			),
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData', 'updateQuery'),
+			array('allow',
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
 				'ips'=>array('54.88.85.63'),
+			),
+			array('allow', 
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
+				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -26,6 +39,11 @@ class ClicksLogController extends Controller
 		);
 	}
 
+	/**
+	 * Record a click stamp and redirect
+	 * to the appropriate landing
+	 * @return [type] [description]
+	 */
 	public function actionTracking($id=null)
 	{
 		$this->actionIndex($id);
@@ -455,6 +473,38 @@ class ClicksLogController extends Controller
 		}
 		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
 
+	}
+
+	/**
+	 * Store clicks_log data from 1 month ago in clicks_log_storage_2
+	 * @return string Transaction status
+	 */
+	public function actionStorage()
+	{
+		$copyRows     = 'INSERT INTO clicks_log_storage_2 
+						SELECT * FROM clicks_log WHERE id < (
+							SELECT id FROM clicks_log 
+							WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL 1 MONTH)) 
+							ORDER BY id ASC 
+							LIMIT 0,1
+							) 
+						ORDER BY id 
+						ASC LIMIT 0,300000';
+
+		$deleteRows	 = 'DELETE FROM clicks_log 
+						WHERE id <= (
+							SELECT id FROM clicks_log_storage_2 
+							ORDER BY id DESC 
+							LIMIT 0,1
+							) 
+						ORDER BY id ASC';
+		
+		$result['action'] = 'ClicksLogStorage';
+		$command = Yii::app()->db->createCommand($copyRows);
+		$result['inserted'] = $command->execute();
+		$command = Yii::app()->db->createCommand($deleteRows);
+		$result['deleted'] = $command->execute();
+		echo json_encode($result);
 	}
 
 	// Uncomment the following methods and override them if needed

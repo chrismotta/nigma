@@ -151,6 +151,11 @@ $('.search-form form').submit(function(){
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalIos").html(dataInicial);
+						$("#modalIos").modal("toggle");
+
 				    	$.post(
 						"view/"+id,
 						"",
@@ -158,7 +163,6 @@ $('.search-form form').submit(function(){
 							{
 								//alert(data);
 								$("#modalIos").html(data);
-								$("#modalIos").modal("toggle");
 							}
 						)
 						return false;
@@ -231,6 +235,11 @@ $('.search-form form').submit(function(){
 				    function(){
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalIos").html(dataInicial);
+						$("#modalIos").modal("toggle");
+
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"uploadPdf/"+id,
@@ -239,7 +248,6 @@ $('.search-form form').submit(function(){
 							{
 								//alert(data);
 								$("#modalIos").html(data);
-								$("#modalIos").modal("toggle");
 							}
 						)
 						return false;

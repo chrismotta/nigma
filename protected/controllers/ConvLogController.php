@@ -2,6 +2,43 @@
 
 class ConvLogController extends Controller
 {
+
+	/**
+	 * @return array action filters
+	 */
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete', // we only allow deletion via POST request
+		);
+	}
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
+	public function accessRules()
+	{
+		return array(
+			array('allow',
+				'actions'=>array('index', 'excelReport'),
+				'users'=>array('*'),
+			),
+			array('allow',
+				'actions'=>array('storage'),
+				'ips'=>array('54.88.85.63'),
+			),
+			array('allow', 
+				'actions'=>array('storage'),
+				'roles'=>array('admin'),
+			),
+			array('deny',  // deny all users
+				'users'=>array('*'),
+			),
+		);
+	}
+
 	/**
 	 * Print daily conversions usin EExcelWriter
 	 * @return excel file
@@ -190,6 +227,37 @@ class ConvLogController extends Controller
 
 		Yii::app()->end();
 
+	}
+
+	/**
+	 * Store conv_log data from 1 month ago in conv_lof_storage
+	 * @return string Transaction status
+	 */
+	public function actionStorage()
+	{
+		$copyRows     = 'INSERT INTO conv_log_storage 
+						SELECT * FROM conv_log WHERE id < (
+							SELECT id FROM conv_log 
+							WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL 1 MONTH)) 
+							ORDER BY id ASC 
+							LIMIT 0,1) 
+						ORDER BY id ASC 
+						LIMIT 0,300000';
+
+		$deleteRows	  = 'DELETE FROM conv_log 
+						WHERE id <= (
+							SELECT id FROM conv_log_storage 
+							ORDER BY id DESC 
+							LIMIT 0,1
+							) 
+						ORDER BY id ASC';
+		
+		$result['action'] = 'ConvLogStorage';
+		$command = Yii::app()->db->createCommand($copyRows);
+		$result['inserted']  = $command->execute();
+		$command = Yii::app()->db->createCommand($deleteRows);
+		$result['deleted']  = $command->execute();
+		echo json_encode($result);
 	}
 
 }
