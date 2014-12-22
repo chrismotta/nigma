@@ -11,7 +11,7 @@ $month =date('m', strtotime($model->period));
 $year  =date('Y', strtotime($model->period));
 $ios=new Ios;
 $io=$ios->findByPk($io_id);
-$clients =$ios->getClients($month,$year,null,$io_id);
+$clients =$ios->getClients($month,$year,null,$io_id,null,null,null,null,null);
 switch ($model->status) {
     case 'Approved':
         echo "<script>alert('Revenue already Approved')</script>";
