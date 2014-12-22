@@ -293,7 +293,7 @@ class IosController extends Controller
         $pdf->setData( array(
 			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
 			'io'            => $model,
-			'opportunities' => Opportunities::model()->findAll( 'ios_id=:id', array(':id'=>$id) ),
+			'opportunities' => Opportunities::model()->findAll( "ios_id=:id AND status='Active'", array(':id'=>$id) ),
         ));
         $pdf->output();
 
