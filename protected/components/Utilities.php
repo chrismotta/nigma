@@ -47,7 +47,7 @@ class Utilities {
 
 		if ($useAlternativeName) {
 			$id_begin = strrpos($campaignname, '-');
-			$return   = substr($campaignname, $id_begin + 1);
+			$return   = trim(substr($campaignname, $id_begin + 1));
 		}
 
 		if ( is_numeric($return) ) {

@@ -82,7 +82,7 @@ if(!$is_archived){
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
         'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/campaigns/admin',
+        'action' => Yii::app()->getBaseUrl() . '/' . Yii::app()->controller->getId().'/'.Yii::app()->controller->getAction()->getId(),
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
