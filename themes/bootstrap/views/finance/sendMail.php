@@ -2,28 +2,31 @@
 /* @var $this FinanceController */
 /* @var $model Finance */
 $date    =date('Y-m-d H:i:s', strtotime('NOW'));
-$status  ="Sended";
+$status  ="Sent";
 $comment =null;
 
 $validation_token=md5($date.$io_id);
 $revenueValidation= new IosValidation;
 $log=new ValidationLog;
-if($revenueValidation->checkValidationOpportunities($io_id,$period))
-{
-	if(!$revenueValidation->checkValidation($io_id,$period))
+// if($revenueValidation->checkValidationOpportunities($io_id,$period))
+// {
+	if($revenueValidation->checkValidation($io_id,$period))
 	{
-		$revenueValidation->attributes=array('ios_id'=>$io_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
-		if($revenueValidation->save())
+		$ioValidation=$revenueValidation->loadByIo($io_id,$period);
+		$ioValidation->attributes=array('status'=>$status);
+		// $revenueValidation->attributes=array('ios_id'=>$io_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
+		if($ioValidation->save())
 		{
-		    echo 'Io aprobada'.$revenueValidation->id;
-			$log->loadLog($revenueValidation->id,$status);
+			//ENVIAR MAIL AQUI
+		    echo 'Io #'.$ioValidation->ios_id.' mail enviado';
+			$log->loadLog($ioValidation->id,$status);
 		}
 		else 
-		    echo 'Error al guardar';
+		    print_r($ioValidation->getErrors());
 	}
 	else
-		    echo 'Email enviado anteriormente';		
-}
-else
-	echo 'Las opperaciones aun no han sido validadas';
+		    echo 'Las operaciones aun no han sido validadas';		
+// }
+// else
+// 	echo 'Las opperaciones aun no han sido validadas';
 ?>

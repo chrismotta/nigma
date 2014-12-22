@@ -69,6 +69,32 @@ class FilterManager
 			'roles'  => array( 
 				'affiliate',
 			)),
+		'clients.validateOpportunitie' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'media',
+			)),
+		'clients.invoice' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'finance',
+			)),
+		'clients.validateIo' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'bussiness',
+				'media_manager',
+			)),
+		'clients.count' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'bussiness',
+				'media_manager',
+			)),
 		);
 
     /**

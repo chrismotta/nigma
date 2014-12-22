@@ -281,10 +281,13 @@ fieldset hr {
 .verifed{
 	background-position:-20px 0px;
 }
+.validated{
+	background-position:-20px 0px;
+}
 .not_sended{
 	background-position:-40px 0px;
 }
-.sended{
+.sent{
 	background-position:-60px 0px;
 }
 .viewed{

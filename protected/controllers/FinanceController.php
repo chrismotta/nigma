@@ -10,7 +10,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie'),
+				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice'),
 				'roles'=>array('admin', 'finance', 'media'),
 			),
 			array('deny',  // deny all users
@@ -28,14 +28,18 @@ class FinanceController extends Controller
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
+		$transactions=new TransactionCount;
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 		else
 			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status,null);
+		
 		$consolidated=array();
 		foreach ($clients['data'] as $client) {
-			$client['total_revenue']=$clients['totals_io'][$client['id']];
-			$consolidated[]=$client;
+			$client['total_revenue']     =$clients['totals_io'][$client['id']];
+			$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+			$client['total']             =$client['total_revenue']+$client['total_transaction'];
+			$consolidated[]              =$client;
 		}
 
 		$totalsdata=array();
@@ -56,13 +60,28 @@ class FinanceController extends Controller
 		    ),
 		));
 		$i=0;
+
+		$totalsTransactions=array();
+		$totalsInvoicedTransactions=array();
+		$totalsTransactionsInvoicedTemp=TransactionCount::model()->getTotalsInvoicedCurrency($year.'-'.$month.'-01');
+		$totalsTransactionsTemp=TransactionCount::model()->getTotalsCurrency($year.'-'.$month.'-01');
+		foreach ($totalsTransactionsInvoicedTemp as $value) {
+			$totalsInvoicedTransactions[$value['currency']]=$value['total'];
+		}
+		foreach ($totalsTransactionsTemp as $value) {
+			$totalsTransactions[$value['currency']]=$value['total'];
+		}
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
 				$i++;
-				$totalsdata[$i]['id']       =$i;
-				$totalsdata[$i]['currency'] =$key;
-				$totalsdata[$i]['total']    =$value['revenue'];
+				$totalsdata[$i]['id']          =$i;
+				$totalsdata[$i]['currency']    =$key;
+				$totalsdata[$i]['sub_total']   =$value['revenue'];
+				$totalsdata[$i]['total_count'] =isset($totalsTransactions[$key]) ? $totalsTransactions[$key] : 0;
+				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
+				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
 		
@@ -70,7 +89,7 @@ class FinanceController extends Controller
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','total',
+		             'id','currency','total','sub_total','total_count','total_invoiced'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -102,12 +121,12 @@ class FinanceController extends Controller
 		$model       =new Networks;
 		$data  =$model->getProviders($month,$year);
 		$this->render('providers',array(			
-			'model'			=>$model,
-			'year'=>$year,
-			'month'=>$month,
-			'arrayProvider'=>$data['arrayProvider'],
-			'filtersForm'=>$data['filtersForm'],
-			'totals'=>$data['totalsDataProvider']
+			'model'         =>$model,
+			'year'          =>$year,
+			'month'         =>$month,
+			'arrayProvider' =>$data['arrayProvider'],
+			'filtersForm'   =>$data['filtersForm'],
+			'totals'        =>$data['totalsDataProvider']
 
 		));
 	}
@@ -217,9 +236,9 @@ class FinanceController extends Controller
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		if(is_null($opportunitie->rate))
-			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->ios_id,null,null,true);
+			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->id,null,null,false);
 		else
-			$clients =$model->getClients($month,$year,null,null,null,null,null,'otro')['data'];		
+			$clients =$model->getClients($month,$year,null,null,null,$opportunitie->id,null,null,'otro')['data'];		
 		$dataProvider=new CArrayDataProvider($clients, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -255,13 +274,49 @@ class FinanceController extends Controller
 			));
 	}
 	
+	public function actionInvoice()
+	{
+		$this->renderPartial('invoice',
+		 array(
+				'io_id'  => $_POST['io_id'],
+				'period' => $_POST['period']
+		 	)
+		);
+	}
+	
 	public function actionSendMail()
 	{
 		$this->renderPartial('sendMail',
 		 array(
-				'io_id'  => $_REQUEST['io_id'],
-				'period' => $_REQUEST['period']
+				'io_id'  => $_POST['io_id'],
+				'period' => $_POST['period']
 		 	)
 		);
+	}
+
+	public function actionTransaction()
+	{
+		$period   =isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
+		$id      =isset($_GET['id']) ? $_GET['id'] : null;
+		$model=new TransactionCount;
+
+		$this->renderPartial('_form',array(
+			'id'    => $id,
+			'period'=>$period,
+			'model'=>$model,
+		), false, true);
+	}
+
+	public function actionAddTransaction()
+	{
+		$transaction                   = new TransactionCount;
+		$transaction->opportunities_id =$_POST['opportunitie'];
+		$transaction->period           =$_POST['TransactionCount']['period'];
+		$transaction->volume           =$_POST['TransactionCount']['volume'];
+		$transaction->rate             =$_POST['TransactionCount']['rate'];
+		$transaction->users_id         =$_POST['TransactionCount']['users_id'];
+		$transaction->date             =$_POST['TransactionCount']['date'];
+		$transaction->save();
+
 	}
 }
