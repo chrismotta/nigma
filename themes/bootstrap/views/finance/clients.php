@@ -53,7 +53,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 				CHtml::link(
 					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
 					array(),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Invoice",  
+    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
     					"onclick" => 
     					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
     						if(confirmed){
@@ -61,7 +61,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 		                            .success(function( data ) {
 			                            alert(data );
 			                            window.location = document.URL;
-		                            })
+		                            });
 								}
 							 })
 						")
@@ -387,6 +387,10 @@ else
 
 					
                                 );
+                            
+                        });
+					$('.linkinvoiced').click(function(e){
+                            e.preventDefault();
                             
                         });
 					function verifedIcon(){
