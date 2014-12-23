@@ -10,7 +10,7 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo KHtml::currencyTotals($totals->getData());
+echo KHtml::currencyTotalsClients($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),

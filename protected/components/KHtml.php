@@ -578,7 +578,7 @@ class KHtml extends CHtml
         );
     } 
 
-    public static function currencyTotals($totals=array())
+    public static function currencyTotalsClients($totals=array())
     {
         $rowTotals='<div class="row totals-bar ">';
         if(count($totals)>0)
@@ -596,6 +596,30 @@ class KHtml extends CHtml
                         <h5 class="">Total: '.number_format($total['total'],2).'</h5>
                         <h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>
                         <h6 class="">Invoiced Percent: '.round(($total['total_invoiced']*100)/$total['total'],2).'%</h6>
+                    </div>
+                </div>
+                ';
+                $i++;
+            }
+        }
+        $rowTotals.='</div>';
+        return $rowTotals;
+    }
+
+    public static function currencyTotals($totals=array())
+    {
+        $rowTotals='<div class="row totals-bar ">';
+        if(count($totals)>0)
+        {
+            $span = floor( 12 / count($totals) );
+            $alert = array('error', 'info', 'success', 'warning', 'muted');
+            $i = 0;
+            foreach($totals as $total){
+                $rowTotals.= '
+                <div class="span'.$span.'">
+                    <div class="alert alert-'.$alert[$i].'">
+                        <small >TOTAL</small>
+                        <h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
                     </div>
                 </div>
                 ';
