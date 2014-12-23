@@ -37,7 +37,7 @@ class Providers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, name', 'required'),
+			array('name', 'required'),
 			array('id', 'numerical', 'integerOnly'=>true),
 			array('prefix', 'length', 'max'=>45),
 			array('name', 'length', 'max'=>128),

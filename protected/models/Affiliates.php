@@ -32,6 +32,8 @@ class Affiliates extends CActiveRecord
 	public $conv;
 	public $spend;
 	public $date;
+	public $country_name;
+	public $providers_name;
 
 	/**
 	 * @return string the associated database table name
@@ -49,9 +51,9 @@ class Affiliates extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('providers_id, name, commercial_name, state, zip_code, address, entity, tax_id', 'required'),
+			array('providers_id, country_id, commercial_name, state, zip_code, address, entity, tax_id, users_id', 'required'),
 			array('providers_id, users_id, country_id', 'numerical', 'integerOnly'=>true),
-			array('name, commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
+			array('commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
 			array('entity', 'length', 'max'=>3),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -79,25 +81,26 @@ class Affiliates extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'providers_id'    => 'Providers',
+			'providers_id'    => 'ID',
 			'users_id'        => 'Users',
 			'country_id'      => 'Country',
-			'name'            => 'Name',
-			'commercial_name' => 'Commercial Name',
+			'commercial_name' => 'Legal Name',
 			'state'           => 'State',
 			'zip_code'        => 'Zip Code',
 			'address'         => 'Address',
 			'phone'           => 'Phone',
-			'contact_com'     => 'Contact Com',
-			'email_com'       => 'Email Com',
-			'contact_adm'     => 'Contact Adm',
-			'email_adm'       => 'Email Adm',
+			'contact_com'     => 'Com Contact Name',
+			'email_com'       => 'Com Contact Email',
+			'contact_adm'     => 'Adm Contact Name',
+			'email_adm'       => 'Adm Contact Email',
 			'entity'          => 'Entity',
 			'tax_id'          => 'Tax',
 			'net_payment'     => 'Net Payment',
 			'rate'            => 'Rate',
 			'conv'            => 'Conv',
 			'spend'           => 'Revenue',
+			'country_name'    => 'Contry',
+			'providers_name'  => 'Name',
 		);
 	}
 
@@ -122,7 +125,6 @@ class Affiliates extends CActiveRecord
 		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('users_id',$this->users_id);
 		$criteria->compare('country_id',$this->country_id);
-		$criteria->compare('name',$this->name,true);
 		$criteria->compare('commercial_name',$this->commercial_name,true);
 		$criteria->compare('state',$this->state,true);
 		$criteria->compare('zip_code',$this->zip_code,true);
@@ -136,8 +138,27 @@ class Affiliates extends CActiveRecord
 		$criteria->compare('tax_id',$this->tax_id,true);
 		$criteria->compare('net_payment',$this->net_payment,true);
 
+		$criteria->with = array('providers', 'country');
+		$criteria->compare('country.name',$this->country_name,true);
+		$criteria->compare('providers.name',$this->providers_name,true);
+
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria' =>$criteria,
+			'sort'     => array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+		            ),
+		            'providers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 
