@@ -294,7 +294,7 @@ else
 				CHtml::link(
 					"<i class=\"icon-pencil\"></i>",
 					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Arqueo?")
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Count")
 
 
 					);
