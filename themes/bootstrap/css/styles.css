@@ -271,12 +271,15 @@ fieldset hr {
 	height: 15px;
 	background-image: url(../img/sprite_status.png);
 }
-.not_verifed{
+.not_verifed, .linkinvoiced .not_sended, .linkinvoiced .verifed, .linkinvoiced .validated, .linkinvoiced .viewed, .linkinvoiced .approved, .linkinvoiced .disputed, .linkinvoiced .expired, .linkinvoiced .sent{
 	display: block;
 	width: 15px;
 	height: 15px;
 	background-image: url(../img/sprite_status.png);
 	background-position:-0px 0px;
+}
+.invoiced{
+	background-position:-20px 0px;	
 }
 .verifed{
 	background-position:-20px 0px;

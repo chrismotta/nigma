@@ -19,7 +19,7 @@ if($revenueValidation= IosValidation::model()->loadByIo($io_id,$period))
 		else 
 		    print_r($revenueValidation->getErrors());
 	}
-	elseif($status=='Invoiced')
+	elseif($revenueValidation->status=='Invoiced')
 	    echo 'IO already invoiced';		
 	else
 		echo 'IO no approved yet ';

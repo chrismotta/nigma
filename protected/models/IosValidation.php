@@ -191,6 +191,6 @@ class IosValidation extends CActiveRecord
 		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
 		if($validation = self::model()->find($criteria))
 			return $validation;
-		else return 'Load error';
+		else return false;
 	}
 }
