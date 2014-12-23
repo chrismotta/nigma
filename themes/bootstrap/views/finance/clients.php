@@ -321,41 +321,10 @@ else
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'name',
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
 		), 
-		// array(
-		// 	'type'              =>'raw',
-		// 	'header'            =>'',
-		// 	'filter'            =>false,
-		// 	'headerHtmlOptions' => array('width' => '20'),
-		// 	'name'              =>	'name',
-		// 	'value'             =>'
-		// 		CHtml::link(
-		// 			"<i class=\"icon-envelope\"></i>",
-		// 			array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
-  //   				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
-
-
-		// 			);
-		// 		',		
-		// ),
-		// array(
-		// 	'type'              =>'raw',
-		// 	'header'            =>'',
-		// 	'filter'            =>false,
-		// 	'headerHtmlOptions' => array('width' => '20'),
-		// 	'name'              =>	'name',
-		// 	'value'             =>'
-		// 		CHtml::link(
-		// 			"<i class=\"icon-eye-open\"></i>",
-		// 			array("finance/view/".$data["id"]),
-  //   				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View IO")
-
-
-		// 			);
-		// 		',		
-		// ),
 	),
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
