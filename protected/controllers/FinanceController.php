@@ -90,7 +90,7 @@ class FinanceController extends Controller
 				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
 				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
 				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
-				isset($totalsdata[$i]['total_invoiced']) ? : $totalsdata[$i]['total_invoiced']=0;
+				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
 				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
