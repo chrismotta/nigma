@@ -34,6 +34,7 @@ class Affiliates extends CActiveRecord
 	public $date;
 	public $country_name;
 	public $providers_name;
+	public $name; // campaigns_name use for external screen with affiliates authentication
 
 	/**
 	 * @return string the associated database table name

@@ -23,15 +23,15 @@ class AffiliatesController extends Controller
 	{
 		if(Yii::app()->user->id)
 		{
-			$model=new Affiliates;
-			$provider=Affiliates::model()->findByUser(Yii::app()->user->id)->providers_id;
-
-			$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
-			$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-			$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
+			$model     = new Affiliates;
+			$provider  = Affiliates::model()->findByUser(Yii::app()->user->id)->providers_id;
 			
-			$dateStart  = date('Y-m-d', strtotime($dateStart));
-			$dateEnd    = date('Y-m-d', strtotime($dateEnd));
+			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
+			
+			$dateStart = date('Y-m-d', strtotime($dateStart));
+			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
 			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
 
 			$this->render('index',array(

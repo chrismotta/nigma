@@ -114,8 +114,8 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
 	'columns'      =>array(
                 array(
-					'name'   =>'date', 
-					'header' =>'Date',
+					'name'        =>'date', 
+					'header'      =>'Date',
 					'htmlOptions' => array('style' => 'width: 200px;') ,
                 ),
                 array(
