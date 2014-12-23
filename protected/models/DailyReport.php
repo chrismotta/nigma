@@ -1344,7 +1344,7 @@ class DailyReport extends CActiveRecord
 	public function updateSpendAffiliates($custom_rate=NULL)
 	{
 		if ($custom_rate == NULL)
-			$rateAffiliate = Affiliates::model()->find("providers_id=:net", array(':net' => $this->providers_id))->rate;
+			$rateAffiliate = $this->campaigns->external_rate;
 		else 
 			$rateAffiliate = $custom_rate;
 
