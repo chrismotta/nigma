@@ -172,4 +172,34 @@ class Providers extends CActiveRecord
 			3 => 'Publishers',
 		);
 	}
+
+
+	public function hasS2S()
+	{
+		if ($this->isNetwork())
+			return Networks::model()->findByPk($this->id)->has_s2s;
+		
+		if ($this->isAffiliate())
+			return Affiliates::model()->findByPk($this->id)->has_s2s;
+
+		if ($this->isPublisher())
+			return false;
+
+		return false;
+	}
+
+
+	public function getCallback()
+	{
+		if ($this->isNetwork())
+			return Networks::model()->findByPk($this->id)->callback;
+		
+		if ($this->isAffiliate())
+			return Affiliates::model()->findByPk($this->id)->callback;
+
+		if ($this->isPublisher())
+			return NULL;
+
+		return NULL;
+	}
 }

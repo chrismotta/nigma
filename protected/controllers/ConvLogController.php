@@ -148,10 +148,10 @@ class ConvLogController extends Controller
 				$conv->save();
 
 				// s4s (server for server)
-				
-				if(Providers::model()->findByPk($conv->campaign->providers_id)->isNetwork() && $conv->campaign->providers->networks->has_s2s){
 
-					$s4s_url = $conv->campaign->providers->networks->callback . $tid;
+				if( Providers::model()->findByPk($conv->campaign->providers_id)->hasS2S() ) {
+
+					$s4s_url = $conv->campaign->providers->getCallback() . $tid;
 					
 					if ( isset($click->custom_params) && $click->custom_params != NULL ) {
 						if( strpos($s4s_url, "?") ){
