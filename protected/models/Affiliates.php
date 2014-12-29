@@ -30,7 +30,9 @@ class Affiliates extends CActiveRecord
 {
 	public $rate;
 	public $conv;
+	public $clics;
 	public $spend;
+	public $convrate;
 	public $date;
 	public $country_name;
 	public $providers_name;
@@ -201,6 +203,8 @@ class Affiliates extends CActiveRecord
 				sum(
 					IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)
 				) as conv,
+				sum(d.clics) as clics,
+				sum(IF(ISNULL(d.conv_adv), d.conv_api, d.conv_adv)) / sum(d.clics) as convrate,
 				sum(d.spend) as spend,
 				DATE(d.date) as date
 				from daily_report d 
@@ -217,16 +221,20 @@ class Affiliates extends CActiveRecord
 			//$command->bindParam(":affiliate", $affiliate, PDO::PARAM_INT);
 			$affiliates=$command->queryAll();
 			foreach ($affiliates as $affiliate) {
-				$data[$i]['id']    =$affiliate['id'];
-				$data[$i]['rate']  =$affiliate['rate'];
-				$data[$i]['conv']  =$affiliate['conv'];
-				$data[$i]['spend'] =$affiliate['spend'];
-				$data[$i]['date']  =$affiliate['date'];
-				$data[$i]['name']  =Campaigns::getExternalName($affiliate['id']);
+				$data[$i]['id']       =$affiliate['id'];
+				$data[$i]['rate']     =$affiliate['rate'];
+				$data[$i]['conv']     =$affiliate['conv'];
+				$data[$i]['spend']    =$affiliate['spend'];
+				$data[$i]['clics']    =$affiliate['clics'];
+				$data[$i]['convrate'] =$affiliate['convrate'];
+				$data[$i]['date']     =$affiliate['date'];
+				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id']);
 
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
+				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;
 				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
 				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['clics']+=$affiliate['clics'];
 				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
 
 				$i++;
@@ -235,10 +243,18 @@ class Affiliates extends CActiveRecord
 		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
 		{
 			$date=date('Y-m-d', strtotime('today'));
-			$sql="SELECT c.id,count(l.id) as conv, c.external_rate as rate, (count(l.id)*c.external_rate) as spend, DATE(l.date) as date
+			$sql="SELECT 
+					c.id,
+					count(l.id) as conv, 
+					c.external_rate as rate, 
+					count(cl.id) as clics, 
+					(count(l.id)*c.external_rate) as spend,
+					count(l.id) / count(cl.id) as convrate,
+					DATE(l.date) as date
 				from campaigns c
 				inner join providers p on c.providers_id=p.id 
-				inner join conv_log l on l.campaign_id=c.id
+				left join conv_log l on l.campaign_id=c.id
+				left join clicks_log cl on cl.campaigns_id=c.id
 				inner join affiliates a on a.providers_id=p.id
 				WHERE DATE(l.date)=DATE(:date)
 				AND p.id = :affiliate
@@ -248,16 +264,20 @@ class Affiliates extends CActiveRecord
 			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
 			$affiliates=$command->queryAll();
 			foreach ($affiliates as $affiliate) {
-				$data[$i]['id']    =$affiliate['id'];
-				$data[$i]['rate']  =$affiliate['rate'];
-				$data[$i]['conv']  =$affiliate['conv'];
-				$data[$i]['spend'] =$affiliate['spend'];
-				$data[$i]['date']  =$affiliate['date'];
-				$data[$i]['name']  =Campaigns::getExternalName($affiliate['id']);		
+				$data[$i]['id']       =$affiliate['id'];
+				$data[$i]['rate']     =$affiliate['rate'];
+				$data[$i]['conv']     =$affiliate['conv'];
+				$data[$i]['spend']    =$affiliate['spend'];
+				$data[$i]['clics']    =$affiliate['clics'];
+				$data[$i]['convrate'] =$affiliate['convrate'];
+				$data[$i]['date']     =$affiliate['date'];
+				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id']);		
 				
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
+				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;
 				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
 				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['clics']+=$affiliate['clics'];
 				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
 
 				$i++;
@@ -267,11 +287,13 @@ class Affiliates extends CActiveRecord
 		$totalGraphic=array();
 		$totalGraphic['dates']=array();
 		$totalGraphic['convs']=array();
+		$totalGraphic['clics']=array();
 		$totalGraphic['spends']=array();
 		foreach ($graphic as $key => $value) {
 			$totalGraphic['dates'][$i]  =$key;
 			$totalGraphic['convs'][$i]  =$value['conv'];
 			$totalGraphic['spends'][$i] =$value['spend'];
+			$totalGraphic['clics'][$i]  =$value['clics'];
 			$i++;
 		}
 
@@ -285,7 +307,7 @@ class Affiliates extends CActiveRecord
 		    'sort'=>array(
 				'defaultOrder' => 'date DESC',
 		        'attributes'=>array(
-		             'id', 'rate', 'conv', 'spend', 'date','name'
+		             'id', 'rate', 'conv', 'spend', 'clics', 'convrate', 'date', 'name'
 		        ),
 		    ),
 		    'pagination'=>array(

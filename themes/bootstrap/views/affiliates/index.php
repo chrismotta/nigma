@@ -24,7 +24,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<div class="span6">
 		<div class="alert alert-error">
 			<small >TOTAL</small>
-			<h3 class="">Conversions: <?php echo array_sum($data['graphic']['convs']) ?></h3>
+			<h3 class="">Conversions: <?php echo number_format(array_sum($data['graphic']['convs'])) ?></h3>
 			<br>
 		</div>
 	</div>
@@ -52,8 +52,9 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Revenues', 'data' => $data['graphic']['spends'],),
+				array('name' => 'Clicks', 'data' => $data['graphic']['clics'],),
 				array('name' => 'Conversions', 'data' => $data['graphic']['convs'],),
+				array('name' => 'Revenues', 'data' => $data['graphic']['spends'],),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
@@ -129,8 +130,21 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 					'htmlOptions' =>array('style'=>'text-align: right')
                 ),
                 array(
+					'name'        =>'clics', 
+					'header'      =>'Clicks',
+					'value'       =>'number_format($data["clics"])',
+					'htmlOptions' =>array('style'=>'text-align: right')
+                ),
+                array(
 					'name'        =>'conv', 
 					'header'      =>'Conv',
+					'value'       =>'number_format($data["conv"])',
+					'htmlOptions' =>array('style'=>'text-align: right')
+                ),
+                array(
+					'name'        =>'convrate', 
+					'header'      =>'Conv. Rate',
+					'value'       =>'number_format($data["convrate"] * 100, 2) . " %"',
 					'htmlOptions' =>array('style'=>'text-align: right')
                 ),
                 array(
