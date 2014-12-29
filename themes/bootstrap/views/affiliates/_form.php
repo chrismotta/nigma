@@ -30,7 +30,23 @@
         echo $form->textFieldRow($modelProv, 'prefix', array('class'=>'span3'));
         echo $form->textFieldRow($modelProv, 'name', array('class'=>'span3'));
         echo $form->dropDownListRow($modelProv, 'currency', $currency, array('prompt' => 'Select a currency'));
-        
+        echo $form->checkboxRow($modelProv, 'has_s2s', array(
+                'onChange' => '
+                  if (this.checked == "1")
+                    $(".has_s2s").show();
+                  else
+                    $(".has_s2s").hide();
+
+                  return;
+                  '
+            ));
+        echo '<div style="display: ' . ($modelProv->has_s2s ? 'block' : 'none') . ';" class="has_s2s">';
+        echo $form->textFieldRow($modelProv, 'callback', array('class'=>'span3'));
+        echo $form->textFieldRow($modelProv, 'placeholder', array('class'=>'span3'));
+        echo $form->checkboxRow($modelProv, 'has_token');
+        echo '</div>';
+        echo '<hr/>';
+
         
         echo $form->dropDownListRow($modelAffi, 'entity', $entity, array('prompt' => 'Select an entity'));
         echo $form->textFieldRow($modelAffi, 'commercial_name', array('class'=>'span3'));

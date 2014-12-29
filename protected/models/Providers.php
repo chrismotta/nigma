@@ -7,7 +7,12 @@
  * @property integer $id
  * @property string $prefix
  * @property string $name
+ * @property string $status
  * @property string $currency
+ * @property integer $has_s2s
+ * @property integer $has_token
+ * @property string $callback
+ * @property string $placeholder
  *
  * The followings are the available model relations:
  * @property Affiliates $affiliates
@@ -37,14 +42,16 @@ class Providers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name', 'required'),
-			array('id', 'numerical', 'integerOnly'=>true),
-			array('prefix', 'length', 'max'=>45),
+			array('name, status', 'required'),
+			array('id, has_s2s, has_token', 'numerical', 'integerOnly'=>true),
+			array('prefix, placeholder', 'length', 'max'=>45),
 			array('name', 'length', 'max'=>128),
+			array('status', 'length', 'max'=>8),
 			array('currency', 'length', 'max'=>3),
+			array('callback', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, currency', 'safe', 'on'=>'search'),
+			array('id, prefix, name, status, currency, has_s2s, has_token, callback, placeholder', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -73,10 +80,15 @@ class Providers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'       => 'ID',
-			'prefix'   => 'Prefix',
-			'name'     => 'Name',
-			'currency' => 'Currency',
+			'id'          => 'ID',
+			'prefix'      => 'Prefix',
+			'name'        => 'Name',
+			'status'      => 'Status',
+			'currency'    => 'Currency',
+			'has_s2s'     => 'Has s2s',
+			'has_token'   => 'Has Token',
+			'callback'    => 'Callback',
+			'placeholder' => 'Placeholder',
 		);
 	}
 
@@ -101,7 +113,12 @@ class Providers extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('status',$this->status,true);
 		$criteria->compare('currency',$this->currency,true);
+		$criteria->compare('has_s2s',$this->has_s2s);
+		$criteria->compare('has_token',$this->has_token);
+		$criteria->compare('callback',$this->callback,true);
+		$criteria->compare('placeholder',$this->placeholder,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
