@@ -37,7 +37,7 @@ class Providers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, name', 'required'),
+			array('name', 'required'),
 			array('id', 'numerical', 'integerOnly'=>true),
 			array('prefix', 'length', 'max'=>45),
 			array('name', 'length', 'max'=>128),
@@ -125,13 +125,51 @@ class Providers extends CActiveRecord
 		return Networks::model()->exists('providers_id=:id', array(':id' => $this->id));
 	}
 
-	public function isProvider()
+
+	public function isPublisher()
 	{
-		return Providers::model()->exists('providers_id=:id', array(':id' => $this->id));
+		return Publihsers::model()->exists('providers_id=:id', array(':id' => $this->id));
 	}
+
 
 	public function isAffiliate()
 	{
 		return Affiliates::model()->exists('providers_id=:id', array(':id' => $this->id));
+	}
+
+
+	public function getType()
+	{
+		if ($this->isAffiliate())
+			return 1;
+		if ($this->isNetwork())
+			return 2;
+		if ($this->isProvider())
+			return 3;
+		return NULL;
+	}
+
+
+	public function findAllByType($type)
+	{
+		switch ($type) {
+			case 1:
+				return Affiliates::model()->with('providers')->findAll();
+			case 2:
+				return Networks::model()->with('providers')->findAll();
+			case 3:
+				return Publishers::model()->with('providers')->findAll();
+		}
+		return array();
+	}
+
+
+	public function getAllTypes()
+	{
+		return array(
+			1 => 'Affiliates', 
+			2 => 'Networks', 
+			3 => 'Publishers',
+		);
 	}
 }

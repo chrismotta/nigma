@@ -106,7 +106,8 @@ class ExternalFormsController extends Controller
 		$totals['revenue']=0;
 		$totals['conv']=0;
 		$IosModel=new Ios;
-		$clients = $IosModel->getClientsProfile(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id);
+		$clients = $IosModel->getClients(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id,null,null,null,null,'profile');
+
 		// foreach ($clients as $ios) {
 		// 	foreach ($ios as $carriers) {
 		// 		foreach ($carriers as $data) {

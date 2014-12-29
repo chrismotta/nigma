@@ -271,20 +271,26 @@ fieldset hr {
 	height: 15px;
 	background-image: url(../img/sprite_status.png);
 }
-.not_verifed{
+.not_verifed, .linkinvoiced .not_sended, .linkinvoiced .verifed, .linkinvoiced .validated, .linkinvoiced .viewed, .linkinvoiced .approved, .linkinvoiced .disputed, .linkinvoiced .expired, .linkinvoiced .sent{
 	display: block;
 	width: 15px;
 	height: 15px;
 	background-image: url(../img/sprite_status.png);
 	background-position:-0px 0px;
 }
+.invoiced{
+	background-position:-20px 0px;	
+}
 .verifed{
+	background-position:-20px 0px;
+}
+.validated{
 	background-position:-20px 0px;
 }
 .not_sended{
 	background-position:-40px 0px;
 }
-.sended{
+.sent{
 	background-position:-60px 0px;
 }
 .viewed{
@@ -301,11 +307,21 @@ fieldset hr {
 }
 
 /* totals-bar */
-.totals-bar {
+.totals-bar small{
+	padding: 0px 0px 5px 0px;
+	display: block;
 }
 .totals-bar h3 {
 	line-height: 20px;
 	margin: 0px;
+}
+.totals-bar h5 {
+	line-height: 15px;
+	margin: 5px 0px 0px 0px;
+}
+.totals-bar h6 {
+	line-height: 10px;
+	margin: 5px 0px 0px 0px;
 }
 
 /* Filter forms */

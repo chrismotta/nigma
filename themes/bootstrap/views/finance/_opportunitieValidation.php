@@ -4,7 +4,7 @@
  ?>
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Opportunitie #<?php echo $opportunitie->id; ?></h4>
+    <h4>Validate Opportunitie #<?php echo $opportunitie->id; ?></h4>
 </div>
 
 <div class="modal-body">
@@ -37,7 +37,7 @@
                     ),
                 array(
                     'name'              =>'rate',
-                    'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
+                    'value'             =>'$data["multi"] ? $data["rate"] : "Multi"',
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'), 
                     'header'            =>'Rate',   
