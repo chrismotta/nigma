@@ -116,9 +116,9 @@ class ClicksLogController extends Controller
 
 		// Get custom parameters
 		
-		if ( Providers::model()->findByPk($nid)->isNetwork() && $model->providers->networks->has_s2s ) {
+		if ( Providers::model()->findByPk($nid)->has_s2s ) {
 			foreach ($_GET as $key => $value) {
-				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'ntoken', 'nid', 'cid', 'ts', 'id');
+				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'g_mty', 'ntoken', 'nid', 'cid', 'ts', 'id');
 				if ( !in_array($key, $ignore_params) ) {
 					$model->custom_params != NULL ? $model->custom_params .= '&' : NULL ;
 					$model->custom_params .= $key . '=' . $value;
