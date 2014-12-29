@@ -374,7 +374,8 @@ else
                            $.post( link, {})
 								.success(function( data ) {
 									$('#modalClients').html(data);
-									$('#modalClients').modal('toggle');
+									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+									//$('#modalClients').modal('toggle');
                                 }
 
 					
