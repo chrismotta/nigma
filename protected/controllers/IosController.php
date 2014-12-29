@@ -40,7 +40,7 @@ class IosController extends Controller
 				'roles'=>array('businness', 'finance'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('update'),
+				'actions'=>array('update','generatePdf','viewPdf','uploadPdf'),
 				'roles'=>array('finance'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
