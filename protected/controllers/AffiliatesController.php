@@ -143,7 +143,7 @@ class AffiliatesController extends Controller
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
 	 * @param integer $id the ID of the model to be loaded
-	 * @return Ios the loaded model
+	 * @return Affiliates the loaded model
 	 * @throws CHttpException
 	 */
 	public function loadModel($id)
@@ -157,7 +157,7 @@ class AffiliatesController extends Controller
 
 	/**
 	 * Performs the AJAX validation.
-	 * @param Ios $model the model to be validated
+	 * @param Affiliates $model the model to be validated
 	 */
 	protected function performAjaxValidation($model)
 	{

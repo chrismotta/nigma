@@ -141,7 +141,7 @@ if($action == "Create"){ ?>
                 if ( ! this.value)
                     return;
 
-                if (this.value == 1)
+                if (this.value == 1) // if is affiliate show extenral rate
                     $(".external-rate").show();
                 else
                     $(".external-rate").hide();
@@ -159,8 +159,9 @@ if($action == "Create"){ ?>
         ));
         echo '</div>'; echo '</div>';
         echo $form->dropDownListRow($model, 'providers_id', $providers, array('class'=>'providers-dropdownlist', 'prompt' => 'Select traffic source'));
-        if ($current_type = 1) { // is affiliate
-            $display = 'display: none;';
+        $display = 'display: none;';
+        if ($current_type == 1) { // is affiliate
+            $display = 'display: block;';
         }
         echo '<div style="' . $display . '" class="external-rate">';
         echo $form->textFieldRow($model, 'external_rate', array());
