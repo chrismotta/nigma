@@ -47,6 +47,7 @@ class Providers extends CActiveRecord
 			array('prefix, placeholder', 'length', 'max'=>45),
 			array('name', 'length', 'max'=>128),
 			array('status', 'length', 'max'=>8),
+			array('callback', 'url'),
 			array('currency', 'length', 'max'=>3),
 			array('callback', 'length', 'max'=>255),
 			// The following rule is used by search().
