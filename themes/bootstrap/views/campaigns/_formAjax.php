@@ -126,7 +126,23 @@ if($action == "Create"){ ?>
         <?php 
 
         if($action == "Create"){
-            echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array('prompt' => 'Select an opportunitiy'));
+            echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array(
+                'prompt'   => 'Select an opportunitiy',
+                'onChange' => '
+                    if ( ! this.value)
+                        return;
+
+                    $.post(
+                        "getDefaultExternalRate/"+this.value,
+                        "",
+                        function(data)
+                        {
+                            // alert(data);
+                            $("#Campaigns_external_rate").val(data);
+                        }
+                    )
+                ',
+            ));
         }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));

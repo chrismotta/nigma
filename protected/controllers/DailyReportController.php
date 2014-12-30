@@ -488,9 +488,7 @@ class DailyReportController extends Controller
 
 			$list = DailyReport::model()->findAll( $criteria );
 			foreach ($list as $model) {
-				if ( $new_rate )
-					$model->updateRevenue($new_rate);
-
+				$model->updateRevenue($new_rate);
 				$model->setNewFields();
 				$model->save();
 				echo $model->id . " - updated<br/>";

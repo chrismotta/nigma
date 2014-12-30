@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders'),
+				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getDefaultExternalRate'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -573,5 +573,21 @@ class CampaignsController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	
+	public function actionGetDefaultExternalRate($id)
+	{
+		$opp = Opportunities::model()->with('ios')->findByPk($id);
+
+		switch ($opp->ios->entity) {
+		 	case 'SRL':
+		 		echo json_encode(round($opp->rate * 0.65), 2);
+		 		break;
+		 	
+		 	default:
+		 		echo json_encode(round($opp->rate * 0.75, 2));
+		 		break;
+		 }
 	}
 }
