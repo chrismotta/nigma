@@ -528,7 +528,7 @@ class CampaignsController extends Controller
 		if ($action == 'Update')
 			$current_type   = Providers::model()->findByPk($model->providers_id)->getType();
 		
-		$providers      = CHtml::listData(Providers::model()->findAllByType($current_type), 'providers_id', 'name');
+		$providers      = CHtml::listData(Providers::model()->findAllByType($current_type), 'providers.id', 'providers.name');
 		$providers_type = Providers::model()->getAllTypes();
 
 		$this->renderPartial('_formAjax',array(
