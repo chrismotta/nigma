@@ -511,14 +511,14 @@ class DailyReportController extends Controller
 			$criteria->compare('providers_id', $affiliate);
 		} else { // update all affiliate
 			$q = Yii::app()->db->createCommand()
-			    ->select('networks_id')
+			    ->select('providers_id')
 			    ->from('affiliates')
 			    ->queryAll(false);
 
 			foreach ($q as $nid)
 	        	$affiliates[] = $nid[0];
 
-			$criteria->addInCondition('networks_id', $affiliates);
+			$criteria->addInCondition('providers_id', $affiliates);
 		}
 
 		$list = DailyReport::model()->findAll( $criteria );
