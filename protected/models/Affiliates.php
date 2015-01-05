@@ -54,7 +54,7 @@ class Affiliates extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('providers_id, country_id, commercial_name, state, zip_code, address, entity, tax_id, users_id', 'required'),
+			array('providers_id, country_id, commercial_name, state, zip_code, address, entity, tax_id', 'required'),
 			array('providers_id, users_id, country_id', 'numerical', 'integerOnly'=>true),
 			array('commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
 			array('entity', 'length', 'max'=>3),
@@ -85,7 +85,7 @@ class Affiliates extends CActiveRecord
 	{
 		return array(
 			'providers_id'    => 'ID',
-			'users_id'        => 'Users',
+			'users_id'        => 'External user login',
 			'country_id'      => 'Country',
 			'commercial_name' => 'Legal Name',
 			'state'           => 'State',

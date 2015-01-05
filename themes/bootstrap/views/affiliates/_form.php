@@ -42,8 +42,19 @@
             ));
         echo '<div style="display: ' . ($modelProv->has_s2s ? 'block' : 'none') . ';" class="has_s2s">';
         echo $form->textFieldRow($modelProv, 'callback', array('class'=>'span3'));
+        echo $form->checkboxRow($modelProv, 'has_token', array(
+                'onChange' => '
+                  if (this.checked == "1")
+                    $(".has_token").show();
+                  else
+                    $(".has_token").hide();
+
+                  return;
+                  '
+            ));
+        echo '<div style="display: ' . ($modelProv->has_token ? 'block' : 'none') . ';" class="has_token">';
         echo $form->textFieldRow($modelProv, 'placeholder', array('class'=>'span3'));
-        echo $form->checkboxRow($modelProv, 'has_token');
+        echo '</div>';
         echo '</div>';
         echo '<hr/>';
 
