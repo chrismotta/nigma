@@ -336,7 +336,7 @@ class OpportunitiesController extends Controller
 		}
 		$opps =Opportunities::model()->findAll($criteria);
 		$response='';
-		// $response='<option value="">All opportunities</option>';
+		$response='<option value="">All opportunities</option>';
 		foreach ($opps as $op) {
 			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
 		}
