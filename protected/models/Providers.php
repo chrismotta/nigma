@@ -87,7 +87,7 @@ class Providers extends CActiveRecord
 			'status'      => 'Status',
 			'currency'    => 'Currency',
 			'has_s2s'     => 'Has s2s',
-			'has_token'   => 'Has Token',
+			'has_token'   => 'Has Placeholder',
 			'callback'    => 'Callback',
 			'placeholder' => 'Placeholder',
 		);

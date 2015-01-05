@@ -72,7 +72,7 @@
         echo $form->textFieldRow($modelAffi, 'contact_adm', array('class'=>'span3'));
         echo $form->textFieldRow($modelAffi, 'email_adm', array('class'=>'span3'));
         
-        echo $form->dropDownListRow($modelAffi, 'users_id', $users, array('prompt' => 'Select associate username'));
+        echo $form->dropDownListRow($modelAffi, 'users_id', $users, array('prompt' => 'Not assigned'));
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
