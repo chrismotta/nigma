@@ -262,7 +262,7 @@ class Opportunities extends CActiveRecord
 		if ( $this->product != NULL )
 			$product = '-' . $this->product;
 		
-		return $adv . $country . $carrier . '-' . $this->rate . $product;
+		return $this->id . '-' . $adv . $country . $carrier . '-' . $this->rate . $product;
 	}
 	public function findByIo($io)
 	{		
