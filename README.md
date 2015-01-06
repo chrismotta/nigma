@@ -1,6 +1,5 @@
 ## Kickads Appserver
 ### Install Environment
-=
 
 #### Programs
 - Sublime
