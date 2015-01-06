@@ -356,7 +356,8 @@ class DailyReportController extends Controller
 			$model->updateRevenue();
 			$model->setNewFields();
 			if ( $model->save() ){
-				$this->redirect(array('admin'));
+				$urlArray = array_merge(array('admin'), json_decode($_POST['query_string'], true));
+				$this->redirect($urlArray);
 			}else{
 				var_dump($model->getErrors());
 			}

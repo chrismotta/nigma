@@ -5,7 +5,7 @@
 /* @var $multi_rates */
 /* @var $currency */
 ?>
-
+<?php $queryString = json_encode($_POST) ?>
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
     <h4>Daily Report #<?php echo $model->id ?> - Multi Rate</h4>
@@ -57,6 +57,7 @@
         ?>
 
     <div class="form-actions">
+        <?php echo CHtml::hiddenField('query_string', $queryString) ?>
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit', 'htmlOptions' => array('name' => 'multiRate-submit'))); ?>
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
     </div>
