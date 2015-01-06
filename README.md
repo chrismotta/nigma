@@ -1,19 +1,20 @@
 Kickads Appserver
 ===================
 Install Environment
-===================
-## Programs
+=
+
+#### Programs
 - Sublime
 - SmartGitHg
 - MySqlWorkbench
 - Synaptic Package Manager
 - Skype
 
-*** Package *** 
+#### Package  
 - git
 - openjdk-7-jre
 - php5-curl
-* see https://help.ubuntu.com/community/ApacheMySQLPHP for complete tutorial
+- see https://help.ubuntu.com/community/ApacheMySQLPHP for complete tutorial
 - apache2
 - libapache2-mod-php5
 - mysql-server libapache2-mod-auth-mysql php5-mysql
@@ -33,7 +34,7 @@ sudo git clone https://github.com/yiisoft/yii.git yii
 	add 'extension=oauth.so'
 	service apache2 restart
 
-*** Configurations ***
+#### Configurations 
 - Copy Ip2Location.BIN and create Wurlf Folders
 - Change permissions for apache folder
 	sudo chmod 777 /var/www/html
