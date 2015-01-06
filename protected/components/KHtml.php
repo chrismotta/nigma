@@ -81,6 +81,29 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
+    public static function filterOpportunitiesDate($value, $accountManagerId=NULL, $htmlOptions = array(),$io_id,$startDate,$endDate)
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All opportunities',
+            'class' => 'opportunitie-dropdownlist',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('campaigns','campaigns.dailyReports');
+        $criteria->addCondition('dailyReports.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"');
+        $criteria->addCondition('dailyReports.revenue>0');
+        if ( $accountManagerId != NULL )
+            $criteria->compare('t.account_manager_id', $accountManagerId);
+        
+        if ( $io_id != NULL )
+            $criteria->compare('t.ios_id', $io_id);
+
+        $opps = Opportunities::model()->findAll($criteria);
+        $list   = CHtml::listData($opps, 'id', 'virtualName');
+        return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
+    }
+
     /**
      * Create dropdown of Account Managers
      * @param  $value
@@ -554,6 +577,34 @@ class KHtml extends CHtml
             )
         );
     } 
+
+    public static function currencyTotalsClients($totals=array())
+    {
+        $rowTotals='<div class="row totals-bar ">';
+        if(count($totals)>0)
+        {
+            $span = floor( 12 / count($totals) );
+            $alert = array('error', 'info', 'success', 'warning', 'muted');
+            $i = 0;
+            foreach($totals as $total){
+                $rowTotals.= '
+                <div class="span'.$span.'">
+                    <div class="alert alert-'.$alert[$i].'">
+                        <small >TOTAL '.$total['currency'].'</small>
+                        <h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>
+                        <h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>
+                        <h5 class="">Total: '.number_format($total['total'],2).'</h5>
+                        <h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>
+                        <h6 class="">Invoiced Percent: '.round(($total['total_invoiced']*100)/$total['total'],2).'%</h6>
+                    </div>
+                </div>
+                ';
+                $i++;
+            }
+        }
+        $rowTotals.='</div>';
+        return $rowTotals;
+    }
 
     public static function currencyTotals($totals=array())
     {

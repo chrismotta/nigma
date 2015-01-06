@@ -18,6 +18,7 @@
  * @property string $status
  * @property integer $opportunities_id
  * @property boolean $post_data
+ * @property string $external_rate
  *
  * The followings are the available model relations:
  * @property Providers $providers
@@ -74,14 +75,14 @@ class Campaigns extends CActiveRecord
 			array('name, providers_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
 			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
-			array('cap', 'length', 'max'=>11),
+			array('cap, external_rate', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>256),
 			array('url', 'url'),
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, ios_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, ios_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -115,7 +116,7 @@ class Campaigns extends CActiveRecord
 		return array(
 			'id'                     => 'ID',
 			'name'                   => 'Name',
-			'providers_id'           => 'Providers',
+			'providers_id'           => 'Traffic Source',
 			'campaign_categories_id' => 'Campaign Categories',
 			'wifi'                   => 'Wifi',
 			'formats_id'             => 'Formats',
@@ -144,6 +145,7 @@ class Campaigns extends CActiveRecord
 			'format'                 => 'Format',
 			'clics_redirect'         => 'Clics Redirect',
 			'date'                   => 'Date',
+			'external_rate'          => 'External rate',
 		);
 	}
 
