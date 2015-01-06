@@ -146,7 +146,7 @@ class Providers extends CActiveRecord
 
 	public function isPublisher()
 	{
-		return Publihsers::model()->exists('providers_id=:id', array(':id' => $this->id));
+		return Publishers::model()->exists('providers_id=:id', array(':id' => $this->id));
 	}
 
 
@@ -162,7 +162,7 @@ class Providers extends CActiveRecord
 			return 1;
 		if ($this->isNetwork())
 			return 2;
-		if ($this->isProvider())
+		if ($this->isPublisher())
 			return 3;
 		return NULL;
 	}
