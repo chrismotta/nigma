@@ -69,7 +69,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->with  = array('ios', 'ios.advertisers', 'country', 'carriers');
         $criteria->compare('t.status', 'Active');
         $criteria->order = 'advertisers.name, country.ISO2';
 
