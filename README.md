@@ -2,7 +2,7 @@ Kickads Appserver
 ===================
 Install Environment
 ===================
-*** Programs ***
+## Programs
 - Sublime
 - SmartGitHg
 - MySqlWorkbench
