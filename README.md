@@ -13,7 +13,7 @@ Install Environment
 - git
 - openjdk-7-jre
 - php5-curl
-(see https://help.ubuntu.com/community/ApacheMySQLPHP for complete tutorial)
+* see https://help.ubuntu.com/community/ApacheMySQLPHP for complete tutorial
 - apache2
 - libapache2-mod-php5
 - mysql-server libapache2-mod-auth-mysql php5-mysql
