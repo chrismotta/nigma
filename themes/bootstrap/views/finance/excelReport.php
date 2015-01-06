@@ -9,7 +9,7 @@ $month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('t
 $entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
 $cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
 $status       =isset($_POST['status']) ? $_POST['status'] : null;
-$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status);
+$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 
 $dataProvider =new CArrayDataProvider($clients['data'], array(
     'id'=>'clients',
