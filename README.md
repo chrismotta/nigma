@@ -19,8 +19,10 @@ Install Environment
 - mysql-server libapache2-mod-auth-mysql php5-mysql
 - phpmyadmin
 - Clone yii source code
-	cd /var/www/html/
-	sudo git clone https://github.com/yiisoft/yii.git yii
+```
+cd /var/www/html/
+sudo git clone https://github.com/yiisoft/yii.git yii
+```
 - Pecl|Pear
 	apt-get install php-pear php5-dev
 - PCRE
