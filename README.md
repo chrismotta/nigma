@@ -1,6 +1,4 @@
-appserver
-=========
-
+Kickads Appserver
 ===================
 Install Environment
 ===================
@@ -23,6 +21,15 @@ Install Environment
 - Clone yii source code
 	cd /var/www/html/
 	sudo git clone https://github.com/yiisoft/yii.git yii
+- Pecl|Pear
+	apt-get install php-pear php5-dev
+- PCRE
+	apt-get install libpcre3 libpcre3-dev
+- OAuth
+	pecl install oauth
+	vi /etc/php5/apache2/php.ini
+	add 'extension=oauth.so'
+	service apache2 restart
 
 *** Configurations ***
 - Copy Ip2Location.BIN and create Wurlf Folders
@@ -44,3 +51,5 @@ Install Environment
 - Plugins Sublime
 	https://sublime.wbond.net/installation#st2
 	http://www.pixmatstudios.com/blog/10-plugins-sublime-text-pixmat/#.VCG2Cq24E8o
+
+
