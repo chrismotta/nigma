@@ -585,15 +585,16 @@ class CampaignsController extends Controller
 	
 	public function actionGetDefaultExternalRate($id)
 	{
-		$opp = Opportunities::model()->with('ios')->findByPk($id);
+		$opp  = Opportunities::model()->with('ios')->findByPk($id);
+		$prov = Providers::model()->findByPk($_GET["p_id"]);
 
 		switch ($opp->ios->entity) {
 		 	case 'SRL':
-		 		echo json_encode(round($opp->rate * 0.65), 2);
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.65, 2));
 		 		break;
 		 	
 		 	default:
-		 		echo json_encode(round($opp->rate * 0.75, 2));
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.75, 2));
 		 		break;
 		 }
 	}

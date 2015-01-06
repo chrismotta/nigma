@@ -118,4 +118,20 @@ class Currency extends CActiveRecord
 		$criteria->params    = array(':date' => $date);
 		return Currency::model()->find( $criteria );
 	}
+
+	public function convert($from, $to, $value)
+	{
+		$currency = $this->findByDate(date('Y-m-d', strtotime('today')));
+
+		if ($from == 'USD' && $to == 'USD')
+			return $value;
+
+		if ($from == 'USD')
+			return $value * $currency[$to];
+
+		if ($to == 'USD')
+			return $value / $currency[$from];
+
+		return $value / $currency[$from] * $currency[$to];
+	}
 }
