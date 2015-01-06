@@ -127,22 +127,11 @@ if($action == "Create"){ ?>
 
         if($action == "Create"){
             echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array(
-                'prompt'   => 'Select an opportunitiy',
-                'onChange' => '
-                    if ( ! this.value)
-                        return;
-
-                    $.post(
-                        "getDefaultExternalRate/"+this.value,
-                        "",
-                        function(data)
-                        {
-                            // alert(data);
-                            $("#Campaigns_external_rate").val(data);
-                        }
-                    )
-                ',
+                'prompt' => 'Select an opportunitiy',
+                'class'  => 'opportunities-dropdownlist',
             ));
+        } else {
+            echo $form->hiddenField($model, 'opportunities_id', array('class' => 'opportunities-dropdownlist'));
         }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
@@ -191,6 +180,19 @@ if($action == "Create"){ ?>
                       $(".prov-currency").html(data);
                     }
                 )
+                
+                if ( ! $(".opportunities-dropdownlist").val() )
+                    return;
+
+                $.post(
+                    "getDefaultExternalRate/"+$(".opportunities-dropdownlist").val()+"?p_id="+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                        $("#Campaigns_external_rate").val(data);
+                    }
+                )
             ',
         ));
         $display = 'display: none;';
@@ -198,9 +200,7 @@ if($action == "Create"){ ?>
             $display = 'display: block;';
         }
         echo '<div style="' . $display . '" class="external-rate">';
-        echo $form->textFieldRow($model, 'external_rate', array(), array(
-                'prepend' => '<p class="prov-currency">' . $modelProv->currency . '</p>',
-            ));
+        echo $form->textFieldRow($model, 'external_rate', array('class' => 'span2'), array( 'prepend' => '<p class="prov-currency">' . $modelProv->currency . '</p>' ));
         echo '</div>';
 
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));
