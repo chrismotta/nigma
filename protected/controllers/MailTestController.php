@@ -24,7 +24,7 @@ class MailTestController extends Controller
 		$body = 'test<hr/>hola mundo';
 
 		$mail = new CPhpMailerLogRoute;
-		$mail->send(array('no-reply@kickads.mobi', 'christian.motta@kickads.mobi'), 'Custom Mail', $body);
+		$mail->send(array('christian.motta@kickads.mobi'), 'Custom Mail', $body);
 	}
 }
 

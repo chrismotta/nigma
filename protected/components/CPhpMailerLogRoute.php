@@ -42,6 +42,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
             // amazon prod
             case '54.88.85.63':
             case 'ec2-54-88-85-63.compute-1.amazonaws.com':
+            case 'test.kickadserver.mobi':
             case 'app.kickadserver.mobi':
             case 'kickadserver.mobi':
                 foreach ($emails as $email) {
