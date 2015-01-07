@@ -29,6 +29,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
         $mailer->AddAddress($email);
         $mailer->Subject = $subject;
         $mailer->Body    = $message;
+        $mailer->isHTML(true);
         $mailer->Send();
     }
 

@@ -92,9 +92,9 @@ class ExternalFormsController extends Controller
 		);
 	}
 	*/
-	public function actionRevenueValidation()
+	public function actionRevenueValidation($hash=null)
 	{
-		$token =isset($_GET['token']) ? $_GET['token'] : null;		
+		$token =isset($hash) ? $hash : null;		
 		$IosValidation =new IosValidation;
 		if(!$model=$IosValidation->loadModelByToken($token))
 		{

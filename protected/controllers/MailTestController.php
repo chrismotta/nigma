@@ -21,8 +21,10 @@ class MailTestController extends Controller
 		Yii::log('Log - level: error', 'error', 'system.mail');
 		Yii::log('Log - level: mail', 'mail', 'system.mail');
 
+		$body = 'test<hr/>hola mundo';
+
 		$mail = new CPhpMailerLogRoute;
-		$mail->send(array('no-reply@kickads.mobi', 'matias.cerrotta@kickads.mobi'), 'Custom Mail', 'Custom Message');
+		$mail->send(array('no-reply@kickads.mobi', 'christian.motta@kickads.mobi'), 'Custom Mail', $body);
 	}
 }
 
