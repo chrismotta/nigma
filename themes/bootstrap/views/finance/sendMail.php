@@ -5,16 +5,12 @@ $date    = date('Y-m-d H:i:s', strtotime('NOW'));
 $status  = "Sent";
 $comment = null;
 
-$validation_token  = md5($date.$io_id);
 $revenueValidation = new IosValidation;
 $log               = new ValidationLog;
-// if($revenueValidation->checkValidationOpportunities($io_id,$period))
-// {
 	if($revenueValidation->checkValidation($io_id,$period))
 	{
 		$ioValidation=$revenueValidation->loadByIo($io_id,$period);
-		$ioValidation->attributes=array('status'=>$status);
-		// $revenueValidation->attributes=array('ios_id'=>$io_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
+		$ioValidation->attributes=array('status'=>$status, 'date'=>$date);
 		if($ioValidation->save())
 		{
 			
