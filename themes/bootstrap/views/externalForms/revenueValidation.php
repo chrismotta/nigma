@@ -185,3 +185,14 @@ switch ($model->status) {
         </p>
     </div>
 </div>
+<?php
+function weekDaysSum($startDay, $cantDays) {
+    for($i=1; $i<=$cantDays; $i++) {
+        $weekDay = date('D', strtotime($startDay . " +" . $i));
+        if( $weekDay == "Sat" || $weekDay == "Sun"){
+            $cantDays++;
+        }
+    }
+    return date('Y-m-d', strtotime($startDay . " +" . $cantDays) );
+}
+?>
