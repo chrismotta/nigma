@@ -195,4 +195,5 @@ function weekDaysSum($startDay, $cantDays) {
     }
     return date('Y-m-d', strtotime($startDay . " +" . $cantDays) );
 }
+
 ?>

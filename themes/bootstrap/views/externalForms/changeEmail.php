@@ -7,6 +7,7 @@ $ios->attributes=array('email_validation'=>$email,'zip_code'=>'0');
 if($ios->save())
 {
 	echo $status;
+	// Re-envio de mail
 	$log->loadLog($model->id,$status);
 }
 else
