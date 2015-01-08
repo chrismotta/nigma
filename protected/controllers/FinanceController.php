@@ -237,24 +237,25 @@ class FinanceController extends Controller
 		if($count=$transactionCount->getTotalsCarrier($io->id,$year.'-'.$month.'-01'))
 		{
 			foreach ($count as $value) {
+			$sum=false;
 				foreach ($clients['data'] as $key => $data) {
+					if($sum)continue;
 					if($data['carrier']==$value->carriers_id_carrier){
 						if($data['rate']==$value->rate)
 						{
 							$clients['data'][$key]['conv']    +=$value->volume;
-							$clients['data'][$key]['revenue'] +=$value->total;
+							$clients['data'][$key]['revenue'] +=$value->total;							
 						}
 						else
-						{							
+						{
 							$aux[$i]=$data;						
 							$aux[$i]['conv']=$value->volume;
 							$aux[$i]['revenue']=$value->total;
 							$aux[$i]['rate']=$value->rate;				
 							$i++;		
-						}
-
+						}						
 					}
-
+					$sum=true;
 				}				
 			}
 			foreach ($aux as $value) {
