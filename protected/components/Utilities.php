@@ -191,4 +191,14 @@ class Utilities {
 	    
 	    return($xml_array);
 	}
+
+	public function weekDaysSum($startDay, $cantDays) {
+	    for($i=1; $i<=$cantDays; $i++) {
+	        $weekDay = date('D', strtotime('+'.$i.' day',strtotime($startDay)));	 
+	        if( $weekDay == "Sat" || $weekDay == "Sun"){
+	            $cantDays++;
+	        }
+	    }
+	    return date('Y-m-d', strtotime('+'.$cantDays.' day',strtotime($startDay)) );
+	}
 }
