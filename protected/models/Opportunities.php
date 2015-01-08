@@ -136,6 +136,15 @@ class Opportunities extends CActiveRecord
 		);
 	}
 
+	public function behaviors()
+	{
+		return array(
+	    		'modelVersioning' => array(
+	          		'class' => 'SAModelVersioning',
+	       		)
+	    	);
+	}
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
@@ -401,6 +410,17 @@ class Opportunities extends CActiveRecord
 			    ),
 
 			));
+	}
+
+	public function getRate($date='today')
+	{
+		$q = Yii::app()->db->createCommand()
+                    ->select('rate')
+                    ->from('opportunities_version')
+                    ->where("id=:id AND DATE(created_time)<=:date", array(':date' => date('Y-m-d', strtotime($date)), ":id" => $this->id))
+                    ->order('created_time DESC')
+                    ->queryAll(false);
+        return $q[0][0]; // return first column of first register
 	}
 
 }
