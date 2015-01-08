@@ -92,10 +92,12 @@ class ExternalFormsController extends Controller
 		);
 	}
 	*/
-	public function actionRevenueValidation()
+	public function actionRevenueValidation($hash=null)
 	{
-		$token =isset($_GET['token']) ? $_GET['token'] : null;		
+		$token =isset($hash) ? $hash : null;		
 		$IosValidation =new IosValidation;
+		$IosModel=new Ios;
+		$transactionCount=new TransactionCount;
 		if(!$model=$IosValidation->loadModelByToken($token))
 		{
 			$this->render('revenueValidation',array(
@@ -105,19 +107,48 @@ class ExternalFormsController extends Controller
 		$consolidated=array();
 		$totals['revenue']=0;
 		$totals['conv']=0;
-		$IosModel=new Ios;
 		$clients = $IosModel->getClients(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id,null,null,null,null,'profile');
+		$consolidated=array();
+		$i=0;
+		$aux=array();
+		if($count=$transactionCount->getTotalsCarrier($IosModel->id,$model->period))
+		{
+			foreach ($count as $value) {
+				foreach ($clients['data'] as $key => $data) {
+					if($data['carrier']==$value->carriers_id_carrier){
+						if($data['rate']==$value->rate)
+						{
+							$clients['data'][$key]['conv']    +=$value->volume;
+							$clients['data'][$key]['revenue'] +=$value->total;
+						}
+						else
+						{							
+							$aux[$i]=$data;						
+							$aux[$i]['conv']=$value->volume;
+							$aux[$i]['revenue']=$value->total;
+							$aux[$i]['rate']=$value->rate;				
+							$i++;		
+						}
 
-		// foreach ($clients as $ios) {
-		// 	foreach ($ios as $carriers) {
-		// 		foreach ($carriers as $data) {
-		// 			$consolidated[]=$data;
-		// 			$totals['revenue']+=$data['revenue'];
-		// 			$totals['conv']+=$data['conv'];
-		// 		}
-		// 	}
-		// }
-		$dataProvider=new CArrayDataProvider($clients['data'], array(
+					}
+
+				}				
+			}
+			foreach ($aux as $value) {
+				$consolidated[]=$value;
+			}
+		}
+		foreach ($clients['data'] as $value) {
+			$consolidated[]=$value;
+		}
+		$totals['revenue']=0;
+		$totals['conv']=0;
+		foreach ($consolidated as $value) {
+			$totals['revenue']+=$value['revenue'];
+			$totals['conv']+=$value['conv'];
+			
+		}
+		$dataProvider=new CArrayDataProvider($consolidated, array(
 		    'id'=>'consolidated',
 		    'sort'=>array(
 		        'attributes'=>array(
@@ -133,7 +164,7 @@ class ExternalFormsController extends Controller
 		$this->render('revenueValidation',array(
 			'model'        =>$model,
 			'dataProvider' =>$dataProvider,
-			'totals'       =>$clients['totals'],
+			'totals'       =>$totals,
 		));
 	}
 

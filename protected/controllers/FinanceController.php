@@ -18,7 +18,34 @@ class FinanceController extends Controller
 			),
 		);
 	}
+	/**
+	 * Returns the data model based on the primary key given in the GET variable.
+	 * If the data model is not found, an HTTP exception will be raised.
+	 * @param integer $id the ID of the model to be loaded
+	 * @return DailyReport the loaded model
+	 * @throws CHttpException
+	 */
+	public function loadModel($id)
+	{
+		$model=TransactionCount::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
+	}
 
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
+	public function actionDelete($id)
+	{
+		$this->loadModel($id)->delete();
+
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		if(!isset($_GET['ajax']))
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transaction'));
+	}
 	
 	public function actionClients()
 	{
@@ -199,12 +226,53 @@ class FinanceController extends Controller
 	public function actionRevenueValidation()
 	{
 		$model             =new Ios;
+		$transactionCount  =new TransactionCount;
 		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$io                =isset($_GET['io']) ? $model->findByPk($_GET['io']) : null;
 		$clients           =$model->getClients($month,$year,null,$io->id,null,null,null,null,'profile');
 		$consolidated=array();
-		$dataProvider=new CArrayDataProvider($clients['data'], array(
+		$i=0;
+		$aux=array();
+		if($count=$transactionCount->getTotalsCarrier($io->id,$year.'-'.$month.'-01'))
+		{
+			foreach ($count as $value) {
+			$sum=false;
+				foreach ($clients['data'] as $key => $data) {
+					if($sum)continue;
+					if($data['carrier']==$value->carriers_id_carrier){
+						if($data['rate']==$value->rate)
+						{
+							$clients['data'][$key]['conv']    +=$value->volume;
+							$clients['data'][$key]['revenue'] +=$value->total;							
+						}
+						else
+						{
+							$aux[$i]=$data;						
+							$aux[$i]['conv']=$value->volume;
+							$aux[$i]['revenue']=$value->total;
+							$aux[$i]['rate']=$value->rate;				
+							$i++;		
+						}						
+					}
+					$sum=true;
+				}				
+			}
+			foreach ($aux as $value) {
+				$consolidated[]=$value;
+			}
+		}
+		foreach ($clients['data'] as $value) {
+			$consolidated[]=$value;
+		}
+		$totals['revenue']=0;
+		$totals['conv']=0;
+		foreach ($consolidated as $value) {
+			$totals['revenue']+=$value['revenue'];
+			$totals['conv']+=$value['conv'];
+			
+		}
+		$dataProvider=new CArrayDataProvider($consolidated, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
@@ -230,8 +298,9 @@ class FinanceController extends Controller
 				'year'         =>$year,
 				'io'           =>$io,
 				'dataProvider' =>$dataProvider,
-				'clients' =>$clients['data'],
-				'totals'       =>$clients['totals']
+				'clients' 		=>$clients['data'],
+				'totals'       =>$totals,
+				'count'=>$count
 		 	),
 		  false, true);
 
@@ -319,14 +388,19 @@ class FinanceController extends Controller
 
 	public function actionAddTransaction()
 	{
-		$transaction                   = new TransactionCount;
-		$transaction->opportunities_id =$_POST['opportunitie'];
-		$transaction->period           =$_POST['TransactionCount']['period'];
-		$transaction->volume           =$_POST['TransactionCount']['volume'];
-		$transaction->rate             =$_POST['TransactionCount']['rate'];
-		$transaction->users_id         =$_POST['TransactionCount']['users_id'];
-		$transaction->date             =$_POST['TransactionCount']['date'];
-		$transaction->save();
+		if($_POST['carrier']!=='')
+		{
+			$transaction                      = new TransactionCount;
+			$transaction->carriers_id_carrier =$_POST['carrier']=='multi' ? null : $_POST['carrier'];
+			$transaction->period              =$_POST['TransactionCount']['period'];
+			$transaction->volume              =$_POST['TransactionCount']['volume'];
+			$transaction->rate                =$_POST['TransactionCount']['rate'];
+			$transaction->users_id            =$_POST['TransactionCount']['users_id'];
+			$transaction->ios_id              =$_POST['TransactionCount']['ios_id'];
+			$transaction->date                =$_POST['TransactionCount']['date'];
+			if(!$transaction->save())echo'<script>alert('.json_encode($transaction->getErrors()).')</script>';
+
+		}
 
 	}
 }

@@ -69,7 +69,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->with  = array('ios', 'ios.advertisers', 'country', 'carriers');
         $criteria->compare('t.status', 'Active');
         $criteria->order = 'advertisers.name, country.ISO2';
 
@@ -102,6 +102,44 @@ class KHtml extends CHtml
         $opps = Opportunities::model()->findAll($criteria);
         $list   = CHtml::listData($opps, 'id', 'virtualName');
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
+    }
+
+    public static function filterCarriersDate($value, $accountManagerId=NULL, $htmlOptions = array(),$io_id,$startDate,$endDate)
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All carriers',
+            'class' => 'carrier-dropdownlist',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        $carriers=array();
+        $query = '  select ca.id_carrier as id_carrier,ca.mobile_brand as mobile_brand from carriers ca, opportunities o
+                    inner join campaigns c on c.opportunities_id=o.id
+                    inner join daily_report d on d.campaigns_id=c.id
+                    left join multi_rate m on m.daily_report_id=d.id
+                    where d.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"
+                    and d.revenue>0
+                    and o.ios_id='.intval($io_id).'
+                    and (o.carriers_id=ca.id_carrier or m.carriers_id_carrier=ca.id_carrier)
+                    group by ca.id_carrier';
+                    // echo $query;
+        $opps = Carriers::model()->findAllBySql($query);
+        foreach ($opps as $op) {
+            $carriers[$op['id_carrier']]=$op['mobile_brand'];
+        }
+        $query = '  select "multi","Multi" from opportunities o
+                    inner join campaigns c on c.opportunities_id=o.id
+                    inner join daily_report d on d.campaigns_id=c.id
+                    where o.carriers_id is null 
+                    and rate is not null
+                    and d.revenue>0
+                    and o.ios_id='.intval($io_id).'
+                    and d.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"';
+                    // echo $query;
+        $opps = Carriers::model()->findAllBySql($query);
+        foreach ($opps as $op) {
+            $carriers[$op['id_carrier']]=$op['mobile_brand'];
+        }
+        return CHtml::dropDownList('carrier', $value, $carriers, $htmlOptions);
     }
 
     /**

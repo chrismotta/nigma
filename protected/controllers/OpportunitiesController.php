@@ -79,6 +79,7 @@ class OpportunitiesController extends Controller
 		if(isset($_POST['Opportunities']))
 		{
 			$model->attributes=$_POST['Opportunities'];
+			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -100,9 +101,10 @@ class OpportunitiesController extends Controller
 
 		if(isset($_POST['Opportunities']))
 		{
-			$model->carriers_id = NULL;
-			$model->rate = NULL;
-			$model->attributes = $_POST['Opportunities'];
+			$model->carriers_id      = NULL;
+			$model->rate             = NULL;
+			$model->attributes       = $_POST['Opportunities'];
+			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
