@@ -112,7 +112,8 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         $carriers=array();
-        $query = '  select ca.id_carrier as id_carrier,ca.mobile_brand as mobile_brand from carriers ca, opportunities o
+        $query = '  SELECT ca.id_carrier as id_carrier,ca.mobile_brand as mobile_brand, g.name as id_country
+                    FROM carriers ca,geo_location g, opportunities o
                     inner join campaigns c on c.opportunities_id=o.id
                     inner join daily_report d on d.campaigns_id=c.id
                     left join multi_rate m on m.daily_report_id=d.id
@@ -120,13 +121,14 @@ class KHtml extends CHtml
                     and d.revenue>0
                     and o.ios_id='.intval($io_id).'
                     and (o.carriers_id=ca.id_carrier or m.carriers_id_carrier=ca.id_carrier)
+                    and g.id_location=ca.id_country
                     group by ca.id_carrier';
                     // echo $query;
         $opps = Carriers::model()->findAllBySql($query);
         foreach ($opps as $op) {
-            $carriers[$op['id_carrier']]=$op['mobile_brand'];
+            $carriers[$op['id_carrier']]=$op['mobile_brand'].' - '.$op['id_country'];
         }
-        $query = '  select "multi","Multi" from opportunities o
+        $query = '  SELECT "multi" as id_carrier,"Multi" as mobile_brand FROM opportunities o
                     inner join campaigns c on c.opportunities_id=o.id
                     inner join daily_report d on d.campaigns_id=c.id
                     where o.carriers_id is null 
