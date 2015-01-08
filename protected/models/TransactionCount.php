@@ -10,7 +10,8 @@
  * @property string $rate
  * @property integer $users_id
  * @property string $date
- * @property integer $opportunities_id
+ * @property integer $ios_id
+ * @property integer $carriers_id_carrier
  *
  * The followings are the available model relations:
  * @property Users $users
@@ -36,12 +37,12 @@ class TransactionCount extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('period, volume, rate, users_id, date, opportunities_id', 'required'),
-			array('volume, users_id, opportunities_id', 'numerical', 'integerOnly'=>true),
+			array('period, volume, rate, users_id, date, ios_id', 'required'),
+			array('volume, users_id, ios_id, carriers_id_carrier', 'numerical', 'integerOnly'=>true),
 			array('rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, period, volume, rate, users_id, date, opportunities_id', 'safe', 'on'=>'search'),
+			array('id, period, volume, rate, users_id, date, ios_id, carriers_id_carrier', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,8 +54,9 @@ class TransactionCount extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'users' => array(self::BELONGS_TO, 'Users', 'users_id'),
-			'opportunities' => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
+			'users'    => array(self::BELONGS_TO, 'Users', 'users_id'),
+			'ios'      => array(self::BELONGS_TO, 'Ios', 'ios_id'),
+			'carriers' => array(self::BELONGS_TO, 'Carriers', 'carriers_id_carrier'),
 		);
 	}
 
@@ -64,15 +66,16 @@ class TransactionCount extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'               => 'ID',
-			'period'           => 'Period',
-			'volume'           => 'Volume',
-			'rate'             => 'Rate',
-			'users_id'         => 'Users',
-			'date'             => 'Date',
-			'opportunities_id' => 'Opportunities',
-			'total'            => 'Total',
-			'currency'         => 'Currency',
+			'id'                  => 'ID',
+			'period'              => 'Period',
+			'volume'              => 'Volume',
+			'rate'                => 'Rate',
+			'users_id'            => 'Users',
+			'date'                => 'Date',
+			'ios_id'              => 'Ios',
+			'carriers_id_carrier' => 'Carriers',
+			'total'               => 'Total',
+			'currency'            => 'Currency',
 		);
 	}
 
@@ -100,7 +103,8 @@ class TransactionCount extends CActiveRecord
 		$criteria->compare('rate',$this->rate,true);
 		$criteria->compare('users_id',$this->users_id);
 		$criteria->compare('date',$this->date,true);
-		$criteria->compare('opportunities_id',$this->opportunities_id);
+		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('carriers_id_carrier',$this->carriers_id_carrier);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -121,9 +125,8 @@ class TransactionCount extends CActiveRecord
 	public function getTransactions($ios_id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->with=array('opportunities');
-		$criteria->addCondition('t.opportunities_id=opportunities.id');
-		$criteria->addCondition('opportunities.ios_id='.$ios_id);
+		// $criteria->with=array('opportunities');
+		$criteria->compare('ios_id',$ios_id);
 		$criteria->compare('period',$period);
 		return new CActiveDataProvider($this,array(
 				'criteria'=>$criteria,
@@ -134,9 +137,10 @@ class TransactionCount extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 		$criteria->select='sum(t.rate*t.volume) as total';
-		$criteria->with=array('opportunities');
-		$criteria->addCondition('t.opportunities_id=opportunities.id');
-		$criteria->addCondition('opportunities.ios_id='.$ios_id);
+		// $criteria->with=array('opportunities');
+		// $criteria->addCondition('t.opportunities_id=opportunities.id');
+		// $criteria->addCondition('opportunities.ios_id='.$ios_id);
+		$criteria->compare('t.ios_id',$ios_id);
 		$criteria->compare('t.period',$period);
 		return self::model()->find($criteria) ? number_format(self::model()->find($criteria)['total'],2) : 0;
 		
@@ -150,7 +154,8 @@ class TransactionCount extends CActiveRecord
 		// group by i.currency;
 
 		$criteria         =new CDbCriteria;
-		$criteria->with  =array('opportunities','opportunities.ios');
+		// $criteria->with  =array('opportunities','opportunities.ios');
+		$criteria->with  =array('ios');
 		$criteria->compare('t.period',$period);		
 		$criteria->select ='sum(t.rate*t.volume) as total, ios.currency as currency';
 		$criteria->group  ='ios.currency';
@@ -165,11 +170,34 @@ class TransactionCount extends CActiveRecord
 		// group by i.currency;
 
 		$criteria         =new CDbCriteria;
-		$criteria->with  =array('opportunities','opportunities.ios','opportunities.ios.iosValidation');
+		// $criteria->with  =array('opportunities','opportunities.ios','opportunities.ios.iosValidation');
+		$criteria->with  =array('ios','ios.iosValidation');
 		$criteria->compare('t.period',$period);		
 		$criteria->compare('iosValidation.status','Invoiced');
 		$criteria->select ='sum(t.rate*t.volume) as total, ios.currency as currency';
 		$criteria->group  ='ios.currency';
 		return Self::model()->findAll($criteria);
 	}
+
+	public function getTotalsCarrier($ios_id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->select='carriers_id_carrier,rate,sum(volume) as volume,sum(rate*volume) as total';
+		$criteria->compare('ios_id',$ios_id);
+		$criteria->compare('period',$period);
+		$criteria->group='carriers_id_carrier,rate';
+		return self::model()->findAll($criteria);
+		
+	}
+
+	public function getCarrier()
+	{
+		return Carriers::model()->findByPk($this->carriers_id_carrier) ? Carriers::model()->findByPk($this->carriers_id_carrier)->mobile_brand : 'Multi';
+	}
+
+	public function getUserName()
+	{
+		return Users::model()->findByPk($this->users_id) ? Users::model()->findByPk($this->users_id)->lastname.' '.Users::model()->findByPk($this->users_id)->name : 'Error';
+	}
+
 }
