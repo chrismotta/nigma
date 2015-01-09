@@ -42,7 +42,7 @@ class MailTestController extends Controller
 		';
 
 		$mail = new CPhpMailerLogRoute;
-		$mail->send(array('christian.motta@kickads.mobi'), 'Custom Mail', $body);
+		$mail->send(array('christian.motta@kickads.mobi'), 'Custom Mail', $body, true);
 
 		echo 'Enviado '.date('H:m:s');
 	}

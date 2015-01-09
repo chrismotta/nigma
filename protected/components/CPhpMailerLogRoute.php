@@ -16,7 +16,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
     ); // Default values
 
 
-    protected function sendEmail($email, $subject, $message)
+    protected function sendEmail($email, $subject, $message, $isHTML=false)
     {
         $configuration = $this->getConfig();
         $mailer        = Yii::createComponent('application.extensions.mailer.EMailer');
@@ -29,14 +29,14 @@ class CPhpMailerLogRoute extends CEmailLogRoute
         $mailer->AddAddress($email);
         $mailer->Subject = $subject;
         $mailer->Body    = $message;
-        $mailer->isHTML(true);
+        $mailer->isHTML($isHTML);
         $mailer->Send();
     }
 
     /*
      * Public function for sendEmail
      */
-    public function send($emails, $subject, $message)
+    public function send($emails, $subject, $message, $isHTML=false)
     {
         switch ( $_SERVER['HTTP_HOST'] ) {
             // amazon prod
@@ -46,7 +46,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
             case 'app.kickadserver.mobi':
             case 'kickadserver.mobi':
                 foreach ($emails as $email) {
-                    $this->sendEmail($email, $subject, $message);
+                    $this->sendEmail($email, $subject, $message, $isHTML);
                 }
             break;
         }

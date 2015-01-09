@@ -36,8 +36,11 @@ $log               = new ValidationLog;
                 	';
             $subject = 'KickAds - Statement of account as per '.date('M j, Y');
 
-            $mail = new CPhpMailerLogRoute;
-            $mail->send(array('christian.motta@kickads.mobi'), $subject, $body);
+            $io = Ios::model()->findByPk($IosValidation->ios_id);         
+			$email_validation=is_null($io->email_validation) ? $io->email_adm : $io->email_validation;
+			
+            $mail = new CPhpMailerLogRoute;   
+            $mail->send(array($email_validation), $subject, $body);
 
 
 		    echo 'Io #'.$ioValidation->ios_id.' mail enviado';

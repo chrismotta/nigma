@@ -151,7 +151,7 @@ else
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
-			$status['Not Sended']='Not Sended';
+			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
