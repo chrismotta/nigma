@@ -345,7 +345,7 @@ class Ios extends CActiveRecord
 				$data[$i]['carrier']         =$daily->carrier;				
 				$data[$i]['mobileBrand']     =$carriers->getMobileBrandById($daily->carrier);
 				$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
-				$data[$i]['country']         =$geoLocation->getNameFromId($carriers->getCountryById($daily->carrier));
+				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
 				$data[$i]['conv']            =round($daily->conversions,2);
@@ -357,7 +357,8 @@ class Ios extends CActiveRecord
 		}
 		return $data;
 	}
-public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$group)
+	
+	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$group)
 	{
 		#Declare arrays to use
 		$totals_io    =array();
@@ -382,7 +383,7 @@ public function getClients($month,$year,$entity=null,$io=null,$accountManager=nu
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['carrier']         =$daily['carrier'];				
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['mobileBrand']     =$daily['mobileBrand'];
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_opp']      =$daily['status_opp'];
-					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['country']         =$daily['country'];
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['country']         =$daily['country'];//aca esta el country
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_io']       =$daily['status_io'];				
 					#If isset, set arrays (conv,revenue) and sum
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']=0;
