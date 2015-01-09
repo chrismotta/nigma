@@ -36,7 +36,7 @@ $log               = new ValidationLog;
                 	';
             $subject = 'KickAds - Statement of account as per '.date('M j, Y');
 
-            $io = Ios::model()->findByPk($IosValidation->ios_id);         
+            $io = Ios::model()->findByPk($ioValidation->ios_id);         
 			$email_validation=is_null($io->email_validation) ? $io->email_adm : $io->email_validation;
 			
             $mail = new CPhpMailerLogRoute;   
