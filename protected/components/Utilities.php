@@ -192,7 +192,8 @@ class Utilities {
 	    return($xml_array);
 	}
 
-	public function weekDaysSum($startDay, $cantDays) {
+	public function weekDaysSum($startDay=null, $cantDays) {
+		if(!$startDay)$startDay= date('Y-m-d', strtotime('NOW'));
 	    for($i=1; $i<=$cantDays; $i++) {
 	        $weekDay = date('D', strtotime('+'.$i.' day',strtotime($startDay)));	 
 	        if( $weekDay == "Sat" || $weekDay == "Sun"){

@@ -127,7 +127,7 @@ switch ($model->status) {
                  Yii::app()->clientScript->registerScript('revenueApproved', "
                     $('#btnApproved').click(function(e){
                         e.preventDefault();
-                       $.post( 'revenueApproved', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
+                       $.post( '".Yii::app()->baseUrl."/externalForms/revenueApproved', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
                             .success(function( data ) {
                             alert(data );
                             });
@@ -142,7 +142,7 @@ switch ($model->status) {
                         e.preventDefault();
                         if($('#comment').val())
                         {
-                            $.post('revenueDisputed', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
+                            $.post('".Yii::app()->baseUrl."/externalForms/revenueDisputed', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
                             .success(function( data ) {
                             alert(data );
                             });
@@ -169,7 +169,7 @@ switch ($model->status) {
                                 e.preventDefault();
                                 if($('#email_validation').val())
                                 {
-                                    $.post( 'changeEmail', { 'token': '".$model->validation_token."', 'email_validation': $('#email_validation').val()})
+                                    $.post( '".Yii::app()->baseUrl."/externalForms/changeEmail', { 'token': '".$model->validation_token."', 'email_validation': $('#email_validation').val()})
                                     .success(function( data ) {
                                     alert(data );
                                     });
