@@ -46,7 +46,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
             case 'app.kickadserver.mobi':
             case 'kickadserver.mobi':
                 foreach ($emails as $email) {
-                    $this->sendEmail($email, $subject, $message, $isHtml);
+                    $this->sendEmail($email, $subject, $message, $isHTML);
                 }
             break;
         }
