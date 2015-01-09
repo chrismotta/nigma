@@ -2,10 +2,27 @@
 
 class FinanceController extends Controller
 {
-	public function actionIndex()
+	/**
+	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
+	 * using two-column layout. See 'protected/views/layouts/column2.php'.
+	 */
+	public $layout='//layouts/column1';
+
+	/**
+	 * @return array action filters
+	 */
+	public function filters()
 	{
-		$this->render('index');
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete', // we only allow deletion via POST request
+		);
 	}
+	// /**
+	//  * Specifies the access control rules.
+	//  * This method is used by the 'accessControl' filter.
+	//  * @return array access control rules
+	//  */
 	public function accessRules()
 	{
 		return array(
@@ -13,11 +30,25 @@ class FinanceController extends Controller
 				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice'),
 				'roles'=>array('admin', 'finance', 'media'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('updateValidationStatus'),
+				'roles'=>array('admin'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('updateValidationStatus'),
+				'ips'=>array('54.88.85.63'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
 	}
+
+	public function actionIndex()
+	{
+		$this->render('index');
+	}
+
 	/**
 	 * Returns the data model based on the primary key given in the GET variable.
 	 * If the data model is not found, an HTTP exception will be raised.
@@ -140,7 +171,7 @@ class FinanceController extends Controller
 			'filtersForm'  =>$filtersForm,
 			'dataProvider' =>$dataProvider,
 			'clients'      =>$consolidated,
-			'clients2'      =>$clients,
+			'clients2'     =>$clients,
 			'totals'       =>$totalsDataProvider,
 			'month'        =>$month,
 			'year'         =>$year,
@@ -279,15 +310,15 @@ class FinanceController extends Controller
 		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','country','product','mobileBrand'
 		        ),
 		    ),
-		    'pagination'=>array(
-		        'pageSize'=>30,
+		    'pagination'   =>array(
+		        'pageSize' =>30,
 		    ),
 		));
 
 		            
 		if( isset($_POST['revenue-validation-form']) ) {
 			$this->renderPartial('sendMail', array(
-				'io_id' => $_POST['ios_id'],
+				'io_id'  => $_POST['ios_id'],
 				'period' => $_POST['period'],
 			));
 		}
@@ -298,7 +329,7 @@ class FinanceController extends Controller
 				'year'         =>$year,
 				'io'           =>$io,
 				'dataProvider' =>$dataProvider,
-				'clients' 		=>$clients['data'],
+				'clients' 	   =>$clients['data'],
 				'totals'       =>$totals,
 				'count'=>$count
 		 	),
@@ -349,7 +380,7 @@ class FinanceController extends Controller
 		$this->renderPartial('validateOpportunitie', array(
 				'opportunities_id' => $_POST['opportunities_id'],
 				'period'           => $_POST['period'],
-				'opportunitie'     =>$opportunitie
+				'opportunitie'     => $opportunitie
 			));
 	}
 	
@@ -375,14 +406,14 @@ class FinanceController extends Controller
 
 	public function actionTransaction()
 	{
-		$period   =isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
-		$id      =isset($_GET['id']) ? $_GET['id'] : null;
-		$model=new TransactionCount;
+		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
+		$id     = isset($_GET['id']) ? $_GET['id'] : null;
+		$model  = new TransactionCount;
 
 		$this->renderPartial('_form',array(
-			'id'    => $id,
-			'period'=>$period,
-			'model'=>$model,
+			'id'     => $id,
+			'period' => $period,
+			'model'  => $model,
 		), false, true);
 	}
 
@@ -391,16 +422,38 @@ class FinanceController extends Controller
 		if($_POST['carrier']!=='')
 		{
 			$transaction                      = new TransactionCount;
-			$transaction->carriers_id_carrier =$_POST['carrier']=='multi' ? null : $_POST['carrier'];
-			$transaction->period              =$_POST['TransactionCount']['period'];
-			$transaction->volume              =$_POST['TransactionCount']['volume'];
-			$transaction->rate                =$_POST['TransactionCount']['rate'];
-			$transaction->users_id            =$_POST['TransactionCount']['users_id'];
-			$transaction->ios_id              =$_POST['TransactionCount']['ios_id'];
-			$transaction->date                =$_POST['TransactionCount']['date'];
-			if(!$transaction->save())echo'<script>alert('.json_encode($transaction->getErrors()).')</script>';
+			$transaction->carriers_id_carrier = $_POST['carrier']=='multi' ? null : $_POST['carrier'];
+			$transaction->period              = $_POST['TransactionCount']['period'];
+			$transaction->volume              = $_POST['TransactionCount']['volume'];
+			$transaction->rate                = $_POST['TransactionCount']['rate'];
+			$transaction->users_id            = $_POST['TransactionCount']['users_id'];
+			$transaction->ios_id              = $_POST['TransactionCount']['ios_id'];
+			$transaction->date                = $_POST['TransactionCount']['date'];
 
+			if(!$transaction->save())echo'<script>alert('.json_encode($transaction->getErrors()).')</script>';
 		}
+	}
+
+	public function actionUpdateValidationStatus(){
+		$list = IosValidation::model()->findAllByAttributes(array('status'=>array('Sent','Viewed')));
+		foreach ($list as $key => $value) {
+			//echo date('Y-m-d') . ' ';
+			echo '#' . $value['id'] . ' - ';
+			echo "Sent ".date('Y-m-d', strtotime($value['date'])) . ' - ';
+			echo "Expiration ".Utilities::weekDaysSum(date('Y-m-d', strtotime($value['date'])),4);
+			
+			$expDay = strtotime( Utilities::weekDaysSum(date('Y-m-d', strtotime($value['date'])),4) );
+			$today  = strtotime("today");
+			if($today > $expDay){
+				echo " (expired)";
+				$model = IosValidation::model()->findByPk($value['id']);
+				$model->status = "Expired";
+				$model->save();
+			}
+
+			echo '<br/>';
+		};
+
 
 	}
 }
