@@ -169,12 +169,9 @@ class NetworksController extends Controller
 	 */
 	private function renderFormAjax($modelNetw, $modelProv)
 	{
-		$currency = KHtml::enumItem($modelProv, 'currency');
-
 		$this->renderPartial('_form', array(
 			'modelNetw' =>$modelNetw,
 			'modelProv' =>$modelProv,
-			'currency'  =>$currency,
 		), false, true);
 	}
 }

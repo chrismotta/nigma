@@ -104,45 +104,39 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
-    public static function filterCarriersDate($value, $accountManagerId=NULL, $htmlOptions = array(),$io_id,$startDate,$endDate)
+    public static function filterCarrier($value, $accountManagerId=NULL, $htmlOptions = array(),$country=null)
     {
         $defaultHtmlOptions = array(
             'empty' => 'All carriers',
             'class' => 'carrier-dropdownlist',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
-        $carriers=array();
-        $query = '  SELECT ca.id_carrier as id_carrier,ca.mobile_brand as mobile_brand, g.name as id_country
-                    FROM carriers ca,geo_location g, opportunities o
-                    inner join campaigns c on c.opportunities_id=o.id
-                    inner join daily_report d on d.campaigns_id=c.id
-                    left join multi_rate m on m.daily_report_id=d.id
-                    where d.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"
-                    and d.revenue>0
-                    and o.ios_id='.intval($io_id).'
-                    and (o.carriers_id=ca.id_carrier or m.carriers_id_carrier=ca.id_carrier)
-                    and g.id_location=ca.id_country
-                    group by ca.id_carrier';
-                    // echo $query;
-        $opps = Carriers::model()->findAllBySql($query);
-        foreach ($opps as $op) {
-            $carriers[$op['id_carrier']]=$op['mobile_brand'].' - '.$op['id_country'];
-        }
-        $query = '  SELECT "multi" as id_carrier,"Multi" as mobile_brand FROM opportunities o
-                    inner join campaigns c on c.opportunities_id=o.id
-                    inner join daily_report d on d.campaigns_id=c.id
-                    where o.carriers_id is null 
-                    and rate is not null
-                    and d.revenue>0
-                    and o.ios_id='.intval($io_id).'
-                    and d.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"';
-                    // echo $query;
-        $opps = Carriers::model()->findAllBySql($query);
-        foreach ($opps as $op) {
-            $carriers[$op['id_carrier']]=$op['mobile_brand'];
-        }
-        return CHtml::dropDownList('carrier', $value, $carriers, $htmlOptions);
+        $criteria=new CDbCriteria;
+        if($country)
+            $criteria->compare('id_country',$country);
+
+        $carriers            = Carriers::model()->findAll($criteria);
+        $list            = CHtml::listData($carriers, 'id_carrier', 'mobile_brand');
+        return CHtml::dropDownList('carrier', $value, $list, $htmlOptions);
     }
+
+    public static function filterProduct($value, $htmlOptions = array(),$io_id=null)
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All products',
+            'class' => 'product-dropdownlist',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+
+        $criteria = new CDbCriteria;
+        if ( $io_id != NULL )
+            $criteria->compare('ios_id', $io_id);
+        $criteria->group='product';
+        $opps = Opportunities::model()->findAll($criteria);
+        $list   = CHtml::listData($opps, 'product', 'product');
+        return CHtml::dropDownList('product', $value, $list, $htmlOptions);
+    }
+
 
     /**
      * Create dropdown of Account Managers
@@ -238,22 +232,36 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterCountries($value, $htmlOptions = array())
+    public static function filterCountries($value, $htmlOptions = array(),$io=null,$dropdownLoad=null)
     {
         $defaultHtmlOptions = array(
-            'empty' => 'All countries',
+            'empty' => 'All countries',            
         );
+        if(!is_null($dropdownLoad))
+            $defaultHtmlOptions = array_merge($defaultHtmlOptions, array(
+                'onChange' => '
+                $.post(
+                    "' . Yii::app()->getBaseUrl() . '/finance/getCarriers/?country="+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                        $("#'.$dropdownLoad.'").html(data);
+                    }
+                )'));
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
         $criteria->with  = array('country');
         $criteria->order = 'country.name';
+        if(!is_null($io))
+            $criteria->compare('ios_id',$io);
         $opps            = Opportunities::model()->findAll($criteria);
         $list            = CHtml::listData($opps, 'country.id_location', 'country.name');
         return CHtml::dropDownList('country', $value, $list, $htmlOptions);
     }
 
-	/**
+    /**
      * Create dropdown of Entities
      * @param  $value
      * @param  $htmlOptions
