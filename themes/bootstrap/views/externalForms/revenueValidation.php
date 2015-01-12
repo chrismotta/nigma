@@ -48,8 +48,8 @@ switch ($model->status) {
         Administrative Contact: <?php echo $io->contact_adm; ?></h5>
         <p style="font-size:13px">Spending in <?php echo date('M, Y', strtotime($model->period)) ?><br/>
             <span style="color:#999">Consumos correspondientes a <?php echo date('M, Y', strtotime($model->period)) ?></span></p>
-        <p>Please check the statement of your account below. We will assume that you are in agreement with us on the statement unless you inform us to the contrary by latest <?php echo date('M j, Y', strtotime('+4 days')) ?><br/>
-        <span style="color:#999">Por favor verificar el estado de su cuenta a continuación. Se considerara de acuerdo con el estado actual a menos que se nos notifique a mas tardar el <?php echo date('M j, Y', strtotime('+4 days')) ?></span></p>
+        <p>Please check the statement of your account below. We will assume that you are in agreement with us on the statement unless you inform us to the contrary by latest <?php echo date('M j, Y', strtotime(Utilities::weekDaysSum(date('Y-m-d', strtotime($model->date)),4))) ?><br/>
+        <span style="color:#999">Por favor verificar el estado de su cuenta a continuación. Se considerara de acuerdo con el estado actual a menos que se nos notifique a mas tardar el <?php echo date('M j, Y', strtotime(Utilities::weekDaysSum(date('Y-m-d', strtotime($model->date)),4))) ?></span></p>
         <?php
             $this->widget('yiibooster.widgets.TbGroupGridView', array(
             'id'                         => 'revenue-validation-grid',
