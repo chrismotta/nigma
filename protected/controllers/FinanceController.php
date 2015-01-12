@@ -27,7 +27,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete'),
+				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -271,7 +271,8 @@ class FinanceController extends Controller
 			$sum=false;
 				foreach ($clients['data'] as $key => $data) {
 					if($sum)continue;
-					if($data['carrier']==$value->carriers_id_carrier){
+					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier)
+					{
 						if($data['rate']==$value->rate)
 						{
 							$clients['data'][$key]['conv']    +=$value->volume;
@@ -284,9 +285,9 @@ class FinanceController extends Controller
 							$aux[$i]['revenue']=$value->total;
 							$aux[$i]['rate']=$value->rate;				
 							$i++;		
-						}						
+						}	
+						$sum=true;
 					}
-					$sum=true;
 				}				
 			}
 			foreach ($aux as $value) {
@@ -409,20 +410,36 @@ class FinanceController extends Controller
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
 		$id     = isset($_GET['id']) ? $_GET['id'] : null;
 		$model  = new TransactionCount;
-
+		$carriers=array();
+		$clients =Ios::model()->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$id,null,null,null,null,'profile');
+		foreach ($clients['data'] as $value) {
+			if($value['carrier'])
+			{
+				$carrier=Carriers::model()->findByPk($value['carrier']);
+				$country=GeoLocation::model()->findByPk($carrier->id_country)->name;
+				$carriers[$value['carrier']]=$carrier->mobile_brand.' - '.$country;
+			}
+			else
+			{
+				$carriers['multi']='Multi';
+			}
+		}
 		$this->renderPartial('_form',array(
 			'id'     => $id,
 			'period' => $period,
 			'model'  => $model,
+			'carriers'=>$carriers
 		), false, true);
 	}
 
 	public function actionAddTransaction()
 	{
-		if($_POST['carrier']!=='')
+		if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
 		{
 			$transaction                      = new TransactionCount;
-			$transaction->carriers_id_carrier = $_POST['carrier']=='multi' ? null : $_POST['carrier'];
+			$transaction->carriers_id_carrier = $_POST['TransactionCount']['carrier']=='multi' ? null : $_POST['TransactionCount']['carrier'];
+			$transaction->product             = $_POST['product'];
+			$transaction->country             = $_POST['country'];
 			$transaction->period              = $_POST['TransactionCount']['period'];
 			$transaction->volume              = $_POST['TransactionCount']['volume'];
 			$transaction->rate                = $_POST['TransactionCount']['rate'];
@@ -455,5 +472,22 @@ class FinanceController extends Controller
 		};
 
 
+	}
+	public function actionGetCarriers()
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		$criteria=new CDbCriteria;
+		$id_country = isset($_GET['country']) ? $_GET['country'] : null;
+			if($id_country)
+				$criteria->compare('id_country', $id_country);
+		$carriers =Carriers::model()->findAll($criteria);
+		$response='';
+		$response='<option value="">All Carriers</option>';
+		foreach ($carriers as $carrier) {
+			$response .= '<option value="' . $carrier->id_carrier . '">' . $carrier->mobile_brand . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 }
