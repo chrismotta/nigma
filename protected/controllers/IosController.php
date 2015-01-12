@@ -308,7 +308,7 @@ class IosController extends Controller
 		if ( file_exists($path . $model->pdf_name) ) {
 			$info = pathinfo($model->pdf_name);
 			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
-				$this->redirect( array('uploads/Adv-1_IO-1.pdf') );
+				$this->redirect( array('uploads/' . $model->pdf_name) );
 			} else { // other files download
 				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
 			}
