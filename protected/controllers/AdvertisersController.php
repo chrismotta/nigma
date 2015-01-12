@@ -280,6 +280,7 @@ class AdvertisersController extends Controller
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$criteria=new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers');
+        $criteria->compare('status', 'Active');
         $criteria->order = 'advertisers.name';
         $criteria->group = 'advertisers.name';
 		$ids = isset($_GET['accountManager']) ? $_GET['accountManager'] : null;
