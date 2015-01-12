@@ -142,8 +142,8 @@ else
 			$months[11] ='November';
 			$months[12] ='December';
 			$years[0]   ='Select a year';
-			foreach (range(date('Y'), 2014) as $year) {
-				$years[$year]=$year;
+			foreach (range(date('Y'), 2014) as $y) {
+				$years[$y]=$y;
 			}
 
 			$entities=KHtml::enumItem(new Ios,'entity');
@@ -151,9 +151,9 @@ else
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
-			$status['Not Sended']='Not Sended';
+			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
-			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array($month=>array('selected'=>true))));
+			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
 			echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
 			echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));

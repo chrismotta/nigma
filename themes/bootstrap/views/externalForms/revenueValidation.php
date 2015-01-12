@@ -14,15 +14,18 @@ $io=$ios->findByPk($io_id);
 $clients =$ios->getClients($month,$year,null,$io_id,null,null,null,null,null);
 switch ($model->status) {
     case 'Approved':
-        echo "<script>alert('Revenue already Approved')</script>";
+        // echo "<script>alert('Revenue already Approved')</script>";
+        die ('Revenue already Approved');
         break;
     
     case 'Disputed':
-        echo "<script>alert('Revenue already Disputed')</script>";
+        // echo "<script>alert('Revenue already Disputed')</script>";
+        die ('Revenue is Disputed');
         break;
     
     case 'Expired':
-        echo "<script>alert('Revenue already Expired')</script>";
+        // echo "<script>alert('Revenue already Expired')</script>";
+        die ('Revenue is Expired');
         break;
     
     default:
@@ -41,9 +44,10 @@ switch ($model->status) {
     <div class="span12">
         <h4><?php echo $io->commercial_name; ?></h4>
 
-        <h5>Commercial Contact: <?php echo $io->contact_com; ?></h5>
-        <h5>Administrative Contact: <?php echo $io->contact_adm; ?></h5>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean eleifend magna libero, suscipit vehicula ex laoreet eleifend. Morbi gravida ipsum augue, quis bibendum odio viverra eu. Ut efficitur sem at lacus interdum euismod. Vivamus et lacinia ante. </p>
+        <h5>Commercial Contact: <?php echo $io->contact_com; ?><br/>
+        Administrative Contact: <?php echo $io->contact_adm; ?></h5>
+        <p>Please check the statement of your account below. We will assume that you are in agreement with us on the statement unless you inform us to the contrary by latest <?php echo date('M j, Y', strtotime('+4 days')) ?><br/>
+        <span style="color:#999">Por favor verificar el estado de su cuenta a continuación. Se considerara de acuerdo con el estado actual a menos que se nos notifique a mas tardar el <?php echo date('M j, Y', strtotime('+4 days')) ?></span></p>
         <?php
             $this->widget('yiibooster.widgets.TbGroupGridView', array(
             'id'                         => 'revenue-validation-grid',
@@ -126,9 +130,10 @@ switch ($model->status) {
                  Yii::app()->clientScript->registerScript('revenueApproved', "
                     $('#btnApproved').click(function(e){
                         e.preventDefault();
-                       $.post( 'revenueApproved', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
+                       $.post( '".Yii::app()->baseUrl."/externalForms/revenueApproved', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
                             .success(function( data ) {
-                            alert(data );
+                            // alert(data );
+                                $('#content').html('<div style=\'text-align:center\'>'+data+'</div>');
                             });
                         
                     });
@@ -141,9 +146,10 @@ switch ($model->status) {
                         e.preventDefault();
                         if($('#comment').val())
                         {
-                            $.post('revenueDisputed', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
+                            $.post('".Yii::app()->baseUrl."/externalForms/revenueDisputed', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
                             .success(function( data ) {
-                            alert(data );
+                            // alert(data );
+                                $('#content').html('<div style=\'text-align:center\'>'+data+'</div>');
                             });
                         }
                         else
@@ -156,8 +162,9 @@ switch ($model->status) {
             ?>
 <hr>
 
-        <p>Si no eres el responsable de esta información brindanos el e-mail del responsable</p>
-        	<?php
+        <p style="font-size:13px"><strong>IMPORTANT:</strong> If you weren’t the right contact person to verify the invoice, please enter the correct email address in the box below<br/>
+            <span style="color:#999"><strong>IMPORTANTE:</strong> Si usted no fuese la persona indicada para hacer esta verificación, por favor ingrese el email correspondiente en el siguiente campo</span></p>
+        <p style="margin-bottom:40px">	<?php
             echo CHtml::textField('email_validation','',array('id'=>'email_validation','name'=>'email_validation','style'=>'width:40%'));
             ?>
                 <?php
@@ -167,9 +174,10 @@ switch ($model->status) {
                                 e.preventDefault();
                                 if($('#email_validation').val())
                                 {
-                                    $.post( 'changeEmail', { 'token': '".$model->validation_token."', 'email_validation': $('#email_validation').val()})
+                                    $.post( '".Yii::app()->baseUrl."/externalForms/changeEmail', { 'token': '".$model->validation_token."', 'email_validation': $('#email_validation').val()})
                                     .success(function( data ) {
-                                    alert(data );
+                                    // alert(data );                                        
+                                        $('#content').html('<div style=\'text-align:center\'>'+data+'</div>');
                                     });
                                 }
                                 else
@@ -180,5 +188,18 @@ switch ($model->status) {
                             });
                         ", CClientScript::POS_READY);
                 ?>
+        </p>
     </div>
 </div>
+<?php
+function weekDaysSum($startDay, $cantDays) {
+    for($i=1; $i<=$cantDays; $i++) {
+        $weekDay = date('D', strtotime($startDay . " +" . $i));
+        if( $weekDay == "Sat" || $weekDay == "Sun"){
+            $cantDays++;
+        }
+    }
+    return date('Y-m-d', strtotime($startDay . " +" . $cantDays) );
+}
+
+?>

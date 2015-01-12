@@ -42,6 +42,7 @@
                 array('label'=>'Providers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Affiliates', 'url'=>array('/affiliates/admin')),
+                    array('label'=>'Networks', 'url'=>array('/networks/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
@@ -111,7 +112,7 @@
                 'items'=>array(
                     array('label'=>'Profile', 'url'=>array('/users/profile')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
+                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->controller->id.'/'.Yii::app()->controller->action->id=='externalForms/revenueValidation' ? false : Yii::app()->user->isGuest),
                 array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
             );
     $this->widget('bootstrap.widgets.TbNavbar',array(

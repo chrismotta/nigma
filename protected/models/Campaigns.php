@@ -587,9 +587,9 @@ class Campaigns extends CActiveRecord
 
 	public function getRateUSD($date)
 	{
-		$opportunitie=$this->opportunities_id;
-		$rate = Opportunities::model()->findByPk($opportunitie)->rate;
-		$io_currency = Ios::model()->findByPk(Opportunities::model()->findByPk($opportunitie)->ios_id)->currency;
+		$opportunity =Opportunities::model()->with('ios')->findByPk($this->opportunities_id);
+		$rate        =$opportunity->rate;
+		$io_currency =$opportunity->ios->currency;
 
 		if ($io_currency == 'USD') // if currency is USD dont apply type change
 			return $rate;
