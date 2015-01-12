@@ -220,7 +220,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);    
         
-        $advs        = Advertisers::model()->findAll( array('order' => 'name') );
+        $advs        = Advertisers::model()->findAll( array('order' => 'name', "condition"=>"status='Active'") );
         $list        = CHtml::listData($advs, 'id', 'name');
         return CHtml::dropDownList('advertiser', $value, $list, $htmlOptions);
     }
