@@ -26,7 +26,9 @@
 			$startDate=date('Y-m-d', strtotime($year.'-'.$month.'-01'));
 			$endDate=date('Y-m-d', strtotime($year.'-'.$month.'-31'));
 			 
-			echo KHtml::filterCarriersDate('carriers_id',NULL,array(),$id,$startDate,$endDate);
+			echo KHtml::filterCountries(NULL,array(),$id);
+			echo $form->dropDownList($model,'carrier',$carriers); 
+			echo KHtml::filterProduct(NULL,array(),$id);
 			echo $form->textFieldRow($model, 'volume', array('class'=>'span3')); 
 			echo $form->textFieldRow($model, 'rate', array('class'=>'span3')); 
 			// echo $form->hiddenField($model, 'opportunities_id',array('value'=>$id)); 
@@ -66,6 +68,8 @@
                 array('name'              =>'id'),
                 // array('name'              =>'ios_id'),
                 array('name'              =>'carriers_id_carrier', 'value'=>'$data->getCarrier()'),
+                array('name'              =>'country', 'value'=>'$data->getCountry()'),
+                array('name'              =>'product'),
                 array('name'              =>'period'),
                 array('name'              =>'volume'),
                 array('name'              =>'rate'),
