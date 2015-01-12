@@ -307,6 +307,7 @@ class FinanceController extends Controller
 		$dataProvider=new CArrayDataProvider($consolidated, array(
 		    'id'=>'clients',
 		    'sort'=>array(
+		    	'defaultOrder'=>'country ASC',
 		        'attributes'=>array(
 		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','country','product','mobileBrand'
 		        ),

@@ -14,15 +14,18 @@ $io=$ios->findByPk($io_id);
 $clients =$ios->getClients($month,$year,null,$io_id,null,null,null,null,null);
 switch ($model->status) {
     case 'Approved':
-        echo "<script>alert('Revenue already Approved')</script>";
+        // echo "<script>alert('Revenue already Approved')</script>";
+        die ('Revenue already Approved');
         break;
     
     case 'Disputed':
-        echo "<script>alert('Revenue already Disputed')</script>";
+        // echo "<script>alert('Revenue already Disputed')</script>";
+        die ('Revenue is Disputed');
         break;
     
     case 'Expired':
-        echo "<script>alert('Revenue already Expired')</script>";
+        // echo "<script>alert('Revenue already Expired')</script>";
+        die ('Revenue is Expired');
         break;
     
     default:
@@ -129,7 +132,8 @@ switch ($model->status) {
                         e.preventDefault();
                        $.post( '".Yii::app()->baseUrl."/externalForms/revenueApproved', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
                             .success(function( data ) {
-                            alert(data );
+                            // alert(data );
+                                $('#content').html('<div style=\'text-align:center\'>'+data+'</div>');
                             });
                         
                     });
@@ -144,7 +148,8 @@ switch ($model->status) {
                         {
                             $.post('".Yii::app()->baseUrl."/externalForms/revenueDisputed', { 'token': '".$model->validation_token."', 'comment': $('#comment').val()})
                             .success(function( data ) {
-                            alert(data );
+                            // alert(data );
+                                $('#content').html('<div style=\'text-align:center\'>'+data+'</div>');
                             });
                         }
                         else
@@ -171,7 +176,8 @@ switch ($model->status) {
                                 {
                                     $.post( '".Yii::app()->baseUrl."/externalForms/changeEmail', { 'token': '".$model->validation_token."', 'email_validation': $('#email_validation').val()})
                                     .success(function( data ) {
-                                    alert(data );
+                                    // alert(data );                                        
+                                        $('#content').html('<div style=\'text-align:center\'>'+data+'</div>');
                                     });
                                 }
                                 else

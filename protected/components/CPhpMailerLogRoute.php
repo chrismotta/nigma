@@ -36,7 +36,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
     /*
      * Public function for sendEmail
      */
-    public function send($emails, $subject, $message, $isHTML=false)
+    public function send($emails, $subject, $message, $isHTML=true)
     {
         switch ( $_SERVER['HTTP_HOST'] ) {
             // amazon prod

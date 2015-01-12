@@ -27,36 +27,10 @@
     		echo $form->textFieldRow($modelNetw, 'providers_id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
     	}
 
-        echo $form->textFieldRow($modelProv, 'prefix', array('class'=>'span3'));
-        echo $form->textFieldRow($modelProv, 'name', array('class'=>'span3'));
-        echo $form->dropDownListRow($modelProv, 'currency', $currency, array('prompt' => 'Select a currency'));
-        echo $form->checkboxRow($modelProv, 'has_s2s', array(
-                'onChange' => '
-                  if (this.checked == "1")
-                    $(".has_s2s").show();
-                  else
-                    $(".has_s2s").hide();
-
-                  return;
-                  '
-            ));
-        echo '<div style="display: ' . ($modelProv->has_s2s ? 'block' : 'none') . ';" class="has_s2s">';
-        echo $form->textFieldRow($modelProv, 'callback', array('class'=>'span3'));
-        echo $form->checkboxRow($modelProv, 'has_token', array(
-                'onChange' => '
-                  if (this.checked == "1")
-                    $(".has_token").show();
-                  else
-                    $(".has_token").hide();
-
-                  return;
-                  '
-            ));
-        echo '<div style="display: ' . ($modelProv->has_token ? 'block' : 'none') . ';" class="has_token">';
-        echo $form->textFieldRow($modelProv, 'placeholder', array('class'=>'span3'));
-        echo '</div>';
-        echo '</div>';
-        echo '<hr/>';
+        $this->renderPartial('/providers/_form', array(
+            'form'  => $form,
+            'model' => $modelProv,
+        ));
 
         echo $form->textFieldRow($modelNetw, 'percent_off', array('class'=>'span3'));
         echo $form->textFieldRow($modelNetw, 'url', array('class'=>'span3'));
