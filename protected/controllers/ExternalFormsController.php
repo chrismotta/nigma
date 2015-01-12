@@ -111,27 +111,29 @@ class ExternalFormsController extends Controller
 		$consolidated=array();
 		$i=0;
 		$aux=array();
-		if($count=$transactionCount->getTotalsCarrier($IosModel->id,$model->period))
+		if($count=$transactionCount->getTotalsCarrier($model->ios_id,$model->period))
 		{
 			foreach ($count as $value) {
+			$sum=false;
 				foreach ($clients['data'] as $key => $data) {
-					if($data['carrier']==$value->carriers_id_carrier){
+					if($sum)continue;
+					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier)
+					{
 						if($data['rate']==$value->rate)
 						{
 							$clients['data'][$key]['conv']    +=$value->volume;
-							$clients['data'][$key]['revenue'] +=$value->total;
+							$clients['data'][$key]['revenue'] +=$value->total;							
 						}
 						else
-						{							
+						{
 							$aux[$i]=$data;						
 							$aux[$i]['conv']=$value->volume;
 							$aux[$i]['revenue']=$value->total;
 							$aux[$i]['rate']=$value->rate;				
 							$i++;		
-						}
-
+						}	
+						$sum=true;
 					}
-
 				}				
 			}
 			foreach ($aux as $value) {
