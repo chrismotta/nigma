@@ -193,15 +193,11 @@ class AffiliatesController extends Controller
 	 */
 	private function renderFormAjax($modelAffi, $modelProv)
 	{
-		$entity   = KHtml::enumItem($modelAffi, 'entity');
-		$country  = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$users    = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
 
 		$this->renderPartial('_form',array(
 			'modelAffi' =>$modelAffi,
 			'modelProv' =>$modelProv,
-			'entity'    =>$entity,
-			'country'   =>$country,
 			'users'     =>$users,
 		), false, true);
 	}
