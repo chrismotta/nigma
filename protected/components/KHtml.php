@@ -123,15 +123,17 @@ class KHtml extends CHtml
         return CHtml::dropDownList('carrier', $value, $list, $htmlOptions);
     }
 
-    public static function filterProduct($value, $htmlOptions = array(),$io_id=null)
+    public static function filterProduct($value, $htmlOptions = array(),$io_id=null,$optionAll=true)
     {
         $defaultHtmlOptions = array(
-            'empty' => 'All products',
             'class' => 'product-dropdownlist',
         );
-        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        if($optionAll)
+            $defaultHtmlOptions = array_merge($defaultHtmlOptions, array('empty' => 'All products'));
 
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         $criteria = new CDbCriteria;
+        $criteria->select='*, if(product="","Without Product",product) as product';
         if ( $io_id != NULL )
             $criteria->compare('ios_id', $io_id);
         $criteria->group='product';
@@ -235,11 +237,11 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterCountries($value, $htmlOptions = array(),$io=null,$dropdownLoad=null)
+    public static function filterCountries($value, $htmlOptions = array(),$io=null,$dropdownLoad=null,$optionAll=true)
     {
-        $defaultHtmlOptions = array(
+        $defaultHtmlOptions = $optionAll ? array(
             'empty' => 'All countries',            
-        );
+        ) : array();
         if(!is_null($dropdownLoad))
             $defaultHtmlOptions = array_merge($defaultHtmlOptions, array(
                 'onChange' => '

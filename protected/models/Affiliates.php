@@ -6,23 +6,9 @@
  * The followings are the available columns in table 'affiliates':
  * @property integer $providers_id
  * @property integer $users_id
- * @property integer $country_id
- * @property string $name
- * @property string $commercial_name
- * @property string $state
- * @property string $zip_code
- * @property string $address
  * @property string $phone
- * @property string $contact_com
- * @property string $email_com
- * @property string $contact_adm
- * @property string $email_adm
- * @property string $entity
- * @property string $tax_id
- * @property string $net_payment
  *
  * The followings are the available model relations:
- * @property GeoLocation $country
  * @property Providers $providers
  * @property Users $users
  */
@@ -36,6 +22,7 @@ class Affiliates extends CActiveRecord
 	public $date;
 	public $country_name;
 	public $providers_name;
+	public $commercial_name;
 	public $name; // campaigns_name use for external screen with affiliates authentication
 
 	/**
@@ -54,13 +41,12 @@ class Affiliates extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('providers_id, country_id, commercial_name, state, zip_code, address, entity, tax_id', 'required'),
-			array('providers_id, users_id, country_id', 'numerical', 'integerOnly'=>true),
-			array('commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
-			array('entity', 'length', 'max'=>3),
+			array('providers_id', 'required'),
+			array('providers_id, users_id', 'numerical', 'integerOnly'=>true),
+			array('phone', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, users_id, country_id, name, commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, entity, tax_id, net_payment', 'safe', 'on'=>'search'),
+			array('providers_id, users_id, phone', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -72,7 +58,6 @@ class Affiliates extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'country'   => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 			'users'     => array(self::BELONGS_TO, 'Users', 'users_id'),
 		);
@@ -88,17 +73,7 @@ class Affiliates extends CActiveRecord
 			'users_id'        => 'External user login',
 			'country_id'      => 'Country',
 			'commercial_name' => 'Legal Name',
-			'state'           => 'State',
-			'zip_code'        => 'Zip Code',
-			'address'         => 'Address',
 			'phone'           => 'Phone',
-			'contact_com'     => 'Com Contact Name',
-			'email_com'       => 'Com Contact Email',
-			'contact_adm'     => 'Adm Contact Name',
-			'email_adm'       => 'Adm Contact Email',
-			'entity'          => 'Entity',
-			'tax_id'          => 'Tax',
-			'net_payment'     => 'Net Payment',
 			'rate'            => 'Rate',
 			'conv'            => 'Conv',
 			'spend'           => 'Revenue',
@@ -127,22 +102,10 @@ class Affiliates extends CActiveRecord
 
 		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('users_id',$this->users_id);
-		$criteria->compare('country_id',$this->country_id);
-		$criteria->compare('commercial_name',$this->commercial_name,true);
-		$criteria->compare('state',$this->state,true);
-		$criteria->compare('zip_code',$this->zip_code,true);
-		$criteria->compare('address',$this->address,true);
 		$criteria->compare('phone',$this->phone,true);
-		$criteria->compare('contact_com',$this->contact_com,true);
-		$criteria->compare('email_com',$this->email_com,true);
-		$criteria->compare('contact_adm',$this->contact_adm,true);
-		$criteria->compare('email_adm',$this->email_adm,true);
-		$criteria->compare('entity',$this->entity,true);
-		$criteria->compare('tax_id',$this->tax_id,true);
-		$criteria->compare('net_payment',$this->net_payment,true);
 
-		$criteria->with = array('providers', 'country');
-		$criteria->compare('country.name',$this->country_name,true);
+		$criteria->with = array('providers', 'providers.country');
+		$criteria->compare('providers.country.name',$this->country_name,true);
 		$criteria->compare('providers.name',$this->providers_name,true);
 
 		return new CActiveDataProvider($this, array(
