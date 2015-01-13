@@ -308,7 +308,7 @@ class IosController extends Controller
 		if ( file_exists($path . $model->pdf_name) ) {
 			$info = pathinfo($model->pdf_name);
 			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
-				$this->redirect( array('uploads/Adv-1_IO-1.pdf') );
+				$this->redirect( array('uploads/' . $model->pdf_name) );
 			} else { // other files download
 				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
 			}
@@ -379,7 +379,7 @@ class IosController extends Controller
 	{
 		$currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
-		$advertiser = CHtml::listData(Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name'); 
+		$advertiser = CHtml::listData(Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name'); 
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 
 		if ( $model->isNewRecord ) {
