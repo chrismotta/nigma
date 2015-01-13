@@ -145,7 +145,7 @@ class TransactionCount extends CActiveRecord
 		// $criteria->addCondition('opportunities.ios_id='.$ios_id);
 		$criteria->compare('t.ios_id',$ios_id);
 		$criteria->compare('t.period',$period);
-		return self::model()->find($criteria) ? number_format(self::model()->find($criteria)['total'],2) : 0;
+		return self::model()->find($criteria) ? self::model()->find($criteria)['total'] : 0;
 		
 	}
 
