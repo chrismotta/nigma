@@ -71,10 +71,13 @@ class KHtml extends CHtml
         $criteria = new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers', 'country', 'carriers');
         $criteria->compare('t.status', 'Active');
-        $criteria->order = 'advertisers.name, country.ISO2';
+        $criteria->order = 't.id, advertisers.name, country.ISO2';
+
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManagerId=Yii::app()->user->id;
 
         if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
+            $criteria->compare('t.account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
         $list = CHtml::listData($opps, 'id', 'virtualName');
@@ -330,14 +333,14 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers', 'country');
-        $criteria->order = 'advertisers.name, country.ISO2';
+        $criteria->order = 't.id, advertisers.name, country.ISO2';
 
 
         if (FilterManager::model()->isUserTotalAccess('media'))
             $accountManagerId=Yii::app()->user->id;
 
         if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
+            $criteria->compare('t.account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios.advertisers', 'carriers')->findAll($criteria);
         $data=array();
