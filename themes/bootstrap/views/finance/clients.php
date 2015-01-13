@@ -153,6 +153,10 @@ else
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
+			foreach ($status as $key => $value) {
+				if($value=='Approved' || $value=='Expired')unset($status[$key]);
+			}
+			$status['ok']='Approved/Expired';
 			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
