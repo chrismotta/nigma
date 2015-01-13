@@ -332,8 +332,19 @@ class Ios extends CActiveRecord
 		if($dailys=DailyReport::model()->findAllBySql($query)){
 			#Save results to array group by io,carrier and date
 			foreach ($dailys as $daily) {
-				if($status)				
-					if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;
+				if($status)
+				{
+					if($status=='ok')
+					{
+						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
+						{
+							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
+								continue;
+						}
+					}
+					else
+						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
+				}				
 				$data[$i]['id']              =$daily->io_id;
 				$data[$i]['name']            =$daily->commercial_name;
 				$data[$i]['opportunitie']    =$opportunities->findByPk($daily->opp_id)->getVirtualName();
@@ -347,6 +358,7 @@ class Ios extends CActiveRecord
 				$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
 				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['comment']       =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
 				$data[$i]['conv']            =round($daily->conversions,2);
 				$data[$i]['rate']            =$daily->rate;		
@@ -385,6 +397,7 @@ class Ios extends CActiveRecord
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_opp']      =$daily['status_opp'];
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['country']         =$daily['country'];//aca esta el country
 					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_io']       =$daily['status_io'];				
+					$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['comment']       =$daily['comment'];				
 					#If isset, set arrays (conv,revenue) and sum
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']=0;
 					isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']=0;
@@ -427,6 +440,7 @@ class Ios extends CActiveRecord
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_opp']      =$daily['status_opp'];
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['country']         =$daily['country'];
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_io']       =$daily['status_io'];				
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['comment']       =$daily['comment'];				
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['multi']           =$daily['multi'];				
 				#If isset, set arrays (conv,revenue) and sum
 				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']=0;
@@ -464,96 +478,6 @@ class Ios extends CActiveRecord
 		$result=array('data' => $consolidated, 'totals_io' => $totals_io, 'totals' => $totals, 'totals_invoiced' => $totals_invoiced);				
 		return $result;
 	}
-
-	// public function getClients2($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
-	// {
-	// 	$data                    =array();	
-	// 	$opportunitiesValidation =new OpportunitiesValidation;
-	// 	$iosValidation           =new IosValidation;
-	// 	$ios=self::model()->findAll();
-	// 	if($entity===0)$entity=null;
-	// 	if($cat===0)$entity=null;
-	// 	//echo "<script>alert('".$entity."')</script>";		
-	// 	if($entity || $io || $cat)
-	// 	{
-	// 		$criteria=new CDbCriteria;
-	// 		if($entity)
-	// 			$criteria->addCondition('entity="'.$entity.'"');
-	// 		if($io)
-	// 			$criteria->addCondition('id="'.$io.'"');
-	// 		if($cat)
-	// 		{
-	// 			$criteria->with=array('advertisers');
-	// 			$criteria->addCondition('advertisers.cat="'.$cat.'"');
-	// 		}
-
-	// 		$ios=self::model()->findAll($criteria);
-	// 	}
-		
-	// 	$i=0;
-	// 	foreach ($ios as $io) {
-	// 		if($status)
-	// 			if($iosValidation->getStatusByIo($io->id,$year.'-'.$month.'-01') != $status) continue;
-	// 		$criteria                       =new CDbCriteria;
-	// 		$criteria->addCondition('ios_id ='.$io->id);
-
-	// 		if($accountManager)
-	// 			$criteria->addCondition('account_manager_id='.$accountManager);				
-	// 		if($opportunitie_id)
-	// 			$criteria->addCondition('id ='.$opportunitie_id);		
-					
-	// 		$criteria->group                ='ios_id,model_adv,rate';
-	// 		$opportunities                  =Opportunities::model()->findAll($criteria);
-	// 		foreach ($opportunities as $opportunitie) {
-	// 			$criteria                                 =new CDbCriteria;
-	// 			$criteria->addCondition('opportunities_id ='.$opportunitie->id);				
-	// 			$campaigns                                =Campaigns::model()->findAll($criteria);
-	// 			foreach ($campaigns as $campaign) {
-	// 				$criteria                             =new CDbCriteria;
-	// 				$criteria->addCondition('campaigns_id ='.$campaign->id);
-	// 				$criteria->addCondition('MONTH(date)  ='.$month);
-	// 				$criteria->addCondition('YEAR(date)   ='.$year);
-	// 				$dailys=DailyReport::model()->findAll($criteria);
-	// 				foreach ($dailys as $daily) {
-	// 					if($daily->revenue>0)
-	// 					{
-	// 						switch ($opportunitie->model_adv) {
-	// 							case 'CPA':
-	// 								$conv=$daily->conv_adv==null ? $daily->conv_api : $daily->conv_adv;
-	// 								break;
-	// 							case 'CPM':
-	// 								$conv=$daily->imp/1000;
-	// 								break;
-	// 							case 'CPC':
-	// 								$conv=$daily->clics;
-	// 								break;
-								
-	// 						}
-							
-	// 						!$opportunitie->rate ? $rate=$opportunitie->rate : $rate=number_format($daily->revenue/$conv,2);
-	// 						$data[$opportunitie->id][$rate]['id']                                       =$io->id;
-	// 						$data[$opportunitie->id][$rate]['name']                                     =$io->commercial_name;
-	// 						$data[$opportunitie->id][$rate]['opportunitie']                             =$opportunitie->getVirtualName();
-	// 						$data[$opportunitie->id][$rate]['opportunitie_id']                          =$opportunitie->id;
-	// 						$data[$opportunitie->id][$rate]['currency']                                 =$io->currency;
-	// 						$data[$opportunitie->id][$rate]['entity']                                   =$io->entity;
-	// 						$data[$opportunitie->id][$rate]['model']                                    =$opportunitie->model_adv;
-	// 						$data[$opportunitie->id][$rate]['carrier']                                  =$opportunitie->carriers_id;
-	// 						$data[$opportunitie->id][$rate]['status_opp']                               =$opportunitiesValidation->checkValidation($opportunitie->id,$year.'-'.$month.'-01');
-	// 						$data[$opportunitie->id][$rate]['status_io']                                =$iosValidation->getStatusByIo($io->id,$year.'-'.$month.'-01');
-	// 						isset($data[$i]['conv']) ?  : $data[$opportunitie->id][$rate]['conv']       =0;
-	// 						isset($data[$i]['revenue']) ?  : $data[$opportunitie->id][$rate]['revenue'] =0;
-	// 						$data[$opportunitie->id][$rate]['revenue']                                  +=$daily->revenue;
-	// 						$data[$opportunitie->id][$rate]['conv']                                     +=$conv;
-	// 						$data[$opportunitie->id][$rate]['rate']                                     =$rate;
-	// 					}
-	// 				}
-	// 			}
-	// 			$i++;
-	// 		}
-	// 	}
-	// 	return $data;
-	// }	
 
 	public function findByAdvertisers($advertiser)
 	{		

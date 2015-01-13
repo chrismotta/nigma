@@ -26,9 +26,9 @@
 			$startDate=date('Y-m-d', strtotime($year.'-'.$month.'-01'));
 			$endDate=date('Y-m-d', strtotime($year.'-'.$month.'-31'));
 			 
-			echo KHtml::filterCountries(NULL,array(),$id);
+			echo KHtml::filterCountries(NULL,array(),$id,null,false);
 			echo $form->dropDownList($model,'carrier',$carriers); 
-			echo KHtml::filterProduct(NULL,array(),$id);
+			echo KHtml::filterProduct(NULL,array(),$id,false);
 			echo $form->textFieldRow($model, 'volume', array('class'=>'span3')); 
 			echo $form->textFieldRow($model, 'rate', array('class'=>'span3')); 
 			// echo $form->hiddenField($model, 'opportunities_id',array('value'=>$id)); 
@@ -75,10 +75,34 @@
                 array('name'              =>'rate'),
                 array('name'              =>'users_id', 'value'=>'$data->getUserName()'),
                 array('name'              =>'date'),
-                array(
-					    'class'=>'CButtonColumn',
-					    'template'=>'{delete}',
-				)
+                array('name'              =>'delete', 
+                	  'type'			  =>'raw', 
+					  'header'            =>false,
+				      'filter'            =>false,
+					  'headerHtmlOptions' => array('width' => '5'),
+					  'htmlOptions'		=>array('style'=>'text-align:left !important'),
+                	  'value' 			  =>'CHtml::link(
+												"<i class=\"icon-remove\"></i>",
+												array(),
+							    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
+							    					"onclick" => 
+							    					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
+							    						if(confirmed){
+									    					$.post(\"delete/".$data["id"]."\",{})
+									                            .success(function( data ) {
+									                				$.fn.yiiGridView.update(\"transaction-count-grid\");
+										                            // alert(data );
+										                            // window.location = document.URL;
+									                            });
+															}
+														 })
+													")
+												);',
+                ),
+    //             array(
+				// 	    'class'=>'CButtonColumn',
+				// 	    'template'=>'{delete}',
+				// )
             ),
         )); ?>
 </div>
@@ -86,3 +110,10 @@
 <div class="modal-footer">
 	Fields with <span class="required">*</span> are required.
 </div>
+
+<?php Yii::app()->clientScript->registerScript('verifedIcon', "
+					$('.linkinvoiced').click(function(e){
+                            e.preventDefault();
+                            
+                        });
+                    ", CClientScript::POS_READY); ?>

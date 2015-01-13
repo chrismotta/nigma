@@ -6,6 +6,7 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
+ Yii::app()->clientScript->registerScript("", "$('.ipopover').popover();", CClientScript::POS_READY);
 ?>
 
 <?php
@@ -113,6 +114,7 @@ else
 				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
 				)
 				;';
+
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -151,6 +153,10 @@ else
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
+			foreach ($status as $key => $value) {
+				if($value=='Approved' || $value=='Expired')unset($status[$key]);
+			}
+			$status['ok']='Approved/Expired';
 			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
@@ -320,10 +326,24 @@ else
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '20'),
+			'headerHtmlOptions' => array('width' => '5'),
 			'name'              =>'name',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
+		), 
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '5'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
+							    "class" => "ipopover",
+							    "data-trigger" => "hover",
+							    "data-content" => $data["comment"],
+							)
+						) : null;',		
 		), 
 	),
 	'mergeColumns' => array('name','opportunitie'),
