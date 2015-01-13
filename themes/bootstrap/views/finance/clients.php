@@ -6,6 +6,7 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
+ Yii::app()->clientScript->registerScript("", "$('.ipopover').popover();", CClientScript::POS_READY);
 ?>
 
 <?php
@@ -113,6 +114,7 @@ else
 				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
 				)
 				;';
+
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -320,10 +322,24 @@ else
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '20'),
+			'headerHtmlOptions' => array('width' => '5'),
 			'name'              =>'name',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
+		), 
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '5'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
+							    "class" => "ipopover",
+							    "data-trigger" => "hover",
+							    "data-content" => $data["comment"],
+							)
+						) : null;',		
 		), 
 	),
 	'mergeColumns' => array('name','opportunitie'),
