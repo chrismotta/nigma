@@ -1320,7 +1320,7 @@ class DailyReport extends CActiveRecord
 		}
 
 		// update revenue for single rate
-		$rate = $custom_rate == NULL ? $opp->rate : $custom_rate;
+		$rate = $custom_rate == NULL ? $opp->getRate($this->date) : $custom_rate;
 		switch ($opp->model_adv) {
 			case 'CPM':
 				$this->revenue = $this->imp_adv != NULL ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
@@ -1344,7 +1344,7 @@ class DailyReport extends CActiveRecord
 	public function updateSpendAffiliates($custom_rate=NULL)
 	{
 		if ($custom_rate == NULL)
-			$rateAffiliate = Affiliates::model()->find("providers_id=:net", array(':net' => $this->providers_id))->rate;
+			$rateAffiliate = $this->campaigns->external_rate;
 		else 
 			$rateAffiliate = $custom_rate;
 
@@ -1530,21 +1530,21 @@ class DailyReport extends CActiveRecord
 	{
 		$campaign     = Campaigns::model()->findByPk($this->campaigns_id);
 		$opportunitie = Opportunities::model()->findByPk($campaign->opportunities_id);
-		$rate         = Opportunities::model()->findByPk($opportunitie->id)->rate;
+		$rate         = Opportunities::model()->findByPk($opportunitie->id)->getRate($this->date);
 		$io_currency  = Ios::model()->findByPk($opportunitie->ios_id)->currency;
 		switch ($opportunitie->model_adv) 
 		{	
 			case 'CPI':
 			case 'CPL':
 			case 'CPA':
-				$rate=$this->getConv()!=0 ? round($this->revenue/$this->getConv(), 2) : $opportunitie->rate;
+				$rate=$this->getConv()!=0 ? round($this->revenue/$this->getConv(), 2) : $rate;
 				break;
 			case 'CPM':
-				$rate=$this->imp!=0 ? round($this->revenue/($this->imp/1000), 2) : $opportunitie->rate;
+				$rate=$this->imp!=0 ? round($this->revenue/($this->imp/1000), 2) : $rate;
 				break;
 			case 'CPV':
 			case 'CPC':
-				$rate=$this->clics!= 0 ? round($this->revenue/$this->clics, 2) : $opportunitie->rate;
+				$rate=$this->clics!= 0 ? round($this->revenue/$this->clics, 2) : $rate;
 				break;
 			
 		}

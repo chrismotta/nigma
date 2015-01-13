@@ -171,6 +171,18 @@ class IosValidation extends CActiveRecord
 			return false;
 	}
 	
+	public function getCommentByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::find($criteria))
+			return $validation->comment;
+		else
+			return false;
+	}
+	
 	public function getStatusByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -191,6 +203,6 @@ class IosValidation extends CActiveRecord
 		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
 		if($validation = self::model()->find($criteria))
 			return $validation;
-		else return 'Load error';
+		else return false;
 	}
 }

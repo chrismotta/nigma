@@ -6,11 +6,12 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
+ Yii::app()->clientScript->registerScript("", "$('.ipopover').popover();", CClientScript::POS_READY);
 ?>
 
 <?php
 //Totals
-echo KHtml::currencyTotals($totals->getData());
+echo KHtml::currencyTotalsClients($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
@@ -53,7 +54,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 				CHtml::link(
 					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
 					array(),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Invoice",  
+    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
     					"onclick" => 
     					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
     						if(confirmed){
@@ -61,7 +62,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 		                            .success(function( data ) {
 			                            alert(data );
 			                            window.location = document.URL;
-		                            })
+		                            });
 								}
 							 })
 						")
@@ -113,6 +114,7 @@ else
 				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
 				)
 				;';
+
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -151,7 +153,7 @@ else
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
-			$status['Not Sended']='Not Sended';
+			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
@@ -294,7 +296,7 @@ else
 				CHtml::link(
 					"<i class=\"icon-pencil\"></i>",
 					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Arqueo?")
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Count")
 
 
 					);
@@ -320,9 +322,24 @@ else
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'name',
+			'headerHtmlOptions' => array('width' => '5'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
+		), 
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '5'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
+							    "class" => "ipopover",
+							    "data-trigger" => "hover",
+							    "data-content" => $data["comment"],
+							)
+						) : null;',		
 		), 
 	),
 	'mergeColumns' => array('name','opportunitie'),
@@ -357,6 +374,10 @@ else
                                 );
                             
                         });
+					$('.linkinvoiced').click(function(e){
+                            e.preventDefault();
+                            
+                        });
 					function verifedIcon(){
                         $('.link').click(function(e){
                             e.preventDefault();
@@ -369,7 +390,8 @@ else
                            $.post( link, {})
 								.success(function( data ) {
 									$('#modalClients').html(data);
-									$('#modalClients').modal('toggle');
+									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+									//$('#modalClients').modal('toggle');
                                 }
 
 					

@@ -47,7 +47,7 @@ class Utilities {
 
 		if ($useAlternativeName) {
 			$id_begin = strrpos($campaignname, '-');
-			$return   = substr($campaignname, $id_begin + 1);
+			$return   = trim(substr($campaignname, $id_begin + 1));
 		}
 
 		if ( is_numeric($return) ) {
@@ -190,5 +190,16 @@ class Utilities {
 	    }
 	    
 	    return($xml_array);
+	}
+
+	public function weekDaysSum($startDay=null, $cantDays) {
+		if(!$startDay)$startDay= date('Y-m-d', strtotime('NOW'));
+	    for($i=1; $i<=$cantDays; $i++) {
+	        $weekDay = date('D', strtotime('+'.$i.' day',strtotime($startDay)));	 
+	        if( $weekDay == "Sat" || $weekDay == "Sun"){
+	            $cantDays++;
+	        }
+	    }
+	    return date('Y-m-d', strtotime('+'.$cantDays.' day',strtotime($startDay)) );
 	}
 }

@@ -126,7 +126,12 @@ if($action == "Create"){ ?>
         <?php 
 
         if($action == "Create"){
-            echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array('prompt' => 'Select an opportunitiy'));
+            echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array(
+                'prompt' => 'Select an opportunitiy',
+                'class'  => 'opportunities-dropdownlist',
+            ));
+        } else {
+            echo $form->hiddenField($model, 'opportunities_id', array('class' => 'opportunities-dropdownlist'));
         }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
@@ -135,13 +140,14 @@ if($action == "Create"){ ?>
         echo '<div class="control-group">';
         echo CHtml::label('Traffic Source Type <span class="required">*</span>', '', array('class' => 'control-label'));
         echo '<div class="controls">';
-        echo CHtml::dropDownList('', $current_type, $providers_type, array(
+        echo CHtml::dropDownList('', $modelProv->getType(), $providers_type, array(
             'prompt'   => 'Select traffic source type',
+            'class'    => 'provider-type-dropdown',
             'onChange' => '
                 if ( ! this.value)
                     return;
 
-                if (this.value == 1)
+                if (this.value == 1) // if is affiliate show external rate
                     $(".external-rate").show();
                 else
                     $(".external-rate").hide();
@@ -158,12 +164,43 @@ if($action == "Create"){ ?>
                 '
         ));
         echo '</div>'; echo '</div>';
-        echo $form->dropDownListRow($model, 'providers_id', $providers, array('class'=>'providers-dropdownlist', 'prompt' => 'Select traffic source'));
-        if ($current_type = 1) { // is affiliate
-            $display = 'display: none;';
+        echo $form->dropDownListRow($model, 'providers_id', $providers, array(
+            'class'    =>'providers-dropdownlist', 
+            'prompt'   => 'Select traffic source',
+            'onChange' => '
+                if ( $(".provider-type-dropdown").val() != 1 )
+                    return;
+                
+                $.post(
+                    "getProviderCurrency/"+this.value,
+                    "",
+                    function(data)
+                    {
+                      // alert(data);
+                      $(".prov-currency").html(data);
+                    }
+                )
+                
+                if ( ! $(".opportunities-dropdownlist").val() )
+                    return;
+
+                $.post(
+                    "getDefaultExternalRate/"+$(".opportunities-dropdownlist").val()+"?p_id="+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                        $("#Campaigns_external_rate").val(data);
+                    }
+                )
+            ',
+        ));
+        $display = 'display: none;';
+        if ($modelProv->getType() == 1) { // is affiliate
+            $display = 'display: block;';
         }
         echo '<div style="' . $display . '" class="external-rate">';
-        echo $form->textFieldRow($model, 'external_rate', array());
+        echo $form->textFieldRow($model, 'external_rate', array('class' => 'span2'), array( 'prepend' => '<p class="prov-currency">' . $modelProv->currency . '</p>' ));
         echo '</div>';
 
         echo $form->dropDownListRow($model, 'campaign_categories_id', $categories, array('prompt' => 'Select a category'));

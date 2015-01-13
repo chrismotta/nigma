@@ -79,6 +79,7 @@ class OpportunitiesController extends Controller
 		if(isset($_POST['Opportunities']))
 		{
 			$model->attributes=$_POST['Opportunities'];
+			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -100,9 +101,10 @@ class OpportunitiesController extends Controller
 
 		if(isset($_POST['Opportunities']))
 		{
-			$model->carriers_id = NULL;
-			$model->rate = NULL;
-			$model->attributes = $_POST['Opportunities'];
+			$model->carriers_id      = NULL;
+			$model->rate             = NULL;
+			$model->attributes       = $_POST['Opportunities'];
+			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -223,7 +225,7 @@ class OpportunitiesController extends Controller
 			// Get only Advertisers and IOs that were created by the current user logged.
 			// comentado provisoriamente, generar permiso de admin
 			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
-			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name' );
+			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name' );
 			$ios = CHtml::listData(Ios::model()->findAll( array('condition' => 'commercial_id=:c_id', 'params' => array( ':c_id'=>Yii::app()->user->id), 'order'=>'name') ), 'id', 'name');
 		} else {
 			// If update register, only show Opportunity's IO and Advertiser
@@ -336,7 +338,7 @@ class OpportunitiesController extends Controller
 		}
 		$opps =Opportunities::model()->findAll($criteria);
 		$response='';
-		// $response='<option value="">All opportunities</option>';
+		$response='<option value="">All opportunities</option>';
 		foreach ($opps as $op) {
 			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
 		}

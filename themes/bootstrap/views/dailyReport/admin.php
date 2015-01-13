@@ -357,6 +357,7 @@ $('.search-form form').submit(function(){
 	        					"onClick" => CHtml::ajax( array(
 									"type"    => "POST",
 									"url"     => "multiRate/" . $data->id,
+									"data"    => "'.$_SERVER['QUERY_STRING'].'",
 									"success" => "function( data )
 										{
 											$(\"#modalDailyReport\").html(data);

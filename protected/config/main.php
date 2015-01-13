@@ -163,6 +163,7 @@ return array(
 		'application.external.wurfl.WurflManager',
 		'ext.eexcelwriter.components.EExcelWriter',
 		'ext.pdffactory.EPdfFactoryDoc',
+		'ext.samodelversioning.SAModelVersioning',
 	),
 
 	'modules'=>array(

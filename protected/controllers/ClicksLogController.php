@@ -30,7 +30,7 @@ class ClicksLogController extends Controller
 				'ips'=>array('54.88.85.63'),
 			),
 			array('allow', 
-				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage', 'test'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -48,6 +48,27 @@ class ClicksLogController extends Controller
 	{
 		$this->actionIndex($id);
 	}
+
+	public function actionTest()
+	{
+
+		if (isset($_GET["user_agent"])) {
+			$user_agent = $_GET["user_agent"];
+			echo $user_agent  . "<hr/>";
+		} else {
+			die ("user_agent missing");
+		}
+
+		$wurfl  = WurflManager::loadWurfl();
+		$device = $wurfl->getDeviceForUserAgent($user_agent);
+		echo "brand_name = " . $device->getCapability('brand_name') . "<br/>";
+		echo "marketing_name = " . $device->getCapability('marketing_name') . "<br/>";
+		echo "device_os = " . $device->getCapability('device_os') . "<br/>";
+		echo "device_os_version = " . $device->getCapability('device_os_version') . "<br/>";
+		echo "advertised_browser = " . $device->getVirtualCapability('advertised_browser') . "<br/>";
+		echo "advertised_browser_version =" . $device->getVirtualCapability('advertised_browser_version') . "<br/>";
+	}
+	
 	public function actionIndex($id=null)
 	{
 			
@@ -116,9 +137,9 @@ class ClicksLogController extends Controller
 
 		// Get custom parameters
 		
-		if ( Providers::model()->findByPk($nid)->isNetwork() && $model->providers->networks->has_s2s ) {
+		if ( Providers::model()->findByPk($nid)->has_s2s ) {
 			foreach ($_GET as $key => $value) {
-				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'ntoken', 'nid', 'cid', 'ts', 'id');
+				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'g_mty', 'ntoken', 'nid', 'cid', 'ts', 'id');
 				if ( !in_array($key, $ignore_params) ) {
 					$model->custom_params != NULL ? $model->custom_params .= '&' : NULL ;
 					$model->custom_params .= $key . '=' . $value;

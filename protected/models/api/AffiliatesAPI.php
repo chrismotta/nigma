@@ -39,16 +39,16 @@ class AffiliatesAPI
 				$dailyReport->imp          = 0;
 				$dailyReport->clics        = $clicks;
 				$dailyReport->conv_api     = $conv;
-				$dailyReport->spend        = $dailyReport->conv_api * $affiliate->rate;
+				$dailyReport->spend        = $dailyReport->conv_api * $campaign->external_rate;
 				$dailyReport->updateSpendAffiliates();
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				if ( !$dailyReport->save() ) {
-					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->affiliates->name);
+					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->name);
 					continue;
 				}
 			}
-			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->affiliates->name);
+			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->name);
 		}
 		Yii::log("SUCCESS - Daily info downloaded for all affiliates", 'info', 'system.model.api.affiliate');
 		return 0;

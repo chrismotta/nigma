@@ -57,6 +57,7 @@ class TransactionCount extends CActiveRecord
 			'users'    => array(self::BELONGS_TO, 'Users', 'users_id'),
 			'ios'      => array(self::BELONGS_TO, 'Ios', 'ios_id'),
 			'carriers' => array(self::BELONGS_TO, 'Carriers', 'carriers_id_carrier'),
+			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country'),
 		);
 	}
 
@@ -76,6 +77,7 @@ class TransactionCount extends CActiveRecord
 			'carriers_id_carrier' => 'Carriers',
 			'total'               => 'Total',
 			'currency'            => 'Currency',
+			'country'            => 'Country',
 		);
 	}
 
@@ -105,6 +107,7 @@ class TransactionCount extends CActiveRecord
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('ios_id',$this->ios_id);
 		$criteria->compare('carriers_id_carrier',$this->carriers_id_carrier);
+		$criteria->compare('country',$this->country);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -142,7 +145,7 @@ class TransactionCount extends CActiveRecord
 		// $criteria->addCondition('opportunities.ios_id='.$ios_id);
 		$criteria->compare('t.ios_id',$ios_id);
 		$criteria->compare('t.period',$period);
-		return self::model()->find($criteria) ? number_format(self::model()->find($criteria)['total'],2) : 0;
+		return self::model()->find($criteria) ? self::model()->find($criteria)['total'] : 0;
 		
 	}
 
@@ -182,7 +185,7 @@ class TransactionCount extends CActiveRecord
 	public function getTotalsCarrier($ios_id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->select='carriers_id_carrier,rate,sum(volume) as volume,sum(rate*volume) as total';
+		$criteria->select='carriers_id_carrier,rate,sum(volume) as volume,sum(rate*volume) as total, product, country';
 		$criteria->compare('ios_id',$ios_id);
 		$criteria->compare('period',$period);
 		$criteria->group='carriers_id_carrier,rate';
@@ -199,5 +202,11 @@ class TransactionCount extends CActiveRecord
 	{
 		return Users::model()->findByPk($this->users_id) ? Users::model()->findByPk($this->users_id)->lastname.' '.Users::model()->findByPk($this->users_id)->name : 'Error';
 	}
+
+	public function getCountry()
+	{
+		return GeoLocation::model()->findByPk($this->country) ? GeoLocation::model()->findByPk($this->country)->name : 'Error';
+	}
+
 
 }

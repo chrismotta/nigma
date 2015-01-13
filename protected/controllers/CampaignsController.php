@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders'),
+				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -524,19 +524,20 @@ class CampaignsController extends Controller
 		$campModel      = KHtml::enumItem($model, 'model');
 		
 		
-		$current_type = NULL;
-		if ($action == 'Update')
-			$current_type   = Providers::model()->findByPk($model->providers_id)->getType();
-		
-		$providers      = CHtml::listData(Providers::model()->findAllByType($current_type), 'providers_id', 'name');
+		if ($action == 'Update') 
+			$modelProv = Providers::model()->findByPk($model->providers_id);
+		else
+			$modelProv = new Providers;
+
+		$providers      = CHtml::listData(Providers::model()->findAllByType($modelProv->getType()), 'providers.id', 'providers.name');
 		$providers_type = Providers::model()->getAllTypes();
 
 		$this->renderPartial('_formAjax',array(
 			'model'            => $model,
+			'modelProv'     => $modelProv,
 			'opportunities'    => $opportunities,
 			'categories'       => $categories,
 			'providers_type'   => $providers_type,
-			'current_type'     => $current_type,
 			'providers'        => $providers,
 			'devices'          => $devices,
 			'formats'          => $formats,
@@ -573,5 +574,28 @@ class CampaignsController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	public function actionGetProviderCurrency($id)
+	{
+		echo Providers::model()->findByPk($id)->currency;
+		Yii::app()->end();
+	}
+
+	
+	public function actionGetDefaultExternalRate($id)
+	{
+		$opp  = Opportunities::model()->with('ios')->findByPk($id);
+		$prov = Providers::model()->findByPk($_GET["p_id"]);
+
+		switch ($opp->ios->entity) {
+		 	case 'SRL':
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.65, 2));
+		 		break;
+		 	
+		 	default:
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.75, 2));
+		 		break;
+		 }
 	}
 }

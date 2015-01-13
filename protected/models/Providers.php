@@ -7,7 +7,32 @@
  * @property integer $id
  * @property string $prefix
  * @property string $name
+ * @property string $status
  * @property string $currency
+ * @property integer $country_id
+ * @property string $model
+ * @property string $net_payment
+ * @property string $deal
+ * @property string $post_payment_amount
+ * @property string $start_date
+ * @property string $end_date
+ * @property string $daily_cap
+ * @property string $sizes
+ * @property integer $has_s2s
+ * @property integer $has_token
+ * @property string $callback
+ * @property string $placeholder
+ * @property integer $has_token
+ * @property string $commercial_name
+ * @property string $state
+ * @property string $zip_code
+ * @property string $address
+ * @property string $contact_com
+ * @property string $email_com
+ * @property string $contact_adm
+ * @property string $email_adm
+ * @property string $entity
+ * @property string $tax_id
  *
  * The followings are the available model relations:
  * @property Affiliates $affiliates
@@ -16,6 +41,7 @@
  * @property ClicksLog[] $clicksLogs
  * @property DailyReport[] $dailyReports
  * @property Networks $networks
+ * @property GeoLocation $country
  * @property Publishers $publishers
  * @property Vectors[] $vectors
  */
@@ -37,14 +63,20 @@ class Providers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id, name', 'required'),
-			array('id', 'numerical', 'integerOnly'=>true),
-			array('prefix', 'length', 'max'=>45),
-			array('name', 'length', 'max'=>128),
-			array('currency', 'length', 'max'=>3),
+			array('name, model, net_payment, start_date, commercial_name, state, zip_code, entity, tax_id', 'required'),
+			array('country_id, has_s2s, has_token', 'numerical', 'integerOnly'=>true),
+			array('prefix, placeholder', 'length', 'max'=>45),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id', 'length', 'max'=>128),
+			array('status', 'length', 'max'=>8),
+			array('deal', 'length', 'max'=>12),
+			array('post_payment_amount, daily_cap', 'length', 'max'=>11),
+			array('callback', 'length', 'max'=>255),
+			array('end_date', 'safe'),
+			array('currency, model, entity', 'length', 'max'=>3),
+			array('callback', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, currency', 'safe', 'on'=>'search'),
+			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,6 +94,7 @@ class Providers extends CActiveRecord
 			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'providers_id'),
 			'networks'     => array(self::HAS_ONE, 'Networks', 'providers_id'),
+			'country'      => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'publishers'   => array(self::HAS_ONE, 'Publishers', 'providers_id'),
 			'vectors'      => array(self::HAS_MANY, 'Vectors', 'providers_id'),
 		);
@@ -73,10 +106,35 @@ class Providers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'       => 'ID',
-			'prefix'   => 'Prefix',
-			'name'     => 'Name',
-			'currency' => 'Currency',
+			'id'                  => 'ID',
+			'prefix'              => 'Prefix',
+			'name'                => 'Name',
+			'status'              => 'Status',
+			'currency'            => 'Currency',
+			'country_id'          => 'Country',
+			'model'               => 'Model',
+			'net_payment'         => 'Net Payment',
+			'deal'                => 'Deal',
+			'post_payment_amount' => 'Post Payment Amount',
+			'start_date'          => 'Start Date',
+			'end_date'            => 'End Date',
+			'daily_cap'           => 'Daily Cap',
+			'sizes'               => 'Sizes',
+			'has_s2s'             => 'Has s2s',
+			'has_token'           => 'Has Placeholder',
+			'callback'            => 'Callback',
+			'placeholder'         => 'Placeholder',
+			'has_token'           => 'Has Token',
+			'commercial_name'     => 'Commercial Name',
+			'state'               => 'State',
+			'zip_code'            => 'Zip Code',
+			'address'             => 'Address',
+			'contact_com'         => 'Contact Com',
+			'email_com'           => 'Email Com',
+			'contact_adm'         => 'Contact Adm',
+			'email_adm'           => 'Email Adm',
+			'entity'              => 'Entity',
+			'tax_id'              => 'Tax',
 		);
 	}
 
@@ -101,7 +159,32 @@ class Providers extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
+		$criteria->compare('status',$this->status,true);
 		$criteria->compare('currency',$this->currency,true);
+		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('model',$this->model,true);
+		$criteria->compare('net_payment',$this->net_payment,true);
+		$criteria->compare('deal',$this->deal,true);
+		$criteria->compare('post_payment_amount',$this->post_payment_amount,true);
+		$criteria->compare('start_date',$this->start_date,true);
+		$criteria->compare('end_date',$this->end_date,true);
+		$criteria->compare('daily_cap',$this->daily_cap,true);
+		$criteria->compare('sizes',$this->sizes,true);
+		$criteria->compare('has_s2s',$this->has_s2s);
+		$criteria->compare('has_token',$this->has_token);
+		$criteria->compare('callback',$this->callback,true);
+		$criteria->compare('placeholder',$this->placeholder,true);
+		$criteria->compare('has_token',$this->has_token);
+		$criteria->compare('commercial_name',$this->commercial_name,true);
+		$criteria->compare('state',$this->state,true);
+		$criteria->compare('zip_code',$this->zip_code,true);
+		$criteria->compare('address',$this->address,true);
+		$criteria->compare('contact_com',$this->contact_com,true);
+		$criteria->compare('email_com',$this->email_com,true);
+		$criteria->compare('contact_adm',$this->contact_adm,true);
+		$criteria->compare('email_adm',$this->email_adm,true);
+		$criteria->compare('entity',$this->entity,true);
+		$criteria->compare('tax_id',$this->tax_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -128,7 +211,7 @@ class Providers extends CActiveRecord
 
 	public function isPublisher()
 	{
-		return Publihsers::model()->exists('providers_id=:id', array(':id' => $this->id));
+		return Publishers::model()->exists('providers_id=:id', array(':id' => $this->id));
 	}
 
 
@@ -144,7 +227,7 @@ class Providers extends CActiveRecord
 			return 1;
 		if ($this->isNetwork())
 			return 2;
-		if ($this->isProvider())
+		if ($this->isPublisher())
 			return 3;
 		return NULL;
 	}

@@ -69,12 +69,15 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->with  = array('ios', 'ios.advertisers', 'country', 'carriers');
         $criteria->compare('t.status', 'Active');
-        $criteria->order = 'advertisers.name, country.ISO2';
+        $criteria->order = 't.id, advertisers.name, country.ISO2';
+
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManagerId=Yii::app()->user->id;
 
         if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
+            $criteria->compare('t.account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios')->findAll($criteria);
         $list = CHtml::listData($opps, 'id', 'virtualName');
@@ -104,43 +107,41 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
-    public static function filterCarriersDate($value, $accountManagerId=NULL, $htmlOptions = array(),$io_id,$startDate,$endDate)
+    public static function filterCarrier($value, $accountManagerId=NULL, $htmlOptions = array(),$country=null)
     {
         $defaultHtmlOptions = array(
             'empty' => 'All carriers',
             'class' => 'carrier-dropdownlist',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
-        $carriers=array();
-        $query = '  select ca.id_carrier as id_carrier,ca.mobile_brand as mobile_brand from carriers ca, opportunities o
-                    inner join campaigns c on c.opportunities_id=o.id
-                    inner join daily_report d on d.campaigns_id=c.id
-                    left join multi_rate m on m.daily_report_id=d.id
-                    where d.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"
-                    and d.revenue>0
-                    and o.ios_id='.intval($io_id).'
-                    and (o.carriers_id=ca.id_carrier or m.carriers_id_carrier=ca.id_carrier)
-                    group by ca.id_carrier';
-                    // echo $query;
-        $opps = Carriers::model()->findAllBySql($query);
-        foreach ($opps as $op) {
-            $carriers[$op['id_carrier']]=$op['mobile_brand'];
-        }
-        $query = '  select "multi","Multi" from opportunities o
-                    inner join campaigns c on c.opportunities_id=o.id
-                    inner join daily_report d on d.campaigns_id=c.id
-                    where o.carriers_id is null 
-                    and rate is not null
-                    and d.revenue>0
-                    and o.ios_id='.intval($io_id).'
-                    and d.date BETWEEN "'.$startDate.'" AND "'.$endDate.'"';
-                    // echo $query;
-        $opps = Carriers::model()->findAllBySql($query);
-        foreach ($opps as $op) {
-            $carriers[$op['id_carrier']]=$op['mobile_brand'];
-        }
-        return CHtml::dropDownList('carrier', $value, $carriers, $htmlOptions);
+        $criteria=new CDbCriteria;
+        if($country)
+            $criteria->compare('id_country',$country);
+
+        $carriers            = Carriers::model()->findAll($criteria);
+        $list            = CHtml::listData($carriers, 'id_carrier', 'mobile_brand');
+        return CHtml::dropDownList('carrier', $value, $list, $htmlOptions);
     }
+
+    public static function filterProduct($value, $htmlOptions = array(),$io_id=null,$optionAll=true)
+    {
+        $defaultHtmlOptions = array(
+            'class' => 'product-dropdownlist',
+        );
+        if($optionAll)
+            $defaultHtmlOptions = array_merge($defaultHtmlOptions, array('empty' => 'All products'));
+
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        $criteria = new CDbCriteria;
+        $criteria->select='*, if(product="","Without Product",product) as product';
+        if ( $io_id != NULL )
+            $criteria->compare('ios_id', $io_id);
+        $criteria->group='product';
+        $opps = Opportunities::model()->findAll($criteria);
+        $list   = CHtml::listData($opps, 'product', 'product');
+        return CHtml::dropDownList('product', $value, $list, $htmlOptions);
+    }
+
 
     /**
      * Create dropdown of Account Managers
@@ -224,7 +225,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);    
         
-        $advs        = Advertisers::model()->findAll( array('order' => 'name') );
+        $advs        = Advertisers::model()->findAll( array('order' => 'name', "condition"=>"status='Active'") );
         $list        = CHtml::listData($advs, 'id', 'name');
         return CHtml::dropDownList('advertiser', $value, $list, $htmlOptions);
     }
@@ -236,22 +237,36 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterCountries($value, $htmlOptions = array())
+    public static function filterCountries($value, $htmlOptions = array(),$io=null,$dropdownLoad=null,$optionAll=true)
     {
-        $defaultHtmlOptions = array(
-            'empty' => 'All countries',
-        );
+        $defaultHtmlOptions = $optionAll ? array(
+            'empty' => 'All countries',            
+        ) : array();
+        if(!is_null($dropdownLoad))
+            $defaultHtmlOptions = array_merge($defaultHtmlOptions, array(
+                'onChange' => '
+                $.post(
+                    "' . Yii::app()->getBaseUrl() . '/finance/getCarriers/?country="+this.value,
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                        $("#'.$dropdownLoad.'").html(data);
+                    }
+                )'));
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
         $criteria->with  = array('country');
         $criteria->order = 'country.name';
+        if(!is_null($io))
+            $criteria->compare('ios_id',$io);
         $opps            = Opportunities::model()->findAll($criteria);
         $list            = CHtml::listData($opps, 'country.id_location', 'country.name');
         return CHtml::dropDownList('country', $value, $list, $htmlOptions);
     }
 
-	/**
+    /**
      * Create dropdown of Entities
      * @param  $value
      * @param  $htmlOptions
@@ -320,14 +335,14 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers', 'country');
-        $criteria->order = 'advertisers.name, country.ISO2';
+        $criteria->order = 't.id, advertisers.name, country.ISO2';
 
 
         if (FilterManager::model()->isUserTotalAccess('media'))
             $accountManagerId=Yii::app()->user->id;
 
         if ( $accountManagerId != NULL )
-            $criteria->compare('account_manager_id', $accountManagerId);
+            $criteria->compare('t.account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('ios.advertisers', 'carriers')->findAll($criteria);
         $data=array();
@@ -616,7 +631,7 @@ class KHtml extends CHtml
         );
     } 
 
-    public static function currencyTotals($totals=array())
+    public static function currencyTotalsClients($totals=array())
     {
         $rowTotals='<div class="row totals-bar ">';
         if(count($totals)>0)
@@ -629,11 +644,35 @@ class KHtml extends CHtml
                 <div class="span'.$span.'">
                     <div class="alert alert-'.$alert[$i].'">
                         <small >TOTAL '.$total['currency'].'</small>
-                        <h3 class="">Subtotal: '.number_format($total['sub_total'],2).'</h3><br>
-                        <h4 class="">Total Count: '.number_format($total['total_count'],2).'</h4>
+                        <h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>
+                        <h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>
                         <h5 class="">Total: '.number_format($total['total'],2).'</h5>
                         <h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>
                         <h6 class="">Invoiced Percent: '.round(($total['total_invoiced']*100)/$total['total'],2).'%</h6>
+                    </div>
+                </div>
+                ';
+                $i++;
+            }
+        }
+        $rowTotals.='</div>';
+        return $rowTotals;
+    }
+
+    public static function currencyTotals($totals=array())
+    {
+        $rowTotals='<div class="row totals-bar ">';
+        if(count($totals)>0)
+        {
+            $span = floor( 12 / count($totals) );
+            $alert = array('error', 'info', 'success', 'warning', 'muted');
+            $i = 0;
+            foreach($totals as $total){
+                $rowTotals.= '
+                <div class="span'.$span.'">
+                    <div class="alert alert-'.$alert[$i].'">
+                        <small >TOTAL</small>
+                        <h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
                     </div>
                 </div>
                 ';
