@@ -6,7 +6,7 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
- Yii::app()->clientScript->registerScript("", "$('.ipopover').popover();", CClientScript::POS_READY);
+ Yii::app()->clientScript->registerScript("", "$('.ipopover').popover({'placement':'left'});", CClientScript::POS_READY);
 ?>
 
 <?php
