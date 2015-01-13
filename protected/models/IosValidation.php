@@ -192,7 +192,7 @@ class IosValidation extends CActiveRecord
 		if($validation = self::find($criteria))
 			return $validation->status;
 		else
-			return 'Not Sended';
+			return 'Not Sent';
 	}
 
 	public function loadByIo($id,$period)
