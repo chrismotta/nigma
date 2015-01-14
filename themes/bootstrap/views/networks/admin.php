@@ -126,8 +126,14 @@ $this->breadcrumbs=array(
 				    }
 				    ',
 				),
+				'exportPdf' => array(
+					'label'   => 'Export PDF',
+					'icon'    => 'download',
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/exportPdf/" . $data->providers_id',
+					'options' => array('target' => '_blank'),
+				),
 			),
-			'template' => '{viewAjax} {updateAjax}',
+			'template' => '{viewAjax} {updateAjax} {exportPdf}',
 		),
 	),
 )); ?>
