@@ -127,7 +127,7 @@
 
 <div class="container" id="page">
 
-    <div class="alert alert-now">You have 13 non-verificated opportunities. You must validate them before Jan 4, 2015</div>
+    <!--div class="alert alert-now">You have -cantidad de oportunidades|ios- non-verificated opportunities. You must validate them before -segundo dia habil|cuarto dia habil-</div-->
 
 	<?php if(isset($this->breadcrumbs)):?>
 		<?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
