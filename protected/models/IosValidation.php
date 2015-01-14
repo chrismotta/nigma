@@ -199,6 +199,18 @@ class IosValidation extends CActiveRecord
 			return 'Not Sent';
 	}
 
+	public function getDateByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::find($criteria))
+			return $validation->date;
+		else
+			return '';
+	}
+
 	public function loadByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;

@@ -359,6 +359,7 @@ class Ios extends CActiveRecord
 				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['comment']       =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['date']       =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
 				$data[$i]['conv']            =round($daily->conversions,2);
 				$data[$i]['rate']            =$daily->rate;		
@@ -441,6 +442,7 @@ class Ios extends CActiveRecord
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['country']         =$daily['country'];
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_io']       =$daily['status_io'];				
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['comment']       =$daily['comment'];				
+				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['date']       =$daily['date'];				
 				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['multi']           =$daily['multi'];				
 				#If isset, set arrays (conv,revenue) and sum
 				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']=0;

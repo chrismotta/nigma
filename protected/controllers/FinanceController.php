@@ -236,8 +236,32 @@ class FinanceController extends Controller
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-clients-form']) ) {
+			$model  =new Ios;
+			$transactions=new TransactionCount;	
+			$year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
+			$month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
+			$entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
+			$cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
+			$status       =isset($_POST['status']) ? $_POST['status'] : null;		
+			$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status,null);
+			$consolidated=array();
+			foreach ($clients['data'] as $client) {
+				$client['total_revenue']     =$clients['totals_io'][$client['id']];
+				$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+				$client['total']             =$client['total_revenue']+$client['total_transaction'];
+				$consolidated[]              =$client;
+				//isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
+				//$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+			}
+			$dataProvider =new CArrayDataProvider($consolidated, array(
+			    'id'=>'clients',
+			    'pagination'=>array(
+			        'pageSize'=>30,
+			    ),
+			));
 			$this->renderPartial('excelReport', array(
-				'model' => new DailyReport,
+				'model' => new IosValidation,
+				'dataProvider'=>$dataProvider,
 			));
 		}
 
