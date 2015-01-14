@@ -87,6 +87,7 @@ class FilterManager
 				'admin',
 				'bussiness',
 				'media_manager',
+				'finance',
 			)),
 		'clients.count' => array( 
 			'column' => 'opportunities.account_manager_id', 
