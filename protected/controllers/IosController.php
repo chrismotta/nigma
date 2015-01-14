@@ -289,14 +289,13 @@ class IosController extends Controller
 	{
 		$model = $this->loadModel($id);
 
-		$pdf = Pdf::doc();
+		$pdf = PDFInsertionOrder::doc();
         $pdf->setData( array(
 			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
 			'io'            => $model,
 			'opportunities' => Opportunities::model()->findAll( "ios_id=:id AND status='Active'", array(':id'=>$id) ),
         ));
         $pdf->output();
-
         Yii::app()->end();
 	}
 
