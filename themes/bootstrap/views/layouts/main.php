@@ -127,6 +127,8 @@
 
 <div class="container" id="page">
 
+    <div class="alert alert-now">You have 13 non-verificated opportunities. You must validate them before Jan 4, 2015</div>
+
 	<?php if(isset($this->breadcrumbs)):?>
 		<?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
 			'links'=>$this->breadcrumbs,
