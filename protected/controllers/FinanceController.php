@@ -392,7 +392,8 @@ class FinanceController extends Controller
 		$this->renderPartial('invoice',
 		 array(
 				'io_id'  => $_POST['io_id'],
-				'period' => $_POST['period']
+				'period' => $_POST['period'],
+				'invoice_id' => $_POST['invoice_id'],
 		 	)
 		);
 	}

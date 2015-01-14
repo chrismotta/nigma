@@ -11,6 +11,7 @@
  * @property string $status
  * @property string $comment
  * @property string $validation_token
+ * @property string $invoice_id
  *
  * The followings are the available model relations:
  * @property Ios $ios
@@ -37,10 +38,11 @@ class IosValidation extends CActiveRecord
 			array('ios_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>255),
 			array('comment', 'length', 'max'=>255),
+			array('invoice_id', 'length', 'max'=>255),
 			array('validation_token', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ios_id, period, date, status, comment, validation_token', 'safe', 'on'=>'search'),
+			array('id, ios_id, period, date, status, comment, validation_token, invoice_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,6 +71,7 @@ class IosValidation extends CActiveRecord
 			'status' => 'Status',
 			'comment' => 'Comment',
 			'validation_token' => 'Validation Token',
+			'invoice_id' => 'Invoice Id',
 		);
 	}
 
@@ -97,6 +100,7 @@ class IosValidation extends CActiveRecord
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('comment',$this->comment,true);
 		$criteria->compare('validation_token',$this->validation_token,true);
+		$criteria->compare('invoice_id',$this->invoice_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
