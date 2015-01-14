@@ -80,8 +80,9 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
@@ -391,7 +392,8 @@ class FinanceController extends Controller
 		$this->renderPartial('invoice',
 		 array(
 				'io_id'  => $_POST['io_id'],
-				'period' => $_POST['period']
+				'period' => $_POST['period'],
+				'invoice_id' => $_POST['invoice_id'],
 		 	)
 		);
 	}

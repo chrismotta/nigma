@@ -9,7 +9,7 @@ if($revenueValidation= IosValidation::model()->loadByIo($io_id,$period))
 {
 	if($revenueValidation->status=='Approved' || $revenueValidation->status=='Expired')
 	{
-		$revenueValidation->attributes=array('status'=>$status);
+		$revenueValidation->attributes=array('status'=>$status,'invoice_id'=>$invoice_id);
 		if($revenueValidation->save())
 		{
 			//ENVIAR MAIL AQUI
