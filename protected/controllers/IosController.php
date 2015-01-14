@@ -302,7 +302,7 @@ class IosController extends Controller
 	public function actionViewPdf($id) 
 	{
 		$model = $this->loadModel($id);
-		$path = Pdf::getPath();
+		$path = PDF::getPath();
 
 		if ( file_exists($path . $model->pdf_name) ) {
 			$info = pathinfo($model->pdf_name);
@@ -320,7 +320,7 @@ class IosController extends Controller
 	public function actionUploadPdf($id) 
 	{
 		$model = $this->loadModel($id);
-		$path = Pdf::getPath();
+		$path = PDF::getPath();
 
 		if(isset($_POST['submit'])) {
 
