@@ -117,7 +117,7 @@ class Providers extends CActiveRecord
 			'model'               => 'Model',
 			'net_payment'         => 'Net Payment',
 			'deal'                => 'Deal',
-			'post_payment_amount' => 'Post Payment Amount',
+			'post_payment_amount' => 'Pre Payment Amount',
 			'start_date'          => 'Start Date',
 			'end_date'            => 'End Date',
 			'daily_cap'           => 'Daily Cap',
