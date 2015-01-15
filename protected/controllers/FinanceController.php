@@ -498,7 +498,9 @@ class FinanceController extends Controller
 			echo '<br/>';
 		};
 
-
+		// if ($today == -dia habil 3-)
+		// if ($today == -dia habil 6-)
+		
 	}
 	public function actionGetCarriers()
 	{
