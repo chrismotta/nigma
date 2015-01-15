@@ -111,7 +111,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	'type'                     => 'striped condensed',
 	'template'                 => '{items} {pager} {summary}',
 	'extraRowColumns'=> array('firstLetter'),
-	'extraRowExpression' => '"<b style=\"font-size: 3em; color: #333;\">".$data["date"]."</b>"',
+	'extraRowExpression' => '"<b style=\"font-size: 2em; color: #333;\">".$data["date"]."</b>"',
 	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
 	'columns'      =>array(
                 array(
