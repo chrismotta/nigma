@@ -126,8 +126,36 @@
 )); ?>
 
 <div class="container" id="page">
-
-    <!--div class="alert alert-now">You have -cantidad de oportunidades|ios- non-verificated opportunities. You must validate them before -segundo dia habil|cuarto dia habil-</div-->
+    <?php
+    if(!Yii::app()->user->isGuest)
+    {        
+        $mainVar           =array();
+        $mainVar['count']=0;
+        $mainVar['date']   = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+        $mainVar['year']   =date('Y', $mainVar['date']);
+        $mainVar['month'] =date('m', $mainVar['date']);
+        if (FilterManager::model()->isUserTotalAccess('alert.business')) 
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),4);
+            $mainVar['option']='ios';
+            foreach(IosValidation::model()->findAllByAttributes(array('status'=>'Validated','period'=>$mainVar['year'].'-'.$mainVar['month'].'-01')) as $value)
+            {
+                $mainVar['count']++;
+            }
+        }elseif (FilterManager::model()->isUserTotalAccess('alert.media'))
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['option']='opportunities';
+            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            {
+                if(!$opportunitie['status_opp'])$mainVar['count']++;
+            }
+        }
+        if($mainVar['count']>0)
+            echo '<div class="alert alert-now">You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'].'</div>';
+    }
+    ?>
+    
 
 	<?php if(isset($this->breadcrumbs)):?>
 		<?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(
