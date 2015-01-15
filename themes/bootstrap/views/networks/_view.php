@@ -10,19 +10,9 @@
 
 <div class="modal-body">
 	
-	<h5>Providers</h5>
-	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
-	    'type'=>'striped bordered condensed',
-		'data'=>$modelProv,
-		'attributes'=>array(
-			'id',
-			'prefix',
-			'name',
-			'currency',
-			'entity',
-			'status',
-		),
-	)); ?>
+	<?php $this->renderPartial('/providers/_view', array(
+        'model' => $modelProv,
+    )); ?>
 
 	<h5>Networks</h5>
 	<?php $this->widget('bootstrap.widgets.TbDetailView', array(

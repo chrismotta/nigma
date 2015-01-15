@@ -56,9 +56,9 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 					array(),
     				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
     					"onclick" => 
-    					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
-    						if(confirmed){
-		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\" })
+    					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
+    						if(confirmed!==null){
+		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
 		                            .success(function( data ) {
 			                            alert(data );
 			                            window.location = document.URL;

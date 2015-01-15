@@ -80,8 +80,9 @@ class FinanceController extends Controller
 	
 	public function actionClients()
 	{
-		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
@@ -235,8 +236,32 @@ class FinanceController extends Controller
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-clients-form']) ) {
+			$model  =new Ios;
+			$transactions=new TransactionCount;	
+			$year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
+			$month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
+			$entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
+			$cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
+			$status       =isset($_POST['status']) ? $_POST['status'] : null;		
+			$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status,null);
+			$consolidated=array();
+			foreach ($clients['data'] as $client) {
+				$client['total_revenue']     =$clients['totals_io'][$client['id']];
+				$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+				$client['total']             =$client['total_revenue']+$client['total_transaction'];
+				$consolidated[]              =$client;
+				//isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
+				//$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+			}
+			$dataProvider =new CArrayDataProvider($consolidated, array(
+			    'id'=>'clients',
+			    'pagination'=>array(
+			        'pageSize'=>30,
+			    ),
+			));
 			$this->renderPartial('excelReport', array(
-				'model' => new DailyReport,
+				'model' => new IosValidation,
+				'dataProvider'=>$dataProvider,
 			));
 		}
 
@@ -391,7 +416,8 @@ class FinanceController extends Controller
 		$this->renderPartial('invoice',
 		 array(
 				'io_id'  => $_POST['io_id'],
-				'period' => $_POST['period']
+				'period' => $_POST['period'],
+				'invoice_id' => $_POST['invoice_id'],
 		 	)
 		);
 	}
@@ -472,7 +498,14 @@ class FinanceController extends Controller
 			echo '<br/>';
 		};
 
-
+		// if ($today == -dia habil 3-)
+		// listar todas las oportunidades no verificadas
+		// enviar mail a emilio
+		
+		// if ($today == -dia habil 6-)
+		// listar todas las ios sin enviar
+		// enviar mail a giselle
+		
 	}
 	public function actionGetCarriers()
 	{

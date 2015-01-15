@@ -337,3 +337,13 @@ fieldset hr {
 .formfilter-date p { display: inline-block; width: 50px; }
 
 .formfilter-submit { float: right; }
+
+.alert-now {
+background-color: #b94a48;
+border-color: #b94a48;
+color: #ffffff;
+font-size: 12px;
+padding-top: 5px;
+padding-bottom: 5px;
+margin-bottom: 6px;
+}
