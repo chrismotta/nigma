@@ -28,8 +28,12 @@ class NetworksController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions' =>array('admin','create','update','view'),
-				'roles'   =>array('admin'),
+				'actions' =>array('admin','view','create','update'),
+				'roles'   =>array('admin','media_manager'),
+			),
+			array('allow',
+				'actions' =>array('admin','view'),
+				'roles'   =>array('media','finance'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

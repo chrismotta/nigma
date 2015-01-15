@@ -23,12 +23,16 @@ class AffiliatesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index'),
-				'roles'=>array('admin', 'affiliate'),
+				'actions' =>array('index'),
+				'roles'   =>array('admin', 'affiliate'),
 			),
-			array('allow',  // deny all users
-				'actions'=>array('admin','view','create','update'),
-				'roles'=>array('admin'),
+			array('allow',
+				'actions' =>array('admin','view','create','update'),
+				'roles'   =>array('admin','media_manager'),
+			),
+			array('allow',
+				'actions' =>array('admin','view'),
+				'roles'   =>array('media','finance'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
