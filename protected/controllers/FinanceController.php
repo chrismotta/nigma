@@ -498,14 +498,66 @@ class FinanceController extends Controller
 			echo '<br/>';
 		};
 
-		// if ($today == -dia habil 3-)
-		// listar todas las oportunidades no verificadas
-		// enviar mail a emilio
-		
-		// if ($today == -dia habil 6-)
-		// listar todas las ios sin enviar
-		// enviar mail a giselle
-		
+		$options          =array();
+		$options['date']  = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$options['year']  =date('Y', $options['date']);
+		$options['month'] =date('m', $options['date']);
+
+		$options['date']   = Utilities::weekDaysSum(date('Y-m-01'),3);
+        if($options['date'] == strtotime ( date('Y-m-d',strtotime('NOW')) ))
+		{
+			echo '<hr/>Opportunities not validated:<br>';
+			foreach(Ios::model()->getClients($options['month'],$options['year'],null,null,null,null,null,null,null)['data'] as $opportunitie)
+	        {
+       			if(!$opportunitie['status_opp'])
+       				$opportunities[]=Opportunities::model()->findByPk($opportunitie['opportunitie_id'])->getVirtualName();
+	        }
+	        if(isset($opportunities))
+	    	{
+	    		$body = '
+					<span style="color:#000">
+					  <p>Opportunities not validated:</p>';
+	    		foreach ($opportunities as $value) {
+	    			echo 'opp #'.$value.'<br>';
+	    			$body .=  '<p>'.$value.'</p>';
+	    		}
+				$body .= '</span>';
+            	$subject = 'KickAds - Opportunities not validated '.date('M j, Y');
+ 			 	$mail = new CPhpMailerLogRoute;   
+ 			 	$emails = array('pedro.forwe@kickads.mobi','emilio.maila@kickads.mobi');
+            	$mail->send($emails, $subject, $body);
+	    	}
+		}
+
+		$options['date']  = Utilities::weekDaysSum(date('Y-m-01'),5);
+        if($options['date'] == strtotime ( date('Y-m-d',strtotime('NOW')) ))
+		{
+			echo '<hr/>Ios Mails not sent:<br>';
+			$criteria=new CDbCriteria;
+			$criteria->compare('t.status','Validated');
+			$criteria->compare('t.period',$options['year'].'-'.$options['month'].'-01');
+			$criteria->with=array('ios');
+			foreach(IosValidation::model()->findAll($criteria) as $value)
+	        {
+       			$ios[]=$value->ios->id.' - '.$value->ios->name;
+	        }
+	        if(isset($ios))
+	    	{
+	    		$body = '
+					<span style="color:#000">
+					  <p>Ios Mails not sent:</p>';
+	    		foreach ($ios as $value) {
+	    			echo 'io #'.$value.'<br>';
+	    			$body .=  '<p>'.$value.'</p>';
+	    		}
+				$body .= '</span>';
+            	$subject = 'KickAds - Ios mails not sent '.date('M j, Y');
+
+ 			 	$mail = new CPhpMailerLogRoute;   
+ 			 	$emails = array('pedro.forwe@kickads.mobi','giselle.poretti@kickadserver.mobi','santiago.guasch@kickads.mobi');
+            	$mail->send($emails, $subject, $body);
+	    	}
+		}		
 	}
 	public function actionGetCarriers()
 	{
