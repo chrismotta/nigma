@@ -13,6 +13,7 @@ $ios=new Ios;
 $io=$ios->findByPk($io_id);
 $clients =$ios->getClients($month,$year,null,$io_id,null,null,null,null,null);
 switch ($model->status) {
+    case 'Invoiced':
     case 'Approved':
         // echo "<script>alert('Revenue already Approved')</script>";
         die ('Revenue already Approved');
@@ -28,7 +29,8 @@ switch ($model->status) {
         die ('Revenue is Expired');
         break;
     
-    default:
+    case 'Sent':
+    case 'Viewed':
         $log=new ValidationLog;
         $status='Viewed';
         $model->attributes=array('status'=>$status);
@@ -36,6 +38,9 @@ switch ($model->status) {
             $log->loadLog($model->id,$status);
         else
             echo 'Error';
+        break;
+    default:
+        die ('');
         break;
 }
 ?>
