@@ -52,8 +52,8 @@ class PDFProviders extends PDF
         $values[$provider->getAttributeLabel('net_payment')]         = $provider->net_payment;
         $values[$provider->getAttributeLabel('deal')]                = $provider->deal;
         $values[$provider->getAttributeLabel('post_payment_amount')] = $provider->post_payment_amount;
-        $values[$provider->getAttributeLabel('start_date')]          = $provider->start_date == 0 ? '' : date('d-m-Y', strtotime($provider->startDate));
-        $values[$provider->getAttributeLabel('end_date')]            = $provider->end_date == 0 ? '' : date('d-m-Y', strtotime($provider->endDate));
+        $values[$provider->getAttributeLabel('start_date')]          = $provider->start_date == 0 ? '' : date('d-m-Y', strtotime($provider->start_date));
+        $values[$provider->getAttributeLabel('end_date')]            = $provider->end_date == 0 ? '' : date('d-m-Y', strtotime($provider->start_date));
         $values[$provider->getAttributeLabel('daily_cap')]           = $provider->daily_cap;
         $values[$provider->getAttributeLabel('sizes')]               = $provider->sizes;
         $values[$provider->getAttributeLabel('has_s2s')]             = $provider->has_s2s ? "Yes" : "No";
