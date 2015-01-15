@@ -126,7 +126,7 @@ class Providers extends CActiveRecord
 			'has_token'           => 'Has Placeholder',
 			'callback'            => 'Callback',
 			'placeholder'         => 'Placeholder',
-			'has_token'           => 'Has Token',
+			'has_token'           => 'Has Placeholder',
 			'commercial_name'     => 'Commercial Name',
 			'state'               => 'State',
 			'zip_code'            => 'Zip Code',
