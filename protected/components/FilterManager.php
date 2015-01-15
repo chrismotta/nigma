@@ -85,7 +85,7 @@ class FilterManager
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
-				'bussiness',
+				'business',
 				'media_manager',
 				'finance',
 			)),
@@ -93,8 +93,18 @@ class FilterManager
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
-				'bussiness',
+				'business',
 				'media_manager',
+			)),
+		'alert.business' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'business',
+			)),
+		'alert.media' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'media',
 			)),
 		);
 

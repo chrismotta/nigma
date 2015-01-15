@@ -33,6 +33,8 @@
  * @property string $email_adm
  * @property string $entity
  * @property string $tax_id
+ * @property integer $prospect
+ * @property string $pdf_name
  *
  * The followings are the available model relations:
  * @property Affiliates $affiliates
@@ -64,19 +66,19 @@ class Providers extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, model, net_payment, start_date, commercial_name, state, zip_code, entity, tax_id', 'required'),
-			array('country_id, has_s2s, has_token', 'numerical', 'integerOnly'=>true),
-			array('prefix, placeholder', 'length', 'max'=>45),
-			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id', 'length', 'max'=>128),
+			array('country_id, has_s2s, has_token, prospect', 'numerical', 'integerOnly'=>true),
+			array('prefix, sizes, placeholder', 'length', 'max'=>45),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name', 'length', 'max'=>128),
+			array('currency, model, entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
 			array('deal', 'length', 'max'=>12),
 			array('post_payment_amount, daily_cap', 'length', 'max'=>11),
 			array('callback', 'length', 'max'=>255),
 			array('end_date', 'safe'),
-			array('currency, model, entity', 'length', 'max'=>3),
 			array('callback', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id', 'safe', 'on'=>'search'),
+			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -135,6 +137,8 @@ class Providers extends CActiveRecord
 			'email_adm'           => 'Email Adm',
 			'entity'              => 'Entity',
 			'tax_id'              => 'Tax',
+			'prospect'            => 'Prospect',
+			'pdf_name'            => 'Pdf Name',
 		);
 	}
 
@@ -185,6 +189,8 @@ class Providers extends CActiveRecord
 		$criteria->compare('email_adm',$this->email_adm,true);
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
+		$criteria->compare('prospect',$this->prospect);
+		$criteria->compare('pdf_name',$this->pdf_name,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

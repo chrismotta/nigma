@@ -289,21 +289,20 @@ class IosController extends Controller
 	{
 		$model = $this->loadModel($id);
 
-		$pdf = Pdf::doc();
+		$pdf = PDFInsertionOrder::doc();
         $pdf->setData( array(
 			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
 			'io'            => $model,
 			'opportunities' => Opportunities::model()->findAll( "ios_id=:id AND status='Active'", array(':id'=>$id) ),
         ));
         $pdf->output();
-
         Yii::app()->end();
 	}
 
 	public function actionViewPdf($id) 
 	{
 		$model = $this->loadModel($id);
-		$path = Pdf::getPath();
+		$path = PDF::getPath();
 
 		if ( file_exists($path . $model->pdf_name) ) {
 			$info = pathinfo($model->pdf_name);
@@ -321,7 +320,7 @@ class IosController extends Controller
 	public function actionUploadPdf($id) 
 	{
 		$model = $this->loadModel($id);
-		$path = Pdf::getPath();
+		$path = PDF::getPath();
 
 		if(isset($_POST['submit'])) {
 

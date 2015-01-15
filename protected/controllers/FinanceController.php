@@ -498,7 +498,14 @@ class FinanceController extends Controller
 			echo '<br/>';
 		};
 
-
+		// if ($today == -dia habil 3-)
+		// listar todas las oportunidades no verificadas
+		// enviar mail a emilio
+		
+		// if ($today == -dia habil 6-)
+		// listar todas las ios sin enviar
+		// enviar mail a giselle
+		
 	}
 	public function actionGetCarriers()
 	{

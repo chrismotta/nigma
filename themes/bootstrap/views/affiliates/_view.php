@@ -10,17 +10,18 @@
 
 <div class="modal-body">
 	
-	<h5>Providers</h5>
+	<?php $this->renderPartial('/providers/_view', array(
+        'model' => $modelProv,
+    )); ?>
+
+	<h5>External User Login</h5>
 	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	    'type'=>'striped bordered condensed',
-		'data'=>$modelProv,
+		'data'=>$modelAffi,
 		'attributes'=>array(
-			'id',
-			'prefix',
-			'name',
-			'currency',
-			'entity',
-			'status',
+			'users.username',
+			'users.name',
+			'users.lastname',
 		),
 	)); ?>
 
@@ -29,19 +30,7 @@
 	    'type'=>'striped bordered condensed',
 		'data'=>$modelAffi,
 		'attributes'=>array(
-			'providers_id',
-			'commercial_name',
-			array(
-				'label' =>$modelAffi->getAttributeLabel('country_name'),
-				'name'  =>'country.name'
-			),
-			'address',
-			'state',
-			'zip_code',
 			'phone',
-			'contact_com',
-			'email_adm',
-			'contact_adm',
 		),
 	)); ?>
 </div>
