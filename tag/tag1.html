@@ -6,6 +6,35 @@
 	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
 </head>
 <body style="margin:0;padding:0;">
-a
+	<script>
+	if (mraid.getState() == 'loading') {
+	  mraid.addEventListener('ready', function(state) {
+	    initDefaultState();
+	  });
+	} else {
+	  initDefaultState();
+	}
+
+
+	function initDefaultState() {
+	  mraid.setExpandProperties({
+	    width : 320,
+	    height : 480,
+	  });
+
+	  mraid.addEventListener("error", function(message, action){
+	    console.log({ message: message, action: action })
+	  });
+
+	  mraid.getState();
+	  
+	}
+
+	$(".initial > img").click(function(){
+	  mraid.expand()
+	})
+
+	</script>
+	<div class="initial"><img src="http://vieclamtiengnhat.com.vn/wp-content/uploads/250x250.png" /></div>
 </body>
 </html>
