@@ -12,7 +12,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case '127.0.0.1':
 	case 'localhost':
 				$mysqlConnect = array(
-					'connectionString'   => 'mysql:host=localhost;dbname=kickads_appserver',
+					'connectionString'   => 'mysql:host=localhost;dbname=nigma',
 					'emulatePrepare'     => true,
 					'username'           => 'root',
 					'password'           => 'pernambuco',
