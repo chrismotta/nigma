@@ -68,7 +68,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 						'CharSet'    => "UTF-8",
                     ),
                 );
-		break;mysql -h tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com -A nigma -P 3306 -u root -pmil99ocho
+
 	// amazon test
 	case 'dev.tmlbox.co':
 				$mysqlConnect = array(
