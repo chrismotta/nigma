@@ -41,8 +41,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 					'emulatePrepare'   => true,
-					'username'         => 'root',
-					'password'         => 'mil99ocho',
+					'username'         => 'www-data',
+					'password'         => 'th3m3d14l4b',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
 			           "SET SESSION time_zone = '-3:00'",
@@ -54,12 +54,11 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'levels'  =>'error, mail',
 					'subject' =>'Automatic Mail Log',
 					'emails'  =>array(
-						'christian.motta@kickads.mobi',
-						'matias.cerrotta@kickads.mobi',
+						'chris@themedialab.co',
 					),
 					'config'  =>array(
-						'From'       => 'no-reply@kickads.mobi',
-						'FromName'   => 'no-reply Kickads adServer',
+						'From'       => 'no-reply@themedialab.co',
+						'FromName'   => 'no-reply themedialab.co',
 						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
 						// 'SMTPAuth'   => true,
 						// 'SMTPSecure' => "tls",
@@ -69,14 +68,14 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 						'CharSet'    => "UTF-8",
                     ),
                 );
-		break;
+		break;mysql -h tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com -A nigma -P 3306 -u root -pmil99ocho
 	// amazon test
 	case 'dev.tmlbox.co':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 					'emulatePrepare'   => true,
-					'username'         => 'root',
-					'password'         => 'mil99ocho',
+					'username'         => 'www-data',
+					'password'         => 'th3m3d14l4b',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
 			           "SET SESSION time_zone = '-3:00'",
