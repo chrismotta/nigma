@@ -17,6 +17,7 @@
   - mysql-server libapache2-mod-auth-mysql php5-mysql
 - phpmyadmin
 - php5-curl
+- php5-mysql 
 - Clone yii source code
 ```
 cd /var/www/html/
