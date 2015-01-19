@@ -497,4 +497,13 @@ class Ios extends CActiveRecord
 			));
 	}
 
+	/**
+	 * Get Opportunities associated with this IO.
+	 * @return [type] [description]
+	 */
+	public function getOpportunities()
+	{
+		return Opportunities::model()->findAll('ios_id=:iosid', array(':iosid' => $this->id));
+	}
+
 }

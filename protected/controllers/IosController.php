@@ -289,14 +289,24 @@ class IosController extends Controller
 	{
 		$model = $this->loadModel($id);
 
-		$pdf = PDFInsertionOrder::doc();
-        $pdf->setData( array(
-			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
-			'io'            => $model,
-			'opportunities' => Opportunities::model()->findAll( "ios_id=:id AND status='Active'", array(':id'=>$id) ),
-        ));
-        $pdf->output();
-        Yii::app()->end();
+		if (isset($_POST['submit'])) {
+
+			if (!isset($_POST['opp_ids'])) // no opportunities selected
+				$this->redirect(array('admin'));
+
+			$pdf = PDFInsertionOrder::doc();
+	        $pdf->setData( array(
+				'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
+				'io'            => $model,
+				'opportunities' => $_POST['opp_ids'],
+	        ));
+	        $pdf->output();
+	        Yii::app()->end();
+	    }
+
+	    $this->renderPartial('_generatePDF', array(
+	    	'model' => $model,
+	    ), false, true);
 	}
 
 	public function actionViewPdf($id) 
