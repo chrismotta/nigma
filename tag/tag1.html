@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TAG</title>
+	  <style type="text/css">
+	    body {
+	      background: #000;
+	    }
+	    body .expanded {
+	      display: none;
+	    }
+	    body.expanded .expanded {
+	      display: block;
+	    }
+	    body .expanded .initial {
+	      display: none;
+	    }
+	  </style>
+	<script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'></script>
+	<script type="text/javascript" src="http://api.airpush.com/mraid/native_mraid.php"></script>
+	<!--script type="text/javascript" src="http://liquidm.github.io/mraid-html5/examples/two_part_mraid/mraid.js"></script-->
+</head>
+<body style="margin:0;padding:0;">
+	<div class="initial"><img src="http://vieclamtiengnhat.com.vn/wp-content/uploads/250x250.png" /></div>
+	<script>
+	//$(document).ready(function(){
+
+	  	//var mraid=window.parent.mraid;
+		console.log(mraid.getState());
+		  /*
+		  mraid_airpush.addEventListener('ready', function(state) {
+		  	console.log("ready");
+		  });
+
+		//    initDefaultState();
+		
+		if (mraid.getState() == 'loading') {
+		  mraid.addEventListener('ready', function(state) {
+		    initDefaultState();
+		  });
+		} else {
+		  initDefaultState();
+		}
+		
+		function initDefaultState() {
+		  mraid.setExpandProperties({
+		    width : 320,
+		    height : 480,
+		  });
+
+		  mraid.addEventListener("error", function(message, action){
+		    console.log({ message: message, action: action })
+		  });
+
+		  mraid.getState();
+		  
+		}
+		/*
+		var airpush_mraid;
+		*/
+		$(".initial img").click(function(){
+		  console.log("click");
+		  mraid.expand("http://google.com");
+		});
+
+	//});
+	</script>
+
+
+	<div class="initial"><img src="http://vieclamtiengnhat.com.vn/wp-content/uploads/250x250.png" /></div>
+<script>
+		console.log("* "+mraid.getState());
+
+if (mraid.getState() == 'loading') {
+		  mraid.addEventListener('ready', function(state) {
+		    //initDefaultState();
+console.log("** "+mraid.getState());
+		  });
+		} else {
+		  //initDefaultState();
+console.log("*** "+mraid.getState());
+mraid.expand("http://google.com");
+
+		}
+
+</script>
+
+
+<script>
+window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js'>\x3C/script>")
+</script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+<div class="initial"><a href="javascript:;" onclick="clickBanner()" ><img src="http://vieclamtiengnhat.com.vn/wp-content/uploads/250x250.png" /></a></div>
+
+<script>
+	console.log("* "+mraid.getState());
+
+	if (mraid.getState() == 'loading') {
+		mraid.addEventListener('ready', function(state) {
+			//initDefaultState();
+			console.log("** "+mraid.getState());
+		});
+	} else {
+		//initDefaultState();
+		console.log("*** "+mraid.getState());
+
+		mraid.setExpandProperties({
+		    width : 320,
+		    height : 480,
+		  });
+
+		  mraid.addEventListener("error", function(message, action){
+		    console.log({ message: message, action: action })
+		  });
+
+		  mraid.getState();
+	}
+
+		//$(".initial img").click(function(){
+		//});
+		
+		function clickBanner(){
+			console.log("click");
+			mraid.setExpandProperties({
+			    width : 320,
+			    height : 480,
+			  });
+			console.log("*-* "+mraid.getState());
+
+			mraid.expand("http://www.yourbannertoday.com/media/catalog/product/cache/5/image/700x700/9df78eab33525d08d6e5fb8d27136e95/s/q/square.jpg");
+			console.log("*-* "+mraid.getState());
+
+		}
+</script>
+
+
+
+<div class="initial"><a href="javascript:;" onclick="clickBanner()" ><img src="http://vieclamtiengnhat.com.vn/wp-content/uploads/250x250.png" /></a></div>
+<script>
+	console.log("* "+mraid.getState());
+
+
+	mraid.setExpandProperties({
+	    width : 320,
+	    height : 480,
+	    useCustomClose:false,
+	    isModal:false
+	  });
+
+	function clickBanner(){
+		console.log("+ click");
+
+		mraid.setExpandProperties({
+		    width : 320,
+		    height : 480,
+		  });
+
+		mraid.expand("http://www.yourbannertoday.com/media/catalog/product/cache/5/image/700x700/9df78eab33525d08d6e5fb8d27136e95/s/q/square.jpg");
+		console.log("= "+mraid.getState());
+
+	}
+</script>
+
+
+<div class="initial"><a href="javascript:;" onclick="clickBanner()" >
+	<img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
+</a></div>
+<script>
+	console.log("* "+mraid.getState());
+
+
+	mraid.setExpandProperties({
+	    width : 320,
+	    height : 480,
+	    useCustomClose:false,
+	    isModal:false
+	  });
+
+	function clickBanner(){
+		console.log("+ click");
+
+		mraid.setExpandProperties({
+		    width : 320,
+		    height : 480,
+		  });
+
+		mraid.expand("http://kickads.mobi/propuestas/dermaglos/");
+		console.log("= "+mraid.getState());
+
+	}
+</script>
+
+
+<a href="javascript:;" onclick="clickBanner()" >
+	<img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
+</a>
+<script>
+	if (mraid.getState() == 'loading') {
+		mraid.addEventListener('ready', function(state) {
+		    initDefaultState();
+		});
+	} else {
+		initDefaultState();
+	}
+	
+	function initDefaultState() {
+	    mraid.setExpandProperties({
+		    width : 300,
+		    height : 500,
+		    useCustomClose:false,
+		    isModal:false
+	    });
+	}
+
+	function clickBanner(){
+		mraid.expand("http://www.kickads.mobi/propuestas/dermaglos/index4.html");
+		console.log("= "+mraid.getState());
+	}
+</script>
+
+<noscript>
+<a href="javascript:;" onclick="clickBanner()" >
+	<img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
+</a>
+</noscript>
+<script type="text/javascript" src="http://test.kickadserver.mobi/tag/kickads_tagscript.js"></script>
+
+</body>
+</html>
