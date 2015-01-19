@@ -100,7 +100,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 return array(
 	'basePath'       => dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'           => '',
-	'theme'          => 'bootstrap',
+	'theme'          => 'tml',
 	'timeZone'       =>  'America/Argentina/Buenos_Aires',
 	'language'       => 'en',
 	'sourceLanguage' => 'en',
