@@ -10,12 +10,17 @@ function initDefaultState() {
     mraid.setExpandProperties({
 	    width : 300,
 	    height : 500,
-	    useCustomClose:false,
+	    useCustomClose:true,
 	    isModal:false
     });
 }
 
 function clickBanner(){
 	mraid.expand("http://www.kickads.mobi/propuestas/dermaglos/index4.html");
+	console.log("= "+mraid.getState());
+}
+
+function bigClose(){
+	mraid.close();
 	console.log("= "+mraid.getState());
 }
