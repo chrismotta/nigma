@@ -1,3 +1,6 @@
+var bannerLink = document.getElementById('bannerLink');
+bannerLink.innerHTML += '<img src="http://ad.doubleclick.net/ad/N884.1918823KICKADS/B8423623.113859519;sz=1x1;ord=[timestamp]?" border=0 width=1 height=1 alt="Advertisement"></a>';
+
 if (mraid.getState() == 'loading') {
 	mraid.addEventListener('ready', function(state) {
 	    initDefaultState();
