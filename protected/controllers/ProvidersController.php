@@ -29,7 +29,7 @@ class ProvidersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('exportPdf','viewPdf','uploadPdf'),
+				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -77,6 +77,14 @@ class ProvidersController extends Controller
 	public function actionExportPdf($id)
 	{
 		$pdf = PDFProviders::doc();
+        $pdf->setData(array('provider' => $this->loadModel($id)));
+        $pdf->output();
+        Yii::app()->end();
+	}
+
+	public function actionAgreementPdf($id)
+	{
+		$pdf = PDFAgreement::doc();
         $pdf->setData(array('provider' => $this->loadModel($id)));
         $pdf->output();
         Yii::app()->end();

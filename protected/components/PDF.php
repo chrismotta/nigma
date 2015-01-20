@@ -87,14 +87,34 @@ class PDF extends EPdfFactoryDoc
      * Print signature section to pdf
      * @param  $pdf TCPDF object
      */
-    protected function printSignature($pdf)
+    protected function printSignature($pdf,$name)
     {
-		$pdf->SetTextColor(0);
-		$pdf->Cell(80, 7, 'Legal Representative', 0, 0, 'C', false);
-		$pdf->Cell(100, 7, 'Customer Legal Representative', 0, 1, 'C', false);
-		$pdf->Ln();
-		$pdf->Cell(80, 7, '...................................', 0, 0, 'C', false);
-		$pdf->Cell(100, 7, '...................................................', 0, 0, 'C', false);
+        $pdf->SetTextColor(0);  
+        $pdf->Cell(50, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(50, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Ln();   
+        $pdf->SetFont('helveticaB','',8.5);
+        $pdf->Cell(10, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(80, 10, '_________________________________', 0, 0, 'L', false);
+        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Image(Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/firma.png',$pdf->getX()+5,$pdf->getY()-20,'40%','40%');
+        $pdf->Cell(100, 10, '_________________________________', 0, 0, 'L', false);
+        $pdf->Ln();
+        $pdf->Cell(10, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(80, 4, $name, 0, 0, 'L', false);
+        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(100, 4, 'KICKADS SRL', 0, 1, 'L', false);
+        $pdf->Ln();
+        $pdf->Cell(10, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(80, 4, 'By:___________________', 0, 0, 'L', false);
+        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(100, 4, 'By: Pedro Forwe', 0, 1, 'L', false);
+        $pdf->Ln();
+        $pdf->Cell(10, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(80, 4, 'Title:___________________', 0, 0, 'L', false);
+        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell(100, 4, 'Title: Mobile Media Director', 0, 1, 'L', false);
     }
 
     /**
@@ -105,7 +125,7 @@ class PDF extends EPdfFactoryDoc
     {
     	$pdf->SetDrawColor(255, 255, 255);
         $pdf->SetLineWidth(0.5);
-        $pdf->SetFont('');
+        $pdf->SetFont('helvetica','',10);
     }
 
     protected $terms = "Payment terms: Payment net 30 days from invoicing date.
@@ -121,7 +141,6 @@ class PDF extends EPdfFactoryDoc
 
 		As part of this agreement with KICKADS, the client agrees to implement a server side pixel that will enable KICKADS to independently validate any conversions that are received. KICKADS will assist the client regarding the technical requirements for implementing this pixel, which when validated will allow KICKADS manage cpa campaigns effectively.
         ";
-
 
     public static function getPath() 
     {
