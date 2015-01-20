@@ -62,11 +62,12 @@ class PDFInsertionOrder extends PDF
 		$pdf->Ln();
 
 		// Print Opportunities section
-		$opps = $this->getDataItem('opportunities');
+		$opp_ids = $this->getDataItem('opportunities');
 		$pdf->Ln();
 		unset($values);
         $i = 1;
-		foreach ($opps as $opp) {
+		foreach ($opp_ids as $opp_id) {
+			$opp = Opportunities::model()->findByPk($opp_id);
 			$this->printTitle($pdf, 'Campaign #' . $i);
 			$values[$opp->getAttributeLabel('country_id')]  = $opp->country ? $opp->country->name : '';
 			$values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers ? $opp->carriers->mobile_brand : '';
