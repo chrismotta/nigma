@@ -23,4 +23,5 @@ function clickBanner(){
 function bigClose(){
 	mraid.close();
 	console.log("= "+mraid.getState());
+	return false;
 }
