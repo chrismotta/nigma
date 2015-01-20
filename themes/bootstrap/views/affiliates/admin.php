@@ -179,9 +179,15 @@ $this->breadcrumbs=array(
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewPdf/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
 					'visible' => '$data->providers->prospect == 10 ? true : false',
-				)
+				),
+				'agreementPdf' => array(
+					'label'   => 'Agreement PDF',
+					'icon'    => 'file',
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/agreementPdf/" . $data->providers_id',
+					'options' => array('target' => '_blank'),
+				),
 			),
-			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf}',
+			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf}',
 		),
 	),
 )); ?>
