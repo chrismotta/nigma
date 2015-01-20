@@ -99,6 +99,6 @@ class PDFInsertionOrder extends PDF
 		$this->printTerms($pdf);
 		$pdf->Ln();
 		$pdf->Ln();
-		$this->printSignature($pdf);
+		$this->printSignature($pdf,$io->commercial_name);
     }
 }
