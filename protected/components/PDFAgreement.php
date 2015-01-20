@@ -26,7 +26,7 @@ class PDFAgreement extends PDF
 		unset($values);
         // $values[$provider->getAttributeLabel('id')]                  = $provider->id;
         $country=isset($provider->country->name) ? ucwords(strtolower($provider->country->name)) : '';
-        $effective_date=$provider->start_date;
+        $effective_date=date('d-m-Y', strtotime($provider->start_date));
         $tax=$provider->tax_id;
         $name=$provider->commercial_name;
         $address=$provider->address;
