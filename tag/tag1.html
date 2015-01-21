@@ -208,7 +208,7 @@ window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jq
 	    mraid.setExpandProperties({
 		    width : 300,
 		    height : 500,
-		    useCustomClose:false,
+		    useCustomClose:true,
 		    isModal:false
 	    });
 	}
@@ -219,12 +219,8 @@ window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jq
 	}
 </script>
 
-<noscript>
-<a href="javascript:;" onclick="clickBanner()" >
-	<img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
-</a>
-</noscript>
-<script type="text/javascript" src="http://test.kickadserver.mobi/tag/kickads_tagscript.js"></script>
+<a id="bannerLink" href="javascript:;" onclick="clickBanner()" ><img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" /></a>
+<script type="text/javascript" src="http://kickadserver.mobi/tag/kickads_tagscript.js"></script>
 
 </body>
 </html>

@@ -95,6 +95,7 @@
                     array('label'=>'Profile', 'url'=>array('/users/profile')),
                     array('label'=>'Users', 'url'=>array('/users/admin')),
                     array('label'=>'Configuration', 'url'=>'#'),
+                    array('label'=>'Meetings', 'url'=>array('/meetingroom')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
                 array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
