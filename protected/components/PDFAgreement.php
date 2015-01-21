@@ -8,10 +8,20 @@ class PDFAgreement extends PDF
     	return 'ServiceAgreement-' . $this->getDataItem('provider')->id . '-KickAds.pdf';
     }
 
+
+    protected function initMargins()
+    {
+        $pdf = $this->getPdf();
+        $pdf->SetMargins(25, 15, 20);
+        $pdf->SetHeaderMargin(10);
+        $pdf->SetFooterMargin(20);
+
+        $pdf->SetAutoPageBreak(TRUE, 20);
+    }
 	public function renderPdf()
     {
-    	$this->addPage();
-        $pdf = $this->getPdf();	// get TCPDF instance
+        $this->addPage();
+        $pdf = $this->getPdf(); // get TCPDF instance
 
         $this->setConfig($pdf); // set format configuration
 
@@ -25,16 +35,18 @@ class PDFAgreement extends PDF
         // Print provider section
 		unset($values);
         // $values[$provider->getAttributeLabel('id')]                  = $provider->id;
-        $country=isset($provider->country->name) ? ucwords(strtolower($provider->country->name)) : '';
-        $effective_date=date('d-m-Y', strtotime($provider->start_date));
-        $tax=$provider->tax_id;
-        $name=$provider->commercial_name;
-        $address=$provider->address;
-        $phone=isset($provider->phone) ? $provider->phone : '+000 0000 0000';
-        $net=$provider->net_payment;
-        $agreement='<p><b>Deal Terms</b></p>
+        $country        =isset($provider->country->name) ? ucwords(strtolower($provider->country->name)) : '';
+        $effective_date =date('d-m-Y', strtotime($provider->start_date));
+        $tax            =$provider->tax_id;
+        $name           =$provider->commercial_name;
+        $address        =$provider->address;
+        $phone          =isset($provider->phone) ? $provider->phone : '+000 0000 0000';
+        $net            =$provider->net_payment;
+
+        $headTitle='<h1>Client Service Agreement</h1><br/><b>Deal Terms</b>';
+        $agreement='
 <p>This Agreement (as defined below) is made on this '.$effective_date.'(the “Effective Date”), by and between:<br/>
-<b>Provider / Affiliate</b> '.$tax.'   (TAX ID), a company registered under the laws of '.$country.' , having its registered offices at  (complete with full address); and,</p>
+<b>'.$name.'</b> '.$tax.' , a company registered under the laws of '.$country.' , having its registered offices at '.$address.', '.$country.'; and,</p>
 
 <p>The company named below (“You” or “Your”):</p>
 
@@ -68,6 +80,8 @@ Cost per Acquisition/Leads/Installs/Downloads (CPA/CPL/CPI/CPD) rate will be agr
 ';
         
         $pdf->SetTextColor(0);
+        $pdf->WriteHTML($headTitle, true,false,false,false, 'C');
+        $pdf->Ln();
         $pdf->WriteHTML($agreement, true, false, false,false,'J');
         $pdf->Ln();
 

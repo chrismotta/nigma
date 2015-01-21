@@ -11,6 +11,7 @@ echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
+echo $form->textFieldRow($model, 'phone', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'entity', KHtml::enumItem($model, 'entity'));
 echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
 

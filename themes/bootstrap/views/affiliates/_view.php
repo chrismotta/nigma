@@ -30,7 +30,6 @@
 	    'type'=>'striped bordered condensed',
 		'data'=>$modelAffi,
 		'attributes'=>array(
-			'phone',
 		),
 	)); ?>
 </div>

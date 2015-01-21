@@ -29,7 +29,7 @@ class ProvidersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf'),
+				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -108,32 +108,71 @@ class ProvidersController extends Controller
 		Yii::app()->end();
 	}
 
-	public function actionUploadPdf($id) 
+	public function actionViewAgreement($id) 
 	{
 		$model = $this->loadModel($id);
 		$path = PDF::getPath();
 
-		if(isset($_POST['submit'])) {
-
-			if ( is_uploaded_file($_FILES["upload-file"]["tmp_name"]) ) {
-				// Create new name for file
-				$extension = substr( $_FILES["upload-file"]["name"], strrpos($_FILES["upload-file"]["name"], '.') );
-				$newName = 'Prov-' . $id . '_IO' . $extension;
-				
-				if ( ! move_uploaded_file($_FILES["upload-file"]['tmp_name'], $path . $newName) ) {
-					Yii::app()->end();
-				}
-
-				// Update prospect to complete
-				$model->prospect = 10;
-				$model->pdf_name = $newName;
-				$model->save();
+		if ( file_exists($path . $model->pdf_agreement) ) {
+			$info = pathinfo($model->pdf_agreement);
+			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
+				$this->redirect( array('uploads/' . $model->pdf_agreement) );
+			} else { // other files download
+				Yii::app()->getRequest()->sendFile( $model->pdf_agreement, file_get_contents($path . $model->pdf_agreement) );
 			}
-			$this->redirect($_SERVER['HTTP_REFERER']);
+		} else {
+			throw new CHttpException(404,"The file doesn't exist.");
+		}
+		Yii::app()->end();
+	}
+
+	public function actionUploadPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = PDF::getPath();
+		$type = $_POST['type'];
+		if(isset($_POST['submit'])) {
+			if($type=='io')
+			{
+				if ( is_uploaded_file($_FILES["upload-file"]["tmp_name"]) ) {
+					// Create new name for file
+					$extension = substr( $_FILES["upload-file"]["name"], strrpos($_FILES["upload-file"]["name"], '.') );
+					$newName = 'Prov-' . $id . '_IO' . $extension;
+					
+					if ( ! move_uploaded_file($_FILES["upload-file"]['tmp_name'], $path . $newName) ) {
+						Yii::app()->end();
+					}
+
+					// Update prospect to complete
+					$model->prospect = 10;
+					$model->pdf_name = $newName;
+					$model->save();
+				}
+				$this->redirect($_SERVER['HTTP_REFERER']);
+			}
+			elseif($type=='agreement')
+			{
+				if ( is_uploaded_file($_FILES["upload-file"]["tmp_name"]) ) {
+					// Create new name for file
+					$extension = substr( $_FILES["upload-file"]["name"], strrpos($_FILES["upload-file"]["name"], '.') );
+					$newName = 'Prov-' . $id . '_Agreement' . $extension;
+					
+					if ( ! move_uploaded_file($_FILES["upload-file"]['tmp_name'], $path . $newName) ) {
+						Yii::app()->end();
+					}
+
+					// Update prospect to complete
+					$model->prospect = 10;
+					$model->pdf_agreement = $newName;
+					$model->save();
+				}
+				$this->redirect($_SERVER['HTTP_REFERER']);
+			}
 		}
 
 		$this->renderPartial('_uploadPDF', array(
 			'model' => $model,
+			'type'	=> $type
 		));
 	}
 

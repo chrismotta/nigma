@@ -20,13 +20,14 @@
     )); ?>
     <fieldset>
 	
-		<small>Select file signed by Provider</small><hr>
+		<small>Select <?php echo $type=='io' ? 'file' : 'agreement';?> signed by Provider</small><hr>
 		<div class="control-group">
 	        <?php echo CHtml::label('File: ', 'file', array('class'=>'control-label')); ?>
 			<div class="controls">
 	        	<?php echo CHtml::fileField('upload-file', 'file', array('class'=>'')); ?>
 	        </div>
 	    </div>
+	        <?php echo CHtml::hiddenField('type', $type, array()); ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
     <div class="form-actions">
@@ -39,5 +40,5 @@
 </div>
 
 <div class="modal-footer">
-    Upload signed file
+    Upload signed <?php echo $type=='io' ? 'file' : 'agreement';?>
 </div>
