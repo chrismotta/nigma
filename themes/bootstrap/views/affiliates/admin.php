@@ -180,14 +180,73 @@ $this->breadcrumbs=array(
 					'options' => array('target' => '_blank'),
 					'visible' => '$data->providers->prospect == 10 ? true : false',
 				),
-				'agreementPdf' => array(
-					'label'   => 'Agreement PDF',
+				'viewAgreement' => array(
+					'label'   => 'View Signed Agreement',
 					'icon'    => 'file',
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewAgreement/" . $data->providers_id',
+					'options' => array('target' => '_blank'),
+					'visible' => '$data->providers->prospect == 10 ? true : false',
+				),
+				'agreementPdf' => array(
+					'label'   => 'Export Agreement',
+					'icon'    => 'download',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/agreementPdf/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
 				),
+				'uploadPdf' => array(
+					'label' => 'Upload Signed IO',
+					'icon'  => 'upload',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalAffiliates").html(dataInicial);
+						$("#modalAffiliates").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"'. Yii::app()->getBaseUrl(true) . '/providers/uploadPdf/"+id,
+						{"type":"io"},
+						function(data)
+							{
+								//alert(data);
+								$("#modalAffiliates").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
+				),
+				'uploadAgreement' => array(
+					'label' => 'Upload Signed Agreement',
+					'icon'  => 'upload',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalAffiliates").html(dataInicial);
+						$("#modalAffiliates").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"'. Yii::app()->getBaseUrl(true) . '/providers/uploadPdf/"+id,
+						{"type":"agreement"},
+						function(data)
+							{
+								//alert(data);
+								$("#modalAffiliates").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
+				),
 			),
-			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf}',
+			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf} {uploadAgreement} {viewAgreement}',
 		),
 	),
 )); ?>
