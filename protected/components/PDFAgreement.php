@@ -25,13 +25,13 @@ class PDFAgreement extends PDF
         // Print provider section
 		unset($values);
         // $values[$provider->getAttributeLabel('id')]                  = $provider->id;
-        $country=isset($provider->country->name) ? ucwords(strtolower($provider->country->name)) : '';
-        $effective_date=date('d-m-Y', strtotime($provider->start_date));
-        $tax=$provider->tax_id;
-        $name=$provider->commercial_name;
-        $address=$provider->address;
-        $phone=isset($provider->phone) ? $provider->phone : '+000 0000 0000';
-        $net=$provider->net_payment;
+        $country        =isset($provider->country->name) ? ucwords(strtolower($provider->country->name)) : '';
+        $effective_date =date('d-m-Y', strtotime($provider->start_date));
+        $tax            =$provider->tax_id;
+        $name           =$provider->commercial_name;
+        $address        =$provider->address;
+        $phone          =isset($provider->phone) ? $provider->phone : '+000 0000 0000';
+        $net            =$provider->net_payment;
         $agreement='<p><b>Deal Terms</b></p>
 <p>This Agreement (as defined below) is made on this '.$effective_date.'(the “Effective Date”), by and between:<br/>
 <b>Provider / Affiliate</b> '.$tax.'   (TAX ID), a company registered under the laws of '.$country.' , having its registered offices at  (complete with full address); and,</p>
