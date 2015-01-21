@@ -8,6 +8,22 @@ class PDFProviders extends PDF
     	return 'Provider-' . $this->getDataItem('provider')->id . '-KickAds.pdf';
     }
 
+    protected function initHeader()
+    {
+        $pdf = $this->getPdf();
+        $pdf->setHeaderData( Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/pdf-header.png', 190, '', '', array(), array(255, 255, 255));
+    }
+
+
+    protected function initMargins()
+    {
+        $pdf = $this->getPdf();
+        $pdf->SetMargins(10, 35, 10);
+        $pdf->SetHeaderMargin(10);
+        $pdf->SetFooterMargin(38);
+
+        $pdf->SetAutoPageBreak(TRUE, 38);
+    }
     /**
      * Print company information to pdf
      * @param  $pdf TCPDF object

@@ -11,25 +11,9 @@ class PDF extends EPdfFactoryDoc
         // $pdf->SetKeywords('x, y, z');
     }
 
-    protected function initHeader()
-    {
-        $pdf = $this->getPdf();
-        $pdf->setHeaderData( Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/pdf-header.png', 190, '', '', array(), array(255, 255, 255));
-    }
-
     protected function initFooter()
     {
         $this->getPdf()->setPrintFooter(false);
-    }
-
-    protected function initMargins()
-    {
-        $pdf = $this->getPdf();
-        $pdf->SetMargins(10, 35, 10);
-        $pdf->SetHeaderMargin(10);
-        $pdf->SetFooterMargin(38);
-
-        $pdf->SetAutoPageBreak(TRUE, 38);
     }
 
     /**
@@ -97,23 +81,23 @@ class PDF extends EPdfFactoryDoc
         $pdf->SetFont('helveticaB','',8.5);
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 10, '_________________________________', 0, 0, 'L', false);
-        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
         $pdf->Image(Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/firma.png',$pdf->getX()+5,$pdf->getY()-20,'40%','40%');
         $pdf->Cell(100, 10, '_________________________________', 0, 0, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 4, $name, 0, 0, 'L', false);
-        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
         $pdf->Cell(100, 4, 'KICKADS SRL', 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 4, 'By:___________________', 0, 0, 'L', false);
-        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
         $pdf->Cell(100, 4, 'By: Pedro Forwe', 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 4, 'Title:___________________', 0, 0, 'L', false);
-        $pdf->Cell(30, 10, '', 0, 0, 'L', false);
+        $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
         $pdf->Cell(100, 4, 'Title: Mobile Media Director', 0, 1, 'L', false);
     }
 
@@ -146,4 +130,5 @@ class PDF extends EPdfFactoryDoc
     {
         return Yii::getPathOfAlias('webroot') . "/uploads/";
     }
+
 }
