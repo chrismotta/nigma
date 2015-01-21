@@ -97,6 +97,20 @@ class PDFInsertionOrder extends PDF
 
 		// Print terms and signature in a new page
 		$this->addPage();
+		$company='KICKADS '.$io->entity[0];
+		$this->terms= "Payment terms: Payment net 30 days from invoicing date.
+		
+		Aditional terms:
+		If any deduction/tax applies, it must be paid by customer. signing this \"insertion order\" we do accept the terms and conditions from ".$company.". ".$company." and the company has the right to cancel the campaign, any time, providing the other party 24 hours labour days notice. ".$company." will invoice based on records from current systems. 
+
+		Client is invoiced on the date the io is consumed or end of month, whichever comes first. The client has 30 days to pay the invoice from the invoice date. 
+
+		I hereby agree to the terms and conditions. I also declare that i'm authorized and empowered enough to sign this document and i have received a copy. The parties agree that any work orders, proposals and insertion order are subject to modifications or amendments to the sole discretion of the company. In case of conflict between terms and conditions and the terms of this agreement be taken as valid signed terms here.
+
+		Advertiser shall immediately notify ".$company." of any suspected fraudulent or illegal activity, and shall submit any lead disputes no later than 5 days after suspected fraudulent lead has been registered. For all lead disputes, advertiser shall provide valid and reasonable evidence supporting the basis for such dispute, including but not limited to contact information, timestamp, ip address, proof of multiple uses of the same credit card and fraudulent information entered.
+
+		As part of this agreement with ".$company.", the client agrees to implement a server side pixel that will enable ".$company." to independently validate any conversions that are received. ".$company." will assist the client regarding the technical requirements for implementing this pixel, which when validated will allow ".$company." manage cpa campaigns effectively.
+        ";
 		$this->printTerms($pdf);
 		$pdf->Ln();
 		$pdf->Ln();
