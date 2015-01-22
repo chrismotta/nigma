@@ -89,7 +89,20 @@ class PDFProviders extends PDF
         $this->printTitle($pdf, 'Provider');
         $this->printTable($pdf, $values);
         $pdf->Ln();
+        if(Networks::model()->findByPk($provider->id))
+            $type='network';
+        if(Affiliates::model()->findByPk($provider->id))
+            $type='affiliate';
+        if($type=='affiliate')
+        {
+            $terms='<p><b>TERMS AND CONDITIONS</b></p>
 
+<p><b>REPORTING:</b> All reported numbers for the purposes of billing, payment and general delivery reporting are based on KICKADS server reports.</p>
+
+<p><b>CANCELLATION:</b> KICKADS and Affiliates have the right to cancel the campaign, any time, providing the other party 48 hours labour days notice. </p>';
+            $pdf->WriteHTML($terms, true,false,false,false, 'J');
+            
+        }
 		// Print terms and signature in a new page
 		$this->addPage();
         $this->terms = "Dear partner:
