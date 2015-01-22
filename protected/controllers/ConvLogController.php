@@ -145,6 +145,7 @@ class ConvLogController extends Controller
 				$conv->tid = $tid;
 				$conv->campaign_id = $click->campaigns_id;
 				$conv->clicks_log_id = $click->id;
+				$conv->rate = $conv->campaign->external_rate;
 				$conv->save();
 
 				// s4s (server for server)
@@ -162,6 +163,10 @@ class ConvLogController extends Controller
 						$s4s_url.=$click->custom_params;
 					}
 
+					//enviar macros
+					if($conv->hasMacro($s4s_url))
+						$s4s_url = $conv->replaceMacro($s4s_url);
+					
 					echo $s4s_url;
 					echo '<hr/>';
 
@@ -222,7 +227,7 @@ class ConvLogController extends Controller
 			}
 
 		}else{
-			//print "ClicksLog: null<hr/>";
+			print "ClicksLog: not match<hr/>";
 		}
 
 		Yii::app()->end();
