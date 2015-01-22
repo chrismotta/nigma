@@ -50,15 +50,15 @@ class PDFAgreement extends PDF
 
 <p>The company named below (“You” or “Your”):</p>
 
-<p><b>Kickads SRL </b></p>
+<p><b>Kickads S.R.L </b></p>
 
 <p>You and '.$name.' agree to be bound by the Agreement, this Deal Terms, the Terms and Conditions attached hereto. These Deal Terms, the Terms and Conditions are collectively referred to as the “Agreement”). The Terms and Conditions are incorporated by reference and form an indivisible part hereof. </p>
 
 <p>i. <b>Your Contact Information</b><br/>
-<b>Company Name:</b> Kickads SRL<br/>
+<b>Company Name:</b> Kickads S.R.L<br/>
 <b>TAX ID:</b> 30-71447415-0<br/>
-<b>Full Address:</b> Av. Honorio Pueyrredón 1309, 1°C, 1414, Buenos Aires Argentina<br/>
-<b>Phone No.:</b> 5411 4777-6274<br/>
+<b>Full Address:</b> Av. Dr Honorio Pueyrredón 1309, 1°C, 1414, Ciudad Autónoma de Buenos Aires Argentina<br/>
+<b>Phone No.:</b> +54 (011) 4777-6274<br/>
 <b>Billing Contact (Full Name & Email):</b> Silvina Shimojo – silvina.shimojo@kickads.mobi<br/>
 <b>Business Contact (Full Name & Email):</b> Pedro Forwe -pedro.forwe@kickads.mobi</p>
 
