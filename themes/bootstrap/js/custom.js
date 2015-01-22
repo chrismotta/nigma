@@ -3,6 +3,8 @@ $(document).ready(function(){
 	$(".showLoadingMenuItem, .showLoadingMenu li").click( showLoadingNewPage );
 	$(".showLoading").click( showLoading );
 
+	$("#clients-grid td[name=nameTD]").parent().css("border-top","2px solid #ccc");
+
 	var easterCode = "";
 	$( "body" ).keypress(function(e) {
 		var keyCode = e.keyCode || e.which;
