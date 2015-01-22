@@ -8,6 +8,22 @@ class PDFInsertionOrder extends PDF
     	return 'IO-' . $this->getDataItem('io')->id . '-KickAds.pdf';
     }
 
+    protected function initHeader()
+    {
+        $pdf = $this->getPdf();
+        $pdf->setHeaderData( Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/pdf-header.png', 190, '', '', array(), array(255, 255, 255));
+    }
+
+
+    protected function initMargins()
+    {
+        $pdf = $this->getPdf();
+        $pdf->SetMargins(10, 35, 10);
+        $pdf->SetHeaderMargin(10);
+        $pdf->SetFooterMargin(38);
+
+        $pdf->SetAutoPageBreak(TRUE, 38);
+    }
     /**
      * Print company information to pdf
      * @param  $pdf TCPDF object
@@ -62,11 +78,12 @@ class PDFInsertionOrder extends PDF
 		$pdf->Ln();
 
 		// Print Opportunities section
-		$opps = $this->getDataItem('opportunities');
+		$opp_ids = $this->getDataItem('opportunities');
 		$pdf->Ln();
 		unset($values);
         $i = 1;
-		foreach ($opps as $opp) {
+		foreach ($opp_ids as $opp_id) {
+			$opp = Opportunities::model()->findByPk($opp_id);
 			$this->printTitle($pdf, 'Campaign #' . $i);
 			$values[$opp->getAttributeLabel('country_id')]  = $opp->country ? $opp->country->name : '';
 			$values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers ? $opp->carriers->mobile_brand : '';
@@ -96,9 +113,23 @@ class PDFInsertionOrder extends PDF
 
 		// Print terms and signature in a new page
 		$this->addPage();
+		$company='KICKADS '.$io->entity[0];
+		$this->terms= "Payment terms: Payment net 30 days from invoicing date.
+		
+		Aditional terms:
+		If any deduction/tax applies, it must be paid by customer. signing this \"insertion order\" we do accept the terms and conditions from ".$company.". ".$company." and the company has the right to cancel the campaign, any time, providing the other party 24 hours labour days notice. ".$company." will invoice based on records from current systems. 
+
+		Client is invoiced on the date the io is consumed or end of month, whichever comes first. The client has 30 days to pay the invoice from the invoice date. 
+
+		I hereby agree to the terms and conditions. I also declare that i'm authorized and empowered enough to sign this document and i have received a copy. The parties agree that any work orders, proposals and insertion order are subject to modifications or amendments to the sole discretion of the company. In case of conflict between terms and conditions and the terms of this agreement be taken as valid signed terms here.
+
+		Advertiser shall immediately notify ".$company." of any suspected fraudulent or illegal activity, and shall submit any lead disputes no later than 5 days after suspected fraudulent lead has been registered. For all lead disputes, advertiser shall provide valid and reasonable evidence supporting the basis for such dispute, including but not limited to contact information, timestamp, ip address, proof of multiple uses of the same credit card and fraudulent information entered.
+
+		As part of this agreement with ".$company.", the client agrees to implement a server side pixel that will enable ".$company." to independently validate any conversions that are received. ".$company." will assist the client regarding the technical requirements for implementing this pixel, which when validated will allow ".$company." manage cpa campaigns effectively.
+        ";
 		$this->printTerms($pdf);
 		$pdf->Ln();
 		$pdf->Ln();
-		$this->printSignature($pdf);
+		$this->printSignature($pdf,$io->commercial_name);
     }
 }
