@@ -77,8 +77,21 @@ echo $form->checkboxRow($model, 'has_s2s', array(
           return;
           '
     ));
+
 echo '<div style="display: ' . ($model->has_s2s ? 'block' : 'none') . ';" class="has_s2s">';
+
 echo $form->textFieldRow($model, 'callback', array('class'=>'span3'));
+echo '<div class="controls controls-macros" id="macros">';
+foreach (ConvLog::model()->macros() as $key => $value) {
+    echo CHtml::label($key, $key, array('class'=>'label')).' ';
+    Yii::app()->clientScript->registerScript('register_script_name', "
+        $('#macros label').click(function(){
+           $('#Campaigns_url').val( $('#Campaigns_url').val() + $(this).text());
+        });
+    ", CClientScript::POS_READY);
+}
+echo '</div>';
+
 echo $form->checkboxRow($model, 'has_token', array(
         'onChange' => '
           if (this.checked == "1")

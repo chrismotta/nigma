@@ -214,7 +214,7 @@ if($action == "Create"){ ?>
         echo '<hr/>';
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
         ?>
-        <div id='macros'>
+        <div id='macros' class="controls controls-macros">
         <?php
         foreach (ClicksLog::model()->macros() as $key => $value) {
             echo CHtml::label($key, $key, array('class'=>'label')).' ';
