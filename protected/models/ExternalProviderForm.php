@@ -8,6 +8,7 @@
  * @property integer $providers_id
  * @property string $hash
  * @property string $status
+ * @property string $type
  * @property string $create_date
  *
  * The followings are the available model relations:
@@ -34,11 +35,12 @@ class ExternalProviderForm extends CActiveRecord
 			array('providers_id, hash', 'required'),
 			array('providers_id', 'numerical', 'integerOnly'=>true),
 			array('hash', 'length', 'max'=>255),
+			array('type','max'=>45),
 			array('status', 'length', 'max'=>9),
 			array('create_date', 'safe'),
 			// The following rule is used by search().
-			// @todo Please remove those attributes that should not be searched.
-			array('id, providers_id, hash, status, create_date', 'safe', 'on'=>'search'),
+			// @todo Please remove those attributes that should not be searched.255
+			array('id, providers_id, hash, status, create_date, type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -65,6 +67,7 @@ class ExternalProviderForm extends CActiveRecord
 			'hash' => 'Hash',
 			'status' => 'Status',
 			'create_date' => 'Create Date',
+			'type'=>'Type',
 		);
 	}
 
@@ -91,6 +94,7 @@ class ExternalProviderForm extends CActiveRecord
 		$criteria->compare('hash',$this->hash,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('create_date',$this->create_date,true);
+		$criteria->compare('type',$this->type,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
