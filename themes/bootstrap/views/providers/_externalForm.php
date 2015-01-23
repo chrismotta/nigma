@@ -15,7 +15,7 @@
 <div class="modal-body">
     <?php
     echo '
-    <p><strong>External Form URL: </strong><br/>' . $url . '</p>
+    <p style="word-break: break-all;"><strong>External Form URL: </strong><br/>' . $url . '</p>
     <hr/>
     ';
     ?>
