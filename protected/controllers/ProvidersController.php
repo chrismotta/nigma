@@ -29,7 +29,7 @@ class ProvidersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement'),
+				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','externalCreate','externalForm'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -175,5 +175,113 @@ class ProvidersController extends Controller
 			'type'	=> $type
 		));
 	}
+	public function actionExternalCreate()
+	{
 
+		if ( isset($_GET['ktoken']) ) {
+			$ktoken = $_GET['ktoken'];
+		} else {
+			echo "ERROR invalid parameters <br>";
+			Yii::app()->end();	
+		}
+
+		$external = ExternalProviderForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+
+		// Validate hash expiration time
+		$validTime = ExternalProviderForm::getExpirationHashTime();
+		if ( ! $external || ( (time() - strtotime($external->create_date) ) > $validTime ) ) { // hash expired
+			$this->render('externalCreate', array(
+				'action'   => 'expire',
+			));
+			Yii::app()->end();
+		}
+
+		if ( $external->status == 'Submitted' ) {
+			$this->render('externalCreate', array(
+				'action'   => 'alreadySubmitted',
+			));
+			Yii::app()->end();
+		}
+
+		$providers = new Providers;
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($providers);
+
+		if(isset($_POST['Ios'])) {
+			echo "submited";
+			$providers = new Providers;
+			$providers->attributes=$_POST['Ios'];
+			$providers->prospect = NULL; // FIXME completar con prospect correspondiente
+			if( $providers->save() )
+				$this->render('externalCreate', array(
+					'action'=> 'submit',
+				));
+			else
+				echo "error saveing" . json_encode($providers->getErrors());
+			Yii::app()->end();
+		}
+
+		// $currency   = KHtml::enumItem($ios, 'currency');
+		// $entity     = KHtml::enumItem($ios, 'entity');
+		// $advertiser = Advertisers::model()->findByPk($external->advertisers_id);
+		// $country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
+		// $commercial = Users::model()->findByPk($external->commercial_id);;
+
+		$providers->prospect = 1;	// FIXME completar con prospect correspondiente
+		// $providers->commercial_id = $commercial->id;
+		// $providers->advertisers_id = $advertiser->id;
+
+		$this->render('externalCreate', array(
+			'action'     => 'form',
+			'model'      => $providers,
+			// 'currency'   => $currency,
+			// 'entity'     => $entity,
+			// 'commercial' => $commercial,
+			// 'advertiser' => $advertiser,
+			// 'country'    => $country,
+		));
+		
+		
+		echo "OK submitting Provider <br>";
+		Yii::app()->end();
+	}
+
+	public function actionExternalForm($id)
+	{
+		$validTime = ExternalProviderForm::getExpirationHashTime();
+		
+		$model = $this->loadModel($id);
+
+		// FIXME si se entra mas de un IO???
+		$formURL = ExternalProviderForm::model()->find( "providers_id=:prov AND status='Pending'", array(':prov'=>$id) );
+
+		if ( $formURL ) { // validate expiration hash's time
+			if ( (time() - strtotime($formURL->create_date) ) > $validTime ) { // hash expired
+				$formURL->create_date = date( 'Y-m-d H:i:s', time() );
+				$formURL->hash = sha1($id . $model->name . $formURL->create_date);
+				if ( ! $formURL->save() ) {
+					// echo "ERROR saving new hash <br>";
+					return;
+				}
+			} // else, hash not expired, do nothing
+		} else { // Create new row for ExternalIoForm
+			$formURL                 = new ExternalProviderForm;
+			$formURL->providers_id = $id;
+			// $formURL->commercial_id  = Yii::app()->user->id;
+			$formURL->hash           = sha1($id . $model->name . $formURL->create_date);
+			if ( ! $formURL->save() ) {
+				// echo "ERROR saving new External IO Form <br>";
+				return;
+			}
+		}
+
+		$url   = Yii::app()->getBaseUrl(true) . '/provders/externalCreate?ktoken=' . $formURL->hash;
+		$this->renderPartial('_externalForm',array(
+			'model'    => $model,
+			'formURL'  => $formURL,
+			'url'      => $url,
+			'timeLeft' => round( ( $validTime - (time() - strtotime($formURL->create_date)) ) / 3600 ), // date in hours to hash expiration.
+		), false, true);
+	}
 }
