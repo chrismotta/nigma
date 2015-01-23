@@ -245,8 +245,34 @@ $this->breadcrumbs=array(
 				    }
 				    ',
 				),
+				'externalForm' => array(
+					'label' => 'External Form',
+					'icon'  => 'repeat',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalAdvertiser").html(dataInicial);
+						$("#modalAdvertiser").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"'. Yii::app()->getBaseUrl(true) . '/providers/externalForm/"+id,
+						{"type":"finance"},
+						function(data)
+							{
+								//alert(data);
+								$("#modalAdvertiser").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
+				),
 			),
-			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf} {uploadAgreement} {viewAgreement}',
+			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf} {uploadAgreement} {viewAgreement} {externalForm}',
 		),
 	),
 )); ?>
