@@ -69,17 +69,17 @@ class Providers extends CActiveRecord
 			array('name, model, net_payment, start_date, commercial_name, state, zip_code, entity, tax_id', 'required'),
 			array('country_id, has_s2s, has_token, prospect', 'numerical', 'integerOnly'=>true),
 			array('prefix, sizes, placeholder', 'length', 'max'=>45),
-			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone', 'length', 'max'=>128),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, ada_name, ada_number, branch, bank_name, swift_code', 'length', 'max'=>128),
 			array('currency, model, entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
 			array('deal', 'length', 'max'=>12),
 			array('post_payment_amount, daily_cap', 'length', 'max'=>11),
 			array('callback', 'length', 'max'=>255),
-			array('end_date', 'safe'),
+			array('end_date,foundation_date', 'safe'),
 			array('callback', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone', 'safe', 'on'=>'search'),
+			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, ada_name, ada_number, branch, bank_name, swift_code', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -141,7 +141,14 @@ class Providers extends CActiveRecord
 			'prospect'            => 'Prospect',
 			'pdf_name'            => 'Pdf Name',
 			'pdf_agreement'       => 'Pdf Agreement',
-			'phone'            	  => 'Phone',
+			'phone'               => 'Phone',
+			'foundation_date'     =>'Date of Constitution',
+			'foundation_place'    =>'Place of foundation',
+			'ada_name'            =>'Account Name',
+			'ada_number'          =>'Account Number',
+			'branch'              =>'Branch Identifier', 
+			'bank_name'           =>'Bank Name',
+			'swift_code'          =>'Swift Code',
 		);
 	}
 
@@ -157,7 +164,7 @@ class Providers extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($prospect=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -192,10 +199,13 @@ class Providers extends CActiveRecord
 		$criteria->compare('email_adm',$this->email_adm,true);
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
-		$criteria->compare('prospect',$this->prospect);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
 		$criteria->compare('pdf_agreement',$this->pdf_agreement,true);
 		$criteria->compare('phone',$this->phone,true);
+		if($prospect)
+			$criteria->addCondition('t.prospect='.$prospect);
+		else
+			$criteria->compare('prospect',$this->prospect);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -265,5 +275,13 @@ class Providers extends CActiveRecord
 			2 => 'Networks', 
 			3 => 'Publishers',
 		);
+	}
+
+	public function printType()
+	{
+		if(self::getType())
+			return self::getAllTypes()[self::getType()];
+		else
+			return false;
 	}
 }

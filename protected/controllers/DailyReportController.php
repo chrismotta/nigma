@@ -36,7 +36,7 @@ class DailyReportController extends Controller
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('setNewFields','setAllNewFields', 'updateSpendAffiliates'),
+				'actions'=>array('setRevenue', 'setNewFields','setAllNewFields', 'updateSpendAffiliates'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -449,6 +449,17 @@ class DailyReportController extends Controller
 			//'providers'  => $providers,
 			'campaigns' => $campaigns, 
 		), false, true);
+	}
+
+	public function actionSetRevenue($id){
+		if($model = DailyReport::model()->findByPk($id)){
+			$model->updateRevenue();
+			// $model->setNewFields();
+			// $model->save();
+			echo $id . " - updated";
+		}else{
+			echo $id . "- not exists";
+		}
 	}
 
 	public function actionSetNewFields($id){
