@@ -259,8 +259,8 @@ $this->breadcrumbs=array(
 
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
-						"externalForm/"+id,
-						"",
+						"'. Yii::app()->getBaseUrl(true) . '/providers/externalForm/"+id,
+						{"type":"finance"},
 						function(data)
 							{
 								//alert(data);
