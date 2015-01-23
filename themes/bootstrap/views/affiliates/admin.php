@@ -253,9 +253,9 @@ $this->breadcrumbs=array(
 				    	// get row id from data-row-id attribute
 				    	var id = $(this).parents("tr").attr("data-row-id");
 
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalAdvertiser").html(dataInicial);
-						$("#modalAdvertiser").modal("toggle");
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalAffiliates").html(dataInicial);
+						$("#modalAffiliates").modal("toggle");
 
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
@@ -264,7 +264,7 @@ $this->breadcrumbs=array(
 						function(data)
 							{
 								//alert(data);
-								$("#modalAdvertiser").html(data);
+								$("#modalAffiliates").html(data);
 							}
 						)
 						return false;

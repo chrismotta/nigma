@@ -177,7 +177,7 @@ $this->menu=array();
 
 			// Provider info
 			echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name'));
-			echo $form->datepickerRow($model, 'start_date', array(
+			echo $form->datepickerRow($model, 'foundation_date', array(
 			        'options' => array(
 			            'autoclose'      => true,
 			            'todayHighlight' => true,
@@ -190,9 +190,15 @@ $this->menu=array();
 			            'class' => 'span3',
 			        )),
 			        array(
-			            'append' => '<label for="Providers_start_date"><i class="icon-calendar"></i></label>',
+			            'append' => '<label for="Providers_foundation_date"><i class="icon-calendar"></i></label>',
 			        )
 			);		
+			echo $form->textFieldRow($model, 'foundation_place', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'ada_name', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'ada_number', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'branch', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'bank_name', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'swift_code', array('class'=>'span3'));
 			echo $form->hiddenField($model, 'id',array('value'=>$id)); 
 			echo '</div>';
 			echo '</div>';
