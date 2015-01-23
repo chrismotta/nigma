@@ -9,13 +9,13 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>External form for Advertiser #<?php echo $model->id ?></h4>
+    <h4>External form for Provider #<?php echo $model->id ?></h4>
 </div>
 
 <div class="modal-body">
     <?php
     echo '
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>External Form URL: </strong>' . $url . '</p>
+    <p><strong>External Form URL: </strong><br/>' . $url . '</p>
     <hr/>
     ';
     ?>
