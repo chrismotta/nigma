@@ -1,6 +1,6 @@
 <?php 
-/* @var $this IosController */
-/* @var $model Ios */
+/* @var $this ProvidersController */
+/* @var $model Providers */
 /* @var $action */
 
 $this->layout='external';
@@ -13,12 +13,12 @@ $this->menu=array();
 
 
 <?php if ($action == 'alreadySubmitted') : ?>
-	<h2>Insertion Order has been already submitted. Contact for modifications.</h2>
+	<h2>Provider has been already submitted. Contact for modifications.</h2>
 <?php endif; ?>
 
 
 <?php if ($action == 'submit') : ?>
-	<h2>Insertion Order submitted succesfully.</h2>
+	<h2>Provider submitted succesfully.</h2>
 <?php endif; ?>
 
 
@@ -27,14 +27,13 @@ $this->menu=array();
 <?php endif; ?>
 
 
-<?php if ( $action == 'form') : ?>
+<?php if ( $action == 'generalForm') : ?>
 	
-	<h2>Advertiser #<?php echo $advertiser->id ?> - <?php echo $advertiser->name ?></h2>
 	<hr>
-	<h4>Create Insertion Order</h4>
+	<h4>Create Provider</h4>
 
 	<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-			'id'                   =>'ios-form',
+			'id'                   =>'providers-form',
 			'type'                 =>'horizontal',
 			'htmlOptions'          =>array('class'=>'well'),
 			// to enable ajax validation
@@ -134,7 +133,67 @@ $this->menu=array();
 			          '
 			    ));
 			echo '<div style="display: ' . ($model->has_token ? 'block' : 'none') . ';" class="has_token">';
-			echo $form->textFieldRow($model, 'placeholder', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'placeholder', array('class'=>'span3'));			
+			echo $form->hiddenField($model, 'id',array('value'=>$id)); 
+			echo '</div>';
+			echo '</div>';
+			echo '<hr/>';
+
+		?>
+
+	    <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
+	    <div class="form-actions">
+	        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
+	        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
+	    </div>
+	    </fieldset>
+
+	<?php $this->endWidget(); ?>
+
+<?php endif; ?>
+<?php if ( $action == 'financeForm') : ?>
+	
+	<hr>
+	<h4>Create Provider</h4>
+
+	<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+			'id'                   =>'providers-form',
+			'type'                 =>'horizontal',
+			'htmlOptions'          =>array('class'=>'well'),
+			// to enable ajax validation
+			'enableAjaxValidation' =>true,
+			'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+	    )); ?>
+	    <fieldset>
+
+		<?php 
+
+			echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
+
+			// Provider info
+			echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name'));
+			echo $form->datepickerRow($model, 'start_date', array(
+			        'options' => array(
+			            'autoclose'      => true,
+			            'todayHighlight' => true,
+			            'clearBtn'       => true,
+			            'format'         => 'yyyy-mm-dd',
+			            'viewformat'     => 'dd-mm-yyyy',
+			            'placement'      => 'right',
+			        ),
+			        'htmlOptions' => array(
+			            'class' => 'span3',
+			        )),
+			        array(
+			            'append' => '<label for="Providers_start_date"><i class="icon-calendar"></i></label>',
+			        )
+			);		
+			echo $form->hiddenField($model, 'id',array('value'=>$id)); 
 			echo '</div>';
 			echo '</div>';
 			echo '<hr/>';
