@@ -29,7 +29,7 @@ class ProvidersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','externalCreate','externalForm'),
+				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -175,16 +175,15 @@ class ProvidersController extends Controller
 			'type'	=> $type
 		));
 	}
-	public function actionExternalCreate()
+	public function actionGeneralDataEntry($hash=null)
 	{
 
-		if ( isset($_GET['ktoken']) ) {
-			$ktoken = $_GET['ktoken'];
+		if ( isset($hash) ) {
+			$ktoken = $hash;
 		} else {
 			echo "ERROR invalid parameters <br>";
 			Yii::app()->end();	
 		}
-
 		$external = ExternalProviderForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
 
 		// Validate hash expiration time
@@ -203,43 +202,96 @@ class ProvidersController extends Controller
 			Yii::app()->end();
 		}
 
-		$providers = new Providers;
+		$providers = Providers::model()->findByPk($external->providers_id);
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($providers);
 
-		if(isset($_POST['Ios'])) {
+		if(isset($_POST['Providers'])) {
 			echo "submited";
-			$providers = new Providers;
-			$providers->attributes=$_POST['Ios'];
-			$providers->prospect = NULL; // FIXME completar con prospect correspondiente
-			if( $providers->save() )
-				$this->render('externalCreate', array(
-					'action'=> 'submit',
-				));
-			else
-				echo "error saveing" . json_encode($providers->getErrors());
+			$providers = Providers::model()->findByPk($_POST['Providers']['id']);
+			$providers->attributes=$_POST['Providers'];
+			$providers->prospect = 10; // FIXME completar con prospect correspondiente
+			$external->status='Submitted';
+			if($external->save())
+			{
+				if( $providers->save() )
+					$this->render('externalCreate', array(
+						'action'=> 'submit',
+					));
+				else
+					echo "error saveing" . json_encode($providers->getErrors());
+			}
+			Yii::app()->end();
+		}
+		$providers->prospect = 1;	// FIXME completar con prospect correspondiente
+		$providers->unsetAttributes();
+		$this->render('externalCreate', array(
+			'action'     => 'generalForm',
+			'model'      => $providers,
+			'id'=>$external->providers_id,
+		));
+		
+		
+		echo "OK submitting Provider <br>";
+		Yii::app()->end();
+	}
+
+	public function actionFinanceDataEntry($hash=null)
+	{
+
+		if ( isset($hash) ) {
+			$ktoken = $hash;
+		} else {
+			echo "ERROR invalid parameters <br>";
+			Yii::app()->end();	
+		}
+		$external = ExternalProviderForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+
+		// Validate hash expiration time
+		$validTime = ExternalProviderForm::getExpirationHashTime();
+		if ( ! $external || ( (time() - strtotime($external->create_date) ) > $validTime ) ) { // hash expired
+			$this->render('externalCreate', array(
+				'action'   => 'expire',
+			));
 			Yii::app()->end();
 		}
 
-		// $currency   = KHtml::enumItem($ios, 'currency');
-		// $entity     = KHtml::enumItem($ios, 'entity');
-		// $advertiser = Advertisers::model()->findByPk($external->advertisers_id);
-		// $country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
-		// $commercial = Users::model()->findByPk($external->commercial_id);;
+		if ( $external->status == 'Submitted' ) {
+			$this->render('externalCreate', array(
+				'action'   => 'alreadySubmitted',
+			));
+			Yii::app()->end();
+		}
 
+		$providers = Providers::model()->findByPk($external->providers_id);
+
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($providers);
+
+		if(isset($_POST['Providers'])) {
+			echo "submited";
+			$providers = Providers::model()->findByPk($_POST['Providers']['id']);
+			$providers->attributes=$_POST['Providers'];
+			$providers->prospect = 10; // FIXME completar con prospect correspondiente
+			$external->status='Submitted';
+			if($external->save())
+			{
+				if( $providers->save() )
+					$this->render('externalCreate', array(
+						'action'=> 'submit',
+					));
+				else
+					echo "error saveing" . json_encode($providers->getErrors());
+			}
+			Yii::app()->end();
+		}
 		$providers->prospect = 1;	// FIXME completar con prospect correspondiente
-		// $providers->commercial_id = $commercial->id;
-		// $providers->advertisers_id = $advertiser->id;
-
+		// $providers->unsetAttributes();
 		$this->render('externalCreate', array(
-			'action'     => 'form',
+			'action'     => 'financeForm',
 			'model'      => $providers,
-			// 'currency'   => $currency,
-			// 'entity'     => $entity,
-			// 'commercial' => $commercial,
-			// 'advertiser' => $advertiser,
-			// 'country'    => $country,
+			'id'=>$external->providers_id,
 		));
 		
 		
@@ -252,13 +304,14 @@ class ProvidersController extends Controller
 		$validTime = ExternalProviderForm::getExpirationHashTime();
 		
 		$model = $this->loadModel($id);
-
+		$type=isset($_POST['type']) ? $_POST['type'] : null;
 		// FIXME si se entra mas de un IO???
-		$formURL = ExternalProviderForm::model()->find( "providers_id=:prov AND status='Pending'", array(':prov'=>$id) );
+		$formURL = ExternalProviderForm::model()->find( "providers_id=:prov AND status='Pending' AND type=:type", array(':prov'=>$id,':type'=>ucwords($type)) );
 
 		if ( $formURL ) { // validate expiration hash's time
 			if ( (time() - strtotime($formURL->create_date) ) > $validTime ) { // hash expired
 				$formURL->create_date = date( 'Y-m-d H:i:s', time() );
+				$formURL->type=ucwords($type);
 				$formURL->hash = sha1($id . $model->name . $formURL->create_date);
 				if ( ! $formURL->save() ) {
 					// echo "ERROR saving new hash <br>";
@@ -267,7 +320,9 @@ class ProvidersController extends Controller
 			} // else, hash not expired, do nothing
 		} else { // Create new row for ExternalIoForm
 			$formURL                 = new ExternalProviderForm;
+			$formURL->create_date = date( 'Y-m-d H:i:s', time() );
 			$formURL->providers_id = $id;
+			$formURL->type=ucwords($type);
 			// $formURL->commercial_id  = Yii::app()->user->id;
 			$formURL->hash           = sha1($id . $model->name . $formURL->create_date);
 			if ( ! $formURL->save() ) {
@@ -275,8 +330,10 @@ class ProvidersController extends Controller
 				return;
 			}
 		}
-
-		$url   = Yii::app()->getBaseUrl(true) . '/provders/externalCreate?ktoken=' . $formURL->hash;
+		if($type=='general')
+			$url   = Yii::app()->getBaseUrl(true) . '/providers/generalDataEntry/' . $formURL->hash;
+		elseif($type=='finance')
+			$url   = Yii::app()->getBaseUrl(true) . '/providers/financeDataEntry/' . $formURL->hash;
 		$this->renderPartial('_externalForm',array(
 			'model'    => $model,
 			'formURL'  => $formURL,
@@ -284,4 +341,98 @@ class ProvidersController extends Controller
 			'timeLeft' => round( ( $validTime - (time() - strtotime($formURL->create_date)) ) / 3600 ), // date in hours to hash expiration.
 		), false, true);
 	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionProspect()
+	{
+		$model=new Providers('search');
+		$model->unsetAttributes();  // clear any default values
+		// $model->providers->status = 'Active';
+		if(isset($_GET['Providers']))
+			$model->attributes=$_GET['Providers'];
+
+		$this->render('prospect',array(
+			'model'=>$model,
+		));
+	}
+	/**
+	 * Creates a new model.
+	 * If creation is successful, the browser will be redirected to the 'view' page.
+	 */
+	public function actionCreate()
+	{
+		$model=new Providers;
+		$modelAffi=new Affiliates;
+		$modelNet=new Networks;
+		$modelPub=new Publishers;
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
+		// $this->performAjaxValidation($modelProv);
+		if(isset($_POST['Providers']))
+		{
+			$defaultAttributes=array(
+				'status'=>'Inactive',
+				'currency'=>'USD',
+				'model'=>'CPA',
+				'net_payment'=>0,
+				'commercial_name'=>'prospect',
+				'state'=>'state',
+				'zip_code'=>'000',
+				'tax_id'=>'000',
+				'start_date'=>'0000-00-00',
+
+				);
+			$attributes=array(
+				'name'=>$_POST['Providers']['name'],
+				'entity'=>$_POST['Providers']['entity'],
+				'prospect'=>1
+				);
+			$attributes=array_merge($defaultAttributes,$attributes);
+			$model->attributes=$attributes;
+			if ($model->save()) {
+				$type=$model->getAllTypes()[$_POST['type']];
+				switch ($type) {
+					case 'Affiliates':
+						$modelAffi->attributes=array('providers_id'=>$model->id,'users_id'=>Yii::App()->user->getId());
+						if($modelAffi->save())
+							$this->redirect(array('prospect'));							
+						break;
+					case 'Networks':
+						$modelNet->attributes=array('providers_id'=>$model->id);
+						if($modelNet->save())
+							$this->redirect(array('prospect'));							
+						break;
+					case 'Publishers':
+						$modelPub->attributes=array('providers_id'=>$model->id,'account_manager_id'=>Yii::App()->user->getId());
+						if($modelPub->save())
+							$this->redirect(array('prospect'));							
+						break;
+					
+					default:
+						break;
+				}
+			}
+			else
+				echo json_encode($model->getErrors());
+		}
+
+		$this->renderFormAjax($model);
+	}
+	/**
+	 * [renderFormAjax description]
+	 * @param  [type] $modelAffi [description]
+	 * @param  [type] $modelProv [description]
+	 * @return [type]        	 [description]
+	 */
+	private function renderFormAjax($model)
+	{
+		// $users    = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
+
+		$this->renderPartial('_formProspect',array(
+			'model' =>$model,
+		), false, true);
+	}
+
 }
