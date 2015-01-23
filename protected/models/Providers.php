@@ -69,7 +69,7 @@ class Providers extends CActiveRecord
 			array('name, model, net_payment, start_date, commercial_name, state, zip_code, entity, tax_id', 'required'),
 			array('country_id, has_s2s, has_token, prospect', 'numerical', 'integerOnly'=>true),
 			array('prefix, sizes, placeholder', 'length', 'max'=>45),
-			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, ada_name, ada_number, branch, bank_name, swift_code', 'length', 'max'=>128),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'length', 'max'=>128),
 			array('currency, model, entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
 			array('deal', 'length', 'max'=>12),
@@ -79,7 +79,7 @@ class Providers extends CActiveRecord
 			array('callback', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, ada_name, ada_number, branch, bank_name, swift_code', 'safe', 'on'=>'search'),
+			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -144,8 +144,8 @@ class Providers extends CActiveRecord
 			'phone'               => 'Phone',
 			'foundation_date'     =>'Date of Constitution',
 			'foundation_place'    =>'Place of foundation',
-			'ada_name'            =>'Account Name',
-			'ada_number'          =>'Account Number',
+			'bank_account_name'   =>'Bank Account Name',
+			'bank_account_number' =>'Bank Account Number',
 			'branch'              =>'Branch Identifier', 
 			'bank_name'           =>'Bank Name',
 			'swift_code'          =>'Swift Code',

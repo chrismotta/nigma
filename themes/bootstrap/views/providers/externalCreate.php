@@ -44,7 +44,6 @@ $this->menu=array();
 
 		<?php 
 
-			echo $form->textFieldRow($model, 'prefix', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
@@ -60,6 +59,7 @@ $this->menu=array();
 
 			// Provider info
 			echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name'));
+			echo '<hr/>';
 			echo $form->dropDownListRow($model, 'model', KHtml::enumItem($model, 'model'));
 			echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
 			echo $form->dropDownListRow($model, 'deal', KHtml::enumItem($model, 'deal'), array(
@@ -139,6 +139,34 @@ $this->menu=array();
 			echo '</div>';
 			echo '<hr/>';
 
+			// Provider info
+			echo $form->datepickerRow($model, 'foundation_date', array(
+			        'options' => array(
+			            'autoclose'      => true,
+			            'todayHighlight' => true,
+			            'clearBtn'       => true,
+			            'format'         => 'yyyy-mm-dd',
+			            'viewformat'     => 'dd-mm-yyyy',
+			            'placement'      => 'right',
+			        ),
+			        'htmlOptions' => array(
+			            'class' => 'span3',
+			        )),
+			        array(
+			            'append' => '<label for="Providers_foundation_date"><i class="icon-calendar"></i></label>',
+			        )
+			);		
+			echo $form->textFieldRow($model, 'foundation_place', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'bank_account_name', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'bank_account_number', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'branch', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'bank_name', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'swift_code', array('class'=>'span3'));
+			echo $form->hiddenField($model, 'id',array('value'=>$id)); 
+			echo '</div>';
+			echo '</div>';
+			echo '<hr/>';
+
 		?>
 
 	    <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
@@ -194,8 +222,8 @@ $this->menu=array();
 			        )
 			);		
 			echo $form->textFieldRow($model, 'foundation_place', array('class'=>'span3'));
-			echo $form->textFieldRow($model, 'ada_name', array('class'=>'span3'));
-			echo $form->textFieldRow($model, 'ada_number', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'bank_account_name', array('class'=>'span3'));
+			echo $form->textFieldRow($model, 'bank_account_number', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'branch', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'bank_name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'swift_code', array('class'=>'span3'));

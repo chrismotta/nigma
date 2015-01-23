@@ -21,12 +21,12 @@ $this->breadcrumbs=array(
 			'beforeSend' => 'function(data)
 				{
 			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalAffiliates").html(dataInicial);
-					$("#modalAffiliates").modal("toggle");
+					$("#modalProspect").html(dataInicial);
+					$("#modalProspect").modal("toggle");
 				}',
 			'success' => 'function(data)
 				{
-					$("#modalAffiliates").html(data);
+					$("#modalProspect").html(data);
 				}',
 			),
 		'htmlOptions' => array('id' => 'create'),
@@ -81,7 +81,7 @@ $this->breadcrumbs=array(
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
 						"'. Yii::app()->getBaseUrl(true) . '/providers/externalForm/"+id,
-						{"type":"finance"},
+						{"type":"general"},
 						function(data)
 							{
 								//alert(data);
