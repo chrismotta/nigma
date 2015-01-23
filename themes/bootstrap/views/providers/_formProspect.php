@@ -24,8 +24,8 @@
         <?php 
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
-        echo $form->dropDownList($model, 'entity', KHtml::enumItem($model, 'entity'));
-        echo CHtml::dropDownList('type', null, $model->getAllTypes(), array());
+        echo 'Entity: '.$form->dropDownList($model, 'entity', KHtml::enumItem($model, 'entity')).'<br/>';
+        echo 'Type: '.CHtml::dropDownList('type', null, $model->getAllTypes(), array());
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
