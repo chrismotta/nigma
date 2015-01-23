@@ -6,7 +6,7 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
- Yii::app()->clientScript->registerScript("", "$('.ipopover').popover();", CClientScript::POS_READY);
+ Yii::app()->clientScript->registerScript("", "$('.ipopover').popover({'placement':'left'});", CClientScript::POS_READY);
 ?>
 
 <?php
@@ -205,7 +205,7 @@ else
 		array(
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
-			'htmlOptions'       => array('id'=>'alignLeft'),		
+			'htmlOptions'       => array('id'=>'alignLeft', 'name'=>'nameTD'),
 			'header'            => 'IO - Commercial Name',
 			),
 		array(

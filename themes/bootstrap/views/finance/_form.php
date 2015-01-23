@@ -84,7 +84,7 @@
                 	  'value' 			  =>'CHtml::link(
 												"<i class=\"icon-remove\"></i>",
 												array(),
-							    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
+							    				array("data-toggle"=>"tooltip", "data-original-title"=>"Delete", "class"=>"linkinvoiced",  
 							    					"onclick" => 
 							    					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
 							    						if(confirmed){

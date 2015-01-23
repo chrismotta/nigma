@@ -40,7 +40,7 @@ class MeetingroomController extends Controller
 	public function actionIndex()
 	{
 		$this->renderPartial('index',array(
-			'url' => 'http://teamup.com/ks442643147a1ab85a',
+			'url' => 'http://teamup.com/ksf8827f801d470b08/',
 		));
 	}
 }

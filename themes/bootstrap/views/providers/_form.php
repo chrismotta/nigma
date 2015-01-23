@@ -21,13 +21,13 @@ echo $form->dropDownListRow($model, 'model', KHtml::enumItem($model, 'model'));
 echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
 echo $form->dropDownListRow($model, 'deal', KHtml::enumItem($model, 'deal'), array(
     'onChange' => ' 
-      if ($("#Providers_deal").val() == "POST-PAYMENT")
+      if ($("#Providers_deal").val() == "PRE-PAYMENT")
         $(".post_payment_amount").show();
       else
         $(".post_payment_amount").hide();
     ',
   ));
-echo '<div style="display: ' . ($model->deal == 'POST-PAYMENT' ? 'block' : 'none') . '" class="post_payment_amount">';
+echo '<div style="display: ' . ($model->deal == 'PRE-PAYMENT' ? 'block' : 'none') . '" class="post_payment_amount">';
 echo $form->textFieldRow($model, 'post_payment_amount', array('class'=>'span3'));
 echo '</div>';
 echo $form->datepickerRow($model, 'start_date', array(
@@ -77,8 +77,21 @@ echo $form->checkboxRow($model, 'has_s2s', array(
           return;
           '
     ));
+
 echo '<div style="display: ' . ($model->has_s2s ? 'block' : 'none') . ';" class="has_s2s">';
+
 echo $form->textFieldRow($model, 'callback', array('class'=>'span3'));
+echo '<div class="controls controls-macros" id="macros">';
+foreach (ConvLog::model()->macros() as $key => $value) {
+    echo CHtml::label($key, $key, array('class'=>'label')).' ';
+    Yii::app()->clientScript->registerScript('register_script_name', "
+        $('#macros label').click(function(){
+           $('#Campaigns_url').val( $('#Campaigns_url').val() + $(this).text());
+        });
+    ", CClientScript::POS_READY);
+}
+echo '</div>';
+
 echo $form->checkboxRow($model, 'has_token', array(
         'onChange' => '
           if (this.checked == "1")
