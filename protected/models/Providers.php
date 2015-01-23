@@ -157,7 +157,7 @@ class Providers extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($prospect=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -192,10 +192,13 @@ class Providers extends CActiveRecord
 		$criteria->compare('email_adm',$this->email_adm,true);
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
-		$criteria->compare('prospect',$this->prospect);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
 		$criteria->compare('pdf_agreement',$this->pdf_agreement,true);
 		$criteria->compare('phone',$this->phone,true);
+		if($prospect)
+			$criteria->addCondition('t.prospect='.$prospect);
+		else
+			$criteria->compare('prospect',$this->prospect);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -265,5 +268,13 @@ class Providers extends CActiveRecord
 			2 => 'Networks', 
 			3 => 'Publishers',
 		);
+	}
+
+	public function printType()
+	{
+		if(self::getType())
+			return self::getAllTypes()[self::getType()];
+		else
+			return false;
 	}
 }
