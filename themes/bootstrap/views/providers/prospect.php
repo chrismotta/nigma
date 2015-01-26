@@ -45,26 +45,26 @@ $this->breadcrumbs=array(
 	'columns'=>array(
 		array(
 			'name'              =>'id',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 40px"),
 		),
 		array(
 			'name'              =>'name',
 			'value'             =>'$data->name',
-			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'headerHtmlOptions' => array('style' => "width: 130px"),
 		),
 		array(
 			'name'            =>'entity',
 			'value'             => '$data->entity',
-			'headerHtmlOptions' => array('style' => "width: 30px"),
+			'headerHtmlOptions' => array('style' => "width: 130px"),
 		),
 		array(
 			'header'            =>'Type',
 			'value'             => '$data->printType()',
-			'headerHtmlOptions' => array('style' => "width: 30px"),
+			'headerHtmlOptions' => array('style' => "width: 50px"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 120px"),
+			'headerHtmlOptions' => array('style' => "width: 20px"),
 			'buttons'           => array(
 				'externalForm' => array(
 					'label' => 'External Form',
@@ -93,7 +93,7 @@ $this->breadcrumbs=array(
 				    ',
 				),
 			),
-			'template' => '{externalForm}',
+			'template' => '{externalForm} {delete}',
 		),
 	),
 )); ?>
