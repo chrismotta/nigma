@@ -173,7 +173,7 @@ class Providers extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('status','Active',true);
 		$criteria->compare('currency',$this->currency,true);
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('model',$this->model,true);
