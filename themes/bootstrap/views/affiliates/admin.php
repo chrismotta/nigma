@@ -178,14 +178,14 @@ $this->breadcrumbs=array(
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewPdf/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->providers->prospect == 10 ? true : false',
+					'visible' => '$data->providers->prospect >= 9 ? true : false',
 				),
 				'viewAgreement' => array(
 					'label'   => 'View Signed Agreement',
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewAgreement/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->providers->prospect == 10 ? true : false',
+					'visible' => '$data->providers->prospect >= 10 ? true : false',
 				),
 				'agreementPdf' => array(
 					'label'   => 'Export Agreement',
