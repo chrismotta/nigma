@@ -105,6 +105,10 @@ class Affiliates extends CActiveRecord
 		$criteria->compare('phone',$this->phone,true);
 
 		$criteria->with = array('providers', 'providers.country');
+		
+		$criteria->compare('providers.status','Active',true);
+		$criteria->addCondition('providers.prospect>1');
+
 		$criteria->compare('providers.country.name',$this->country_name,true);
 		$criteria->compare('providers.name',$this->providers_name,true);
 
