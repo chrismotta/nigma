@@ -365,10 +365,11 @@ class Campaigns extends CActiveRecord
 		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $providers . $product . $format . '-' . $model->name . $alternativeConventionName;
 	}
 	
-	public function excel($startDate=NULL, $endDate=NULL, $id=null)
+	public function excel($startDate=NULL, $endDate=NULL, $id=null, $opp=NULL)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->with=array('clicksLog', 'clicksLog.providers');
+		$criteria->with=array('clicksLog', 'clicksLog.providers', 'campaign');
+		$criteria->compare('campaign.opportunities_id', $opp);
 		if($id) $criteria->addCondition('t.campaign_id='.$id);
 		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
 		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");

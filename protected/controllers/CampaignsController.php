@@ -405,11 +405,21 @@ class CampaignsController extends Controller
 		if( isset($_POST['excel-traffic']) ) {
 			$this->renderPartial('excelReport', array(
 					'model' => new Campaigns,
+					'opp'   => isset($_POST['opportunities']) ? $_POST['opportunities'] : NULL,
 					//'id'	=> $id
 				));	
 		}
 
-		$this->renderPartial('_excelReport', array('id'=>$id), false, true);
+		$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'t.id, advertisers.name, country.ISO2')), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+
+		$this->renderPartial('_excelReport', array(
+			'id'            =>$id,
+			'opportunities' => $opportunities,
+		), false, true);
 	}
 	
 	public function actionFetchCampaigns()
