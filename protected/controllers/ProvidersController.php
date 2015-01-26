@@ -144,7 +144,7 @@ class ProvidersController extends Controller
 					}
 
 					// Update prospect to complete
-					$model->prospect = 10;
+					$model->prospect = 9;
 					$model->pdf_name = $newName;
 					$model->save();
 				}
@@ -211,7 +211,7 @@ class ProvidersController extends Controller
 			echo "submited";
 			$providers = Providers::model()->findByPk($_POST['Providers']['id']);
 			$providers->attributes=$_POST['Providers'];
-			$providers->prospect = 10; // FIXME completar con prospect correspondiente
+			$providers->prospect = 2; // FIXME completar con prospect correspondiente
 			$external->status='Submitted';
 			if($external->save())
 			{
@@ -273,7 +273,7 @@ class ProvidersController extends Controller
 			echo "submited";
 			$providers = Providers::model()->findByPk($_POST['Providers']['id']);
 			$providers->attributes=$_POST['Providers'];
-			$providers->prospect = 10; // FIXME completar con prospect correspondiente
+			$providers->prospect = 2; // FIXME completar con prospect correspondiente
 			$external->status='Submitted';
 			if($external->save())
 			{
