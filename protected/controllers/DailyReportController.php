@@ -454,8 +454,8 @@ class DailyReportController extends Controller
 	public function actionSetRevenue($id){
 		if($model = DailyReport::model()->findByPk($id)){
 			$model->updateRevenue();
-			// $model->setNewFields();
-			// $model->save();
+			$model->setNewFields();
+			$model->save();
 			echo $id . " - updated";
 		}else{
 			echo $id . "- not exists";
