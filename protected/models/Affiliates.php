@@ -210,30 +210,51 @@ class Affiliates extends CActiveRecord
 		if(date('Y-m-d', strtotime($dateStart))==date('Y-m-d', strtotime('today')) || date('Y-m-d', strtotime($dateEnd))==date('Y-m-d', strtotime('today')))
 		{
 			$date=date('Y-m-d', strtotime('today'));
+			
+			// get general info, conv are gotten separated
 			$sql="SELECT 
 					c.id,
-					count(l.id) as conv, 
 					c.external_rate as rate, 
 					count(cl.id) as clics, 
 					(count(l.id)*c.external_rate) as spend,
 					count(l.id) / count(cl.id) as convrate,
 					DATE(cl.date) as date
 				from campaigns c
-				inner join providers p on c.providers_id=p.id 
 				left join clicks_log cl on cl.campaigns_id=c.id
 				left join conv_log l on l.clicks_log_id=cl.id
-				inner join affiliates a on a.providers_id=p.id
 				WHERE DATE(cl.date)=DATE(:date)
-				AND p.id = :affiliate
+				AND c.providers_id = :affiliate
 				group by c.id,DATE(cl.date)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":date", $date, PDO::PARAM_STR);
 			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
 			$affiliates=$command->queryAll();
+
+			// get conv count
+			$sql="SELECT 
+					c.id,
+					count(l.id) as conv, 
+					DATE(l.date) as date
+				from campaigns c
+				left join conv_log l on l.campaign_id=c.id
+				WHERE DATE(l.date)=DATE(:date)
+				AND c.providers_id = :affiliate
+				group by c.id,DATE(l.date)";
+			$command = Yii::app()->db->createCommand($sql);
+			$command->bindParam(":date", $date, PDO::PARAM_STR);
+			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
+			$conv_count=$command->queryAll();
+
 			foreach ($affiliates as $affiliate) {
+
+				foreach ($conv_count as $conv)
+					if ($affiliate['id'] == $conv['id']) {
+						$data[$i]['conv'] = $conv['conv'];
+						break;
+					}
+
 				$data[$i]['id']       =$affiliate['id'];
 				$data[$i]['rate']     =$affiliate['rate'];
-				$data[$i]['conv']     =$affiliate['conv'];
 				$data[$i]['spend']    =$affiliate['spend'];
 				$data[$i]['clics']    =$affiliate['clics'];
 				$data[$i]['convrate'] =$affiliate['convrate'];
@@ -243,7 +264,7 @@ class Affiliates extends CActiveRecord
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
 				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;
 				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
-				$graphic[$affiliate['date']]['conv']+=$affiliate['conv'];
+				$graphic[$affiliate['date']]['conv']+=$data[$i]['conv']; // FIX: use $data instead of $affiliates for setting conv
 				$graphic[$affiliate['date']]['clics']+=$affiliate['clics'];
 				$graphic[$affiliate['date']]['spend']+=$affiliate['spend'];
 
