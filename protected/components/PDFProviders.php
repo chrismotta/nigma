@@ -28,9 +28,9 @@ class PDFProviders extends PDF
      * Print company information to pdf
      * @param  $pdf TCPDF object
      */
-    private function printCompanyInfo($pdf, $provider)
+    private function printCompanyInfo($pdf, $provider, $company)
     {
-        $pdf->Cell(90, 7, 'KICKADS', 0, 0, 'L', false);
+        $pdf->Cell(90, 7, $company, 0, 0, 'L', false);
 
         $pdf->SetFillColor(155, 187, 89);
         $pdf->SetTextColor(255);
@@ -53,8 +53,10 @@ class PDFProviders extends PDF
         $this->setConfig($pdf); // set format configuration
 
         // Print presentation
-		$provider  = $this->getDataItem('provider');
-        $this->printCompanyInfo($pdf, $provider);
+		$provider  = $this->getDataItem('provider');        
+        $company='KICKADS '.$provider->entity[0].'.'.$provider->entity[1].'.'.$provider->entity[2];
+
+        $this->printCompanyInfo($pdf, $provider,$company);
         $pdf->Ln();
 
         // Print provider section
@@ -97,9 +99,9 @@ class PDFProviders extends PDF
         {
             $terms='<p><b>TERMS AND CONDITIONS</b></p>
 
-<p><b>REPORTING:</b> All reported numbers for the purposes of billing, payment and general delivery reporting are based on KICKADS server reports.</p>
+<p><b>REPORTING:</b> All reported numbers for the purposes of billing, payment and general delivery reporting are based on '.$company.' server reports.</p>
 
-<p><b>CANCELLATION:</b> KICKADS and Affiliates have the right to cancel the campaign, any time, providing the other party 48 hours labour days notice. </p>';
+<p><b>CANCELLATION:</b> '.$company.' and Affiliates have the right to cancel the campaign, any time, providing the other party 48 hours labour days notice. </p>';
             $pdf->WriteHTML($terms, true,false,false,false, 'J');
             
         }
@@ -109,7 +111,7 @@ class PDFProviders extends PDF
 
 Due to the central bank of Argentina introducing strict controls to foreign currency operations we need to ask you for certain details to be included and some others to be excluded off the monthly invoices you send us effective December 2014.
 1) Invoice must include the month/period
-2) It must not mention Vanega or any other fantasy name tan related to KickAds SRL
+2) It must not mention Vanega or any other fantasy name tan related to ".$company."
 3) It must not mention targetting details such as Carrier, Geo, etc
 4) It must include a rate per click or subscription (it can be an average), an amount in units, and a total
     For example:
