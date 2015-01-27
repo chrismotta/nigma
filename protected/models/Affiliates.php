@@ -247,6 +247,7 @@ class Affiliates extends CActiveRecord
 
 			foreach ($affiliates as $affiliate) {
 
+				$data[$i]['conv'] = 0;
 				foreach ($conv_count as $conv)
 					if ($affiliate['id'] == $conv['id']) {
 						$data[$i]['conv'] = $conv['conv'];
