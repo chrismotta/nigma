@@ -373,7 +373,7 @@ class ProvidersController extends Controller
 		if(isset($_POST['Providers']))
 		{
 			$defaultAttributes=array(
-				'status'=>'Inactive',
+				'status'=>'Active',
 				'currency'=>'USD',
 				'model'=>'CPA',
 				'net_payment'=>0,
