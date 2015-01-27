@@ -220,8 +220,8 @@ class Affiliates extends CActiveRecord
 					DATE(cl.date) as date
 				from campaigns c
 				inner join providers p on c.providers_id=p.id 
-				left join conv_log l on l.campaign_id=c.id
 				left join clicks_log cl on cl.campaigns_id=c.id
+				left join conv_log l on l.clicks_log_id=cl.id
 				inner join affiliates a on a.providers_id=p.id
 				WHERE DATE(cl.date)=DATE(:date)
 				AND p.id = :affiliate
