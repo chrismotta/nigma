@@ -178,14 +178,14 @@ $this->breadcrumbs=array(
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewPdf/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->providers->prospect == 10 ? true : false',
+					'visible' => '$data->providers->prospect >= 9 ? true : false',
 				),
 				'viewAgreement' => array(
 					'label'   => 'View Signed Agreement',
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewAgreement/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->providers->prospect == 10 ? true : false',
+					'visible' => '$data->providers->prospect >= 10 ? true : false',
 				),
 				'agreementPdf' => array(
 					'label'   => 'Export Agreement',
@@ -245,8 +245,34 @@ $this->breadcrumbs=array(
 				    }
 				    ',
 				),
+				'externalForm' => array(
+					'label' => 'External Form',
+					'icon'  => 'repeat',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalAffiliates").html(dataInicial);
+						$("#modalAffiliates").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"'. Yii::app()->getBaseUrl(true) . '/providers/externalForm/"+id,
+						{"type":"finance"},
+						function(data)
+							{
+								//alert(data);
+								$("#modalAffiliates").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
+				),
 			),
-			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf} {uploadAgreement} {viewAgreement}',
+			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf} {agreementPdf} {uploadAgreement} {viewAgreement} {externalForm}',
 		),
 	),
 )); ?>

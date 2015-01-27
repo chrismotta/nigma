@@ -27,6 +27,7 @@ class PDFAgreement extends PDF
 
         // Print presentation
 		$provider  = $this->getDataItem('provider');
+        $company='KICKADS '.$provider->entity[0].'.'.$provider->entity[1].'.'.$provider->entity[2];
         if(Networks::model()->findByPk($provider->id))
             $type='network';
         if(Affiliates::model()->findByPk($provider->id))
@@ -50,12 +51,12 @@ class PDFAgreement extends PDF
 
 <p>The company named below (“You” or “Your”):</p>
 
-<p><b>Kickads S.R.L </b></p>
+<p><b>'.$company.' </b></p>
 
 <p>You and '.$name.' agree to be bound by the Agreement, this Deal Terms, the Terms and Conditions attached hereto. These Deal Terms, the Terms and Conditions are collectively referred to as the “Agreement”). The Terms and Conditions are incorporated by reference and form an indivisible part hereof. </p>
 
 <p>i. <b>Your Contact Information</b><br/>
-<b>Company Name:</b> Kickads S.R.L<br/>
+<b>Company Name:</b> '.$company.'<br/>
 <b>TAX ID:</b> 30-71447415-0<br/>
 <b>Full Address:</b> Av. Dr Honorio Pueyrredón 1309, 1°C, 1414, Ciudad Autónoma de Buenos Aires Argentina<br/>
 <b>Phone No.:</b> +54 (011) 4777-6274<br/>
@@ -135,12 +136,12 @@ Agreement or as otherwise permitted in this Agreement; provided, however, that R
 
 <p>".$count.". <b>Miscellaneous</b><br/>
 ".$count.".1 No press releases and/or any other public announcement and/or disclosures regarding this Agreement are permitted by either party, without first obtaining the other party’s written consent.<br/>
-".$count.".2 All notices and other communications given or made pursuant hereto shall be in writing and shall be deemed to have been duly given or made as of the date delivered or transmitted, and shall be effective upon receipt, if delivered personally, sent by air courier, or sent by electronic transmission, with confirmation received, to the phone number specified as follows: ".$phone.", You KICKADS +5411 4777-6274<.<br/>
+".$count.".2 All notices and other communications given or made pursuant hereto shall be in writing and shall be deemed to have been duly given or made as of the date delivered or transmitted, and shall be effective upon receipt, if delivered personally, sent by air courier, or sent by electronic transmission, with confirmation received, to the phone number specified as follows: ".$phone.", You ".$company." +5411 4777-6274<.<br/>
 ".$count.".3 This Agreement may be executed: (i) in counterparts, each of which will be deemed an original, but all of which taken together will constitute one and the same instrument; or (ii) by scanning the same and attaching to an email and facsimile, such email and facsímile executions will have the same force and effect as an original document with original signatures.</p>
 <br/>
 ";
 		$pdf->WriteHTML($terms, true,false,false,false, 'J');
-		$this->printSignature($pdf,$name);
+		$this->printSignature($pdf,$name,$company);
     }
 
 }

@@ -206,7 +206,7 @@ return array(
 				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
 				// custom parameters //
-				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
 				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),

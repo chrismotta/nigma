@@ -105,6 +105,10 @@ class Affiliates extends CActiveRecord
 		$criteria->compare('phone',$this->phone,true);
 
 		$criteria->with = array('providers', 'providers.country');
+		
+		$criteria->compare('providers.status','Active',true);
+		$criteria->addCondition('providers.prospect>1');
+
 		$criteria->compare('providers.country.name',$this->country_name,true);
 		$criteria->compare('providers.name',$this->providers_name,true);
 
@@ -301,5 +305,20 @@ class Affiliates extends CActiveRecord
 		));
 		$result['graphic'] = $totalGraphic;
 		return $result;
+	}
+
+	/**
+	 * Returns the data model based on the primary key given in the GET variable.
+	 * If the data model is not found, an HTTP exception will be raised.
+	 * @param integer $id the ID of the model to be loaded
+	 * @return Providers the loaded model
+	 * @throws CHttpException
+	 */
+	public function loadModel($id)
+	{
+		$model=Affiliates::model()->findByPk($id);
+		if($model===null)
+			throw new CHttpException(404,'The requested page does not exist.');
+		return $model;
 	}
 }

@@ -205,7 +205,7 @@ else
 		array(
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
-			'htmlOptions'       => array('id'=>'alignLeft'),		
+			'htmlOptions'       => array('id'=>'alignLeft', 'name'=>'nameTD'),
 			'header'            => 'IO - Commercial Name',
 			),
 		array(
