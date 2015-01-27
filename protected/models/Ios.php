@@ -248,84 +248,111 @@ class Ios extends CActiveRecord
 		if($multi==false)
 		{
 			#Query to find clients with multi rate
-			$query="SELECT i.id AS io_id,o.id AS opp_id,o.model_adv AS model,i.entity AS entity,i.currency AS currency,m.carriers_id_carrier AS carrier, i.commercial_name AS commercial_name,g.name,
-														o.product AS product,m.rate as rate,
-														SUM(m.conv) AS conversions,
-														SUM(m.rate*m.conv) AS revenue
-														FROM daily_report d 
-														INNER JOIN campaigns c ON d.campaigns_id=c.id
-														INNER JOIN opportunities o ON c.opportunities_id=o.id
-														INNER JOIN ios i ON o.ios_id=i.id
-														INNER JOIN advertisers a ON i.advertisers_id=a.id
-														INNER JOIN multi_rate m ON d.id=m.daily_report_id
-														INNER JOIN carriers ca ON m.carriers_id_carrier=ca.id_carrier
-														INNER JOIN geo_location g ON ca.id_country=g.id_location													
-														WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
-														AND d.revenue>0 
-														AND m.conv>0 ";
-			#Add filters to query
-			if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
-			if($io)	$query                 .=			"AND i.id=".$io." ";										
-			if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
-			if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
-			if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
-			$query.=									"GROUP BY i.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
+			$query=
+				"SELECT i.id AS io_id,o.id AS opp_id,o.model_adv AS model,i.entity AS entity,i.currency AS currency,m.carriers_id_carrier AS carrier, i.commercial_name AS commercial_name,g.name, o.product AS product,m.rate as rate, SUM(m.conv) AS conversions, SUM(m.rate*m.conv) AS revenue
+				
+				FROM daily_report d 
+				INNER JOIN campaigns c ON d.campaigns_id=c.id
+				INNER JOIN opportunities o ON c.opportunities_id=o.id
+				INNER JOIN ios i ON o.ios_id=i.id
+				INNER JOIN advertisers a ON i.advertisers_id=a.id
+				INNER JOIN multi_rate m ON d.id=m.daily_report_id
+				INNER JOIN carriers ca ON m.carriers_id_carrier=ca.id_carrier
+				INNER JOIN geo_location g ON ca.id_country=g.id_location
+
+				WHERE d.date BETWEEN '".$year."-".$month."-01' 
+					AND '".$year."-".$month."-31'
+					AND d.revenue>0 
+					AND ISNULL((
+							SELECT ov.rate 
+							FROM opportunities_version ov
+							WHERE ov.created_time <= '".$year."-".$month."-31'
+								AND ov.id = o.id
+							ORDER BY ov.created_time DESC
+							LIMIT 0,1 ))";
+			if($io)	
+				$query .= "AND i.id=".$io." ";										
+			
+			if($accountManager)	
+				$query .= "AND o.account_manager_id='".$accountManager."' ";										
+			if($opportunitie_id)	
+				$query .= "AND o.id=".$opportunitie_id." ";										
+			if($cat)	
+				$query .= "AND a.cat='".$cat."' ";										
+			
+			$query.= "GROUP BY i.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
 		}
-		else
+		else // multirate = true
 		{
-			$query="SELECT i.id as io_id,o.id AS opp_id,o.model_adv AS model,i.entity AS entity,i.currency AS currency,o.carriers_id AS carrier, i.commercial_name AS commercial_name,g.name AS country,o.product AS product,
-													ROUND(
-														IF(
-															ISNULL(o.rate),
-															o.rate,
-															d.revenue/
-															(
-																CASE o.model_adv
-																	WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-																	WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
-																	WHEN 'CPC' THEN d.clics
-																END 
-															)
-														),
-													2) AS rate,
-													SUM(
-													CASE o.model_adv
-														WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-														WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)
-														WHEN 'CPC' THEN d.clics
-													END 
-													) as conversions,
-													SUM(d.revenue) AS revenue
-													FROM daily_report d 
-													INNER JOIN campaigns c ON d.campaigns_id=c.id
-													INNER JOIN opportunities o ON c.opportunities_id=o.id
-													INNER JOIN ios i ON o.ios_id=i.id
-													INNER JOIN advertisers a ON i.advertisers_id=a.id
-													LEFT JOIN carriers ca ON o.carriers_id=ca.id_carrier
-													LEFT JOIN geo_location g ON o.country_id=g.id_location													
-													WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
-													AND d.revenue>0 
-													AND NOT(ISNULL(o.rate)) ";
+			$query=
+				"SELECT i.id as io_id,o.id AS opp_id,o.model_adv AS model,i.entity AS entity,i.currency AS currency,o.carriers_id AS carrier, i.commercial_name AS commercial_name,g.name AS country,o.product AS product,
+					ROUND(
+						IF(
+							ISNULL(o.rate),
+							o.rate,
+							d.revenue/
+							(
+								CASE o.model_adv
+									WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+									WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
+									WHEN 'CPC' THEN d.clics
+								END 
+							)
+						), 2) AS rate,
+					SUM(
+						CASE o.model_adv
+							WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+							WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)
+							WHEN 'CPC' THEN d.clics
+						END 
+					) as conversions,
+					SUM(d.revenue) AS revenue
+				
+				FROM daily_report d 
+				INNER JOIN campaigns c ON d.campaigns_id=c.id
+				INNER JOIN opportunities o ON c.opportunities_id=o.id
+				INNER JOIN ios i ON o.ios_id=i.id
+				INNER JOIN advertisers a ON i.advertisers_id=a.id
+				LEFT JOIN carriers ca ON o.carriers_id=ca.id_carrier
+				LEFT JOIN geo_location g ON o.country_id=g.id_location													
+				WHERE d.date BETWEEN '".$year."-".$month."-01' 
+					AND '".$year."-".$month."-31'
+					AND d.revenue>0 
+					AND NOT(ISNULL((
+							SELECT opp_version.rate 
+							FROM opportunities_version opp_version
+							WHERE opp_version.created_by <= '".$year."-".$month."-31'
+							ORDER BY opp_version.created_time DESC
+							LIMIT 0,1 ))) ";
 			#Add filters to query
-			if($entity)	$query             .=			"AND i.entity='".$entity."' ";										
-			if($io)	$query                 .=			"AND i.id='".$io."' ";										
-			if($accountManager)	$query     .=			"AND o.account_manager_id='".$accountManager."' ";										
-			if($opportunitie_id)	$query .=			"AND o.id=".$opportunitie_id." ";										
-			if($cat)	$query             .=			"AND a.cat='".$cat."' ";										
-			$query.=									"group by i.id,o.id,o.carriers_id,ROUND(
-															IF(
-																ISNULL(o.rate),
-																o.rate,
-																d.revenue/
-																(
-																	CASE o.model_adv
-																		when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-																		when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
-																		when 'CPC' THEN d.clics
-																	END 
-																)
-															),
-														2)";
+			if($entity)	
+				$query .= "AND i.entity='".$entity."' ";										
+			if($io)	
+				$query .= "AND i.id='".$io."' ";
+
+			if($accountManager)	
+				$query .= "AND o.account_manager_id='".$accountManager."' ";						
+			if($opportunitie_id)	
+				$query .= "AND o.id=".$opportunitie_id." ";
+
+			if($cat)	
+				$query .= "AND a.cat='".$cat."' ";
+
+			$query .= "group by i.id,o.id,o.carriers_id,
+					ROUND(
+						IF(
+							ISNULL(o.rate),
+							o.rate,
+							d.revenue/
+							(
+								CASE o.model_adv
+									when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
+									when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
+									when 'CPC' THEN d.clics
+								END 
+							)
+						),
+					2)";
 		}
 		$i=0;
 		#If query find results
