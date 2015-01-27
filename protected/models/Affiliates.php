@@ -213,15 +213,15 @@ class Affiliates extends CActiveRecord
 					count(cl.id) as clics, 
 					(count(l.id)*c.external_rate) as spend,
 					count(l.id) / count(cl.id) as convrate,
-					DATE(l.date) as date
+					DATE(cl.date) as date
 				from campaigns c
 				inner join providers p on c.providers_id=p.id 
 				left join conv_log l on l.campaign_id=c.id
 				left join clicks_log cl on cl.campaigns_id=c.id
 				inner join affiliates a on a.providers_id=p.id
-				WHERE DATE(l.date)=DATE(:date)
+				WHERE DATE(cl.date)=DATE(:date)
 				AND p.id = :affiliate
-				group by c.id,DATE(l.date)";
+				group by c.id,DATE(cl.date)";
 			$command = Yii::app()->db->createCommand($sql);
 			$command->bindParam(":date", $date, PDO::PARAM_STR);
 			$command->bindParam(":affiliate", $affiliate_id, PDO::PARAM_INT);
