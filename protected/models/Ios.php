@@ -319,11 +319,12 @@ class Ios extends CActiveRecord
 					AND '".$year."-".$month."-31'
 					AND d.revenue>0 
 					AND NOT(ISNULL((
-							SELECT opp_version.rate 
-							FROM opportunities_version opp_version
-							WHERE opp_version.created_by <= '".$year."-".$month."-31'
-							ORDER BY opp_version.created_time DESC
-							LIMIT 0,1 ))) ";
+							SELECT ov.rate 
+							FROM opportunities_version ov
+							WHERE ov.created_time <= '".$year."-".$month."-31'
+								AND ov.id = o.id
+							ORDER BY ov.created_time DESC
+							LIMIT 0,1  ))) ";
 			#Add filters to query
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";										
