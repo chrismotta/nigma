@@ -47,12 +47,16 @@ $log               = new ValidationLog;
 	            if(!$mailReturn){
 		            Yii::log($mail->ErrorInfo, 'mail', 'Validation Send Error');
 	            	$status = "Error";
+
+				    echo 'Io #'.$ioValidation->ios_id.' error - '.$mail->ErrorInfo;
+					$log->loadLog($ioValidation->id,$status);
+					
 					$ioValidation->attributes=array('status'=>'Validated', 'date'=>$date);
 					$ioValidation->save();
+	            }else{
+	            	echo 'Io #'.$ioValidation->ios_id.' mail enviado';
+					$log->loadLog($ioValidation->id,$status);
 	            }
-
-			    echo 'Io #'.$ioValidation->ios_id.' mail enviado';
-				$log->loadLog($ioValidation->id,$status);
 				
 			}else{
 			    echo 'Io #'.$ioValidation->ios_id.' - Mail contact is undefined';
