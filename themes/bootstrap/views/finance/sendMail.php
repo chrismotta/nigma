@@ -44,13 +44,11 @@ $log               = new ValidationLog;
 	            // $mail->send(array($email_validation), $subject, $body);
 	            // try 
 	            // {
-            		$mail->sendEmail($email_validation, $subject, $body);
-            		echo $mail->getErrorInfo();
-            		// if($mailReturn)
-            		// 	echo "ok";
-            		// else 
-            		// 	echo "nook";
-            		// echo json_encode($mailReturn);
+            		$mailReturn = $mail->sendEmail($email_validation, $subject, $body,true);
+            		if($mailReturn)
+            			echo "ok";
+            		else 
+            			echo "nook";
 
     //         	} 
     //         	catch (phpmailerException $e) {

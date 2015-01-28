@@ -30,10 +30,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
         $mailer->Subject = $subject;
         $mailer->Body    = $message;
         $mailer->isHTML($isHTML);
-        if(!$mailer->Send())
-        {
-            $this->ErrorInfo=$mailer->ErrorInfo;
-        }
+        return $mailer->Send();
     }
 
     /*
@@ -78,11 +75,6 @@ class CPhpMailerLogRoute extends CEmailLogRoute
     public function setConfig($value)
     {
         $this->_config = array_merge($this->_config, $value);
-    }
-
-    public function getErrorInfo()
-    {
-        return $this->ErrorInfo;
     }
 
 }
