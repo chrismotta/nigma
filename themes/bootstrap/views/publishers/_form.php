@@ -8,7 +8,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Publisher <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+    <h4>Publisher <?php echo $modelPubl->isNewRecord ? "" : "#". $modelPubl->providers_id; ?></h4>
 </div>
 
 
@@ -25,8 +25,8 @@
     <fieldset>
 	<?php 
 
-        if ( ! $model->isNewRecord ) {
-    		echo $form->textFieldRow($model, 'providers_d', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
+        if ( ! $modelPubl->isNewRecord ) {
+    		echo $form->textFieldRow($modelPubl, 'providers_id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
     	}
 
         $this->renderPartial('/providers/_form', array(
@@ -34,9 +34,9 @@
             'model' => $modelProv,
         ));
 
-        echo $form->hiddenField($model, 'account_manager_id', array('type'=>"hidden") );
-        echo $form->textFieldRow($model, 'RS_perc', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
+        echo $form->hiddenField($modelPubl, 'account_manager_id', array('type'=>"hidden") );
+        echo $form->textFieldRow($modelPubl, 'RS_perc', array('class'=>'span3'));
+        echo $form->textFieldRow($modelPubl, 'rate', array('class'=>'span3'));
     ?>
 
     <div class="form-actions">

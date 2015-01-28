@@ -38,13 +38,47 @@ $log               = new ValidationLog;
 
             $io = Ios::model()->findByPk($ioValidation->ios_id);         
 			$email_validation=is_null($io->email_validation) ? $io->email_adm : $io->email_validation;
-			
-            $mail = new CPhpMailerLogRoute;   
-            $mail->send(array($email_validation), $subject, $body);
 
+			if(isset($email_validation)){
+	            $mail = new CPhpMailerLogRoute;  
+	            // $mail->send(array($email_validation), $subject, $body);
+	            // try 
+	            // {
+            		$mail->send(array($email_validation), $subject, $body);
+            		echo 'Io #'.$ioValidation->ios_id.' email sent';
+					// $log->loadLog($ioValidation->id,$status);s
+            		// if($mailReturn)
+            		// 	echo "ok";
+            		// else 
+            		// // echo json_encode($mailReturn);
 
-		    echo 'Io #'.$ioValidation->ios_id.' mail enviado';
-			$log->loadLog($ioValidation->id,$status);
+    //         	} 
+    //         	catch (phpmailerException $e) {
+				//  	echo $e->errorMessage(); //Pretty error messages from PHPMailer
+				// } catch (Exception $e) {
+				//   	echo $e->getMessage(); //Boring error messages from anything else!
+				// }
+	    //         $mailReturn=$mail->send(array($email_validation), $subject, $body);
+	    //         if(!$mailReturn){
+		   //          Yii::log($mail->ErrorInfo, 'mail', 'Validation Send Error');
+	    //         	$status = "Error";
+
+				 //    echo 'Io #'.$ioValidation->ios_id.' error - '.$mail->ErrorInfo;
+					// $log->loadLog($ioValidation->id,$status);
+					
+					// $ioValidation->attributes=array('status'=>'Validated', 'date'=>$date);
+					// $ioValidation->save();
+	    //         }else{
+	    //         	echo 'Io #'.$ioValidation->ios_id.' mail enviado';
+					// $log->loadLog($ioValidation->id,$status);
+	    //         }
+				
+			}else{
+			    echo 'Io #'.$ioValidation->ios_id.' - Mail contact is undefined';
+				$ioValidation->attributes=array('status'=>'Validated', 'date'=>$date);
+				$ioValidation->save();
+			}
+
 		}
 		else 
 		    print_r($ioValidation->getErrors());

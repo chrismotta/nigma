@@ -73,7 +73,7 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  => array(
 		// 'state',
@@ -87,41 +87,47 @@ $('.search-form form').submit(function(){
 		// 'contact_adm',
 		// 'email_adm',
 		array(
-			'name' => 'providers_id',
+			'name' =>'providers_id',
 		),
 		array(
-			'name' => 'name',
+			'name'  =>'providers_name',
+			'value' =>'$data->providers->name'
 		),
 		array( 
-			'name' => 'commercial_name',
+			'header' =>Providers::model()->getAttributeLabel('commercial_name'),
+			'value'  =>'$data->providers->commercial_name',
 		),
 		array(
-			'name'  =>'country_name',
-			'value' => '$data->country ? $data->country->name : ""',		
+			'header' =>Providers::model()->getAttributeLabel('country_id'),
+			'value'  =>'$data->providers->country ? $data->providers->country->name : ""',
 		),
 		array( 
-			'name' => 'entity',
+			'header' =>Providers::model()->getAttributeLabel('entity'),
+			'value'  =>'$data->providers->entity',
 		),
 		array( 
-			'name' => 'tax_id',
+			'header' =>Providers::model()->getAttributeLabel('tax_id'),
+			'value'  =>'$data->providers->tax_id',
 		),
 		array( 
-			'name' => 'net_payment',
+			'header' =>Providers::model()->getAttributeLabel('net_payment'),
+			'value'  =>'$data->providers->net_payment',
 		),
 		array(
-			'name'  => 'account_manager_id',
-			'value' => '$data->account_manager_id ? $data->accountManager->lastname . " " . $data->accountManager->name : ""',
+			'name'  =>'account_manager_id',
+			'value' =>'$data->account_manager_id ? $data->accountManager->lastname . " " . $data->accountManager->name : ""',
 		),
 		array( 
-			'name' => 'model',
+			'header' =>Providers::model()->getAttributeLabel('model'),
+			'value'  =>'$data->providers->model',
 		),
 		array( 
-			'name'  => 'RS_perc',
-			'value' => 'number_format($data->RS_perc, 2)',
+			'name'  =>'RS_perc',
+			'value' =>'number_format($data->RS_perc, 2)',
 		),
 		array( 
-			'name' => 'rate',
-			'value' => 'number_format($data->rate, 2)',
+			'name'  =>'rate',
+			'value' =>'number_format($data->rate, 2)',
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',

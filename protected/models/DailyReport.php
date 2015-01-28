@@ -1509,8 +1509,8 @@ class DailyReport extends CActiveRecord
 	public function setNewFields()
 	{
 		// update spend only for affiliates
-		// if ( Affiliates::model()->exists('providers_id=:nid', array(':nid'=>$this->providers_id)) ) 
-		//	$this->updateSpendAffiliates();
+		if($this->providers->getType() == 1)
+			$this->updateSpendAffiliates();
 
 		$this->profit             = $this->getProfit();
 		$this->profit_percent     = $this->getProfitPerc();
