@@ -6,11 +6,12 @@ $this->breadcrumbs=array(
 	'Finance'=>'#',	
 	'Clients',
 );
+ Yii::app()->clientScript->registerScript("", "$('.ipopover').popover({'placement':'left'});", CClientScript::POS_READY);
 ?>
 
 <?php
 //Totals
-echo KHtml::currencyTotals($totals->getData());
+echo KHtml::currencyTotalsClients($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
@@ -18,6 +19,102 @@ $this->menu=array(
 );
 $log    =new ValidationLog;
 $ios    =new Ios;
+$buttonsColumn='
+				CHtml::ajaxLink(
+					"<i style=\"cursor:default\" id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>$data["status_io"])
+				).
+				CHtml::link(
+					"<i class=\"icon-eye-open\"></i>",
+					array("finance/view/".$data["id"]),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View IO")
+
+
+					).';
+if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
+	$buttonsColumn.='CHtml::link(
+					"<i class=\"icon-envelope\"></i>",
+					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
+
+
+					).';
+else 
+	$buttonsColumn.='CHtml::link(
+					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
+					array(""),
+    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
+
+
+					).';
+if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
+	$buttonsColumn.='
+				CHtml::link(
+					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
+					array(),
+    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
+    					"onclick" => 
+    					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
+    						if(confirmed!==null){
+		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
+		                            .success(function( data ) {
+			                            alert(data );
+			                            window.location = document.URL;
+		                            });
+								}
+							 })
+						")
+
+
+					);
+				';
+else 
+	$buttonsColumn.='
+				CHtml::link(
+					"<i style=\"cursor:default\" id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
+					array(),
+    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Invoice")
+
+
+					);
+				';
+if (FilterManager::model()->isUserTotalAccess('clients.validateOpportunitie'))
+	$buttonValidate='$data["status_opp"] == false ?
+				CHtml::link(
+					"<i class=\"not_verifed\" ></i>",
+					array("opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+
+
+					)
+				: 
+				CHtml::ajaxLink(
+					"<i id=\"icon-status\" class=\"verifed\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
+				)
+				;';
+else 
+	$buttonValidate='$data["status_opp"] == false ?
+				CHtml::link(
+					"<i style=\"cursor:default\" class=\"not_verifed\" ></i>",
+					array(""),
+    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
+
+
+					)
+				: 
+				CHtml::ajaxLink(
+					"<i style=\"cursor:default\" id=\"icon-status\" class=\"verifed\"></i>", 
+					"javascript:void(0)", 
+				    array (), 
+				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
+				)
+				;';
+
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -47,8 +144,8 @@ $ios    =new Ios;
 			$months[11] ='November';
 			$months[12] ='December';
 			$years[0]   ='Select a year';
-			foreach (range(date('Y'), 2014) as $year) {
-				$years[$year]=$year;
+			foreach (range(date('Y'), 2014) as $y) {
+				$years[$y]=$y;
 			}
 
 			$entities=KHtml::enumItem(new Ios,'entity');
@@ -56,9 +153,13 @@ $ios    =new Ios;
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
-			$status['Not Sended']='Not Sended';
+			foreach ($status as $key => $value) {
+				if($value=='Approved' || $value=='Expired')unset($status[$key]);
+			}
+			$status['ok']='Approved/Expired';
+			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
-			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array($month=>array('selected'=>true))));
+			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
 			echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
 			echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
@@ -104,7 +205,7 @@ $ios    =new Ios;
 		array(
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
-			'htmlOptions'       => array('id'=>'alignLeft'),		
+			'htmlOptions'       => array('id'=>'alignLeft', 'name'=>'nameTD'),
 			'header'            => 'IO - Commercial Name',
 			),
 		array(
@@ -179,23 +280,7 @@ $ios    =new Ios;
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>'opportunitie',
-			'value'             =>'$data["status_opp"] == false ?
-				CHtml::link(
-					"<i class=\"not_verifed\" ></i>",
-					array("opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
-
-
-					)
-				: 
-				CHtml::ajaxLink(
-					"<i id=\"icon-status\" class=\"verifed\"></i>", 
-					"javascript:void(0)", 
-				    array (), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
-				)
-				;
-				',		
+			'value'             =>$buttonValidate,		
 		),
 		array(
 			'name'              =>'name',
@@ -212,46 +297,54 @@ $ios    =new Ios;
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'name',
 			'value'             =>'
-				CHtml::ajaxLink(
-					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>", 
-					"javascript:void(0)", 
-				    array (), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>$data["status_io"])
-				);
+				CHtml::link(
+					"<i class=\"icon-pencil\"></i>",
+					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Count")
+
+
+					);
 				',		
+		),
+		array(
+			'name'              =>'name',
+			'header'            =>'Total Transaction',
+			'filter'			=>false,
+			'value'             =>'number_format($data["total_transaction"],2)',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
+		array(
+			'name'              =>'name',
+			'header'            =>'Total',
+			'filter'			=>false,
+			'value'             =>'number_format($data["total"],2)',
+			'headerHtmlOptions' => array('width' => '80'),
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '5'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>$buttonsColumn,		
 		), 
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'name',
-			'value'             =>'
-				CHtml::link(
-					"<i class=\"icon-envelope\"></i>",
-					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
-
-
-					);
-				',		
-		),
-		array(
-			'type'              =>'raw',
-			'header'            =>'',
-			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'name',
-			'value'             =>'
-				CHtml::link(
-					"<i class=\"icon-eye-open\"></i>",
-					array("finance/view/".$data["id"]),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View IO")
-
-
-					);
-				',		
-		),
+			'headerHtmlOptions' => array('width' => '5'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
+							    "class" => "ipopover",
+							    "data-trigger" => "hover",
+							    "data-content" => $data["comment"],
+							)
+						) : null;',		
+		), 
 	),
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
@@ -272,15 +365,21 @@ $ios    =new Ios;
                             e.preventDefault();
                             var that = $(this);
 							var link = that.attr('href');
-
+							
+							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+							$('#modalClients').html(dataInicial);
+							$('#modalClients').modal('toggle');
                            $.post( link, {})
 								.success(function( data ) {
 									$('#modalClients').html(data);
-									$('#modalClients').modal('toggle');
                                 }
 
 					
                                 );
+                            
+                        });
+					$('.linkinvoiced').click(function(e){
+                            e.preventDefault();
                             
                         });
 					function verifedIcon(){
@@ -289,10 +388,14 @@ $ios    =new Ios;
                             var that = $(this);
 							var link = that.attr('href');
 
+							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+							$('#modalClients').html(dataInicial);
+							$('#modalClients').modal('toggle');
                            $.post( link, {})
 								.success(function( data ) {
 									$('#modalClients').html(data);
-									$('#modalClients').modal('toggle');
+									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+									//$('#modalClients').modal('toggle');
                                 }
 
 					

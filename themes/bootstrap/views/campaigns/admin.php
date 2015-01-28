@@ -82,7 +82,7 @@ if(!$is_archived){
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
         'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/campaigns/admin',
+        'action' => Yii::app()->getBaseUrl() . '/' . Yii::app()->controller->getId().'/'.Yii::app()->controller->getAction()->getId(),
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -251,6 +251,11 @@ if(!$is_archived){
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalCampaigns").html(dataInicial);
+						$("#modalCampaigns").modal("toggle");
+
 				    	$.post(
 						"viewAjax/"+id,
 						"",
@@ -258,7 +263,6 @@ if(!$is_archived){
 							{
 								//alert(data);
 								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
 							}
 						)
 						return false;

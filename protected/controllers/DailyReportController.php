@@ -36,7 +36,7 @@ class DailyReportController extends Controller
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('setNewFields','setAllNewFields', 'updateSpendAffiliates'),
+				'actions'=>array('setRevenue', 'setNewFields','setAllNewFields', 'updateSpendAffiliates'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -356,7 +356,8 @@ class DailyReportController extends Controller
 			$model->updateRevenue();
 			$model->setNewFields();
 			if ( $model->save() ){
-				$this->redirect(array('admin'));
+				$urlArray = array_merge(array('admin'), json_decode($_POST['query_string'], true));
+				$this->redirect($urlArray);
 			}else{
 				var_dump($model->getErrors());
 			}
@@ -450,6 +451,17 @@ class DailyReportController extends Controller
 		), false, true);
 	}
 
+	public function actionSetRevenue($id){
+		if($model = DailyReport::model()->findByPk($id)){
+			$model->updateRevenue();
+			$model->setNewFields();
+			$model->save();
+			echo $id . " - updated";
+		}else{
+			echo $id . "- not exists";
+		}
+	}
+
 	public function actionSetNewFields($id){
 
 		$new_rate = isset($_GET['newRate']) ? $_GET['newRate'] : NULL;
@@ -487,9 +499,7 @@ class DailyReportController extends Controller
 
 			$list = DailyReport::model()->findAll( $criteria );
 			foreach ($list as $model) {
-				if ( $new_rate )
-					$model->updateRevenue($new_rate);
-
+				$model->updateRevenue($new_rate);
 				$model->setNewFields();
 				$model->save();
 				echo $model->id . " - updated<br/>";
@@ -508,17 +518,17 @@ class DailyReportController extends Controller
 		$criteria = new CDbCriteria;
 		$criteria->compare('date', $date);
 		if ($affiliate) { // update one affiliate
-			$criteria->compare('networks_id', $affiliate);
+			$criteria->compare('providers_id', $affiliate);
 		} else { // update all affiliate
 			$q = Yii::app()->db->createCommand()
-			    ->select('networks_id')
+			    ->select('providers_id')
 			    ->from('affiliates')
 			    ->queryAll(false);
 
 			foreach ($q as $nid)
 	        	$affiliates[] = $nid[0];
 
-			$criteria->addInCondition('networks_id', $affiliates);
+			$criteria->addInCondition('providers_id', $affiliates);
 		}
 
 		$list = DailyReport::model()->findAll( $criteria );

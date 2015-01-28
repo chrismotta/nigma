@@ -282,13 +282,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp'],
+			'footer'            => number_format($totals['imp']),
         ),
         array(	
 			'name'              => 'imp_adv',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp_adv'],
+			'footer'            => number_format($totals['imp_adv']),
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
 			'editable'          => array(
 				'apply'      => $sum ? false : true,
@@ -308,13 +308,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'clics',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['clics'],
+			'footer'            => number_format($totals['clics']),
         ),
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['conv_api'],
+			'footer'            => number_format($totals['conv_api']),
         ),
 		array(
 			'name'              => 'conv_adv',
@@ -339,7 +339,7 @@ $('.search-form form').submit(function(){
 					  	}
 					}',
             ),
-			'footer' => $totals['conv_adv'],
+			'footer' => number_format($totals['conv_adv']),
 		),
 		array(
 			'name'              => 'mr',
@@ -357,6 +357,7 @@ $('.search-form form').submit(function(){
 	        					"onClick" => CHtml::ajax( array(
 									"type"    => "POST",
 									"url"     => "multiRate/" . $data->id,
+									"data"    => "'.$_SERVER['QUERY_STRING'].'",
 									"success" => "function( data )
 										{
 											$(\"#modalDailyReport\").html(data);
@@ -376,21 +377,21 @@ $('.search-form form').submit(function(){
 			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['revenue'],
+			'footer'            => number_format($totals['revenue'],2),
         ),
 		array(
 			'name'              => 'spend',
 			'value'             => 'number_format($data->getSpendUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['spend'],
+			'footer'            => number_format($totals['spend'],2),
         ),
 		array(
 			'name'              => 'profit',
 			'value'             => 'number_format($data->profit, 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['profit'],
+			'footer'            => number_format($totals['profit'],2),
 		),
 		array(
 			'name'              => 'profit_percent',
@@ -404,14 +405,14 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4))."%" : 0,
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4)*100)."%" : 0,
 		),
 		array(
 			'name'              => 'conversion_rate',
 			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv_adv'] / $totals['clics'], 4 ))."%" : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv'] / $totals['clics'], 4 )*100)."%" : 0,
 		),
 		array(
 			'name'              => 'eCPM',
@@ -432,7 +433,7 @@ $('.search-form form').submit(function(){
 			'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['conv_adv']) && $totals['conv_adv']!=0 ? round($totals['spend'] / $totals['conv_adv'], 2) : 0,
+			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? round($totals['spend'] / $totals['conv'], 2) : 0,
 		),
 		array(
 			'name'              => 'date',

@@ -39,6 +39,12 @@
                     array('label'=>'Placements', 'url'=>array('/placements/admin')),
                     array('label'=>'Reporting', 'url'=>array('/dailyPublishers/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Providers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Affiliates', 'url'=>array('/affiliates/admin')),
+                    array('label'=>'Networks', 'url'=>array('/networks/admin')),
+                    array('label'=>'Prospects', 'url'=>array('/providers/prospect')),
+                ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Creatives', 'url'=>array('/sem/creative')),
@@ -90,6 +96,7 @@
                     array('label'=>'Profile', 'url'=>array('/users/profile')),
                     array('label'=>'Users', 'url'=>array('/users/admin')),
                     array('label'=>'Configuration', 'url'=>'#'),
+                    array('label'=>'Meetings', 'url'=>array('/meetingroom')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
                 array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
@@ -107,7 +114,7 @@
                 'items'=>array(
                     array('label'=>'Profile', 'url'=>array('/users/profile')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
+                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->controller->id.'/'.Yii::app()->controller->action->id=='externalForms/revenueValidation' ? false : Yii::app()->user->isGuest),
                 array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
             );
     $this->widget('bootstrap.widgets.TbNavbar',array(
@@ -121,6 +128,36 @@
 )); ?>
 
 <div class="container" id="page">
+    <?php
+    if(!Yii::app()->user->isGuest)
+    {        
+        $mainVar           =array();
+        $mainVar['count']=0;
+        $mainVar['date']   = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+        $mainVar['year']   =date('Y', $mainVar['date']);
+        $mainVar['month'] =date('m', $mainVar['date']);
+        if (FilterManager::model()->isUserTotalAccess('alert.business')) 
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),4);
+            $mainVar['option']='ios';
+            foreach(IosValidation::model()->findAllByAttributes(array('status'=>'Validated','period'=>$mainVar['year'].'-'.$mainVar['month'].'-01')) as $value)
+            {
+                $mainVar['count']++;
+            }
+        }elseif (FilterManager::model()->isUserTotalAccess('alert.media'))
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['option']='opportunities';
+            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            {
+                if(!$opportunitie['status_opp'])$mainVar['count']++;
+            }
+        }
+        if($mainVar['count']>0)
+            echo '<div class="alert alert-now">You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'].'</div>';
+    }
+    ?>
+    
 
 	<?php if(isset($this->breadcrumbs)):?>
 		<?php $this->widget('bootstrap.widgets.TbBreadcrumbs', array(

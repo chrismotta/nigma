@@ -163,6 +163,7 @@ return array(
 		'application.external.wurfl.WurflManager',
 		'ext.eexcelwriter.components.EExcelWriter',
 		'ext.pdffactory.EPdfFactoryDoc',
+		'ext.samodelversioning.SAModelVersioning',
 	),
 
 	'modules'=>array(
@@ -205,7 +206,7 @@ return array(
 				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
 				// custom parameters //
-				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
 				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),

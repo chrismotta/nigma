@@ -1,9 +1,6 @@
 <?php 
 /* @var $this FinanceController */
 /* @var $form CActiveForm */
-// $clients=array_merge(Ios::model()->getClientsMulti(11,2014,null,null,null,null,null,null,false),Ios::model()->getClientsMulti(11,2014,null,null,null,null,null,null,true));
-// echo json_encode(Ios::model()->getClientsProfile2(11,2014,null,29,null,null,null,null,'profile')['data']);
-// return;
  ?>
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
@@ -101,6 +98,7 @@
                        $.post( 'sendMail', { 'io_id': ".$io->id.", 'period': '".$period."' })
                             .success(function( data ) {
                             alert(data );
+                            window.location = document.URL;
                             });
                         
                     });

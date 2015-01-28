@@ -34,9 +34,9 @@
         $redirect_new['g_mty'] = '{matchtype}';
     }
 
-    if( $provider->isNetwork() && $provider->networks->has_token ) {
-        $redirect_old['ntoken'] = $provider->networks->placeholder;
-        $redirect_new['ntoken'] = $provider->networks->placeholder;
+    if( $provider->has_token ) {
+        $redirect_old['ntoken'] = $provider->placeholder;
+        $redirect_new['ntoken'] = $provider->placeholder;
     }
 
     $redirect_old_query = urldecode( http_build_query($redirect_old) );

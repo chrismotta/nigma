@@ -4,12 +4,10 @@
  * This is the model class for table "networks".
  *
  * The followings are the available columns in table 'networks':
- * @property integer $id
- * @property string $prefix
- * @property string $name
- * @property string $currency
+ * @property integer $providers_id
  * @property string $percent_off
  * @property string $url
+ * @property integer $use_alternative_convention_name
  * @property integer $has_api
  * @property integer $use_vectors
  * @property string $query_string
@@ -18,14 +16,14 @@
  * @property string $token3
  *
  * The followings are the available model relations:
- * @property ApiCronLog[] $apiCronLogs
- * @property Campaigns[] $campaigns
- * @property ClicksLog[] $clicksLogs
- * @property DailyReport[] $dailyReports
- * @property Vectors[] $vectors
+ * @property Providers $providers
  */
 class Networks extends CActiveRecord
 {
+
+	public $providers_name;
+	public $providers_has_s2s;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -42,17 +40,14 @@ class Networks extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('prefix, name, url', 'required'),
-			array('has_api, use_vectors', 'numerical', 'integerOnly'=>true),
-			array('prefix', 'length', 'max'=>45),
-			array('name, url', 'length', 'max'=>128),
-			array('currency', 'length', 'max'=>3),
-			array('percent_off', 'length', 'max'=>5),
+			array('providers_id', 'required'),
+			array('providers_id, use_alternative_convention_name, has_api, use_vectors', 'numerical', 'integerOnly'=>true),
+			array('url', 'length', 'max'=>128),
 			array('query_string', 'length', 'max'=>255),
 			array('token1, token2, token3', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, currency, percent_off, url, has_api, use_vectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
+			array('providers_id, percent_off, url, use_alternative_convention_name, has_api, use_vectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -64,12 +59,7 @@ class Networks extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'networks_id'),
-			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'networks_id'),
-			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'networks_id'),
-			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'networks_id'),
-			'vectors'      => array(self::HAS_MANY, 'Vectors', 'networks_id'),
-			'providers'    => array(self::BELONGS_TO, 'Providers', 'providers_id'),
+			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 		);
 	}
 
@@ -79,18 +69,18 @@ class Networks extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'prefix' => 'Prefix',
-			'name' => 'Name',
-			'currency' => 'Currency',
-			'percent_off' => 'Percent Off',
-			'url' => 'Url',
-			'has_api' => 'Has Api',
-			'use_vectors' => 'Use Vectors',
-			'query_string' => 'Query String',
-			'token1' => 'Token1',
-			'token2' => 'Token2',
-			'token3' => 'Token3',
+			'providers_id'                    => 'ID',
+			'providers_name'                  => 'Name',
+			'providers_has_s2s'               => 'Has s2s',
+			'percent_off'                     => 'Percent Off',
+			'url'                             => 'Url',
+			'use_alternative_convention_name' => 'Use Alternative Convention Name',
+			'has_api'                         => 'Has Api',
+			'use_vectors'                     => 'Use Vectors',
+			'query_string'                    => 'Query String',
+			'token1'                          => 'Token1',
+			'token2'                          => 'Token2',
+			'token3'                          => 'Token3',
 		);
 	}
 
@@ -112,12 +102,14 @@ class Networks extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('prefix',$this->prefix,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('currency',$this->currency,true);
+		$criteria->with = array('providers');
+		$criteria->compare('providers.status','Active',true);
+		$criteria->addCondition('providers.prospect>1');
+
+		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('percent_off',$this->percent_off,true);
 		$criteria->compare('url',$this->url,true);
+		$criteria->compare('use_alternative_convention_name',$this->use_alternative_convention_name);
 		$criteria->compare('has_api',$this->has_api);
 		$criteria->compare('use_vectors',$this->use_vectors);
 		$criteria->compare('query_string',$this->query_string,true);
@@ -127,6 +119,24 @@ class Networks extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination'=>array(
+                'pageSize'=>30,
+            ),
+			'sort'     => array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'providers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),
+		            'providers_has_s2s'=>array(
+						'asc'  =>'providers.has_s2s',
+						'desc' =>'providers.has_s2s DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 

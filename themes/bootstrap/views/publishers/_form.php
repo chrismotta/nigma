@@ -29,23 +29,12 @@
     		echo $form->textFieldRow($model, 'providers_d', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
     	}
 
-        echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
-        echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
-        echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'phone', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
-        // echo $form->dropDownListRow($model, 'currency', $currency, array('prompt' => 'Select a currency'));
+        $this->renderPartial('/providers/_form', array(
+            'form'  => $form,
+            'model' => $modelProv,
+        ));
+
         echo $form->hiddenField($model, 'account_manager_id', array('type'=>"hidden") );
-        echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
-        echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
-        echo $form->radioButtonListRow($model, 'model', $model_publ);
         echo $form->textFieldRow($model, 'RS_perc', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'rate', array('class'=>'span3'));
     ?>

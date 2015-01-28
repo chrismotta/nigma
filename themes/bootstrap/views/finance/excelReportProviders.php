@@ -20,7 +20,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'  =>'network_name',
-            'value' =>'$data->network_name',
+            'value' =>'$data->providers->name',
         ),
         array(
             'name'  =>'currency',
