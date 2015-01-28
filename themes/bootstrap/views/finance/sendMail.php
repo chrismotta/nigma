@@ -42,8 +42,9 @@ $log               = new ValidationLog;
 			if(isset($email_validation)){
 
 	            $mail = new CPhpMailerLogRoute;   
-	            echo $mail->send(array($email_validation), $subject, $body);
-	            print_r($mail->ErrorInfo);
+	            $mail->send(array($email_validation), $subject, $body);
+	            print_r($mail);
+	            echo json_encode($mail);
 	    //         if(!$mailReturn){
 		   //          Yii::log($mail->ErrorInfo, 'mail', 'Validation Send Error');
 	    //         	$status = "Error";
