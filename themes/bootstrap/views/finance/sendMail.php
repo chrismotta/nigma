@@ -45,7 +45,10 @@ $log               = new ValidationLog;
 	            // try 
 	            // {
             		$mailReturn = $mail->send(array($email_validation), $subject, $body);
-            		echo $mailReturn;
+            		if($mailReturn)
+            			echo "ok";
+            		else 
+            			echo "nook";
             		// echo json_encode($mailReturn);
 
     //         	} 
