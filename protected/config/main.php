@@ -110,7 +110,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'subject' =>'',
 					'emails'  =>array(),
 					'config'  =>array(
-						'From'       => 'no-reply@kickads.mobi',
+						'From'       => 'no-reply@kickadserver.mobi',
 						'FromName'   => 'no-reply Kickads adServer',
 						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
 						// 'SMTPAuth'   => true,
