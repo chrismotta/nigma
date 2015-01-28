@@ -2,7 +2,7 @@
 
 class CPhpMailerLogRoute extends CEmailLogRoute
 {
-    public $ErrorInfo;
+
     private $_config = array(
         'From'       => 'no-reply@kickads.mobi',
         'FromName'   => 'no-reply Kickads adServer',
@@ -30,15 +30,7 @@ class CPhpMailerLogRoute extends CEmailLogRoute
         $mailer->Subject = $subject;
         $mailer->Body    = $message;
         $mailer->isHTML($isHTML);
-        if($response = $mailer->Send())
-        {            
-            return $response;
-        }
-        else
-        {
-            $this->ErrorInfo=$mailer->ErrorInfo;
-            return $response;
-        }
+        $mailer->Send();
     }
 
     /*
@@ -56,23 +48,6 @@ class CPhpMailerLogRoute extends CEmailLogRoute
                 foreach ($emails as $email) {
                     $this->sendEmail($email, $subject, $message, $isHTML);
                 }
-            break;
-        }
-
-    }
-    /*
-     * Public function for sendEmail
-     */
-    public function sendMail($email, $subject, $message, $isHTML=true)
-    {
-        switch ( $_SERVER['HTTP_HOST'] ) {
-            // amazon prod
-            case '54.88.85.63':
-            case 'ec2-54-88-85-63.compute-1.amazonaws.com':
-            case 'test.kickadserver.mobi':
-            case 'app.kickadserver.mobi':
-            case 'kickadserver.mobi':
-                return $this->sendEmail($email, $subject, $message, $isHTML);
             break;
         }
 

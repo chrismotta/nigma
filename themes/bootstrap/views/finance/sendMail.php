@@ -44,18 +44,9 @@ $log               = new ValidationLog;
 	            // $mail->send(array($email_validation), $subject, $body);
 	            // try 
 	            // {
-            		$mailReturn = $mail->sendMail($email_validation, $subject, $body, true);
-            		if($mailReturn )
-            		{
-	            		echo 'Io #'.$ioValidation->ios_id.' mail sent';
-						$log->loadLog($ioValidation->id,$status);
-            			echo $mail->ErrorInfo;
-            			
-            		}
-            		else
-            		{
-            			echo $mail->ErrorInfo;
-            		}
+            		$mail->send(array($email_validation), $subject, $body);
+            		echo 'Io #'.$ioValidation->ios_id.' email sent';
+					// $log->loadLog($ioValidation->id,$status);s
             		// if($mailReturn)
             		// 	echo "ok";
             		// else 
