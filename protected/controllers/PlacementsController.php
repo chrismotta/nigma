@@ -197,7 +197,7 @@ class PlacementsController extends Controller
 	{
 		$sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		$exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$publishers = CHtml::listData( Publishers::model()->findAll(array('order'=>'name', 'condition' => "status='Active'")), 'id', 'name');
+		$publishers = CHtml::listData( Publishers::model()->with('providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 
 		$this->renderPartial('_form', array(
 			'model'      => $model,

@@ -32,7 +32,7 @@
  */
 class Publishers extends CActiveRecord
 {
-	public $country_name;
+	public $providers_name;
 	public $account_name;
 
 	/**
@@ -51,16 +51,11 @@ class Publishers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('name, commercial_name, state, zip_code, address, currency, entity, tax_id, model', 'required'),
-			array('country_id, account_manager_id', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>8),
-			array('name, commercial_name, state, zip_code, address, phone, contact_com, email_com, contact_adm, email_adm, tax_id, net_payment', 'length', 'max'=>128),
-			array('email_com, email_adm', 'email'),
-			array('currency, entity, model', 'length', 'max'=>3),
+			array('account_manager_id', 'numerical', 'integerOnly'=>true),
 			array('RS_perc, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, status, name, commercial_name, country_id, state, zip_code, address, phone, currency, contact_com, email_com, contact_adm, email_adm, entity, tax_id, net_payment, account_manager_id, model, RS_perc, rate', 'safe', 'on'=>'search'),
+			array('providers_id, account_manager_id, RS_perc, rate', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -85,28 +80,10 @@ class Publishers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'                 => 'ID',
-			'status'             => 'Status',
-			'name'               => 'Name',
-			'commercial_name'    => 'Legal Name',
-			'country_id'         => 'Country',
-			'state'              => 'State',
-			'zip_code'           => 'Zip Code',
-			'address'            => 'Address',
-			'phone'              => 'Phone',
-			'currency'           => 'Currency',
-			'contact_com'        => 'Com Contact Name',
-			'email_com'          => 'Com Contact Email',
-			'contact_adm'        => 'Adm Contact Name',
-			'email_adm'          => 'Adm Contact Email',
-			'entity'             => 'Entity',
-			'tax_id'             => 'Tax',
-			'net_payment'        => 'Net Payment',
-			'account_manager_id' => 'Account Manager',
-			'model'              => 'Model',
+			'providers_id'       => 'ID',
+			'providers_name'     => 'Name',
 			'RS_perc'            => 'Revenue Share',
 			'rate'               => 'Rate',
-			'country_name'       => 'Country',
 			'account_name'       => 'Account Name'
 		);
 	}
@@ -128,30 +105,15 @@ class Publishers extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-		$criteria->with = array('country', 'accountManager', 'providers');
+		$criteria->with = array('providers');
 
 		$criteria->compare('t.providers_id',$this->providers_id);
-		$criteria->compare('t.status',$this->status,true);
-		$criteria->compare('t.name',$this->name,true);
-		$criteria->compare('country_id',$this->country_id);
-		$criteria->compare('state',$this->state,true);
-		$criteria->compare('zip_code',$this->zip_code,true);
-		$criteria->compare('address',$this->address,true);
-		$criteria->compare('phone',$this->phone,true);
-		// $criteria->compare('providers.currency',$this->currency,true);
-		$criteria->compare('contact_com',$this->contact_com,true);
-		$criteria->compare('email_com',$this->email_com,true);
-		$criteria->compare('contact_adm',$this->contact_adm,true);
-		$criteria->compare('email_adm',$this->email_adm,true);
-		$criteria->compare('entity',$this->entity,true);
-		$criteria->compare('tax_id',$this->tax_id,true);
-		$criteria->compare('net_payment',$this->net_payment,true);
+		$criteria->compare('providers.status','Active',true);
+		// $criteria->compare('t.name',$this->name,true);
 		$criteria->compare('account_manager_id',$this->account_manager_id);
-		$criteria->compare('model',$this->model,true);
 		$criteria->compare('RS_perc',$this->RS_perc,true);
 		$criteria->compare('rate',$this->rate,true);
 
-		$criteria->compare('country.name',$this->country_name);
 		$criteria->compare('accountManager.name',$this->account_name,true);
 		$criteria->compare('accountManager.lastname',$this->account_name,true);
 
@@ -163,9 +125,9 @@ class Publishers extends CActiveRecord
 			'sort'     	 =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
-		            'country_name'=>array(
-						'asc'  =>'country.name',
-						'desc' =>'country.name DESC',
+		            'providers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
 		            ),
 		            '*',
 		        ),
