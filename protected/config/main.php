@@ -106,20 +106,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 
 				$mailLog = array(
 					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'error, mail, warning',
+					'levels'  =>'',
 					'subject' =>'',
 					'emails'  =>array(),
-					'config'  =>array(
-						'From'       => 'no-reply@kickadserver.mobi',
-						'FromName'   => 'no-reply Kickads adServer',
-						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
-						// 'SMTPAuth'   => true,
-						// 'SMTPSecure' => "tls",
-						// 'Port'       => 25,
-						// 'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
-						// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
-						'CharSet'    => "UTF-8",
-                    ),
 				);
 		break;
 	case 'tmp.kickadserver.mobi':
