@@ -111,8 +111,7 @@ class ClicksLogController extends Controller
 				}
 				$ts['campaign']       = microtime(true);
 				
-				$s2s                  = $campaign->opportunities->server_to_server;
-				if(!isset($s2s)) $s2s = "ktoken";
+				$s2s = $campaign->opportunities->server_to_server ? $campaign->opportunities->server_to_server : NULL;
 				$ts['s2s']            = microtime(true);
 			}else{
 				//print "campaign: null<hr/>";
@@ -264,12 +263,14 @@ class ClicksLogController extends Controller
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if($cid){
-				if( strpos($redirectURL, "?") ){
-					$redirectURL.= "&";
-				} else {
-					$redirectURL.= "?";
+				if($s2s){
+					if( strpos($redirectURL, "?") ){
+						$redirectURL.= "&";
+					} else {
+						$redirectURL.= "?";
+					}
+					$redirectURL.= $s2s."=".$ktoken;
 				}
-				$redirectURL.= $s2s."=".$ktoken;
 			}
 
 			//enviar macros
