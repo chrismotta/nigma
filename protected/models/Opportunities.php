@@ -420,7 +420,8 @@ class Opportunities extends CActiveRecord
                     ->where("id=:id AND DATE(created_time)<=:date", array(':date' => date('Y-m-d', strtotime($date)), ":id" => $this->id))
                     ->order('created_time DESC')
                     ->queryAll(false);
-        return $q[0][0]; // return first column of first register
+        // return first column of first register if exists
+        return isset($q[0][0]) ? $q[0][0] : NULL; 
 	}
 
 }

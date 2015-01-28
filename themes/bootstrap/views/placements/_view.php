@@ -5,37 +5,21 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Publisher <?php echo "#".$model->id ?></h4>
+    <h4>Placements <?php echo "#".$model->id ?></h4>
 </div>
 
 <div class="modal-body">
+
+	<?php $this->renderPartial('/providers/_view', array(
+        'model' => $model->publishers->providers,
+    )); ?>
 
 	<h5>Publisher</h5>
 	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	    'type'=>'striped bordered condensed',
 		'data'=>$model,
 		'attributes'=>array(
-			'publishers.id',
-			'publishers.status',
-			'publishers.name',
-			'publishers.commercial_name',
-			array(
-				'label' => 'Country',
-				'name'  => 'publishers.country.name',
-			),
-			'publishers.state',
-			'publishers.zip_code',
-			'publishers.address',
-			'publishers.phone',
-			'publishers.currency',
-			'publishers.contact_com',
-			'publishers.email_com',
-			'publishers.contact_adm',
-			'publishers.email_adm',
-			'publishers.entity',
-			'publishers.tax_id',
-			'publishers.net_payment',
-			'publishers.model',
+			'publishers.providers_id',
 			'publishers.RS_perc',
 			'publishers.rate',
 		),
