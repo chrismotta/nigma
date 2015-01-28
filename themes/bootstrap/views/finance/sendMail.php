@@ -47,8 +47,10 @@ $log               = new ValidationLog;
             		$mail->send(array($email_validation), $subject, $body);
             	} 
             	catch (phpmailerException $e) {
+            		echo 'primer catch';
 				 	echo $e->errorMessage(); //Pretty error messages from PHPMailer
 				} catch (Exception $e) {
+            		echo 'segundo catch';
 				  	echo $e->getMessage(); //Boring error messages from anything else!
 				}
 	            
