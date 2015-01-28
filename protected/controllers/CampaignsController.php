@@ -604,7 +604,7 @@ class CampaignsController extends Controller
 		 		break;
 		 	
 		 	default:
-		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.75, 2));
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.80, 2));
 		 		break;
 		 }
 	}
