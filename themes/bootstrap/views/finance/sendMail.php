@@ -44,11 +44,7 @@ $log               = new ValidationLog;
 	            // $mail->send(array($email_validation), $subject, $body);
 	            // try 
 	            // {
-            		$mailReturn = $mail->sendEmail($email_validation, $subject, $body,true);
-            		if($mailReturn)
-            			echo "ok";
-            		else 
-            			echo "nook";
+            		echo $mail->sendEmail($email_validation, $subject, $body,true);
 
     //         	} 
     //         	catch (phpmailerException $e) {
