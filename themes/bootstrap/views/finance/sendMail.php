@@ -44,14 +44,14 @@ $log               = new ValidationLog;
 	            $mail = new CPhpMailerLogRoute;  
 	            try 
 	            {
-	            	$mail->send(array($email_validation), $subject, $body);
-	            	} 
-	            	catch (phpmailerException $e) {
-					  echo $e->errorMessage(); //Pretty error messages from PHPMailer
-					} catch (Exception $e) {
-					  echo $e->getMessage(); //Boring error messages from anything else!
-					}
-	            } 
+            		$mail->send(array($email_validation), $subject, $body);
+            	} 
+            	catch (phpmailerException $e) {
+				 	echo $e->errorMessage(); //Pretty error messages from PHPMailer
+				} catch (Exception $e) {
+				  	echo $e->getMessage(); //Boring error messages from anything else!
+				}
+	            
 	    //         if(!$mailReturn){
 		   //          Yii::log($mail->ErrorInfo, 'mail', 'Validation Send Error');
 	    //         	$status = "Error";
