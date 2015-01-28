@@ -2,7 +2,7 @@
 
 class CPhpMailerLogRoute extends CEmailLogRoute
 {
-    public $ErrorInfo;
+
     private $_config = array(
         'From'       => 'no-reply@kickads.mobi',
         'FromName'   => 'no-reply Kickads adServer',
@@ -31,7 +31,6 @@ class CPhpMailerLogRoute extends CEmailLogRoute
         $mailer->Body    = $message;
         $mailer->isHTML($isHTML);
         $mailer->Send();
-        return $mailer->ErrorInfo();
     }
 
     /*
