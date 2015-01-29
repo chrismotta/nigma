@@ -183,7 +183,8 @@ class ClicksLogController extends Controller
 				$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 				$location       = new IP2Location($binPath, IP2Location::FILE_IO);
 				$ipData         = $location->lookup($ip, IP2Location::ALL);
-				$model->country = $ipData->countryName;
+				//$model->country = $ipData->countryName;
+				$model->country = $ipData->countryCode;
 				$model->city    = $ipData->cityName;
 				$model->carrier = $ipData->mobileCarrierName;
 			}
