@@ -39,5 +39,5 @@
 </div>
 
 <div class="modal-footer">
-    Edit Affiliates attributes. Fields with <span class="required">*</span> are required.
+    Edit Prospects attributes. Fields with <span class="required">*</span> are required.
 </div>

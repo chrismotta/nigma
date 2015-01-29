@@ -3,7 +3,7 @@
 /* @var $model Affiliates */
 
 $this->breadcrumbs=array(
-	'Affiliates',
+	'Prospects',
 	'Manage',
 );
 ?>
