@@ -112,10 +112,10 @@ class PublishersController extends Controller
 	public function actionDelete($id)
 	{
 
-		$model = $this->loadModel($id);
+		$model = Providers::model()->findByPk($id);
 		switch ($model->status) {
 			case 'Active':
-				if ( Placements::model()->count("publishers_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
+				if ( Placements::model()->count("publishers_providers_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
 					echo "To remove this item must delete the placements associated with it.";
 					Yii::app()->end();
 				} else {
