@@ -281,7 +281,7 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1 ))";
+							LIMIT 0,1 )) ";
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";
 			
