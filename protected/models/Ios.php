@@ -249,7 +249,19 @@ class Ios extends CActiveRecord
 		{
 			#Query to find clients with multi rate
 			$query=
-				"SELECT i.id AS io_id,o.id AS opp_id,o.model_adv AS model,i.entity AS entity,i.currency AS currency,m.carriers_id_carrier AS carrier, i.commercial_name AS commercial_name,g.name, o.product AS product,m.rate as rate, SUM(m.conv) AS conversions, SUM(m.rate*m.conv) AS revenue
+				"SELECT 
+					i.id AS io_id,
+					o.id AS opp_id,
+					o.model_adv AS model,
+					i.entity AS entity,
+					i.currency AS currency,
+					m.carriers_id_carrier AS carrier, 
+					i.commercial_name AS commercial_name,
+					g.name, 
+					o.product AS product,
+					m.rate as rate, 
+					SUM(m.conv) AS conversions, 
+					SUM(m.rate*m.conv) AS revenue
 				
 				FROM daily_report d 
 				INNER JOIN campaigns c ON d.campaigns_id=c.id
@@ -261,14 +273,15 @@ class Ios extends CActiveRecord
 				INNER JOIN geo_location g ON ca.id_country=g.id_location
 
 				WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
-					AND d.revenue>0 
+					AND d.revenue>0
+					AND m.conv>0
 					AND ISNULL((
 							SELECT ov.rate 
 							FROM opportunities_version ov
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1 ))";
+							LIMIT 0,1 )) ";
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";
 			
@@ -282,12 +295,21 @@ class Ios extends CActiveRecord
 			if($cat)	
 				$query .= "AND a.cat='".$cat."' ";										
 			
-			$query.= "GROUP BY i.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
+			$query.= "GROUP BY i.id,o.id,m.carriers_id_carrier,m.rate";
 		}
 		else // multirate = true
 		{
 			$query=
-				"SELECT i.id as io_id,o.id AS opp_id,o.model_adv AS model,i.entity AS entity,i.currency AS currency,o.carriers_id AS carrier, i.commercial_name AS commercial_name,g.name AS country,o.product AS product,
+				"SELECT 
+					i.id as io_id,
+					o.id AS opp_id,
+					o.model_adv AS model,
+					i.entity AS entity,
+					i.currency AS currency,
+					o.carriers_id AS carrier, 
+					i.commercial_name AS commercial_name,
+					g.name AS country,
+					o.product AS product,
 					ROUND(
 						IF(
 							ISNULL((
@@ -332,7 +354,7 @@ class Ios extends CActiveRecord
 				LEFT JOIN carriers ca ON o.carriers_id=ca.id_carrier
 				LEFT JOIN geo_location g ON o.country_id=g.id_location												
 				WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
-					AND d.revenue>0 
+					AND d.revenue>0
 					AND NOT(ISNULL((
 							SELECT ov.rate 
 							FROM opportunities_version ov
