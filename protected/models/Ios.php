@@ -295,7 +295,7 @@ class Ios extends CActiveRecord
 			if($cat)	
 				$query .= "AND a.cat='".$cat."' ";										
 			
-			$query.= "GROUP BY i.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
+			$query.= "GROUP BY i.id,o.id,m.carriers_id_carrier,m.rate,g.id_location,m.rate";
 		}
 		else // multirate = true
 		{
