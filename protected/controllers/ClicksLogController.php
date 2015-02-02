@@ -111,8 +111,7 @@ class ClicksLogController extends Controller
 				}
 				$ts['campaign']       = microtime(true);
 				
-				$s2s                  = $campaign->opportunities->server_to_server;
-				if(!isset($s2s)) $s2s = "ktoken";
+				$s2s = $campaign->opportunities->server_to_server ? $campaign->opportunities->server_to_server : NULL;
 				$ts['s2s']            = microtime(true);
 			}else{
 				//print "campaign: null<hr/>";
@@ -183,7 +182,8 @@ class ClicksLogController extends Controller
 				$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 				$location       = new IP2Location($binPath, IP2Location::FILE_IO);
 				$ipData         = $location->lookup($ip, IP2Location::ALL);
-				$model->country = $ipData->countryName;
+				//$model->country = $ipData->countryName;
+				$model->country = $ipData->countryCode;
 				$model->city    = $ipData->cityName;
 				$model->carrier = $ipData->mobileCarrierName;
 			}
@@ -264,12 +264,14 @@ class ClicksLogController extends Controller
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if($cid){
-				if( strpos($redirectURL, "?") ){
-					$redirectURL.= "&";
-				} else {
-					$redirectURL.= "?";
+				if($s2s){
+					if( strpos($redirectURL, "?") ){
+						$redirectURL.= "&";
+					} else {
+						$redirectURL.= "?";
+					}
+					$redirectURL.= $s2s."=".$ktoken;
 				}
-				$redirectURL.= $s2s."=".$ktoken;
 			}
 
 			//enviar macros

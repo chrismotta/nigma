@@ -395,7 +395,7 @@ class ProvidersController extends Controller
 				$type=$model->getAllTypes()[$_POST['type']];
 				switch ($type) {
 					case 'Affiliates':
-						$modelAffi->attributes=array('providers_id'=>$model->id,'users_id'=>Yii::App()->user->getId());
+						$modelAffi->attributes=array('providers_id'=>$model->id,'users_id'=>Yii::app()->user->getId());
 						if($modelAffi->save())
 							$this->redirect(array('prospect'));							
 						break;
@@ -405,7 +405,8 @@ class ProvidersController extends Controller
 							$this->redirect(array('prospect'));							
 						break;
 					case 'Publishers':
-						$modelPub->attributes=array('providers_id'=>$model->id,'account_manager_id'=>Yii::App()->user->getId());
+						$modelPub->providers_id=$model->id;
+						$modelPub->attributes=array('account_manager_id'=>Yii::app()->user->getId());
 						if($modelPub->save())
 							$this->redirect(array('prospect'));							
 						break;
