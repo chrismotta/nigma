@@ -1,7 +1,8 @@
 <?php
 /* @var $this DailyReportController */
 /* @var $model DailyReport */
-ini_set ( 'memory_limit', '500M' );
+ini_set ( 'memory_limit', '256M' );
+set_time_limit('100000');
 $this->breadcrumbs=array(
 	'Daily Reports'=>array('index'),
 	'Manage',
