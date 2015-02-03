@@ -189,7 +189,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         if ( !$providers ) {
-            $providers = Providers::model()->findAll( array('order' => 'name') );
+            $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active' AND prospect=10") );
             $providers = CHtml::listData($providers, 'id', 'name');
         }
             
@@ -409,7 +409,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
         if ( !$providers ) {
-            $providers = Providers::model()->findAll( array('order' => 'name') );
+            $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active' AND prospect=10") );
             $providers = CHtml::listData($providers, 'id', 'name');
         }
 
@@ -587,7 +587,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Countriess',
+                    'placeholder' => 'All Countries',
                     'width'       => '20%',
                 ),
             )
