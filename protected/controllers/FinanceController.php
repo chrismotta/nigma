@@ -298,7 +298,7 @@ class FinanceController extends Controller
 					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier) {
 						if($data['rate']==$value->rate) {
 							$clients['data'][$key]['conv']    +=$value->volume;
-							$clients['data'][$key]['revenue'] +=($value->volume*$value->rate);
+							$clients['data'][$key]['revenue'] +=$value->total;
 							$found = true;
 							break;
 						}
@@ -307,7 +307,7 @@ class FinanceController extends Controller
 				if (!$found) {
 					$aux[$i]            =$data;
 					$aux[$i]['conv']    =$value->volume;
-					$aux[$i]['revenue'] =($value->volume*$value->rate);
+					$aux[$i]['revenue'] =$value->total;
 					$aux[$i]['rate']    =$value->rate;				
 					$i++;		
 				}				
