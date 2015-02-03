@@ -525,3 +525,4 @@ $('.search-form form').submit(function(){
 
 <div class="row" id="blank-row">
 </div>
+<?php ini_set ( 'memory_limit', '128M' ); ?>
