@@ -293,26 +293,23 @@ class FinanceController extends Controller
 		if($count=$transactionCount->getTotalsCarrier($io->id,$year.'-'.$month.'-01'))
 		{
 			foreach ($count as $value) {
-			$sum=false;
+				$found = false;
 				foreach ($clients['data'] as $key => $data) {
-					if($sum)continue;
-					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier)
-					{
-						if($data['rate']==$value->rate)
-						{
+					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier) {
+						if($data['rate']==$value->rate) {
 							$clients['data'][$key]['conv']    +=$value->volume;
-							$clients['data'][$key]['revenue'] +=$value->total;							
+							$clients['data'][$key]['revenue'] +=($value->volume*$value->rate);
+							$found = true;
+							break;
 						}
-						else
-						{
-							$aux[$i]=$data;						
-							$aux[$i]['conv']=$value->volume;
-							$aux[$i]['revenue']=$value->total;
-							$aux[$i]['rate']=$value->rate;				
-							$i++;		
-						}	
-						$sum=true;
 					}
+				}
+				if (!$found) {
+					$aux[$i]            =$data;
+					$aux[$i]['conv']    =$value->volume;
+					$aux[$i]['revenue'] =($value->volume*$value->rate);
+					$aux[$i]['rate']    =$value->rate;				
+					$i++;		
 				}				
 			}
 			foreach ($aux as $value) {
