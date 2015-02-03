@@ -465,7 +465,7 @@ class FinanceController extends Controller
 		{
 			$transaction                      = new TransactionCount;
 			$transaction->carriers_id_carrier = $_POST['TransactionCount']['carrier']=='multi' ? null : $_POST['TransactionCount']['carrier'];
-			$transaction->product             = $_POST['product'];
+			$transaction->product             = $_POST['product']=='Without Product' ? '' : $_POST['product'];
 			$transaction->country             = $_POST['country'];
 			$transaction->period              = $_POST['TransactionCount']['period'];
 			$transaction->volume              = $_POST['TransactionCount']['volume'];
