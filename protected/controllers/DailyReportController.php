@@ -147,6 +147,8 @@ class DailyReportController extends Controller
 		$criteria->join  = 'LEFT JOIN networks ON t.id=networks.providers_id';
 		$criteria->order = 'name';
 		$criteria->compare('networks.has_api',0);
+		$criteria->compare('t.status','Active');
+		$criteria->compare('t.prospect',10);
 		$providers = CHtml::listData(Providers::model()->findAll($criteria), 'id', 'name');
 
 		$campaign = new Campaigns('search');
