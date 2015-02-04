@@ -7,6 +7,9 @@ $this->breadcrumbs=array(
 	'Clients',
 );
  Yii::app()->clientScript->registerScript("", "$('.ipopover').popover({'placement':'left'});", CClientScript::POS_READY);
+ print_r(TransactionCount::getTotalTransactions(20,'2015-01-01'));
+ echo '<hr/>';
+ print_r(TransactionCount::getTotalsCarrier(20,'2015-01-01'));
 ?>
 
 <?php

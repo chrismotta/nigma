@@ -201,8 +201,9 @@ class Networks extends CActiveRecord
 			$dataArray[$i]['clics']         =$provider->clics;
 			$dataArray[$i]['imp']           =$provider->imp;
 			$dataArray[$i]['percent_off']   =$provider->percent_off;
-			$dataArray[$i]['spend']         =intval($provider->spend);
+			$dataArray[$i]['spend']         =$provider->spend;
 			$dataArray[$i]['off']           =$provider->off;
+			$dataArray[$i]['transaction']   =TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
 			$dataArray[$i]['total']         =$provider->total;
 
 			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics'] =0;
@@ -229,7 +230,7 @@ class Networks extends CActiveRecord
 		    'id'=>'clients',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id', 'providers_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total'
+		             'id', 'providers_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total','transaction'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -256,18 +257,13 @@ class Networks extends CActiveRecord
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','clics', 'imp', 'spend', 'off', 'total'
+		             'id','currency','clics', 'imp', 'spend', 'off', 'total','transaction'
 		        ),
 		    ),
 		    'pagination'=>array(
 		        'pageSize'=>30,
 		    ),
 		));
-
-
-
-
-		
 		return $data;
 	}
 }
