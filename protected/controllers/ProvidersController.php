@@ -286,7 +286,7 @@ class ProvidersController extends Controller
 			}
 			Yii::app()->end();
 		}
-		$providers->prospect = 1;	// FIXME completar con prospect correspondiente
+		$providers->prospect = 8;	// FIXME completar con prospect correspondiente
 		// $providers->unsetAttributes();
 		$this->render('externalCreate', array(
 			'action'     => 'financeForm',
