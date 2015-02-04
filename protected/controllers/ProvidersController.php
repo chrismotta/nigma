@@ -32,6 +32,10 @@ class ProvidersController extends Controller
 				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance'),
 			),
+			array('allow',
+				'actions'=>array('financeDataEntry','generalDataEntry'),
+				'users'=>array('*'),
+			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
