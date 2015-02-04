@@ -198,8 +198,9 @@ class FinanceController extends Controller
 
 	public function actionProviders()
 	{
-		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$model       =new Networks;
 		$data  =$model->getProviders($month,$year);
