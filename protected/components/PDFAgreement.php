@@ -32,6 +32,8 @@ class PDFAgreement extends PDF
             $type='network';
         if(Affiliates::model()->findByPk($provider->id))
             $type='affiliate';
+        if(Publishers::model()->findByPk($provider->id))
+            $type='publisher';
 
         // Print provider section
 		unset($values);
