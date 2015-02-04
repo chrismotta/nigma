@@ -206,17 +206,21 @@ class Networks extends CActiveRecord
 			$dataArray[$i]['transaction']   =TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
 			$dataArray[$i]['total']         =$provider->total;
 
-			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics'] =0;
-			isset($totals[$provider->currency]['imp']) ? : $totals[$provider->currency]['imp']     =0;
-			isset($totals[$provider->currency]['spend']) ? : $totals[$provider->currency]['spend'] =0;
-			isset($totals[$provider->currency]['off']) ? : $totals[$provider->currency]['off']     =0;
-			isset($totals[$provider->currency]['total']) ? : $totals[$provider->currency]['total'] =0;
+			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics']             =0;
+			isset($totals[$provider->currency]['imp']) ? : $totals[$provider->currency]['imp']                 =0;
+			isset($totals[$provider->currency]['spend']) ? : $totals[$provider->currency]['spend']             =0;
+			isset($totals[$provider->currency]['off']) ? : $totals[$provider->currency]['off']                 =0;
+			isset($totals[$provider->currency]['sub_total']) ? : $totals[$provider->currency]['sub_total']     =0;
+			isset($totals[$provider->currency]['total_count']) ? : $totals[$provider->currency]['total_count'] =0;
+			isset($totals[$provider->currency]['total']) ? : $totals[$provider->currency]['total']             =0;
 
-			$totals[$provider->currency]['clics'] +=$provider->clics;
-			$totals[$provider->currency]['imp']   +=$provider->imp;
-			$totals[$provider->currency]['spend'] +=$provider->spend;
-			$totals[$provider->currency]['off']   +=$provider->off;
-			$totals[$provider->currency]['total'] +=$provider->total;
+			$totals[$provider->currency]['clics']       +=$provider->clics;
+			$totals[$provider->currency]['imp']         +=$provider->imp;
+			$totals[$provider->currency]['spend']       +=$provider->spend;
+			$totals[$provider->currency]['off']         +=$provider->off;
+			$totals[$provider->currency]['sub_total']   +=$provider->total;
+			$totals[$provider->currency]['total_count'] +=TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
+			$totals[$provider->currency]['total']       +=TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01')+$provider->total;
 			$i++;
 		}
 
@@ -243,13 +247,15 @@ class Networks extends CActiveRecord
 			
 		$totalsdata=array();
 		foreach ($totals as $key => $value) {
-			$totalsdata[$i]['id']       =$i;
-			$totalsdata[$i]['currency'] =$key;
-			$totalsdata[$i]['clics']    =$value['clics'];
-			$totalsdata[$i]['imp']      =$value['imp'];
-			$totalsdata[$i]['spend']    =$value['spend'];
-			$totalsdata[$i]['off']      =$value['off'];
-			$totalsdata[$i]['total']    =$value['total'];
+			$totalsdata[$i]['id']          =$i;
+			$totalsdata[$i]['currency']    =$key;
+			$totalsdata[$i]['clics']       =$value['clics'];
+			$totalsdata[$i]['imp']         =$value['imp'];
+			$totalsdata[$i]['spend']       =$value['spend'];
+			$totalsdata[$i]['off']         =$value['off'];
+			$totalsdata[$i]['total']       =$value['total'];
+			$totalsdata[$i]['sub_total']   =$value['sub_total'];
+			$totalsdata[$i]['total_count'] =$value['total_count'];
 			$i++;
 		}
 		
@@ -257,7 +263,7 @@ class Networks extends CActiveRecord
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','clics', 'imp', 'spend', 'off', 'total','transaction'
+		             'id','currency','clics', 'imp', 'spend', 'off', 'total','total_count','sub_total'
 		        ),
 		    ),
 		    'pagination'=>array(
