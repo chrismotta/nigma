@@ -19,8 +19,9 @@ $this->widget('EExcelWriter', array(
             'value' =>'$data["id"]',
         ),
         array(
-            'name'  =>'network_name',
-            'value' =>'$data["providers->name"]',
+            'name'  =>'providers_name',
+            'header'=>'Providers Name',
+            'value' =>'$data["providers_name"]',
         ),
         array(
             'name'  =>'currency',
@@ -53,7 +54,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'  =>'transaction',
-            'value' =>'$data["transaction"]',
+            'value' =>'$data["transaction"] ? $data["transaction"] : 0',
         ),
         array(
             'name'  =>'total',
