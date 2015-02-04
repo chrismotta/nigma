@@ -88,7 +88,9 @@
 
 
 <script type="text/javascript">
- 
+$('.linkinvoiced').click(function(e){
+        e.preventDefault();        
+    });
 function send()
  { 
 	var data=$("#transactionProviders-add-form").serialize();
