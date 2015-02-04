@@ -95,6 +95,7 @@ class Providers extends CActiveRecord
 			'affiliates'   => array(self::HAS_ONE, 'Affiliates', 'providers_id'),
 			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'providers_id'),
 			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'providers_id'),
+			'transactionProviders'    => array(self::HAS_MANY, 'TransactionProviders', 'providers_id'),
 			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'providers_id'),
 			'networks'     => array(self::HAS_ONE, 'Networks', 'providers_id'),
