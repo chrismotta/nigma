@@ -51,7 +51,7 @@ echo KHtml::currencyTotals($totals->getData());
 			foreach ($entity as $value) {
 				$entities[$value->entity]=$value->entity;
 			}
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array(intval($month)=>array('selected'=>true))));
 		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
 		
 		            ?>
@@ -61,7 +61,7 @@ echo KHtml::currencyTotals($totals->getData());
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReportProviders',
+		'url'         => 'excelReportProviders?month='.$month.'&year='.$year,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
