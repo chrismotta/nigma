@@ -36,7 +36,7 @@ $buttonsColumn='
 
 
 					).';
-if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
+// if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
 	$buttonsColumn.='CHtml::link(
 					"<i class=\"icon-envelope\"></i>",
 					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
@@ -44,14 +44,14 @@ if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
 
 
 					).';
-else 
-	$buttonsColumn.='CHtml::link(
-					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
-					array(""),
-    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
+// else 
+// 	$buttonsColumn.='CHtml::link(
+// 					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
+// 					array(""),
+//     				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
 
 
-					).';
+// 					).';
 if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 	$buttonsColumn.='
 				CHtml::link(

@@ -544,7 +544,12 @@ class Ios extends CActiveRecord
 
 		}	
 		#Return clients, totals by io and totals
-		$result=array('data' => $consolidated, 'totals_io' => $totals_io, 'totals' => $totals, 'totals_invoiced' => $totals_invoiced);				
+		$result = array(
+			'data'            => $consolidated, 
+			'totals_io'       => $totals_io, 
+			'totals'          => $totals, 
+			'totals_invoiced' => $totals_invoiced
+		);
 		return $result;
 	}
 
