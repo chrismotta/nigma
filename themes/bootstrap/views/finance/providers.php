@@ -9,7 +9,7 @@ $this->breadcrumbs=array(
 ?>
 <?php 
 //Totals
-echo KHtml::currencyTotals($totals->getData());
+echo KHtml::currencyTotalsProviders($totals->getData());
 	$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
