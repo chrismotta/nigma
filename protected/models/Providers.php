@@ -286,4 +286,111 @@ class Providers extends CActiveRecord
 		else
 			return false;
 	}
+
+	public function getProviders($month,$year)
+	{
+		$query="select providers.id as id,
+			providers.name as providers_name,
+			providers.currency as currency,
+			sum(t.clics) as clics,
+			sum(t.imp) as imp,
+			networks.percent_off as percent_off,
+			SUM(t.spend) as spend,
+			round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as off,
+			SUM(t.spend) - round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as total 
+			from daily_report t, providers
+			left join networks on providers_id=providers.id
+			left join publishers pu on pu.providers_id=providers.id
+			left join affiliates a on a.providers_id=providers.id
+			where t.date between '".$year."-".$month."-01' and '".$year."-".$month."-31'
+			and t.providers_id=providers.id
+			group by providers.id";
+		$data   =array();		
+		$totals =array();	
+			
+		$dataArray =array();		
+		$providers=DailyReport::model()->findAllBySql($query);
+		// $data['dataProvider'] = new CActiveDataProvider(new DailyReport, array(
+		// 	'criteria'=>$criteria,
+		// ));	
+
+		$i=0;
+		foreach ($providers as $provider) {
+			$dataArray[$i]['id']            =$provider->id;
+			$dataArray[$i]['providers_name']=$provider->providers_name;
+			$dataArray[$i]['currency']      =$provider->currency;
+			$dataArray[$i]['clics']         =$provider->clics;
+			$dataArray[$i]['imp']           =$provider->imp;
+			$dataArray[$i]['percent_off']   =$provider->percent_off;
+			$dataArray[$i]['spend']         =$provider->spend;
+			$dataArray[$i]['off']           =$provider->off;
+			$dataArray[$i]['transaction']   =TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
+			$dataArray[$i]['total']         =$provider->total;
+
+			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics']             =0;
+			isset($totals[$provider->currency]['imp']) ? : $totals[$provider->currency]['imp']                 =0;
+			isset($totals[$provider->currency]['spend']) ? : $totals[$provider->currency]['spend']             =0;
+			isset($totals[$provider->currency]['off']) ? : $totals[$provider->currency]['off']                 =0;
+			isset($totals[$provider->currency]['sub_total']) ? : $totals[$provider->currency]['sub_total']     =0;
+			isset($totals[$provider->currency]['total_count']) ? : $totals[$provider->currency]['total_count'] =0;
+			isset($totals[$provider->currency]['total']) ? : $totals[$provider->currency]['total']             =0;
+
+			$totals[$provider->currency]['clics']       +=$provider->clics;
+			$totals[$provider->currency]['imp']         +=$provider->imp;
+			$totals[$provider->currency]['spend']       +=$provider->spend;
+			$totals[$provider->currency]['off']         +=$provider->off;
+			$totals[$provider->currency]['sub_total']   +=$provider->total;
+			$totals[$provider->currency]['total_count'] +=TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
+			$totals[$provider->currency]['total']       +=TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01')+$provider->total;
+			$i++;
+		}
+
+		$filtersForm =new FiltersForm;
+		$data['filtersForm']=$filtersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+		$filteredData=$filtersForm->filter($dataArray);
+
+		$data['arrayProvider']=new CArrayDataProvider($filteredData, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'providers_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total','transaction'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+
+		$i=0;
+			
+		$totalsdata=array();
+		foreach ($totals as $key => $value) {
+			$totalsdata[$i]['id']          =$i;
+			$totalsdata[$i]['currency']    =$key;
+			$totalsdata[$i]['clics']       =$value['clics'];
+			$totalsdata[$i]['imp']         =$value['imp'];
+			$totalsdata[$i]['spend']       =$value['spend'];
+			$totalsdata[$i]['off']         =$value['off'];
+			$totalsdata[$i]['total']       =$value['total'];
+			$totalsdata[$i]['sub_total']   =$value['sub_total'];
+			$totalsdata[$i]['total_count'] =$value['total_count'];
+			$i++;
+		}
+		
+		$data['totalsDataProvider'] = new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','clics', 'imp', 'spend', 'off', 'total','total_count','sub_total'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		return $data;
+	}
 }

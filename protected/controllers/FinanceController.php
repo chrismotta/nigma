@@ -202,7 +202,7 @@ class FinanceController extends Controller
 		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
 		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
-		$model       =new Networks;
+		$model       =new Providers;
 		$data  =$model->getProviders($month,$year);
 		$this->render('providers',array(			
 			'model'         =>$model,
@@ -287,7 +287,7 @@ class FinanceController extends Controller
 	{
 		if( isset($_POST['excel-providers-form']) ) {
 			$this->renderPartial('excelReportProviders', array(
-				'model' => new Networks,
+				'model' => new Providers,
 			));
 		}
 

@@ -55,7 +55,6 @@
         //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
         echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
         echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
-        echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
         echo '<hr/>';
         echo $form->checkboxRow($model, 'is_brand', array(
             'onChange' => '
