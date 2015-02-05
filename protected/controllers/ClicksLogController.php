@@ -313,13 +313,12 @@ class ClicksLogController extends Controller
 					header("Location: ".$redirectURL);
 				}
 			}else{
-				echo "no redirect";
+				logError("no redirect");
 			}
 				
 				
 		}else{
-			print "no guardado<hr/>";
-			print json_encode($model->getErrors());
+			logError("no guardado");
 		}
 
 	}
@@ -529,6 +528,12 @@ class ClicksLogController extends Controller
 		$command = Yii::app()->db->createCommand($deleteRows);
 		$result['deleted'] = $command->execute();
 		echo json_encode($result);
+	}
+
+	public function logError($msg){
+		
+		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
+
 	}
 
 	// Uncomment the following methods and override them if needed
