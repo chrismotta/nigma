@@ -43,7 +43,7 @@ class Affiliates extends CActiveRecord
 		return array(
 			array('providers_id', 'required'),
 			array('providers_id, users_id', 'numerical', 'integerOnly'=>true),
-			array('prefix','unique', 'message'=>'This prefix already exists.'),
+			//array('prefix','unique', 'message'=>'This prefix already exists.'),
 			array('phone', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
