@@ -52,7 +52,7 @@ class Publishers extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('account_manager_id', 'numerical', 'integerOnly'=>true),
-			array('prefix','unique', 'message'=>'This prefix already exists.'),
+			// array('prefix','unique', 'message'=>'This prefix already exists.'),
 			array('RS_perc, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
