@@ -144,7 +144,7 @@ class Placements extends CActiveRecord
 	public function findByPublisherId($id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->compare("t.publishers_providers_id", $id);
+		$criteria->compare("t.publishers_id", $id);
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'   =>$criteria,

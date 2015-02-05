@@ -95,6 +95,8 @@ class PDFProviders extends PDF
             $type='network';
         if(Affiliates::model()->findByPk($provider->id))
             $type='affiliate';
+        if(Publishers::model()->findByPk($provider->id))
+            $type='publisher';
         if($type=='affiliate')
         {
             $terms='<p><b>TERMS AND CONDITIONS</b></p>
