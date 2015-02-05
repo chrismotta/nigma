@@ -61,10 +61,6 @@ class PDFProviders extends PDF
 
         // Print provider section
 		unset($values);
-        // $values[$provider->getAttributeLabel('id')]                  = $provider->id;
-        // $values[$provider->getAttributeLabel('prefix')]              = $provider->prefix;
-        // $values[$provider->getAttributeLabel('name')]                = $provider->name;
-        // $values[$provider->getAttributeLabel('currency')]            = $provider->currency;
         $values[$provider->getAttributeLabel('commercial_name')]     = $provider->commercial_name;
         $values[$provider->getAttributeLabel('tax_id')]              = $provider->tax_id;
         $values[$provider->getAttributeLabel('country_id')]          = $provider->country ? $provider->country->name : '';
@@ -81,13 +77,14 @@ class PDFProviders extends PDF
         $values[$provider->getAttributeLabel('email_com')]           = $provider->email_com;
         $values[$provider->getAttributeLabel('contact_adm')]         = $provider->contact_adm;
         $values[$provider->getAttributeLabel('email_adm')]           = $provider->email_adm;
-        // $values[$provider->getAttributeLabel('daily_cap')]           = $provider->daily_cap;
-        // $values[$provider->getAttributeLabel('sizes')]               = $provider->sizes;
-        // $values[$provider->getAttributeLabel('has_s2s')]             = $provider->has_s2s ? "Yes" : "No";
-        // $values[$provider->getAttributeLabel('has_token')]           = $provider->has_token ? "Yes" : "No";
-        // $values[$provider->getAttributeLabel('callback')]            = $provider->callback;
-        // $values[$provider->getAttributeLabel('placeholder')]         = $provider->placeholder;
-        // $values[$provider->getAttributeLabel('entity')]              = $provider->entity;
+        if($publisher=Publishers::model()->findByPk($provider->id))
+        {
+            $values[$publisher->getAttributeLabel('rate')]           = $publisher->rate;
+            if($provider->model=='RS')
+                $values[$publisher->getAttributeLabel('RS_perc')]           = $publisher->RS_perc;
+            
+        }
+        
         $this->printTitle($pdf, 'Provider');
         $this->printTable($pdf, $values);
         $pdf->Ln();
@@ -95,6 +92,8 @@ class PDFProviders extends PDF
             $type='network';
         if(Affiliates::model()->findByPk($provider->id))
             $type='affiliate';
+        if(Publishers::model()->findByPk($provider->id))
+            $type='publisher';
         if($type=='affiliate')
         {
             $terms='<p><b>TERMS AND CONDITIONS</b></p>

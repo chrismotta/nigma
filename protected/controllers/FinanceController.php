@@ -27,8 +27,12 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
+				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers'),
+				'roles'=>array('admin', 'finance','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('updateValidationStatus'),
@@ -76,6 +80,20 @@ class FinanceController extends Controller
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transaction'));
+	}
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
+	public function actionDeleteTransactionProviders($id)
+	{
+		$model=TransactionProviders::model()->findByPk($id);
+		$model->delete();
+
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		if(!isset($_GET['ajax']))
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transactionProviders'));
 	}
 	
 	public function actionClients()
@@ -184,10 +202,11 @@ class FinanceController extends Controller
 
 	public function actionProviders()
 	{
-		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
-		$model       =new Networks;
+		$model       =new Providers;
 		$data  =$model->getProviders($month,$year);
 		$this->render('providers',array(			
 			'model'         =>$model,
@@ -272,7 +291,7 @@ class FinanceController extends Controller
 	{
 		if( isset($_POST['excel-providers-form']) ) {
 			$this->renderPartial('excelReportProviders', array(
-				'model' => new Networks,
+				'model' => new Providers,
 			));
 		}
 
@@ -429,6 +448,29 @@ class FinanceController extends Controller
 		);
 	}
 
+	public function actionTransactionProviders()
+	{
+		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
+		$id     = isset($_GET['id']) ? $_GET['id'] : null;
+		$model  = new TransactionProviders;
+		if(isset($_POST['TransactionProviders']))
+		{
+			$model->attributes=$_POST['TransactionProviders'];
+			if($model->validate())
+        	{
+        		if(!$model->save())echo'<script>alert('.json_encode($model->getErrors()).')</script>';
+        		return;
+        	}
+			
+		}		
+		$this->renderPartial('_transactionProviders',array(
+			'id'     => $id,
+			'period' => $period,
+			'model'  => $model,
+		), false, true);
+	}
+
+
 	public function actionTransaction()
 	{
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
@@ -572,5 +614,18 @@ class FinanceController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	/**
+	 * Performs the AJAX validation.
+	 * @param CModel the model to be validated
+	 */
+	protected function performAjaxValidation($model)
+	{
+		if(isset($_POST['ajax']) && $_POST['ajax']==='transaction-count-form')
+		{
+			echo CActiveForm::validate($model);
+			Yii::app()->end();
+		}
 	}
 }
