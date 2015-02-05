@@ -69,7 +69,7 @@ class Opportunities extends CActiveRecord
 			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			array('model_adv', 'length', 'max'=>3),
-			array('product, comment, targeting, sizes, channel_description', 'length', 'max'=>255),
+			array('product, targeting, sizes, channel_description', 'length', 'max'=>255),
 			array('server_to_server, freq_cap', 'length', 'max'=>45),
 			array('status', 'length', 'max'=>8),
 			array('startDate, endDate', 'safe'),
