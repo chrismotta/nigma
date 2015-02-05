@@ -349,7 +349,7 @@ else
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients', 'htmlOptions' => array('style'=>'width: 600px;'))); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
@@ -361,46 +361,42 @@ else
 </div>
 
 <?php Yii::app()->clientScript->registerScript('verifedIcon', "
-						$('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
-							
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-                                }
+	$('.link').click(function(e){
+        e.preventDefault();
+        var that = $(this);
+		var link = that.attr('href');
+		
+		var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+		$('#modalClients').html(dataInicial);
+		$('#modalClients').modal('toggle');
+       $.post( link, {})
+			.success(function( data ) {
+				$('#modalClients').html(data);
+            }
 
-					
-                                );
-                            
-                        });
-					$('.linkinvoiced').click(function(e){
-                            e.preventDefault();
-                            
-                        });
-					function verifedIcon(){
-                        $('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
 
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
-									//$('#modalClients').modal('toggle');
-                                }
+            );
+        
+    });
+	$('.linkinvoiced').click(function(e){
+	        e.preventDefault();
+	});
 
-					
-                                );
-                            
-                        });
-					}
-                    ", CClientScript::POS_READY); ?>
+	function verifedIcon(){
+	    $('.link').click(function(e){
+	        e.preventDefault();
+	        var that = $(this);
+			var link = that.attr('href');
+
+			var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+			$('#modalClients').html(dataInicial);
+			$('#modalClients').modal('toggle');
+	        $.post( link, {})
+				.success(function( data ) {
+					$('#modalClients').html(data);
+					//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+					//$('#modalClients').modal('toggle');
+	            });
+    });
+}
+", CClientScript::POS_READY); ?>

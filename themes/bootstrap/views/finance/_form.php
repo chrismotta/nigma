@@ -2,6 +2,36 @@
 /* @var $model TransactionCount */
 ?>
 
+<?php Yii::app()->clientScript->registerScript('verifedIcon', "
+	$('.linkinvoiced').click(function(e){
+        e.preventDefault();
+    });
+", CClientScript::POS_READY); ?>
+
+<?php $deleteTransaction = "
+	$('.deleteTransaction').click(function(e){
+		e.preventDefault();
+		
+		if ( !confirm('Are you sure you want to delete this item?') ) 
+			return false;
+
+		var id = $(this).parents('tr').attr('data-row-id');
+
+		$.post(
+			'delete/'+id,
+			'',
+            function(data) 
+            	{
+    				$.fn.yiiGridView.update('transaction-count-grid');
+                    // alert(data );
+                    // window.location = document.URL;
+            	}
+		);
+	});
+"; ?>
+
+<?php Yii::app()->clientScript->registerScript('deleteTransaction', $deleteTransaction, CClientScript::POS_READY); ?>
+
 <div class="modal-header">
 	<a class="close" data-dismiss="modal">&times;</a>
 	<h4>Transaction Count</h4>
@@ -21,10 +51,10 @@
 			'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
 		)); 
 		echo '<fieldset>';
-			$month=date('m', strtotime($period));
-			$year=date('Y', strtotime($period));
-			$startDate=date('Y-m-d', strtotime($year.'-'.$month.'-01'));
-			$endDate=date('Y-m-d', strtotime($year.'-'.$month.'-31'));
+			$month     =date('m', strtotime($period));
+			$year      =date('Y', strtotime($period));
+			$startDate =date('Y-m-d', strtotime($year.'-'.$month.'-01'));
+			$endDate   =date('Y-m-d', strtotime($year.'-'.$month.'-31'));
 			 
 			echo KHtml::filterCountries(NULL,array(),$id,null,false);
 			echo $form->dropDownList($model,'carrier',$carriers); 
@@ -60,44 +90,55 @@
 
 	<?php 
             $this->widget('yiibooster.widgets.TbExtendedGridView', array(
-            'id'                         => 'transaction-count-grid',
-            'dataProvider'               => $model->getTransactions($id,$period),
-            'type'                       => 'striped bordered',    
-            'template'                   => '{items} {pager} {summary}',
-            'columns'                    => array(
-                array('name'              =>'id'),
-                // array('name'              =>'ios_id'),
-                array('name'              =>'carriers_id_carrier', 'value'=>'$data->getCarrier()'),
-                array('name'              =>'country', 'value'=>'$data->getCountry()'),
-                array('name'              =>'product'),
-                array('name'              =>'period'),
-                array('name'              =>'volume'),
-                array('name'              =>'rate'),
-                array('name'              =>'users_id', 'value'=>'$data->getUserName()'),
-                array('name'              =>'date'),
-                array('name'              =>'delete', 
-                	  'type'			  =>'raw', 
-					  'header'            =>false,
-				      'filter'            =>false,
-					  'headerHtmlOptions' => array('width' => '5'),
-					  'htmlOptions'		=>array('style'=>'text-align:left !important'),
-                	  'value' 			  =>'CHtml::link(
-												"<i class=\"icon-remove\"></i>",
-												array(),
-							    				array("data-toggle"=>"tooltip", "data-original-title"=>"Delete", "class"=>"linkinvoiced",  
-							    					"onclick" => 
-							    					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
-							    						if(confirmed){
-									    					$.post(\"delete/".$data["id"]."\",{})
-									                            .success(function( data ) {
-									                				$.fn.yiiGridView.update(\"transaction-count-grid\");
-										                            // alert(data );
-										                            // window.location = document.URL;
-									                            });
-															}
-														 })
-													")
-												);',
+			'id'                       => 'transaction-count-grid',
+			'dataProvider'             => $model->getTransactions($id,$period),
+			'type'                     => 'striped bordered',   
+			'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)', 
+			'afterAjaxUpdate'          => "function(){ ". $deleteTransaction . "}",
+			'template'                 => '{items} {pager} {summary}',
+			'columns'                  => array(
+				array(
+					'name' =>'id'
+				),
+				// array('name' =>'ios_id'),
+				array(
+					'name'  =>'carriers_id_carrier', 
+					'value' =>'$data->getCarrier()'
+				),
+				array(
+					'name'  =>'country', 
+					'value' =>'$data->getCountry()'
+				),
+				array(
+					'name' =>'product'
+				),
+				array(
+					'name' =>'period'
+				),
+				array(
+					'name' =>'volume'
+				),
+				array(
+					'name' =>'rate'
+				),
+				array(
+					'name'  =>'users_id', 
+					'value' =>'$data->getUserName()'
+				),
+				array(
+					'name' =>'date'
+				),
+                array(
+					'type'              =>'raw', 
+					'header'            =>'',
+					'filter'            =>false,
+					'headerHtmlOptions' =>array('width' => '5'),
+					'htmlOptions'       =>array('style'=>'text-align:left !important'),
+					'value'             =>'CHtml::ajaxLink("<i class=\"icon-remove\"></i>", "", array(), array(
+							"data-toggle"         =>"tooltip", 
+							"data-original-title" =>"Delete", 
+							"class"               =>"deleteTransaction"
+						));',
                 ),
     //             array(
 				// 	    'class'=>'CButtonColumn',
@@ -110,10 +151,3 @@
 <div class="modal-footer">
 	Fields with <span class="required">*</span> are required.
 </div>
-
-<?php Yii::app()->clientScript->registerScript('verifedIcon', "
-					$('.linkinvoiced').click(function(e){
-                            e.preventDefault();
-                            
-                        });
-                    ", CClientScript::POS_READY); ?>
