@@ -47,7 +47,7 @@
                 'name'=>'month', 
                 'style' => "margin-left: 1em",
                 'options' => array(
-                    isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true),
+                    isset($_GET['month']) ? intval($_GET['month']) : 0=>array('selected'=>true),
                     )
                 )
             );

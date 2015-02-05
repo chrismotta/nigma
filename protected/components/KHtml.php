@@ -659,7 +659,7 @@ class KHtml extends CHtml
         return $rowTotals;
     }
 
-    public static function currencyTotals($totals=array())
+    public static function currencyTotalsProviders($totals=array())
     {
         $rowTotals='<div class="row totals-bar ">';
         if(count($totals)>0)
@@ -671,8 +671,10 @@ class KHtml extends CHtml
                 $rowTotals.= '
                 <div class="span'.$span.'">
                     <div class="alert alert-'.$alert[$i].'">
-                        <small >TOTAL</small>
-                        <h3 class="">'.$total['currency'].' '.$total['total'].'</h3>
+                        <small >TOTAL '.$total['currency'].'</small>
+                        <h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>
+                        <h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>
+                        <h5 class="">Total: '.number_format($total['total'],2).'</h5>
                     </div>
                 </div>
                 ';
