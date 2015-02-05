@@ -318,7 +318,8 @@ class ClicksLogController extends Controller
 				
 				
 		}else{
-			print "no guardado";
+			print "no guardado<hr/>";
+			print json_encode($model->getErrors());
 		}
 
 	}
