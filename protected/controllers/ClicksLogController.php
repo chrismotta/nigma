@@ -164,6 +164,8 @@ class ClicksLogController extends Controller
 		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
 		$model->match_type   = isset($_GET["g_mty"]) ? $_GET["g_mty"] : null;
 
+		// get query if exists
+
 		$tmp = array();
 		if (preg_match('/q=[^\&]*/', $model->referer, $tmp)) {
 			$model->query = urldecode(substr($tmp[0], 2));
