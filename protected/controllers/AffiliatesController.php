@@ -116,8 +116,7 @@ class AffiliatesController extends Controller
 		$modelProv=new Providers;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelAffi);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelAffi, $modelProv);
 
 		if(isset($_POST['Affiliates']) && isset($_POST['Providers']))
 		{
@@ -145,8 +144,7 @@ class AffiliatesController extends Controller
 		$modelProv=Providers::model()->findByPk($modelAffi->providers_id);
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelAffi);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelAffi, $modelProv);
 
 		if(isset($_POST['Affiliates']) && isset($_POST['Providers']))
 		{
@@ -180,11 +178,11 @@ class AffiliatesController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Affiliates $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($modelAffi, $modelProv)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='affiliates-form')
 		{
-			echo CActiveForm::validate($model);
+			echo CActiveForm::validate(array($modelAffi, $modelProv));
 			Yii::app()->end();
 		}
 	}
