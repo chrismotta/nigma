@@ -56,17 +56,17 @@
         echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
         echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
         echo '<hr/>';
-        echo $form->checkboxRow($model, 'is_brand', array(
+        echo $form->checkboxRow($model, 'closed_deal', array(
             'onChange' => '
               if (this.checked == "1")
-                $(".brand").show();
+                $(".closed_deal").show();
               else
-                $(".brand").hide();
+                $(".closed_deal").hide();
 
               return;
               '
         ));
-        echo '<div style="display: ' . ($model->is_brand   ? 'block' : 'none') . ';" class="brand">';
+        echo '<div style="display: ' . ($model->closed_deal   ? 'block' : 'none') . ';" class="closed_deal">';
             echo $form->textFieldRow($model, 'closed_amount', array('class'=>'span3'));
             echo $form->textFieldRow($model, 'agency_commission', array('class'=>'span3'));
             echo $form->datepickerRow($model, 'invoice_date', array(

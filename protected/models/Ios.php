@@ -67,7 +67,7 @@ class Ios extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, contact_com, email_com, contact_adm, email_adm, commercial_id, entity, net_payment, advertisers_id', 'required'),
-			array('prospect, country_id, commercial_id, advertisers_id, agency_commission, is_brand', 'numerical', 'integerOnly'=>true),
+			array('prospect, country_id, commercial_id, advertisers_id, agency_commission, closed_deal', 'numerical', 'integerOnly'=>true),
 			array('email_com, email_adm, email_validation','email'),
 			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment, invoice_date, closed_amount', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
@@ -283,7 +283,8 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1 )) ";
+							LIMIT 0,1 )) 
+					AND i.closed_deal=0 ";
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";
 			
@@ -363,7 +364,8 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1  ))) ";
+							LIMIT 0,1  ))) 
+					AND i.closed_deal=0 ";
 			#Add filters to query
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";										
@@ -425,8 +427,8 @@ class Ios extends CActiveRecord
 				$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
 				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['comment']       =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['date']       =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['comment']         =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['date']            =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
 				$data[$i]['conv']            =round($daily->conversions,2);
 				$data[$i]['rate']            =$daily->rate;		
@@ -551,6 +553,73 @@ class Ios extends CActiveRecord
 			'totals_invoiced' => $totals_invoiced
 		);
 		return $result;
+	}
+
+	public function getClientsClosedDeal($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	{
+
+		$iosValidation           =new IosValidation;
+		$query='SELECT 
+		i.id AS io_id,
+		i.entity AS entity,
+		i.currency AS currency,
+		i.commercial_name AS commercial_name,
+		i.closed_amount as total,
+		sum(IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)) as conversions,
+		sum(IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)) as imp,
+		sum(d.clics) as clics
+		from daily_report d 
+		inner join campaigns c on d.campaigns_id=c.id
+		inner join opportunities o on c.opportunities_id=o.id
+		inner join ios i on o.ios_id=i.id
+		where i.closed_deal=1 ';
+
+		if($entity)	
+			$query .= "AND i.entity='".$entity."' ";										
+		if($io)	
+			$query .= "AND i.id='".$io."' ";
+
+		if($accountManager)	
+			$query .= "AND o.account_manager_id='".$accountManager."' ";						
+		if($opportunitie_id)	
+			$query .= "AND o.id=".$opportunitie_id." ";
+
+		if($cat)	
+			$query .= "AND a.cat='".$cat."' ";
+		$query .='group by i.id';
+		$data=array();
+		if($dailys=DailyReport::model()->findAllBySql($query)){
+			$i=0;
+			#Save results to array group by io,carrier and date			
+			foreach ($dailys as $daily) {
+				if($status)
+				{
+					if($status=='ok')
+					{
+						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
+						{
+							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
+								continue;
+						}
+					}
+					else
+						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
+				}				
+				$data[$i]['id']          =$daily->io_id;
+				$data[$i]['name']        =$daily->commercial_name;				
+				$data[$i]['currency']    =$daily->currency;
+				$data[$i]['entity']      =$daily->entity;			
+				$data[$i]['status_io']   =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['comment']     =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['date']        =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['imp']         =floatval($daily->imp);
+				$data[$i]['conv']        =floatval($daily->conversions);	
+				$data[$i]['clics']        =floatval($daily->clics);	
+				$data[$i]['total']        =round($daily->total,2);	
+				$i++;		
+			}
+		}
+		return $data;
 	}
 
 	public function findByAdvertisers($advertiser)
