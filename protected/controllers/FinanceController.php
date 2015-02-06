@@ -153,18 +153,23 @@ class FinanceController extends Controller
 		foreach ($totalsTransactionsTemp as $value) {
 			$totalsTransactions[$value['currency']]=$value['total'];
 		}
+
+		$totalsdeal=$model->getClientsClosedDeal($month,$year,$entity,null,null,null,$cat,$status);
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
 				$i++;
+				$deal=isset($totalsdeal['totals'][$key]['revenue']) ? $totalsdeal['totals'][$key]['revenue'] : 0;
+				$invoice=isset($totalsdeal['totals'][$key]['revenue']) ? $totalsdeal['totals_invoiced'][$key] : 0;
 				$totalsdata[$i]['id']          =$i;
 				$totalsdata[$i]['currency']    =$key;
 				$totalsdata[$i]['sub_total']   =$value['revenue'];
+				$totalsdata[$i]['total_deal']   =$deal;
 				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
 				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
+				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total']+$totalsdata[$i]['total_deal'];
 				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0 + $invoice;
 			}
 		}
 		
@@ -172,7 +177,7 @@ class FinanceController extends Controller
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','total','sub_total','total_count','total_invoiced'
+		             'id','currency','total','sub_total','total_count','total_invoiced','total_deal'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -211,7 +216,8 @@ class FinanceController extends Controller
 		$filtersForm =new FiltersForm;
 		if (isset($_GET['FiltersForm']))
 		    $filtersForm->filters=$_GET['FiltersForm'];
-		$consolidated=$model->getClientsClosedDeal($month,$year,$entity,null,null,null,$cat,$status);
+		$clients=$model->getClientsClosedDeal($month,$year,$entity,null,null,null,$cat,$status);
+		$consolidated=$clients['data'];
 		$filteredData=$filtersForm->filter($consolidated);
 		$dataProvider=new CArrayDataProvider($filteredData, array(
 		    'id'=>'clients',
@@ -231,10 +237,7 @@ class FinanceController extends Controller
 				$i++;
 				$totalsdata[$i]['id']          =$i;
 				$totalsdata[$i]['currency']    =$key;
-				$totalsdata[$i]['sub_total']   =$value['revenue'];
-				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
-				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
+				$totalsdata[$i]['total']   =$value['revenue'];
 				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
 				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
@@ -259,7 +262,7 @@ class FinanceController extends Controller
 			'dataProvider' =>$dataProvider,
 			// 'clients'      =>$consolidated,
 			// 'clients2'     =>$clients,
-			// 'totals'       =>$totalsDataProvider,
+			'totals'       =>$totalsDataProvider,
 			'month'        =>$month,
 			'year'         =>$year,
 			'stat'         =>$status,
