@@ -298,9 +298,9 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         if ( empty($providers_id) )
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active'") );
         else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => 'providers_id IN (' . join($providers_id, ', ') . ')') );
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
 
         $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
 
