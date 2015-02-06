@@ -62,8 +62,7 @@ class PublishersController extends Controller
 		$modelProv=new Providers;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelPubl);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelPubl, $modelProv);
 
 		if(isset($_POST['Publishers']) && isset($_POST['Providers']))
 		{
@@ -90,8 +89,7 @@ class PublishersController extends Controller
 		$modelProv=Providers::model()->findByPk($modelPubl->providers_id);
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelPubl);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelPubl, $modelProv);
 
 		if(isset($_POST['Publishers']) && isset($_POST['Providers']))
 		{
@@ -189,11 +187,11 @@ class PublishersController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Publishers $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($modelPubl, $modelProv)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='publishers-form')
 		{
-			echo CActiveForm::validate($model);
+			echo CActiveForm::validate(array($modelPubl, $modelProv));
 			Yii::app()->end();
 		}
 	}
