@@ -588,6 +588,8 @@ class Ios extends CActiveRecord
 			$query .= "AND a.cat='".$cat."' ";
 		$query .='group by i.id';
 		$data=array();
+		$totals=array();
+		$totals_invoiced=array();
 		if($dailys=DailyReport::model()->findAllBySql($query)){
 			$i=0;
 			#Save results to array group by io,carrier and date			
@@ -605,21 +607,38 @@ class Ios extends CActiveRecord
 					else
 						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
 				}				
-				$data[$i]['id']          =$daily->io_id;
-				$data[$i]['name']        =$daily->commercial_name;				
-				$data[$i]['currency']    =$daily->currency;
-				$data[$i]['entity']      =$daily->entity;			
-				$data[$i]['status_io']   =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['comment']     =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['date']        =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['imp']         =floatval($daily->imp);
-				$data[$i]['conv']        =floatval($daily->conversions);	
-				$data[$i]['clics']        =floatval($daily->clics);	
-				$data[$i]['total']        =round($daily->total,2);	
+				$data[$i]['id']        =$daily->io_id;
+				$data[$i]['name']      =$daily->commercial_name;				
+				$data[$i]['currency']  =$daily->currency;
+				$data[$i]['entity']    =$daily->entity;			
+				$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['date']      =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['imp']       =floatval($daily->imp);
+				$data[$i]['conv']      =floatval($daily->conversions);	
+				$data[$i]['clics']     =floatval($daily->clics);	
+				$data[$i]['total']     =round($daily->total,2);	
+				$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');			
+				$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');		
+				#This array have totals
+				isset($totals[$data[$i]['currency']]['revenue']) ?  : $totals[$data[$i]['currency']]['revenue'] =0;
+					$totals[$data[$i]['currency']]['revenue']+=$data[$i]['total'];
+				
+				isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
+					if($data[$i]['status_io']=='Invoiced')
+					$totals_invoiced[$data[$i]['currency']]+=$data[$i]['total'];	
+
 				$i++;		
 			}
 		}
-		return $data;
+		#Return clients, totals by io and totals
+		$result = array(
+			'data'            => $data, 
+			// 'totals_io'       => $totals_io, 
+			'totals'          => $totals, 
+			'totals_invoiced' => $totals_invoiced
+		);
+		return $result;
 	}
 
 	public function findByAdvertisers($advertiser)
