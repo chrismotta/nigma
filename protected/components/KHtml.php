@@ -640,6 +640,7 @@ class KHtml extends CHtml
             $alert = array('error', 'info', 'success', 'warning', 'muted');
             $i = 0;
             foreach($totals as $total){
+                $invoice_percent=(isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
                 $rowTotals.= '
                 <div class="span'.$span.'">
                     <div class="alert alert-'.$alert[$i].'">
@@ -648,7 +649,7 @@ class KHtml extends CHtml
                         <h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>
                         <h5 class="">Total: '.number_format($total['total'],2).'</h5>
                         <h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>
-                        <h6 class="">Invoiced Percent: '.round(($total['total_invoiced']*100)/$total['total'],2).'%</h6>
+                        <h6 class="">Invoiced Percent: '.$invoice_percent.'%</h6>
                     </div>
                 </div>
                 ';

@@ -88,14 +88,17 @@ $('.search-form form').submit(function(){
 		// 'email_adm',
 		array(
 			'name' =>'providers_id',
+			'headerHtmlOptions' => array('style' => "width: 1%"),
 		),
 		array(
 			'name'  =>'providers_name',
-			'value' =>'$data->providers->name'
+			'value' =>'$data->providers->name',
+			'headerHtmlOptions' => array('style' => "width: 15%"),
 		),
 		array( 
 			'header' =>Providers::model()->getAttributeLabel('commercial_name'),
 			'value'  =>'$data->providers->commercial_name',
+			'headerHtmlOptions' => array('style' => "width: 15%"),
 		),
 		array(
 			'header' =>Providers::model()->getAttributeLabel('country_id'),
@@ -115,7 +118,9 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'  =>'account_manager_id',
+			'header'=>'Account Manager',
 			'value' =>'$data->account_manager_id ? $data->accountManager->lastname . " " . $data->accountManager->name : ""',
+			'headerHtmlOptions' => array('style' => "width: 10%"),
 		),
 		array( 
 			'header' =>Providers::model()->getAttributeLabel('model'),
@@ -124,14 +129,17 @@ $('.search-form form').submit(function(){
 		array( 
 			'name'  =>'RS_perc',
 			'value' =>'number_format($data->RS_perc, 2)',
+			'headerHtmlOptions' => array('style' => "width: 5%"),
 		),
 		array( 
 			'name'  =>'rate',
 			'value' =>'number_format($data->rate, 2)',
+			'headerHtmlOptions' => array('style' => "width: 5%"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
+			'headerHtmlOptions' => array('style' => "width: 15%"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
