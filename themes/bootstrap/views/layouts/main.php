@@ -64,6 +64,7 @@
                 'items'=>array(
                     array('label'=>'Clients', 'url'=>array('/finance/clients')),
                     array('label'=>'Providers', 'url'=>array('/finance/providers')),
+                    array('label'=>'Closed Deal', 'url'=>array('/finance/closedDeal')),
                     //array('label'=>'Cierre Mes', 'url'=>'#'),
                     //array('label'=>'Invoices', 'url'=>'#'),
                     array('label'=>'Currency', 'url'=>array('/currency/admin')),

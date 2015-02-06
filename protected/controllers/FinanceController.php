@@ -31,7 +31,7 @@ class FinanceController extends Controller
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers','closeDeal'),
+				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers','closedDeal'),
 				'roles'=>array('admin', 'finance','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
