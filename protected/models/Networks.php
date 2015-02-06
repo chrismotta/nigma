@@ -44,6 +44,7 @@ class Networks extends CActiveRecord
 			array('providers_id, use_alternative_convention_name, has_api, use_vectors', 'numerical', 'integerOnly'=>true),
 			array('url', 'length', 'max'=>128),
 			array('query_string', 'length', 'max'=>255),
+			//array('prefix','unique', 'message'=>'This prefix already exists.'),
 			array('token1, token2, token3', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

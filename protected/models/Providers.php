@@ -77,6 +77,7 @@ class Providers extends CActiveRecord
 			array('callback', 'length', 'max'=>255),
 			array('end_date,foundation_date', 'safe'),
 			array('callback', 'length', 'max'=>255),
+			array('prefix','unique', 'message'=>'This prefix already exists.'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'safe', 'on'=>'search'),

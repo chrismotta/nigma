@@ -44,7 +44,7 @@ $this->menu=array();
 
 		<?php 
 
-			echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
+			//echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
 			echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));

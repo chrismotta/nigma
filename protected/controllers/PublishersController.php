@@ -99,6 +99,9 @@ class PublishersController extends Controller
 			$modelProv->attributes=$_POST['Providers'];
 			if($modelPubl->save() && $modelProv->save())
 				$this->redirect(array('admin'));
+			else{
+				echo json_encode($modelPubl->errorSummary());
+				echo json_encode($modelProv->errorSummary());}
 		}
 
 		$this->renderFormAjax($modelPubl, $modelProv);
