@@ -106,7 +106,7 @@ class OpportunitiesController extends Controller
 			$model->attributes       = $_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				echo "ok";//$this->redirect(array('admin'));
+				$this->redirect(array('admin'));
 		}
 
 		$this->renderFormAjax($model);
