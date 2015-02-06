@@ -11,8 +11,39 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-// echo KHtml::currencyTotalsClients($totals->getData());
+$buttonsColumn='';
+if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
+	$buttonsColumn.='
+				CHtml::link(
+					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
+					array(),
+    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
+    					"onclick" => 
+    					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
+    						if(confirmed!==null){
+		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
+		                            .success(function( data ) {
+			                            alert(data );
+			                            window.location = document.URL;
+		                            });
+								}
+							 })
+						")
 
+
+					);
+				';
+else 
+	$buttonsColumn.='
+				CHtml::link(
+					"<i style=\"cursor:default\" id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
+					array(),
+    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Invoice")
+
+
+					);
+				';
+echo KHtml::currencyTotals($totals->getData());
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
@@ -155,6 +186,29 @@ $ios    =new Ios;
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '3'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>$buttonsColumn,		
+		), 
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '3'),
+			'name'              =>'name',
+			'htmlOptions'		=>array('style'=>'text-align:left !important'),
+			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
+							    "class" => "ipopover",
+							    "data-trigger" => "hover",
+							    "data-content" => $data["comment"],
+							)
+						) : null;',		
+		), 
 	),
 	// 'mergeColumns' => array('name','opportunitie'),
 )); ?>
