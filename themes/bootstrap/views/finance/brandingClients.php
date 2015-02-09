@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	'Finance'=>'#',	
-	'Clients',
+	'Branding Clients',
 );
  Yii::app()->clientScript->registerScript("", "$('.ipopover').popover({'placement':'left'});", CClientScript::POS_READY);
 ?>
@@ -59,7 +59,7 @@ $ios    =new Ios;
 		'htmlOptions'          =>array('class'=>'well'),
 		// to enable ajax validation
 		'enableAjaxValidation' =>false,
-		'action'               => Yii::app()->getBaseUrl() . '/finance/closedDeal',
+		'action'               => Yii::app()->getBaseUrl() . '/finance/brandingClients',
 		'method'               => 'GET',
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -146,6 +146,12 @@ $ios    =new Ios;
 			'header'            => 'IO - Commercial Name',
 			),
 		array(
+			'name'              => 'opportunitie',
+			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
+			'htmlOptions'       => array('id'=>'alignLeft'),
+			'header'            => 'Opportunitie',                           
+			),	
+		array(
 			'name'              =>'entity',
 			'value'             =>'$data["entity"]',
 			'headerHtmlOptions' => array('width' => '80'),	
@@ -159,39 +165,49 @@ $ios    =new Ios;
 			),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Conversions',
+			'header'            =>'Imp/Clics/Conv',
 			'value'             =>'number_format($data["conv"])',	
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
-			'name'              =>'imp',
-			'header'            =>'Impressions',
-			'value'             =>'number_format($data["imp"])',	
-			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
-			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			'name'              =>'opportunitie',
+			'header'            =>'Percent Agency Commission',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->agency_commission)."%"',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
 		),
 		array(
-			'name'              =>'clics',
-			'header'            =>'Clicks',
-			'value'             =>'number_format($data["clics"])',	
-			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
-			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			'name'              =>'opportunitie',
+			'header'            =>'Agency Commission',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->getTotalAgencyCommission(),2)',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
 		),
 		array(
-			'name'              =>'name',
+			'name'              =>'opportunitie',
+			'header'            =>'Sub Total',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->close_amount,2)',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
+		),
+		array(
+			'name'              =>'opportunitie',
 			'header'            =>'Total',
 			'filter'			=>false,
-			'value'             =>'number_format($data["total"],2)',
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->getTotalCloseDeal(),2)',
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
-			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
 		),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '3'),
-			'name'              =>'name',
+			'name'              =>'opportunitie',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
 		), 
@@ -200,7 +216,7 @@ $ios    =new Ios;
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '3'),
-			'name'              =>'name',
+			'name'              =>'opportunitie',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
 							    "class" => "ipopover",
@@ -209,8 +225,15 @@ $ios    =new Ios;
 							)
 						) : null;',		
 		), 
+		array(
+			'name'              =>'opportunitie',
+			'header'            =>'End Date',
+			'value'             =>'Opportunities::model()->findByPk($data["opportunitie_id"])->endDate',	
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
 	),
-	// 'mergeColumns' => array('name','opportunitie'),
+	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
