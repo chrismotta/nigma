@@ -179,8 +179,7 @@ class IosValidation extends CActiveRecord
 	{
 		$criteria=new CDbCriteria;
 		$criteria->addCondition('ios_id='.$id);
-		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
-		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		$criteria->compare("period",date('Y-m-d', strtotime($period)));
 		if($validation = self::find($criteria))
 			return $validation->comment;
 		else

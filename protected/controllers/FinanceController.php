@@ -31,7 +31,7 @@ class FinanceController extends Controller
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers','closedDeal'),
+				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers'),
 				'roles'=>array('admin', 'finance','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -169,7 +169,7 @@ class FinanceController extends Controller
 				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
 				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
 				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]);
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
 		
@@ -177,7 +177,7 @@ class FinanceController extends Controller
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','total','sub_total','total_count','total_invoiced','total_deal'
+		             'id','currency','total','sub_total','total_count','total_invoiced'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -200,76 +200,7 @@ class FinanceController extends Controller
 			'cat'          =>$cat,
 		));
 	}
-
-	public function actionClosedDeal()
-	{
-		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
-		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
-		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
-		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
-		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
-		$status    =isset($_GET['status']) ? $_GET['status'] : null;
-		$model  =new Ios;
-		$transactions=new TransactionCount;
-
-		$totalsdata=array();
-		$filtersForm =new FiltersForm;
-		if (isset($_GET['FiltersForm']))
-		    $filtersForm->filters=$_GET['FiltersForm'];
-		$clients=$model->getClientsClosedDeal($month,$year,$entity,null,null,null,$cat,$status);
-		$consolidated=$clients['data'];
-		$filteredData=$filtersForm->filter($consolidated);
-		$dataProvider=new CArrayDataProvider($filteredData, array(
-		    'id'=>'clients',
-		    'sort'=>array(
-		        'attributes'=>array(
-		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io','comment'
-		        ),
-		    ),
-		    'pagination'=>array(
-		        'pageSize'=>30,
-		    ),
-		));
-		$i=0;
-		if(isset($clients['totals']))
-		{
-			foreach ($clients['totals'] as $key => $value) {
-				$i++;
-				$totalsdata[$i]['id']          =$i;
-				$totalsdata[$i]['currency']    =$key;
-				$totalsdata[$i]['total']   =$value['revenue'];
-				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
-			}
-		}
-		
-		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
-		    'id'=>'totals',
-		    'sort'=>array(
-		        'attributes'=>array(
-		             'id','currency','total','sub_total','total_count','total_invoiced'
-		        ),
-		    ),
-		    'pagination'=>array(
-		        'pageSize'=>30,
-		    ),
-		));
-
-
-		$this->render('closedDeal',array(
-			'model'        =>$model,
-			'filtersForm'  =>$filtersForm,
-			'dataProvider' =>$dataProvider,
-			// 'clients'      =>$consolidated,
-			// 'clients2'     =>$clients,
-			'totals'       =>$totalsDataProvider,
-			'month'        =>$month,
-			'year'         =>$year,
-			'stat'         =>$status,
-			'entity'       =>$entity,
-			'cat'          =>$cat,
-		));
-	}
+	
 	public function actionProviders()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
@@ -295,14 +226,7 @@ class FinanceController extends Controller
 		$year  =$_GET['year'];
 		$id    =$_GET['id'];
 		$op    =Opportunities::model()->findByPk($id);
-
-		$filters = array(
-		'month'           =>$month,
-		'year'            =>$year,
-		'opportunitie_id' =>$op->id,	
-		'multi'           =>true,		
-		);
-		$data  =Ios::model()->getClientsMulti($filters);
+		$data  =Ios::model()->getClientsMulti($month,$year,null,null,null,$id,null,null,false);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -465,15 +389,8 @@ class FinanceController extends Controller
 		$model   =new Ios;
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
-		if(is_null($opportunitie->rate)){
-			$filters = array(
-			'month'           =>$month,
-			'year'            =>$year,
-			'opportunitie_id' =>$opportunitie->id,	
-			'multi'           =>true,		
-			);
-			$clients =$model->getClientsMulti($filters);
-		}
+		if(is_null($opportunitie->rate))
+			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->id,null,null,false);
 		else
 			$clients =$model->getClients($month,$year,null,null,null,$opportunitie->id,null,null,'otro')['data'];		
 		$dataProvider=new CArrayDataProvider($clients, array(

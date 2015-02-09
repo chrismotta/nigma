@@ -640,6 +640,7 @@ class KHtml extends CHtml
             $alert = array('error', 'info', 'success', 'warning', 'muted');
             $i = 0;
             foreach($totals as $total){
+                $invoice_percent=(isset($total['total_invoiced']) && isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
                 $rowTotals.= '
                 <div class="span'.$span.'">
                     <div class="alert alert-'.$alert[$i].'">';
@@ -649,7 +650,7 @@ class KHtml extends CHtml
                         $rowTotals.=isset($total['total_deal']) ? '<h5 class="">Total Closed Deal: '.number_format($total['total_deal'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total']) ?'<h5 class="">Total: '.number_format($total['total'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_invoiced']) ? '<h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>' : '';
-                        $rowTotals.=isset($total['total_invoiced']) && isset($total['total']) ? '<h6 class="">Invoiced Percent: '.round(($total['total_invoiced']*100)/$total['total'],2).'%</h6>' : '';
+                        $rowTotals.=isset($total['total_invoiced']) && isset($total['total']) ? '<h6 class="">Invoiced Percent: '.$invoice_percent.'%</h6>' : '';
                     $rowTotals.= '</div>';
                 $rowTotals.='</div>
                 ';
