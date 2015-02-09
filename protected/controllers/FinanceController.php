@@ -27,7 +27,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
+				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -201,6 +201,110 @@ class FinanceController extends Controller
 		));
 	}
 	
+	public function actionBrandingClients()
+	{
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
+		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status    =isset($_GET['status']) ? $_GET['status'] : null;
+		$model  =new Ios;
+		$transactions=new TransactionCount;
+		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
+			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
+		else
+			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status,null,true);
+		
+		$consolidated=array();
+		foreach ($clients['data'] as $client) {
+			$client['total_revenue']     =$clients['totals_io'][$client['id']];
+			$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+			$client['total']             =$client['total_revenue']+$client['total_transaction'];
+			$consolidated[]              =$client;
+			isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
+			$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+		}
+		isset($totalCount) ? : $totalCount=array();;
+		foreach ($totalCount as $key => $value) {
+			$currency=Ios::model()->findByPk($key)->currency;
+			isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
+			$totalCountCurrency[$currency]+=$value;
+		}
+
+
+		$totalsdata=array();
+		$filtersForm =new FiltersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+
+		$filteredData=$filtersForm->filter($consolidated);
+		$dataProvider=new CArrayDataProvider($filteredData, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io','comment'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		$i=0;
+
+		$totalsTransactions=array();
+		$totalsInvoicedTransactions=array();
+		$totalsTransactionsInvoicedTemp=TransactionCount::model()->getTotalsInvoicedCurrency($year.'-'.$month.'-01');
+		$totalsTransactionsTemp=TransactionCount::model()->getTotalsCurrency($year.'-'.$month.'-01');
+		foreach ($totalsTransactionsInvoicedTemp as $value) {
+			$totalsInvoicedTransactions[$value['currency']]=$value['total'];
+		}
+		foreach ($totalsTransactionsTemp as $value) {
+			$totalsTransactions[$value['currency']]=$value['total'];
+		}
+
+		if(isset($clients['totals']))
+		{
+			foreach ($clients['totals'] as $key => $value) {
+				$i++;
+				$totalsdata[$i]['id']          =$i;
+				$totalsdata[$i]['currency']    =$key;
+				$totalsdata[$i]['sub_total']   =$value['revenue'];
+				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
+				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
+				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
+				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+			}
+		}
+		
+		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','total','sub_total','total_count','total_invoiced'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+
+		$this->render('brandingClients',array(
+			'model'        =>$model,
+			'filtersForm'  =>$filtersForm,
+			'dataProvider' =>$dataProvider,
+			'clients'      =>$consolidated,
+			'clients2'     =>$clients,
+			'totals'       =>$totalsDataProvider,
+			'month'        =>$month,
+			'year'         =>$year,
+			'stat'         =>$status,
+			'entity'       =>$entity,
+			'cat'          =>$cat,
+		));
+	}
 	public function actionProviders()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
