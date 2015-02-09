@@ -157,6 +157,7 @@ class FinanceController extends Controller
 		foreach ($totalsTransactionsTemp as $value) {
 			$totalsTransactions[$value['currency']]=$value['total'];
 		}
+
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
@@ -199,7 +200,7 @@ class FinanceController extends Controller
 			'cat'          =>$cat,
 		));
 	}
-
+	
 	public function actionProviders()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;

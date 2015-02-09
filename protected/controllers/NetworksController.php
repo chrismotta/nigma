@@ -66,8 +66,7 @@ class NetworksController extends Controller
 		$modelProv=new Providers;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelNetw);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelNetw, $modelProv);
 
 		if(isset($_POST['Networks']) && isset($_POST['Providers']))
 		{
@@ -94,8 +93,7 @@ class NetworksController extends Controller
 		$modelProv=Providers::model()->findByPk($modelNetw->providers_id);
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelNetw);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelNetw, $modelProv);
 
 		if(isset($_POST['Networks']) && isset($_POST['Providers']))
 		{
@@ -156,11 +154,11 @@ class NetworksController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Networks $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($modelNetw, $modelProv)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='networks-form')
 		{
-			echo CActiveForm::validate($model);
+			echo CActiveForm::validate(array($modelNetw, $modelProv));
 			Yii::app()->end();
 		}
 	}

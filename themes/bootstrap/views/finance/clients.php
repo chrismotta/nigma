@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo KHtml::currencyTotalsClients($totals->getData());
+echo KHtml::currencyTotals($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),

@@ -164,6 +164,8 @@ class ClicksLogController extends Controller
 		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
 		$model->match_type   = isset($_GET["g_mty"]) ? $_GET["g_mty"] : null;
 
+		// get query if exists
+
 		$tmp = array();
 		if (preg_match('/q=[^\&]*/', $model->referer, $tmp)) {
 			$model->query = urldecode(substr($tmp[0], 2));
@@ -313,12 +315,12 @@ class ClicksLogController extends Controller
 					header("Location: ".$redirectURL);
 				}
 			}else{
-				echo "no redirect";
+				logError("no redirect");
 			}
 				
 				
 		}else{
-			print "no guardado";
+			logError("no guardado");
 		}
 
 	}
@@ -528,6 +530,12 @@ class ClicksLogController extends Controller
 		$command = Yii::app()->db->createCommand($deleteRows);
 		$result['deleted'] = $command->execute();
 		echo json_encode($result);
+	}
+
+	public function logError($msg){
+		
+		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
+
 	}
 
 	// Uncomment the following methods and override them if needed

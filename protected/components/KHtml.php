@@ -298,9 +298,9 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         if ( empty($providers_id) )
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active'") );
         else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => 'providers_id IN (' . join($providers_id, ', ') . ')') );
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
 
         $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
 
@@ -631,7 +631,7 @@ class KHtml extends CHtml
         );
     } 
 
-    public static function currencyTotalsClients($totals=array())
+    public static function currencyTotals($totals=array())
     {
         $rowTotals='<div class="row totals-bar ">';
         if(count($totals)>0)
@@ -640,44 +640,19 @@ class KHtml extends CHtml
             $alert = array('error', 'info', 'success', 'warning', 'muted');
             $i = 0;
             foreach($totals as $total){
-                $invoice_percent=(isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
+                $invoice_percent=(isset($total['total_invoiced']) && isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
                 $rowTotals.= '
                 <div class="span'.$span.'">
-                    <div class="alert alert-'.$alert[$i].'">
-                        <small >TOTAL '.$total['currency'].'</small>
-                        <h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>
-                        <h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>
-                        <h5 class="">Total: '.number_format($total['total'],2).'</h5>
-                        <h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>
-                        <h6 class="">Invoiced Percent: '.$invoice_percent.'%</h6>
-                    </div>
-                </div>
-                ';
-                $i++;
-            }
-        }
-        $rowTotals.='</div>';
-        return $rowTotals;
-    }
-
-    public static function currencyTotalsProviders($totals=array())
-    {
-        $rowTotals='<div class="row totals-bar ">';
-        if(count($totals)>0)
-        {
-            $span = floor( 12 / count($totals) );
-            $alert = array('error', 'info', 'success', 'warning', 'muted');
-            $i = 0;
-            foreach($totals as $total){
-                $rowTotals.= '
-                <div class="span'.$span.'">
-                    <div class="alert alert-'.$alert[$i].'">
-                        <small >TOTAL '.$total['currency'].'</small>
-                        <h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>
-                        <h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>
-                        <h5 class="">Total: '.number_format($total['total'],2).'</h5>
-                    </div>
-                </div>
+                    <div class="alert alert-'.$alert[$i].'">';
+                        $rowTotals.=isset($total['currency']) ? '<small >TOTAL '.$total['currency'].'</small>':'';
+                        $rowTotals.=isset($total['sub_total']) ? '<h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>' : '';
+                        $rowTotals.=isset($total['total_count']) ? '<h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_deal']) ? '<h5 class="">Total Closed Deal: '.number_format($total['total_deal'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total']) ?'<h5 class="">Total: '.number_format($total['total'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_invoiced']) ? '<h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>' : '';
+                        $rowTotals.=isset($total['total_invoiced']) && isset($total['total']) ? '<h6 class="">Invoiced Percent: '.$invoice_percent.'%</h6>' : '';
+                    $rowTotals.= '</div>';
+                $rowTotals.='</div>
                 ';
                 $i++;
             }

@@ -67,9 +67,9 @@ class Ios extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, contact_com, email_com, contact_adm, email_adm, commercial_id, entity, net_payment, advertisers_id', 'required'),
-			array('prospect, country_id, commercial_id, advertisers_id, agency_commission, is_brand', 'numerical', 'integerOnly'=>true),
+			array('prospect, country_id, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
 			array('email_com, email_adm, email_validation','email'),
-			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment, invoice_date, closed_amount', 'length', 'max'=>128),
+			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
 			array('entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
@@ -136,9 +136,6 @@ class Ios extends CActiveRecord
 			'status'           => 'Status',
 			'description'      => 'Description',
 			'email_validation' => 'Email Validation',
-			'agency_commission'=> 'Agency Commission',
-			'closed_amount'	   => 'Closed Amount',
-			'invoice_date'	   => 'Invoice Date',
 		);
 	}
 
@@ -283,7 +280,7 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1 )) ";
+							LIMIT 0,1 ))";
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";
 			
@@ -425,8 +422,8 @@ class Ios extends CActiveRecord
 				$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
 				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
 				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['comment']       =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['date']       =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['comment']         =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['date']            =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
 				$data[$i]['conv']            =round($daily->conversions,2);
 				$data[$i]['rate']            =$daily->rate;		
