@@ -67,9 +67,9 @@ class Ios extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, contact_com, email_com, contact_adm, email_adm, commercial_id, entity, net_payment, advertisers_id', 'required'),
-			array('prospect, country_id, commercial_id, advertisers_id, agency_commission, closed_deal', 'numerical', 'integerOnly'=>true),
+			array('prospect, country_id, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
 			array('email_com, email_adm, email_validation','email'),
-			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment, invoice_date, closed_amount', 'length', 'max'=>128),
+			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
 			array('entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
@@ -136,9 +136,6 @@ class Ios extends CActiveRecord
 			'status'           => 'Status',
 			'description'      => 'Description',
 			'email_validation' => 'Email Validation',
-			'agency_commission'=> 'Agency Commission',
-			'closed_amount'	   => 'Closed Amount',
-			'invoice_date'	   => 'Invoice Date',
 		);
 	}
 
@@ -283,8 +280,7 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1 )) 
-					AND i.closed_deal=0 ";
+							LIMIT 0,1 ))";
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";
 			
@@ -364,8 +360,7 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1  ))) 
-					AND i.closed_deal=0 ";
+							LIMIT 0,1  ))) ";
 			#Add filters to query
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";										
@@ -549,92 +544,6 @@ class Ios extends CActiveRecord
 		$result = array(
 			'data'            => $consolidated, 
 			'totals_io'       => $totals_io, 
-			'totals'          => $totals, 
-			'totals_invoiced' => $totals_invoiced
-		);
-		return $result;
-	}
-
-	public function getClientsClosedDeal($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
-	{
-
-		$iosValidation           =new IosValidation;
-		$query='SELECT 
-		i.id AS io_id,
-		i.entity AS entity,
-		i.currency AS currency,
-		i.commercial_name AS commercial_name,
-		i.closed_amount as total,
-		sum(IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)) as conversions,
-		sum(IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)) as imp,
-		sum(d.clics) as clics
-		from daily_report d 
-		inner join campaigns c on d.campaigns_id=c.id
-		inner join opportunities o on c.opportunities_id=o.id
-		inner join ios i on o.ios_id=i.id
-		where i.closed_deal=1 ';
-
-		if($entity)	
-			$query .= "AND i.entity='".$entity."' ";										
-		if($io)	
-			$query .= "AND i.id='".$io."' ";
-
-		if($accountManager)	
-			$query .= "AND o.account_manager_id='".$accountManager."' ";						
-		if($opportunitie_id)	
-			$query .= "AND o.id=".$opportunitie_id." ";
-
-		if($cat)	
-			$query .= "AND a.cat='".$cat."' ";
-		$query .='group by i.id';
-		$data=array();
-		$totals=array();
-		$totals_invoiced=array();
-		if($dailys=DailyReport::model()->findAllBySql($query)){
-			$i=0;
-			#Save results to array group by io,carrier and date			
-			foreach ($dailys as $daily) {
-				if($status)
-				{
-					if($status=='ok')
-					{
-						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
-						{
-							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
-								continue;
-						}
-					}
-					else
-						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
-				}				
-				$data[$i]['id']        =$daily->io_id;
-				$data[$i]['name']      =$daily->commercial_name;				
-				$data[$i]['currency']  =$daily->currency;
-				$data[$i]['entity']    =$daily->entity;			
-				$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['date']      =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['imp']       =floatval($daily->imp);
-				$data[$i]['conv']      =floatval($daily->conversions);	
-				$data[$i]['clics']     =floatval($daily->clics);	
-				$data[$i]['total']     =round($daily->total,2);	
-				$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');			
-				$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');		
-				#This array have totals
-				isset($totals[$data[$i]['currency']]['revenue']) ?  : $totals[$data[$i]['currency']]['revenue'] =0;
-					$totals[$data[$i]['currency']]['revenue']+=$data[$i]['total'];
-				
-				isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
-					if($data[$i]['status_io']=='Invoiced')
-					$totals_invoiced[$data[$i]['currency']]+=$data[$i]['total'];	
-
-				$i++;		
-			}
-		}
-		#Return clients, totals by io and totals
-		$result = array(
-			'data'            => $data, 
-			// 'totals_io'       => $totals_io, 
 			'totals'          => $totals, 
 			'totals_invoiced' => $totals_invoiced
 		);
