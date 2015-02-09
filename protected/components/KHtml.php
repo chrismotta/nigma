@@ -640,7 +640,7 @@ class KHtml extends CHtml
             $alert = array('error', 'info', 'success', 'warning', 'muted');
             $i = 0;
             foreach($totals as $total){
-                $invoice_percent=(isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
+                $invoice_percent=(isset($total['total_invoiced']) && isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
                 $rowTotals.= '
                 <div class="span'.$span.'">
                     <div class="alert alert-'.$alert[$i].'">';
