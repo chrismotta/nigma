@@ -55,37 +55,6 @@
         //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
         echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
         echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
-        echo '<hr/>';
-        echo $form->checkboxRow($model, 'is_brand', array(
-            'onChange' => '
-              if (this.checked == "1")
-                $(".brand").show();
-              else
-                $(".brand").hide();
-
-              return;
-              '
-        ));
-        echo '<div style="display: ' . ($model->is_brand   ? 'block' : 'none') . ';" class="brand">';
-            echo $form->textFieldRow($model, 'closed_amount', array('class'=>'span3'));
-            echo $form->textFieldRow($model, 'agency_commission', array('class'=>'span3'));
-            echo $form->datepickerRow($model, 'invoice_date', array(
-            'options' => array(
-                    'autoclose'      => true,
-                    'todayHighlight' => true,
-                    'clearBtn'       => true,
-                    'format'         => 'yyyy-mm-dd',
-                    'viewformat'     => 'dd-mm-yyyy',
-                    'placement'      => 'right',
-                ),
-                'htmlOptions' => array(
-                    'class' => 'span3',
-                )),
-                array(
-                    'append' => '<label for="Ios_invoice_date"><i class="icon-calendar"></i></label>',
-                )
-            );
-        echo '</div>';
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>
