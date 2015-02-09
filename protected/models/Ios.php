@@ -456,7 +456,7 @@ class Ios extends CActiveRecord
 			'opportunitie_id' =>$opportunitie_id,
 			'categorie'       =>$cat,
 			'status'          =>$status,	
-			'multi'           =>false,		
+			'multi'           =>true,		
 			);
 		#Declare arrays to use
 		$totals_io       =array();
@@ -464,7 +464,7 @@ class Ios extends CActiveRecord
 		$data            =array();
 		$totals_invoiced =array();
 		$dailysNoMulti   =Ios::model()->getClientsMulti($filters);
-		$filters['multi']=true;
+		$filters['multi']=false;
 		$dailysMulti     =Ios::model()->getClientsMulti($filters);
 		$dailys          =array_merge($dailysNoMulti,$dailysMulti);
 		

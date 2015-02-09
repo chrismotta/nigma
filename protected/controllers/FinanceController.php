@@ -226,7 +226,13 @@ class FinanceController extends Controller
 		$year  =$_GET['year'];
 		$id    =$_GET['id'];
 		$op    =Opportunities::model()->findByPk($id);
-		$data  =Ios::model()->getClientsMulti($month,$year,null,null,null,$id,null,null,false);
+		$filters = array(
+				'month'           =>$month,
+				'year'            =>$year,
+				'opportunitie_id' =>$id,
+				'multi'           =>true,		
+				);
+		$data  =Ios::model()->getClientsMulti($filters);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -389,8 +395,15 @@ class FinanceController extends Controller
 		$model   =new Ios;
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
-		if(is_null($opportunitie->rate))
-			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->id,null,null,false);
+		if(is_null($opportunitie->rate)){
+			$filters = array(
+				'month'           =>$month,
+				'year'            =>$year,
+				'opportunitie_id' =>$opportunitie->id,
+				'multi'           =>true,		
+				);
+			$clients =$model->getClientsMulti($filters);			
+		}
 		else
 			$clients =$model->getClients($month,$year,null,null,null,$opportunitie->id,null,null,'otro')['data'];		
 		$dataProvider=new CArrayDataProvider($clients, array(
