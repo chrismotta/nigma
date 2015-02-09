@@ -158,22 +158,18 @@ class FinanceController extends Controller
 			$totalsTransactions[$value['currency']]=$value['total'];
 		}
 
-		$totalsdeal=$model->getClientsClosedDeal($month,$year,$entity,null,null,null,$cat,$status);
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
 				$i++;
-				$deal=isset($totalsdeal['totals'][$key]['revenue']) ? $totalsdeal['totals'][$key]['revenue'] : 0;
-				$invoice=isset($totalsdeal['totals'][$key]['revenue']) ? $totalsdeal['totals_invoiced'][$key] : 0;
 				$totalsdata[$i]['id']          =$i;
 				$totalsdata[$i]['currency']    =$key;
 				$totalsdata[$i]['sub_total']   =$value['revenue'];
-				$totalsdata[$i]['total_deal']   =$deal;
 				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
 				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total']+$totalsdata[$i]['total_deal'];
+				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
 				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0 + $invoice;
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]);
 			}
 		}
 		
@@ -299,7 +295,14 @@ class FinanceController extends Controller
 		$year  =$_GET['year'];
 		$id    =$_GET['id'];
 		$op    =Opportunities::model()->findByPk($id);
-		$data  =Ios::model()->getClientsMulti($month,$year,null,null,null,$id,null,null,false);
+
+		$filters = array(
+		'month'           =>$month,
+		'year'            =>$year,
+		'opportunitie_id' =>$op->id,	
+		'multi'           =>true,		
+		);
+		$data  =Ios::model()->getClientsMulti($filters);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -462,8 +465,15 @@ class FinanceController extends Controller
 		$model   =new Ios;
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
-		if(is_null($opportunitie->rate))
-			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->id,null,null,false);
+		if(is_null($opportunitie->rate)){
+			$filters = array(
+			'month'           =>$month,
+			'year'            =>$year,
+			'opportunitie_id' =>$opportunitie->id,	
+			'multi'           =>true,		
+			);
+			$clients =$model->getClientsMulti($filters);
+		}
 		else
 			$clients =$model->getClients($month,$year,null,null,null,$opportunitie->id,null,null,'otro')['data'];		
 		$dataProvider=new CArrayDataProvider($clients, array(

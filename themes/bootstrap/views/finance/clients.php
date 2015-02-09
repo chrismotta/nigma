@@ -234,7 +234,7 @@ else
 			),
 		array(
 			'name'              =>'rate',
-			'value'             =>'$data["multi"] === 1 ? $data["rate"] : "Multi"',
+			'value'             =>'$data["multi"] === 0 ? $data["rate"] : "Multi"',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			'header'            =>'Rate',	
@@ -248,7 +248,7 @@ else
 			'htmlOptions'       => array('class'=>'plusMR'),
 			'type'              => 'raw',
 			'value'             =>	'
-				$data["multi"] === 0 ?
+				$data["multi"] === 1 ?
 				CHtml::link(
 					"<i class=\"icon-plus\"></i>",
 					array("multiRate?id=" . $data["opportunitie_id"] ."&month='.$month.'&year='.$year.'"),

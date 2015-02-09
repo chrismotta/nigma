@@ -67,7 +67,7 @@ class Ios extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, contact_com, email_com, contact_adm, email_adm, commercial_id, entity, net_payment, advertisers_id', 'required'),
-			array('prospect, country_id, commercial_id, advertisers_id, agency_commission, closed_deal', 'numerical', 'integerOnly'=>true),
+			array('prospect, country_id, commercial_id, advertisers_id, agency_commission', 'numerical', 'integerOnly'=>true),
 			array('email_com, email_adm, email_validation','email'),
 			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment, invoice_date, closed_amount', 'length', 'max'=>128),
 			array('currency', 'length', 'max'=>6),
@@ -233,8 +233,18 @@ class Ios extends CActiveRecord
 	{
 		return parent::model($className);
 	}
-	public function getClientsMulti($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$multi=false)
+	public function getClientsMulti($filters)
 	{
+		$month           = isset($filters['month']) ? $filters['month'] : null;
+		$year            = isset($filters['year']) ? $filters['year'] : null;
+		$entity          = isset($filters['entity']) ? $filters['entity'] : null;
+		$io              = isset($filters['io']) ? $filters['io'] : null;
+		$accountManager  = isset($filters['accountManager']) ? $filters['accountManager'] : null;
+		$opportunitie_id = isset($filters['opportunitie_id']) ? $filters['opportunitie_id'] : null;
+		$cat             = isset($filters['categorie']) ? $filters['categorie'] : null;
+		$status          = isset($filters['status']) ? $filters['status'] : null;
+		$multi           = isset($filters['multi']) ? $filters['multi'] : false;
+
 		#Instance of models to use
 		$opportunitiesValidation =new OpportunitiesValidation;
 		$iosValidation           =new IosValidation;
@@ -247,7 +257,7 @@ class Ios extends CActiveRecord
 		$totals    =array();
 		$data      =array();
 
-		if($multi==false)
+		if($multi==true)
 		{
 			#Query to find clients with multi rate
 			$query=
@@ -283,8 +293,7 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1 )) 
-					AND i.closed_deal=0 ";
+							LIMIT 0,1 )) ";
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";
 			
@@ -364,8 +373,7 @@ class Ios extends CActiveRecord
 							WHERE ov.created_time <= '".$year."-".$month."-31'
 								AND ov.id = o.id
 							ORDER BY ov.created_time DESC
-							LIMIT 0,1  ))) 
-					AND i.closed_deal=0 ";
+							LIMIT 0,1  ))) ";
 			#Add filters to query
 			if($entity)	
 				$query .= "AND i.entity='".$entity."' ";										
@@ -442,43 +450,62 @@ class Ios extends CActiveRecord
 	
 	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$group)
 	{
+		$filters = array(
+			'month'           =>$month,
+			'year'            =>$year,
+			'entity'          =>$entity,
+			'io'              =>$io,
+			'accountManager'  =>$accountManager,
+			'opportunitie_id' =>$opportunitie_id,
+			'categorie'       =>$cat,
+			'status'          =>$status,	
+			'multi'           =>false,		
+			);
 		#Declare arrays to use
-		$totals_io    =array();
-		$totals    =array();
-		$data      =array();
-		$totals_invoiced=array();
-		$dailysNoMulti=Ios::model()->getClientsMulti($month,$year,$entity,$io,$accountManager,$opportunitie_id,$cat,$status,false);
-		$dailysMulti=Ios::model()->getClientsMulti($month,$year,$entity,$io,$accountManager,$opportunitie_id,$cat,$status,true);
-		$dailys=array_merge($dailysNoMulti,$dailysMulti);
+		$totals_io       =array();
+		$totals          =array();
+		$data            =array();
+		$totals_invoiced =array();
+		$dailysNoMulti   =Ios::model()->getClientsMulti($filters);
+		$filters['multi']=true;
+		$dailysMulti     =Ios::model()->getClientsMulti($filters);
+		$dailys          =array_merge($dailysNoMulti,$dailysMulti);
+		
 		if($group=='profile')
 		{
 			#Save results to array group by io,carrier and date
-			foreach ($dailys as $daily) {				
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['id']              =$daily['id'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['name']            =$daily['name'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['opportunitie']    =$daily['opportunitie'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['opportunitie_id'] =$daily['opportunitie_id'];						
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['product']         =$daily['product'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['currency']        =$daily['currency'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['entity']          =$daily['entity'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['model']           =$daily['model'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['carrier']         =$daily['carrier'];				
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['mobileBrand']     =$daily['mobileBrand'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_opp']      =$daily['status_opp'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['country']         =$daily['country'];//aca esta el country
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['status_io']       =$daily['status_io'];				
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['comment']       =$daily['comment'];				
+			foreach ($dailys as $daily) {	
+				$id      = $daily['id'];
+				$carrier = $daily['carrier'];
+				$product = $daily['product'];
+				$rate    = $daily['rate'];
+				$revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+
+				$data[$id][$carrier][$product][$rate]['id']              =$daily['id'];
+				$data[$id][$carrier][$product][$rate]['name']            =$daily['name'];
+				$data[$id][$carrier][$product][$rate]['opportunitie']    =$daily['opportunitie'];
+				$data[$id][$carrier][$product][$rate]['opportunitie_id'] =$daily['opportunitie_id'];						
+				$data[$id][$carrier][$product][$rate]['product']         =$daily['product'];
+				$data[$id][$carrier][$product][$rate]['currency']        =$daily['currency'];
+				$data[$id][$carrier][$product][$rate]['entity']          =$daily['entity'];
+				$data[$id][$carrier][$product][$rate]['model']           =$daily['model'];
+				$data[$id][$carrier][$product][$rate]['carrier']         =$daily['carrier'];				
+				$data[$id][$carrier][$product][$rate]['mobileBrand']     =$daily['mobileBrand'];
+				$data[$id][$carrier][$product][$rate]['status_opp']      =$daily['status_opp'];
+				$data[$id][$carrier][$product][$rate]['country']         =$daily['country'];//aca esta el country
+				$data[$id][$carrier][$product][$rate]['status_io']       =$daily['status_io'];				
+				$data[$id][$carrier][$product][$rate]['comment']         =$daily['comment'];				
 				#If isset, set arrays (conv,revenue) and sum
-				isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']=0;
-				isset($data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']) ? : $data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']=0;
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['revenue']         +=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['conv']            +=$daily['conv'];
-				$data[$daily['id']][$daily['carrier']][$daily['product']][$daily['rate']]['rate']            =$daily['rate'];
+				isset($data[$id][$carrier][$product][$rate]['revenue']) ? : $data[$id][$carrier][$product][$rate]['revenue']=0;
+				isset($data[$id][$carrier][$product][$rate]['conv']) ? : $data[$id][$carrier][$product][$rate]['conv']=0;
+				$data[$id][$carrier][$product][$rate]['revenue']         +=$revenue;
+				$data[$id][$carrier][$product][$rate]['conv']            +=$daily['conv'];
+				$data[$id][$carrier][$product][$rate]['rate']            =$daily['rate'];
 
 				#This array have totals
 				isset($totals['revenue']) ?  : $totals['revenue'] =0;
 				isset($totals['conv']) ?  : $totals['conv'] =0;
-				$totals['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+				$totals['revenue']+=$revenue;
 				$totals['conv']+=$daily['conv'];
 			}
 
@@ -497,40 +524,47 @@ class Ios extends CActiveRecord
 		else
 		{
 			foreach ($dailys as $daily) {
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['id']              =$daily['id'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['name']            =$daily['name'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['opportunitie']    =$daily['opportunitie'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['opportunitie_id'] =$daily['opportunitie_id'];						
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['product']         =$daily['product'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['currency']        =$daily['currency'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['entity']          =$daily['entity'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['model']           =$daily['model'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['carrier']         =$daily['carrier'];				
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['mobileBrand']     =$daily['mobileBrand'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_opp']      =$daily['status_opp'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['country']         =$daily['country'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['status_io']       =$daily['status_io'];				
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['comment']       =$daily['comment'];				
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['date']       =$daily['date'];				
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['multi']           =$daily['multi'];				
+				$id      = $daily['id'];
+				$carrier = $daily['carrier'];
+				$product = $daily['product'];
+				$rate    = $daily['multi']==false ? $daily['rate'] : 'multi';
+				$revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+
+				$opportunitie=$daily['opportunitie_id'];
+				$data[$id][$opportunitie_id][$rate]['id']              =$daily['id'];
+				$data[$id][$opportunitie_id][$rate]['name']            =$daily['name'];
+				$data[$id][$opportunitie_id][$rate]['opportunitie']    =$daily['opportunitie'];
+				$data[$id][$opportunitie_id][$rate]['opportunitie_id'] =$daily['opportunitie_id'];						
+				$data[$id][$opportunitie_id][$rate]['product']         =$daily['product'];
+				$data[$id][$opportunitie_id][$rate]['currency']        =$daily['currency'];
+				$data[$id][$opportunitie_id][$rate]['entity']          =$daily['entity'];
+				$data[$id][$opportunitie_id][$rate]['model']           =$daily['model'];
+				$data[$id][$opportunitie_id][$rate]['carrier']         =$daily['carrier'];				
+				$data[$id][$opportunitie_id][$rate]['mobileBrand']     =$daily['mobileBrand'];
+				$data[$id][$opportunitie_id][$rate]['status_opp']      =$daily['status_opp'];
+				$data[$id][$opportunitie_id][$rate]['country']         =$daily['country'];
+				$data[$id][$opportunitie_id][$rate]['status_io']       =$daily['status_io'];				
+				$data[$id][$opportunitie_id][$rate]['comment']         =$daily['comment'];				
+				$data[$id][$opportunitie_id][$rate]['date']            =$daily['date'];				
+				$data[$id][$opportunitie_id][$rate]['multi']           =$daily['multi'];				
 				#If isset, set arrays (conv,revenue) and sum
-				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']=0;
-				isset($data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']) ? : $data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']=0;
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['revenue']         +=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['conv']            +=$daily['conv'];
-				$data[$daily['id']][$daily['opportunitie_id']][$daily['multi']==true ? $daily['rate'] : 'multi']['rate']            =$daily['rate'];
+				isset($data[$id][$opportunitie_id][$rate]['revenue']) ? : $data[$id][$opportunitie_id][$rate]['revenue']=0;
+				isset($data[$id][$opportunitie_id][$rate]['conv']) ? : $data[$id][$opportunitie_id][$rate]['conv']=0;
+				$data[$id][$opportunitie_id][$rate]['revenue']         +=$revenue;
+				$data[$id][$opportunitie_id][$rate]['conv']            +=$daily['conv'];
+				$data[$id][$opportunitie_id][$rate]['rate']            =$daily['rate'];
 
 				isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
 					if($daily['status_io']=='Invoiced')
-					$totals_invoiced[$daily['currency']]+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+					$totals_invoiced[$daily['currency']]+=$revenue;
 
 
 				#This array have totals
 				isset($totals[$daily['currency']]) ?  : $totals[$daily['currency']]['revenue'] =0;
-					$totals[$daily['currency']]['revenue']+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+					$totals[$daily['currency']]['revenue']+=$revenue;
 
 				isset($totals_io[$daily['id']]) ?  : $totals_io[$daily['id']] =0;
-					$totals_io[$daily['id']]+=$daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+					$totals_io[$daily['id']]+=$revenue;
 			}
 			#Make array like CArrayDataProvider
 			$consolidated=array();
@@ -555,91 +589,91 @@ class Ios extends CActiveRecord
 		return $result;
 	}
 
-	public function getClientsClosedDeal($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
-	{
+	// public function getClientsClosedDeal($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null)
+	// {
 
-		$iosValidation           =new IosValidation;
-		$query='SELECT 
-		i.id AS io_id,
-		i.entity AS entity,
-		i.currency AS currency,
-		i.commercial_name AS commercial_name,
-		i.closed_amount as total,
-		sum(IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)) as conversions,
-		sum(IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)) as imp,
-		sum(d.clics) as clics
-		from daily_report d 
-		inner join campaigns c on d.campaigns_id=c.id
-		inner join opportunities o on c.opportunities_id=o.id
-		inner join ios i on o.ios_id=i.id
-		where i.closed_deal=1 ';
+	// 	$iosValidation           =new IosValidation;
+	// 	$query='SELECT 
+	// 	i.id AS io_id,
+	// 	i.entity AS entity,
+	// 	i.currency AS currency,
+	// 	i.commercial_name AS commercial_name,
+	// 	i.closed_amount as total,
+	// 	sum(IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)) as conversions,
+	// 	sum(IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)) as imp,
+	// 	sum(d.clics) as clics
+	// 	from daily_report d 
+	// 	inner join campaigns c on d.campaigns_id=c.id
+	// 	inner join opportunities o on c.opportunities_id=o.id
+	// 	inner join ios i on o.ios_id=i.id
+	// 	where i.closed_deal=1 ';
 
-		if($entity)	
-			$query .= "AND i.entity='".$entity."' ";										
-		if($io)	
-			$query .= "AND i.id='".$io."' ";
+	// 	if($entity)	
+	// 		$query .= "AND i.entity='".$entity."' ";										
+	// 	if($io)	
+	// 		$query .= "AND i.id='".$io."' ";
 
-		if($accountManager)	
-			$query .= "AND o.account_manager_id='".$accountManager."' ";						
-		if($opportunitie_id)	
-			$query .= "AND o.id=".$opportunitie_id." ";
+	// 	if($accountManager)	
+	// 		$query .= "AND o.account_manager_id='".$accountManager."' ";						
+	// 	if($opportunitie_id)	
+	// 		$query .= "AND o.id=".$opportunitie_id." ";
 
-		if($cat)	
-			$query .= "AND a.cat='".$cat."' ";
-		$query .='group by i.id';
-		$data=array();
-		$totals=array();
-		$totals_invoiced=array();
-		if($dailys=DailyReport::model()->findAllBySql($query)){
-			$i=0;
-			#Save results to array group by io,carrier and date			
-			foreach ($dailys as $daily) {
-				if($status)
-				{
-					if($status=='ok')
-					{
-						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
-						{
-							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
-								continue;
-						}
-					}
-					else
-						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
-				}				
-				$data[$i]['id']        =$daily->io_id;
-				$data[$i]['name']      =$daily->commercial_name;				
-				$data[$i]['currency']  =$daily->currency;
-				$data[$i]['entity']    =$daily->entity;			
-				$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['date']      =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
-				$data[$i]['imp']       =floatval($daily->imp);
-				$data[$i]['conv']      =floatval($daily->conversions);	
-				$data[$i]['clics']     =floatval($daily->clics);	
-				$data[$i]['total']     =round($daily->total,2);	
-				$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');			
-				$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');		
-				#This array have totals
-				isset($totals[$data[$i]['currency']]['revenue']) ?  : $totals[$data[$i]['currency']]['revenue'] =0;
-					$totals[$data[$i]['currency']]['revenue']+=$data[$i]['total'];
+	// 	if($cat)	
+	// 		$query .= "AND a.cat='".$cat."' ";
+	// 	$query .='group by i.id';
+	// 	$data=array();
+	// 	$totals=array();
+	// 	$totals_invoiced=array();
+	// 	if($dailys=DailyReport::model()->findAllBySql($query)){
+	// 		$i=0;
+	// 		#Save results to array group by io,carrier and date			
+	// 		foreach ($dailys as $daily) {
+	// 			if($status)
+	// 			{
+	// 				if($status=='ok')
+	// 				{
+	// 					if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
+	// 					{
+	// 						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
+	// 							continue;
+	// 					}
+	// 				}
+	// 				else
+	// 					if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
+	// 			}				
+	// 			$data[$i]['id']        =$daily->io_id;
+	// 			$data[$i]['name']      =$daily->commercial_name;				
+	// 			$data[$i]['currency']  =$daily->currency;
+	// 			$data[$i]['entity']    =$daily->entity;			
+	// 			$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+	// 			$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
+	// 			$data[$i]['date']      =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
+	// 			$data[$i]['imp']       =floatval($daily->imp);
+	// 			$data[$i]['conv']      =floatval($daily->conversions);	
+	// 			$data[$i]['clics']     =floatval($daily->clics);	
+	// 			$data[$i]['total']     =round($daily->total,2);	
+	// 			$data[$i]['status_io'] =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');			
+	// 			$data[$i]['comment']   =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');		
+	// 			#This array have totals
+	// 			isset($totals[$data[$i]['currency']]['revenue']) ?  : $totals[$data[$i]['currency']]['revenue'] =0;
+	// 				$totals[$data[$i]['currency']]['revenue']+=$data[$i]['total'];
 				
-				isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
-					if($data[$i]['status_io']=='Invoiced')
-					$totals_invoiced[$data[$i]['currency']]+=$data[$i]['total'];	
+	// 			isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
+	// 				if($data[$i]['status_io']=='Invoiced')
+	// 				$totals_invoiced[$data[$i]['currency']]+=$data[$i]['total'];	
 
-				$i++;		
-			}
-		}
-		#Return clients, totals by io and totals
-		$result = array(
-			'data'            => $data, 
-			// 'totals_io'       => $totals_io, 
-			'totals'          => $totals, 
-			'totals_invoiced' => $totals_invoiced
-		);
-		return $result;
-	}
+	// 			$i++;		
+	// 		}
+	// 	}
+	// 	#Return clients, totals by io and totals
+	// 	$result = array(
+	// 		'data'            => $data, 
+	// 		// 'totals_io'       => $totals_io, 
+	// 		'totals'          => $totals, 
+	// 		'totals_invoiced' => $totals_invoiced
+	// 	);
+	// 	return $result;
+	// }
 
 	public function findByAdvertisers($advertiser)
 	{		
