@@ -116,15 +116,15 @@ class OpportunitiesValidation extends CActiveRecord
 			return false;
 	}
 
-	// public function checkValidationIo($io,$period)
-	// {
-	// 	$check=false;
-	// 	$ios=new Ios;
-	// 	$opportunities = $ios->getClients($month,$year,null,$io);
-	// 	foreach ($opportunities as $opportunitie) {
-	// 		if(checkValidation($opportunitie['opportunitie'],$period)==true) $check=true;
-	// 		else return false;
-	// 	}
-	// 	return $check;
-	// }
+	
+	public function loadByPeriod($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('opportunities_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::model()->find($criteria))
+			return $validation;
+		else return false;
+	}
 }
