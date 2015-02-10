@@ -548,13 +548,64 @@ class FinanceController extends Controller
 	
 	public function actionInvoice()
 	{
-		$this->renderPartial('invoice',
-		 array(
-				'io_id'  => $_POST['io_id'],
-				'period' => $_POST['period'],
-				'invoice_id' => $_POST['invoice_id'],
-		 	)
-		);
+		$date       =date('Y-m-d H:i:s', strtotime('NOW'));
+		$status     ="Invoiced";
+		$period     =$_REQUEST['period'];
+		$invoice_id =$_REQUEST['invoice_id'];
+		$log=new ValidationLog;
+		if(isset($_POST['io_id']))
+		{
+			$io_id      =$_POST['io_id'];
+			if($revenueValidation= IosValidation::model()->loadByIo($io_id,$period))
+			{
+				if($revenueValidation->status=='Approved' || $revenueValidation->status=='Expired')
+				{
+					$revenueValidation->attributes=array('status'=>$status,'invoice_id'=>$invoice_id);
+					if($revenueValidation->save())
+					{
+						//ENVIAR MAIL AQUI
+					    echo 'Io #'.$revenueValidation->ios_id.' invoiced';
+						$log->loadLog($revenueValidation->id,$status);
+					}
+					else 
+					    print_r($revenueValidation->getErrors());
+				}
+				elseif($revenueValidation->status=='Invoiced')
+				    echo 'IO already invoiced';		
+				else
+					echo 'IO no approved yet ';
+			}
+			else
+			 	echo 'Las opperaciones aun no han sido validadas';			
+		}
+		elseif (isset($_REQUEST['opportunitie_id'])) {
+			$opportunitie_id=$_REQUEST['opportunitie_id'];
+			if($opportunitiesValidation=OpportunitiesValidation::model()->loadByPeriod($opportunitie_id,$period))
+			{
+			 	echo 'Opportunitie already invoiced!';							
+			}
+			else
+			{
+				$opportunitiesValidation = new OpportunitiesValidation;
+				$opportunitiesValidation->attributes=array(
+					'opportunities_id' =>$opportunitie_id,
+					'period'           =>$period,
+					'date'             =>$date,
+					'invoice_id'       =>$invoice_id
+					);
+				if($opportunitiesValidation->save())
+				{
+					//FIXME agregar log
+				    echo 'Opportunitie #'.$opportunitiesValidation->opportunities_id.' invoiced'.$invoice_id;
+					// $log->loadLog($opportunitiesValidation->id,$status);
+				}
+				else 
+				    print_r($revenueValidation->getErrors());
+				
+			}
+		
+		}
+ 		Yii::app()->end();
 	}
 	
 	public function actionSendMail()
