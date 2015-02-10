@@ -115,16 +115,4 @@ class OpportunitiesValidation extends CActiveRecord
 		else
 			return false;
 	}
-
-	
-	public function loadByPeriod($id,$period)
-	{
-		$criteria=new CDbCriteria;
-		$criteria->addCondition('opportunities_id='.$id);
-		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
-		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
-		if($validation = self::model()->find($criteria))
-			return $validation;
-		else return false;
-	}
 }
