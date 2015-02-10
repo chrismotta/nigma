@@ -661,5 +661,47 @@ class KHtml extends CHtml
         $rowTotals.='</div>';
         return $rowTotals;
     }
+
+    public static function printAlerts()
+    {
+        $mainVar          =array();
+        $mainVar['count'] =0;
+        $mainVar['date']  = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+        $mainVar['year']  =date('Y', $mainVar['date']);
+        $mainVar['month'] =date('m', $mainVar['date']);
+        if (FilterManager::model()->isUserTotalAccess('alert.business')) 
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),4);
+            $mainVar['option'] ='ios';
+            foreach(IosValidation::model()->findAllByAttributes(array('status'=>'Validated','period'=>$mainVar['year'].'-'.$mainVar['month'].'-01')) as $value)
+            {
+                $mainVar['count']++;
+            }
+            if($mainVar['count']>0)
+                $message = 'You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'];
+        }elseif (FilterManager::model()->isUserTotalAccess('alert.media'))
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['option'] ='opportunities';
+            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            {
+                if(!$opportunitie['status_opp'])$mainVar['count']++;
+            }
+            if($mainVar['count']>0)
+                $message = 'You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'];
+        }elseif (FilterManager::model()->isUserTotalAccess('alert.finance'))
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['option'] ='opportunities closed deal';
+            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
+            {
+                if(!$opportunitie['status_opp'])$mainVar['count']++;
+            }
+            if($mainVar['count']>0)
+                $message = 'You have '.$mainVar['count'].' available '.$mainVar['option'].' to invoice.';
+        }
+        if(isset($message))
+            echo '<div class="alert alert-now">'.$message.'</div>';
+    }
 }
 ?>
