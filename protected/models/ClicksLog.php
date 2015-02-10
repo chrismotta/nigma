@@ -49,6 +49,7 @@ class ClicksLog extends CActiveRecord
 			'{referer}'        => $this->referer ? urlencode($this->referer) : '',
 			'{app}'            => $this->app ? urlencode($this->app) : '',
 			'{keyword}'        => $this->keyword ? urlencode($this->keyword) : '',
+			'{ktoken}'         => $this->tid ? urlencode($this->tid) : '',
 			);
 	}
 
@@ -67,8 +68,8 @@ class ClicksLog extends CActiveRecord
 		return array(
 			//array('campaigns_id, providers_id', 'required'),
 			array('campaigns_id, providers_id', 'numerical', 'integerOnly'=>true),
-			array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app, redirect_url', 'length', 'max'=>255),
-			array('device_type', 'length', 'max'=>45),
+			//array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app, redirect_url', 'length', 'max'=>255),
+			//array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, campaigns_id, providers_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),

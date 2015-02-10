@@ -68,11 +68,12 @@ class Opportunities extends CActiveRecord
 			array('country_id, model_adv, wifi, ios_id', 'required'),
 			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
+			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
-			array('product, comment, targeting, sizes, channel_description', 'length', 'max'=>255),
+			array('product, targeting, sizes, channel_description', 'length', 'max'=>255),
 			array('server_to_server, freq_cap', 'length', 'max'=>45),
 			array('status', 'length', 'max'=>8),
-			array('startDate, endDate', 'safe'),
+			array('startDate, endDate, comment', 'safe'),
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -420,7 +421,8 @@ class Opportunities extends CActiveRecord
                     ->where("id=:id AND DATE(created_time)<=:date", array(':date' => date('Y-m-d', strtotime($date)), ":id" => $this->id))
                     ->order('created_time DESC')
                     ->queryAll(false);
-        return $q[0][0]; // return first column of first register
+        // return first column of first register if exists
+        return isset($q[0][0]) ? $q[0][0] : NULL; 
 	}
 
 }

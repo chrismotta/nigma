@@ -31,6 +31,7 @@
  * @property string $email_com
  * @property string $contact_adm
  * @property string $email_adm
+ * @property string $phone
  * @property string $entity
  * @property string $tax_id
  * @property integer $prospect
@@ -68,17 +69,18 @@ class Providers extends CActiveRecord
 			array('name, model, net_payment, start_date, commercial_name, state, zip_code, entity, tax_id', 'required'),
 			array('country_id, has_s2s, has_token, prospect', 'numerical', 'integerOnly'=>true),
 			array('prefix, sizes, placeholder', 'length', 'max'=>45),
-			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name', 'length', 'max'=>128),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'length', 'max'=>128),
 			array('currency, model, entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
 			array('deal', 'length', 'max'=>12),
 			array('post_payment_amount, daily_cap', 'length', 'max'=>11),
 			array('callback', 'length', 'max'=>255),
-			array('end_date', 'safe'),
+			array('end_date,foundation_date', 'safe'),
 			array('callback', 'length', 'max'=>255),
+			array('prefix','unique', 'message'=>'This prefix already exists.'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name', 'safe', 'on'=>'search'),
+			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -93,6 +95,7 @@ class Providers extends CActiveRecord
 			'affiliates'   => array(self::HAS_ONE, 'Affiliates', 'providers_id'),
 			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'providers_id'),
 			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'providers_id'),
+			'transactionProviders'    => array(self::HAS_MANY, 'TransactionProviders', 'providers_id'),
 			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
 			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'providers_id'),
 			'networks'     => array(self::HAS_ONE, 'Networks', 'providers_id'),
@@ -131,14 +134,23 @@ class Providers extends CActiveRecord
 			'state'               => 'State',
 			'zip_code'            => 'Zip Code',
 			'address'             => 'Address',
-			'contact_com'         => 'Contact Com',
-			'email_com'           => 'Email Com',
-			'contact_adm'         => 'Contact Adm',
-			'email_adm'           => 'Email Adm',
+			'contact_com'         => 'Commercial Contact',
+			'email_com'           => 'Commercial Email',
+			'contact_adm'         => 'Admin Contact',
+			'email_adm'           => 'Administration Email',
 			'entity'              => 'Entity',
-			'tax_id'              => 'Tax',
+			'tax_id'              => 'Tax ID',
 			'prospect'            => 'Prospect',
 			'pdf_name'            => 'Pdf Name',
+			'pdf_agreement'       => 'Pdf Agreement',
+			'phone'               => 'Phone',
+			'foundation_date'     =>'Date of Constitution',
+			'foundation_place'    =>'Place of foundation',
+			'bank_account_name'   =>'Bank Account Name',
+			'bank_account_number' =>'Bank Account Number',
+			'branch'              =>'Branch Identifier', 
+			'bank_name'           =>'Bank Name',
+			'swift_code'          =>'Swift Code',
 		);
 	}
 
@@ -154,7 +166,7 @@ class Providers extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($prospect=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -163,7 +175,7 @@ class Providers extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('status','Active',true);
 		$criteria->compare('currency',$this->currency,true);
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('model',$this->model,true);
@@ -189,8 +201,13 @@ class Providers extends CActiveRecord
 		$criteria->compare('email_adm',$this->email_adm,true);
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
-		$criteria->compare('prospect',$this->prospect);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
+		$criteria->compare('pdf_agreement',$this->pdf_agreement,true);
+		$criteria->compare('phone',$this->phone,true);
+		if($prospect)
+			$criteria->addCondition('t.prospect='.$prospect);
+		else
+			$criteria->compare('prospect',$this->prospect);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -260,5 +277,120 @@ class Providers extends CActiveRecord
 			2 => 'Networks', 
 			3 => 'Publishers',
 		);
+	}
+
+	public function printType()
+	{
+		if(self::getType())
+			return self::getAllTypes()[self::getType()];
+		else
+			return false;
+	}
+
+	public function getProviders($month,$year)
+	{
+		$query="select providers.id as id,
+			providers.name as providers_name,
+			providers.currency as currency,
+			sum(t.clics) as clics,
+			sum(t.imp) as imp,
+			networks.percent_off as percent_off,
+			SUM(t.spend) as spend,
+			round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as off,
+			SUM(t.spend) - round(SUM(t.spend) * if(isnull(networks.percent_off),0,networks.percent_off),2) as total 
+			from daily_report t, providers
+			left join networks on providers_id=providers.id
+			left join publishers pu on pu.providers_id=providers.id
+			left join affiliates a on a.providers_id=providers.id
+			where t.date between '".$year."-".$month."-01' and '".$year."-".$month."-31'
+			and t.providers_id=providers.id
+			group by providers.id";
+		$data   =array();		
+		$totals =array();	
+			
+		$dataArray =array();		
+		$providers=DailyReport::model()->findAllBySql($query);
+		// $data['dataProvider'] = new CActiveDataProvider(new DailyReport, array(
+		// 	'criteria'=>$criteria,
+		// ));	
+
+		$i=0;
+		foreach ($providers as $provider) {
+			$dataArray[$i]['id']            =$provider->id;
+			$dataArray[$i]['providers_name']=$provider->providers_name;
+			$dataArray[$i]['currency']      =$provider->currency;
+			$dataArray[$i]['clics']         =$provider->clics;
+			$dataArray[$i]['imp']           =$provider->imp;
+			$dataArray[$i]['percent_off']   =$provider->percent_off;
+			$dataArray[$i]['spend']         =$provider->spend;
+			$dataArray[$i]['off']           =$provider->off;
+			$dataArray[$i]['transaction']   =TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
+			$dataArray[$i]['total']         =$provider->total;
+
+			isset($totals[$provider->currency]['clics']) ? : $totals[$provider->currency]['clics']             =0;
+			isset($totals[$provider->currency]['imp']) ? : $totals[$provider->currency]['imp']                 =0;
+			isset($totals[$provider->currency]['spend']) ? : $totals[$provider->currency]['spend']             =0;
+			isset($totals[$provider->currency]['off']) ? : $totals[$provider->currency]['off']                 =0;
+			isset($totals[$provider->currency]['sub_total']) ? : $totals[$provider->currency]['sub_total']     =0;
+			isset($totals[$provider->currency]['total_count']) ? : $totals[$provider->currency]['total_count'] =0;
+			isset($totals[$provider->currency]['total']) ? : $totals[$provider->currency]['total']             =0;
+
+			$totals[$provider->currency]['clics']       +=$provider->clics;
+			$totals[$provider->currency]['imp']         +=$provider->imp;
+			$totals[$provider->currency]['spend']       +=$provider->spend;
+			$totals[$provider->currency]['off']         +=$provider->off;
+			$totals[$provider->currency]['sub_total']   +=$provider->total;
+			$totals[$provider->currency]['total_count'] +=TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01');
+			$totals[$provider->currency]['total']       +=TransactionProviders::model()->getTotalTransactions($provider->id,$year.'-'.$month.'-01')+$provider->total;
+			$i++;
+		}
+
+		$filtersForm =new FiltersForm;
+		$data['filtersForm']=$filtersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+		$filteredData=$filtersForm->filter($dataArray);
+
+		$data['arrayProvider']=new CArrayDataProvider($filteredData, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'providers_name', 'currency', 'clics', 'imp', 'percent_off', 'spend','off', 'total','transaction'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+
+		$i=0;
+			
+		$totalsdata=array();
+		foreach ($totals as $key => $value) {
+			$totalsdata[$i]['id']          =$i;
+			$totalsdata[$i]['currency']    =$key;
+			$totalsdata[$i]['clics']       =$value['clics'];
+			$totalsdata[$i]['imp']         =$value['imp'];
+			$totalsdata[$i]['spend']       =$value['spend'];
+			$totalsdata[$i]['off']         =$value['off'];
+			$totalsdata[$i]['total']       =$value['total'];
+			$totalsdata[$i]['sub_total']   =$value['sub_total'];
+			$totalsdata[$i]['total_count'] =$value['total_count'];
+			$i++;
+		}
+		
+		$data['totalsDataProvider'] = new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','clics', 'imp', 'spend', 'off', 'total','total_count','sub_total'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		return $data;
 	}
 }

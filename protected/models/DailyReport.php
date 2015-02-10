@@ -1357,9 +1357,8 @@ class DailyReport extends CActiveRecord
 	 */
 	public function getRevenueUSD()
 	{
-		$camp         = Campaigns::model()->findByPk($this->campaigns_id);
-		$opp          = Opportunities::model()->findByPk($camp->opportunities_id);
-		$ios_currency = Ios::model()->findByPk($opp->ios_id)->currency;
+		$camp         = Campaigns::model()->with('opportunities','opportunities.ios')->findByPk($this->campaigns_id);
+		$ios_currency = $camp->opportunities->ios->currency;
 	
 		if ($ios_currency == 'USD')	// if currency is USD dont apply type change
 			return $this->revenue;
@@ -1510,8 +1509,8 @@ class DailyReport extends CActiveRecord
 	public function setNewFields()
 	{
 		// update spend only for affiliates
-		// if ( Affiliates::model()->exists('providers_id=:nid', array(':nid'=>$this->providers_id)) ) 
-		//	$this->updateSpendAffiliates();
+		if($this->providers->getType() == 1)
+			$this->updateSpendAffiliates();
 
 		$this->profit             = $this->getProfit();
 		$this->profit_percent     = $this->getProfitPerc();
@@ -1528,11 +1527,11 @@ class DailyReport extends CActiveRecord
 	 */
 	public function getRateUSD()
 	{
-		$campaign     = Campaigns::model()->findByPk($this->campaigns_id);
-		$opportunitie = Opportunities::model()->findByPk($campaign->opportunities_id);
-		$rate         = Opportunities::model()->findByPk($opportunitie->id)->getRate($this->date);
-		$io_currency  = Ios::model()->findByPk($opportunitie->ios_id)->currency;
-		switch ($opportunitie->model_adv) 
+		$campaign     = Campaigns::model()->with('opportunities','opportunities.ios')->findByPk($this->campaigns_id);
+		$io_currency  = $campaign->opportunities->ios->currency;
+		$rate         = $campaign->opportunities->getRate($this->date);
+
+		switch ($campaign->opportunities->model_adv) 
 		{	
 			case 'CPI':
 			case 'CPL':

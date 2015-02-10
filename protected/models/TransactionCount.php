@@ -188,7 +188,7 @@ class TransactionCount extends CActiveRecord
 		$criteria->select='carriers_id_carrier,rate,sum(volume) as volume,sum(rate*volume) as total, product, country';
 		$criteria->compare('ios_id',$ios_id);
 		$criteria->compare('period',$period);
-		$criteria->group='carriers_id_carrier,rate';
+		$criteria->group='carriers_id_carrier,product,country,rate';
 		return self::model()->findAll($criteria);
 		
 	}

@@ -94,7 +94,7 @@ $('.search-form form').submit(function(){
 		),
 		array( 
 			'name'  => 'publishers_name',
-			'value' => '$data->publishers->name',
+			'value' => '$data->publishers->providers->name',
 		),
 		array( 
 			'name'  => 'exchanges_name',

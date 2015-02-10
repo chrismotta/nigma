@@ -29,7 +29,7 @@ class PublishersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete','archived'),
-				'roles'=>array('admin'),
+				'roles'=>array('admin','media_manager'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -43,9 +43,12 @@ class PublishersController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = $this->loadModel($id);
-		$this->renderPartial('_view', array(
-			'model' => $model,
+		$modelPubl = $this->loadModel($id);
+		$modelProv = Providers::model()->findByPk($modelPubl->providers_id);
+
+		$this->renderPartial('_view', array( 
+			'modelPubl'=>$modelPubl,
+			'modelProv'=>$modelProv,
 		), false, true);
 	}
 
@@ -55,22 +58,24 @@ class PublishersController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Publishers;
-		$model->account_manager_id = Yii::app()->user->id;
+		$modelPubl=new Publishers;
+		$modelProv=new Providers;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		$this->performAjaxValidation($modelPubl, $modelProv);
 
-		if(isset($_POST['Publishers']))
+		if(isset($_POST['Publishers']) && isset($_POST['Providers']))
 		{
-			$model->attributes=$_POST['Publishers'];
-			if($model->save())
-				$this->redirect(array('admin'));
-			else
-				echo json_encode($model->getErrors());
+			$modelProv->attributes=$_POST['Providers'];
+			if ($modelProv->save()) {
+				$modelPubl->attributes=$_POST['Publishers'];
+				$modelPubl->providers_id = $modelProv->id;
+				if ($modelPubl->save())
+					$this->redirect(array('admin'));
+			}
 		}
 
-		$this->renderFormAjax($model);
+		$this->renderFormAjax($modelPubl, $modelProv);
 	}
 
 	/**
@@ -80,19 +85,24 @@ class PublishersController extends Controller
 	 */
 	public function actionUpdate($id)
 	{
-		$model=$this->loadModel($id);
+		$modelPubl=$this->loadModel($id);
+		$modelProv=Providers::model()->findByPk($modelPubl->providers_id);
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+		$this->performAjaxValidation($modelPubl, $modelProv);
 
-		if(isset($_POST['Publishers']))
+		if(isset($_POST['Publishers']) && isset($_POST['Providers']))
 		{
-			$model->attributes=$_POST['Publishers'];
-			if($model->save())
+			$modelPubl->attributes=$_POST['Publishers'];
+			$modelProv->attributes=$_POST['Providers'];
+			if($modelPubl->save() && $modelProv->save())
 				$this->redirect(array('admin'));
+			else{
+				echo json_encode($modelPubl->errorSummary());
+				echo json_encode($modelProv->errorSummary());}
 		}
 
-		$this->renderFormAjax($model);
+		$this->renderFormAjax($modelPubl, $modelProv);
 	}
 
 	/**
@@ -103,7 +113,7 @@ class PublishersController extends Controller
 	public function actionDelete($id)
 	{
 
-		$model = $this->loadModel($id);
+		$model = Providers::model()->findByPk($id);
 		switch ($model->status) {
 			case 'Active':
 				if ( Placements::model()->count("publishers_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
@@ -126,24 +136,13 @@ class PublishersController extends Controller
 	}
 
 	/**
-	 * Lists all models.
-	 */
-	public function actionIndex()
-	{
-		$dataProvider=new CActiveDataProvider('Publishers');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
-	}
-
-	/**
 	 * Manages all models.
 	 */
 	public function actionAdmin()
 	{
 		$model=new Publishers('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->status = 'Active';
+		// $model->status = 'Active';
 		if(isset($_GET['Publishers']))
 			$model->attributes=$_GET['Publishers'];
 
@@ -188,30 +187,20 @@ class PublishersController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Publishers $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($modelPubl, $modelProv)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='publishers-form')
 		{
-			echo CActiveForm::validate($model);
+			echo CActiveForm::validate(array($modelPubl, $modelProv));
 			Yii::app()->end();
 		}
 	}
 
-	private function renderFormAjax($model) 
+	private function renderFormAjax($modelPubl, $modelProv) 
 	{
-		// $currency   = KHtml::enumItem($model, 'currency');
-		$entity     = KHtml::enumItem($model, 'entity');
-		$model_publ = KHtml::enumItem($model, 'model');
-
-		// Get countries and carriers with status "Active"
-		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
-
 		$this->renderPartial('_form', array(
-			'model'      => $model,
-			// 'currency'   => $currency,
-			'model_publ' => $model_publ,
-			'country'    => $country,
-			'entity'     => $entity,
+			'modelProv' =>$modelProv,
+			'modelPubl' =>$modelPubl,
 		), false, true);
 	}
 }

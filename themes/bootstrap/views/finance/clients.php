@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo KHtml::currencyTotalsClients($totals->getData());
+echo KHtml::currencyTotals($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
@@ -33,7 +33,7 @@ $buttonsColumn='
 
 
 					).';
-if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
+// if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
 	$buttonsColumn.='CHtml::link(
 					"<i class=\"icon-envelope\"></i>",
 					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
@@ -41,14 +41,14 @@ if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
 
 
 					).';
-else 
-	$buttonsColumn.='CHtml::link(
-					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
-					array(""),
-    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
+// else 
+// 	$buttonsColumn.='CHtml::link(
+// 					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
+// 					array(""),
+//     				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
 
 
-					).';
+// 					).';
 if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 	$buttonsColumn.='
 				CHtml::link(
@@ -172,7 +172,7 @@ else
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
+		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat.'&cat='.$cat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -205,7 +205,7 @@ else
 		array(
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
-			'htmlOptions'       => array('id'=>'alignLeft'),		
+			'htmlOptions'       => array('id'=>'alignLeft', 'name'=>'nameTD'),
 			'header'            => 'IO - Commercial Name',
 			),
 		array(
@@ -349,7 +349,7 @@ else
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients', 'htmlOptions' => array('style'=>'width: 600px;'))); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
@@ -361,46 +361,42 @@ else
 </div>
 
 <?php Yii::app()->clientScript->registerScript('verifedIcon', "
-						$('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
-							
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-                                }
+	$('.link').click(function(e){
+        e.preventDefault();
+        var that = $(this);
+		var link = that.attr('href');
+		
+		var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+		$('#modalClients').html(dataInicial);
+		$('#modalClients').modal('toggle');
+       $.post( link, {})
+			.success(function( data ) {
+				$('#modalClients').html(data);
+            }
 
-					
-                                );
-                            
-                        });
-					$('.linkinvoiced').click(function(e){
-                            e.preventDefault();
-                            
-                        });
-					function verifedIcon(){
-                        $('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
 
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
-									//$('#modalClients').modal('toggle');
-                                }
+            );
+        
+    });
+	$('.linkinvoiced').click(function(e){
+	        e.preventDefault();
+	});
 
-					
-                                );
-                            
-                        });
-					}
-                    ", CClientScript::POS_READY); ?>
+	function verifedIcon(){
+	    $('.link').click(function(e){
+	        e.preventDefault();
+	        var that = $(this);
+			var link = that.attr('href');
+
+			var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+			$('#modalClients').html(dataInicial);
+			$('#modalClients').modal('toggle');
+	        $.post( link, {})
+				.success(function( data ) {
+					$('#modalClients').html(data);
+					//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+					//$('#modalClients').modal('toggle');
+	            });
+    });
+}
+", CClientScript::POS_READY); ?>

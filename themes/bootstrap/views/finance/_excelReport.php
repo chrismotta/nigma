@@ -51,11 +51,11 @@
             $status['ok']='Approved/Expired';
             $status['Not Sent']='Not Sent';
             $status[0]='All Status';
-            echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true)))) . "<br>";
+            echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;', 'options' => array(isset($_GET['month']) ? intval($_GET['month']) : 0=>array('selected'=>true)))) . "<br>";
             echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true)))) . "<br>";
-            echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true)))) . "<br>";
-            echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true)))) . "<br>";
-            echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true)))) . "<br>";
+            echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array($_GET['entity']!='' ? $_GET['entity'] : 0=>array('selected'=>true)))) . "<br>";
+            echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array($_GET['cat']!='' ? $_GET['cat'] : 0=>array('selected'=>true)))) . "<br>";
+            echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array($_GET['status']!='' ? $_GET['status'] : 0=>array('selected'=>true)))) . "<br>";
         
     ?>
     

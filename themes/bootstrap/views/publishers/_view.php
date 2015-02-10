@@ -5,37 +5,20 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Publisher <?php echo "#".$model->id ?></h4>
+    <h4>Publisher <?php echo "#".$modelPubl->providers_id ?></h4>
 </div>
 
 <div class="modal-body">
 
+	<?php $this->renderPartial('/providers/_view', array(
+        'model' => $modelProv,
+    )); ?>
+
 	<h5>Publisher</h5>
 	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	    'type'=>'striped bordered condensed',
-		'data'=>$model,
+		'data'=>$modelPubl,
 		'attributes'=>array(
-			'id',
-			'status',
-			'name',
-			'commercial_name',
-			array(
-				'label' => 'Country',
-				'name'  => 'country.name',
-			),
-			'state',
-			'zip_code',
-			'address',
-			'phone',
-			'currency',
-			'contact_com',
-			'email_com',
-			'contact_adm',
-			'email_adm',
-			'entity',
-			'tax_id',
-			'net_payment',
-			'model',
 			'RS_perc',
 			'rate',
 		),
@@ -44,7 +27,7 @@
 	<h5>Account Manager</h5>
 	<?php $this->widget('bootstrap.widgets.TbDetailView', array(
 	    'type'=>'striped bordered condensed',
-		'data'=>$model,
+		'data'=>$modelPubl,
 		'attributes'=>array(
 			'accountManager.id',
 			'accountManager.name',
@@ -59,7 +42,7 @@
 	$this->widget('bootstrap.widgets.TbGridView', array(
     'id'           =>'placement-grid',
     'type'         =>'striped condensed',
-    'dataProvider' =>$placement->findByPublisherId($model->id),
+    'dataProvider' =>$placement->findByPublisherId($modelPubl->providers_id),
     'template'     =>'{items} {summary} {pager}',
     'columns'=>array(
         array(

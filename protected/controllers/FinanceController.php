@@ -27,8 +27,12 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','providers','excelReportProviders','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
+				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers'),
+				'roles'=>array('admin', 'finance','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('updateValidationStatus'),
@@ -76,6 +80,20 @@ class FinanceController extends Controller
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transaction'));
+	}
+	/**
+	 * Deletes a particular model.
+	 * If deletion is successful, the browser will be redirected to the 'admin' page.
+	 * @param integer $id the ID of the model to be deleted
+	 */
+	public function actionDeleteTransactionProviders($id)
+	{
+		$model=TransactionProviders::model()->findByPk($id);
+		$model->delete();
+
+		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+		if(!isset($_GET['ajax']))
+			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transactionProviders'));
 	}
 	
 	public function actionClients()
@@ -139,6 +157,7 @@ class FinanceController extends Controller
 		foreach ($totalsTransactionsTemp as $value) {
 			$totalsTransactions[$value['currency']]=$value['total'];
 		}
+
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
@@ -181,13 +200,14 @@ class FinanceController extends Controller
 			'cat'          =>$cat,
 		));
 	}
-
+	
 	public function actionProviders()
 	{
-		$year        =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
-		$month       =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity      =isset($_GET['entity']) ? $_GET['entity'] : null;
-		$model       =new Networks;
+		$model       =new Providers;
 		$data  =$model->getProviders($month,$year);
 		$this->render('providers',array(			
 			'model'         =>$model,
@@ -272,7 +292,7 @@ class FinanceController extends Controller
 	{
 		if( isset($_POST['excel-providers-form']) ) {
 			$this->renderPartial('excelReportProviders', array(
-				'model' => new Networks,
+				'model' => new Providers,
 			));
 		}
 
@@ -293,26 +313,23 @@ class FinanceController extends Controller
 		if($count=$transactionCount->getTotalsCarrier($io->id,$year.'-'.$month.'-01'))
 		{
 			foreach ($count as $value) {
-			$sum=false;
+				$found = false;
 				foreach ($clients['data'] as $key => $data) {
-					if($sum)continue;
-					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier)
-					{
-						if($data['rate']==$value->rate)
-						{
+					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier) {
+						if($data['rate']==$value->rate) {
 							$clients['data'][$key]['conv']    +=$value->volume;
-							$clients['data'][$key]['revenue'] +=$value->total;							
+							$clients['data'][$key]['revenue'] +=$value->total;
+							$found = true;
+							break;
 						}
-						else
-						{
-							$aux[$i]=$data;						
-							$aux[$i]['conv']=$value->volume;
-							$aux[$i]['revenue']=$value->total;
-							$aux[$i]['rate']=$value->rate;				
-							$i++;		
-						}	
-						$sum=true;
 					}
+				}
+				if (!$found) {
+					$aux[$i]            =$data;
+					$aux[$i]['conv']    =$value->volume;
+					$aux[$i]['revenue'] =$value->total;
+					$aux[$i]['rate']    =$value->rate;				
+					$i++;		
 				}				
 			}
 			foreach ($aux as $value) {
@@ -432,6 +449,29 @@ class FinanceController extends Controller
 		);
 	}
 
+	public function actionTransactionProviders()
+	{
+		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
+		$id     = isset($_GET['id']) ? $_GET['id'] : null;
+		$model  = new TransactionProviders;
+		if(isset($_POST['TransactionProviders']))
+		{
+			$model->attributes=$_POST['TransactionProviders'];
+			if($model->validate())
+        	{
+        		if(!$model->save())echo'<script>alert('.json_encode($model->getErrors()).')</script>';
+        		return;
+        	}
+			
+		}		
+		$this->renderPartial('_transactionProviders',array(
+			'id'     => $id,
+			'period' => $period,
+			'model'  => $model,
+		), false, true);
+	}
+
+
 	public function actionTransaction()
 	{
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
@@ -465,7 +505,7 @@ class FinanceController extends Controller
 		{
 			$transaction                      = new TransactionCount;
 			$transaction->carriers_id_carrier = $_POST['TransactionCount']['carrier']=='multi' ? null : $_POST['TransactionCount']['carrier'];
-			$transaction->product             = $_POST['product'];
+			$transaction->product             = $_POST['product']=='Without Product' ? '' : $_POST['product'];
 			$transaction->country             = $_POST['country'];
 			$transaction->period              = $_POST['TransactionCount']['period'];
 			$transaction->volume              = $_POST['TransactionCount']['volume'];
@@ -498,14 +538,66 @@ class FinanceController extends Controller
 			echo '<br/>';
 		};
 
-		// if ($today == -dia habil 3-)
-		// listar todas las oportunidades no verificadas
-		// enviar mail a emilio
-		
-		// if ($today == -dia habil 6-)
-		// listar todas las ios sin enviar
-		// enviar mail a giselle
-		
+		$options          =array();
+		$options['date']  = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$options['year']  =date('Y', $options['date']);
+		$options['month'] =date('m', $options['date']);
+
+		$options['date']   = Utilities::weekDaysSum(date('Y-m-01'),3);
+        if($options['date'] == strtotime ( date('Y-m-d',strtotime('NOW')) ))
+		{
+			echo '<hr/>Opportunities not validated:<br>';
+			foreach(Ios::model()->getClients($options['month'],$options['year'],null,null,null,null,null,null,null)['data'] as $opportunitie)
+	        {
+       			if(!$opportunitie['status_opp'])
+       				$opportunities[]=Opportunities::model()->findByPk($opportunitie['opportunitie_id'])->getVirtualName();
+	        }
+	        if(isset($opportunities))
+	    	{
+	    		$body = '
+					<span style="color:#000">
+					  <p>Opportunities not validated:</p>';
+	    		foreach ($opportunities as $value) {
+	    			echo 'opp #'.$value.'<br>';
+	    			$body .=  '<p>'.$value.'</p>';
+	    		}
+				$body .= '</span>';
+            	$subject = 'KickAds - Opportunities not validated '.date('M j, Y');
+ 			 	$mail = new CPhpMailerLogRoute;   
+ 			 	$emails = array('pedro.forwe@kickads.mobi','emilio.maila@kickads.mobi');
+            	$mail->send($emails, $subject, $body);
+	    	}
+		}
+
+		$options['date']  = Utilities::weekDaysSum(date('Y-m-01'),5);
+        if($options['date'] == strtotime ( date('Y-m-d',strtotime('NOW')) ))
+		{
+			echo '<hr/>Ios Mails not sent:<br>';
+			$criteria=new CDbCriteria;
+			$criteria->compare('t.status','Validated');
+			$criteria->compare('t.period',$options['year'].'-'.$options['month'].'-01');
+			$criteria->with=array('ios');
+			foreach(IosValidation::model()->findAll($criteria) as $value)
+	        {
+       			$ios[]=$value->ios->id.' - '.$value->ios->name;
+	        }
+	        if(isset($ios))
+	    	{
+	    		$body = '
+					<span style="color:#000">
+					  <p>Ios Mails not sent:</p>';
+	    		foreach ($ios as $value) {
+	    			echo 'io #'.$value.'<br>';
+	    			$body .=  '<p>'.$value.'</p>';
+	    		}
+				$body .= '</span>';
+            	$subject = 'KickAds - Ios mails not sent '.date('M j, Y');
+
+ 			 	$mail = new CPhpMailerLogRoute;   
+ 			 	$emails = array('pedro.forwe@kickads.mobi','giselle.poretti@kickadserver.mobi','santiago.guasch@kickads.mobi');
+            	$mail->send($emails, $subject, $body);
+	    	}
+		}		
 	}
 	public function actionGetCarriers()
 	{
@@ -523,5 +615,18 @@ class FinanceController extends Controller
 		}
 		echo $response;
 		Yii::app()->end();
+	}
+
+	/**
+	 * Performs the AJAX validation.
+	 * @param CModel the model to be validated
+	 */
+	protected function performAjaxValidation($model)
+	{
+		if(isset($_POST['ajax']) && $_POST['ajax']==='transaction-count-form')
+		{
+			echo CActiveForm::validate($model);
+			Yii::app()->end();
+		}
 	}
 }

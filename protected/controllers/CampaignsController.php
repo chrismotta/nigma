@@ -405,11 +405,21 @@ class CampaignsController extends Controller
 		if( isset($_POST['excel-traffic']) ) {
 			$this->renderPartial('excelReport', array(
 					'model' => new Campaigns,
+					'opp'   => isset($_POST['opportunities']) ? $_POST['opportunities'] : NULL,
 					//'id'	=> $id
 				));	
 		}
 
-		$this->renderPartial('_excelReport', array('id'=>$id), false, true);
+		$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'t.id, advertisers.name, country.ISO2')), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+
+		$this->renderPartial('_excelReport', array(
+			'id'            =>$id,
+			'opportunities' => $opportunities,
+		), false, true);
 	}
 	
 	public function actionFetchCampaigns()
@@ -594,7 +604,7 @@ class CampaignsController extends Controller
 		 		break;
 		 	
 		 	default:
-		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.75, 2));
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.80, 2));
 		 		break;
 		 }
 	}

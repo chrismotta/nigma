@@ -36,7 +36,7 @@ class DailyReportController extends Controller
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('setNewFields','setAllNewFields', 'updateSpendAffiliates'),
+				'actions'=>array('setRevenue', 'setNewFields','setAllNewFields', 'updateSpendAffiliates'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -147,6 +147,8 @@ class DailyReportController extends Controller
 		$criteria->join  = 'LEFT JOIN networks ON t.id=networks.providers_id';
 		$criteria->order = 'name';
 		$criteria->compare('networks.has_api',0);
+		$criteria->compare('t.status','Active');
+		$criteria->compare('t.prospect',10);
 		$providers = CHtml::listData(Providers::model()->findAll($criteria), 'id', 'name');
 
 		$campaign = new Campaigns('search');
@@ -449,6 +451,17 @@ class DailyReportController extends Controller
 			//'providers'  => $providers,
 			'campaigns' => $campaigns, 
 		), false, true);
+	}
+
+	public function actionSetRevenue($id){
+		if($model = DailyReport::model()->findByPk($id)){
+			$model->updateRevenue();
+			$model->setNewFields();
+			$model->save();
+			echo $id . " - updated";
+		}else{
+			echo $id . "- not exists";
+		}
 	}
 
 	public function actionSetNewFields($id){

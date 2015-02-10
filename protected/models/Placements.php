@@ -8,6 +8,7 @@
  * @property integer $exchanges_id
  * @property integer $publishers_id
  * @property integer $sizes_id
+ * @property string $status
  * @property string $name
  * @property string $product
  *
@@ -109,8 +110,8 @@ class Placements extends CActiveRecord
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('t.product',$this->product,true);
 
-		$criteria->with = array('publishers', 'exchanges', 'sizes');
-		$criteria->compare('publishers.name',$this->publishers_name,true);
+		$criteria->with = array('publishers', 'publishers.providers','exchanges', 'sizes');
+		$criteria->compare('providers.name',$this->publishers_name,true);
 		$criteria->compare('exchanges.name',$this->exchanges_name,true);
 		$criteria->compare('sizes.size',$this->size,true);
 
@@ -123,8 +124,8 @@ class Placements extends CActiveRecord
 		        'attributes'=>array(
 					// Adding custom sort attributes
 		            'publishers_name'=>array(
-						'asc'  =>'publishers.name',
-						'desc' =>'publishers.name DESC',
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
 		            ),
 		            'exchanges_name'=>array(
 						'asc'  =>'exchanges.name',
