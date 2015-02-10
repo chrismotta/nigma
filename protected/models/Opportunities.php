@@ -435,4 +435,15 @@ class Opportunities extends CActiveRecord
 		return $this->close_amount - $this->getTotalAgencyCommission();
 	}
 
+	public function checkIsAbleInvoice()
+	{
+		if($this->closed_deal)
+		{
+			$endDate=date('Y-m-d',strtotime($this->endDate));
+			$now=date('Y-m-d',strtotime('NOW'));
+			return $endDate >= $now ? true : false;			
+		}
+		else
+			return false;
+	}
 }
