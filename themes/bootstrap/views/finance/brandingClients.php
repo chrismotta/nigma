@@ -21,7 +21,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
     					"onclick" => 
     					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
     						if(confirmed!==null){
-		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
+		    					$.post(\"invoice\",{ \"opportunitie_id\": ".$data["opportunitie_id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
 		                            .success(function( data ) {
 			                            alert(data );
 			                            window.location = document.URL;
