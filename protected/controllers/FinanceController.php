@@ -254,14 +254,14 @@ class FinanceController extends Controller
 
 		$totalsTransactions=array();
 		$totalsInvoicedTransactions=array();
-		$totalsTransactionsInvoicedTemp=TransactionCount::model()->getTotalsInvoicedCurrency($year.'-'.$month.'-01');
-		$totalsTransactionsTemp=TransactionCount::model()->getTotalsCurrency($year.'-'.$month.'-01');
-		foreach ($totalsTransactionsInvoicedTemp as $value) {
-			$totalsInvoicedTransactions[$value['currency']]=$value['total'];
-		}
-		foreach ($totalsTransactionsTemp as $value) {
-			$totalsTransactions[$value['currency']]=$value['total'];
-		}
+		// $totalsTransactionsInvoicedTemp=TransactionCount::model()->getTotalsInvoicedCurrency($year.'-'.$month.'-01');
+		// $totalsTransactionsTemp=TransactionCount::model()->getTotalsCurrency($year.'-'.$month.'-01');
+		// foreach ($totalsTransactionsInvoicedTemp as $value) {
+		// 	$totalsInvoicedTransactions[$value['currency']]=$value['total'];
+		// }
+		// foreach ($totalsTransactionsTemp as $value) {
+		// 	$totalsTransactions[$value['currency']]=$value['total'];
+		// }
 
 		if(isset($clients['totals']))
 		{
@@ -270,11 +270,12 @@ class FinanceController extends Controller
 				$totalsdata[$i]['id']          =$i;
 				$totalsdata[$i]['currency']    =$key;
 				$totalsdata[$i]['sub_total']   =$value['revenue'];
-				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
-				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
-				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['total_commission']=$value['agency_commission'];
+				// isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
+				// $totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
+				$totalsdata[$i]['total']       =$totalsdata[$i]['sub_total']-$totalsdata[$i]['total_commission'];
+				// $totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				// $totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
 		

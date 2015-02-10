@@ -647,6 +647,7 @@ class KHtml extends CHtml
                         $rowTotals.=isset($total['currency']) ? '<small >TOTAL '.$total['currency'].'</small>':'';
                         $rowTotals.=isset($total['sub_total']) ? '<h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>' : '';
                         $rowTotals.=isset($total['total_count']) ? '<h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_commission']) ? '<h5 class="">Total Commission: '.number_format($total['total_commission'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_deal']) ? '<h5 class="">Total Closed Deal: '.number_format($total['total_deal'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total']) ?'<h5 class="">Total: '.number_format($total['total'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_invoiced']) ? '<h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>' : '';

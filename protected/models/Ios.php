@@ -671,6 +671,8 @@ class Ios extends CActiveRecord
 		$totals          =array();
 
 		foreach ($clients as $daily) {
+
+			$opportunitie=Opportunities::model()->findByPk($daily['opportunitie_id']);
 			$revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 
 			isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
@@ -678,8 +680,17 @@ class Ios extends CActiveRecord
 				$totals_invoiced[$daily['currency']]+=$revenue;
 
 			#This array have totals
-			isset($totals[$daily['currency']]) ?  : $totals[$daily['currency']]['revenue'] =0;
-				$totals[$daily['currency']]['revenue']+=$revenue;
+			if(!isset($totals[$daily['currency']])){
+				$totals[$daily['currency']]['revenue']           =0;
+				$totals[$daily['currency']]['agency_commission'] =0;
+			}
+				if($opportunitie->closed_deal){
+					$totals[$daily['currency']]['revenue']           +=$opportunitie->close_amount;
+					$totals[$daily['currency']]['agency_commission'] +=$opportunitie->getTotalAgencyCommission();
+				}
+				else
+					$totals[$daily['currency']]['revenue']+=$revenue;
+				
 
 			isset($totals_io[$daily['id']]) ?  : $totals_io[$daily['id']] =0;
 				$totals_io[$daily['id']]+=$revenue;
@@ -692,5 +703,6 @@ class Ios extends CActiveRecord
 
 		return $consolidated;
 	}	
+
 	
 }

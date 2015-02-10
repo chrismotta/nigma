@@ -228,7 +228,8 @@ $ios    =new Ios;
 		array(
 			'name'              =>'opportunitie',
 			'header'            =>'End Date',
-			'value'             =>'Opportunities::model()->findByPk($data["opportunitie_id"])->endDate',	
+			'filter'			=>false,
+			'value'             =>'date("Y-m-d",strtotime(Opportunities::model()->findByPk($data["opportunitie_id"])->endDate))',	
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
