@@ -201,7 +201,21 @@
       echo $form->textFieldRow($model, 'channel_description', array('disabled'=>true, 'class'=>'span3'));
       echo "<hr>";
       echo $form->textAreaRow($model, 'comment', array('class'=>'span3', 'rows'=>5));
+      echo '<hr/>';
+      echo $form->checkboxRow($model, 'closed_deal', array(
+          'onChange' => '
+            if (this.checked == "1")
+              $(".closed_deal").show();
+            else
+              $(".closed_deal").hide();
 
+            return;
+            '
+      ));
+      echo '<div style="display: ' . ($model->closed_deal   ? 'block' : 'none') . ';" class="closed_deal">';
+          echo $form->textFieldRow($model, 'close_amount', array('class'=>'span3'));
+          echo $form->textFieldRow($model, 'agency_commission', array('class'=>'span3'));
+      echo '</div>';
       // ----- End - Branding attributes
 ?>
         
