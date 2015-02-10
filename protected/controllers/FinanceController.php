@@ -81,6 +81,7 @@ class FinanceController extends Controller
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transaction'));
 	}
+
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
@@ -96,6 +97,10 @@ class FinanceController extends Controller
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transactionProviders'));
 	}
 	
+	/**
+	 * [actionClients description]
+	 * @return [type] [description]
+	 */
 	public function actionClients()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
@@ -201,6 +206,10 @@ class FinanceController extends Controller
 		));
 	}
 	
+	/**
+	 * [actionBrandingClients description]
+	 * @return [type] [description]
+	 */
 	public function actionBrandingClients()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
@@ -306,6 +315,11 @@ class FinanceController extends Controller
 			'cat'          =>$cat,
 		));
 	}
+
+	/**
+	 * [actionProviders description]
+	 * @return [type] [description]
+	 */
 	public function actionProviders()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
@@ -325,6 +339,10 @@ class FinanceController extends Controller
 		));
 	}
 
+	/**
+	 * [actionMultiRate description]
+	 * @return [type] [description]
+	 */
 	public function actionMultiRate()
 	{
 		$month =$_GET['month'];
@@ -355,6 +373,11 @@ class FinanceController extends Controller
 		), false, false);
 	}
 
+	/**
+	 * [actionView description]
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 */
 	public function actionView($id)
 	{
 		$model = Ios::model()->findByPk($id);
@@ -364,6 +387,10 @@ class FinanceController extends Controller
 		), false, true);
 	}
 
+	/**
+	 * [actionExcelReport description]
+	 * @return [type] [description]
+	 */
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-clients-form']) ) {
@@ -399,6 +426,10 @@ class FinanceController extends Controller
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
 
+	/**
+	 * [actionExcelReportProviders description]
+	 * @return [type] [description]
+	 */
 	public function actionExcelReportProviders()
 	{
 		if( isset($_POST['excel-providers-form']) ) {
@@ -410,6 +441,10 @@ class FinanceController extends Controller
 		$this->renderPartial('_excelReportProviders', array(), false, true);
 	}	
 
+	/**
+	 * [actionRevenueValidation description]
+	 * @return [type] [description]
+	 */
 	public function actionRevenueValidation()
 	{
 		$model             =new Ios;
@@ -492,6 +527,10 @@ class FinanceController extends Controller
 
 	}
 
+	/**
+	 * [actionOpportunitieValidation description]
+	 * @return [type] [description]
+	 */
 	public function actionOpportunitieValidation()
 	{
 		$year    =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
@@ -535,6 +574,10 @@ class FinanceController extends Controller
 
 	}
 
+	/**
+	 * [actionValidateOpportunitie description]
+	 * @return [type] [description]
+	 */
 	public function actionValidateOpportunitie()
 	{		
 		$modelOp      =new Opportunities;
@@ -545,7 +588,11 @@ class FinanceController extends Controller
 				'opportunitie'     => $opportunitie
 			));
 	}
-	
+
+	/**
+	 * [actionInvoice description]
+	 * @return [type] [description]
+	 */
 	public function actionInvoice()
 	{
 		$date       =date('Y-m-d H:i:s', strtotime('NOW'));
@@ -608,6 +655,10 @@ class FinanceController extends Controller
  		Yii::app()->end();
 	}
 	
+	/**
+	 * [actionSendMail description]
+	 * @return [type] [description]
+	 */
 	public function actionSendMail()
 	{
 		$this->renderPartial('sendMail',
@@ -618,6 +669,10 @@ class FinanceController extends Controller
 		);
 	}
 
+	/**
+	 * [actionTransactionProviders description]
+	 * @return [type] [description]
+	 */
 	public function actionTransactionProviders()
 	{
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
@@ -640,7 +695,10 @@ class FinanceController extends Controller
 		), false, true);
 	}
 
-
+	/**
+	 * [actionTransaction description]
+	 * @return [type] [description]
+	 */
 	public function actionTransaction()
 	{
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
@@ -668,6 +726,10 @@ class FinanceController extends Controller
 		), false, true);
 	}
 
+	/**
+	 * [actionAddTransaction description]
+	 * @return [type] [description]
+	 */
 	public function actionAddTransaction()
 	{
 		if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
@@ -687,6 +749,10 @@ class FinanceController extends Controller
 		}
 	}
 
+	/**
+	 * [actionUpdateValidationStatus description]
+	 * @return [type] [description]
+	 */
 	public function actionUpdateValidationStatus(){
 		$list = IosValidation::model()->findAllByAttributes(array('status'=>array('Sent','Viewed')));
 		foreach ($list as $key => $value) {
@@ -768,6 +834,11 @@ class FinanceController extends Controller
 	    	}
 		}		
 	}
+
+	/**
+	 * [actionGetCarriers description]
+	 * @return [type] [description]
+	 */
 	public function actionGetCarriers()
 	{
 		// comentado provisoriamente, generar permiso de admin

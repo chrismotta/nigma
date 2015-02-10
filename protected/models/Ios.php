@@ -230,6 +230,12 @@ class Ios extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	/**
+	 * [getClientsMulti description]
+	 * @param  [type] $filters [description]
+	 * @return [type]          [description]
+	 */
 	public function getClientsMulti($filters)
 	{
 		$month           = isset($filters['month']) ? $filters['month'] : null;
@@ -302,6 +308,20 @@ class Ios extends CActiveRecord
 		return $data;
 	}
 	
+	/**
+	 * [getClients description]
+	 * @param  [type]  $month           [description]
+	 * @param  [type]  $year            [description]
+	 * @param  [type]  $entity          [description]
+	 * @param  [type]  $io              [description]
+	 * @param  [type]  $accountManager  [description]
+	 * @param  [type]  $opportunitie_id [description]
+	 * @param  [type]  $cat             [description]
+	 * @param  [type]  $status          [description]
+	 * @param  [type]  $group           [description]
+	 * @param  boolean $closed_deal     [description]
+	 * @return [type]                   [description]
+	 */
 	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$group,$closed_deal=false)
 	{
 		$filters = array(
@@ -347,6 +367,11 @@ class Ios extends CActiveRecord
 		return $result;
 	}
 
+	/**
+	 * [findByAdvertisers description]
+	 * @param  [type] $advertiser [description]
+	 * @return [type]             [description]
+	 */
 	public function findByAdvertisers($advertiser)
 	{		
 		$criteria = new CDbCriteria;
@@ -372,6 +397,11 @@ class Ios extends CActiveRecord
 		return Opportunities::model()->findAll('ios_id=:iosid', array(':iosid' => $this->id));
 	}
 
+	/**
+	 * [makeClientsMultiRateQuery description]
+	 * @param  [type] $filters [description]
+	 * @return [type]          [description]
+	 */
 	public function makeClientsMultiRateQuery($filters)
 	{
 		$month           = isset($filters['month']) ? $filters['month'] : null;
@@ -442,6 +472,12 @@ class Ios extends CActiveRecord
 
 			return $query;
 	}
+
+	/**
+	 * [makeClientsQuery description]
+	 * @param  [type] $filters [description]
+	 * @return [type]          [description]
+	 */
 	public function makeClientsQuery($filters)
 	{
 		$month           = isset($filters['month']) ? $filters['month'] : null;
@@ -560,6 +596,11 @@ class Ios extends CActiveRecord
 		return $query;
 	}
 
+	/**
+	 * [gruopClientsByProfile description]
+	 * @param  [type] $clients [description]
+	 * @return [type]          [description]
+	 */
 	public function gruopClientsByProfile($clients)
 	{
 		$data=array();
@@ -615,6 +656,11 @@ class Ios extends CActiveRecord
 
 	}
 
+	/**
+	 * [groupClientsByRate description]
+	 * @param  [type] $clients [description]
+	 * @return [type]          [description]
+	 */
 	public function groupClientsByRate($clients)
 	{
 		$data=array();
@@ -664,6 +710,11 @@ class Ios extends CActiveRecord
 		return $consolidated;
 	}
 	
+	/**
+	 * [getTotalsClients description]
+	 * @param  [type] $clients [description]
+	 * @return [type]          [description]
+	 */
 	public function getTotalsClients($clients)
 	{
 		$totals_io       =array();
