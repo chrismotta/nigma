@@ -597,8 +597,8 @@ class FinanceController extends Controller
 	{
 		$date       =date('Y-m-d H:i:s', strtotime('NOW'));
 		$status     ="Invoiced";
-		$period     =$_REQUEST['period'];
-		$invoice_id =$_REQUEST['invoice_id'];
+		$period     =$_POST['period'];
+		$invoice_id =$_POST['invoice_id'];
 		$log=new ValidationLog;
 		if(isset($_POST['io_id']))
 		{
@@ -625,9 +625,9 @@ class FinanceController extends Controller
 			else
 			 	echo 'Las opperaciones aun no han sido validadas';			
 		}
-		elseif (isset($_REQUEST['opportunitie_id'])) {
-			$opportunitie_id=$_REQUEST['opportunitie_id'];
-			if($opportunitiesValidation=OpportunitiesValidation::model()->loadByPeriod($opportunitie_id,$period))
+		elseif (isset($_POST['opportunitie_id'])) {
+			$opportunitie_id=$_POST['opportunitie_id'];
+			if($opportunitiesValidation=OpportunitiesValidation::model()->checkValidation($opportunitie_id,$period))
 			{
 			 	echo 'Opportunitie already invoiced!';							
 			}
