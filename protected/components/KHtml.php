@@ -647,6 +647,7 @@ class KHtml extends CHtml
                         $rowTotals.=isset($total['currency']) ? '<small >TOTAL '.$total['currency'].'</small>':'';
                         $rowTotals.=isset($total['sub_total']) ? '<h4 class="">Subtotal: '.number_format($total['sub_total'],2).'</h4>' : '';
                         $rowTotals.=isset($total['total_count']) ? '<h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_commission']) ? '<h5 class="">Total Commission: '.number_format($total['total_commission'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_deal']) ? '<h5 class="">Total Closed Deal: '.number_format($total['total_deal'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total']) ?'<h5 class="">Total: '.number_format($total['total'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_invoiced']) ? '<h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>' : '';
@@ -659,6 +660,48 @@ class KHtml extends CHtml
         }
         $rowTotals.='</div>';
         return $rowTotals;
+    }
+
+    public static function printAlerts()
+    {
+        $mainVar          =array();
+        $mainVar['count'] =0;
+        $mainVar['date']  = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+        $mainVar['year']  =date('Y', $mainVar['date']);
+        $mainVar['month'] =date('m', $mainVar['date']);
+        if (FilterManager::model()->isUserTotalAccess('alert.business')) 
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),4);
+            $mainVar['option'] ='ios';
+            foreach(IosValidation::model()->findAllByAttributes(array('status'=>'Validated','period'=>$mainVar['year'].'-'.$mainVar['month'].'-01')) as $value)
+            {
+                $mainVar['count']++;
+            }
+            if($mainVar['count']>0)
+                $message = 'You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'];
+        }elseif (FilterManager::model()->isUserTotalAccess('alert.media'))
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['option'] ='opportunities';
+            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            {
+                if(!$opportunitie['status_opp'])$mainVar['count']++;
+            }
+            if($mainVar['count']>0)
+                $message = 'You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'];
+        }elseif (FilterManager::model()->isUserTotalAccess('alert.finance'))
+        {
+            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['option'] ='opportunities closed deal';
+            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
+            {
+                if(!$opportunitie['status_opp'])$mainVar['count']++;
+            }
+            if($mainVar['count']>0)
+                $message = 'You have '.$mainVar['count'].' available '.$mainVar['option'].' to invoice.';
+        }
+        if(isset($message))
+            echo '<div class="alert alert-now">'.$message.'</div>';
     }
 }
 ?>

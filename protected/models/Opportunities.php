@@ -66,13 +66,14 @@ class Opportunities extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('country_id, model_adv, wifi, ios_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
+			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total, close_amount, agency_commission, close_amount', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
+			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
 			array('product, targeting, sizes, channel_description', 'length', 'max'=>255),
 			array('server_to_server, freq_cap', 'length', 'max'=>45),
 			array('status', 'length', 'max'=>8),
-			array('startDate, endDate', 'safe'),
+			array('startDate, endDate, comment', 'safe'),
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -424,4 +425,25 @@ class Opportunities extends CActiveRecord
         return isset($q[0][0]) ? $q[0][0] : NULL; 
 	}
 
+	public function getTotalAgencyCommission()
+	{
+		return ($this->agency_commission/100)*$this->close_amount;
+	}
+
+	public function getTotalCloseDeal()
+	{
+		return $this->close_amount - $this->getTotalAgencyCommission();
+	}
+
+	public function checkIsAbleInvoice()
+	{
+		if($this->closed_deal)
+		{
+			$endDate=date('Y-m-d',strtotime($this->endDate));
+			$now=date('Y-m-d',strtotime('NOW'));
+			return $endDate >= $now ? true : false;			
+		}
+		else
+			return false;
+	}
 }

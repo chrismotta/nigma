@@ -27,7 +27,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers'),
+				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -81,6 +81,7 @@ class FinanceController extends Controller
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transaction'));
 	}
+
 	/**
 	 * Deletes a particular model.
 	 * If deletion is successful, the browser will be redirected to the 'admin' page.
@@ -96,6 +97,10 @@ class FinanceController extends Controller
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transactionProviders'));
 	}
 	
+	/**
+	 * [actionClients description]
+	 * @return [type] [description]
+	 */
 	public function actionClients()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
@@ -201,6 +206,120 @@ class FinanceController extends Controller
 		));
 	}
 	
+	/**
+	 * [actionBrandingClients description]
+	 * @return [type] [description]
+	 */
+	public function actionBrandingClients()
+	{
+		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
+		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status    =isset($_GET['status']) ? $_GET['status'] : null;
+		$model  =new Ios;
+		$transactions=new TransactionCount;
+		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
+			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
+		else
+			$clients =$model->getClients($month,$year,$entity,null,Yii::App()->user->getId(),null,$cat,$status,null,true);
+		
+		$consolidated=array();
+		foreach ($clients['data'] as $client) {
+			$client['total_revenue']     =$clients['totals_io'][$client['id']];
+			$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+			$client['total']             =$client['total_revenue']+$client['total_transaction'];
+			$consolidated[]              =$client;
+			isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
+			$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
+		}
+		isset($totalCount) ? : $totalCount=array();;
+		foreach ($totalCount as $key => $value) {
+			$currency=Ios::model()->findByPk($key)->currency;
+			isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
+			$totalCountCurrency[$currency]+=$value;
+		}
+
+
+		$totalsdata=array();
+		$filtersForm =new FiltersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];
+
+		$filteredData=$filtersForm->filter($consolidated);
+		$dataProvider=new CArrayDataProvider($filteredData, array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io','comment'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+		$i=0;
+
+		$totalsTransactions=array();
+		$totalsInvoicedTransactions=array();
+		// $totalsTransactionsInvoicedTemp=TransactionCount::model()->getTotalsInvoicedCurrency($year.'-'.$month.'-01');
+		// $totalsTransactionsTemp=TransactionCount::model()->getTotalsCurrency($year.'-'.$month.'-01');
+		// foreach ($totalsTransactionsInvoicedTemp as $value) {
+		// 	$totalsInvoicedTransactions[$value['currency']]=$value['total'];
+		// }
+		// foreach ($totalsTransactionsTemp as $value) {
+		// 	$totalsTransactions[$value['currency']]=$value['total'];
+		// }
+
+		if(isset($clients['totals']))
+		{
+			foreach ($clients['totals'] as $key => $value) {
+				$i++;
+				$totalsdata[$i]['id']          =$i;
+				$totalsdata[$i]['currency']    =$key;
+				$totalsdata[$i]['sub_total']   =$value['revenue'];
+				$totalsdata[$i]['total_commission']=$value['agency_commission'];
+				// isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
+				// $totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
+				$totalsdata[$i]['total']       =$totalsdata[$i]['sub_total']-$totalsdata[$i]['total_commission'];
+				// $totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				// $totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+			}
+		}
+		
+		$totalsDataProvider=new CArrayDataProvider($totalsdata, array(
+		    'id'=>'totals',
+		    'sort'=>array(
+		        'attributes'=>array(
+		             'id','currency','total','sub_total','total_count','total_invoiced'
+		        ),
+		    ),
+		    'pagination'=>array(
+		        'pageSize'=>30,
+		    ),
+		));
+
+
+		$this->render('brandingClients',array(
+			'model'        =>$model,
+			'filtersForm'  =>$filtersForm,
+			'dataProvider' =>$dataProvider,
+			'clients'      =>$consolidated,
+			'clients2'     =>$clients,
+			'totals'       =>$totalsDataProvider,
+			'month'        =>$month,
+			'year'         =>$year,
+			'stat'         =>$status,
+			'entity'       =>$entity,
+			'cat'          =>$cat,
+		));
+	}
+
+	/**
+	 * [actionProviders description]
+	 * @return [type] [description]
+	 */
 	public function actionProviders()
 	{
 		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
@@ -220,13 +339,23 @@ class FinanceController extends Controller
 		));
 	}
 
+	/**
+	 * [actionMultiRate description]
+	 * @return [type] [description]
+	 */
 	public function actionMultiRate()
 	{
 		$month =$_GET['month'];
 		$year  =$_GET['year'];
 		$id    =$_GET['id'];
 		$op    =Opportunities::model()->findByPk($id);
-		$data  =Ios::model()->getClientsMulti($month,$year,null,null,null,$id,null,null,false);
+		$filters = array(
+				'month'           =>$month,
+				'year'            =>$year,
+				'opportunitie_id' =>$id,
+				'multi'           =>true,		
+				);
+		$data  =Ios::model()->getClientsMulti($filters);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -244,6 +373,11 @@ class FinanceController extends Controller
 		), false, false);
 	}
 
+	/**
+	 * [actionView description]
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 */
 	public function actionView($id)
 	{
 		$model = Ios::model()->findByPk($id);
@@ -253,6 +387,10 @@ class FinanceController extends Controller
 		), false, true);
 	}
 
+	/**
+	 * [actionExcelReport description]
+	 * @return [type] [description]
+	 */
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-clients-form']) ) {
@@ -288,6 +426,10 @@ class FinanceController extends Controller
 		$this->renderPartial('_excelReport', array(), false, true);
 	}
 
+	/**
+	 * [actionExcelReportProviders description]
+	 * @return [type] [description]
+	 */
 	public function actionExcelReportProviders()
 	{
 		if( isset($_POST['excel-providers-form']) ) {
@@ -299,6 +441,10 @@ class FinanceController extends Controller
 		$this->renderPartial('_excelReportProviders', array(), false, true);
 	}	
 
+	/**
+	 * [actionRevenueValidation description]
+	 * @return [type] [description]
+	 */
 	public function actionRevenueValidation()
 	{
 		$model             =new Ios;
@@ -381,6 +527,10 @@ class FinanceController extends Controller
 
 	}
 
+	/**
+	 * [actionOpportunitieValidation description]
+	 * @return [type] [description]
+	 */
 	public function actionOpportunitieValidation()
 	{
 		$year    =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
@@ -389,8 +539,15 @@ class FinanceController extends Controller
 		$model   =new Ios;
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
-		if(is_null($opportunitie->rate))
-			$clients =$model->getClientsMulti($month,$year,null,null,null,$opportunitie->id,null,null,false);
+		if(is_null($opportunitie->rate)){
+			$filters = array(
+				'month'           =>$month,
+				'year'            =>$year,
+				'opportunitie_id' =>$opportunitie->id,
+				'multi'           =>true,		
+				);
+			$clients =$model->getClientsMulti($filters);			
+		}
 		else
 			$clients =$model->getClients($month,$year,null,null,null,$opportunitie->id,null,null,'otro')['data'];		
 		$dataProvider=new CArrayDataProvider($clients, array(
@@ -417,6 +574,10 @@ class FinanceController extends Controller
 
 	}
 
+	/**
+	 * [actionValidateOpportunitie description]
+	 * @return [type] [description]
+	 */
 	public function actionValidateOpportunitie()
 	{		
 		$modelOp      =new Opportunities;
@@ -427,18 +588,77 @@ class FinanceController extends Controller
 				'opportunitie'     => $opportunitie
 			));
 	}
-	
+
+	/**
+	 * [actionInvoice description]
+	 * @return [type] [description]
+	 */
 	public function actionInvoice()
 	{
-		$this->renderPartial('invoice',
-		 array(
-				'io_id'  => $_POST['io_id'],
-				'period' => $_POST['period'],
-				'invoice_id' => $_POST['invoice_id'],
-		 	)
-		);
+		$date       =date('Y-m-d H:i:s', strtotime('NOW'));
+		$status     ="Invoiced";
+		$period     =$_POST['period'];
+		$invoice_id =$_POST['invoice_id'];
+		$log=new ValidationLog;
+		if(isset($_POST['io_id']))
+		{
+			$io_id      =$_POST['io_id'];
+			if($revenueValidation= IosValidation::model()->loadByIo($io_id,$period))
+			{
+				if($revenueValidation->status=='Approved' || $revenueValidation->status=='Expired')
+				{
+					$revenueValidation->attributes=array('status'=>$status,'invoice_id'=>$invoice_id);
+					if($revenueValidation->save())
+					{
+						//ENVIAR MAIL AQUI
+					    echo 'Io #'.$revenueValidation->ios_id.' invoiced';
+						$log->loadLog($revenueValidation->id,$status);
+					}
+					else 
+					    print_r($revenueValidation->getErrors());
+				}
+				elseif($revenueValidation->status=='Invoiced')
+				    echo 'IO already invoiced';		
+				else
+					echo 'IO no approved yet ';
+			}
+			else
+			 	echo 'Las opperaciones aun no han sido validadas';			
+		}
+		elseif (isset($_POST['opportunitie_id'])) {
+			$opportunitie_id=$_POST['opportunitie_id'];
+			if($opportunitiesValidation=OpportunitiesValidation::model()->checkValidation($opportunitie_id,$period))
+			{
+			 	echo 'Opportunitie already invoiced!';							
+			}
+			else
+			{
+				$opportunitiesValidation = new OpportunitiesValidation;
+				$opportunitiesValidation->attributes=array(
+					'opportunities_id' =>$opportunitie_id,
+					'period'           =>$period,
+					'date'             =>$date,
+					'invoice_id'       =>$invoice_id
+					);
+				if($opportunitiesValidation->save())
+				{
+					//FIXME agregar log
+				    echo 'Opportunitie #'.$opportunitiesValidation->opportunities_id.' invoiced'.$invoice_id;
+					// $log->loadLog($opportunitiesValidation->id,$status);
+				}
+				else 
+				    print_r($revenueValidation->getErrors());
+				
+			}
+		
+		}
+ 		Yii::app()->end();
 	}
 	
+	/**
+	 * [actionSendMail description]
+	 * @return [type] [description]
+	 */
 	public function actionSendMail()
 	{
 		$this->renderPartial('sendMail',
@@ -449,6 +669,10 @@ class FinanceController extends Controller
 		);
 	}
 
+	/**
+	 * [actionTransactionProviders description]
+	 * @return [type] [description]
+	 */
 	public function actionTransactionProviders()
 	{
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
@@ -471,7 +695,10 @@ class FinanceController extends Controller
 		), false, true);
 	}
 
-
+	/**
+	 * [actionTransaction description]
+	 * @return [type] [description]
+	 */
 	public function actionTransaction()
 	{
 		$period = isset($_GET['period']) ? $_GET['period'] : date('Y-m-d', strtotime('today'));
@@ -499,6 +726,10 @@ class FinanceController extends Controller
 		), false, true);
 	}
 
+	/**
+	 * [actionAddTransaction description]
+	 * @return [type] [description]
+	 */
 	public function actionAddTransaction()
 	{
 		if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
@@ -518,6 +749,10 @@ class FinanceController extends Controller
 		}
 	}
 
+	/**
+	 * [actionUpdateValidationStatus description]
+	 * @return [type] [description]
+	 */
 	public function actionUpdateValidationStatus(){
 		$list = IosValidation::model()->findAllByAttributes(array('status'=>array('Sent','Viewed')));
 		foreach ($list as $key => $value) {
@@ -599,6 +834,11 @@ class FinanceController extends Controller
 	    	}
 		}		
 	}
+
+	/**
+	 * [actionGetCarriers description]
+	 * @return [type] [description]
+	 */
 	public function actionGetCarriers()
 	{
 		// comentado provisoriamente, generar permiso de admin

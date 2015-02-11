@@ -106,6 +106,11 @@ class FilterManager
 			'roles'  => array( 
 				'media',
 			)),
+		'alert.finance' => array( 
+			'column' => 'users.id', 
+			'roles'  => array( 
+				'finance',
+			)),
 		);
 
     /**
