@@ -53,7 +53,7 @@ class PartnersController extends Controller
 			
 			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
 
-			$this->render('index',array(
+			$this->render('affiliates',array(
 				'model'     =>$model,
 				'provider'  =>$provider,
 				'dateStart' =>$dateStart,
@@ -66,5 +66,10 @@ class PartnersController extends Controller
 		// {			
 		// 	$this->redirect(Yii::app()->baseUrl);
 		// }	
+	}
+
+	public function actionAdvertisers()
+	{
+
 	}
 }
