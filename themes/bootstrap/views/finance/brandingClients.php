@@ -89,7 +89,7 @@ $ios    =new Ios;
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status['invoiced']='Invoiced';
-			$status['ready_to_invoice']='Ready to invoice';
+			$status['toinvoice']='Ready to invoice';
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
