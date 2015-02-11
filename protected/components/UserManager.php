@@ -46,8 +46,9 @@ class UserManager
     }
 
     /**
-     * [redirectToIndex description]
-     * @return [type] [description]
+     * If current user is a partner associated user. Redirecto to corresponding index view.
+     *
+     * If user is not login, this method doesn't redirect.
      */
     public function redirectToIndex()
     {
