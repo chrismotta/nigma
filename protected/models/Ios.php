@@ -242,6 +242,7 @@ class Ios extends CActiveRecord
 		$year            = isset($filters['year']) ? $filters['year'] : null;
 		$status          = isset($filters['status']) ? $filters['status'] : null;
 		$multi           = isset($filters['multi']) ? $filters['multi'] : false;
+		$closed_deal           = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
 
 		#Instance of models to use
 		$opportunitiesValidation =new OpportunitiesValidation;
@@ -269,18 +270,36 @@ class Ios extends CActiveRecord
 		if($dailys=DailyReport::model()->findAllBySql($query)){
 			#Save results to array group by io,carrier and date
 			foreach ($dailys as $daily) {
+				$opportunitie=Opportunities::model()->findByPk($daily->opp_id);
 				if($status)
 				{
-					if($status=='ok')
+					if($closed_deal)
 					{
-						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
+						if($status==='invoiced')
+						{							
+							if(!$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
+								continue;
+						}
+						elseif ($status=="toinvoice") 
 						{
-							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
+							if(!$opportunitie->checkIsAbleInvoice())
 								continue;
 						}
 					}
 					else
-						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
+					{
+						if($status=='ok')
+						{
+							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Approved')
+							{
+								if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
+									continue;
+							}
+						}
+						else
+							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
+						
+					}
 				}				
 				$data[$i]['id']              =$daily->io_id;
 				$data[$i]['name']            =$daily->commercial_name;
@@ -294,7 +313,7 @@ class Ios extends CActiveRecord
 				$data[$i]['mobileBrand']     =$carriers->getMobileBrandById($daily->carrier);
 				$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
 				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
-				$data[$i]['status_io']       =$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');				
+				$data[$i]['status_io']       =$opportunitie->checkIsAbleInvoice();				
 				$data[$i]['comment']         =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['date']            =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
