@@ -282,8 +282,11 @@ class Ios extends CActiveRecord
 						}
 						elseif ($status=="toinvoice") 
 						{
-							if(!$opportunitie->checkIsAbleInvoice())
-								continue;
+							if(!$opportunitie->checkIsAbleInvoice() || $opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
+							{
+									continue;
+							}								
+								
 						}
 					}
 					else
