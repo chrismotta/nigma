@@ -698,7 +698,7 @@ class KHtml extends CHtml
             foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
             {
                 $opp=Opportunities::model()->findByPk($opportunitie['opportunitie_id']);
-                if($opp->checkIsAbleInvoice())$mainVar['count']++;
+                if($opp->checkIsAbleInvoice() && !OpportunitiesValidation::model()->checkValidation($opp->id, $mainVar['year'].'-'.$mainVar['month'].'-01'))$mainVar['count']++;
             }
             if($mainVar['count']>0)
                 $message = 'You have '.$mainVar['count'].' available '.$mainVar['option'].' to invoice.';
