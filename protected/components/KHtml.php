@@ -691,11 +691,14 @@ class KHtml extends CHtml
                 $message = 'You have '.$mainVar['count'].' non-verificated '.$mainVar['option'].'. You must validate them before '.$mainVar['date'];
         }elseif (FilterManager::model()->isUserTotalAccess('alert.finance'))
         {
-            $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
+            $mainVar['date']  =strtotime(date('Y-m-d',strtotime('NOW'))) ;
+            $mainVar['year']  =date('Y', $mainVar['date']);
+            $mainVar['month'] =date('m', $mainVar['date']);
             $mainVar['option'] ='opportunities closed deal';
             foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
             {
-                if(!$opportunitie['status_opp'])$mainVar['count']++;
+                $opp=Opportunities::model()->findByPk($opportunitie['opportunitie_id']);
+                if($opp->checkIsAbleInvoice())$mainVar['count']++;
             }
             if($mainVar['count']>0)
                 $message = 'You have '.$mainVar['count'].' available '.$mainVar['option'].' to invoice.';
