@@ -22,10 +22,6 @@ class AffiliatesController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions' =>array('index'),
-				'roles'   =>array('admin', 'affiliate'),
-			),
 			array('allow',
 				'actions' =>array('admin','view','create','update'),
 				'roles'   =>array('admin','media_manager'),
@@ -39,39 +35,6 @@ class AffiliatesController extends Controller
 			),
 		);
 	}
-
-	public function actionIndex()
-	{
-		if(Yii::app()->user->id)
-		{
-			$model     = new Affiliates;
-			$provider  = Affiliates::model()->findByUser(Yii::app()->user->id)->providers_id;
-			
-			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
-			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
-			
-			$dateStart = date('Y-m-d', strtotime($dateStart));
-			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
-			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
-
-			$this->render('index',array(
-				'model'     =>$model,
-				'provider'  =>$provider,
-				'dateStart' =>$dateStart,
-				'dateEnd'   =>$dateEnd,
-				'sum'       =>$sum,
-				'data'      =>$data
-			));
-		}
-		else
-		{			
-			$this->redirect(Yii::app()->baseUrl);
-		}
-		
-		
-	}
-
 
 	/**
 	 * Manages all models.
