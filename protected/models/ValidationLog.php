@@ -33,7 +33,7 @@ class ValidationLog extends CActiveRecord
 		return array(
 			array('date', 'required'),
 			array('ios_validation_id', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>13),
+			array('status', 'length', 'max'=>255),
 			array('ip', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

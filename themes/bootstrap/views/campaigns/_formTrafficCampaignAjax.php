@@ -10,7 +10,6 @@
     <h4>Campaign Traffic</h4>
 </div>
 <div class="modal-body">
-    <div class="row">
     <?php
 $criteria=new CDbCriteria;
 $criteria->with=array('clicksLog');
@@ -89,7 +88,6 @@ $this->widget('bootstrap.widgets.TbGridView', array(
 ));
 ?>
 
-</div>
 </div>
 
 <div class="modal-footer">

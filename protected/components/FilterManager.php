@@ -38,10 +38,17 @@ class FilterManager
 				'admin',
 				'media_manager',
 				'sem',
+				'finance',
 			)),
 		'campaign.commercial' => array( 
 			'column' => 'opportunities.ios.commercial_id', 
 			'roles'  => array( 
+				'admin',
+				'media_manager',
+			)),
+		'campaign.post_data' => array(
+			'column' => '',
+			'roles' => array(
 				'admin',
 				'media_manager',
 			)),
@@ -51,6 +58,53 @@ class FilterManager
 				'admin',
 				'media_manager',
 				'finance',
+			)),
+		'media' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'media',
+			)),
+		'affiliate' => array( 
+			'column' => 'affiliates.id', 
+			'roles'  => array( 
+				'affiliate',
+			)),
+		'clients.validateOpportunitie' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'media',
+			)),
+		'clients.invoice' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'finance',
+			)),
+		'clients.validateIo' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'business',
+				'media_manager',
+				'finance',
+			)),
+		'clients.count' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'admin',
+				'business',
+				'media_manager',
+			)),
+		'alert.business' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'business',
+			)),
+		'alert.media' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'media',
 			)),
 		);
 

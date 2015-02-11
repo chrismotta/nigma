@@ -11,6 +11,7 @@
  * @property string $status
  * @property string $comment
  * @property string $validation_token
+ * @property string $invoice_id
  *
  * The followings are the available model relations:
  * @property Ios $ios
@@ -35,12 +36,13 @@ class IosValidation extends CActiveRecord
 		return array(
 			array('period, date, validation_token', 'required'),
 			array('ios_id', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>8),
+			array('status', 'length', 'max'=>255),
 			array('comment', 'length', 'max'=>255),
+			array('invoice_id', 'length', 'max'=>255),
 			array('validation_token', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ios_id, period, date, status, comment, validation_token', 'safe', 'on'=>'search'),
+			array('id, ios_id, period, date, status, comment, validation_token, invoice_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,6 +71,7 @@ class IosValidation extends CActiveRecord
 			'status' => 'Status',
 			'comment' => 'Comment',
 			'validation_token' => 'Validation Token',
+			'invoice_id' => 'Invoice Id',
 		);
 	}
 
@@ -97,6 +100,7 @@ class IosValidation extends CActiveRecord
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('comment',$this->comment,true);
 		$criteria->compare('validation_token',$this->validation_token,true);
+		$criteria->compare('invoice_id',$this->invoice_id,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -145,13 +149,13 @@ class IosValidation extends CActiveRecord
 		$check=false;
 		$ios=new Ios;
 		$opportunitiesValidation=new OpportunitiesValidation;
-		$clients = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io);
-		foreach ($clients as $client) {			
-			foreach ($client as $data) {
-				$opportunities[]=$data;
-			}
-		}
-		foreach ($opportunities as $opportunitie) {
+		$clients = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io,null,null,null,null,'otro');
+		// foreach ($clients as $client) {			
+		// 	foreach ($client as $data) {
+		// 		$opportunities[]=$data;
+		// 	}
+		// }
+		foreach ($clients['data'] as $opportunitie) {
 			if($opportunitiesValidation->checkValidation($opportunitie['opportunitie_id'],$period)==true) $check=true;
 			else return false;
 		}
@@ -171,6 +175,17 @@ class IosValidation extends CActiveRecord
 			return false;
 	}
 	
+	public function getCommentByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->compare("period",date('Y-m-d', strtotime($period)));
+		if($validation = self::find($criteria))
+			return $validation->comment;
+		else
+			return false;
+	}
+	
 	public function getStatusByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -180,6 +195,29 @@ class IosValidation extends CActiveRecord
 		if($validation = self::find($criteria))
 			return $validation->status;
 		else
-			return 'Not Sended';
+			return 'Not Sent';
+	}
+
+	public function getDateByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::find($criteria))
+			return $validation->date;
+		else
+			return '';
+	}
+
+	public function loadByIo($id,$period)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
+		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		if($validation = self::model()->find($criteria))
+			return $validation;
+		else return false;
 	}
 }

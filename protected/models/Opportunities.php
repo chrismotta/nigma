@@ -47,6 +47,7 @@ class Opportunities extends CActiveRecord
 	public $open_budget;
 	public $multi_carrier;
 	public $multi_rate;
+	public $name;
 
 	/**
 	 * @return string the associated database table name
@@ -67,11 +68,12 @@ class Opportunities extends CActiveRecord
 			array('country_id, model_adv, wifi, ios_id', 'required'),
 			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
+			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
-			array('product, comment, targeting, sizes, channel_description', 'length', 'max'=>255),
+			array('product, targeting, sizes, channel_description', 'length', 'max'=>255),
 			array('server_to_server, freq_cap', 'length', 'max'=>45),
 			array('status', 'length', 'max'=>8),
-			array('startDate, endDate', 'safe'),
+			array('startDate, endDate, comment', 'safe'),
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -131,7 +133,17 @@ class Opportunities extends CActiveRecord
 			'advertiser_name'          => 'Advertiser',
 			'currency'                 => 'Currency',
 			'status'                   => 'Status',
+			'name'                     => 'Opportunitie',
 		);
+	}
+
+	public function behaviors()
+	{
+		return array(
+	    		'modelVersioning' => array(
+	          		'class' => 'SAModelVersioning',
+	       		)
+	    	);
 	}
 
 	/**
@@ -243,24 +255,24 @@ class Opportunities extends CActiveRecord
 
 	public function getVirtualName()
 	{
-		$adv = Advertisers::model()->findByPk( Ios::model()->findByPk($this->ios_id)->advertisers_id)->name;
+		$adv = $this->ios->advertisers->name;
 		
 		$country = '';
 		if ( $this->country_id !== NULL )
-			$country = '-' . GeoLocation::model()->findByPk($this->country_id)->ISO2;
+			$country = '-' . $this->country->ISO2;
 
 		$carrier = '';
 		if ( $this->carriers_id === NULL ) {
 			$carrier = '-MULTI';
 		} else {
-			$carrier = '-' . Carriers::model()->findByPk($this->carriers_id)->mobile_brand;
+			$carrier = '-' . $this->carriers->mobile_brand;
 		}
 
 		$product = '';
 		if ( $this->product != NULL )
 			$product = '-' . $this->product;
 		
-		return $adv . $country . $carrier . '-' . $this->rate . $product;
+		return $this->id . '-' . $adv . $country . $carrier . '-' . $this->rate . $product;
 	}
 	public function findByIo($io)
 	{		
@@ -276,6 +288,141 @@ class Opportunities extends CActiveRecord
 			    ),
 
 			));
+	}
+
+	public function getManagersDistribution($accountManager=NULL,$advertisers=NULL,$countries=NULL,$models=NULL)
+	{
+		/*
+		
+		SELECT u.username,a.name,o.id,g.name,o.model_adv FROM opportunities o 
+		inner join users u on o.account_manager_id=u.id
+		inner join ios i on o.ios_id=i.id
+		inner join advertisers a on i.advertisers_id=a.id
+		inner join geo_location g on o.country_id=g.id_location
+		group by o.id
+		 */
+
+		$criteria=new CDbCriteria;
+		$criteria->with=array('accountManager','country','ios','ios.advertisers');
+
+
+		if ( $accountManager != NULL) {
+			if(is_array($accountManager))
+			{
+				$query="(";
+				$i=0;
+				foreach ($accountManager as $id) {	
+					if($i==0)			
+						$query.="accountManager.id=".$id;
+					else
+						$query.=" OR accountManager.id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
+
+		if ( $advertisers != NULL) {
+			if(is_array($advertisers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($advertisers as $id) {	
+					if($i==0)			
+						$query.="ios.advertisers_id=".$id;
+					else
+						$query.=" OR ios.advertisers_id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('ios.advertisers_id',$advertisers);
+			}
+		}
+
+		if ( $countries != NULL) {
+			if(is_array($countries))
+			{
+				$query="(";
+				$i=0;
+				foreach ($countries as $id) {	
+					if($i==0)			
+						$query.="t.country_id=".$id;
+					else
+						$query.=" OR t.country_id=".$id;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('t.country_id',$countries);
+			}
+		}
+
+		if ( $models != NULL) {
+			if(is_array($models))
+			{
+				$query="(";
+				$i=0;
+				foreach ($models as $id) {	
+					if($i==0)			
+						$query.="t.model_adv='".$id."'";
+					else
+						$query.=" OR t.model_adv='".$id."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('t.model_adv',$models);
+			}
+		}
+		$criteria->compare('t.status','Active');
+		$criteria->order = 'accountManager.lastname ASC, advertisers.name ASC';
+
+		// $criteria->compare('advertisers.name', $this->advertiser_name, true);
+		return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=>false,
+				'sort'=>array(
+					'attributes'   =>array(						
+			            'advertiser_name'=>array(
+							'asc'  =>'advertisers.name',
+							'desc' =>'advertisers.name DESC',
+			            ),				
+			            'name'=>array(
+							'asc'  =>'advertisers.name',
+							'desc' =>'advertisers.name DESC',
+			            ),
+			            '*',
+			        ),
+			    ),
+
+			));
+	}
+
+	public function getRate($date='today')
+	{
+		$q = Yii::app()->db->createCommand()
+                    ->select('rate')
+                    ->from('opportunities_version')
+                    ->where("id=:id AND DATE(created_time)<=:date", array(':date' => date('Y-m-d', strtotime($date)), ":id" => $this->id))
+                    ->order('created_time DESC')
+                    ->queryAll(false);
+        // return first column of first register if exists
+        return isset($q[0][0]) ? $q[0][0] : NULL; 
 	}
 
 }

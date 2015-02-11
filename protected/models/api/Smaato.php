@@ -3,7 +3,7 @@
 class Smaato
 { 
 
-	private $network_id = 28;
+	private $provider_id = 28;
 
 	public function downloadInfo()
 	{
@@ -14,13 +14,13 @@ class Smaato
 		}
 
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.smaato');
 			return 2;
 		}
 
 		// Get json from Smaato API.
-		$network = Networks::model()->findbyPk($this->network_id);
+		$network = Networks::model()->findbyPk($this->provider_id);
 		$apiurl = $network->url;
 		$username = $network->token1;
 		$password = $network->token2;
@@ -46,10 +46,10 @@ class Smaato
 
 		// Save campaigns information
 		if ( $response['response']['report']['rows']['value'] == 1 ) {
-			$this->saveDailyReport($response['response']['result']['campaign'], $date);
+			$this->saveDailyReport($response['response']['result']['campaign'], $date, $network->use_alternative_convention_name);
 		} else {
 			foreach ($response['response']['result']['campaign'] as $campaign) {
-				$this->saveDailyReport($campaign, $date);
+				$this->saveDailyReport($campaign, $date, $network->use_alternative_convention_name);
 			}
 		}
 
@@ -58,23 +58,23 @@ class Smaato
 	}
 
 
-	private function saveDailyReport($campaign, $date)
+	private function saveDailyReport($campaign, $date, $useAlternativeName)
 	{
 		$dailyReport = new DailyReport;
-		// get campaign ID used in KickAds Server, from the campaign name use in the external network
-		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name']);
+		// get campaign ID used in KickAds Server, from the campaign name use in the external provider
+		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['attr']['name'], $useAlternativeName);
 
 		if ( !$dailyReport->campaigns_id ) {
 			Yii::log("Invalid external campaign name: '" . $campaign['attr']['name'], 'warning', 'system.model.api.smaato');
-			continue;
+			return;
 		}
 		$data = $campaign['country']['data'];
 		if ( $data['impressions']['value'] == 0 && $data['clicks']['value'] == 0 ) { // if no impressions dismiss campaign
-			continue;
+			return;
 		}
 
 		$dailyReport->date        = $date;
-		$dailyReport->networks_id = $this->network_id;
+		$dailyReport->providers_id = $this->provider_id;
 		$dailyReport->clics       = $data['clicks']['value'];
 		$dailyReport->imp         = $data['impressions']['value'];
 		$dailyReport->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
@@ -84,7 +84,7 @@ class Smaato
 		$dailyReport->setNewFields();
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $campaign['attr']['name'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.smaato');
-			continue;
+			return;
 		}
 	}
 }

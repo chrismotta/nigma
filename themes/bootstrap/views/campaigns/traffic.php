@@ -7,13 +7,13 @@ $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
 $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+$providers       = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 $totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
 
-if($accountManager==null && $opportunitie==null && $networks==null)
+if($accountManager==null && $opportunitie==null && $providers==null)
 	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
 else 
-	$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$networks);
+	$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$providers);
 
 // print_r($totals);
 // return;
@@ -51,7 +51,7 @@ Yii::app()->clientScript->registerScript('search', "
 				'categories' => $totalsGrap['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-			'yAxis' => array(
+			'yAxis'   => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
@@ -59,14 +59,14 @@ Yii::app()->clientScript->registerScript('search', "
 				array('name' => 'Conversions', 'data' => $totalsGrap['conversions_s2s'],),
 				),
 	        'legend' => array(
-	            'layout' => 'vertical',
-	            'align' =>  'left',
-	            'verticalAlign' =>  'top',
-	            'x' =>  40,
-	            'y' =>  3,
-	            'floating' =>  true,
-	            'borderWidth' =>  1,
-	            'backgroundColor' => '#FFFFFF'
+				'layout'          => 'vertical',
+				'align'           =>  'left',
+				'verticalAlign'   =>  'top',
+				'x'               =>  40,
+				'y'               =>  3,
+				'floating'        =>  true,
+				'borderWidth'     =>  1,
+				'backgroundColor' => '#FFFFFF'
 	        	)
 			),
 		)
@@ -119,17 +119,17 @@ Yii::app()->clientScript->registerScript('search', "
 			echo KHtml::filterAccountManagers($accountManager);
 		
 		echo KHtml::filterOpportunities($opportunitie, $accountManager);
-		echo KHtml::filterNetworks($networks);
+		echo KHtml::filterProviders($providers);
 	?>
 
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 </fieldset>
 
 <?php $this->endWidget(); ?>
 <!--### Traffic grid###-->
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'traffic-grid',
-	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$networks, $dateStart, $dateEnd),
+	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$providers, $dateStart, $dateEnd),
 	'filter'                   => $model,
     'fixedHeader'			   => true,
     'headerOffset'			   => 50,

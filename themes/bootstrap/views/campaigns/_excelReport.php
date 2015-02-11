@@ -15,7 +15,7 @@ $cid = isset($_GET['id']) ? $_GET['id'] : null;
 <div class="modal-body">
 
     <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'excel-traffic-form',
+        'id'=>'excel-traffic',
         'type'=>'horizontal',
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
@@ -71,8 +71,17 @@ $cid = isset($_GET['id']) ? $_GET['id'] : null;
     </div></label>
 
 
+    <div class="control-group">
+        <label for="" class="control-label">Opportunities:</label>
+        <div class="controls">
+            <?php echo CHtml::dropDownList('opportunities', NULL, $opportunities, array('prompt' => 'All opportunities')); ?>
+        </div>
+    </div>
+
     <div class="form-actions">
-        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Download', 'htmlOptions' => array('name' => 'excel-traffic'))); ?>
+        <?php 
+        echo CHtml::hiddenField('id' , $id, array('id' => 'id'));
+        $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Download', 'htmlOptions' => array('name' => 'excel-traffic'))); ?>
     </div>
     </fieldset>
 

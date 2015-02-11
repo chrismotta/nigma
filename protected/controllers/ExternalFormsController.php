@@ -16,7 +16,54 @@ class ExternalFormsController extends Controller
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
+			array('allow',  // allow all users
+				'actions'=>array('trafficReport'),
+				'users'=>array('*'),
+			),
 		);
+	}
+
+	/**
+	 * Reports for OneClick partners
+	 * @param  [type] $hash [description] md5 (id + ios_id)
+	 * @return [type] JSon  [description] traffic report in json format
+	 */
+	public function actionTrafficReport($hash=null){
+		if(!$hash) die('ERROR: Hash needed!');
+
+		$startDate = isset($_GET['date-start']) ? date('Y-m-d', strtotime($_GET['date-start'])) : date('Y-m-d', strtotime('yesterday'));
+		$endDate   = isset($_GET['date-end'])   ? date('Y-m-d', strtotime($_GET['date-end'])) : date('Y-m-d', strtotime('yesterday'));;
+
+		//$return = array($oppID, $startDate, $endDate);
+		$model = new DailyReport();
+		$data = $model->trafficReport($hash, $startDate, $endDate);
+		// $this->widget('bootstrap.widgets.TbGridView', array(
+
+		foreach ($data as $key => $value) {
+			$row['date']       = $value['date'];
+			$row['url']        = $value['campaigns']['url'];
+			$row['imp']        = $value['imp'];
+			//$row['imp_fake'] = $value['conv_adv'];
+			//$row['imp_true'] = $value['imp_adv'];
+			$row['click']      = $value['clics'];
+			$row['conv']       = $value['conv_api'];
+			$return[]          = $row;
+			
+			// echo $value['date'] .' - ';
+			// echo $value['campaigns']['url'] .' - ';
+			// echo $value['imp'] .' - ';
+			// echo $value['clics'] .' - ';
+			// echo $value['conv_api'] .' - ';
+			// echo $value['campaigns']['opportunities_id'];
+			// echo '<hr/>';
+			// var_dump($value);
+			// echo '<hr/><hr/>';
+		}
+		if(isset($return)){
+			echo json_encode($return);
+		}else{
+			echo json_encode(array('no data available'));
+		}
 	}
 
 	// Uncomment the following methods and override them if needed
@@ -45,10 +92,12 @@ class ExternalFormsController extends Controller
 		);
 	}
 	*/
-	public function actionRevenueValidation()
+	public function actionRevenueValidation($hash=null)
 	{
-		$token =isset($_GET['token']) ? $_GET['token'] : null;		
+		$token =isset($hash) ? $hash : null;		
 		$IosValidation =new IosValidation;
+		$IosModel=new Ios;
+		$transactionCount=new TransactionCount;
 		if(!$model=$IosValidation->loadModelByToken($token))
 		{
 			$this->render('revenueValidation',array(
@@ -58,16 +107,45 @@ class ExternalFormsController extends Controller
 		$consolidated=array();
 		$totals['revenue']=0;
 		$totals['conv']=0;
-		$IosModel=new Ios;
-		$clients = $IosModel->getClientsNew(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id);
-		foreach ($clients as $ios) {
-			foreach ($ios as $carriers) {
-				foreach ($carriers as $data) {
-					$consolidated[]=$data;
-					$totals['revenue']+=$data['revenue'];
-					$totals['conv']+=$data['conv'];
+		$clients = $IosModel->getClients(date('m', strtotime($model->period)),date('Y', strtotime($model->period)),null,$model->ios_id,null,null,null,null,'profile');
+		$consolidated=array();
+		$i=0;
+		$aux=array();
+		if($count=$transactionCount->getTotalsCarrier($model->ios_id,$model->period))
+		{
+			foreach ($count as $value) {
+				$found = false;
+				foreach ($clients['data'] as $key => $data) {
+					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier) {
+						if($data['rate']==$value->rate) {
+							$clients['data'][$key]['conv']    +=$value->volume;
+							$clients['data'][$key]['revenue'] +=$value->total;
+							$found = true;
+							break;
+						}
+					}
 				}
+				if (!$found) {
+					$aux[$i]            =$data;
+					$aux[$i]['conv']    =$value->volume;
+					$aux[$i]['revenue'] =$value->total;
+					$aux[$i]['rate']    =$value->rate;				
+					$i++;		
+				}				
 			}
+			foreach ($aux as $value) {
+				$consolidated[]=$value;
+			}
+		}
+		foreach ($clients['data'] as $value) {
+			$consolidated[]=$value;
+		}
+		$totals['revenue']=0;
+		$totals['conv']=0;
+		foreach ($consolidated as $value) {
+			$totals['revenue']+=$value['revenue'];
+			$totals['conv']+=$value['conv'];
+			
 		}
 		$dataProvider=new CArrayDataProvider($consolidated, array(
 		    'id'=>'consolidated',

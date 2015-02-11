@@ -28,12 +28,12 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport'),
+				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
 				'roles'=>array('admin', 'media', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','excelReport','graphicCampaign','trafficCampaignAjax','graphic'),
-				'roles'=>array('businness', 'sem'),
+				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','excelReport','graphicCampaign','trafficCampaignAjax','graphic','getProviders'),
+				'roles'=>array('businness', 'sem', 'finance'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('fetchCampaigns'),
@@ -118,11 +118,11 @@ class CampaignsController extends Controller
 	public function actionRedirectAjax($id)
 	{
 		$model    = $this->loadModel($id);
-		$network = Networks::model()->findByPk($model->networks_id);
+		$provider = Providers::model()->findByPk($model->providers_id);
 
 		$this->renderPartial('_redirects',array(
 			'model'        => $model,
-			'network'     => $network,
+			'provider'     => $provider,
 			'campaignName' => Campaigns::model()->getExternalName($id),
 		), false, true);
 	}
@@ -169,38 +169,7 @@ class CampaignsController extends Controller
 			Yii::app()->end();
 		}
 		 */
-
-		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
-
-		if ( $isAdmin ) {
-			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
-				array('order'=>'advertisers.name, country.ISO2')), 
-				'id', 
-				function($opp) { return $opp->getVirtualName(); }
-			);
-		} else {
-			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
-				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
-				'id', 
-				function($opp) { return $opp->getVirtualName(); }
-			);
-		}
-		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campModel     = KHtml::enumItem($model, 'model');
-		$this->renderPartial('_formAjax',array(
-			'model'         => $model,
-			//'modelOpp'    => $modelOpp,
-			'opportunities' => $opportunities,
-			'categories'    => $categories,
-			'networks'      => $networks,
-			'devices'       => $devices,
-			'formats'       => $formats,
-			'campModel'     => $campModel,
-			'action'        => 'Create'
-		), false, true);
+		$this->renderFormAjax($model, 'Create');
 	}
 	
 	/**
@@ -223,24 +192,7 @@ class CampaignsController extends Controller
 				$this->redirect($backURL);
 		}
 
-		// use listData in order to send a list of categories to the view
-		//$opportunities = CHtml::listData(Opportunities::model()->findAll(array('order'=>'id')), 'id', 'ios.name');
-		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campModel     = KHtml::enumItem($model, 'model');
-		$this->renderPartial('_formAjax',array(
-			'model'         => $model,
-			//'modelOpp'    => $modelOpp,
-			//'opportunities' => $opportunities,
-			'categories'    => $categories,
-			'networks'      => $networks,
-			'devices'       => $devices,
-			'formats'       => $formats,
-			'campModel'     => $campModel,
-			'action'        => 'Update'
-		), false, true);
+		$this->renderFormAjax($model, 'Update');
 
 	}
 
@@ -262,23 +214,8 @@ class CampaignsController extends Controller
 			if($new->save())
 				$this->redirect(array('admin'));
 		} 
-		$model=$new;
-		$categories    = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$networks      = CHtml::listData(Networks::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$formats       = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$devices       = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$campModel     = KHtml::enumItem($model, 'model');
-		$this->renderPartial('_formAjax',array(
-			'model'         => $model,
-			//'modelOpp'    => $modelOpp,
-			//'opportunities' => $opportunities,
-			'categories'    => $categories,
-			'networks'      => $networks,
-			'devices'       => $devices,
-			'formats'       => $formats,
-			'campModel'     => $campModel,
-			'action'        => 'Update'
-		), false, true);
+		
+		$this->renderFormAjax($new, 'Update');
 	}
 	public function actionGraphicCampaign()
 	{
@@ -310,7 +247,7 @@ class CampaignsController extends Controller
 			'dateStart' 		=> $_GET['dateStart'],
 			'dateEnd' 			=> $_GET['dateEnd'],
 			// 'categories'    => $categories,
-			// 'networks'      => $networks,
+			// 'providers'     => $providers,
 			// 'devices'       => $devices,
 			// 'formats'       => $formats,
 			// 'campModel'     => $campModel,
@@ -464,13 +401,25 @@ class CampaignsController extends Controller
 	
 	public function actionExcelReport()
 	{
+		$id= isset($_GET['id']) ? $_GET['id'] : NULL;
 		if( isset($_POST['excel-traffic']) ) {
 			$this->renderPartial('excelReport', array(
-				'model' => new Campaigns,
-			));
+					'model' => new Campaigns,
+					'opp'   => isset($_POST['opportunities']) ? $_POST['opportunities'] : NULL,
+					//'id'	=> $id
+				));	
 		}
 
-		$this->renderPartial('_excelReport', array(), false, true);
+		$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'t.id, advertisers.name, country.ISO2')), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+
+		$this->renderPartial('_excelReport', array(
+			'id'            =>$id,
+			'opportunities' => $opportunities,
+		), false, true);
 	}
 	
 	public function actionFetchCampaigns()
@@ -485,7 +434,7 @@ class CampaignsController extends Controller
 		*/
 	
 		$q = Yii::app()->db->createCommand()
-                    ->select('id, networks_id, url')
+                    ->select('id, providers_id, url')
                     ->from("campaigns")
                     ->queryAll(false);
 		echo json_encode($q);
@@ -559,5 +508,104 @@ class CampaignsController extends Controller
 		$this->render('search',array(
 			'model'=>$model,
 		));
+	}
+
+
+	private function renderFormAjax($model, $action)
+	{
+		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
+
+		if ( $isAdmin ) {
+			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'advertisers.name, country.ISO2')), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+		} else {
+			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
+				'id', 
+				function($opp) { return $opp->getVirtualName(); }
+			);
+		}
+		$categories     = CHtml::listData(CampaignCategories::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$formats        = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$devices        = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$campModel      = KHtml::enumItem($model, 'model');
+		
+		
+		if ($action == 'Update') 
+			$modelProv = Providers::model()->findByPk($model->providers_id);
+		else
+			$modelProv = new Providers;
+
+		$providers      = CHtml::listData(Providers::model()->findAllByType($modelProv->getType()), 'providers.id', 'providers.name');
+		$providers_type = Providers::model()->getAllTypes();
+
+		$this->renderPartial('_formAjax',array(
+			'model'            => $model,
+			'modelProv'     => $modelProv,
+			'opportunities'    => $opportunities,
+			'categories'       => $categories,
+			'providers_type'   => $providers_type,
+			'providers'        => $providers,
+			'devices'          => $devices,
+			'formats'          => $formats,
+			'campModel'        => $campModel,
+			'action'           => $action,
+		), false, true);
+	}
+
+
+	public function actionGetProviders($id)
+	{
+		$model = NULL;
+		switch ($id) {
+			case 1: // affiliates
+				$criteria       = new CDbCriteria;
+				$criteria->join = 'INNER JOIN affiliates a ON a.providers_id = t.id';
+				$model = Providers::model()->findAll( $criteria );
+				break;			
+			case 2: // networks
+				$criteria       = new CDbCriteria;
+				$criteria->join = 'INNER JOIN networks n ON n.providers_id = t.id';
+				$model = Providers::model()->findAll( $criteria );
+				break;			
+			case 3: // publishers
+				$criteria       = new CDbCriteria;
+				$criteria->join = 'INNER JOIN publishers p ON p.providers_id = t.id';
+				$model = Providers::model()->findAll( $criteria );
+				break;			
+		}
+
+		$response='<option value="">Select a provider</option>';
+		foreach ($model as $val) {
+			$response .= '<option value="' . $val->id . '">' . $val->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
+
+	public function actionGetProviderCurrency($id)
+	{
+		echo Providers::model()->findByPk($id)->currency;
+		Yii::app()->end();
+	}
+
+	
+	public function actionGetDefaultExternalRate($id)
+	{
+		$opp  = Opportunities::model()->with('ios')->findByPk($id);
+		$prov = Providers::model()->findByPk($_GET["p_id"]);
+
+		switch ($opp->ios->entity) {
+		 	case 'SRL':
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.65, 2));
+		 		break;
+		 	
+		 	default:
+		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.80, 2));
+		 		break;
+		 }
 	}
 }

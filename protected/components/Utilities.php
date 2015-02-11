@@ -18,7 +18,7 @@ class Utilities {
 	    return $range;
 	}
 
-	public static function parseCampaignID($campaignname)
+	public static function parseCampaignID($campaignname, $useAlternativeName = false)
 	{
 		$campaignname = strip_tags($campaignname);
 		
@@ -44,6 +44,12 @@ class Utilities {
 				$return = NULL;
 				break;
 		}
+
+		if ($useAlternativeName) {
+			$id_begin = strrpos($campaignname, '-');
+			$return   = trim(substr($campaignname, $id_begin + 1));
+		}
+
 		if ( is_numeric($return) ) {
 			if ( !Campaigns::model()->isValidId($return) )
 				return NULL;
@@ -184,5 +190,16 @@ class Utilities {
 	    }
 	    
 	    return($xml_array);
+	}
+
+	public function weekDaysSum($startDay=null, $cantDays) {
+		if(!$startDay)$startDay= date('Y-m-d', strtotime('NOW'));
+	    for($i=1; $i<=$cantDays; $i++) {
+	        $weekDay = date('D', strtotime('+'.$i.' day',strtotime($startDay)));	 
+	        if( $weekDay == "Sat" || $weekDay == "Sun"){
+	            $cantDays++;
+	        }
+	    }
+	    return date('Y-m-d', strtotime('+'.$cantDays.' day',strtotime($startDay)) );
 	}
 }

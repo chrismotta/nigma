@@ -28,7 +28,7 @@ class SemController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('keyword','placement','creative'),
+				'actions'=>array('keyword','placement','creative','excelReport', 'searchCriteria'),
 				'roles'=>array('admin', 'sem'),
 			),
 			array('deny',  // deny all users
@@ -40,38 +40,82 @@ class SemController extends Controller
 
 	public function actionKeyword()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('report', array(
-			'model'  => new ClicksLog,
-			'report' => 'keyword',
+			'model'       => $model,
+			'report_type' => 'keyword',
 		));
 	}
 
 
 	public function actionPlacement()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('report', array(
-			'model'  => new ClicksLog,
-			'report' => 'placement',
+			'model'       => $model,
+			'report_type' => 'placement',
 		));
 	}
 
 
 	public function actionCreative()
 	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
 		$this->render('report', array(
-			'model'  => new ClicksLog,
-			'report' => 'creative',
+			'model'       => $model,
+			'report_type' => 'creative',
 		));
 	}
 
-	// public function actionExcelReport()
-	// {
-	// 	if( isset($_POST['excel-report-sem']) ) {
-	// 		$this->renderPartial('excelReport', array(
-	// 			'model' => new ClicksLog,
-	// 		));
-	// 	}
 
-	// 	$this->renderPartial('_excelReport', array(), false, true);
-	// }
+	public function actionExcelReport()
+	{
+		// generate excel report if submitted
+		if( isset($_POST['excel-report-sem']) ) {
+			$this->renderPartial('excelReport', array(
+				'model'       => new ClicksLog,
+				'report_type' => $_POST['excel-report'],
+			));
+		}
+
+		// render modal with config input information to generate excel report
+		$this->renderPartial('_excelReport', array(
+			'report_type' => $_POST['report_type'],
+		), false, true);
+	}
+
+
+	public function actionSearchCriteria()
+	{
+		$model = new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+
+		if(isset($_GET['ClicksLog']))
+			$model->attributes=$_GET['ClicksLog'];
+
+		if (isset($_GET['submit-excel'])) {
+			$this->renderpartial('excelSearchQuery', array(
+				'model' => $model,
+			));
+		} 
+
+		$this->render('searchCriteria', array(
+			'model' => $model,
+		));
+	}
 }

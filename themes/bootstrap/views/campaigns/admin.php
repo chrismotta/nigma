@@ -21,17 +21,7 @@ $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
 	$breadcrumbs['title'],
 );
-
-/*
-$this->menu=array(
-	//array('label'=>'List Campaigns', 'url'=>array('index')),
-	array('label'=>'Create Campaigns', 'url'=>array('create')),
-);
-*/
 ?>
-
-<!--h2>Manage Campaigns</h2-->
-
 <?php
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -82,7 +72,7 @@ if(!$is_archived){
 <?php
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
+	$providers       = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
 ?>
 
@@ -92,7 +82,7 @@ if(!$is_archived){
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
         'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/campaigns/admin',
+        'action' => Yii::app()->getBaseUrl() . '/' . Yii::app()->controller->getId().'/'.Yii::app()->controller->getAction()->getId(),
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -103,18 +93,18 @@ if(!$is_archived){
 			echo KHtml::filterAccountManagers($accountManager);
 		
 		echo KHtml::filterOpportunities($opportunitie, $accountManager);
-		echo KHtml::filterNetworks($networks);
+		echo KHtml::filterProviders($providers);
 		echo KHtml::filterAdvertisersCategory($advertiser);
 	?>
 	  
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
 </fieldset>
 <?php $this->endWidget(); ?>
 
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
-	'dataProvider'             => $model->search($accountManager, $opportunitie, $networks, $advertiser),
+	'dataProvider'             => $model->search($accountManager, $opportunitie, $providers, $advertiser),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,
@@ -175,7 +165,7 @@ if(!$is_archived){
 		array(
 			'name'              => 'net_currency',
 			'headerHtmlOptions' => array('style' => 'width: 20px'),
-			'value'             => '$data->networks->currency',
+			'value'             => '$data->providers->currency',
         ),
 		array(
 			'name'              => 'cap',
@@ -261,6 +251,11 @@ if(!$is_archived){
 					'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
+
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalCampaigns").html(dataInicial);
+						$("#modalCampaigns").modal("toggle");
+
 				    	$.post(
 						"viewAjax/"+id,
 						"",
@@ -268,7 +263,6 @@ if(!$is_archived){
 							{
 								//alert(data);
 								$("#modalCampaigns").html(data);
-								$("#modalCampaigns").modal("toggle");
 							}
 						)
 						return false;

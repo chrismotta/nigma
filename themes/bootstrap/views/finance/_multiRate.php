@@ -8,7 +8,8 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Io #<?php echo $id ?> - Multi Rate</h4>
+    <h4>Multi Rate</h4>
+    <h5>Opportunitie: <?php echo $opportunitie->id. " - ". $opportunitie->getVirtualName(); ?></h5>
 </div>
 
 
@@ -16,13 +17,14 @@
 
     <?php 
         $this->widget('bootstrap.widgets.TbGridView', array(
-            'type'         =>'striped condensed',
+            'type'         =>'striped bordered',
             'dataProvider' => $dataProvider,
             'template'     => "{items}",
             'columns'      =>array(
-                array('name'=>'rate', 'type' => 'raw', 'header'=>'Rate'),
-                array('name'=>'conv', 'type' => 'raw', 'header'=>'Conv.'),
-                array('name'=>'revenue', 'type' => 'raw', 'header'=>'Revenue'),
+                array('name' =>'revenue', 'type' => 'raw', 'header'=>'Profile','value'=>'$data["country"]." - ".$data["mobileBrand"]." - ".$data["product"]'),
+                array('name' =>'rate', 'type' => 'raw', 'header'=>'Rate'),
+                array('name' =>'conv', 'type' => 'raw', 'header'=>'Conv.'),
+                array('name' =>'revenue', 'type' => 'raw', 'header'=>'Revenue'),
             ),
         ));
         ?>

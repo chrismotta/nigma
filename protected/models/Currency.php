@@ -54,12 +54,12 @@ class Currency extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'id'   => 'ID',
 			'date' => 'Date',
-			'ARS' => 'Ars',
-			'EUR' => 'Eur',
-			'BRL' => 'Brl',
-			'GBP' => 'Gbp',
+			'ARS'  => 'Ars',
+			'EUR'  => 'Eur',
+			'BRL'  => 'Brl',
+			'GBP'  => 'Gbp',
 		);
 	}
 
@@ -111,11 +111,27 @@ class Currency extends CActiveRecord
 	 */
 	public function findByDate($date)
 	{
-		$criteria = new CDbCriteria;
-		$criteria->order = 'date DESC';
+		$criteria            = new CDbCriteria;
+		$criteria->order     = 'date DESC';
 		$criteria->condition = 'date<=Date(:date)';
-		$criteria->limit = 0;
-		$criteria->params = array(':date' => $date);
+		$criteria->limit     = 0;
+		$criteria->params    = array(':date' => $date);
 		return Currency::model()->find( $criteria );
+	}
+
+	public function convert($from, $to, $value)
+	{
+		$currency = $this->findByDate(date('Y-m-d', strtotime('today')));
+
+		if ($from == 'USD' && $to == 'USD')
+			return $value;
+
+		if ($from == 'USD')
+			return $value * $currency[$to];
+
+		if ($to == 'USD')
+			return $value / $currency[$from];
+
+		return $value / $currency[$from] * $currency[$to];
 	}
 }

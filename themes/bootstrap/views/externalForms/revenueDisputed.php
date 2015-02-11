@@ -1,8 +1,8 @@
 <?php 
 /* @var $this ExternalFormsController */
 /* @var $model ExternalForm */
-$status='Disputed';
-$log=new ValidationLog;
+$status ='Disputed';
+$log    =new ValidationLog;
 
 switch ($model->status) {
 	case 'Disputed':

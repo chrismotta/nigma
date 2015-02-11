@@ -1,6 +1,6 @@
 <?php 
-/* @var $this DailyReportController */
-/* @var $model DailyReport */
+/* @var $this CampaignsController */
+/* @var $model Campaigns */
 
 $path = 'uploads/';
 $name = 'KickAds-ConversionsReport.xls';
@@ -10,7 +10,7 @@ $dateStart = date('Y-m-d', strtotime($dateStart));
 $dateEnd = date('Y-m-d', strtotime($dateEnd));
 $id= isset($_POST['id']) ? $_POST['id'] : null;
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->excel($dateStart,$dateEnd,$id),
+    'dataProvider' => $model->excel($dateStart,$dateEnd,$id,$opp),
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
@@ -25,8 +25,8 @@ $this->widget('EExcelWriter', array(
             'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
         ),
         array(
-            'name'   => 'Network',
-            'value'  => '$data->clicksLog->networks->name',           
+            'name'   => 'Provider',
+            'value'  => '$data->clicksLog->providers->name',           
         ),
         array(
             'name'   => 'IP',

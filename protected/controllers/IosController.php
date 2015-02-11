@@ -36,11 +36,11 @@ class IosController extends Controller
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','redirect','admin'),
+				'actions'=>array('index','view','redirect','admin','archived'),
 				'roles'=>array('businness', 'finance'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('update'),
+				'actions'=>array('update','generatePdf','viewPdf','uploadPdf'),
 				'roles'=>array('finance'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -289,26 +289,35 @@ class IosController extends Controller
 	{
 		$model = $this->loadModel($id);
 
-		$pdf = Pdf::doc();
-        $pdf->setData( array(
-			'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
-			'io'            => $model,
-			'opportunities' => Opportunities::model()->findAll( 'ios_id=:id', array(':id'=>$id) ),
-        ));
-        $pdf->output();
+		if (isset($_POST['submit'])) {
 
-        Yii::app()->end();
+			if (!isset($_POST['opp_ids'])) // no opportunities selected
+				$this->redirect(array('admin'));
+
+			$pdf = PDFInsertionOrder::doc();
+	        $pdf->setData( array(
+				'advertiser'    => Advertisers::model()->findByPk($model->advertisers_id),
+				'io'            => $model,
+				'opportunities' => $_POST['opp_ids'],
+	        ));
+	        $pdf->output();
+	        Yii::app()->end();
+	    }
+
+	    $this->renderPartial('_generatePDF', array(
+	    	'model' => $model,
+	    ), false, true);
 	}
 
 	public function actionViewPdf($id) 
 	{
 		$model = $this->loadModel($id);
-		$path = Pdf::getPath();
+		$path = PDF::getPath();
 
 		if ( file_exists($path . $model->pdf_name) ) {
 			$info = pathinfo($model->pdf_name);
 			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
-				$this->redirect( array('uploads/Adv-1_IO-1.pdf') );
+				$this->redirect( array('uploads/' . $model->pdf_name) );
 			} else { // other files download
 				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
 			}
@@ -321,7 +330,7 @@ class IosController extends Controller
 	public function actionUploadPdf($id) 
 	{
 		$model = $this->loadModel($id);
-		$path = Pdf::getPath();
+		$path = PDF::getPath();
 
 		if(isset($_POST['submit'])) {
 
@@ -379,7 +388,7 @@ class IosController extends Controller
 	{
 		$currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
-		$advertiser = CHtml::listData(Advertisers::model()->findAll(array('order'=>'name')), 'id', 'name'); 
+		$advertiser = CHtml::listData(Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name'); 
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 
 		if ( $model->isNewRecord ) {

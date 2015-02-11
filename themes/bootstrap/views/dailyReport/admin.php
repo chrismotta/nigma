@@ -1,7 +1,8 @@
 <?php
 /* @var $this DailyReportController */
 /* @var $model DailyReport */
-
+ini_set ( 'memory_limit', '1024M' );
+set_time_limit('100000');
 $this->breadcrumbs=array(
 	'Daily Reports'=>array('index'),
 	'Manage',
@@ -30,14 +31,14 @@ $('.search-form form').submit(function(){
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-	$networks       = isset($_GET['networks']) ? $_GET['networks'] : NULL;
-	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
+	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
+	$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
+	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
-	$dateStart = date('Y-m-d', strtotime($dateStart));
-	$dateEnd = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap=$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunitie,$networks);
+	$dateStart  = date('Y-m-d', strtotime($dateStart));
+	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
+	$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$providers, $adv_categories);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -51,7 +52,7 @@ $('.search-form form').submit(function(){
 				'categories' => $totalsGrap['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-			'yAxis' => array(
+			'yAxis'   => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
@@ -63,14 +64,14 @@ $('.search-form form').submit(function(){
 				array('name' => 'Profit','data' => $totalsGrap['profits'],),
 				),
 	        'legend' => array(
-	            'layout' => 'vertical',
-	            'align' =>  'left',
-	            'verticalAlign' =>  'top',
-	            'x' =>  40,
-	            'y' =>  3,
-	            'floating' =>  true,
-	            'borderWidth' =>  1,
-	            'backgroundColor' => '#FFFFFF'
+				'layout'          => 'vertical',
+				'align'           =>  'left',
+				'verticalAlign'   =>  'top',
+				'x'               =>  40,
+				'y'               =>  3,
+				'floating'        =>  true,
+				'borderWidth'     =>  1,
+				'backgroundColor' => '#FFFFFF'
 	        	)
 			),
 		)
@@ -105,12 +106,67 @@ $('.search-form form').submit(function(){
 		'htmlOptions' => array('id' => 'createAjax'),
 		)
 	); ?>
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
+	<?php 
+	//Create link to load filters in modal
+	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
+	if(isset($accountManager))
+	{
+		if(is_array($accountManager))
+		{
+			foreach ($accountManager as $id) {
+				$link.='&accountManager[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&accountManager='.$accountManager;
+		}
+	}
+	if(isset($opportunities))
+	{
+		if(is_array($opportunities))
+		{
+			foreach ($opportunities as $id) {
+				$link.='&opportunities[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&opportunities='.$opportunities;
+		}
+	}	
+	if(isset($providers))
+	{
+		if(is_array($providers))
+		{
+			foreach ($providers as $id) {
+				$link.='&providers[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&providers='.$providers;
+		}
+	}
+	if(isset($adv_categories))
+	{
+		if(is_array($adv_categories))
+		{
+			foreach ($adv_categories as $id) {
+				$link.='&advertisers-cat[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&advertisers-cat='.$adv_categories;
+		}
+	}
+	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport',
+		'url'         => $link,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -131,49 +187,57 @@ $('.search-form form').submit(function(){
 
 <br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/dailyReport/admin',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		'id'                   =>'date-filter-form',
+		'type'                 =>'search',
+		'htmlOptions'          =>array('class'=>'well'),
+		'enableAjaxValidation' =>true,
+		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/admin',
+		'method'               => 'GET',
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
-<fieldset>
-	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
-	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
-	<?php 
-		if (FilterManager::model()->isUserTotalAccess('daily'))
-			echo KHtml::filterAccountManagers($accountManager);
+<fieldset class="formfilter">
+	<div class="formfilter-date">
+		<p>From:</p> 
+		<?php echo KHtml::datePicker('dateStart', $dateStart); ?>
 		
-		echo KHtml::filterOpportunities($opportunitie, $accountManager, array('style' => "width: 140px; margin-left: 1em"));
-		echo KHtml::filterNetworks($networks, array('style' => "width: 140px; margin-left: 1em"));
-		echo KHtml::filterAdvertisersCategory($advertiser, array('style' => "width: 140px; margin-left: 1em"));
-	?>
-	  
-	SUM 
-	<div class="input-append">
-	<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
+		<p>To:</p> 
+		<?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
 	</div>
-		
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter')); ?>
+	<?php 
+		//Load Filters
+		if (FilterManager::model()->isUserTotalAccess('daily'))
+			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
+		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
+		KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
+		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
+	?>
+	<hr>
+	<div class="formfilter-submit">
+		SUM
+		<div class="input-append">
+			<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
+		</div>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+	</div>
 
 </fieldset>
 <?php $this->endWidget(); ?>
 
 <?php 
-	$totals=$model->getDailyTotals($dateStart, $dateEnd, $accountManager,$opportunitie,$networks);
+//yess
+	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
+	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
+
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
-	'dataProvider'             => $model->search($dateStart, $dateEnd, $accountManager, $opportunitie, $networks, $sum, $advertiser),
+	'dataProvider'             => $dataProvider,
 	'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->networks_id, "data-row-c-id" => $data->campaigns_id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
 	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
@@ -196,9 +260,9 @@ $('.search-form form').submit(function(){
 			'class'       => 'bootstrap.widgets.TbEditableColumn',
 			'htmlOptions' => array('class'=>'editableField'),
 			'editable'    => array(
-				'title'     => 'Comment',
-				'type'      => 'textarea',
-				'url'       => 'updateEditable/',
+				'title'   => 'Comment',
+				'type'    => 'textarea',
+				'url'     => 'updateEditable/',
 				'display' => 'js:function(value, source){
 					$(this).html("<i class=\"icon-font\"></i>");
 				}'
@@ -206,26 +270,26 @@ $('.search-form form').submit(function(){
             'visible' => $sum ? false : true,
         ),
 		array(
-			'name'   =>	'network_name',
-			'value'  =>	'$data->networks->name',
-			'filter' => $networks_names,
+			'name'   =>	'providers_name',
+			'value'  =>	'$data->providers->name',
+			'filter' => $providers_names,
 		),
 		array(
 			'name'        => 'rate',
-			'value'       => '$data->getRateUSD() ? $data->getRateUSD() : 0',
+			'value'       => '$data->getRateUSD() ? number_format($data->getRateUSD(),2) : "0.00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
 		),
 		array(	
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp'],
+			'footer'            => number_format($totals['imp']),
         ),
         array(	
 			'name'              => 'imp_adv',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['imp_adv'],
+			'footer'            => number_format($totals['imp_adv']),
 			'class'             => 'bootstrap.widgets.TbEditableColumn',
 			'editable'          => array(
 				'apply'      => $sum ? false : true,
@@ -245,13 +309,13 @@ $('.search-form form').submit(function(){
 			'name'              => 'clics',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['clics'],
+			'footer'            => number_format($totals['clics']),
         ),
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['conv_s2s'],
+			'footer'            => number_format($totals['conv_api']),
         ),
 		array(
 			'name'              => 'conv_adv',
@@ -276,7 +340,7 @@ $('.search-form form').submit(function(){
 					  	}
 					}',
             ),
-			'footer' => $totals['conv_adv'],
+			'footer' => number_format($totals['conv_adv']),
 		),
 		array(
 			'name'              => 'mr',
@@ -294,6 +358,7 @@ $('.search-form form').submit(function(){
 	        					"onClick" => CHtml::ajax( array(
 									"type"    => "POST",
 									"url"     => "multiRate/" . $data->id,
+									"data"    => "'.$_SERVER['QUERY_STRING'].'",
 									"success" => "function( data )
 										{
 											$(\"#modalDailyReport\").html(data);
@@ -310,70 +375,74 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'revenue',
-			'value'             => '$data->getRevenueUSD()',
+			'value'             => 'number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['revenue'],
+			'footer'            => number_format($totals['revenue'],2),
         ),
 		array(
 			'name'              => 'spend',
-			'value'             => '$data->getSpendUSD()',
+			'value'             => 'number_format($data->getSpendUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['spend'],
+			'footer'            => number_format($totals['spend'],2),
         ),
 		array(
 			'name'              => 'profit',
+			'value'             => 'number_format($data->profit, 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['profit'],
+			'footer'            => number_format($totals['profit'],2),
 		),
 		array(
 			'name'              => 'profit_percent',
-			'value'             => '$data->profit_percent * 100 . "%"',
+			'value'             => $sum ? '$data->revenue == 0 ? "0%" : number_format($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'number_format($data->profit_percent*100)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => ($totals['profitperc']*100)."%",
+			'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? number_format(($totals['profit'] / $totals['revenue']) * 100)."%" : 0,
 		),
 		array(
 			'name'              => 'click_through_rate',
-			'value'             => 'number_format($data->click_through_rate * 100, 2) . "%"',
+			'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => ($totals['ctr']*100)."%",
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4)*100)."%" : 0,
 		),
 		array(
 			'name'              => 'conversion_rate',
-			'value'             => 'number_format($data->conversion_rate * 100, 2) . "%"',
+			'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => ($totals['cr']*100)."%",
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv'] / $totals['clics'], 4 )*100)."%" : 0,
 		),
 		array(
 			'name'              => 'eCPM',
+			'value'             => $sum ? 'number_format($data->getECPM(), 2)' : '$data->eCPM', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['ecpm'],
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0 ? round($totals['spend'] * 1000 / $totals['imp'], 2) : 0,
 		),
 		array(
 			'name'              => 'eCPC',
+			'value'             => $sum ? 'number_format($data->getECPC(), 2)' : '$data->eCPC', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['ecpc'],
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? round($totals['spend'] / $totals['clics'], 2) : 0,
 		),
 		array(
 			'name'              => 'eCPA',
+			'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => $totals['ecpa'],
+			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? round($totals['spend'] / $totals['conv'], 2) : 0,
 		),
 		array(
-			'name'        => 'date',
-			'value'       => 'date("d-m-Y", strtotime($data->date))',
+			'name'              => 'date',
+			'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 30px"),
-			'htmlOptions' => array(
-				'class' => 'date', 
-				'style'=>'text-align:right;'
+			'htmlOptions'       => array(
+					'class' => 'date', 
+					'style' =>'text-align:right;'
 				),
 			'filter'      => false,
         ),

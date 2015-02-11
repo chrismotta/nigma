@@ -16,25 +16,27 @@
 
     $redirect_old = array(
         'cid' => $model->id,
-        'nid' => $network->id,
+        'nid' => $provider->id,
         );
     $redirect_new = array();
 
-    if(stristr($network->name, "Adwords")){
+    if(stristr($provider->name, "Adwords")){
         $redirect_old['g_net'] = '{network}';
         $redirect_old['g_key'] = '{keyword}';
         $redirect_old['g_cre'] = '{creative}';
         $redirect_old['g_pla'] = '{placement}';
+        $redirect_old['g_mty'] = '{matchtype}';
 
         $redirect_new['g_net'] = '{network}';
         $redirect_new['g_key'] = '{keyword}';
         $redirect_new['g_cre'] = '{creative}';
         $redirect_new['g_pla'] = '{placement}';
+        $redirect_new['g_mty'] = '{matchtype}';
     }
 
-    if($network->has_s2s){
-        $redirect_old['ntoken'] = $network->placeholder;
-        $redirect_new['ntoken'] = $network->placeholder;
+    if( $provider->has_token ) {
+        $redirect_old['ntoken'] = $provider->placeholder;
+        $redirect_new['ntoken'] = $provider->placeholder;
     }
 
     $redirect_old_query = urldecode( http_build_query($redirect_old) );
@@ -46,14 +48,14 @@
     
     // redirect old format
     echo '<p style="color:#AAA">';
-    echo '<strong>'.$network->name.' (old format): </strong>';
+    echo '<strong>'.$provider->name.' (old format): </strong>';
     echo 'http://kickadserver.mobi/clicksLog?';
     echo $redirect_old_query;
     echo '</p>';
 
     // redirect new format
     echo '<p>';
-    echo '<strong>'.$network->name.' (new format): </strong>';
+    echo '<strong>'.$provider->name.' (new format): </strong>';
     echo 'http://kickadserver.mobi/clicksLog/tracking/'.$model->id.'/';
     if($redirect_new) echo '?' . $redirect_new_query;
     echo '</p>';

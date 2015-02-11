@@ -44,6 +44,7 @@
         echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'phone', array('class'=>'span3'));
+        echo '<hr/>';
         echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));

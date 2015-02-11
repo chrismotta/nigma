@@ -4,21 +4,34 @@ class ClicksLogController extends Controller
 {
 
 	/**
-	 * Record a click stamp and redirect
-	 * to the appropriate landing
-	 * @return [type] [description]
+	 * @return array action filters
 	 */
-	
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete', // we only allow deletion via POST request
+		);
+	}
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData'),
-				'roles'=>array('admin'),
+			array('allow',
+				'actions'=>array('index', 'tracking', 'vector'),
+				'users'=>array('*'),
 			),
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateClicksData'),
+			array('allow',
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage'),
 				'ips'=>array('54.88.85.63'),
+			),
+			array('allow', 
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage', 'test'),
+				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -26,10 +39,36 @@ class ClicksLogController extends Controller
 		);
 	}
 
+	/**
+	 * Record a click stamp and redirect
+	 * to the appropriate landing
+	 * @return [type] [description]
+	 */
 	public function actionTracking($id=null)
 	{
 		$this->actionIndex($id);
 	}
+
+	public function actionTest()
+	{
+
+		if (isset($_GET["user_agent"])) {
+			$user_agent = $_GET["user_agent"];
+			echo $user_agent  . "<hr/>";
+		} else {
+			die ("user_agent missing");
+		}
+
+		$wurfl  = WurflManager::loadWurfl();
+		$device = $wurfl->getDeviceForUserAgent($user_agent);
+		echo "brand_name = " . $device->getCapability('brand_name') . "<br/>";
+		echo "marketing_name = " . $device->getCapability('marketing_name') . "<br/>";
+		echo "device_os = " . $device->getCapability('device_os') . "<br/>";
+		echo "device_os_version = " . $device->getCapability('device_os_version') . "<br/>";
+		echo "advertised_browser = " . $device->getVirtualCapability('advertised_browser') . "<br/>";
+		echo "advertised_browser_version =" . $device->getVirtualCapability('advertised_browser_version') . "<br/>";
+	}
+	
 	public function actionIndex($id=null)
 	{
 			
@@ -68,12 +107,11 @@ class ClicksLogController extends Controller
 			if($campaign = Campaigns::model()->findByPk($cid)){
 				$redirectURL          = $campaign->url;
 				if($nid==NULL){
-					$nid              = $campaign->networks_id;
+					$nid              = $campaign->providers_id;
 				}
 				$ts['campaign']       = microtime(true);
 				
-				$s2s                  = $campaign->opportunities->server_to_server;
-				if(!isset($s2s)) $s2s = "ktoken";
+				$s2s = $campaign->opportunities->server_to_server ? $campaign->opportunities->server_to_server : NULL;
 				$ts['s2s']            = microtime(true);
 			}else{
 				//print "campaign: null<hr/>";
@@ -93,8 +131,20 @@ class ClicksLogController extends Controller
 		$model = new ClicksLog();
 		//$model->id         = 2;
 		$model->campaigns_id = $cid;
-		$model->networks_id  = $nid;
+		$model->providers_id = $nid;
 		//$model->date       = 0;
+
+		// Get custom parameters
+		
+		if ( Providers::model()->findByPk($nid)->has_s2s ) {
+			foreach ($_GET as $key => $value) {
+				$ignore_params = array('g_net', 'g_key', 'g_cre', 'g_pla', 'g_mty', 'ntoken', 'nid', 'cid', 'ts', 'id');
+				if ( !in_array($key, $ignore_params) ) {
+					$model->custom_params != NULL ? $model->custom_params .= '&' : NULL ;
+					$model->custom_params .= $key . '=' . $value;
+				}
+			}
+		}
 
 		// Get visitor parameters
 		
@@ -112,12 +162,20 @@ class ClicksLogController extends Controller
 		$model->keyword      = isset($_GET["g_key"]) ? $_GET["g_key"] : null;
 		$model->creative     = isset($_GET["g_cre"]) ? $_GET["g_cre"] : null;
 		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
-		
+		$model->match_type   = isset($_GET["g_mty"]) ? $_GET["g_mty"] : null;
+
+		// get query if exists
+
+		$tmp = array();
+		if (preg_match('/q=[^\&]*/', $model->referer, $tmp)) {
+			$model->query = urldecode(substr($tmp[0], 2));
+		}
+
 
 		$ts['model']         = microtime(true);
 		
 		
-		if($test || $campaign->post_data == '1'){
+		// if($test || $campaign->post_data == '1'){
 		
 			// Get ip data
 
@@ -126,7 +184,8 @@ class ClicksLogController extends Controller
 				$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 				$location       = new IP2Location($binPath, IP2Location::FILE_IO);
 				$ipData         = $location->lookup($ip, IP2Location::ALL);
-				$model->country = $ipData->countryName;
+				//$model->country = $ipData->countryName;
+				$model->country = $ipData->countryCode;
 				$model->city    = $ipData->cityName;
 				$model->carrier = $ipData->mobileCarrierName;
 			}
@@ -147,14 +206,18 @@ class ClicksLogController extends Controller
 
 				$wurfl = WurflManager::loadWurfl();
 				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
-				
-				$model->device = $device->getCapability('brand_name') . " " . $device->getCapability('marketing_name');
-				$model->os     = $device->getCapability('device_os') . " " . $device->getCapability('device_os_version');
+				$model->device          = $device->getCapability('brand_name');
+				$model->device_model    = $device->getCapability('marketing_name');
+				$model->os              = $device->getCapability('device_os');
+				$model->os_version      = $device->getCapability('device_os_version');
+				$model->browser         = $device->getVirtualCapability('advertised_browser');
+				$model->browser_version = $device->getVirtualCapability('advertised_browser_version');
+
 			}
 
 			$ts['wurfl'] = microtime(true);
 
-		}
+		// }
 		
 
 		//var_dump($model);
@@ -203,24 +266,31 @@ class ClicksLogController extends Controller
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if($cid){
-				if( strpos($redirectURL, "?") ){
-					$redirectURL.= "&";
-				} else {
-					$redirectURL.= "?";
+				if($s2s){
+					if( strpos($redirectURL, "?") ){
+						$redirectURL.= "&";
+					} else {
+						$redirectURL.= "?";
+					}
+					$redirectURL.= $s2s."=".$ktoken;
 				}
-				$redirectURL.= $s2s."=".$ktoken;
 			}
 
 			//enviar macros
-
+			if($model->haveMacro($redirectURL))
+				$redirectURL = $model->replaceMacro($redirectURL);
+			
 			if($campaign->post_data == '1'){
-				$redirectURL.= "&os=".$model->os;
-				$redirectURL.= "&device=".$model->device;
-				$redirectURL.= "&country=".$model->country;
-				$redirectURL.= "&carrier=".$model->carrier;
-				$redirectURL.= "&referer=".$model->referer;
-				$redirectURL.= "&app=".$model->app;
-				$redirectURL.= "&kw=".$model->keyword;
+
+				$dataQuery['os']      = $model->os."-".$model->os_version;
+				$dataQuery['device']  = $model->device."-".$model->device_model;
+				$dataQuery['country'] = $model->country;
+				$dataQuery['carrier'] = $model->carrier;
+				$dataQuery['referer'] = $model->referer;
+				$dataQuery['app']     = $model->app;
+				$dataQuery['keyword'] = $model->keyword;
+
+				$redirectURL.= '&'.http_build_query($dataQuery, null, '&', PHP_QUERY_RFC3986);
 			}
 			
 			
@@ -239,18 +309,18 @@ class ClicksLogController extends Controller
 				// redirect to campaign url
 				if($test){
 					echo json_encode($ts);
+					die($redirectURL);
 				}else{
 					//$this->redirect($redirectURL);
 					header("Location: ".$redirectURL);
-					die();
 				}
 			}else{
-				echo "no redirect";
+				logError("no redirect");
 			}
 				
 				
 		}else{
-			print "no guardado";
+			logError("no guardado");
 		}
 
 	}
@@ -371,6 +441,100 @@ class ClicksLogController extends Controller
 			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
 		}
 		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
+
+	}
+
+	public function actionUpdateQuery() 
+	{
+		set_time_limit(1000000);
+
+		if (isset($_GET['useUTC'])) {
+			date_default_timezone_set('UTC');
+		}
+
+		if (isset($_GET['date']) && isset($_GET['hourFrom']) && isset($_GET['hourTo'])) {
+			$date     = $_GET['date'];
+			$hourFrom = $_GET['hourFrom'];
+			$hourTo   = $_GET['hourTo'];
+		} else {
+			echo "Missing parameters: date, hourFrom, hourTo";
+			return;
+		}
+
+		$timestampFrom = new DateTime($date . ' ' . $hourFrom . ':00');
+		$timestampTo   = new DateTime($date . ' ' . $hourTo . ':00');
+
+		$criteria=new CDbCriteria;
+		$criteria->compare('date', '>=' . $timestampFrom->format('Y-m-d H:i:s'));
+		$criteria->compare('date', '<=' . $timestampTo->format('Y-m-d H:i:s'));
+		$criteria->compare('providers_id', '4');
+		// $criteria->addCondition('query IS NULL');
+		$dataProvider = new CActiveDataProvider("ClicksLog", array(
+			'criteria'   => $criteria,
+			'pagination' => array(
+                'pageSize' => 100,
+            ),
+		));
+		$iterator = new CDataProviderIterator($dataProvider);
+
+		echo 'total: '.count($iterator).'<hr/>';
+		$timeBegin = time();
+		$countClicks = 0;
+		foreach ($iterator as $click) {
+			$countClicks++;
+
+			if ( $click->query !== NULL ) {
+				echo $countClicks . " - " . $click->date . " - " . $click->id . " - " . $click->query . "<br/>";
+				continue;
+			}
+
+			$tmp = array();
+			if (preg_match('/q=[^\&]*/', $click->referer, $tmp)) {
+				$click->query = urldecode(substr($tmp[0], 2));
+			}
+			
+			$click->save();
+			echo $countClicks . " - " . $click->date . " - " . $click->id . " - " . $click->query . " - updated<br/>";
+		}
+		echo "Execution time: " . (time() - $timeBegin) . " seg <br>";
+
+	}
+
+	/**
+	 * Store clicks_log data from 1 month ago in clicks_log_storage_2
+	 * @return string Transaction status
+	 */
+	public function actionStorage()
+	{
+		$copyRows     = 'INSERT INTO clicks_log_storage_2 
+						SELECT * FROM clicks_log WHERE id < (
+							SELECT id FROM clicks_log 
+							WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL 1 MONTH)) 
+							ORDER BY id ASC 
+							LIMIT 0,1
+							) 
+						ORDER BY id 
+						ASC LIMIT 0,300000';
+
+		$deleteRows	 = 'DELETE FROM clicks_log 
+						WHERE id <= (
+							SELECT id FROM clicks_log_storage_2 
+							ORDER BY id DESC 
+							LIMIT 0,1
+							) 
+						ORDER BY id ASC';
+		
+		$result['action'] = 'ClicksLogStorage';
+		$command = Yii::app()->db->createCommand($copyRows);
+		$result['inserted'] = $command->execute();
+		$command = Yii::app()->db->createCommand($deleteRows);
+		$result['deleted'] = $command->execute();
+		echo json_encode($result);
+	}
+
+	public function logError($msg){
+		
+		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
 
 	}
 

@@ -15,15 +15,17 @@ if(!$opportunitiesValidation->checkValidation($opportunities_id,$period))
 		if($iosValidation->checkValidationOpportunities($opportunitie->ios_id,$period))
 		{
 
-			$status  ="Sended";
+			$status  ="Validated";
 			$comment =null;
 			$validation_token=md5($date.$opportunitie->ios_id);
 			$iosValidation->attributes=array('ios_id'=>$opportunitie->ios_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
 			if($iosValidation->save())
 			{
-			    echo 'Mail Enviado';
+			    echo 'IO Validated';
 				$log->loadLog($iosValidation->id,$status);
 			}
+			else 
+			    print_r($iosValidation->getErrors());
 		}
 	}
 	else 

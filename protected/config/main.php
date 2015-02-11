@@ -12,11 +12,18 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case '127.0.0.1':
 	case 'localhost':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
-					'emulatePrepare'   => true,
-					'username'         => 'root',
-					'password'         => 'pernambuco',
-					'charset'          => 'utf8',
+					'connectionString'   => 'mysql:host=localhost;dbname=kickads_appserver',
+					'emulatePrepare'     => true,
+					'username'           => 'root',
+					'password'           => 'pernambuco',
+					'charset'            => 'utf8',
+					// Uncomment to show db log
+					// 'enableParamLogging' =>true,
+					// 'enableProfiling'    =>true,
+					'initSQLs'           => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
+
 				);
 				
 				$mailLog = array(
@@ -34,6 +41,9 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'username'         => 'root',
 					'password'         => 'pernambuco',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -48,12 +58,16 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
 	case 'app.kickadserver.mobi':
 	case 'kickadserver.mobi':
+	case 'www.kickadserver.mobi':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -63,6 +77,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emails'  =>array(
 						'christian.motta@kickads.mobi',
 						'matias.cerrotta@kickads.mobi',
+						'santiago.mena@kickads.mobi',
 					),
 					'config'  =>array(
 						'From'       => 'no-reply@kickads.mobi',
@@ -80,11 +95,33 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// amazon test
 	case 'test.kickadserver.mobi':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'k1ck4ds3rv3r',
 					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
+				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
+				);
+		break;
+	case 'tmp.kickadserver.mobi':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'emulatePrepare'   => true,
+					'username'         => 'www-data',
+					'password'         => 'k1ck4ds3rv3r',
+					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
 				);
 
 				$mailLog = array(
@@ -121,11 +158,13 @@ return array(
 	'import' =>array(
 		'application.models.*',
 		'application.models.api.*',
+		'application.models.api.publisher.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
 		'application.external.wurfl.WurflManager',
 		'ext.eexcelwriter.components.EExcelWriter',
 		'ext.pdffactory.EPdfFactoryDoc',
+		'ext.samodelversioning.SAModelVersioning',
 	),
 
 	'modules'=>array(
@@ -164,9 +203,15 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
-				'<controller:\w+>/<id:\d+>'              =>'<controller>/view',
-				'<controller:\w+>/<action:\w+>/<id:\d+>' =>'<controller>/<action>',
-				'<controller:\w+>/<action:\w+>'          =>'<controller>/<action>',
+	            'gii'=>'gii',
+	            'gii/<controller:\w+>'=>'gii/<controller>',
+	            'gii/<controller:\w+>/<action:\w+>'=>'gii/<controller>/<action>',
+				'<controller:\w+>/<id:\d+>'                           =>'<controller>/view',
+				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
+				// custom parameters //
+				'<controller:\w+>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),
 		'eexcelwriter'=>array(
@@ -224,8 +269,13 @@ return array(
 					'connectionID' =>'db',
 					'logTableName' =>'log',
 					'levels'       =>'info, profile, error, warning',
-					'categories'   =>'system.*',
+					'except' 	   =>'system.db.CDbCommand.*',
+					'categories'   =>array('php.*', 'exception.*', 'system.*'),
                 ),
+				array( 
+			 	    'class'	=>'CProfileLogRoute', 
+			 	    'report'=>'callstack',  /* summary or callstack */ 
+			 	), 
                 $mailLog,
         	),
         ),
