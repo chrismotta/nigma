@@ -212,7 +212,7 @@ class FinanceController extends Controller
 	 */
 	public function actionBrandingClients()
 	{
-		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$date = strtotime ( date('Y-m-d',strtotime('NOW')) );
 		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
 		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
@@ -627,9 +627,13 @@ class FinanceController extends Controller
 		}
 		elseif (isset($_POST['opportunitie_id'])) {
 			$opportunitie_id=$_POST['opportunitie_id'];
+			$opportunitie=Opportunities::model()->findByPk($opportunitie_id);
 			if($opportunitiesValidation=OpportunitiesValidation::model()->checkValidation($opportunitie_id,$period))
 			{
 			 	echo 'Opportunitie already invoiced!';							
+			}
+			elseif ($opportunitie->checkIsAbleInvoice()) {
+				echo 'Opportunitie available to invoiced since '.date('Y-m-d',strtotime($opportunitie->endDate));		
 			}
 			else
 			{
@@ -643,7 +647,7 @@ class FinanceController extends Controller
 				if($opportunitiesValidation->save())
 				{
 					//FIXME agregar log
-				    echo 'Opportunitie #'.$opportunitiesValidation->opportunities_id.' invoiced'.$invoice_id;
+				    echo 'Opportunitie #'.$opportunitiesValidation->opportunities_id.' invoiced';
 					// $log->loadLog($opportunitiesValidation->id,$status);
 				}
 				else 

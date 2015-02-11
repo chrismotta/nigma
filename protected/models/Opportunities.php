@@ -437,11 +437,11 @@ class Opportunities extends CActiveRecord
 
 	public function checkIsAbleInvoice()
 	{
-		if($this->closed_deal)
+		if($this->closed_deal==1)
 		{
 			$endDate=date('Y-m-d',strtotime($this->endDate));
 			$now=date('Y-m-d',strtotime('NOW'));
-			return $endDate >= $now ? true : false;			
+			return $endDate <= $now ? true : false;			
 		}
 		else
 			return false;

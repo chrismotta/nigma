@@ -32,7 +32,7 @@ class OpportunitiesValidation extends CActiveRecord
 		return array(
 			array('date, period', 'required'),
 			array('opportunities_id', 'numerical', 'integerOnly'=>true),
-			array('period', 'length', 'max'=>45),
+			array('period,invoice_id', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, opportunities_id, date, period', 'safe', 'on'=>'search'),
