@@ -632,7 +632,7 @@ class FinanceController extends Controller
 			{
 			 	echo 'Opportunitie already invoiced!';							
 			}
-			elseif ($opportunitie->checkIsAbleInvoice()) {
+			elseif (!$opportunitie->checkIsAbleInvoice()) {
 				echo 'Opportunitie available to invoiced since '.date('Y-m-d',strtotime($opportunitie->endDate));		
 			}
 			else
