@@ -163,18 +163,36 @@ class FinanceController extends Controller
 			$totalsTransactions[$value['currency']]=$value['total'];
 		}
 
+		$totalsInvoiceBranding=$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
+
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
 				$i++;
-				$totalsdata[$i]['id']          =$i;
-				$totalsdata[$i]['currency']    =$key;
-				$totalsdata[$i]['sub_total']   =$value['revenue'];
-				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
-				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
-				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['id']                                                    =$i;
+				$totalsdata[$i]['currency']                                              =$key;
+				$totalsdata[$i]['sub_total']                                             =$value['revenue'];
+				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count'] =0;
+
+
+				$totalsdata[$i]['total_clients_invoice']  =isset($clients['totals_clients'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_clients_invoice']  +=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+
+				$totalsdata[$i]['total_branding_invoice'] =isset($clients['total_branding'][$key]) ? $clients['total_branding'][$key] : 0;
+				$totalsdata[$i]['total_branding_invoice'] +=isset($totalsInvoiceBranding['totals_invoiced'][$key]) ? $totalsInvoiceBranding['totals_invoiced'][$key] : 0;
+
+				$totalsdata[$i]['total_count']            +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
+
+				$totalsdata[$i]['total_clients']          =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
+				$totalsdata[$i]['total_branding']		  =isset($totalsInvoiceBranding['totals'][$key]['revenue']) ? $totalsInvoiceBranding['totals'][$key]['revenue']-$totalsInvoiceBranding['totals'][$key]['agency_commission'] : 0;
+
+				// $totalsdata[$i]['total'] = $totalsdata[$i]['total_branding']+$totalsdata[$i]['total_clients'];
+				$totalsdata[$i]['total_invoiced']         =$totalsdata[$i]['total_branding_invoice']+$totalsdata[$i]['total_clients_invoice'];
+
+				$totalsdata[$i]['total'] = $totalsdata[$i]['total_clients']+$totalsdata[$i]['total_branding'];
+
+				// $totalsdata[$i]['total']                  +=isset($totalsInvoiceBranding['totals'][$key]) ? $totalsInvoiceBranding['totals'][$key]['revenue'] : 0;
+
 			}
 		}
 		
@@ -182,7 +200,7 @@ class FinanceController extends Controller
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','total','sub_total','total_count','total_invoiced'
+		             'id','currency','total','sub_total','total_count','total_invoiced','total_branding'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -283,8 +301,8 @@ class FinanceController extends Controller
 				// isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
 				// $totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
 				$totalsdata[$i]['total']       =$totalsdata[$i]['sub_total']-$totalsdata[$i]['total_commission'];
-				// $totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				// $totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
 		
@@ -401,7 +419,11 @@ class FinanceController extends Controller
 			$entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
 			$cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
 			$status       =isset($_POST['status']) ? $_POST['status'] : null;		
-			$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status,null);
+			$closed_deal  =isset($_POST['closed_deal']) ? $_POST['closed_deal'] : null;		
+			if($closed_deal=='false')
+				$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
+			else
+				$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
 			$consolidated=array();
 			foreach ($clients['data'] as $client) {
 				$client['total_revenue']     =$clients['totals_io'][$client['id']];
@@ -420,6 +442,7 @@ class FinanceController extends Controller
 			$this->renderPartial('excelReport', array(
 				'model' => new IosValidation,
 				'dataProvider'=>$dataProvider,
+				'closed_deal'=>$closed_deal,
 			));
 		}
 
