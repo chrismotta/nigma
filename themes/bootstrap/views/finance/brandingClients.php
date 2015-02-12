@@ -113,7 +113,7 @@ $ios    =new Ios;
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
+		'url'         => 'excelReport?closed_deal=true&month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat.'&cat='.$cat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -149,7 +149,7 @@ $ios    =new Ios;
 			'htmlOptions'       => array('id'=>'alignLeft'),
 			'headerHtmlOptions' => array('width' => '150'),
 			'header'            => 'IO - Commercial Name',
-			),
+			),	
 		array(
 			'name'              => 'opportunitie',
 			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
