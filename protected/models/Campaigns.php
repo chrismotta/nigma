@@ -77,7 +77,7 @@ class Campaigns extends CActiveRecord
 			array('name', 'length', 'max'=>128),
 			array('cap, external_rate', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
-			array('url', 'length', 'max'=>256),
+			array('url', 'length', 'max'=>512),
 			array('url', 'url'),
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
