@@ -374,7 +374,7 @@ class Ios extends CActiveRecord
 			$consolidated=$this->groupClientsByRate($dailys);
 		}	
 
-		$totals_consolidated =$this->getTotalsClients($dailys);
+		$totals_consolidated =$this->getTotalsClients($dailys,$filters);
 		$totals_invoiced     =$totals_consolidated['totals_invoiced'];
 		$totals_io           =$totals_consolidated['totals_io'];
 		$totals              =$totals_consolidated['totals'];
@@ -737,20 +737,27 @@ class Ios extends CActiveRecord
 	 * @param  [type] $clients [description]
 	 * @return [type]          [description]
 	 */
-	public function getTotalsClients($clients)
+	public function getTotalsClients($clients,$filters)
 	{
 		$totals_io       =array();
 		$totals_invoiced =array();
 		$totals          =array();
-
 		foreach ($clients as $daily) {
 
 			$opportunitie=Opportunities::model()->findByPk($daily['opportunitie_id']);
 			$revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 
 			isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
-				if($daily['status_io']=='Invoiced')
-				$totals_invoiced[$daily['currency']]+=$revenue;
+				if($opportunitie->closed_deal)
+				{
+					if($daily['status_opp'])
+					$totals_invoiced[$daily['currency']]+=$opportunitie->getTotalCloseDeal();
+				}
+				else
+				{
+					if($daily['status_io']=='Invoiced')
+					$totals_invoiced[$daily['currency']]+=$revenue;		
+				}
 
 			#This array have totals
 			if(!isset($totals[$daily['currency']])){
