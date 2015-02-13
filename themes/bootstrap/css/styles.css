@@ -234,6 +234,10 @@ fieldset hr {
 	overflow-y: auto;
 	/* prevent horizontal scrollbar */
 	overflow-x: hidden;
+<<<<<<< HEAD
+}
+
+=======
 	z-index: 1060!important;
 }
 
@@ -265,6 +269,7 @@ fieldset hr {
 	height: 15px!important;
 }
 	
+>>>>>>> 0abe5f862f2ffbc8447453f7a4d4a1d391e3ff7b
 #icon-status{
 	display: block;
 	width: 15px;
@@ -305,6 +310,8 @@ fieldset hr {
 .expired{
 	background-position:-139px 0px;
 }
+<<<<<<< HEAD
+=======
 
 /* totals-bar */
 .totals-bar small{
@@ -352,3 +359,4 @@ margin-bottom: 6px;
 	margin-top: -15px;
 	margin-bottom: 10px;
 }
+>>>>>>> 0abe5f862f2ffbc8447453f7a4d4a1d391e3ff7b
