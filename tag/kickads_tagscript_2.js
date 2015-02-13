@@ -16,4 +16,6 @@ function innit(){
 
 innit();
 
+//tag load
+//<div id="adContainer"></div>
 //<script src="http://kickadserver.mobi/tag/kickads_tagscript_2.js"></script>
