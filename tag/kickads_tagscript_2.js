@@ -1,5 +1,5 @@
 function innit(){
-	
+
 	if (mraid.getState() == 'loading') {
 		mraid.addEventListener('ready', function(state) {
 		    initDefaultState();
@@ -13,6 +13,6 @@ function innit(){
 
 }
 
-
+innit();
 
 //<script src="http://kickadserver.mobi/tag/kickads_tagscript_2.js"></script>
