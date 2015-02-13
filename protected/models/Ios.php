@@ -238,11 +238,11 @@ class Ios extends CActiveRecord
 	 */
 	public function getClientsMulti($filters)
 	{
-		$month           = isset($filters['month']) ? $filters['month'] : null;
-		$year            = isset($filters['year']) ? $filters['year'] : null;
-		$status          = isset($filters['status']) ? $filters['status'] : null;
-		$multi           = isset($filters['multi']) ? $filters['multi'] : false;
-		$closed_deal           = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
+		$month       = isset($filters['month']) ? $filters['month'] : null;
+		$year        = isset($filters['year']) ? $filters['year'] : null;
+		$status      = isset($filters['status']) ? $filters['status'] : null;
+		$multi       = isset($filters['multi']) ? $filters['multi'] : false;
+		$closed_deal = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
 
 		#Instance of models to use
 		$opportunitiesValidation =new OpportunitiesValidation;
@@ -256,18 +256,18 @@ class Ios extends CActiveRecord
 		$totals    =array();
 		$data      =array();
 
-		if($multi==true)
-		{
-			#Query to find clients with multi rate
-			$query=$this->makeClientsMultiRateQuery($filters);
-		}
-		else // multirate = true
-		{
+		// if($multi==true)
+		// {
+		// 	#Query to find clients with multi rate
+		// 	$query=$this->makeClientsQuery($filters);
+		// }
+		// else // multirate = true
+		// {
 			$query=$this->makeClientsQuery($filters);
-		}
+		// }
 		$i=0;
 		#If query find results
-		if($dailys=DailyReport::model()->findAllBySql($query)){
+		if($dailys=DailyReport::model()->findAll($query)){
 			#Save results to array group by io,carrier and date
 			foreach ($dailys as $daily) {
 				$opportunitie=Opportunities::model()->findByPk($daily->opp_id);
@@ -420,202 +420,161 @@ class Ios extends CActiveRecord
 	}
 
 	/**
-	 * [makeClientsMultiRateQuery description]
-	 * @param  [type] $filters [description]
-	 * @return [type]          [description]
-	 */
-	public function makeClientsMultiRateQuery($filters)
-	{
-		$month           = isset($filters['month']) ? $filters['month'] : null;
-		$year            = isset($filters['year']) ? $filters['year'] : null;
-		$entity          = isset($filters['entity']) ? $filters['entity'] : null;
-		$io              = isset($filters['io']) ? $filters['io'] : null;
-		$accountManager  = isset($filters['accountManager']) ? $filters['accountManager'] : null;
-		$opportunitie_id = isset($filters['opportunitie_id']) ? $filters['opportunitie_id'] : null;
-		$cat             = isset($filters['categorie']) ? $filters['categorie'] : null;
-		$closed_deal     = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
-
-		$query=
-				"SELECT 
-					i.id AS io_id,
-					o.id AS opp_id,
-					o.model_adv AS model,
-					i.entity AS entity,
-					i.currency AS currency,
-					m.carriers_id_carrier AS carrier, 
-					i.commercial_name AS commercial_name,
-					g.name, 
-					o.product AS product,
-					m.rate as rate, 
-					SUM(m.conv) AS conversions, 
-					SUM(m.rate*m.conv) AS revenue
-				
-				FROM daily_report d 
-				INNER JOIN campaigns c ON d.campaigns_id=c.id
-				INNER JOIN opportunities o ON c.opportunities_id=o.id
-				INNER JOIN ios i ON o.ios_id=i.id
-				INNER JOIN advertisers a ON i.advertisers_id=a.id
-				INNER JOIN multi_rate m ON d.id=m.daily_report_id
-				INNER JOIN carriers ca ON m.carriers_id_carrier=ca.id_carrier
-				INNER JOIN geo_location g ON ca.id_country=g.id_location
-
-				WHERE d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'
-					AND d.revenue>0
-					AND m.conv>0
-					AND ISNULL((
-							SELECT ov.rate 
-							FROM opportunities_version ov
-							WHERE ov.created_time <= '".$year."-".$month."-31'
-								AND ov.id = o.id
-							ORDER BY ov.created_time DESC
-							LIMIT 0,1 ))";
-			if($entity)	
-				$query .= "AND i.entity='".$entity."' ";
-			
-			if($io)	
-				$query .= "AND i.id=".$io." ";										
-			
-			if($accountManager)	
-				$query .= "AND o.account_manager_id='".$accountManager."' ";										
-			if($opportunitie_id)	
-				$query .= "AND o.id=".$opportunitie_id." ";										
-			if($cat)	
-				$query .= "AND a.cat='".$cat."' ";		
-
-			if($closed_deal)
-			{
-				$query .= "AND o.closed_deal=1 ";
-				$query .= "AND date(o.endDate) BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'";
-				$query .= "AND d.date BETWEEN date(o.startDate) AND date(o.endDate)";
-			}
-			else
-				$query .= "AND o.closed_deal=0 ";
-			$query.= "GROUP BY i.id,o.id,m.carriers_id_carrier,m.rate";
-
-			return $query;
-	}
-
-	/**
 	 * [makeClientsQuery description]
 	 * @param  [type] $filters [description]
 	 * @return [type]          [description]
 	 */
 	public function makeClientsQuery($filters)
 	{
-		$month           = isset($filters['month']) ? $filters['month'] : null;
-		$year            = isset($filters['year']) ? $filters['year'] : null;
-		$entity          = isset($filters['entity']) ? $filters['entity'] : null;
-		$io              = isset($filters['io']) ? $filters['io'] : null;
-		$accountManager  = isset($filters['accountManager']) ? $filters['accountManager'] : null;
-		$opportunitie_id = isset($filters['opportunitie_id']) ? $filters['opportunitie_id'] : null;
-		$cat             = isset($filters['categorie']) ? $filters['categorie'] : null;
+		$month           = isset($filters['month']) ? $filters['month'] : NULL;
+		$year            = isset($filters['year']) ? $filters['year'] : NULL;
+		$entity          = isset($filters['entity']) ? $filters['entity'] : NULL;
+		$io              = isset($filters['io']) ? $filters['io'] : NULL;
+		$accountManager  = isset($filters['accountManager']) ? $filters['accountManager'] : NULL;
+		$opportunitie_id = isset($filters['opportunitie_id']) ? $filters['opportunitie_id'] : NULL;
+		$cat             = isset($filters['categorie']) ? $filters['categorie'] : NULL;
 		$closed_deal     = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
+		$isMulti     	 = isset($filters['multi']) ? $filters['multi'] : false;
 
-		$query=
-				"SELECT 
-					i.id as io_id,
-					o.id AS opp_id,
-					o.model_adv AS model,
-					i.entity AS entity,
-					i.currency AS currency,
-					o.carriers_id AS carrier, 
-					i.commercial_name AS commercial_name,
-					g.name AS country,
-					o.product AS product,
+
+		$criteria = new CDbCriteria;
+
+		//
+		// Define columns being selected
+		//
+		$criteria->select = array( // common columns for all opportunities
+			'ios.id AS io_id',
+			'ios.entity AS entity',
+			'ios.currency AS currency',
+			'ios.commercial_name AS commercial_name',
+			'country.name AS country',
+			'opportunities.id AS opp_id',
+			'opportunities.model_adv AS model',
+			'opportunities.product AS product',
+		);
+
+		// subquery that get the rate according with period's date
+		$rate = "SELECT ov.rate 
+				FROM opportunities_version ov
+				WHERE ov.created_time <= '".$year."-".$month."-31' 
+					AND ov.id = opportunities.id
+				ORDER BY ov.created_time DESC
+				LIMIT 0,1";
+
+		if ($isMulti) { // add columns for multi opportunities
+			$criteria->select = array_merge($criteria->select, array(
+				'multiRates.carriers_id_carrier AS carrier',
+				'multiRates.rate AS rate', 
+				'SUM(multiRates.conv) AS conversions', 
+				'SUM(multiRates.rate * multiRates.conv) AS revenue'
+			));
+		} else { // add columns for NO multi opportunities
+			$criteria->select = array_merge($criteria->select, array(
+				'opportunities.carriers_id AS carrier',
+				'ROUND(
+					IF( 
+						ISNULL(('. $rate .')),
+						('. $rate .'),
+						t.revenue/ (
+							CASE opportunities.model_adv
+								WHEN \'CPA\' THEN IF(ISNULL(t.conv_adv),t.conv_api,t.conv_adv)
+								WHEN \'CPM\' THEN IF(ISNULL(t.imp_adv),t.imp/1000,t.imp_adv/1000)
+								WHEN \'CPC\' THEN t.clics
+							END )
+				), 2) AS rate',
+				'SUM(
+					CASE opportunities.model_adv
+						WHEN \'CPA\' THEN IF(ISNULL(t.conv_adv),t.conv_api,t.conv_adv)
+						WHEN \'CPM\' THEN IF(ISNULL(t.imp_adv),t.imp,t.imp_adv)
+						WHEN \'CPC\' THEN t.clics
+					END 
+				) AS conversions',
+				'SUM(t.revenue) AS revenue'
+			));
+		}
+	
+
+		//
+		// Define relational query criterias
+		//
+		$criteria->join = '
+				INNER JOIN campaigns ON campaigns.id=t.campaigns_id
+				INNER JOIN opportunities ON opportunities.id=campaigns.opportunities_id
+				INNER JOIN ios ON ios.id=opportunities.ios_id
+				INNER JOIN advertisers ON advertisers.id=ios.advertisers_id
+				';
+
+		if ($isMulti) { // add relation for multi opportunities
+			$criteria->join .= '
+				INNER JOIN multi_rate multiRates ON multiRates.daily_report_id=t.id
+				INNER JOIN carriers ON multiRates.carriers_id_carrier=carriers.id_carrier
+				INNER JOIN geo_location country ON country.id_location=carriers.id_country
+			';
+		} else {
+			$criteria->join .= '
+				LEFT JOIN carriers ON opportunities.carriers_id=carriers.id_carrier
+				LEFT JOIN geo_location country ON opportunities.country_id=country.id_location
+			';
+		}
+
+
+		//
+		// Define conditions
+		//
+		// FIXME hacer validacion de ternaria en scope superior
+		$criteria->compare('ios.entity', $entity ? $entity : NULL);
+		$criteria->compare('ios.id', $io ? $io : NULL);
+		$criteria->compare('ios.account_manager_id', $accountManager ? $accountManager : NULL);
+		$criteria->compare('opportunities.id', $opportunitie_id ? $opportunitie_id : NULL);
+		$criteria->compare('advertisers.cat', $cat ? $cat : NULL);
+		
+
+		if($closed_deal) {
+			$criteria->compare('opportunities.closed_deal',1);
+			$criteria->addCondition("DATE(opportunities.endDate) BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'");
+			$criteria->addCondition("DATE(t.date) BETWEEN DATE(opportunities.startDate) AND DATE(opportunities.endDate)");
+		} else {
+			$criteria->compare('opportunities.closed_deal',0);
+			$criteria->addCondition("DATE(t.date) BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'");			
+		}
+
+		if ($isMulti) {
+			// $criteria->addCondition('multiRates.id IS NOT NULL');
+			$criteria->compare('multiRates.conv', '>0');
+		}
+		$criteria->compare('t.revenue', '>0');
+		$criteria->addCondition( // condition for filter only multi or NO multi opportunities
+			($isMulti ? NULL : "NOT(") . 
+				"ISNULL((". $rate . "))". 
+			($isMulti ? NULL : ")")
+		);
+
+
+		//
+		// Define how to group results
+		//
+		$criteria->group = 'ios.id, opportunities.id';
+		if($isMulti) {
+			$criteria->group .= ', multiRates.carriers_id_carrier, multiRates.rate';
+		} else {
+			$criteria->group .= ', opportunities.carriers_id,
 					ROUND(
 						IF(
-							ISNULL((
-								SELECT ov.rate 
-								FROM opportunities_version ov
-								WHERE ov.created_time <= '".$year."-".$month."-31' 
-									AND ov.id = o.id
-								ORDER BY ov.created_time DESC
-								LIMIT 0,1  
-							)),
+							ISNULL(opportunities.rate),
+							opportunities.rate,
+							t.revenue/
 							(
-								SELECT ov.rate 
-								FROM opportunities_version ov
-								WHERE ov.created_time <= '".$year."-".$month."-31'
-									AND ov.id = o.id
-								ORDER BY ov.created_time DESC
-								LIMIT 0,1  
-							),
-							d.revenue/
-							(
-								CASE o.model_adv
-									WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-									WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
-									WHEN 'CPC' THEN d.clics
-								END 
-							)
-						), 2) AS rate,
-					SUM(
-						CASE o.model_adv
-							WHEN 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-							WHEN 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp,d.imp_adv)
-							WHEN 'CPC' THEN d.clics
-						END 
-					) as conversions,
-					SUM(d.revenue) AS revenue
-				
-				FROM daily_report d 
-				INNER JOIN campaigns c ON d.campaigns_id=c.id
-				INNER JOIN opportunities o ON c.opportunities_id=o.id
-				INNER JOIN ios i ON o.ios_id=i.id
-				INNER JOIN advertisers a ON i.advertisers_id=a.id
-				LEFT JOIN carriers ca ON o.carriers_id=ca.id_carrier
-				LEFT JOIN geo_location g ON o.country_id=g.id_location												
-				WHERE d.revenue>0
-					AND NOT(ISNULL((
-							SELECT ov.rate 
-							FROM opportunities_version ov
-							WHERE ov.created_time <= '".$year."-".$month."-31'
-								AND ov.id = o.id
-							ORDER BY ov.created_time DESC
-							LIMIT 0,1  )))";
-			#Add filters to query
-			if($entity)	
-				$query .= "AND i.entity='".$entity."' ";										
-			if($io)	
-				$query .= "AND i.id='".$io."' ";
-
-			if($accountManager)	
-				$query .= "AND o.account_manager_id='".$accountManager."' ";						
-			if($opportunitie_id)	
-				$query .= "AND o.id=".$opportunitie_id." ";
-
-			if($cat)	
-				$query .= "AND a.cat='".$cat."' ";	
-
-			if($closed_deal)
-			{
-				$query .= "AND o.closed_deal=1 ";
-				$query .= "AND date(o.endDate) BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31'";
-				$query .= "AND d.date BETWEEN date(o.startDate) AND date(o.endDate)";
-			}
-			else
-			{
-				$query .= "AND o.closed_deal=0 ";
-				$query .= "AND d.date BETWEEN '".$year."-".$month."-01' AND '".$year."-".$month."-31' "; 
-			}
-
-			$query .= "group by i.id,o.id,o.carriers_id,
-					ROUND(
-						IF(
-							ISNULL(o.rate),
-							o.rate,
-							d.revenue/
-							(
-								CASE o.model_adv
-									when 'CPA' THEN IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv)
-									when 'CPM' THEN IF(ISNULL(d.imp_adv),d.imp/1000,d.imp_adv/1000)
-									when 'CPC' THEN d.clics
+								CASE opportunities.model_adv
+									when \'CPA\' THEN IF(ISNULL(t.conv_adv),t.conv_api,t.conv_adv)
+									when \'CPM\' THEN IF(ISNULL(t.imp_adv),t.imp/1000,t.imp_adv/1000)
+									when \'CPC\' THEN t.clics
 								END 
 							)
 						),
-					2)";
+					2)';
+		}
 
-		return $query;
+		return $criteria;
 	}
 
 	/**
