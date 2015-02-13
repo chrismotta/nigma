@@ -163,18 +163,36 @@ class FinanceController extends Controller
 			$totalsTransactions[$value['currency']]=$value['total'];
 		}
 
+		$totalsInvoiceBranding=$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
+
 		if(isset($clients['totals']))
 		{
 			foreach ($clients['totals'] as $key => $value) {
 				$i++;
-				$totalsdata[$i]['id']          =$i;
-				$totalsdata[$i]['currency']    =$key;
-				$totalsdata[$i]['sub_total']   =$value['revenue'];
-				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
-				$totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-				$totalsdata[$i]['total']       =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
-				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['id']                                                    =$i;
+				$totalsdata[$i]['currency']                                              =$key;
+				$totalsdata[$i]['sub_total']                                             =$value['revenue'];
+				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count'] =0;
+
+
+				$totalsdata[$i]['total_clients_invoice']  =isset($clients['totals_clients'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_clients_invoice']  +=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+
+				$totalsdata[$i]['total_branding_invoice'] =isset($clients['total_branding'][$key]) ? $clients['total_branding'][$key] : 0;
+				$totalsdata[$i]['total_branding_invoice'] +=isset($totalsInvoiceBranding['totals_invoiced'][$key]) ? $totalsInvoiceBranding['totals_invoiced'][$key] : 0;
+
+				$totalsdata[$i]['total_count']            +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
+
+				$totalsdata[$i]['total_clients']          =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
+				$totalsdata[$i]['total_branding']		  =isset($totalsInvoiceBranding['totals'][$key]['revenue']) ? $totalsInvoiceBranding['totals'][$key]['revenue']-$totalsInvoiceBranding['totals'][$key]['agency_commission'] : 0;
+
+				// $totalsdata[$i]['total'] = $totalsdata[$i]['total_branding']+$totalsdata[$i]['total_clients'];
+				$totalsdata[$i]['total_invoiced']         =$totalsdata[$i]['total_branding_invoice']+$totalsdata[$i]['total_clients_invoice'];
+
+				$totalsdata[$i]['total'] = $totalsdata[$i]['total_clients']+$totalsdata[$i]['total_branding'];
+
+				// $totalsdata[$i]['total']                  +=isset($totalsInvoiceBranding['totals'][$key]) ? $totalsInvoiceBranding['totals'][$key]['revenue'] : 0;
+
 			}
 		}
 		
@@ -182,7 +200,7 @@ class FinanceController extends Controller
 		    'id'=>'totals',
 		    'sort'=>array(
 		        'attributes'=>array(
-		             'id','currency','total','sub_total','total_count','total_invoiced'
+		             'id','currency','total','sub_total','total_count','total_invoiced','total_branding'
 		        ),
 		    ),
 		    'pagination'=>array(
@@ -283,8 +301,8 @@ class FinanceController extends Controller
 				// isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count']=0;
 				// $totalsdata[$i]['total_count'] +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
 				$totalsdata[$i]['total']       =$totalsdata[$i]['sub_total']-$totalsdata[$i]['total_commission'];
-				// $totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				// $totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['total_invoiced']=isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_invoiced']+=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 			}
 		}
 		
@@ -401,7 +419,11 @@ class FinanceController extends Controller
 			$entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
 			$cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
 			$status       =isset($_POST['status']) ? $_POST['status'] : null;		
-			$clients      =Ios::getClients($month,$year,$entity,null,null,null,$cat,$status,null);
+			$closed_deal  =isset($_POST['closed_deal']) ? $_POST['closed_deal'] : null;		
+			if($closed_deal=='false')
+				$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
+			else
+				$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
 			$consolidated=array();
 			foreach ($clients['data'] as $client) {
 				$client['total_revenue']     =$clients['totals_io'][$client['id']];
@@ -420,6 +442,7 @@ class FinanceController extends Controller
 			$this->renderPartial('excelReport', array(
 				'model' => new IosValidation,
 				'dataProvider'=>$dataProvider,
+				'closed_deal'=>$closed_deal,
 			));
 		}
 
@@ -581,12 +604,42 @@ class FinanceController extends Controller
 	public function actionValidateOpportunitie()
 	{		
 		$modelOp      =new Opportunities;
+		$opportunities_id = $_POST['opportunities_id'];
+		$period           = $_POST['period'];
 		$opportunitie =$modelOp->findByPk($_POST['opportunities_id']);
-		$this->renderPartial('validateOpportunitie', array(
-				'opportunities_id' => $_POST['opportunities_id'],
-				'period'           => $_POST['period'],
-				'opportunitie'     => $opportunitie
-			));
+		
+		$date    =date('Y-m-d H:i:s', strtotime('NOW'));
+		$opportunitiesValidation= new OpportunitiesValidation;
+		$iosValidation=new IosValidation;
+		$log=new ValidationLog;
+		if(!$opportunitiesValidation->checkValidation($opportunities_id,$period))
+		{
+			$opportunitiesValidation->attributes=array('opportunities_id'=>$opportunities_id,'period'=>$period,'date'=>$date);
+			if($opportunitiesValidation->save())
+			{
+			    echo 'Oportunidad aprobada';
+				if($iosValidation->checkValidationOpportunities($opportunitie->ios_id,$period))
+				{
+
+					$status  ="Validated";
+					$comment =null;
+					$validation_token=md5($date.$opportunitie->ios_id);
+					$iosValidation->attributes=array('ios_id'=>$opportunitie->ios_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
+					if($iosValidation->save())
+					{
+					    echo 'IO Validated';
+						$log->loadLog($iosValidation->id,$status);
+					}
+					else 
+					    print_r($iosValidation->getErrors());
+				}
+			}
+			else 
+			    echo 'Error al guardar';
+		}
+		else
+			echo 'La oportunidad ya ha sido validada anteriormente';
+ 		Yii::app()->end();
 	}
 
 	/**
@@ -665,12 +718,65 @@ class FinanceController extends Controller
 	 */
 	public function actionSendMail()
 	{
-		$this->renderPartial('sendMail',
-		 array(
-				'io_id'  => $_POST['io_id'],
-				'period' => $_POST['period']
-		 	)
-		);
+		$io_id  = $_POST['io_id'];
+		$period = $_POST['period'];
+		
+		$date    = date('Y-m-d H:i:s', strtotime('NOW'));
+		$status  = "Sent";
+		$comment = null;
+
+		$revenueValidation = new IosValidation;
+		$log               = new ValidationLog;
+		if($revenueValidation->checkValidation($io_id,$period))
+		{
+			$ioValidation=$revenueValidation->loadByIo($io_id,$period);
+			$ioValidation->attributes=array('status'=>$status, 'date'=>$date);
+			if($ioValidation->save())
+			{
+				
+				$body = '
+						<span style="color:#000">
+						  <p>Dear client:</p>
+						  <p>Please check the statement of your account by following the link below. We will assume that you are in agreement with us on the statement unless you inform us to the contrary by latest '.date('M j, Y', strtotime(Utilities::weekDaysSum(date('Y-m-d', strtotime($date)),4))).'</p>
+						  <p><a href="http://kickadserver.mobi/externalForms/revenueValidation/'.$ioValidation->validation_token.'">http://kickadserver.mobi/externalForms/revenueValidation/'.$ioValidation->validation_token.'</a></p>
+						  <p>If you weren’t the right contact person to verify the invoice, we ask you to follow the link above and update the information. Do not reply to this email with additional information.</p>
+						  <p>This process allows us to audit the invoice together beforehand and expedite any paperwork required and payment.</p>
+						  <p>Thanks</p>
+						</span>
+						<hr style="border: none; border-bottom: 1px solid #999;"/>
+						<span style="color:#666">
+						  <p>Estimado cliente:</p>
+						  <p>Por favor verificar el estado de su cuenta a través del link a continuación. Se considerara de acuerdo con el estado actual a menos que se nos notifique lo contrario a mas tardar el '.date('d-m-Y', strtotime(Utilities::weekDaysSum(date('Y-m-d', strtotime($date)),4))).'</p>
+						  <p><a href="http://kickadserver.mobi/externalForms/revenueValidation/'.$ioValidation->validation_token.'">http://kickadserver.mobi/externalForms/revenueValidation/'.$ioValidation->validation_token.'</a></p>
+						  <p>Si usted no fuese la persona indicada para hacer esta verificación, le solicitamos ingrese al link anterior y actualice los datos. No responda a este correo con información adicional.</p>
+						  <p>Este proceso nos permite auditar en conjunto la facturación previo a realizar y agilizar en lo posible el intercambio de documentos y el pago.</p>
+						  <p>Gracias</p> 
+						  <p><img src="http://kickads.mobi/logo/logo_kickads_181x56.png"/></p>
+						</span>
+	                	';
+	            $subject = 'KickAds - Statement of account as per '.date('M j, Y');
+
+	            $io = Ios::model()->findByPk($ioValidation->ios_id);         
+				$email_validation=is_null($io->email_validation) ? $io->email_adm : $io->email_validation;
+
+				if(isset($email_validation)){
+		            $mail = new CPhpMailerLogRoute;  
+	            		$mail->send(array($email_validation), $subject, $body);
+	            		echo 'Io #'.$ioValidation->ios_id.' email sent';
+					
+				}else{
+				    echo 'Io #'.$ioValidation->ios_id.' - Mail contact is undefined';
+					$ioValidation->attributes=array('status'=>'Validated', 'date'=>$date);
+					$ioValidation->save();
+				}
+
+			}
+			else 
+			    print_r($ioValidation->getErrors());
+		}
+		else
+			echo 'Las operaciones aun no han sido validadas';	
+ 		Yii::app()->end();	
 	}
 
 	/**

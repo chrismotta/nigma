@@ -13,13 +13,21 @@ $this->breadcrumbs=array(
 //Totals
 $buttonsColumn='';
 if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
-	$buttonsColumn.='
+	$buttonsColumn.='Opportunities::model()->findByPk($data["opportunitie_id"])->checkIsAbleInvoice() ? 				
+				OpportunitiesValidation::model()->checkValidation($data["opportunitie_id"],"'.$year.'-'.$month.'-01") ? 
 				CHtml::link(
-					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
+						"<i style=\"cursor:default\" id=\"icon-status\" class=\"verifed\"></i>",
+						array(),
+	    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"not_verifed")
+					)
+				:
+				 
+				CHtml::link(
+					"<i id=\"icon-status\" class=\"not_verifed\"></i>",
 					array(),
-    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
+    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"not_verifed",  
     					"onclick" => 
-    					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
+    					"js:bootbox.prompt(\"Invoice Opportunitie #".$data["opportunitie_id"]."?<hr><h6>Invoice reference</h6>\", function(confirmed){
     						if(confirmed!==null){
 		    					$.post(\"invoice\",{ \"opportunitie_id\": ".$data["opportunitie_id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
 		                            .success(function( data ) {
@@ -31,7 +39,8 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 						")
 
 
-					);
+					)
+				: null;
 				';
 else 
 	$buttonsColumn.='
@@ -104,7 +113,7 @@ $ios    =new Ios;
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
+		'url'         => 'excelReport?closed_deal=true&month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat.'&cat='.$cat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -140,7 +149,7 @@ $ios    =new Ios;
 			'htmlOptions'       => array('id'=>'alignLeft'),
 			'headerHtmlOptions' => array('width' => '150'),
 			'header'            => 'IO - Commercial Name',
-			),
+			),	
 		array(
 			'name'              => 'opportunitie',
 			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
@@ -208,20 +217,6 @@ $ios    =new Ios;
 			'value'             =>$buttonsColumn,		
 		), 
 		array(
-			'type'              =>'raw',
-			'header'            =>'',
-			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '3'),
-			'name'              =>'opportunitie',
-			'htmlOptions'		=>array('style'=>'text-align:left !important'),
-			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
-							    "class" => "ipopover",
-							    "data-trigger" => "hover",
-							    "data-content" => $data["comment"],
-							)
-						) : null;',		
-		), 
-		array(
 			'name'              =>'opportunitie',
 			'header'            =>'End Date',
 			'filter'			=>false,
@@ -262,7 +257,7 @@ $ios    =new Ios;
                                 );
                             
                         });
-					$('.linkinvoiced').click(function(e){
+					$('.not_verifed').click(function(e){
                             e.preventDefault();
                             
                         });

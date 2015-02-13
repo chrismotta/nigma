@@ -640,7 +640,7 @@ class KHtml extends CHtml
             $alert = array('error', 'info', 'success', 'warning', 'muted');
             $i = 0;
             foreach($totals as $total){
-                $invoice_percent=(isset($total['total_invoiced']) && isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],2) : 0;
+                $invoice_percent=(isset($total['total_invoiced']) && isset($total['total']) && $total['total']>0) ? round(($total['total_invoiced']*100)/$total['total'],3) : 0;
                 $rowTotals.= '
                 <div class="span'.$span.'">
                     <div class="alert alert-'.$alert[$i].'">';
@@ -649,7 +649,11 @@ class KHtml extends CHtml
                         $rowTotals.=isset($total['total_count']) ? '<h5 class="">Total Count: '.number_format($total['total_count'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_commission']) ? '<h5 class="">Total Commission: '.number_format($total['total_commission'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total_deal']) ? '<h5 class="">Total Closed Deal: '.number_format($total['total_deal'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_clients']) ?'<h5 class="">Total Clients: '.number_format($total['total_clients'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_branding']) ?'<h5 class="">Total Branding: '.number_format($total['total_branding'],2).'</h5>' : '';
                         $rowTotals.=isset($total['total']) ?'<h5 class="">Total: '.number_format($total['total'],2).'</h5>' : '';
+                        $rowTotals.=isset($total['total_clients_invoice']) ? '<h6 class="">Total Clients Invoiced: '.number_format($total['total_clients_invoice'],2).'</h6>' : '';
+                        $rowTotals.=isset($total['total_branding_invoice']) ? '<h6 class="">Total Branding Invoiced: '.number_format($total['total_branding_invoice'],2).'</h6>' : '';
                         $rowTotals.=isset($total['total_invoiced']) ? '<h6 class="">Total Invoiced: '.number_format($total['total_invoiced'],2).'</h6>' : '';
                         $rowTotals.=isset($total['total_invoiced']) && isset($total['total']) ? '<h6 class="">Invoiced Percent: '.$invoice_percent.'%</h6>' : '';
                     $rowTotals.= '</div>';
@@ -698,7 +702,7 @@ class KHtml extends CHtml
             foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
             {
                 $opp=Opportunities::model()->findByPk($opportunitie['opportunitie_id']);
-                if($opp->checkIsAbleInvoice())$mainVar['count']++;
+                if($opp->checkIsAbleInvoice() && !OpportunitiesValidation::model()->checkValidation($opp->id, $mainVar['year'].'-'.$mainVar['month'].'-01'))$mainVar['count']++;
             }
             if($mainVar['count']>0)
                 $message = 'You have '.$mainVar['count'].' available '.$mainVar['option'].' to invoice.';

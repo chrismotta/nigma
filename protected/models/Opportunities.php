@@ -66,7 +66,8 @@ class Opportunities extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('country_id, model_adv, wifi, ios_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total, close_amount, agency_commission, close_amount', 'numerical', 'integerOnly'=>true),
+			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total, closed_deal', 'numerical', 'integerOnly'=>true),
+			array('close_amount, agency_commission', 'numerical', 'integerOnly'=>false),
 			array('rate, budget', 'length', 'max'=>11),
 			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
@@ -77,7 +78,7 @@ class Opportunities extends CActiveRecord
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id, status', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id, status, close_amount, agency_commission, closed_deal', 'safe', 'on'=>'search'),
 		);
 	}
 
