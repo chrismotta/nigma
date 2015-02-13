@@ -64,6 +64,7 @@ class Advertisers extends CActiveRecord
 			'apiKeys' => array(self::HAS_MANY, 'ApiKey', 'advertisers_id'),
 			'externalIoForms' => array(self::HAS_MANY, 'ExternalIoForm', 'advertisers_id'),
 			'ioses' => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
+			'financeEntities' => array(self::HAS_MANY, 'financeEntities', 'finance_entities_id'),
 		);
 	}
 

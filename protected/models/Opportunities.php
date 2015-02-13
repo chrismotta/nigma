@@ -93,6 +93,7 @@ class Opportunities extends CActiveRecord
 			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'carriers'       => array(self::BELONGS_TO, 'Carriers', 'carriers_id'),
 			'ios'            => array(self::BELONGS_TO, 'Ios', 'ios_id'),
+			'regions'            => array(self::BELONGS_TO, 'Regions', 'regions_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 		);
 	}
