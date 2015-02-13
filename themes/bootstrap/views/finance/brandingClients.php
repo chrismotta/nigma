@@ -27,7 +27,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 					array(),
     				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"not_verifed",  
     					"onclick" => 
-    					"js:bootbox.prompt(\"Invoice Opportunitie #".$data["opportunitie_id"]."?<hr><h6>Invoice reference</h6>\", function(confirmed){
+    					"js:bootbox.prompt(\"Invoice Opportunitie #".$data["opportunitie_id"]."?<hr><h4>Invoice reference</h4><p><b>Client: </b> ".$data["name"]."</b><p><b>Total invoice:</b> ".Opportunities::model()->findByPk($data["opportunitie_id"])->close_amount."</b>\", function(confirmed){
     						if(confirmed!==null){
 		    					$.post(\"invoice\",{ \"opportunitie_id\": ".$data["opportunitie_id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
 		                            .success(function( data ) {
@@ -177,6 +177,14 @@ $ios    =new Ios;
 		),
 		array(
 			'name'              =>'opportunitie',
+			'header'            =>'Sub Total',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->close_amount,2)',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
+		),
+		array(
+			'name'              =>'opportunitie',
 			'header'            =>'Percent Agency Commission',
 			'filter'			=>false,
 			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->agency_commission)."%"',
@@ -189,15 +197,7 @@ $ios    =new Ios;
 			'filter'			=>false,
 			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->getTotalAgencyCommission(),2)',
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
-			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
-		),
-		array(
-			'name'              =>'opportunitie',
-			'header'            =>'Sub Total',
-			'filter'			=>false,
-			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->close_amount,2)',
-			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
-			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
+			'htmlOptions'       => array('style'=>'text-align:right !important; color:red;'),	
 		),
 		array(
 			'name'              =>'opportunitie',
