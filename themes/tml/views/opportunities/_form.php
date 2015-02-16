@@ -44,42 +44,44 @@
                     return;
                   }
                   $.post(
-                      "getIos/"+this.value,
+                      "getRegions/"+this.value,
                       "",
                       function(data)
                       {
                           // alert(data);
-                        $(".ios-dropdownlist").html(data);
+                        $(".regions-dropdownlist").html(data);
                       }
                   )
                   '
             ));
-        echo $form->dropDownListRow($model, 'ios_id', $ios, array('class'=>'ios-dropdownlist', 'prompt' => 'Select an IOs'));
+         echo $form->dropDownListRow($model, 'regions_id', $regions, 
+            array(
+              'prompt'   => 'Select an region', 
+              'class'=>'regions-dropdownlist',
+              'onChange' => '
+                      if ( ! this.value) {
+                        return;
+                      }
+                      $.post(
+                          "getCarriers/"+this.value,
+                          "",
+                          function(data)
+                          {
+                            // alert(data);
+                            $(".carriers-dropdownlist").html(data);
+                          }
+                      )
+                  ',
+            ));
+        //echo $form->dropDownListRow($model, 'ios_id', $ios, array('class'=>'ios-dropdownlist', 'prompt' => 'Select an IOs'));
       } else {
         echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true, ));
-        echo $form->textFieldRow($advertiser, 'name', array('class'=>'span3', 'readonly'=>true, 'label'=>$ios->getAttributeLabel('advertisers_id') ));
-        echo $form->textFieldRow($ios, 'name', array('class'=>'span3', 'readonly'=>true, 'label'=>$model->getAttributeLabel('ios_id') ));
+        //echo $form->textFieldRow($advertiser, 'name', array('class'=>'span3', 'readonly'=>true, 'label'=>$ios->getAttributeLabel('advertisers_id') ));
+        //echo $form->textFieldRow($regions, 'name', array('class'=>'span3', 'readonly'=>true, 'label'=>$model->getAttributeLabel('regions_id') ));
       
       }
 
-      echo $form->dropDownListRow($model, 'country_id', $country, 
-        array(
-          'prompt' => 'Select a country', 
-          'onChange' => '
-                  if ( ! this.value) {
-                    return;
-                  }
-                  $.post(
-                      "getCarriers/"+this.value,
-                      "",
-                      function(data)
-                      {
-                        // alert(data);
-                        $(".carriers-dropdownlist").html(data);
-                      }
-                  )
-                  ',
-        ));
+      
 
       $model->carriers_id == NULL ? $multicarrier = true : $multicarrier = false;
       echo $form->dropDownListRow($model, 'carriers_id', $carrier, 
