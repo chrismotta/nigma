@@ -16,6 +16,8 @@
  */
 class Regions extends CActiveRecord
 {
+	public $finance_entities_name;
+	public $country_name;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -90,9 +92,29 @@ class Regions extends CActiveRecord
 		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('region',$this->region,true);
-
+		$criteria->with=array('financeEntities','country');
+		$criteria->compare('country_name',$this->country_name);
+		$criteria->compare('finance_entities_name',$this->finance_entities_name);
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria'   => $criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
+			'sort'       => array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+		            ),
+		            'finance_entities_name'=>array(
+						'asc'  =>'financeEntities.name',
+						'desc' =>'financeEntities.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 
@@ -105,5 +127,35 @@ class Regions extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+
+	public function findByAdvertisers($advertiser)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->compare("financeEntities.advertisers_id",$advertiser);
+		$criteria->join='INNER JOIN finance_entities financeEntities ON( t.finance_entities_id=financeEntities.id )';
+		$criteria->group='t.id';
+		$criteria->order='t.region';
+		return $this->model()->findAll($criteria);
+	}
+
+	public function findByCommercialId($commercial_id)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->compare("financeEntities.commercial_id",$commercial_id);
+		$criteria->join='INNER JOIN finance_entities financeEntities ON( t.finance_entities_id=financeEntities.id )';
+		$criteria->group='t.id';
+		$criteria->order='t.region';
+		return $this->model()->findAll($criteria);
+	}
+
+	/**
+	 * Get Opportunities associated with this IO.
+	 * @return [type] [description]
+	 */
+	public function getOpportunities()
+	{
+		return Opportunities::model()->findAll('regions_id=:regions_id', array(':regions_id' => $this->id));
 	}
 }
