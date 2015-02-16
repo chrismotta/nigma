@@ -28,7 +28,7 @@ class OpportunitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'getIos', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
+				'actions'=>array('index','view','create','update','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -220,17 +220,18 @@ class OpportunitiesController extends Controller
 
 	public function renderFormAjax($model)
 	{
-		
 		if ( $model->isNewRecord ) {
 			// Get only Advertisers and IOs that were created by the current user logged.
 			// comentado provisoriamente, generar permiso de admin
-			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
+			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );			
+			$regions = CHtml::listData( Regions::model()->findByCommercialId(Yii::app()->user->id),'id','region');
 			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name' );
-			$ios = CHtml::listData(Ios::model()->findAll( array('condition' => 'commercial_id=:c_id', 'params' => array( ':c_id'=>Yii::app()->user->id), 'order'=>'name') ), 'id', 'name');
+			//$ios = CHtml::listData(Ios::model()->findAll( array('condition' => 'commercial_id=:c_id', 'params' => array( ':c_id'=>Yii::app()->user->id), 'order'=>'name') ), 'id', 'name');
 		} else {
 			// If update register, only show Opportunity's IO and Advertiser
-			$ios = Ios::model()->findByPk($model->ios_id);
-			$advertiser = Advertisers::model()->findByPk($ios->advertisers_id);
+			//$ios = Ios::model()->findByPk($model->ios_id);
+			$regions = Regions::model()->findByPk($model->regions_id);
+			$advertiser = Advertisers::model()->findByPk($regions->financeEntities->advertisers_id);
 		}
 		
 		// Get users with authorization "media"
@@ -251,7 +252,8 @@ class OpportunitiesController extends Controller
 		$this->renderPartial('_form',array(
 			'model'      =>$model,
 			'advertiser' =>$advertiser,
-			'ios'        =>$ios,
+			//'ios'        =>$ios,
+			'regions'    =>$regions,
 			'account'    =>$account,
 			'country'    =>$country,
 			'carrier'    =>$carrier,
@@ -274,9 +276,24 @@ class OpportunitiesController extends Controller
 		Yii::app()->end();
 	}
 
+	public function actionGetRegions($id)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		$regions = Regions::model()->findByAdvertisers($id);
+
+		$response='<option value="">Select an Regions</option>';
+		foreach ($regions as $region) {
+			$response .= '<option value="' . $region->id . '">' . $region->region . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
+
 	public function actionGetCarriers($id)
 	{
-		$carriers = Carriers::model()->findAll( "id_country=:country AND status='Active'", array(':country'=>$id) );
+		$conutry = Regions::model()->findByPk($id)->country_id;
+		$carriers = Carriers::model()->findAll( "id_country=:country AND status='Active'", array(':country'=>$conutry) );
 
 		$response='<option value="">Select a carrier</option>';
 		foreach ($carriers as $carrier) {
