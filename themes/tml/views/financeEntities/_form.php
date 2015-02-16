@@ -13,14 +13,14 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Insertion Order <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+    <h4>Finance Entitie <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
 </div>
 
 
 <div class="modal-body">
 
     <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-		'id'                   =>'ios-form',
+		'id'                   =>'financeEntities-form',
 		'type'                 =>'horizontal',
 		'htmlOptions'          =>array('class'=>'well'),
 		// to enable ajax validation
@@ -67,5 +67,5 @@
 </div>
 
 <div class="modal-footer">
-    Edit Insertion Order attributes. Fields with <span class="required">*</span> are required.
+    Edit Finance Entities attributes. Fields with <span class="required">*</span> are required.
 </div>

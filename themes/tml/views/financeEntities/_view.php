@@ -148,5 +148,5 @@
 </div>
 
 <div class="modal-footer">
-    Io detail view.
+    Finance Entities detail view.
 </div>

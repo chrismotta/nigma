@@ -89,14 +89,14 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new Ios;
+		$model=new FinanceEntities;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['Ios']))
+		if(isset($_POST['FinanceEntities']))
 		{
-			$model->attributes=$_POST['Ios'];
+			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -116,9 +116,9 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['Ios']))
+		if(isset($_POST['FinanceEntities']))
 		{
-			$model->attributes=$_POST['Ios'];
+			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -166,7 +166,7 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Ios');
+		$dataProvider=new CActiveDataProvider('FinanceEntities');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
 		));
@@ -201,9 +201,9 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($new);
 
-		if(isset($_POST['Ios']))
+		if(isset($_POST['FinanceEntities']))
 		{
-			$new->attributes=$_POST['Ios'];
+			$new->attributes=$_POST['FinanceEntities'];
 			if($new->save())
 				$this->redirect(array('admin'));
 		} 
@@ -363,7 +363,7 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=Ios::model()->findByPk($id);
+		$model=FinanceEntities::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -375,7 +375,7 @@ class FinanceEntitiesController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='ios-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='financeEntities-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
