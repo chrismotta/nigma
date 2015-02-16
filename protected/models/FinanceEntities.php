@@ -26,20 +26,23 @@
  * @property string $entity
  * @property string $net_payment
  * @property string $pdf_name
- * @property string $status_copy1
  * @property string $description
  * @property integer $country_id
  *
  * The followings are the available model relations:
  * @property Advertisers $advertisers
- * @property Users $commercial
  * @property GeoLocation $country
+ * @property Users $commercial
  * @property IosValidation[] $iosValidations
  * @property Regions[] $regions
  * @property TransactionCount[] $transactionCounts
  */
 class FinanceEntities extends CActiveRecord
 {
+	public $country_name;
+	public $com_name;
+	public $com_lastname;
+	public $advertiser_name;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -56,15 +59,15 @@ class FinanceEntities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('advertisers_id, name, commercial_name, status, address, state, zip_code, currency, tax_id, entity, net_payment, status_copy1', 'required'),
+			array('advertisers_id, name, commercial_name, status, address, state, zip_code, currency, tax_id, entity, net_payment', 'required'),
 			array('advertisers_id, commercial_id, prospect, country_id', 'numerical', 'integerOnly'=>true),
 			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, ret, tax_id, net_payment, pdf_name', 'length', 'max'=>128),
-			array('status, status_copy1', 'length', 'max'=>8),
+			array('status', 'length', 'max'=>8),
 			array('currency, entity', 'length', 'max'=>3),
 			array('description', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, status_copy1, description, country_id', 'safe', 'on'=>'search'),
+			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, description, country_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -77,8 +80,8 @@ class FinanceEntities extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'advertisers' => array(self::BELONGS_TO, 'Advertisers', 'advertisers_id'),
-			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
 			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
 			'iosValidations' => array(self::HAS_MANY, 'IosValidation', 'finance_entities_id'),
 			'regions' => array(self::HAS_MANY, 'Regions', 'finance_entities_id'),
 			'transactionCounts' => array(self::HAS_MANY, 'TransactionCount', 'finance_entities_id'),
@@ -113,7 +116,6 @@ class FinanceEntities extends CActiveRecord
 			'entity' => 'Entity',
 			'net_payment' => 'Net Payment',
 			'pdf_name' => 'Pdf Name',
-			'status_copy1' => 'Status Copy1',
 			'description' => 'Description',
 			'country_id' => 'Country',
 		);
@@ -159,12 +161,43 @@ class FinanceEntities extends CActiveRecord
 		$criteria->compare('entity',$this->entity,true);
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
-		$criteria->compare('status_copy1',$this->status_copy1,true);
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('country_id',$this->country_id);
 
+		$criteria->with=array('advertisers','country','commercial');
+		$criteria->compare('advertisers.name', $this->advertiser_name, true);
+		//$criteria->compare('advertisers.cat', $cat);
+		$criteria->compare('commercial.name', $this->com_name, true);
+		$criteria->compare('commercial.lastname', $this->com_lastname, true);
+		$criteria->compare('country.name', $this->country_name, true);
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
+			'criteria'   => $criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
+			'sort'       => array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'advertiser_name'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),
+		            'com_name'=>array(
+						'asc'  =>'commercial.name',
+						'desc' =>'commercial.name DESC',
+		            ),
+		            'com_lastname'=>array(
+						'asc'  =>'commercial.lastname',
+						'desc' =>'commercial.lastname DESC',
+		            ),
+					'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+					),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 
