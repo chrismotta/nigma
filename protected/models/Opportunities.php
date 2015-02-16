@@ -38,10 +38,12 @@ class Opportunities extends CActiveRecord
 {
 
 	public $country_name;
+	public $country_id;
 	public $carrier_mobile_brand;
 	public $account_manager_name;
 	public $account_manager_lastname;
-	public $ios_name;
+	public $regions_name;
+	public $finance_entities_name;
 	public $advertiser_name;
 	public $currency;
 	public $open_budget;
@@ -65,8 +67,8 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('country_id, model_adv, wifi, ios_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
+			array('model_adv, wifi, regions_id', 'required'),
+			array('carriers_id, account_manager_id, country_id, wifi, ios_id, regions_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
@@ -77,7 +79,7 @@ class Opportunities extends CActiveRecord
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id, status', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id, regions_id, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -118,6 +120,7 @@ class Opportunities extends CActiveRecord
 			'startDate'                => 'Start Date',
 			'endDate'                  => 'End Date',
 			'ios_id'                   => 'Ios',
+			'regions_id'               => 'Regions',
 			'freq_cap'                 => 'Frequency Cap',
 			'imp_per_day'              => 'Impression Per Day',
 			'imp_total'                => 'Impression Total',
@@ -131,6 +134,7 @@ class Opportunities extends CActiveRecord
 			'account_manager_name'     => 'Account Manager',
 			'account_manager_lastname' => 'Account Manager',
 			'ios_name'                 => 'IO',
+			'regions_name'             => 'Region',
 			'advertiser_name'          => 'Advertiser',
 			'currency'                 => 'Currency',
 			'status'                   => 'Status',
@@ -172,14 +176,15 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('product',$this->product,true);
 		$criteria->compare('account_manager_id',$this->account_manager_id);
 		$criteria->compare('comment',$this->comment,true);
-		if($country==NULL)$criteria->compare('country_id',$this->country_id);
-		else $criteria->compare('t.country_id',$country);
+		if($country==NULL)$criteria->compare('regions.country_id',$this->country_id);
+		else $criteria->compare('regions.country_id',$country);
 		$criteria->compare('wifi',$this->wifi);
 		$criteria->compare('budget',$this->budget,true);
 		$criteria->compare('server_to_server',$this->server_to_server,true);
 		$criteria->compare('startDate',$this->startDate,true);
 		$criteria->compare('endDate',$this->endDate,true);
-		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('regions_id',$this->regions_id);
+		$criteria->compare('regions.region',$this->regions_name);
 		$criteria->compare('freq_cap',$this->freq_cap,true);
 		$criteria->compare('imp_per_day',$this->imp_per_day);
 		$criteria->compare('imp_total',$this->imp_total);
@@ -189,14 +194,14 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('channel_description',$this->channel_description,true);
 		$criteria->compare('t.status',$this->status,true);
 
-		$criteria->with = array( 'country', 'carriers', 'ios', 'accountManager', 'ios.advertisers');
+		$criteria->with = array( 'regions','regions.country', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'carriers', 'accountManager');
 		$criteria->compare('country.ISO2', $this->country_name, true);
 		$criteria->compare('carriers.mobile_brand', $this->carrier_mobile_brand, true);
 		$criteria->compare('accountManager.name', $this->account_manager_name, true);
 		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);
-		$criteria->compare('ios.name', $this->ios_name, true);
+		$criteria->compare('financeEntities.name', $this->finance_entities_name, true);
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
-		$criteria->compare('ios.currency', $this->currency, true);
+		$criteria->compare('financeEntities.currency', $this->currency, true);
 		if($accountManager != NULL)$criteria->compare('accountManager.id',$accountManager);
 		if($advertiser != NULL)$criteria->compare('advertisers.id',$advertiser);
 		if($io != NULL)$criteria->addCondition('t.ios_id='.$io);
@@ -208,9 +213,17 @@ class Opportunities extends CActiveRecord
 			'sort'     =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
+		            'regions_name'=>array(
+						'asc'  =>'regions.region',
+						'desc' =>'regions.region DESC',
+		            ),
 		            'advertiser_name'=>array(
 						'asc'  =>'advertisers.name',
 						'desc' =>'advertisers.name DESC',
+		            ),
+		            'finance_entities_name'=>array(
+						'asc'  =>'financeEntities.name',
+						'desc' =>'financeEntities.name DESC',
 		            ),
 		            'country_name'=>array(
 						'asc'  =>'country.name',
@@ -227,14 +240,6 @@ class Opportunities extends CActiveRecord
 		            'account_manager_lastname'=>array(
 						'asc'  =>'accountManager.lastname',
 						'desc' =>'accountManager.lastname DESC',
-		            ),
-		            'ios_name'=>array(
-						'asc'  =>'ios.name',
-						'desc' =>'ios.name DESC',
-		            ),
-		            'currency'=>array(
-						'asc'  =>'ios.currency',
-						'desc' =>'ios.currency DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',
@@ -256,11 +261,11 @@ class Opportunities extends CActiveRecord
 
 	public function getVirtualName()
 	{
-		$adv = $this->ios->advertisers->name;
+		$adv = $this->regions->financeEntities->advertisers->name;
 		
 		$country = '';
-		if ( $this->country_id !== NULL )
-			$country = '-' . $this->country->ISO2;
+		if ( $this->regions->country_id !== NULL )
+			$country = '-' . $this->regions->country->ISO2;
 
 		$carrier = '';
 		if ( $this->carriers_id === NULL ) {
