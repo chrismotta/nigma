@@ -1,7 +1,6 @@
 <?php
 /* @var $this OpportunitiesController */
 /* @var $model Opportunities */
-
 // Config parameters depending if have to show Archived or Admin view
 if( isset($isArchived) ) {
 	$delete['icon']       = 'refresh';
@@ -43,7 +42,6 @@ $('.search-form form').submit(function(){
 	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
 	$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
-
 ?>
 <?php if( !isset($isArchived) )  : ?>
 	<div class="botonera">
@@ -112,21 +110,26 @@ $('.search-form form').submit(function(){
 	'columns'                  =>array(
 		array(
 			'name'              =>'id',
-			'headerHtmlOptions' => array('style'=>'width: 50px'),
+			'headerHtmlOptions' => array('style'=>'width:10px'),
 		),
-		array(
-			'name'              =>'advertiser_name',
-			'value'             =>'$data->ios->advertisers->name',
+		array( 
+			'name'              =>'regions_name',
+			'value'             =>'$data->regions->region',
 			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
 		array( 
-			'name'              =>'ios_name',
-			'value'             =>'$data->ios->name',
+			'name'              =>'finance_entities_name',
+			'value'             =>'$data->regions->financeEntities->name',
+			'headerHtmlOptions' => array('style'=>'width: 90px'),
+		),
+		array(
+			'name'              =>'advertiser_name',
+			'value'             =>'$data->regions->financeEntities->advertisers->name',
 			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
 		array(
 			'name'              =>'country_name',
-			'value'             =>'$data->country ? $data->country->ISO2 : ""',
+			'value'             =>'$data->regions->country ? $data->regions->country->name : ""',
 			'headerHtmlOptions' => array('style'=>'width: 50px'),
 		),
 		array(
@@ -134,16 +137,19 @@ $('.search-form form').submit(function(){
 			'value'             =>'$data->carriers ? $data->carriers->mobile_brand : ""',
 			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
-		'product',
+		array(
+			'name'              => 'product',
+			'headerHtmlOptions' => array('style'=>'width: 50px'),
+		),
 		array(
 			'name'              => 'model_adv',
 			'headerHtmlOptions' => array('style'=>'width: 30px'),
 		),
-		array(
+		/*array(
 			'name'              => 'currency',
 			'value'             =>'$data->ios->currency',
 			'headerHtmlOptions' => array('style'=>'width: 30px'),
-		),
+		),*/
 		array(
 			'name'              => 'rate',
 			'headerHtmlOptions' => array('style'=>'width: 60px'),
