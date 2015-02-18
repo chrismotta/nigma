@@ -310,7 +310,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		
-		if ( in_array('commercial', Yii::app()->authManager->getRoles(Yii::app()->user->id), true) )
+		if ( in_array('commercial', array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id)), true) )
 			FilterManager::model()->addUserFilter($criteria, 'daily.commercial');
 		else
 			FilterManager::model()->addUserFilter($criteria, 'daily');
