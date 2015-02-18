@@ -30,7 +30,15 @@ class FilterManager
 				'bussiness',
 				'finance',
 				'sem',
+			)),
+		'daily.commercial' => array( 
+			'column' => 'ios.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'bussiness',
 				'finance',
+				'sem',
 			)),
 		'campaign.account' => array( 
 			'column' => 'opportunities.account_manager_id', 
@@ -41,10 +49,12 @@ class FilterManager
 				'finance',
 			)),
 		'campaign.commercial' => array( 
-			'column' => 'opportunities.ios.commercial_id', 
+			'column' => 'ios.commercial_id', 
 			'roles'  => array( 
 				'admin',
 				'media_manager',
+				'sem',
+				'finance',
 			)),
 		'campaign.post_data' => array(
 			'column' => '',
@@ -105,6 +115,33 @@ class FilterManager
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'media',
+			)),
+		'ios' => array( 
+			'column' => 't.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'commercial_manager',
+				'finance',
+				'business',
+			)),
+		'opportunities' => array( 
+			'column' => 'ios.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'commercial_manager',
+				'finance',
+				'business',
+			)),
+		'advertisers' => array( 
+			'column' => 'ios.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'commercial_manager',
+				'finance',
+				'business',
 			)),
 		);
 
