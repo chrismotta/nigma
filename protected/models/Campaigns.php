@@ -203,7 +203,7 @@ class Campaigns extends CActiveRecord
 		$criteria->mergeWith($tmp);
 
 		// Filter depending if user has "media" or "commercial" role
-		if ( in_array('commercial', Yii::app()->authManager->getRoles(Yii::app()->user->id), true) )
+		if ( in_array('commercial', array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id)), true) )
 			FilterManager::model()->addUserFilter($criteria, 'campaign.commercial');
 		else
 			FilterManager::model()->addUserFilter($criteria, 'campaign.account');

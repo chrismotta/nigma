@@ -189,6 +189,8 @@ class Ios extends CActiveRecord
 		$criteria->compare('commercial.lastname', $this->com_lastname, true);
 		$criteria->compare('country.name', $this->country_name, true);
 
+		FilterManager::model()->addUserFilter($criteria, 'ios');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			'pagination' => array(
