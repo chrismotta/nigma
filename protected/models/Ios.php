@@ -407,6 +407,9 @@ class Ios extends CActiveRecord
 							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
 								continue;
 						}
+					}elseif ($status=='not_invoiced') {
+						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') =='Invoiced')
+							continue;
 					}
 					else
 						if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					

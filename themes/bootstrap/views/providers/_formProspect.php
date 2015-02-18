@@ -37,12 +37,12 @@
         echo $form->dropDownListRow($model, 'deal', KHtml::enumItem($model, 'deal'), array(
             'onChange' => ' 
               if ($("#Providers_deal").val() == "POST-PAYMENT")
-                $(".post_payment_amount").show();
-              else
                 $(".post_payment_amount").hide();
+              else
+                $(".post_payment_amount").show();
             ',
           ));
-        echo '<div style="display: ' . ($model->deal == 'POST-PAYMENT' ? 'block' : 'none') . '" class="post_payment_amount">';
+        echo '<div style="display: ' . ($model->deal == 'POST-PAYMENT' ? 'none' : 'block') . '" class="post_payment_amount">';
         echo $form->textFieldRow($model, 'post_payment_amount', array('class'=>'span3'));
         echo '</div>';
         echo $form->datepickerRow($model, 'start_date', array(
