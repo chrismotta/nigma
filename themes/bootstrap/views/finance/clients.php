@@ -153,9 +153,9 @@ else
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
 			$status=KHtml::enumItem(new IosValidation,'status');
-			foreach ($status as $key => $value) {
-				if($value=='Approved' || $value=='Expired')unset($status[$key]);
-			}
+			// foreach ($status as $key => $value) {
+			// 	if($value=='Approved' || $value=='Expired')unset($status[$key]);
+			// }
 			$status['ok']='Approved/Expired';
 			$status['Not Sent']='Not Sent';
 			$status[0]='All Status';
