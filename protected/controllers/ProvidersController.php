@@ -377,21 +377,24 @@ class ProvidersController extends Controller
 		if(isset($_POST['Providers']))
 		{
 			$defaultAttributes=array(
-				'status'=>'Active',
-				'currency'=>'USD',
-				'model'=>'CPA',
-				'net_payment'=>0,
-				'commercial_name'=>'prospect',
-				'state'=>'state',
-				'zip_code'=>'000',
-				'tax_id'=>'000',
-				'start_date'=>'0000-00-00',
-
+				'status'          =>'Active',
+				'commercial_name' =>'prospect',
+				'state'           =>'state',
+				'zip_code'        =>'000',
+				'tax_id'          =>'000',
 				);
 			$attributes=array(
-				'name'=>$_POST['Providers']['name'],
-				'entity'=>$_POST['Providers']['entity'],
-				'prospect'=>1
+				'name'        =>$_POST['Providers']['name'],
+				'entity'      =>$_POST['Providers']['entity'],
+				'model'       =>$_POST['Providers']['model'],
+				'net_payment' =>$_POST['Providers']['net_payment'],
+				'deal'        =>$_POST['Providers']['deal'],
+				'start_date'  =>$_POST['Providers']['start_date'],
+				'end_date'    =>$_POST['Providers']['end_date'],
+				'daily_cap'   =>$_POST['Providers']['daily_cap'],
+				'sizes'       =>$_POST['Providers']['sizes'],
+				'currency'    =>$_POST['Providers']['currency'],
+				'prospect'    =>1,
 				);
 			$attributes=array_merge($defaultAttributes,$attributes);
 			$model->attributes=$attributes;

@@ -199,6 +199,9 @@ class Opportunities extends CActiveRecord
 		if($accountManager != NULL)$criteria->compare('accountManager.id',$accountManager);
 		if($advertiser != NULL)$criteria->compare('advertisers.id',$advertiser);
 		if($io != NULL)$criteria->addCondition('t.ios_id='.$io);
+
+		FilterManager::model()->addUserFilter($criteria, 'opportunities');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination' => array(

@@ -189,6 +189,8 @@ class Ios extends CActiveRecord
 		$criteria->compare('commercial.lastname', $this->com_lastname, true);
 		$criteria->compare('country.name', $this->country_name, true);
 
+		FilterManager::model()->addUserFilter($criteria, 'ios');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			'pagination' => array(
@@ -278,16 +280,11 @@ class Ios extends CActiveRecord
 						if($status==='invoiced')
 						{							
 							if(!$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
-								continue;
-						}
-						elseif ($status=="toinvoice") 
-						{
-							if(!$opportunitie->checkIsAbleInvoice() || $opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
 							{
-									continue;
-							}								
-								
+								continue;
+							}
 						}
+
 					}
 					else
 					{
@@ -299,9 +296,28 @@ class Ios extends CActiveRecord
 									continue;
 							}
 						}
+						elseif ($status=="toinvoice") 
+						{
+							if(!$opportunitie->checkIsAbleInvoice() || $opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
+							{
+								continue;
+							}								
+								
+						}
+						elseif ($status=='not_invoiced')
+						{
+							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') =='Invoiced')
+							{
+								continue;
+							}
+						}
 						else
-							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status) continue;					
-						
+						{
+							if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') != $status)
+							{
+								continue;
+							}
+						}
 					}
 				}				
 				$data[$i]['id']              =$daily->io_id;
