@@ -4,21 +4,6 @@
 $this->breadcrumbs=array(
 	'Advertisers',
 );
-
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$('#daily-report-grid').yiiGridView('update', {
-		data: $(this).serialize()
-	});
-	return false;
-});
-");
-
-$alert = array('error', 'info', 'success', 'warning', 'muted');
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -115,7 +100,8 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
             'value'             =>'number_format($data["conv"])',  
             'headerHtmlOptions' => array('width' => '30'),  
             'htmlOptions'       => array('style'=>'text-align:right;'),
-            'footerHtmlOptions' => array('style'=>'text-align:right;'),   
+            'footerHtmlOptions' => array('style'=>'text-align:right;'),
+            'footer'            => number_format($totals['conv'], 2),   
         ),
         array(
             'name'              =>'revenue',
@@ -124,6 +110,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
             'headerHtmlOptions' => array('width' => '50'),
             'htmlOptions'       => array('style'=>'text-align:right;'),   
             'footerHtmlOptions' => array('style'=>'text-align:right;'),    
+            // 'footer'            => number_format($totals['revenue'], 2),   
         ),
     ),
 )); ?>
