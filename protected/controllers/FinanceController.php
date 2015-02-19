@@ -103,12 +103,12 @@ class FinanceController extends Controller
 	 */
 	public function actionClients()
 	{
-		$date = strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$date   =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
 		$year   =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
 		$month  =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
-		$status    =isset($_GET['status']) ? $_GET['status'] : null;
+		$status =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
 		$transactions=new TransactionCount;
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))

@@ -273,6 +273,13 @@ class Ios extends CActiveRecord
 			#Save results to array group by io,carrier and date
 			foreach ($dailys as $daily) {
 				$opportunitie=Opportunities::model()->findByPk($daily->opp_id);
+			
+				// FIXME se puede agregar este filtro a la query??? 
+				// NO, tiene mayor logica que solo consultar una columna
+				// 
+				// FIXME refactorizar a una funcion aparte, donde se cree un nuevo array
+				// de CModel dejando solo los CModel que cumplan con la condicion del status
+				// requerida por el filtro
 				if($status)
 				{
 					if($closed_deal)
@@ -320,11 +327,15 @@ class Ios extends CActiveRecord
 						}
 					}
 				}		
+
+				// Carga el status del IO dependiendo si es close deal o no.
 				if($closed_deal)					
 					$status_io=$opportunitie->checkIsAbleInvoice();
 				else
 					$status_io=$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');
 
+				// FIXME se puede modificar el CModel q esta guardado en $daily para agregar
+				// los campos o modificar los necesarios??
 				$data[$i]['id']              =$daily->io_id;
 				$data[$i]['name']            =$daily->commercial_name;
 				$data[$i]['opportunitie']    =$opportunities->findByPk($daily->opp_id)->getVirtualName();
@@ -381,6 +392,9 @@ class Ios extends CActiveRecord
 			'advertiser'      =>$advertiser,
 			);
 		#Declare arrays to use
+		// Obtiene un array asociativo (con id incremental) que corresponde a un CModel 
+		// custom proveniente de la query de makeClientsQuery y modificado dentro de la
+		// logica de getClientsMulti
 		$dailysNoMulti   =Ios::model()->getClientsMulti($filters);
 		$filters['multi']=false;
 		$dailysMulti     =Ios::model()->getClientsMulti($filters);
@@ -442,9 +456,10 @@ class Ios extends CActiveRecord
 	}
 
 	/**
-	 * [makeClientsQuery description]
-	 * @param  [type] $filters [description]
-	 * @return [type]          [description]
+	 * Create CDbCriteria base on @param $filters
+	 * 
+	 * @param  array() 		$filters
+	 * @return DcbCriteria
 	 */
 	private function makeClientsQuery($filters)
 	{
@@ -634,13 +649,20 @@ class Ios extends CActiveRecord
 			#If isset, set arrays (conv,revenue) and sum
 			isset($data[$id][$carrier][$product][$rate]['revenue']) ? : $data[$id][$carrier][$product][$rate]['revenue']=0;
 			isset($data[$id][$carrier][$product][$rate]['conv']) ? : $data[$id][$carrier][$product][$rate]['conv']=0;
+
+			// $id corresponde a ios_id
+			// Se suman todos los revenue y todas las conv y se agrupan por ios_id
 			$data[$id][$carrier][$product][$rate]['revenue']         +=$revenue;
 			$data[$id][$carrier][$product][$rate]['conv']            +=$daily['conv'];
 			$data[$id][$carrier][$product][$rate]['rate']            =$daily['rate'];
 
+
+			// FIXME $totals no se devuelve?
 			#This array have totals
+			// inicializa $totals
 			isset($totals['revenue']) ?  : $totals['revenue'] =0;
 			isset($totals['conv']) ?  : $totals['conv'] =0;
+			// suma todos los revenus y todas las conv
 			$totals['revenue']+=$revenue;
 			$totals['conv']+=$daily['conv'];
 		}
@@ -656,7 +678,7 @@ class Ios extends CActiveRecord
 				}
 			}
 		}
-
+		// devuelve los $daily originales pero con $revenue y $conv sumadas
 		return $consolidated;
 
 	}
@@ -668,6 +690,9 @@ class Ios extends CActiveRecord
 	 */
 	public function groupClientsByRate($clients)
 	{
+		//
+		// FIXME idem logica que groupClientsByProfile
+		// 
 		$data=array();
 		$consolidated=array();
 		foreach ($clients as $daily) {
