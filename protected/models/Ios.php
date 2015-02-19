@@ -284,6 +284,14 @@ class Ios extends CActiveRecord
 								continue;
 							}
 						}
+						elseif ($status=="toinvoice") 
+						{
+							if(!$opportunitie->checkIsAbleInvoice() || $opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
+							{
+								continue;
+							}								
+								
+						}
 
 					}
 					else
@@ -295,14 +303,6 @@ class Ios extends CActiveRecord
 								if($iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01') !='Expired')
 									continue;
 							}
-						}
-						elseif ($status=="toinvoice") 
-						{
-							if(!$opportunitie->checkIsAbleInvoice() || $opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01'))
-							{
-								continue;
-							}								
-								
 						}
 						elseif ($status=='not_invoiced')
 						{
@@ -319,7 +319,12 @@ class Ios extends CActiveRecord
 							}
 						}
 					}
-				}				
+				}		
+				if($closed_deal)					
+					$status_io=$opportunitie->checkIsAbleInvoice();
+				else
+					$status_io=$iosValidation->getStatusByIo($daily->io_id,$year.'-'.$month.'-01');
+
 				$data[$i]['id']              =$daily->io_id;
 				$data[$i]['name']            =$daily->commercial_name;
 				$data[$i]['opportunitie']    =$opportunities->findByPk($daily->opp_id)->getVirtualName();
@@ -332,7 +337,7 @@ class Ios extends CActiveRecord
 				$data[$i]['mobileBrand']     =$carriers->getMobileBrandById($daily->carrier);
 				$data[$i]['status_opp']      =$opportunitiesValidation->checkValidation($daily->opp_id,$year.'-'.$month.'-01');
 				$data[$i]['country']         =$geoLocation->getNameFromId(Opportunities::model()->findByPk($daily->opp_id)->country_id);//acá está el country
-				$data[$i]['status_io']       =$opportunitie->checkIsAbleInvoice();				
+				$data[$i]['status_io']       =$status_io;		
 				$data[$i]['comment']         =$iosValidation->getCommentByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['date']            =$iosValidation->getDateByIo($daily->io_id,$year.'-'.$month.'-01');				
 				$data[$i]['revenue']         =floatval($daily->revenue);
