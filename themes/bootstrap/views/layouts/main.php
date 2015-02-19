@@ -149,6 +149,16 @@
             ), 
         ),
         array(
+            'label'       =>'Advertiser', 
+            'url'         =>'#',
+            'itemOptions' =>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
+            'linkOptions' =>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+            'visible'     =>UserManager::model()->isUserAssignToRole(array('advertiser')),
+            'items'       =>array(
+                array('label'=>'Dashboard', 'url'=>array('/partners/advertisers')),
+            ), 
+        ),
+        array(
             'label'       =>'Admin', 
             'url'         =>'#',
             'itemOptions' =>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
