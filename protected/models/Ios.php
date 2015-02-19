@@ -373,10 +373,7 @@ class Ios extends CActiveRecord
 			'status'          =>$status,	
 			'multi'           =>true,		
 			'closed_deal'     =>$closed_deal,		
-			'advertiser'      =>$advertiser,		
-			// 'country'         =>$country,
-			// 'product'         =>$product,
-			// 'model'           =>$model,
+			'advertiser'      =>$advertiser,
 			);
 		#Declare arrays to use
 		$dailysNoMulti   =Ios::model()->getClientsMulti($filters);
@@ -395,7 +392,6 @@ class Ios extends CActiveRecord
 		}	
 
 		$totals_consolidated =$this->getTotalsClients($dailys,$filters);
-		$graphic             =$this->getGraphicClients($dailys,$filters);
 		$totals_invoiced     =$totals_consolidated['totals_invoiced'];
 		$totals_io           =$totals_consolidated['totals_io'];
 		$totals              =$totals_consolidated['totals'];
@@ -405,8 +401,7 @@ class Ios extends CActiveRecord
 			'data'            => $consolidated, 
 			'totals_io'       => $totals_io, 
 			'totals'          => $totals, 
-			'totals_invoiced' => $totals_invoiced,
-			'graphic'         => $graphic,
+			'totals_invoiced' => $totals_invoiced
 		);
 		return $result;
 	}
@@ -767,9 +762,5 @@ class Ios extends CActiveRecord
 		return $consolidated;
 	}	
 
-	public function getGraphicClients($data,$filters)
-	{
-		
-	}
 	
 }

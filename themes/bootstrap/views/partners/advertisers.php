@@ -21,9 +21,6 @@ $('.search-form form').submit(function(){
 $alert = array('error', 'info', 'success', 'warning', 'muted');
 ?>
 
-<hr>
-
-<br>
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
@@ -71,26 +68,26 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
         array(
             'name'              =>'country',
             'value'             =>'$data["country"]', 
-            'headerHtmlOptions' => array('width' => '80'),
+            'headerHtmlOptions' => array('width' => '100'),
             'header'            =>'Country',      
             'footer'            =>'Totals:',      
             ),
         array(
             'name'              =>'product',
             'value'             =>'$data["product"]', 
-            'headerHtmlOptions' => array('width' => '80'),
+            'headerHtmlOptions' => array('width' => '200'),
             'header'            =>'Product',      
             ),
         array(
             'name'              =>'mobileBrand',
             'value'             =>'$data["mobileBrand"]', 
-            'headerHtmlOptions' => array('width' => '80'),
+            'headerHtmlOptions' => array('width' => '150'),
             'header'            =>'Carrier',      
             ),
         array(
             'name'              =>'model',
             'value'             =>'$data["model"]', 
-            'headerHtmlOptions' => array('width' => '80'),
+            'headerHtmlOptions' => array('width' => '100'),
             'header'            =>'Model',    
             ),
         // array(
@@ -102,13 +99,13 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
         array(
             'name'              =>'currency',
             'value'             =>'$data["currency"]',
-            'headerHtmlOptions' => array('width' => '80'),      
+            'headerHtmlOptions' => array('width' => '100'),      
             'header'            =>'Currency',   
             ),
         array(
             'name'              =>'rate',
             'value'             =>'$data["rate"] ? $data["rate"] : "Multi"',
-            'headerHtmlOptions' => array('width' => '80'),  
+            'headerHtmlOptions' => array('width' => '30'),  
             'htmlOptions'       => array('style'=>'text-align:right;'), 
             'header'            =>'Rate',   
         ),  
@@ -116,15 +113,15 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
             'name'              =>'conv',
             'header'            =>'Clics/Imp/Conv',
             'value'             =>'number_format($data["conv"])',  
-            'headerHtmlOptions' => array('width' => '80'),  
+            'headerHtmlOptions' => array('width' => '30'),  
             'htmlOptions'       => array('style'=>'text-align:right;'),
             'footerHtmlOptions' => array('style'=>'text-align:right;'),   
         ),
         array(
             'name'              =>'revenue',
-            'header'            =>'Revenue',
+            'header'            =>'Spend',
             'value'             =>'number_format($data["revenue"],2)',
-            'headerHtmlOptions' => array('width' => '80'),
+            'headerHtmlOptions' => array('width' => '50'),
             'htmlOptions'       => array('style'=>'text-align:right;'),   
             'footerHtmlOptions' => array('style'=>'text-align:right;'),    
         ),
