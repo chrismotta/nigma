@@ -111,6 +111,7 @@ class FinanceController extends Controller
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
 		$model  =new Ios;
 		$transactions=new TransactionCount;
+
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 		else
@@ -125,11 +126,16 @@ class FinanceController extends Controller
 			isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
 			$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 		}
-		isset($totalCount) ? : $totalCount=array();;
+		isset($totalCount) ? : $totalCount=array();
 		foreach ($totalCount as $key => $value) {
 			$currency=Ios::model()->findByPk($key)->currency;
 			isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
 			$totalCountCurrency[$currency]+=$value;
+			if(IosValidation::model()->getStatusByIo($key,$year.'-'.$month.'-01'))
+			{
+				isset($totalCountInvoice[$currency]) ?  : $totalCountInvoice[$currency]=0;
+				$totalCountInvoice[$currency]+=$value;
+			}
 		}
 
 
@@ -175,8 +181,9 @@ class FinanceController extends Controller
 				isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count'] =0;
 
 
-				$totalsdata[$i]['total_clients_invoice']  =isset($clients['totals_clients'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				$totalsdata[$i]['total_clients_invoice']  +=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
+				$totalsdata[$i]['total_clients_invoice']  =isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
+				$totalsdata[$i]['total_clients_invoice']  +=isset($totalCountInvoice[$key]) ? $totalCountInvoice[$key] : 0;
+				// $totalsdata[$i]['total_clients_invoice']  +=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
 
 				$totalsdata[$i]['total_branding_invoice'] =isset($clients['total_branding'][$key]) ? $clients['total_branding'][$key] : 0;
 				$totalsdata[$i]['total_branding_invoice'] +=isset($totalsInvoiceBranding['totals_invoiced'][$key]) ? $totalsInvoiceBranding['totals_invoiced'][$key] : 0;
