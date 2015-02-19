@@ -70,6 +70,47 @@ class PartnersController extends Controller
 
 	public function actionAdvertisers()
 	{
+		$year  = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
+		$month = isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
+		
+		$advertiser = Advertisers::model()->findByUser(Yii::app()->user->id);
+		
+		$data = Ios::model()->getClients(
+			$month, // month
+			$year, // year
+			null, // entity
+			null, // io
+			null, // account
+			null, // opportunity
+			null, // cat
+			null, // status
+			null, // group
+			false, // close deal
+			$advertiser->id
+		);
 
+		// Create dataProvider
+		$dataProvider=new CArrayDataProvider($data['data'], array(
+		    'id'=>'clients',
+		    'sort'=>array(
+		    	'defaultOrder'=>'country ASC',
+		        'attributes'=>array(
+		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','country','product','mobileBrand'
+		        ),
+		    ),
+		    'pagination'   =>array(
+		        'pageSize' =>30,
+		    ),
+		));
+
+
+		$this->render('advertisers',array(
+			// 'model'      =>$model,
+			'advertiser'   =>$advertiser,
+			'data'         =>$data,
+			'dataProvider' =>$dataProvider,
+			'month'        =>$month,
+			'year'         =>$year
+		));
 	}
 }
