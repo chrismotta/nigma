@@ -84,13 +84,55 @@ class PartnersController extends Controller
 			null, // opportunity
 			null, // cat
 			null, // status
-			null, // group
+			'profile', // group
 			false, // close deal
 			$advertiser->id
 		);
 
+		// add transaction count information
+		$transactionCount =new TransactionCount;
+		$consolidated     =array();
+		$i                =0;
+		$aux              =array();
+		if($count=$transactionCount->getTotalsCarrier(NULL,$year.'-'.$month.'-01'))
+		{
+			foreach ($count as $value) {
+				$found = false;
+				foreach ($data['data'] as $key => $data) {
+					if($data['country']==$value->getCountry() && $data['product']==$value->product && $data['carrier']==$value->carriers_id_carrier) {
+						if($data['rate']==$value->rate) {
+							$data['data'][$key]['conv']    +=$value->volume;
+							$data['data'][$key]['revenue'] +=$value->total;
+							$found = true;
+							break;
+						}
+					}
+				}
+				if (!$found) {
+					$aux[$i]            =$data;
+					$aux[$i]['conv']    =$value->volume;
+					$aux[$i]['revenue'] =$value->total;
+					$aux[$i]['rate']    =$value->rate;				
+					$i++;		
+				}				
+			}
+			foreach ($aux as $value) {
+				$consolidated[]=$value;
+			}
+		}
+		foreach ($data['data'] as $value) {
+			$consolidated[]=$value;
+		}
+		$totals['revenue']=0;
+		$totals['conv']=0;
+		foreach ($consolidated as $value) {
+			$totals['revenue']+=$value['revenue'];
+			$totals['conv']+=$value['conv'];
+			
+		}
+
 		// Create dataProvider
-		$dataProvider=new CArrayDataProvider($data['data'], array(
+		$dataProvider=new CArrayDataProvider($consolidated, array(
 		    'id'=>'clients',
 		    'sort'=>array(
 		    	'defaultOrder'=>'country ASC',
@@ -103,12 +145,12 @@ class PartnersController extends Controller
 		    ),
 		));
 
-
 		$this->render('advertisers',array(
 			// 'model'      =>$model,
 			'advertiser'   =>$advertiser,
 			'data'         =>$data,
 			'dataProvider' =>$dataProvider,
+			'totals'       =>$totals,
 			'month'        =>$month,
 			'year'         =>$year
 		));
