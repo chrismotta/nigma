@@ -360,7 +360,7 @@ class Ios extends CActiveRecord
 	 * @param  boolean $closed_deal     [description]
 	 * @return [type]                   [description]
 	 */
-	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$group,$closed_deal=false)
+	public function getClients($month,$year,$entity=null,$io=null,$accountManager=null,$opportunitie_id=null,$cat=null,$status=null,$group,$closed_deal=false,$advertiser=null)
 	{
 		$filters = array(
 			'month'           =>$month,
@@ -373,6 +373,10 @@ class Ios extends CActiveRecord
 			'status'          =>$status,	
 			'multi'           =>true,		
 			'closed_deal'     =>$closed_deal,		
+			'advertiser'      =>$advertiser,		
+			// 'country'         =>$country,
+			// 'product'         =>$product,
+			// 'model'           =>$model,
 			);
 		#Declare arrays to use
 		$dailysNoMulti   =Ios::model()->getClientsMulti($filters);
@@ -383,7 +387,7 @@ class Ios extends CActiveRecord
 		if($group=='profile')
 		{
 			#Save results to array group by io,carrier and date
-			$consolidated=$this->gruopClientsByProfile($dailys);
+			$consolidated=$this->groupClientsByProfile($dailys);
 		}
 		else
 		{
@@ -391,6 +395,7 @@ class Ios extends CActiveRecord
 		}	
 
 		$totals_consolidated =$this->getTotalsClients($dailys,$filters);
+		$graphic             =$this->getGraphicClients($dailys,$filters);
 		$totals_invoiced     =$totals_consolidated['totals_invoiced'];
 		$totals_io           =$totals_consolidated['totals_io'];
 		$totals              =$totals_consolidated['totals'];
@@ -400,7 +405,8 @@ class Ios extends CActiveRecord
 			'data'            => $consolidated, 
 			'totals_io'       => $totals_io, 
 			'totals'          => $totals, 
-			'totals_invoiced' => $totals_invoiced
+			'totals_invoiced' => $totals_invoiced,
+			'graphic'         => $graphic,
 		);
 		return $result;
 	}
@@ -440,7 +446,7 @@ class Ios extends CActiveRecord
 	 * @param  [type] $filters [description]
 	 * @return [type]          [description]
 	 */
-	public function makeClientsQuery($filters)
+	private function makeClientsQuery($filters)
 	{
 		$month           = isset($filters['month']) ? $filters['month'] : NULL;
 		$year            = isset($filters['year']) ? $filters['year'] : NULL;
@@ -451,6 +457,7 @@ class Ios extends CActiveRecord
 		$cat             = isset($filters['categorie']) ? $filters['categorie'] : NULL;
 		$closed_deal     = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
 		$isMulti     	 = isset($filters['multi']) ? $filters['multi'] : false;
+		$advertiser   	 = isset($filters['advertiser']) ? $filters['advertiser'] : NULL;
 
 
 		$criteria = new CDbCriteria;
@@ -543,6 +550,7 @@ class Ios extends CActiveRecord
 		$criteria->compare('ios.account_manager_id', $accountManager ? $accountManager : NULL);
 		$criteria->compare('opportunities.id', $opportunitie_id ? $opportunitie_id : NULL);
 		$criteria->compare('advertisers.cat', $cat ? $cat : NULL);
+		$criteria->compare('advertisers.id', $advertiser ? $advertiser : NULL);
 		
 
 		if($closed_deal) {
@@ -594,11 +602,11 @@ class Ios extends CActiveRecord
 	}
 
 	/**
-	 * [gruopClientsByProfile description]
+	 * [groupClientsByProfile description]
 	 * @param  [type] $clients [description]
 	 * @return [type]          [description]
 	 */
-	public function gruopClientsByProfile($clients)
+	public function groupClientsByProfile($clients)
 	{
 		$data=array();
 		$consolidated=array();
@@ -712,7 +720,7 @@ class Ios extends CActiveRecord
 	 * @param  [type] $clients [description]
 	 * @return [type]          [description]
 	 */
-	public function getTotalsClients($clients,$filters)
+	private function getTotalsClients($clients,$filters)
 	{
 		$totals_io       =array();
 		$totals_invoiced =array();
@@ -759,5 +767,9 @@ class Ios extends CActiveRecord
 		return $consolidated;
 	}	
 
+	public function getGraphicClients($data,$filters)
+	{
+		
+	}
 	
 }
