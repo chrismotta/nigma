@@ -411,7 +411,7 @@ class Ios extends CActiveRecord
 		}	
 
 		$totals_consolidated =$this->getTotalsClients($dailys,$filters);
-		$totals_invoiced     =$totals_consolidated['totals_invoiced'];
+		// $totals_invoiced     =$totals_consolidated['totals_invoiced'];
 		$totals_io           =$totals_consolidated['totals_io'];
 		$totals              =$totals_consolidated['totals'];
 
@@ -420,7 +420,7 @@ class Ios extends CActiveRecord
 			'data'            => $consolidated, 
 			'totals_io'       => $totals_io, 
 			'totals'          => $totals, 
-			'totals_invoiced' => $totals_invoiced
+			// 'totals_invoiced' => $totals_invoiced
 		);
 		return $result;
 	}
@@ -747,46 +747,76 @@ class Ios extends CActiveRecord
 	 */
 	private function getTotalsClients($clients,$filters)
 	{
-		$totals_io       =array();
-		$totals_invoiced =array();
-		$totals          =array();
-		foreach ($clients as $daily) {
+		$totals_io          =array();
+		$totals_invoiced    =array();
+		$totals             =array();
+		$totalCountCurrency =array();
+		$totalCount         =array();
+		$totalCountInvoice         =array();
+		$closed_deal        = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
+		$month              = isset($filters['month']) ? $filters['month'] : NULL;
+		$year               = isset($filters['year']) ? $filters['year'] : NULL;
+		$transactions       =new TransactionCount;
+		foreach ($clients as $daily) 
+		{
 
 			$opportunitie=Opportunities::model()->findByPk($daily['opportunitie_id']);
 			$revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+				
+			isset($totalCount[$daily['id']]) ? : $totalCount[$daily['id']]=0;
 
-			isset($totals_invoiced[$daily['currency']]) ?  : $totals_invoiced[$daily['currency']] =0;
-				if($opportunitie->closed_deal)
-				{
-					if($daily['status_opp'])
-					$totals_invoiced[$daily['currency']]+=$opportunitie->getTotalCloseDeal();
+			
+			$totalCount[$daily['id']]=$transactions->getTotalTransactions($daily['id'],$year.'-'.$month.'-01');			
+			foreach ($totalCount as $key => $value) {
+				$currency=Ios::model()->findByPk($key)->currency;
+				isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
+				$totalCountCurrency[$currency]+=$value;
+
+				isset($totalCountInvoice[$currency]) ? : $totalCountInvoice[$currency]=0;
+				if($daily['status_io']=='Invoiced'){
+					$totalCountInvoice[$currency]+=$value;
+					
 				}
-				else
-				{
-					if($daily['status_io']=='Invoiced')
-					$totals_invoiced[$daily['currency']]+=$revenue;		
-				}
+			}
+
+
 
 			#This array have totals
-			if(!isset($totals[$daily['currency']])){
+			if(!isset($totals[$daily['currency']]))
+			{
 				$totals[$daily['currency']]['revenue']           =0;
+				$totals[$daily['currency']]['invoiced']          =0;
 				$totals[$daily['currency']]['agency_commission'] =0;
+				$totals[$daily['currency']]['transaction']       =0;
+				$totals[$daily['currency']]['transaction_invoiced']       =0;
 			}
-				if($opportunitie->closed_deal){
-					$totals[$daily['currency']]['revenue']           +=$opportunitie->close_amount;
-					$totals[$daily['currency']]['agency_commission'] +=$opportunitie->getTotalAgencyCommission();
-				}
-				else
-					$totals[$daily['currency']]['revenue']+=$revenue;
+			if($closed_deal)
+			{
+				$totals[$daily['currency']]['revenue']           +=$opportunitie->close_amount;
+				$totals[$daily['currency']]['agency_commission'] +=$opportunitie->getTotalAgencyCommission();
+
+				if($daily['status_opp'])
+					$totals[$daily['currency']]['invoiced']+=$opportunitie->getTotalCloseDeal();
+			}
+			else
+			{
+				$totals[$daily['currency']]['revenue']     +=$revenue;
+				$totals[$daily['currency']]['transaction'] +=$totalCountCurrency[$daily['currency']];
+				$totals[$daily['currency']]['transaction_invoiced'] +=$totalCountInvoice[$daily['currency']];
 				
+				if($daily['status_io']=='Invoiced')
+					$totals[$daily['currency']]['invoiced']+=$revenue;
+			}
+
+
 
 			isset($totals_io[$daily['id']]) ?  : $totals_io[$daily['id']] =0;
-				$totals_io[$daily['id']]+=$revenue;
+			$totals_io[$daily['id']]+=$revenue;
 		}
 		$consolidated = array(
-			'totals_io'       => $totals_io,
-			'totals_invoiced' => $totals_invoiced,
-			'totals'          => $totals,
+			'totals_io'          => $totals_io,
+			// 'totals_invoiced'    => $totals_invoiced,
+			'totals'             => $totals,
 			);
 
 		return $consolidated;
