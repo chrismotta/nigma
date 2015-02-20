@@ -180,7 +180,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		//We need to list all related tables in with property
-		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'vectors', 'providers');
+		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'vectors', 'providers', 'providers.affiliates');
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
@@ -202,11 +202,13 @@ class Campaigns extends CActiveRecord
 		$tmp->compare('opportunities.product',$this->name,true,'OR');
 		$criteria->mergeWith($tmp);
 
-		// Filter depending if user has "media" or "commercial" role
-		if ( in_array('commercial', array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id)), true) )
-			FilterManager::model()->addUserFilter($criteria, 'campaign.commercial');
+		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+		if ( in_array('commercial', $roles, true) )
+			FilterManager::model()->addUserFilter($criteria, 'daily.commercial');
+		else if (in_array('affiliates_manager', $roles, true))
+			$criteria->addCondition('affiliates.providers_id IS NOT NULL');
 		else
-			FilterManager::model()->addUserFilter($criteria, 'campaign.account');
+			FilterManager::model()->addUserFilter($criteria, 'daily');
 
 		$criteria->compare('ios.name',$this->ios_name, true);
 		$criteria->compare('providers.currency',$this->net_currency, true);

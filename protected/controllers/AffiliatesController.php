@@ -28,7 +28,7 @@ class AffiliatesController extends Controller
 			),
 			array('allow',
 				'actions' =>array('admin','view','create','update'),
-				'roles'   =>array('admin','media_manager'),
+				'roles'   =>array('admin','media_manager','affiliates_manager'),
 			),
 			array('allow',
 				'actions' =>array('admin','view'),

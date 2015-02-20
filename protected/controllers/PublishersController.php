@@ -29,7 +29,7 @@ class PublishersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete','archived'),
-				'roles'=>array('admin','media_manager'),
+				'roles'=>array('admin','media_manager','affiliates_manager'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
