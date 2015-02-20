@@ -45,12 +45,13 @@
             $categories=KHtml::enumItem(new Advertisers,'cat');
             $categories[0]='All Categories';
             $status=KHtml::enumItem(new IosValidation,'status');
-            foreach ($status as $key => $value) {
-                if($value=='Approved' || $value=='Expired')unset($status[$key]);
-            }
-            $status['ok']='Approved/Expired';
-            $status['Not Sent']='Not Sent';
-            $status[0]='All Status';
+            // foreach ($status as $key => $value) {
+            //     if($value=='Approved' || $value=='Expired')unset($status[$key]);
+            // }
+            $status['ok']           ='Approved/Expired';
+            $status['not_invoiced'] ='Not Invoiced';
+            $status['Not Sent']     ='Not Sent';
+            $status[0]              ='All Status';
             echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;', 'options' => array(isset($_GET['month']) ? intval($_GET['month']) : 0=>array('selected'=>true)))) . "<br>";
             echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true)))) . "<br>";
             echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array($_GET['entity']!='' ? $_GET['entity'] : 0=>array('selected'=>true)))) . "<br>";
