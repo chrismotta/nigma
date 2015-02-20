@@ -125,10 +125,6 @@ class FinanceController extends Controller
 			$client['total']             =$client['total_revenue']+$client['total_transaction'];
 			//Crea el array definitivo del grid con los totales incluidos
 			$consolidated[]              =$client;
-
-			//Suma totales de arqueo
-			// isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
-			// $totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 		}
 
 		//Filtros para el grid con CArrayDataProvider
@@ -149,31 +145,6 @@ class FinanceController extends Controller
 		        'pageSize'=>30,
 		    ),
 		));
-		//Agrupa totales de arqueo por currency
-		// isset($totalCount) ? : $totalCount=array();
-		// foreach ($totalCount as $key => $value) {
-		// 	$currency=Ios::model()->findByPk($key)->currency;
-		// 	isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
-		// 	$totalCountCurrency[$currency]+=$value;
-		// }
-
-		
-		// $totalsdata                 =array();
-		// $totalsTransactions         =array();
-		// $totalsInvoicedTransactions =array();
-
-		// //Total de arqueos invoiced
-		// $totalsTransactionsInvoicedTemp =TransactionCount::model()->getTotalsInvoicedCurrency($year.'-'.$month.'-01');
-		// $totalsTransactionsTemp         =TransactionCount::model()->getTotalsCurrency($year.'-'.$month.'-01');
-
-		// //Array [currency]=>total
-		// foreach ($totalsTransactionsInvoicedTemp as $value) {
-		// 	$totalsInvoicedTransactions[$value['currency']]=$value['total'];
-		// }
-		// foreach ($totalsTransactionsTemp as $value) {
-		// 	$totalsTransactions[$value['currency']]=$value['total'];
-		// }
-
 		$totalsInvoiceBranding=$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
 
 		$i=0;
@@ -196,28 +167,6 @@ class FinanceController extends Controller
 				$totalsdata[$i]['total_branding_invoice'] =isset($totalsInvoiceBranding['totals'][$key]) ? $totalsInvoiceBranding['totals'][$key]['invoiced'] : 0;				
 				$totalsdata[$i]['total']                  = $totalsdata[$i]['total_clients']+$totalsdata[$i]['total_branding'];
 				$totalsdata[$i]['total_invoiced']         =$totalsdata[$i]['total_branding_invoice']+$totalsdata[$i]['total_clients_invoice'];
-				// isset($totalsdata[$i]['total_count']) ? : $totalsdata[$i]['total_count'] =0;
-
-
-				// $totalsdata[$i]['total_clients_invoice']  =isset($clients['totals_invoiced'][$key]) ? $clients['totals_invoiced'][$key] : 0;
-				// $totalsdata[$i]['total_clients_invoice']  +=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
-				// // $totalsdata[$i]['total_clients_invoice']  +=isset($totalsInvoicedTransactions[$key]) ? $totalsInvoicedTransactions[$key] : 0;
-
-				// $totalsdata[$i]['total_branding_invoice'] =isset($clients['total_branding'][$key]) ? $clients['total_branding'][$key] : 0;
-				// $totalsdata[$i]['total_branding_invoice'] +=isset($totalsInvoiceBranding['totals_invoiced'][$key]) ? $totalsInvoiceBranding['totals_invoiced'][$key] : 0;
-
-				// $totalsdata[$i]['total_count']            +=isset($totalCountCurrency[$key]) ? $totalCountCurrency[$key] : 0;
-
-				// $totalsdata[$i]['total_clients']          =$totalsdata[$i]['total_count']+$totalsdata[$i]['sub_total'];
-				// $totalsdata[$i]['total_branding']		  =isset($totalsInvoiceBranding['totals'][$key]['revenue']) ? $totalsInvoiceBranding['totals'][$key]['revenue']-$totalsInvoiceBranding['totals'][$key]['agency_commission'] : 0;
-
-				// // $totalsdata[$i]['total'] = $totalsdata[$i]['total_branding']+$totalsdata[$i]['total_clients'];
-				// $totalsdata[$i]['total_invoiced']         =$totalsdata[$i]['total_branding_invoice']+$totalsdata[$i]['total_clients_invoice'];
-
-				// $totalsdata[$i]['total'] = $totalsdata[$i]['total_clients']+$totalsdata[$i]['total_branding'];
-
-				// $totalsdata[$i]['total']                  +=isset($totalsInvoiceBranding['totals'][$key]) ? $totalsInvoiceBranding['totals'][$key]['revenue'] : 0;
-
 			}
 		}
 		
