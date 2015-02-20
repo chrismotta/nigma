@@ -59,6 +59,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'app.kickadserver.mobi':
 	case 'kickadserver.mobi':
 	case 'www.kickadserver.mobi':
+	case 'juegosmobi.mobi':
+	case 'www.juegosmobi.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
