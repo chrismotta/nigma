@@ -27,14 +27,14 @@
             'label'       =>'Dashboard', 
             'url'         =>array('/site/index'), 
             'itemOptions' =>array('class'=>'showLoadingMenuItem'), 
-            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem')),
+            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem','affiliates_manager')),
         ),
         array(
             'label'       =>'Media', 
             'url'         =>'#',
             'itemOptions' =>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
             'linkOptions' =>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','finance','media','media_manager','sem')),
+            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','finance','media','media_manager','sem','affiliates_manager')),
             'items'       =>array(
                 array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
                 array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
@@ -60,7 +60,7 @@
             'url'         =>'#',
             'itemOptions' =>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
             'linkOptions' =>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','commercial','commercial_manager','finance','media_manager')),
+            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','commercial','commercial_manager','finance','media_manager','affiliates_manager')),
             'items'       =>array(
                 array('label'=>'Affiliates', 'url'=>array('/affiliates/admin')),
                 array('label'=>'Networks', 'url'=>array('/networks/admin')),
@@ -100,7 +100,7 @@
             'url'         =>'#',
             'itemOptions' =>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
             'linkOptions' =>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','finance','media','media_manager')),
+            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','finance','media','media_manager','affiliates_manager')),
             'items'       =>array(
                 array('label'=>'Clients', 'url'=>array('/finance/clients')),
                 array('label'=>'Branding Clients', 'url'=>array('/finance/brandingClients')),
@@ -115,7 +115,7 @@
             'url'         =>'#',
             'itemOptions' =>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
             'linkOptions' =>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager')),
+            'visible'     =>UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','affiliates_manager')),
             'items'       =>array(
                 array('label'=>'Advertisers', 'url'=>array('/advertisers/archived')),
                 array('label'=>'IOs', 'url'=>array('/ios/archived')),
@@ -169,17 +169,17 @@
                 array(
                     'label'   =>'Users', 
                     'url'     =>array('/users/admin'), 
-                    'visible' => UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem'))
+                    'visible' => UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem','affiliates_manager'))
                 ),
                 array(
                     'label'   =>'Configuration', 
                     'url'     =>'#', 
-                    'visible' => UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem'))
+                    'visible' => UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem','affiliates_manager'))
                 ),
                 array(
                     'label'   =>'Meetings', 
                     'url'     =>array('/meetingroom'), 
-                    'visible' =>UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem'))
+                    'visible' =>UserManager::model()->isUserAssignToRole(array('admin','business','commercial','commercial_manager','finance','media','media_manager','sem','affiliates_manager'))
                 ),
             ), 
         ),
