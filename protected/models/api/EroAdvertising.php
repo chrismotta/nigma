@@ -67,10 +67,16 @@ class EroAdvertising
 		// return;
 		$result = json_decode($result);
 		if (!$result) {
-			Yii::log("EroAdvertising: WARNING - ERROR - decoding json.", 'error', 'system.model.api.eroadvertising');
+			Yii::log("EroAdvertising: ERROR - decoding json.", 'error', 'system.model.api.eroadvertising');
+			return 1;
+		}
+		
+		if (!isset($result->data->period)) {
+			Yii::log("EroAdvertising: WARNING - empty data.", 'warning', 'system.model.api.eroadvertising');
 			return 1;
 		}
 		curl_close($curl);	
+
 		if(is_array($result->data->period->stats)){
 			foreach ($result->data->period->stats as $stats) {
 				if(!is_array($stats->campaign))

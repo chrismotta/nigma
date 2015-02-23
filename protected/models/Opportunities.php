@@ -67,8 +67,8 @@ class Opportunities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('model_adv, wifi, regions_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, ios_id, regions_id, imp_per_day, imp_total', 'numerical', 'integerOnly'=>true),
+			array('country_id, model_adv, wifi, regions_id', 'required'),
+			array('carriers_id, account_manager_id, country_id, wifi, regions_id, imp_per_day, imp_total, closed_deal', 'numerical', 'integerOnly'=>true),
 			array('rate, budget', 'length', 'max'=>11),
 			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
@@ -79,7 +79,7 @@ class Opportunities extends CActiveRecord
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, ios_id, regions_id, status', 'safe', 'on'=>'search'),
+			array('id, advertiser_name, currency, carriers_id, country_name, carrier_mobile_brand, account_manager_name, account_manager_lastname, ios_name, rate, model_adv, product, account_manager_id, comment, country_id, wifi, budget, server_to_server, startDate, endDate, regions_id, status, close_amount, agency_commission, closed_deal', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -205,6 +205,9 @@ class Opportunities extends CActiveRecord
 		if($accountManager != NULL)$criteria->compare('accountManager.id',$accountManager);
 		if($advertiser != NULL)$criteria->compare('advertisers.id',$advertiser);
 		if($io != NULL)$criteria->addCondition('t.ios_id='.$io);
+
+		FilterManager::model()->addUserFilter($criteria, 'opportunities');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination' => array(
@@ -431,4 +434,25 @@ class Opportunities extends CActiveRecord
         return isset($q[0][0]) ? $q[0][0] : NULL; 
 	}
 
+	public function getTotalAgencyCommission()
+	{
+		return ($this->agency_commission/100)*$this->close_amount;
+	}
+
+	public function getTotalCloseDeal()
+	{
+		return $this->close_amount - $this->getTotalAgencyCommission();
+	}
+
+	public function checkIsAbleInvoice()
+	{
+		if($this->closed_deal==1)
+		{
+			$endDate=date('Y-m-d',strtotime($this->endDate));
+			$now=date('Y-m-d',strtotime('NOW'));
+			return $endDate <= $now ? true : false;			
+		}
+		else
+			return false;
+	}
 }

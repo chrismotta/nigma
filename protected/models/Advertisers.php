@@ -10,8 +10,10 @@
  * @property string $cat
  * @property integer $commercial_id
  * @property string $status
+ * @property integer $users_id
  *
  * The followings are the available model relations:
+ * @property Users $users
  * @property Users $commercial
  * @property ApiKey[] $apiKeys
  * @property ExternalIoForm[] $externalIoForms
@@ -40,7 +42,7 @@ class Advertisers extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('prefix, name, cat', 'required'),
-			array('commercial_id', 'numerical', 'integerOnly'=>true),
+			array('commercial_id, users_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			array('prefix', 'length', 'max'=>6),
 			array('status', 'length', 'max'=>8),
@@ -48,7 +50,7 @@ class Advertisers extends CActiveRecord
 			array('name, prefix', 'unique'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id, status', 'safe', 'on'=>'search'),
+			array('id, prefix, name, commercial_name, commercial_lastname, cat, commercial_id, status, users_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,11 +62,11 @@ class Advertisers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
-			'apiKeys' => array(self::HAS_MANY, 'ApiKey', 'advertisers_id'),
+			'users'           => array(self::BELONGS_TO, 'Users', 'users_id'),
+			'commercial'      => array(self::BELONGS_TO, 'Users', 'commercial_id'),
+			'apiKeys'         => array(self::HAS_MANY, 'ApiKey', 'advertisers_id'),
 			'externalIoForms' => array(self::HAS_MANY, 'ExternalIoForm', 'advertisers_id'),
-			'ioses' => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
-			'financeEntities' => array(self::HAS_MANY, 'financeEntities', 'finance_entities_id'),
+			'ioses'           => array(self::HAS_MANY, 'Ios', 'advertisers_id'),
 		);
 	}
 
@@ -74,14 +76,15 @@ class Advertisers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'prefix' => 'Prefix',
-			'name' => 'Name',
-			'cat' => 'Category',
-			'commercial_id' => 'Commercial',
-			'commercial_name'	=>	'Commercial',
+			'id'                  => 'ID',
+			'prefix'              => 'Prefix',
+			'name'                => 'Name',
+			'cat'                 => 'Category',
+			'commercial_id'       => 'Commercial',
+			'commercial_name'     => 'Commercial',
 			'commercial_lastname' => 'Commercial',
-			'status' => 'Status',
+			'status'              => 'Status',
+			'users_id'            => 'External user login',
 		);
 	}
 
@@ -137,6 +140,14 @@ class Advertisers extends CActiveRecord
 		        ),
 		    ),
 		));
+	}
+
+	public function findByUser($id)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('users_id='.$id);
+		if($adv=Self::model()->find($criteria))
+			return $adv;
 	}
 
 	/**

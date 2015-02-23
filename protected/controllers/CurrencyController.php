@@ -27,7 +27,7 @@ class CurrencyController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','admin','create','update','delete'),
-				'roles'=>array('admin', 'business', 'finance'),
+				'roles'=>array('admin', 'business', 'finance', 'affiliates_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','admin'),
