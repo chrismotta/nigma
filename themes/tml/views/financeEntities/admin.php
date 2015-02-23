@@ -121,7 +121,8 @@ $('.search-form form').submit(function(){
 		'contact_com',
 		'contact_adm',
 		array(
-			'name'=>'com_lastname',
+			'name'=>'com_name',
+			'header'=>'Commercial Name',
 			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
 		),
 		array(

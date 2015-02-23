@@ -32,9 +32,10 @@
 
         if ( ! $model->isNewRecord ) {
     		echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
-    	}
+        }
 
-		echo $form->dropDownListRow($model, 'advertisers_id', $advertiser, array('prompt' => 'Select an advertiser'));
+        echo $form->hiddenField($model, 'status', array('type'=>"hidden",'value'=>'Active') );
+        echo $form->dropDownListRow($model, 'advertisers_id', $advertiser, array('prompt' => 'Select an advertiser'));
         //echo $form->textFieldRow($model, 'status', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));

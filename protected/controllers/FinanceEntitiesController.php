@@ -99,6 +99,10 @@ class FinanceEntitiesController extends Controller
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
 				$this->redirect(array('admin'));
+			else{
+				echo json_encode($model->getErrors());
+			return;
+			}
 		}
 
 		$this->renderFormAjax($model);
@@ -116,7 +120,7 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['FinanceEntities']))
+		if(isset($_POST['financeEntities']))
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())

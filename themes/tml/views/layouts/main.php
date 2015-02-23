@@ -55,6 +55,8 @@
                 'items'=>array(
                     array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
                     array('label'=>'IOs', 'url'=>array('/ios/admin')),
+                    array('label'=>'Regions', 'url'=>array('/regions/admin')),
+                    array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
                     //array('label'=>'Cierre y %', 'url'=>'#'),
                     //array('label'=>'Media Kit', 'url'=>'#'),

@@ -66,8 +66,8 @@ $('.search-form form').submit(function(){
 <?php endif; ?>
 <br>
 
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
+<?php /*$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'filters-form',
         'type'=>'search',
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
@@ -78,11 +78,12 @@ $('.search-form form').submit(function(){
     )); ?> 
 
 	<fieldset>
+
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
     </fieldset>
 
-<?php $this->endWidget(); ?>
+<?php $this->endWidget();*/ ?>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'regions-grid',
 	'dataProvider'             => $model->search(),
