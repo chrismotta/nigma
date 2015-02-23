@@ -100,6 +100,8 @@
 			'channel',
 			'channel_description',
 			'status',
+			'close_amount',
+			'agency_commission',
 		),
 	)); ?>
 

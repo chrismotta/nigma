@@ -37,6 +37,7 @@
 
         echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
         //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
+        echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Not assigned'));
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

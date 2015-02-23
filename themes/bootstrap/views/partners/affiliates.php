@@ -89,7 +89,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 		'type'                 =>'search',
 		'htmlOptions'          =>array('class'=>'well'),
 		'enableAjaxValidation' =>true,
-		'action'               => Yii::app()->getBaseUrl() . '/affiliates/index',
+		'action'               => Yii::app()->getBaseUrl() . '/partners/affiliates',
 		'method'               => 'GET',
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
