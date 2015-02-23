@@ -303,15 +303,18 @@ class DailyReport extends CActiveRecord
 
 		//$criteria->with = array( 'campaigns', 'providers' );
 
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities', 'campaigns.opportunities.ios', 'campaigns.opportunities.ios.advertisers' ,'campaigns.opportunities.accountManager','campaigns.opportunities.country' );
+		$criteria->with = array( 'providers', 'providers.affiliates', 'campaigns', 'campaigns.opportunities', 'campaigns.opportunities.ios', 'campaigns.opportunities.ios.advertisers' ,'campaigns.opportunities.accountManager','campaigns.opportunities.country' );
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ( $providers->isNetwork() )
 		// 	$criteria->compare('providers.networks.has_api',$this->providers_hasApi, true);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		
-		if ( in_array('commercial', Yii::app()->authManager->getRoles(Yii::app()->user->id), true) )
+		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+		if ( in_array('commercial', $roles, true) )
 			FilterManager::model()->addUserFilter($criteria, 'daily.commercial');
+		else if (in_array('affiliates_manager', $roles, true))
+			$criteria->addCondition('affiliates.providers_id IS NOT NULL');
 		else
 			FilterManager::model()->addUserFilter($criteria, 'daily');
 
@@ -859,7 +862,7 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.ios','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 'providers', 'providers.affiliates', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.ios','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ($providers->isNetwork())
@@ -963,8 +966,11 @@ class DailyReport extends CActiveRecord
 		$tmp->compare('campaigns.name',$this->campaign_name,true,'OR');
 		$criteria->mergeWith($tmp);
 
-		if ( in_array('commercial', array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id)), true) )
+		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+		if ( in_array('commercial', $roles, true) )
 			FilterManager::model()->addUserFilter($criteria, 'daily.commercial');
+		else if (in_array('affiliates_manager', $roles, true))
+			$criteria->addCondition('affiliates.providers_id IS NOT NULL');
 		else
 			FilterManager::model()->addUserFilter($criteria, 'daily');
 
