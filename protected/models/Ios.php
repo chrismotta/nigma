@@ -631,7 +631,7 @@ class Ios extends CActiveRecord
 			$io           = $daily['id'];
 			$carrier      = $daily['carrier'];
 			$product      = $daily['product'];
-			$rate         = $daily['rate'];
+			$rate         = $daily['multi']==false ? $daily['rate'] : 'multi';
 			$revenue      = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 			$opportunitie = $daily['opportunitie_id'];
 			$country 	  = $daily['country'];
