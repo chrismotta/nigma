@@ -402,11 +402,11 @@ class Ios extends CActiveRecord
 
 		if($group=='profile')
 		{
-			$groupBy=array('io','carrier','product');
+			$groupBy=array('io','carrier','product','rate');
 		}
 		else
 		{
-			$groupBy=array('io','opportunitie','rate');
+			$groupBy=array('io','opportunitie','multi');
 		}	
 
 		$consolidated=$this->groupClients($dailys,$groupBy);
@@ -621,6 +621,15 @@ class Ios extends CActiveRecord
 	/**
 	 * [groupClientsByRate description]
 	 * @param  [type] $clients [description]
+	 * @param  array  $group   possible element for the array: 
+	 *                         		'io',
+	 *                           	'carrier',
+	 *                            	'product',
+	 *                             	'rate',
+	 *                             	'multi',
+	 *                             	'revenue',
+	 *                             	'opportunitie',
+	 *                              'country',
 	 * @return [type]          [description]
 	 */
 	public function groupClients($clients,$group)
@@ -631,7 +640,8 @@ class Ios extends CActiveRecord
 			$io           = $daily['id'];
 			$carrier      = $daily['carrier'];
 			$product      = $daily['product'];
-			$rate         = $daily['multi']==false ? $daily['rate'] : 'multi';
+			$rate         = $daily['rate'];
+			$multi        = $daily['multi'] == false ? $daily['rate'] : 'multi';
 			$revenue      = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 			$opportunitie = $daily['opportunitie_id'];
 			$country 	  = $daily['country'];
@@ -640,6 +650,11 @@ class Ios extends CActiveRecord
 			$groupBy='';
 			foreach($group as $var)
 			{
+				// double $ evaluate the content of $var. 
+				// 		Ej: 
+				// 			$rate = 10
+				// 			$var = 'rate'
+				// 			$$var = $rate = 10
 			 	$groupBy.='['.$$var.']';
 			}
 
