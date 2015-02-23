@@ -23,11 +23,11 @@ class ApiUpdateController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads', 'plugRush', 'jampp'),
 				'roles'=>array('admin', 'media_manager'),
 			),
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads'),
+				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads', 'plugRush', 'jampp'),
 				'ips'=>array('54.88.85.63'),
 			),
 			array('deny',  // deny all users
@@ -46,13 +46,14 @@ class ApiUpdateController extends Controller
 		$this->actionAdWords();
 		$this->actionVServ();
 		$this->actionMobfox();
-		//reparar
-		//$this->actionEroAdvertising();
+		$this->actionEroAdvertising();
 		$this->actionInMobi();
 		$this->actionBingAds();
 		$this->actionSmaato();
 		$this->actionAdultmoda();
 		$this->actionMobads();
+		// $this->actionPlugRush();
+		// $this->actionJampp();
 		$this->actionAffiliates();
 	}
 
@@ -213,8 +214,28 @@ class ApiUpdateController extends Controller
 	public function actionMobads()
 	{
 		try {
-			$affiliates = new MobAds;
-			$affiliates->downloadInfo();
+			$mobads = new MobAds;
+			$mobads->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.mobads');			
+		}
+	}
+
+	public function actionPlugRush()
+	{
+		try {
+			$plugRush = new PlugRush;
+			$plugRush->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.mobads');			
+		}
+	}
+
+	public function actionJampp()
+	{
+		try {
+			$Jampp = new Jampp;
+			$Jampp->downloadInfo();
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.mobads');			
 		}

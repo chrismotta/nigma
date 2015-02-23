@@ -4,7 +4,7 @@
 
 $this->breadcrumbs=array(
 	'Finance'=>'#',	
-	'Clients',
+	'Branding Clients',
 );
  Yii::app()->clientScript->registerScript("", "$('.ipopover').popover({'placement':'left'});", CClientScript::POS_READY);
 ?>
@@ -13,15 +13,23 @@ $this->breadcrumbs=array(
 //Totals
 $buttonsColumn='';
 if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
-	$buttonsColumn.='
+	$buttonsColumn.='Opportunities::model()->findByPk($data["opportunitie_id"])->checkIsAbleInvoice() ? 				
+				OpportunitiesValidation::model()->checkValidation($data["opportunitie_id"],"'.$year.'-'.$month.'-01") ? 
 				CHtml::link(
-					"<i id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>",
+						"<i style=\"cursor:default\" id=\"icon-status\" class=\"verifed\"></i>",
+						array(),
+	    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"not_verifed")
+					)
+				:
+				 
+				CHtml::link(
+					"<i id=\"icon-status\" class=\"not_verifed\"></i>",
 					array(),
-    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
+    				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"not_verifed",  
     					"onclick" => 
-    					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
+    					"js:bootbox.prompt(\"Invoice Opportunitie #".$data["opportunitie_id"]."?<hr><h4>Invoice reference</h4><p><b>Client: </b> ".$data["name"]."</b><p><b>Total invoice:</b> ".Opportunities::model()->findByPk($data["opportunitie_id"])->close_amount."</b>\", function(confirmed){
     						if(confirmed!==null){
-		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
+		    					$.post(\"invoice\",{ \"opportunitie_id\": ".$data["opportunitie_id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
 		                            .success(function( data ) {
 			                            alert(data );
 			                            window.location = document.URL;
@@ -31,7 +39,8 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 						")
 
 
-					);
+					)
+				: null;
 				';
 else 
 	$buttonsColumn.='
@@ -59,7 +68,7 @@ $ios    =new Ios;
 		'htmlOptions'          =>array('class'=>'well'),
 		// to enable ajax validation
 		'enableAjaxValidation' =>false,
-		'action'               => Yii::app()->getBaseUrl() . '/finance/closedDeal',
+		'action'               => Yii::app()->getBaseUrl() . '/finance/brandingClients',
 		'method'               => 'GET',
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -88,12 +97,8 @@ $ios    =new Ios;
 			$entities[0]='All Entities';
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
-			$status=KHtml::enumItem(new IosValidation,'status');
-			foreach ($status as $key => $value) {
-				if($value=='Approved' || $value=='Expired')unset($status[$key]);
-			}
-			$status['ok']='Approved/Expired';
-			$status['Not Sent']='Not Sent';
+			$status['invoiced']='Invoiced';
+			$status['toinvoice']='Ready to invoice';
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
@@ -108,7 +113,7 @@ $ios    =new Ios;
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
+		'url'         => 'excelReport?closed_deal=true&month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat.'&cat='.$cat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -144,7 +149,13 @@ $ios    =new Ios;
 			'htmlOptions'       => array('id'=>'alignLeft'),
 			'headerHtmlOptions' => array('width' => '150'),
 			'header'            => 'IO - Commercial Name',
-			),
+			),	
+		array(
+			'name'              => 'opportunitie',
+			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
+			'htmlOptions'       => array('id'=>'alignLeft'),
+			'header'            => 'Opportunitie',                           
+			),	
 		array(
 			'name'              =>'entity',
 			'value'             =>'$data["entity"]',
@@ -159,58 +170,62 @@ $ios    =new Ios;
 			),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Conversions',
+			'header'            =>'Imp/Clics/Conv',
 			'value'             =>'number_format($data["conv"])',	
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
-			'name'              =>'imp',
-			'header'            =>'Impressions',
-			'value'             =>'number_format($data["imp"])',	
-			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
-			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			'name'              =>'opportunitie',
+			'header'            =>'Sub Total',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->close_amount,2)',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
 		),
 		array(
-			'name'              =>'clics',
-			'header'            =>'Clicks',
-			'value'             =>'number_format($data["clics"])',	
-			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
-			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			'name'              =>'opportunitie',
+			'header'            =>'Percent Agency Commission',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->agency_commission)."%"',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
 		),
 		array(
-			'name'              =>'name',
+			'name'              =>'opportunitie',
+			'header'            =>'Agency Commission',
+			'filter'			=>false,
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->getTotalAgencyCommission(),2)',
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'text-align:right !important; color:red;'),	
+		),
+		array(
+			'name'              =>'opportunitie',
 			'header'            =>'Total',
 			'filter'			=>false,
-			'value'             =>'number_format($data["total"],2)',
+			'value'             =>'number_format(Opportunities::model()->findByPk($data["opportunitie_id"])->getTotalCloseDeal(),2)',
 			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),
-			'htmlOptions'       => array('style'=>'text-align:right;'),	
+			'htmlOptions'       => array('style'=>'text-align:right !important;'),	
 		),
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
 			'filter'            =>false,
 			'headerHtmlOptions' => array('width' => '3'),
-			'name'              =>'name',
+			'name'              =>'opportunitie',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
 		), 
 		array(
-			'type'              =>'raw',
-			'header'            =>'',
-			'filter'            =>false,
-			'headerHtmlOptions' => array('width' => '3'),
-			'name'              =>'name',
-			'htmlOptions'		=>array('style'=>'text-align:left !important'),
-			'value'             =>'$data["comment"] ? CHtml::link("<i class=\"icon-info-sign\" style=\"cursor:default\"></i>","javascript:void(0)", array(
-							    "class" => "ipopover",
-							    "data-trigger" => "hover",
-							    "data-content" => $data["comment"],
-							)
-						) : null;',		
-		), 
+			'name'              =>'opportunitie',
+			'header'            =>'End Date',
+			'filter'			=>false,
+			'value'             =>'date("Y-m-d",strtotime(Opportunities::model()->findByPk($data["opportunitie_id"])->endDate))',	
+			'headerHtmlOptions' => array('width' => '80','style'=>'text-align:right;'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
 	),
-	// 'mergeColumns' => array('name','opportunitie'),
+	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
@@ -242,7 +257,7 @@ $ios    =new Ios;
                                 );
                             
                         });
-					$('.linkinvoiced').click(function(e){
+					$('.not_verifed').click(function(e){
                             e.preventDefault();
                             
                         });

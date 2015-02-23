@@ -125,6 +125,12 @@ class TransactionCount extends CActiveRecord
 		return parent::model($className);
 	}
 
+	/**
+	 * [getTransactions description]
+	 * @param  [type] $ios_id [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getTransactions($ios_id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -136,6 +142,12 @@ class TransactionCount extends CActiveRecord
 			));
 	}
 
+	/**
+	 * [getTotalTransactions description]
+	 * @param  [type] $ios_id [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getTotalTransactions($ios_id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -149,6 +161,11 @@ class TransactionCount extends CActiveRecord
 		
 	}
 
+	/**
+	 * [getTotalsCurrency description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getTotalsCurrency($period)
 	{
 		// SELECT sum(t.rate*t.volume),i.currency FROM transaction_count t
@@ -165,8 +182,14 @@ class TransactionCount extends CActiveRecord
 		return Self::model()->findAll($criteria);
 	}
 
+	/**
+	 * [getTotalsInvoicedCurrency description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getTotalsInvoicedCurrency($period)
 	{
+	//agregar filtros para que coincidan las cuentas
 		// SELECT sum(t.rate*t.volume),i.currency FROM transaction_count t
 		// inner join opportunities o on t.opportunities_id=o.id
 		// inner join ios i on o.ios_id=i.id
@@ -182,6 +205,12 @@ class TransactionCount extends CActiveRecord
 		return Self::model()->findAll($criteria);
 	}
 
+	/**
+	 * [getTotalsCarrier description]
+	 * @param  [type] $ios_id [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getTotalsCarrier($ios_id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -193,16 +222,28 @@ class TransactionCount extends CActiveRecord
 		
 	}
 
+	/**
+	 * [getCarrier description]
+	 * @return [type] [description]
+	 */
 	public function getCarrier()
 	{
 		return Carriers::model()->findByPk($this->carriers_id_carrier) ? Carriers::model()->findByPk($this->carriers_id_carrier)->mobile_brand : 'Multi';
 	}
 
+	/**
+	 * [getUserName description]
+	 * @return [type] [description]
+	 */
 	public function getUserName()
 	{
 		return Users::model()->findByPk($this->users_id) ? Users::model()->findByPk($this->users_id)->lastname.' '.Users::model()->findByPk($this->users_id)->name : 'Error';
 	}
 
+	/**
+	 * [getCountry description]
+	 * @return [type] [description]
+	 */
 	public function getCountry()
 	{
 		return GeoLocation::model()->findByPk($this->country) ? GeoLocation::model()->findByPk($this->country)->name : 'Error';
