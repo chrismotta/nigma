@@ -141,6 +141,7 @@ class FinanceController extends Controller
 		        'attributes'=>array(
 		             'id', 'name', 'model', 'entity', 'currency', 'rate', 'conv','revenue', 'carrier','opportunitie','total_revenue','status_io','comment'
 		        ),
+		        'defaultOrder'=>array('name'=>CSort::SORT_ASC,),
 		    ),
 		    'pagination'=>array(
 		        'pageSize'=>30,
