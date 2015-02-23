@@ -402,7 +402,7 @@ class Ios extends CActiveRecord
 
 		if($group=='profile')
 		{
-			$groupBy=array('io','carrier','product','rate');
+			$groupBy=array('io','carrier','product');
 		}
 		else
 		{
