@@ -564,7 +564,7 @@ class Ios extends CActiveRecord
 		// FIXME hacer validacion de ternaria en scope superior
 		$criteria->compare('ios.entity', $entity ? $entity : NULL);
 		$criteria->compare('ios.id', $io ? $io : NULL);
-		$criteria->compare('ios.account_manager_id', $accountManager ? $accountManager : NULL);
+		$criteria->compare('opportunities.account_manager_id', $accountManager ? $accountManager : NULL);
 		$criteria->compare('opportunities.id', $opportunitie_id ? $opportunitie_id : NULL);
 		$criteria->compare('advertisers.cat', $cat ? $cat : NULL);
 		$criteria->compare('advertisers.id', $advertiser ? $advertiser : NULL);
