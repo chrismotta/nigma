@@ -207,10 +207,10 @@
 
 <div class="container" id="page">
     <?php
-    // if(!Yii::app()->user->isGuest)
-    // {        
-    //     KHtml::printAlerts();
-    // }
+    if(!Yii::app()->user->isGuest)
+    {        
+        KHtml::printAlerts();
+    }
     ?>
     
 
