@@ -54,7 +54,7 @@
                 array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
-                    array('label'=>'IOs', 'url'=>array('/ios/admin')),
+                    //array('label'=>'IOs', 'url'=>array('/ios/admin')),
                     array('label'=>'Regions', 'url'=>array('/regions/admin')),
                     array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
@@ -73,7 +73,7 @@
                 array('label'=>'Archive', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Advertisers', 'url'=>array('/advertisers/archived')),
-                    array('label'=>'IOs', 'url'=>array('/ios/archived')),
+                    //array('label'=>'IOs', 'url'=>array('/ios/archived')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
                     array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
                     array('label'=>'Vectors', 'url'=>array('/vectors/archived')),
