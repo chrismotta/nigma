@@ -69,6 +69,7 @@ class Opportunities extends CActiveRecord
 		return array(
 			array('model_adv, wifi, regions_id', 'required'),
 			array('carriers_id, account_manager_id, country_id, wifi, regions_id, imp_per_day, imp_total, closed_deal', 'numerical', 'integerOnly'=>true),
+			array('close_amount, agency_commission', 'numerical', 'integerOnly'=>false),
 			array('rate, budget', 'length', 'max'=>11),
 			//array('comment', 'length', 'max'=>500),
 			array('model_adv', 'length', 'max'=>3),
