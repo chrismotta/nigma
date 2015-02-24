@@ -66,7 +66,9 @@ $('.search-form form').submit(function(){
 <?php endif; ?>
 <br>
 
-<?php /*$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+<?php 
+//FIXME Agregar filtros regions
+/*$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'filters-form',
         'type'=>'search',
         'htmlOptions'=>array('class'=>'well'),

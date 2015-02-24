@@ -92,7 +92,8 @@ $('.search-form form').submit(function(){
 		echo KHtml::filterAccountManagers($accountManager);
 
 	echo KHtml::filterAdvertisers($advertiser);
-	echo KHtml::filterCountries($country);	  
+	//FIXME Agregar agregar filtro Regions
+//	echo KHtml::filterCountries($country);	  
 	?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
