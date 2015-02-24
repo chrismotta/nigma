@@ -132,7 +132,7 @@ class OpportunitiesController extends Controller
 				}
 				break;
 			case 'Archived':
-				if ($model->ios->status == 'Active') {
+				if ($model->regions->status == 'Active') {
 					$model->status = 'Active';
 				} else {
 					echo "To restore this item must restore the IO associated with it.";
@@ -242,10 +242,10 @@ class OpportunitiesController extends Controller
 		// Get countries and carriers with status "Active"
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		
-		if ( $model->isNewRecord || !$model->country_id ) {
+		if ( $model->isNewRecord || !$model->regions_id ) {
 			$carrier = array();
 		} else {
-			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
+			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->regions->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
 		}
 		
 		$model_adv = KHtml::enumItem($model, 'model_adv');

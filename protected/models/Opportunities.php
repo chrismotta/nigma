@@ -312,7 +312,7 @@ class Opportunities extends CActiveRecord
 		 */
 
 		$criteria=new CDbCriteria;
-		$criteria->with=array('accountManager','country','ios','ios.advertisers');
+		$criteria->with=array('accountManager','country','regions','regions.financeEntities','financeEntities.advertisers');
 
 
 		if ( $accountManager != NULL) {
@@ -343,9 +343,9 @@ class Opportunities extends CActiveRecord
 				$i=0;
 				foreach ($advertisers as $id) {	
 					if($i==0)			
-						$query.="ios.advertisers_id=".$id;
+						$query.="financeEntities.advertisers_id=".$id;
 					else
-						$query.=" OR ios.advertisers_id=".$id;
+						$query.=" OR financeEntities.advertisers_id=".$id;
 					$i++;
 				}
 				$query.=")";

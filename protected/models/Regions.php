@@ -37,6 +37,7 @@ class Regions extends CActiveRecord
 			array('finance_entities_id', 'required'),
 			array('finance_entities_id, country_id', 'numerical', 'integerOnly'=>true),
 			array('region', 'length', 'max'=>255),
+			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, finance_entities_id, country_id, region', 'safe', 'on'=>'search'),
