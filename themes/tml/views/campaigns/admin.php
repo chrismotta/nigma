@@ -89,12 +89,14 @@ if(!$is_archived){
 
 <fieldset>
 	<?php 
-		if (FilterManager::model()->isUserTotalAccess('campaign.account'))
+
+		//FIXME Arreglar filtros
+		/*if (FilterManager::model()->isUserTotalAccess('campaign.account'))
 			echo KHtml::filterAccountManagers($accountManager);
 		
 		echo KHtml::filterOpportunities($opportunitie, $accountManager);
 		echo KHtml::filterProviders($providers);
-		echo KHtml::filterAdvertisersCategory($advertiser);
+		echo KHtml::filterAdvertisersCategory($advertiser);*/
 	?>
 	  
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
@@ -123,12 +125,12 @@ if(!$is_archived){
 		),
 		array(
 			'name'              => 'advertisers_name',
-			'value'             => '$data->opportunities->ios->advertisers->name',
+			'value'             => '$data->opportunities->regions->financeEntities->advertisers->name',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
-			'name'              => 'ios_name',
-			'value'             => '$data->opportunities->ios->name',
+			'name'              => 'financeEntities_name',
+			'value'             => '$data->opportunities->regions->financeEntities->name',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
         /*
