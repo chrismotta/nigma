@@ -410,10 +410,16 @@ class CampaignsController extends Controller
 				));	
 		}
 
-		$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
-				array('order'=>'t.id, advertisers.name, country.ISO2')), 
-				'id', 
-				function($opp) { return $opp->getVirtualName(); }
+		$opportunities = CHtml::listData(
+			Opportunities::model()->with(
+										'regions', 
+										'regions.financeEntities', 
+										'regions.financeEntities.advertisers', 
+										'regions.country'
+										)->findAll(
+											array('order'=>'t.id, advertisers.name, country.ISO2')), 
+											'id', 
+											function($opp) { return $opp->getVirtualName(); }
 			);
 
 		$this->renderPartial('_excelReport', array(
@@ -516,13 +522,13 @@ class CampaignsController extends Controller
 		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
-			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+			$opportunities = CHtml::listData(Opportunities::model()->with('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'country')->findAll(
 				array('order'=>'advertisers.name, country.ISO2')), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);
 		} else {
-			$opportunities = CHtml::listData(Opportunities::model()->with('ios', 'ios.advertisers', 'country')->findAll(
+			$opportunities = CHtml::listData(Opportunities::model()->with('regions','regions.financeEntities', 'regions.financeEntities.advertisers', 'regions.country')->findAll(
 				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
@@ -595,16 +601,16 @@ class CampaignsController extends Controller
 	
 	public function actionGetDefaultExternalRate($id)
 	{
-		$opp  = Opportunities::model()->with('ios')->findByPk($id);
+		$opp  = Opportunities::model()->with('regions','regions.financeEntities')->findByPk($id);
 		$prov = Providers::model()->findByPk($_GET["p_id"]);
 
-		switch ($opp->ios->entity) {
+		switch ($opp->regions->financeEntities->entity) {
 		 	case 'SRL':
-		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.65, 2));
+		 		echo json_encode(round(Currency::model()->convert($opp->regions->financeEntities->currency, $prov->currency,$opp->rate) * 0.65, 2));
 		 		break;
 		 	
 		 	default:
-		 		echo json_encode(round(Currency::model()->convert($opp->ios->currency, $prov->currency,$opp->rate) * 0.80, 2));
+		 		echo json_encode(round(Currency::model()->convert($opp->regions->financeEntities->currency, $prov->currency,$opp->rate) * 0.80, 2));
 		 		break;
 		 }
 	}
