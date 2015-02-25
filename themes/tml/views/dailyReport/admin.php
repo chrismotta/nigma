@@ -205,11 +205,14 @@ $('.search-form form').submit(function(){
 	</div>
 	<?php 
 		//Load Filters
+
+	/*
 		if (FilterManager::model()->isUserTotalAccess('daily'))
 			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
 		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
 		KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
 		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
+		*/
 	?>
 	<hr>
 	<div class="formfilter-submit">
