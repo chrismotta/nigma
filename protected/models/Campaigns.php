@@ -42,7 +42,7 @@ class Campaigns extends CActiveRecord
 	public $advertisers_name;
 	public $opportunities_rate;
 	public $opportunities_carrier;
-	public $ios_name;
+	public $financeEntities_name;
 	public $vectors_id;
 	public $net_currency;
 	public $clicks;
@@ -82,7 +82,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, ios_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -180,7 +180,18 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 
 		//We need to list all related tables in with property
-		$criteria->with = array('opportunities','opportunities.accountManager', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'vectors', 'providers', 'providers.affiliates');
+		$criteria->with = array(
+				'opportunities',
+				'opportunities.accountManager', 
+				'opportunities.regions', 
+				'opportunities.regions.financeEntities', 
+				'opportunities.regions.financeEntities.advertisers', 
+				'opportunities.regions.country', 
+				'opportunities.carriers', 
+				'vectors', 
+				'providers',
+				'providers.affiliates'
+			);
 		// Related search criteria items added (use only table.columnName)
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
@@ -210,7 +221,7 @@ class Campaigns extends CActiveRecord
 		else
 			FilterManager::model()->addUserFilter($criteria, 'daily');
 
-		$criteria->compare('ios.name',$this->ios_name, true);
+		$criteria->compare('financeEntities.name',$this->financeEntities_name, true);
 		$criteria->compare('providers.currency',$this->net_currency, true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
 
@@ -240,9 +251,9 @@ class Campaigns extends CActiveRecord
 						'asc'  =>'opportunities.carrier',
 						'desc' =>'opportunities.carrier DESC',
 		            ),
-		            'ios_name'=>array(
-						'asc'  =>'ios.id',
-						'desc' =>'ios.id DESC',
+		            'financeEntities_name'=>array(
+						'asc'  =>'financeEntities.id',
+						'desc' =>'financeEntities.id DESC',
 		            ),
 		            'net_currency'=>array(
 						'asc'  =>'providers.currency',
@@ -329,10 +340,20 @@ class Campaigns extends CActiveRecord
 
 	public function getExternalName($id=NULL)
 	{
-		$model = Campaigns::model()->with('opportunities', 'opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers', 'providers', 'devices', 'formats')->findByPk($id);
+		$model = Campaigns::model()->with(
+				'opportunities', 
+				'opportunities.regions', 
+				'opportunities.regions.financeEntities', 
+				'opportunities.regions.financeEntities.advertisers', 
+				'opportunities.regions.country', 
+				'opportunities.carriers', 
+				'providers', 
+				'devices', 
+				'formats'
+			)->findByPk($id);
 
 		$opportunity = $model->opportunities;
-		$adv = $model->opportunities->ios->advertisers->prefix;
+		$adv = $model->opportunities->regions->financeEntities->advertisers->prefix;
 
 		$country = '';
 		if ( $opportunity->country_id !== NULL )
@@ -510,7 +531,13 @@ class Campaigns extends CActiveRecord
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
-		$criteria->with = array('opportunities.ios', 'opportunities.ios.advertisers', 'opportunities.country', 'opportunities.carriers');
+		$criteria->with = array(
+			'opportunities.regions', 
+			'opportunities.regions.financeEntities', 
+			'opportunities.regions.financeEntities.advertisers', 
+			'opportunities.country', 
+			'opportunities.carriers'
+			);
 		
 		// external name
 		$tmp = new CDbCriteria;
@@ -523,7 +550,7 @@ class Campaigns extends CActiveRecord
 		$criteria->mergeWith($tmp);
 
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
-		$criteria->compare('ios.name',$this->ios_name, true);
+		$criteria->compare('financeEntities.name',$this->financeEntities_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
 		if($accountManager!=null)$criteria->compare('opportunities.account_manager_id',$accountManager);
@@ -563,9 +590,9 @@ class Campaigns extends CActiveRecord
 						'asc'  =>'advertisers.name',
 						'desc' =>'advertisers.name DESC',
 		            ),
-		            'ios_name'=>array(
-						'asc'  =>'ios.name',
-						'desc' =>'ios.name DESC',
+		            'financeEntities_name'=>array(
+						'asc'  =>'financeEntities.name',
+						'desc' =>'financeEntities.name DESC',
 		            ),
 		            'clicks'=>array(
 						'asc'  =>'clicks',
@@ -590,15 +617,15 @@ class Campaigns extends CActiveRecord
 
 	public function getRateUSD($date)
 	{
-		$opportunity =Opportunities::model()->with('ios')->findByPk($this->opportunities_id);
+		$opportunity =Opportunities::model()->with('regions','regions.financeEntities')->findByPk($this->opportunities_id);
 		$rate        =$opportunity->rate;
-		$io_currency =$opportunity->ios->currency;
+		$finance_entitie_currency =$opportunity->regions->financeEntities->currency;
 
-		if ($io_currency == 'USD') // if currency is USD dont apply type change
+		if ($finance_entitie_currency == 'USD') // if currency is USD dont apply type change
 			return $rate;
 
 		$currency = Currency::model()->findByDate($date);
-		return $currency ? number_format($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
+		return $currency ? number_format($rate / $currency[$finance_entitie_currency], 2) : 'Currency ERROR!';
 	}
 
 	public function getGeoClicks($dateStart=null,$dateEnd=null,$campaign=null)
