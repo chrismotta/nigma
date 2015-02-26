@@ -313,7 +313,7 @@ class Opportunities extends CActiveRecord
 		 */
 
 		$criteria=new CDbCriteria;
-		$criteria->with=array('accountManager','country','regions','regions.financeEntities','financeEntities.advertisers');
+		$criteria->with=array('accountManager','country','regions','regions.financeEntities','regions.financeEntities.advertisers');
 
 
 		if ( $accountManager != NULL) {

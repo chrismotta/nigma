@@ -69,7 +69,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers', 'country', 'carriers');
+        $criteria->with  = array('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'regions.country', 'carriers');
         $criteria->compare('t.status', 'Active');
         $criteria->order = 't.id, advertisers.name, country.ISO2';
 
@@ -79,7 +79,7 @@ class KHtml extends CHtml
         if ( $accountManagerId != NULL )
             $criteria->compare('t.account_manager_id', $accountManagerId);
 
-        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
         $list = CHtml::listData($opps, 'id', 'virtualName');
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
@@ -189,6 +189,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         if ( !$providers ) {
+            //FIXME verificar si es necesari prospect para tml
             $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active' AND prospect=10") );
             $providers = CHtml::listData($providers, 'id', 'name');
         }
@@ -334,7 +335,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers', 'country');
+        $criteria->with  = array('regions','regions.financeEntities','regions.financeEntities.advertisers', 'regions.country');
         $criteria->order = 't.id, advertisers.name, country.ISO2';
 
 
@@ -344,7 +345,8 @@ class KHtml extends CHtml
         if ( $accountManagerId != NULL )
             $criteria->compare('t.account_manager_id', $accountManagerId);
 
-        $opps = Opportunities::model()->with('ios.advertisers', 'carriers')->findAll($criteria);
+        //$opps = Opportunities::model()->with('regions','regions.financeEntities','regions.financeEntities.advertisers', 'carriers')->findAll($criteria);
+        $opps = Opportunities::model()->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
             $data[$opp->id]=$opp->getVirtualName();
@@ -507,7 +509,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers','accountManager');
+        $criteria->with  = array('regions', 'regions.financeEntities.advertisers','accountManager');
         $criteria->order = 'advertisers.name';
 
 
@@ -535,10 +537,10 @@ class KHtml extends CHtml
             }
         }
 
-        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
-            $data[$opp->ios->advertisers->id]=$opp->ios->advertisers->name;
+            $data[$opp->regions->financeEntities->advertisers->id]=$opp->regions->financeEntities->advertisers->name;
         }
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
@@ -571,13 +573,13 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('ios', 'ios.advertisers','country');
+        $criteria->with  = array('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers','country');
         $criteria->order = 'country.name';
 
-        $opps = Opportunities::model()->with('ios')->findAll($criteria);
+        $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
-            $data[$opp->country->id_location]=$opp->country->name;
+            $data[$opp->regions->country->id_location]=$opp->regions->country->name;
         }
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',

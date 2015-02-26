@@ -144,13 +144,13 @@ Yii::app()->clientScript->registerScript('search', "
 		// y la ruta relacional de la columna en 'value'
 		array(
 			'name'              => 'advertisers_name',
-			'value'             => '$data->opportunities->ios->advertisers->name',
+			'value'             => '$data->opportunities->regions->financeEntities->advertisers->name',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
 			'footer'			=> 'Totals:'
         ),
 		array(
-			'name'              => 'ios_name',
-			'value'             => '$data->opportunities->ios->name',
+			'name'              => 'financeEntities_name',
+			'value'             => '$data->opportunities->regions->financeEntities->name',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),		
 		array(

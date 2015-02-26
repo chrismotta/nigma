@@ -54,7 +54,7 @@ if (FilterManager::model()->isUserTotalAccess('daily'))
 			),
 			array(
 				'name'  =>'advertiser_name',
-				'value' =>'$data->ios->advertisers->name',
+				'value' =>'$data->regions->financeEntities->advertisers->name',
 			),
 			array(
 				'name'  => 'name',
@@ -62,7 +62,7 @@ if (FilterManager::model()->isUserTotalAccess('daily'))
 			),
 			array(
 				'name'  => 'country_id',
-				'value' => '$data->country->name'
+				'value' => '$data->regions->country->name'
 			),
 			array(
 				'name'  => 'model_adv',

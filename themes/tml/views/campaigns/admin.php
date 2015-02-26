@@ -91,12 +91,12 @@ if(!$is_archived){
 	<?php 
 
 		//FIXME Arreglar filtros
-		/*if (FilterManager::model()->isUserTotalAccess('campaign.account'))
+		if (FilterManager::model()->isUserTotalAccess('campaign.account'))
 			echo KHtml::filterAccountManagers($accountManager);
 		
 		echo KHtml::filterOpportunities($opportunitie, $accountManager);
 		echo KHtml::filterProviders($providers);
-		echo KHtml::filterAdvertisersCategory($advertiser);*/
+		echo KHtml::filterAdvertisersCategory($advertiser);
 	?>
 	  
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
