@@ -32,7 +32,7 @@
             'model' => $modelProv,
         ));
 
-        echo $form->textFieldRow($modelAffi, 'phone', array('class'=>'span3'));
+        //echo $form->textFieldRow($modelAffi, 'phone', array('class'=>'span3'));
         echo $form->dropDownListRow($modelAffi, 'users_id', $users, array('prompt' => 'Not assigned'));
         ?>
         

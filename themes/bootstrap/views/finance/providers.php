@@ -37,8 +37,8 @@ echo KHtml::currencyTotals($totals->getData());
 			$months[11] ='November';
 			$months[12] ='December';
 			$years[0]   ='Select a year';
-			foreach (range(date('Y'), 2014) as $year) {
-				$years[$year]=$year;
+			foreach (range(date('Y'), 2014) as $y) {
+				$years[$y]=$y;
 			}
 
 			$criteria                       =new CDbCriteria;
@@ -51,7 +51,7 @@ echo KHtml::currencyTotals($totals->getData());
 			foreach ($entity as $value) {
 				$entities[$value->entity]=$value->entity;
 			}
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array(intval($month)=>array('selected'=>true))));
 		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
 		
 		            ?>
@@ -61,7 +61,7 @@ echo KHtml::currencyTotals($totals->getData());
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReportProviders',
+		'url'         => 'excelReportProviders?month='.$month.'&year='.$year,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -86,7 +86,7 @@ echo KHtml::currencyTotals($totals->getData());
 
 <?php 
 $this->widget('bootstrap.widgets.TbExtendedGridView', array(
-	'id'                       => 'advertisers-grid',
+	'id'                       => 'providers-grid',
 	'dataProvider'             => $arrayProvider,
 	'filter'                   => $filtersForm,
 	'type'                     => 'striped condensed',
@@ -113,13 +113,13 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 		),
 		array(
 			'name'        =>'clics',
-			'value'       =>'$data["clics"]',
+			'value'       =>'number_format($data["clics"],2)',
 			'htmlOptions' =>array('style' => 'width: 100px;'),
 			'header'      =>'Clicks',  
 		),
 		array(
 			'name'        =>'imp',
-			'value'       =>'$data["imp"]',
+			'value'       =>'number_format($data["imp"],2)',
 			'htmlOptions' =>array('style' => 'width: 100px;'),
 			'header'      =>'Imp.',  
 		),
@@ -132,19 +132,47 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 		array(
 			'name'        =>'spend',
 			'header'      =>'Subtotal',
-			'value'       =>'$data["spend"]',
+			'value'       =>'number_format($data["spend"],2)',
 			'htmlOptions' =>array('style' => 'width: 100px;'),
 			'header'      =>'Spend',  
 		),
 		array(
 			'name'        =>'off',
-			'value'       =>'$data["off"]',
+			'value'       =>'number_format($data["off"],2)',
 			'htmlOptions' =>array('style' => 'width: 100px;'),
 			'header'      =>'Off',  
 		),
 		array(
+			'name'        =>'subTotal',
+			'value'       =>'number_format($data["total"],2)',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+			'header'      =>'Sub Total',  
+		),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			'filter'            =>false,
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'
+				CHtml::link(
+					"<i class=\"icon-pencil\"></i>",
+					array("finance/transactionProviders/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
+    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Count")
+
+
+					);
+				',		
+		),
+		array(
+			'name'        =>'transaction',
+			'header'      =>'Transaction',
+			'value'       =>'number_format($data["transaction"],2)',
+			'htmlOptions' =>array('style' => 'width: 100px;'),
+		),
+		array(
 			'name'        =>'total',
-			'value'       =>'$data["total"]',
+			'value'       =>'number_format($data["total"]+$data["transaction"],2)',
 			'htmlOptions' =>array('style' => 'width: 100px;'),
 			'header'      =>'Total',  
 		),
@@ -162,3 +190,48 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 
 <div class="row" id="blank-row">
 </div>
+
+<?php Yii::app()->clientScript->registerScript('verifedIcon', "
+						$('.link').click(function(e){
+                            e.preventDefault();
+                            var that = $(this);
+							var link = that.attr('href');
+							
+							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+							$('#modalProviders').html(dataInicial);
+							$('#modalProviders').modal('toggle');
+                           $.post( link, {})
+								.success(function( data ) {
+									$('#modalProviders').html(data);
+                                }
+
+					
+                                );
+                            
+                        });
+					$('.linkinvoiced').click(function(e){
+                            e.preventDefault();
+                            
+                        });
+					function verifedIcon(){
+                        $('.link').click(function(e){
+                            e.preventDefault();
+                            var that = $(this);
+							var link = that.attr('href');
+
+							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+							$('#modalProviders').html(dataInicial);
+							$('#modalProviders').modal('toggle');
+                           $.post( link, {})
+								.success(function( data ) {
+									$('#modalProviders').html(data);
+									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+									//$('#modalProviders').modal('toggle');
+                                }
+
+					
+                                );
+                            
+                        });
+					}
+                    ", CClientScript::POS_READY); ?>

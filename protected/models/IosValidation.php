@@ -118,6 +118,11 @@ class IosValidation extends CActiveRecord
 		return parent::model($className);
 	}
 
+	/**
+	 * [loadModelByToken description]
+	 * @param  [type] $token [description]
+	 * @return [type]        [description]
+	 */
 	public function loadModelByToken($token)
 	{
 		$criteria=new CDbCriteria;
@@ -128,6 +133,12 @@ class IosValidation extends CActiveRecord
 			return null;
 	}
 
+	/**
+	 * [loadModelByIo description]
+	 * @param  [type] $io     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function loadModelByIo($io,$period=null)
 	{
 		$criteria=new CDbCriteria;
@@ -144,6 +155,12 @@ class IosValidation extends CActiveRecord
 			return null;
 	}
 
+	/**
+	 * [checkValidationOpportunities description]
+	 * @param  [type] $io     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function checkValidationOpportunities($io,$period)
 	{
 		$check=false;
@@ -162,6 +179,12 @@ class IosValidation extends CActiveRecord
 		return $check;
 	}
 
+	/**
+	 * [checkValidation description]
+	 * @param  [type] $io     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function checkValidation($io,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -175,18 +198,29 @@ class IosValidation extends CActiveRecord
 			return false;
 	}
 	
+	/**
+	 * [getCommentByIo description]
+	 * @param  [type] $id     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getCommentByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
 		$criteria->addCondition('ios_id='.$id);
-		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
-		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
+		$criteria->compare("period",date('Y-m-d', strtotime($period)));
 		if($validation = self::find($criteria))
 			return $validation->comment;
 		else
 			return false;
 	}
 	
+	/**
+	 * [getStatusByIo description]
+	 * @param  [type] $id     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getStatusByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -199,6 +233,12 @@ class IosValidation extends CActiveRecord
 			return 'Not Sent';
 	}
 
+	/**
+	 * [getDateByIo description]
+	 * @param  [type] $id     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function getDateByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
@@ -211,6 +251,12 @@ class IosValidation extends CActiveRecord
 			return '';
 	}
 
+	/**
+	 * [loadByIo description]
+	 * @param  [type] $id     [description]
+	 * @param  [type] $period [description]
+	 * @return [type]         [description]
+	 */
 	public function loadByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;

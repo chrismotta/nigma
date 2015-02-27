@@ -59,6 +59,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case 'app.kickadserver.mobi':
 	case 'kickadserver.mobi':
 	case 'www.kickadserver.mobi':
+	case 'juegosmobi.mobi':
+	case 'www.juegosmobi.mobi':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
@@ -77,6 +79,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emails'  =>array(
 						'christian.motta@kickads.mobi',
 						'matias.cerrotta@kickads.mobi',
+						'santiago.mena@kickads.mobi',
 					),
 					'config'  =>array(
 						'From'       => 'no-reply@kickads.mobi',
@@ -202,11 +205,14 @@ return array(
 			'urlFormat'=>'path',
 			'showScriptName'=>false,
 			'rules'=>array(
+	            'gii'=>'gii',
+	            'gii/<controller:\w+>'=>'gii/<controller>',
+	            'gii/<controller:\w+>/<action:\w+>'=>'gii/<controller>/<action>',
 				'<controller:\w+>/<id:\d+>'                           =>'<controller>/view',
 				'<controller:\w+>/<action:\w+>/<id:\d+>'              =>'<controller>/<action>',
 				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
 				// custom parameters //
-				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				'<controller:\w+>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
 				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),

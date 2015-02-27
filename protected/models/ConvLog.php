@@ -18,6 +18,15 @@ class ConvLog extends CActiveRecord
 {
 	public $advertiser_id;
 	public $conv;
+	public $rate;
+
+	public function macros()
+	{
+		return array(
+			'{rate}' => $this->rate ? urlencode($this->rate) : '',
+		);
+	}
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -123,5 +132,16 @@ class ConvLog extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function hasMacro($url)
+	{
+		preg_match('%\{[a-z \_]+\}%', $url, $match);
+		return isset($match[0]) ? true : false;
+	}
+
+	public function replaceMacro($url)
+	{	
+		return str_replace(array_keys(self::macros()),array_values(self::macros()),$url);
 	}
 }

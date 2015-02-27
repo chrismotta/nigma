@@ -111,8 +111,7 @@ class ClicksLogController extends Controller
 				}
 				$ts['campaign']       = microtime(true);
 				
-				$s2s                  = $campaign->opportunities->server_to_server;
-				if(!isset($s2s)) $s2s = "ktoken";
+				$s2s = $campaign->opportunities->server_to_server ? $campaign->opportunities->server_to_server : NULL;
 				$ts['s2s']            = microtime(true);
 			}else{
 				//print "campaign: null<hr/>";
@@ -165,6 +164,8 @@ class ClicksLogController extends Controller
 		$model->placement    = isset($_GET["g_pla"]) ? $_GET["g_pla"] : null;
 		$model->match_type   = isset($_GET["g_mty"]) ? $_GET["g_mty"] : null;
 
+		// get query if exists
+
 		$tmp = array();
 		if (preg_match('/q=[^\&]*/', $model->referer, $tmp)) {
 			$model->query = urldecode(substr($tmp[0], 2));
@@ -183,7 +184,8 @@ class ClicksLogController extends Controller
 				$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 				$location       = new IP2Location($binPath, IP2Location::FILE_IO);
 				$ipData         = $location->lookup($ip, IP2Location::ALL);
-				$model->country = $ipData->countryName;
+				//$model->country = $ipData->countryName;
+				$model->country = $ipData->countryCode;
 				$model->city    = $ipData->cityName;
 				$model->carrier = $ipData->mobileCarrierName;
 			}
@@ -264,12 +266,14 @@ class ClicksLogController extends Controller
 			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if($cid){
-				if( strpos($redirectURL, "?") ){
-					$redirectURL.= "&";
-				} else {
-					$redirectURL.= "?";
+				if($s2s){
+					if( strpos($redirectURL, "?") ){
+						$redirectURL.= "&";
+					} else {
+						$redirectURL.= "?";
+					}
+					$redirectURL.= $s2s."=".$ktoken;
 				}
-				$redirectURL.= $s2s."=".$ktoken;
 			}
 
 			//enviar macros
@@ -311,12 +315,12 @@ class ClicksLogController extends Controller
 					header("Location: ".$redirectURL);
 				}
 			}else{
-				echo "no redirect";
+				logError("no redirect");
 			}
 				
 				
 		}else{
-			print "no guardado";
+			logError("no guardado");
 		}
 
 	}
@@ -526,6 +530,12 @@ class ClicksLogController extends Controller
 		$command = Yii::app()->db->createCommand($deleteRows);
 		$result['deleted'] = $command->execute();
 		echo json_encode($result);
+	}
+
+	public function logError($msg){
+		
+		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
+
 	}
 
 	// Uncomment the following methods and override them if needed

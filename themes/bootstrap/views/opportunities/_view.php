@@ -42,8 +42,10 @@
 			'ios.zip_code',
 			'ios.phone',
 			'ios.contact_com',
-			'ios.email_adm',
+			'ios.email_com',
 			'ios.contact_adm',
+			'ios.email_adm',
+			'ios.email_validation',
 			'ios.currency',
 			'ios.ret',
 			'ios.tax_id',
@@ -98,6 +100,8 @@
 			'channel',
 			'channel_description',
 			'status',
+			'close_amount',
+			'agency_commission',
 		),
 	)); ?>
 

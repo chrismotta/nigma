@@ -22,13 +22,9 @@ class AffiliatesController extends Controller
 	public function accessRules()
 	{
 		return array(
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions' =>array('index'),
-				'roles'   =>array('admin', 'affiliate'),
-			),
 			array('allow',
 				'actions' =>array('admin','view','create','update'),
-				'roles'   =>array('admin','media_manager'),
+				'roles'   =>array('admin','media_manager','affiliates_manager'),
 			),
 			array('allow',
 				'actions' =>array('admin','view'),
@@ -39,39 +35,6 @@ class AffiliatesController extends Controller
 			),
 		);
 	}
-
-	public function actionIndex()
-	{
-		if(Yii::app()->user->id)
-		{
-			$model     = new Affiliates;
-			$provider  = Affiliates::model()->findByUser(Yii::app()->user->id)->providers_id;
-			
-			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
-			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
-			
-			$dateStart = date('Y-m-d', strtotime($dateStart));
-			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
-			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
-
-			$this->render('index',array(
-				'model'     =>$model,
-				'provider'  =>$provider,
-				'dateStart' =>$dateStart,
-				'dateEnd'   =>$dateEnd,
-				'sum'       =>$sum,
-				'data'      =>$data
-			));
-		}
-		else
-		{			
-			$this->redirect(Yii::app()->baseUrl);
-		}
-		
-		
-	}
-
 
 	/**
 	 * Manages all models.
@@ -116,8 +79,7 @@ class AffiliatesController extends Controller
 		$modelProv=new Providers;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelAffi);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelAffi, $modelProv);
 
 		if(isset($_POST['Affiliates']) && isset($_POST['Providers']))
 		{
@@ -145,8 +107,7 @@ class AffiliatesController extends Controller
 		$modelProv=Providers::model()->findByPk($modelAffi->providers_id);
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($modelAffi);
-		$this->performAjaxValidation($modelProv);
+		$this->performAjaxValidation($modelAffi, $modelProv);
 
 		if(isset($_POST['Affiliates']) && isset($_POST['Providers']))
 		{
@@ -180,11 +141,11 @@ class AffiliatesController extends Controller
 	 * Performs the AJAX validation.
 	 * @param Affiliates $model the model to be validated
 	 */
-	protected function performAjaxValidation($model)
+	protected function performAjaxValidation($modelAffi, $modelProv)
 	{
 		if(isset($_POST['ajax']) && $_POST['ajax']==='affiliates-form')
 		{
-			echo CActiveForm::validate($model);
+			echo CActiveForm::validate(array($modelAffi, $modelProv));
 			Yii::app()->end();
 		}
 	}

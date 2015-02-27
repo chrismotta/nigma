@@ -303,14 +303,20 @@ class DailyReport extends CActiveRecord
 
 		//$criteria->with = array( 'campaigns', 'providers' );
 
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities', 'campaigns.opportunities.ios', 'campaigns.opportunities.ios.advertisers' ,'campaigns.opportunities.accountManager','campaigns.opportunities.country' );
+		$criteria->with = array( 'providers', 'providers.affiliates', 'campaigns', 'campaigns.opportunities', 'campaigns.opportunities.ios', 'campaigns.opportunities.ios.advertisers' ,'campaigns.opportunities.accountManager','campaigns.opportunities.country' );
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ( $providers->isNetwork() )
 		// 	$criteria->compare('providers.networks.has_api',$this->providers_hasApi, true);
 		$criteria->compare('accountManager.name',$this->account_manager, true);
 		$criteria->compare('campaigns.id',$this->campaign_name, true);
 		
-		FilterManager::model()->addUserFilter($criteria, 'daily');
+		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+		if ( in_array('commercial', $roles, true) )
+			FilterManager::model()->addUserFilter($criteria, 'daily.commercial');
+		else if (in_array('affiliates_manager', $roles, true))
+			$criteria->addCondition('affiliates.providers_id IS NOT NULL');
+		else
+			FilterManager::model()->addUserFilter($criteria, 'daily');
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -856,7 +862,7 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 'providers', 'providers.affiliates', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.ios','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ($providers->isNetwork())
@@ -959,8 +965,14 @@ class DailyReport extends CActiveRecord
 		$tmp->compare('opportunities.product',$this->campaign_name,true,'OR');
 		$tmp->compare('campaigns.name',$this->campaign_name,true,'OR');
 		$criteria->mergeWith($tmp);
-		
-		FilterManager::model()->addUserFilter($criteria, 'daily');
+
+		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+		if ( in_array('commercial', $roles, true) )
+			FilterManager::model()->addUserFilter($criteria, 'daily.commercial');
+		else if (in_array('affiliates_manager', $roles, true))
+			$criteria->addCondition('affiliates.providers_id IS NOT NULL');
+		else
+			FilterManager::model()->addUserFilter($criteria, 'daily');
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -1357,9 +1369,8 @@ class DailyReport extends CActiveRecord
 	 */
 	public function getRevenueUSD()
 	{
-		$camp         = Campaigns::model()->findByPk($this->campaigns_id);
-		$opp          = Opportunities::model()->findByPk($camp->opportunities_id);
-		$ios_currency = Ios::model()->findByPk($opp->ios_id)->currency;
+		$camp         = Campaigns::model()->with('opportunities','opportunities.ios')->findByPk($this->campaigns_id);
+		$ios_currency = $camp->opportunities->ios->currency;
 	
 		if ($ios_currency == 'USD')	// if currency is USD dont apply type change
 			return $this->revenue;
@@ -1510,8 +1521,8 @@ class DailyReport extends CActiveRecord
 	public function setNewFields()
 	{
 		// update spend only for affiliates
-		// if ( Affiliates::model()->exists('providers_id=:nid', array(':nid'=>$this->providers_id)) ) 
-		//	$this->updateSpendAffiliates();
+		if($this->providers->getType() == 1)
+			$this->updateSpendAffiliates();
 
 		$this->profit             = $this->getProfit();
 		$this->profit_percent     = $this->getProfitPerc();
@@ -1528,11 +1539,11 @@ class DailyReport extends CActiveRecord
 	 */
 	public function getRateUSD()
 	{
-		$campaign     = Campaigns::model()->findByPk($this->campaigns_id);
-		$opportunitie = Opportunities::model()->findByPk($campaign->opportunities_id);
-		$rate         = Opportunities::model()->findByPk($opportunitie->id)->getRate($this->date);
-		$io_currency  = Ios::model()->findByPk($opportunitie->ios_id)->currency;
-		switch ($opportunitie->model_adv) 
+		$campaign     = Campaigns::model()->with('opportunities','opportunities.ios')->findByPk($this->campaigns_id);
+		$io_currency  = $campaign->opportunities->ios->currency;
+		$rate         = $campaign->opportunities->getRate($this->date);
+
+		switch ($campaign->opportunities->model_adv) 
 		{	
 			case 'CPI':
 			case 'CPL':

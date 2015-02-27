@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ * FilterManager encapsulates functionality to applying filtering to CDbCriteria.
  */
 class FilterManager
 {
@@ -18,8 +18,8 @@ class FilterManager
     }
 
 	/**
-	 * Specify the scenario for user filtering. The scenarios indicate column to add the search criteria,
-	 * and the roles who have complete access.
+	 * Specify the scenario for user filtering. The scenarios indicate column to add 
+	 * the search criteria, and the roles who have complete access.
 	 */
 	private $userScenarios = array(
 		'daily' => array( 
@@ -30,7 +30,15 @@ class FilterManager
 				'bussiness',
 				'finance',
 				'sem',
+			)),
+		'daily.commercial' => array( 
+			'column' => 'ios.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'bussiness',
 				'finance',
+				'sem',
 			)),
 		'campaign.account' => array( 
 			'column' => 'opportunities.account_manager_id', 
@@ -41,10 +49,12 @@ class FilterManager
 				'finance',
 			)),
 		'campaign.commercial' => array( 
-			'column' => 'opportunities.ios.commercial_id', 
+			'column' => 'ios.commercial_id', 
 			'roles'  => array( 
 				'admin',
 				'media_manager',
+				'sem',
+				'finance',
 			)),
 		'campaign.post_data' => array(
 			'column' => '',
@@ -106,6 +116,38 @@ class FilterManager
 			'roles'  => array( 
 				'media',
 			)),
+		'ios' => array( 
+			'column' => 't.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'commercial_manager',
+				'finance',
+				'business',
+			)),
+		'opportunities' => array( 
+			'column' => 'ios.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'commercial_manager',
+				'finance',
+				'business',
+			)),
+		'advertisers' => array( 
+			'column' => 'ios.commercial_id', 
+			'roles'  => array( 
+				'admin',
+				'media_manager',
+				'commercial_manager',
+				'finance',
+				'business',
+			)),
+		'alert.finance' => array( 
+			'column' => 'users.id', 
+			'roles'  => array( 
+				'finance',
+			)),
 		);
 
     /**
@@ -129,6 +171,15 @@ class FilterManager
 		$criteria->compare( $this->userScenarios[$scenario]['column'], $currentUserId );
     }
 
+    /**
+     * Return TRUE if current user has total access for the scenario specified, FALSE 
+     * otherwise.
+     *
+     * The scenarios are define in class attribute $userScenarios
+     * 
+     * @param  string  $scenario
+     * @return boolean
+     */
     public function isUserTotalAccess($scenario)
     {
     	if ( ! array_key_exists($scenario, $this->userScenarios) )

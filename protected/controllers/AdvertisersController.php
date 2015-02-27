@@ -267,10 +267,13 @@ class AdvertisersController extends Controller
 			$commercial = Users::model()->findByPk($model->commercial_id);
 		}
 
+		$users = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
+
 		$this->renderPartial('_form',array(
 			'model'      =>$model,
 			'categories' =>$cat,
 			'commercial' =>$commercial,
+			'users'      =>$users,
 		), false, true);
 	}
 
@@ -280,7 +283,7 @@ class AdvertisersController extends Controller
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$criteria=new CDbCriteria;
         $criteria->with  = array('ios', 'ios.advertisers');
-        $criteria->compare('status', 'Active');
+        $criteria->compare('t.status', 'Active');
         $criteria->order = 'advertisers.name';
         $criteria->group = 'advertisers.name';
 		$ids = isset($_GET['accountManager']) ? $_GET['accountManager'] : null;

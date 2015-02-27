@@ -29,6 +29,7 @@
 		'email_com',
 		'contact_adm',
 		'email_adm',
+		'phone',
 		'entity',
 		'tax_id',
 		array(

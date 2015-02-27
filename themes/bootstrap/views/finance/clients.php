@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo KHtml::currencyTotalsClients($totals->getData());
+echo KHtml::currencyTotals($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
@@ -33,7 +33,7 @@ $buttonsColumn='
 
 
 					).';
-if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
+// if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
 	$buttonsColumn.='CHtml::link(
 					"<i class=\"icon-envelope\"></i>",
 					array("revenueValidation?io=".$data["id"]."&month='.$month.'&year='.$year.'"),
@@ -41,14 +41,14 @@ if (FilterManager::model()->isUserTotalAccess('clients.validateIo'))
 
 
 					).';
-else 
-	$buttonsColumn.='CHtml::link(
-					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
-					array(""),
-    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
+// else 
+// 	$buttonsColumn.='CHtml::link(
+// 					"<i style=\"cursor:default\" class=\"icon-envelope\"></i>",
+// 					array(""),
+//     				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Send Mail")
 
 
-					).';
+// 					).';
 if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 	$buttonsColumn.='
 				CHtml::link(
@@ -56,7 +56,7 @@ if (FilterManager::model()->isUserTotalAccess('clients.invoice'))
 					array(),
     				array("data-toggle"=>"tooltip", "data-original-title"=>"Invoice", "class"=>"linkinvoiced",  
     					"onclick" => 
-    					"js:bootbox.prompt(\"Are you sure?\", function(confirmed){
+    					"js:bootbox.prompt(\"Invoice IO #".$data["id"]."?<hr><h4>Invoice reference</h4><p><b>Client: </b> ".$data["name"]."</b><p><p><b>Total Invoice: </b> ".$data["total"]."</b><p>\", function(confirmed){
     						if(confirmed!==null){
 		    					$.post(\"invoice\",{ \"io_id\": ".$data["id"].", \"period\":\"'.$year.'-'.$month.'-01\",  \"invoice_id\": confirmed })
 		                            .success(function( data ) {
@@ -148,17 +148,18 @@ else
 				$years[$y]=$y;
 			}
 
-			$entities=KHtml::enumItem(new Ios,'entity');
-			$entities[0]='All Entities';
-			$categories=KHtml::enumItem(new Advertisers,'cat');
-			$categories[0]='All Categories';
-			$status=KHtml::enumItem(new IosValidation,'status');
-			foreach ($status as $key => $value) {
-				if($value=='Approved' || $value=='Expired')unset($status[$key]);
-			}
-			$status['ok']='Approved/Expired';
-			$status['Not Sent']='Not Sent';
-			$status[0]='All Status';
+			$entities      =KHtml::enumItem(new Ios,'entity');
+			$entities[0]   ='All Entities';
+			$categories    =KHtml::enumItem(new Advertisers,'cat');
+			$categories[0] ='All Categories';
+			$status        =KHtml::enumItem(new IosValidation,'status');
+			// foreach ($status as $key => $value) {
+			// 	if($value=='Approved' || $value=='Expired')unset($status[$key]);
+			// }
+			$status['ok']           ='Approved/Expired';
+			$status['not_invoiced'] ='Not Invoiced';
+			$status['Not Sent']     ='Not Sent';
+			$status[0]              ='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
 			echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
@@ -172,7 +173,7 @@ else
 		'label'       => 'Excel Report',
 		'block'       => false,
 		'buttonType'  => 'ajaxButton',
-		'url'         => 'excelReport?month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat,
+		'url'         => 'excelReport?closed_deal=false&month='.$month.'&year='.$year.'&entity='.$entity.'&status='.$stat.'&cat='.$cat,
 		'ajaxOptions' => array(
 			'type'    => 'POST',
 			'beforeSend' => 'function(data)
@@ -205,7 +206,7 @@ else
 		array(
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
-			'htmlOptions'       => array('id'=>'alignLeft'),		
+			'htmlOptions'       => array('id'=>'alignLeft', 'name'=>'nameTD'),
 			'header'            => 'IO - Commercial Name',
 			),
 		array(
@@ -234,7 +235,7 @@ else
 			),
 		array(
 			'name'              =>'rate',
-			'value'             =>'$data["multi"] === 1 ? $data["rate"] : "Multi"',
+			'value'             =>'$data["multi"] === 0 ? $data["rate"] : "Multi"',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			'header'            =>'Rate',	
@@ -248,7 +249,7 @@ else
 			'htmlOptions'       => array('class'=>'plusMR'),
 			'type'              => 'raw',
 			'value'             =>	'
-				$data["multi"] === 0 ?
+				$data["multi"] === 1 ?
 				CHtml::link(
 					"<i class=\"icon-plus\"></i>",
 					array("multiRate?id=" . $data["opportunitie_id"] ."&month='.$month.'&year='.$year.'"),
@@ -349,7 +350,7 @@ else
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients', 'htmlOptions' => array('style'=>'width: 600px;'))); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
@@ -361,46 +362,42 @@ else
 </div>
 
 <?php Yii::app()->clientScript->registerScript('verifedIcon', "
-						$('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
-							
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-                                }
+	$('.link').click(function(e){
+        e.preventDefault();
+        var that = $(this);
+		var link = that.attr('href');
+		
+		var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+		$('#modalClients').html(dataInicial);
+		$('#modalClients').modal('toggle');
+       $.post( link, {})
+			.success(function( data ) {
+				$('#modalClients').html(data);
+            }
 
-					
-                                );
-                            
-                        });
-					$('.linkinvoiced').click(function(e){
-                            e.preventDefault();
-                            
-                        });
-					function verifedIcon(){
-                        $('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
 
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-									//Error en modal, se cerraba luego de abrirse. Ver con Santi.
-									//$('#modalClients').modal('toggle');
-                                }
+            );
+        
+    });
+	$('.linkinvoiced').click(function(e){
+	        e.preventDefault();
+	});
 
-					
-                                );
-                            
-                        });
-					}
-                    ", CClientScript::POS_READY); ?>
+	function verifedIcon(){
+	    $('.link').click(function(e){
+	        e.preventDefault();
+	        var that = $(this);
+			var link = that.attr('href');
+
+			var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+			$('#modalClients').html(dataInicial);
+			$('#modalClients').modal('toggle');
+	        $.post( link, {})
+				.success(function( data ) {
+					$('#modalClients').html(data);
+					//Error en modal, se cerraba luego de abrirse. Ver con Santi.
+					//$('#modalClients').modal('toggle');
+	            });
+    });
+}
+", CClientScript::POS_READY); ?>
