@@ -12,7 +12,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case '127.0.0.1':
 	case 'localhost':
 				$mysqlConnect = array(
-					'connectionString'   => 'mysql:host=localhost;dbname=kickads_appserver',
+					'connectionString'   => 'mysql:host=localhost;dbname=nigma',
 					'emulatePrepare'     => true,
 					'username'           => 'root',
 					'password'           => 'pernambuco',
@@ -33,30 +33,10 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emails'  =>array(),
 				);
 		break;
-	// iweb prod
-	case '70.38.54.231':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=localhost;dbname=kickads_appserver',
-					'emulatePrepare'   => true,
-					'username'         => 'root',
-					'password'         => 'pernambuco',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
-				);
-
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
-		break;
-	// amazon prod
+	// amazon kick
 	case 'kick.tmlbox.co':
 				$mysqlConnect = array(
-					'connectionString' => 'mysmysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
+					'connectionString' => 'mysmysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'th3m3d14l4b',
@@ -85,45 +65,6 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 						'CharSet'    => "UTF-8",
                     ),
                 );
-		break;
-	// amazon test
-	case 'test.kickadserver.mobi':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver_dev',
-					'emulatePrepare'   => true,
-					'username'         => 'www-data',
-					'password'         => 'k1ck4ds3rv3r',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
-				);
-
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
-		break;
-	case 'tmp.kickadserver.mobi':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
-					'emulatePrepare'   => true,
-					'username'         => 'www-data',
-					'password'         => 'k1ck4ds3rv3r',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
-				);
-
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
 		break;
 	
 	default:
