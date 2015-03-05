@@ -54,18 +54,12 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 				);
 		break;
 	// amazon prod
-	case '54.88.85.63':
-	case 'ec2-54-88-85-63.compute-1.amazonaws.com':
-	case 'app.kickadserver.mobi':
-	case 'kickadserver.mobi':
-	case 'www.kickadserver.mobi':
-	case 'juegosmobi.mobi':
-	case 'www.juegosmobi.mobi':
+	case 'kick.tmlbox.co':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=kickads-db-3.ccqfyxyzmdiq.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'connectionString' => 'mysmysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
-					'password'         => 'k1ck4ds3rv3r',
+					'password'         => 'th3m3d14l4b',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
 			           "SET SESSION time_zone = '-3:00'",
@@ -77,13 +71,11 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'levels'  =>'error, mail',
 					'subject' =>'Automatic Mail Log',
 					'emails'  =>array(
-						'christian.motta@kickads.mobi',
-						'matias.cerrotta@kickads.mobi',
-						'santiago.mena@kickads.mobi',
+						'chris@themedialab.co',
 					),
 					'config'  =>array(
-						'From'       => 'no-reply@kickads.mobi',
-						'FromName'   => 'no-reply Kickads adServer',
+						'From'       => 'no-reply@themedialab.co',
+						'FromName'   => 'no-reply TheMediaLab',
 						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
 						// 'SMTPAuth'   => true,
 						// 'SMTPSecure' => "tls",
