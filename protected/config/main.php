@@ -36,35 +36,22 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// amazon kick
 	case 'kick.tmlbox.co':
 				$mysqlConnect = array(
-					'connectionString' => 'mysmysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'th3m3d14l4b',
 					'charset'          => 'utf8',
 					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
+			           		"SET SESSION time_zone = '-3:00'",
 					),
 				);
-
+				
 				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'error, mail',
-					'subject' =>'Automatic Mail Log',
-					'emails'  =>array(
-						'chris@themedialab.co',
-					),
-					'config'  =>array(
-						'From'       => 'no-reply@themedialab.co',
-						'FromName'   => 'no-reply TheMediaLab',
-						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
-						// 'SMTPAuth'   => true,
-						// 'SMTPSecure' => "tls",
-						// 'Port'       => 25,
-						// 'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
-						// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
-						'CharSet'    => "UTF-8",
-                    ),
-                );
+                                        'class'   =>'CPhpMailerLogRoute',
+                                        'levels'  =>'',
+                                        'subject' =>'',
+                                        'emails'  =>array(),
+                                );
 		break;
 	
 	default:
