@@ -8,6 +8,7 @@ Yii::setPathOfAlias('yiibooster', dirname(__FILE__).'/../extensions/yiibooster')
 
 // MySql Policy
 switch ( $_SERVER['HTTP_HOST'] ) {
+	
 	// local
 	case '127.0.0.1':
 	case 'localhost':
@@ -33,6 +34,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'emails'  =>array(),
 				);
 		break;
+	
 	// amazon prod
 	case '54.172.221.175':
 	case 'ec2-54-172-221-175.compute-1.amazonaws.com':
@@ -72,7 +74,28 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// amazon test
 	case 'dev.tmlbox.co':
 				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
+					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma_dev',
+					'emulatePrepare'   => true,
+					'username'         => 'www-data',
+					'password'         => 'th3m3d14l4b',
+					'charset'          => 'utf8',
+					'initSQLs'         => array(
+			           "SET SESSION time_zone = '-3:00'",
+					),
+				);
+
+				$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
+				);
+		break;
+
+	// amazon sourcecode
+	case 'kick.tmlbox.co':
+				$mysqlConnect = array(
+					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
 					'emulatePrepare'   => true,
 					'username'         => 'www-data',
 					'password'         => 'th3m3d14l4b',
