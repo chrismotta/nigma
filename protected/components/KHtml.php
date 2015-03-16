@@ -170,7 +170,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        $medias = Users::model()->findUsersByRole('media');
+        $medias = Users::model()->findUsersByRole('admin');//originaly media
         $list   = CHtml::listData($medias, 'id', 'FullName');
         return CHtml::dropDownList('accountManager', $value, $list, $htmlOptions);
     }
