@@ -175,7 +175,7 @@ class AdvertisersController extends Controller
 			}
 		}
 
-		$url   = Yii::app()->getBaseUrl(true) . '/ios/externalCreate?ktoken=' . $formURL->hash;
+		$url   = Yii::app()->getBaseUrl(true) . '/ios/externalCreate?tmltoken=' . $formURL->hash;
 		$this->renderPartial('_externalForm',array(
 			'model'    => $model,
 			'formURL'  => $formURL,

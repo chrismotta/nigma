@@ -230,9 +230,10 @@ class ClicksLogController extends Controller
 		if($model->save()){
 
 			if($ntoken){
-				$ktoken = $ntoken;
+				$tmltoken = $ntoken;
 			}else{
-				$ktoken = md5($model->id);
+				$',
+ = md5($model->id);
 			}
 				
 
@@ -247,7 +248,8 @@ class ClicksLogController extends Controller
 			// el origen del click
 			$gc_log = fopen( "log/clicks.log", "a");
 			fwrite($gc_log, "---------------------------"."\n\r");
-			fwrite($gc_log, $ktoken."\n\r");
+			fwrite($gc_log, $',
+."\n\r");
 			fwrite($gc_log, "---------------------------"."\n\r");
 			fwrite($gc_log, $headers."\n\r") ? null : fwrite($gc_log, "error"."\n\r");
 			fwrite($gc_log, "---------------------------"."\n\r");
@@ -257,13 +259,13 @@ class ClicksLogController extends Controller
 			//die($headers);
 
 
-			//print "guardado - tid: ".$ktoken;
+			//print "guardado - tid: ".$tmltoken;
 			//print "<hr/>";
-			$model->tid = $ktoken;
+			$model->tid = $tmltoken;
 			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)
-			//setcookie('ktoken', $ktoken, time() + 1 * 1 * 60 * 60, '/');
+			//setcookie('tmltoken', $tmltoken, time() + 1 * 1 * 60 * 60, '/');
 
 			if($cid){
 				if($s2s){
@@ -272,7 +274,7 @@ class ClicksLogController extends Controller
 					} else {
 						$redirectURL.= "?";
 					}
-					$redirectURL.= $s2s."=".$ktoken;
+					$redirectURL.= $s2s."=".$tmltoken;
 				}
 			}
 

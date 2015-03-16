@@ -216,14 +216,14 @@ class IosController extends Controller
 	public function actionExternalCreate()
 	{
 
-		if ( isset($_GET['ktoken']) ) {
-			$ktoken = $_GET['ktoken'];
+		if ( isset($_GET['tmltoken']) ) {
+			$tmltoken = $_GET['tmltoken'];
 		} else {
 			echo "ERROR invalid parameters <br>";
 			Yii::app()->end();	
 		}
 
-		$external = ExternalIoForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+		$external = ExternalIoForm::model()->find( 'hash=:tmltoken', array(':tmltoken' => $tmltoken) );
 
 		// Validate hash expiration time
 		$validTime = ExternalIoForm::getExpirationHashTime();

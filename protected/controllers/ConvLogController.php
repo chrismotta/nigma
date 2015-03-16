@@ -116,8 +116,8 @@ class ConvLogController extends Controller
 		*/
 
 		// Get Request
-		if( isset( $_GET['ktoken'] ) ){
-			$tid = $_GET['ktoken'];
+		if( isset( $_GET['tmltoken'] ) ){
+			$tid = $_GET['tmltoken'];
 			print "get tid: ".$tid."<hr/>";
 		}else{
 			print "get tid: null<hr/>";
