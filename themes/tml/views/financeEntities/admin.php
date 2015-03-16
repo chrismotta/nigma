@@ -124,7 +124,7 @@ $('.search-form form').submit(function(){
 		array(
 			'name'=>'com_name',
 			'header'=>'Commercial Name',
-			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
+			'value'=> '$data->commercial ? $data->commercial->name . " " . $data->commercial->lastname : ""',
 		),
 		array(
 			'name'=>'entity',
