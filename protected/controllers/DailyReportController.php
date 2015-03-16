@@ -399,7 +399,7 @@ class DailyReportController extends Controller
 		$this->renderPartial('_multiRate', array(
 			'model'       => $model,
 			'multi_rates' => $multi_rates,
-			'currency'    => $model->campaigns->opportunities->ios->currency,
+			'currency'    => $model->campaigns->opportunities->regions->financeEntities->currency,
 		), false, false);
 	}	
 
@@ -435,11 +435,11 @@ class DailyReportController extends Controller
 	{
 		//$providers = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$criteria       = new CDbCriteria;
-		$criteria->with = array('providers', 'opportunities.ios');
+		$criteria->with = array('providers', 'opportunities.regions','opportunities.regions.financeEntities');
 		$criteria->join = 'LEFT JOIN networks ON t.providers_id=networks.providers_id';
 		$criteria->compare('networks.has_api',0);
 		$criteria->compare('t.status','Active');
-		$criteria->order = 'ios.name';
+		$criteria->order = 'financeEntities.name';
 		$campaigns = CHtml::listData(Campaigns::model()->findAll($criteria), 'id',
 			function($camp) { return $camp->getExternalName($camp->id); } );
 

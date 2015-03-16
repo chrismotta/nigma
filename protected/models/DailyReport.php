@@ -303,7 +303,17 @@ class DailyReport extends CActiveRecord
 
 		//$criteria->with = array( 'campaigns', 'providers' );
 
-		$criteria->with = array( 'providers', 'providers.affiliates', 'campaigns', 'campaigns.opportunities', 'campaigns.opportunities.ios', 'campaigns.opportunities.ios.advertisers' ,'campaigns.opportunities.accountManager','campaigns.opportunities.country' );
+		$criteria->with = array( 
+				'providers', 
+				'providers.affiliates', 
+				'campaigns', 
+				'campaigns.opportunities', 
+				'campaigns.opportunities.regions',
+				'campaigns.opportunities.regions.financeEntities',
+				'campaigns.opportunities.regions.financeEntities.advertisers' ,
+				'campaigns.opportunities.accountManager',
+				'campaigns.opportunities.regions.country' 
+			);
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ( $providers->isNetwork() )
 		// 	$criteria->compare('providers.networks.has_api',$this->providers_hasApi, true);
@@ -359,7 +369,17 @@ class DailyReport extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 
+				'providers', 
+				'campaigns', 
+				'campaigns.opportunities',
+				'campaigns.opportunities.accountManager', 
+				'campaigns.opportunities.regions', 
+				'campaigns.opportunities.regions.country', 
+				'campaigns.opportunities.regions.financeEntities', 
+				'campaigns.opportunities.regions.financeEntities.advertisers', 
+				'campaigns.opportunities.carriers' 
+			);
 		if ( $providers != NULL) {
 			if(is_array($providers))
 			{
@@ -498,7 +518,17 @@ class DailyReport extends CActiveRecord
 		$criteria = new CDbCriteria;
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
 		$criteria->addCondition("DATE(date)<="."'".$endDate."'");
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 
+				'providers', 
+				'campaigns', 
+				'campaigns.opportunities',
+				'campaigns.opportunities.accountManager', 
+				'campaigns.opportunities.regions', 
+				'campaigns.opportunities.regions.country', 
+				'campaigns.opportunities.regions.financeEntities', 
+				'campaigns.opportunities.regions.financeEntities.advertisers', 
+				'campaigns.opportunities.carriers' 
+			);
 		
 		if ( $providers != NULL) {
 			if(is_array($providers))
@@ -862,7 +892,18 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'providers', 'providers.affiliates', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.ios','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 
+			'providers', 
+			'providers.affiliates', 
+			'campaigns', 
+			'campaigns.opportunities',
+			'campaigns.opportunities.accountManager', 
+			'campaigns.opportunities.regions',
+			'campaigns.opportunities.regions.country', 
+			'campaigns.opportunities.regions.financeEntities',
+			'campaigns.opportunities.regions.financeEntities.advertisers', 
+			'campaigns.opportunities.carriers' 
+			);
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ($providers->isNetwork())
@@ -1112,7 +1153,17 @@ class DailyReport extends CActiveRecord
 		}
 		
 		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 'providers', 'campaigns', 'campaigns.opportunities','campaigns.opportunities.accountManager', 'campaigns.opportunities.country', 'campaigns.opportunities.ios.advertisers', 'campaigns.opportunities.carriers' );
+		$criteria->with = array( 
+				'providers',
+				'campaigns', 
+				'campaigns.opportunities',
+				'campaigns.opportunities.accountManager', 
+				'campaigns.opportunities.regions', 
+				'campaigns.opportunities.regions.country', 
+				'campaigns.opportunities.regions.financeEntities', 
+				'campaigns.opportunities.regions.financeEntities.advertisers', 
+				'campaigns.opportunities.carriers' 
+			);
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// $criteria->compare('providers.has_api',$this->network_hasApi, true);
@@ -1369,14 +1420,14 @@ class DailyReport extends CActiveRecord
 	 */
 	public function getRevenueUSD()
 	{
-		$camp         = Campaigns::model()->with('opportunities','opportunities.ios')->findByPk($this->campaigns_id);
-		$ios_currency = $camp->opportunities->ios->currency;
+		$camp         = Campaigns::model()->with('opportunities','opportunities.regions', 'opportunities.regions.financeEntities')->findByPk($this->campaigns_id);
+		$financeEntities_currency = $camp->opportunities->regions->financeEntities->currency;
 	
-		if ($ios_currency == 'USD')	// if currency is USD dont apply type change
+		if ($financeEntities_currency == 'USD')	// if currency is USD dont apply type change
 			return $this->revenue;
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? round($this->revenue / $currency[$ios_currency], 2) : 'Currency ERROR!';
+		return $currency ? round($this->revenue / $currency[$financeEntities_currency], 2) : 'Currency ERROR!';
 	}
 
 	/**
@@ -1539,8 +1590,8 @@ class DailyReport extends CActiveRecord
 	 */
 	public function getRateUSD()
 	{
-		$campaign     = Campaigns::model()->with('opportunities','opportunities.ios')->findByPk($this->campaigns_id);
-		$io_currency  = $campaign->opportunities->ios->currency;
+		$campaign     = Campaigns::model()->with('opportunities','opportunities.regions', 'opportunities.regions.financeEntities')->findByPk($this->campaigns_id);
+		$financeEntities_currency  = $campaign->opportunities->regions->financeEntities->currency;
 		$rate         = $campaign->opportunities->getRate($this->date);
 
 		switch ($campaign->opportunities->model_adv) 
@@ -1560,11 +1611,11 @@ class DailyReport extends CActiveRecord
 			
 		}
 
-		if ($io_currency == 'USD') // if currency is USD dont apply type change
+		if ($financeEntities_currency == 'USD') // if currency is USD dont apply type change
 			return round($rate,2);
 
 		$currency = Currency::model()->findByDate($this->date);
-		return $currency ? round($rate / $currency[$io_currency], 2) : 'Currency ERROR!';
+		return $currency ? round($rate / $currency[$financeEntities_currency], 2) : 'Currency ERROR!';
 	}
 
 	/**

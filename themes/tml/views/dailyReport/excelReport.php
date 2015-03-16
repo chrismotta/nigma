@@ -33,7 +33,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'  => 'commercial_name',
-            'value' => '$data->campaigns->opportunities->ios->commercial->lastname . " " .$data->campaigns->opportunities->ios->commercial->name',
+            'value' => '$data->campaigns->opportunities->regions->financeEntities->commercial->lastname . " " .$data->campaigns->opportunities->regions->financeEntities->commercial->name',
         ),
         array(
             'name'  => 'campaign_name',
@@ -49,19 +49,19 @@ $this->widget('EExcelWriter', array(
         ),        
         array(
             'name'  => 'io_name',
-            'value' => '$data->campaigns->opportunities->ios->name',
+            'value' => '$data->campaigns->opportunities->regions->financeEntities->name',
         ),
         array(
             'name'  => 'country',
-            'value' => '$data->campaigns->opportunities->country->name',
+            'value' => '$data->campaigns->opportunities->regions->country->name',
         ),
         array(
             'name'  => 'entity_name',
-            'value' => '$data->campaigns->opportunities->ios->entity',
+            'value' => '$data->campaigns->opportunities->regions->financeEntities->entity',
         ),
         array(
             'name'  => 'category_name',
-            'value' => '$data->campaigns->opportunities->ios->advertisers->cat',
+            'value' => '$data->campaigns->opportunities->regions->financeEntities->advertisers->cat',
         ),
         array(
             'name'  => 'providers_name',

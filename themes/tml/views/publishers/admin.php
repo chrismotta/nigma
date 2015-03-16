@@ -89,7 +89,7 @@ $('.search-form form').submit(function(){
 		array(
 			'name' => 'providers_id',
 		),
-		array(
+		/*array(
 			'name' => 'name',
 		),
 		array( 
@@ -107,14 +107,14 @@ $('.search-form form').submit(function(){
 		),
 		array( 
 			'name' => 'net_payment',
-		),
+		),*/
 		array(
 			'name'  => 'account_manager_id',
 			'value' => '$data->account_manager_id ? $data->accountManager->lastname . " " . $data->accountManager->name : ""',
-		),
+		),/*
 		array( 
 			'name' => 'model',
-		),
+		),*/
 		array( 
 			'name'  => 'RS_perc',
 			'value' => 'number_format($data->RS_perc, 2)',

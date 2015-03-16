@@ -199,8 +199,8 @@ class PublishersController extends Controller
 	private function renderFormAjax($modelPubl, $modelProv) 
 	{
 		$this->renderPartial('_form', array(
-			'modelProv' =>$modelProv,
-			'modelPubl' =>$modelPubl,
+			'modelProvs' =>$modelProv,
+			'modelPub' =>$modelPubl,
 		), false, true);
 	}
 }

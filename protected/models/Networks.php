@@ -105,7 +105,9 @@ class Networks extends CActiveRecord
 
 		$criteria->with = array('providers');
 		$criteria->compare('providers.status','Active',true);
-		$criteria->addCondition('providers.prospect>1');
+		
+		//Comentado provisionalmente, activar sis e usa el sistema de prospects
+		//$criteria->addCondition('providers.prospect>1');
 
 		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('percent_off',$this->percent_off,true);
