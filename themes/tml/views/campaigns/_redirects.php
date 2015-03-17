@@ -49,21 +49,21 @@
     // redirect old format
     echo '<p style="color:#AAA">';
     echo '<strong>'.$provider->name.' (old format): </strong>';
-    echo 'http://kickadserver.mobi/clicksLog?';
+    echo 'http://tmlbox.co/clicksLog?';
     echo $redirect_old_query;
     echo '</p>';
 
     // redirect new format
     echo '<p>';
     echo '<strong>'.$provider->name.' (new format): </strong>';
-    echo 'http://kickadserver.mobi/clicksLog/tracking/'.$model->id.'/';
+    echo 'http://tmlbox.co/clicksLog/tracking/'.$model->id.'/';
     if($redirect_new) echo '?' . $redirect_new_query;
     echo '</p>';
     echo '<hr/>';
 
     // s2s callback
     echo '<p><strong>S2S: </strong>';
-    echo 'http://kickadserver.mobi/convLog';
+    echo 'http://tmlbox.co/convLog';
     echo '?tmltoken=&lt;'.$model->opportunities->server_to_server.'&gt;';
     echo '</p>';
     //<button type="button" class="btn btn-default btn-sm">copy</button> 
