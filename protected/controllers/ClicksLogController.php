@@ -232,8 +232,7 @@ class ClicksLogController extends Controller
 			if($ntoken){
 				$tmltoken = $ntoken;
 			}else{
-				$',
- = md5($model->id);
+				$tmltoken = md5($model->id);
 			}
 				
 
@@ -248,14 +247,14 @@ class ClicksLogController extends Controller
 			// el origen del click
 			$gc_log = fopen( "log/clicks.log", "a");
 			fwrite($gc_log, "---------------------------"."\n\r");
-			fwrite($gc_log, $',
-."\n\r");
+			fwrite($gc_log, $ktoken."\n\r");
 			fwrite($gc_log, "---------------------------"."\n\r");
 			fwrite($gc_log, $headers."\n\r") ? null : fwrite($gc_log, "error"."\n\r");
 			fwrite($gc_log, "---------------------------"."\n\r");
 			fclose($gc_log);
 
 			 */
+			//die($headers);
 			//die($headers);
 
 
