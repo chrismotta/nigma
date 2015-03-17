@@ -56,7 +56,7 @@
     // redirect new format
     echo '<p>';
     echo '<strong>'.$provider->name.' Redirect: </strong>';
-    echo 'http://tmlbox.co/clickslog/tracking/'.$model->id.'/';
+    echo 'http://tmlbox.co/clicklog/tracking/'.$model->id.'/';
     if($redirect_new) echo '?' . $redirect_new_query;
     echo '</p>';
     echo '<hr/>';
