@@ -120,7 +120,7 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['financeEntities']))
+		if(isset($_POST['FinanceEntities']))
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
