@@ -226,11 +226,15 @@ if($action == "Create"){ ?>
         }?>
         </div>
         <?php
+        echo "<hr>";
+        echo $form->textAreaRow($model, 'comment', array('class'=>'span3', 'rows'=>5));
+
+        /*
         if( FilterManager::model()->isUserTotalAccess('campaign.post_data') ) {
             echo '<hr/>';
             echo $form->checkboxRow($model, 'post_data');
         }
-
+        */
         ?>
 
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

@@ -356,8 +356,8 @@ class Campaigns extends CActiveRecord
 		$adv = $model->opportunities->regions->financeEntities->advertisers->prefix;
 
 		$country = '';
-		if ( $opportunity->country_id !== NULL )
-			$country = '-' . $model->opportunities->country->ISO2;
+		if ( $opportunity->regions->country_id !== NULL )
+			$country = '-' . $model->opportunities->regions->country->ISO2;
 
 		$carrier = '-MUL';
 		if ( $opportunity->carriers_id !== NULL )

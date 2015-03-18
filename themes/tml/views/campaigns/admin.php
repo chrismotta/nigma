@@ -165,6 +165,10 @@ if(!$is_archived){
 		'comment',
 		*/
 		array(
+			'name'              => 'model',
+			'headerHtmlOptions' => array('style' => 'width: 20px'),
+        ),
+		array(
 			'name'              => 'net_currency',
 			'headerHtmlOptions' => array('style' => 'width: 20px'),
 			'value'             => '$data->providers->currency',
