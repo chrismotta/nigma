@@ -332,7 +332,7 @@ class CampaignsController extends Controller
 	{
 		$model=new Campaigns('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->status = 'Active';
+		$model->status = array('Active','Paused');
 		if(isset($_GET['Campaigns']))
 			$model->attributes=$_GET['Campaigns'];
 
@@ -538,6 +538,7 @@ class CampaignsController extends Controller
 		$formats        = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$devices        = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel      = KHtml::enumItem($model, 'model');
+		$campStatus     = array('Active'=>'Active', 'Paused'=>'Paused');
 		
 		
 		if ($action == 'Update') 
@@ -558,6 +559,7 @@ class CampaignsController extends Controller
 			'devices'          => $devices,
 			'formats'          => $formats,
 			'campModel'        => $campModel,
+			'campStatus'       => $campStatus,
 			'action'           => $action,
 		), false, true);
 	}

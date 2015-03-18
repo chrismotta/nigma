@@ -18,7 +18,10 @@ if($is_archived){
 }
 
 $this->breadcrumbs=array(
-	'Campaigns'=>array('index'),
+	'Advertisers'=>array('advertisers/admin'),
+	'FinanceEntities'=>array('financeEntities/admin'),
+	'Regions'=>array('regions/admin'),
+	'Opportunities'=>array('opportunities/admin'),
 	$breadcrumbs['title'],
 );
 ?>
@@ -110,7 +113,7 @@ if(!$is_archived){
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,
-	'headerOffset'             => 50,
+	'headerOffset'             => 20,
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 =>'{items} {pager} {summary}',
 	
