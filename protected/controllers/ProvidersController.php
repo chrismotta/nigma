@@ -183,12 +183,12 @@ class ProvidersController extends Controller
 	{
 
 		if ( isset($hash) ) {
-			$ktoken = $hash;
+			$tmltoken = $hash;
 		} else {
 			echo "ERROR invalid parameters <br>";
 			Yii::app()->end();	
 		}
-		$external = ExternalProviderForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+		$external = ExternalProviderForm::model()->find( 'hash=:tmltoken', array(':tmltoken' => $tmltoken) );
 
 		// Validate hash expiration time
 		$validTime = ExternalProviderForm::getExpirationHashTime();
@@ -245,12 +245,12 @@ class ProvidersController extends Controller
 	{
 
 		if ( isset($hash) ) {
-			$ktoken = $hash;
+			$tmltoken = $hash;
 		} else {
 			echo "ERROR invalid parameters <br>";
 			Yii::app()->end();	
 		}
-		$external = ExternalProviderForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+		$external = ExternalProviderForm::model()->find( 'hash=:tmltoken', array(':tmltoken' => $tmltoken) );
 
 		// Validate hash expiration time
 		$validTime = ExternalProviderForm::getExpirationHashTime();

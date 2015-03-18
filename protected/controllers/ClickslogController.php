@@ -1,6 +1,6 @@
 <?php
 
-class ClicksLogController extends Controller
+class ClickslogController extends Controller
 {
 
 	/**

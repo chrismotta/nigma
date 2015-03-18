@@ -24,6 +24,16 @@
 <?php 
     $items=array(
                 array('label'=>'Dashboard', 'url'=>array('/site/index'), 'itemOptions' => array('class'=>'showLoadingMenuItem'), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
+                    //array('label'=>'IOs', 'url'=>array('/ios/admin')),
+                    array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
+                    array('label'=>'Regions', 'url'=>array('/regions/admin')),
+                    array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
+                    //array('label'=>'Cierre y %', 'url'=>'#'),
+                    //array('label'=>'Media Kit', 'url'=>'#'),
+                ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
@@ -50,16 +60,6 @@
                     array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
                     array('label'=>'Placements', 'url'=>array('/sem/placement')),
                     array('label'=>'Search Query', 'url'=>array('/sem/searchCriteria')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
-                    //array('label'=>'IOs', 'url'=>array('/ios/admin')),
-                    array('label'=>'Regions', 'url'=>array('/regions/admin')),
-                    array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
-                    array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
-                    //array('label'=>'Cierre y %', 'url'=>'#'),
-                    //array('label'=>'Media Kit', 'url'=>'#'),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
@@ -149,7 +149,7 @@
         {
             $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
             $mainVar['option']='opportunities';
-            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            foreach(FinanceEntities::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
             {
                 if(!$opportunitie['status_opp'])$mainVar['count']++;
             }

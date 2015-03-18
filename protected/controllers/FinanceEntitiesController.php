@@ -29,12 +29,12 @@ class FinanceEntitiesController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
+				'roles'=>array('admin'),
 			),
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','redirect','admin','archived'),
-				'roles'=>array('businness', 'finance'),
-			),
+			// array('allow',  // allow all users to perform 'index' and 'view' actions
+			// 	'actions'=>array('index','view','redirect','admin','archived'),
+			// 	'roles'=>array('businness', 'finance'),
+			// ),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
 			// 	'actions'=>array('create','update'),
 			// 	'users'=>array('@'),
@@ -120,7 +120,7 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['financeEntities']))
+		if(isset($_POST['FinanceEntities']))
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
@@ -218,14 +218,14 @@ class FinanceEntitiesController extends Controller
 	public function actionExternalCreate()
 	{
 
-		if ( isset($_GET['ktoken']) ) {
-			$ktoken = $_GET['ktoken'];
+		if ( isset($_GET['tmltoken']) ) {
+			$tmltoken = $_GET['tmltoken'];
 		} else {
 			echo "ERROR invalid parameters <br>";
 			Yii::app()->end();	
 		}
 
-		$external = ExternalIoForm::model()->find( 'hash=:ktoken', array(':ktoken' => $ktoken) );
+		$external = ExternalIoForm::model()->find( 'hash=:tmltoken', array(':tmltoken' => $tmltoken) );
 
 		// Validate hash expiration time
 		$validTime = ExternalIoForm::getExpirationHashTime();

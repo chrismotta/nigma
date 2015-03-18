@@ -1,6 +1,6 @@
 <?php
 
-class ConvLogController extends Controller
+class ConvlogController extends Controller
 {
 
 	/**

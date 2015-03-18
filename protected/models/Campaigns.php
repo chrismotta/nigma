@@ -75,6 +75,8 @@ class Campaigns extends CActiveRecord
 			array('name, providers_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
 			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
+			// array('comment', 'length', 'max'=>512),
+			array('comment', 'safe'),
 			array('cap, external_rate', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>512),
@@ -82,7 +84,7 @@ class Campaigns extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -146,6 +148,7 @@ class Campaigns extends CActiveRecord
 			'clics_redirect'         => 'Clics Redirect',
 			'date'                   => 'Date',
 			'external_rate'          => 'External rate',
+			'comment'				 => 'Comment'
 		);
 	}
 
@@ -356,8 +359,8 @@ class Campaigns extends CActiveRecord
 		$adv = $model->opportunities->regions->financeEntities->advertisers->prefix;
 
 		$country = '';
-		if ( $opportunity->country_id !== NULL )
-			$country = '-' . $model->opportunities->country->ISO2;
+		if ( $opportunity->regions->country_id !== NULL )
+			$country = '-' . $model->opportunities->regions->country->ISO2;
 
 		$carrier = '-MUL';
 		if ( $opportunity->carriers_id !== NULL )

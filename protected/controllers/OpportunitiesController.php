@@ -237,7 +237,7 @@ class OpportunitiesController extends Controller
 		}
 		
 		// Get users with authorization "media"
-		$account = CHtml::listData(Users::model()->findUsersByRole('media'), 'id', 'username' );
+		$account = CHtml::listData(Users::model()->findUsersByRole('admin'), 'id', 'username' );
 
 		// Get countries and carriers with status "Active"
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
