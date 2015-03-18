@@ -148,7 +148,8 @@ class Campaigns extends CActiveRecord
 			'clics_redirect'         => 'Clics Redirect',
 			'date'                   => 'Date',
 			'external_rate'          => 'External rate',
-			'comment'				 => 'Comment'
+			'comment'				 => 'Comment',
+			'financeEntities_name'   => 'Finance Entity'
 		);
 	}
 
