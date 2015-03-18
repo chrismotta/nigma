@@ -227,6 +227,7 @@ if($action == "Create"){ ?>
         </div>
         <?php
         echo "<hr>";
+        echo $form->radioButtonListRow($model, 'status', $campStatus);
         echo $form->textAreaRow($model, 'comment', array('class'=>'span3', 'rows'=>5));
 
         /*

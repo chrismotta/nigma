@@ -18,7 +18,10 @@ if($is_archived){
 }
 
 $this->breadcrumbs=array(
-	'Campaigns'=>array('index'),
+	'Advertisers'=>array('advertisers/admin'),
+	'FinanceEntities'=>array('financeEntities/admin'),
+	'Regions'=>array('regions/admin'),
+	'Opportunities'=>array('opportunities/admin'),
 	$breadcrumbs['title'],
 );
 ?>
