@@ -149,7 +149,7 @@
         {
             $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
             $mainVar['option']='opportunities';
-            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            foreach(FinanceEntities::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
             {
                 if(!$opportunitie['status_opp'])$mainVar['count']++;
             }
