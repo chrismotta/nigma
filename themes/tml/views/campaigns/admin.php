@@ -113,7 +113,7 @@ if(!$is_archived){
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,
-	'headerOffset'             => 15,
+	'headerOffset'             => 20,
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 =>'{items} {pager} {summary}',
 	
