@@ -105,7 +105,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'=>'country_name',
-			'value'=>'$data->country->name',
+			'value'=>'isset($data->country->name) ? $data->country->name : "no country"',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
