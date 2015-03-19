@@ -188,6 +188,8 @@ class CampaignsController extends Controller
 		if(isset($_POST['Campaigns']))
 		{
 			$model->attributes=$_POST['Campaigns'];
+			if($model->status == '')
+				$model->status = 'Pending';
 			if($model->save())
 				$this->redirect($backURL);
 		}
