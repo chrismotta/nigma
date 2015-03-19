@@ -184,6 +184,13 @@ if(!$is_archived){
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
 			'value'             => '$data->cap',
         ),
+        array(
+			//'name'              => 'cp_status',
+			'headerHtmlOptions' => array('style' => 'width: 10px; overflow: hidden;'),
+			'htmlOptions' => array('style' => 'width: 10px; overflow: hidden;'),
+			'value'             => '$data->status',
+        ),
+		// 'status',
 		// array(
 		// 	'name'              => 'status',
 		// 	'value'             => '$data->status', //== 0 ? "Active" : "Paused"',

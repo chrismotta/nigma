@@ -56,6 +56,8 @@ class Campaigns extends CActiveRecord
 	public $format;
 	public $clics_redirect;
 	public $date;
+	public $cp_status;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -82,10 +84,10 @@ class Campaigns extends CActiveRecord
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>512),
 			array('url', 'url'),
-			array('status', 'length', 'max'=>8),
+			array('status', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment, environment', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment, environment, cp_status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -130,6 +132,10 @@ class Campaigns extends CActiveRecord
 			'url'                    => 'Url',
 			'status'                 => 'Status',
 			'opportunities_id'       => 'Opportunities',
+			'comment'				 => 'Comment',
+			'financeEntities_name'   => 'Finance Entity',
+			'environment'			 => 'Buying Environment',
+			'cp_status'				 => "Status",
 			// Header names for the related columns
 			'advertisers_name'       => 'Advertiser', 
 			'opportunities_rate'     => 'Rate', 
@@ -149,9 +155,6 @@ class Campaigns extends CActiveRecord
 			'clics_redirect'         => 'Clics Redirect',
 			'date'                   => 'Date',
 			'external_rate'          => 'External rate',
-			'comment'				 => 'Comment',
-			'financeEntities_name'   => 'Finance Entity',
-			'environment'			 => 'Buying Environment'
 		);
 	}
 
@@ -184,6 +187,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('post_data',$this->post_data);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
+		$criteria->compare('t.status',$this->cp_status);
 
 		//We need to list all related tables in with property
 		$criteria->with = array(
@@ -264,6 +268,10 @@ class Campaigns extends CActiveRecord
 		            'net_currency'=>array(
 						'asc'  =>'providers.currency',
 						'desc' =>'providers.currency DESC',
+		            ),
+		            'cp_status'=>array(
+						'asc'  =>'status',
+						'desc' =>'status DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',

@@ -332,7 +332,7 @@ class CampaignsController extends Controller
 	{
 		$model=new Campaigns('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->status = array('Active','Paused');
+		$model->status = array('Pending','Active','Paused','Inactive');
 		if(isset($_GET['Campaigns']))
 			$model->attributes=$_GET['Campaigns'];
 
