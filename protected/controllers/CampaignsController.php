@@ -538,6 +538,7 @@ class CampaignsController extends Controller
 		$formats        = CHtml::listData(Formats::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$devices        = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel      = KHtml::enumItem($model, 'model');
+		$environment    = KHtml::enumItem($model, 'environment');
 		$campStatus     = array('Active'=>'Active', 'Paused'=>'Paused');
 		
 		
@@ -551,7 +552,7 @@ class CampaignsController extends Controller
 
 		$this->renderPartial('_formAjax',array(
 			'model'            => $model,
-			'modelProv'     => $modelProv,
+			'modelProv'        => $modelProv,
 			'opportunities'    => $opportunities,
 			'categories'       => $categories,
 			'providers_type'   => $providers_type,
@@ -560,6 +561,7 @@ class CampaignsController extends Controller
 			'formats'          => $formats,
 			'campModel'        => $campModel,
 			'campStatus'       => $campStatus,
+			'environment'      => $environment,
 			'action'           => $action,
 		), false, true);
 	}

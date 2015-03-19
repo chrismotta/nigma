@@ -208,10 +208,26 @@ if($action == "Create"){ ?>
         echo $form->checkboxRow($model, 'ip');
         echo $form->dropDownListRow($model, 'formats_id', $formats, array('prompt' => 'Select a format'));
         echo $form->dropDownListRow($model, 'devices_id', $devices, array('prompt' => 'Select a format'));
+        
         echo '<hr/>';
+        
         echo $form->textFieldRow($model, 'cap', array('prepend'=>'$'));
-        echo $form->radioButtonListRow($model, 'model', $campModel);
+        echo $form->radioButtonListRow($model, 'model', $campModel, array(
+            'onChange' => '
+                if (this.value == "CPM") // if is CPM show environment
+                    $(".environment").show();
+                else
+                    $(".environment").hide();
+                '
+        ));
+
+        $display = $model->model == 'CPM' ? 'display:block;' : 'display:none;';
+        echo '<div style="' . $display . '" class="environment">';
+        echo $form->radioButtonListRow($model, 'environment', $environment);
+        echo '</div>';
+
         echo '<hr/>';
+        
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
         ?>
         <div id='macros'>

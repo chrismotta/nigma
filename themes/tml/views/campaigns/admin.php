@@ -170,6 +170,9 @@ if(!$is_archived){
 		array(
 			'name'              => 'model',
 			'headerHtmlOptions' => array('style' => 'width: 20px'),
+			'value'				=> '$data->model == "CPM" ? 
+									"CPM (" . $data->environment . ")" : 
+									$data->model',
         ),
 		array(
 			'name'              => 'net_currency',
