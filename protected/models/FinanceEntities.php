@@ -65,6 +65,7 @@ class FinanceEntities extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			array('currency, entity', 'length', 'max'=>3),
 			array('description', 'length', 'max'=>255),
+			array('email_adm, email_com, email_validation', 'email'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, description, country_id', 'safe', 'on'=>'search'),
@@ -111,7 +112,7 @@ class FinanceEntities extends CActiveRecord
 			'email_adm' => 'Finance Email',
 			'email_validation' => 'Email Validation',
 			'currency' => 'Currency',
-			'ret' => 'Ret',
+			'ret' => 'WHT',
 			'tax_id' => 'Tax ID',
 			'entity' => 'Entity',
 			'net_payment' => 'Net Payment',
