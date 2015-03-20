@@ -27,22 +27,26 @@ class FinanceEntitiesController extends Controller
 	public function accessRules()
 	{
 		return array(
+			array('allow',
+				'actions'=>array('externalCreate'),
+				'users'=>array('*'),
+			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect'),
 				'roles'=>array('admin'),
 			),
-			// array('allow',  // allow all users to perform 'index' and 'view' actions
-			// 	'actions'=>array('index','view','redirect','admin','archived'),
-			// 	'roles'=>array('businness', 'finance'),
-			// ),
-			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
-			// 	'actions'=>array('create','update'),
-			// 	'users'=>array('@'),
-			// ),
-			// array('allow', // allow admin user to perform 'admin' and 'delete' actions
-			// 	'actions'=>array('admin','delete'),
-			// 	'users'=>array('admin'),
-			// ),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('index','view','redirect','admin','archived'),
+				'roles'=>array('businness', 'finance'),
+			),
+			array('allow', // allow authenticated user to perform 'create' and 'update' actions
+				'actions'=>array('create','update'),
+				'users'=>array('@'),
+			),
+			array('allow', // allow admin user to perform 'admin' and 'delete' actions
+				'actions'=>array('admin','delete'),
+				'users'=>array('admin'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -217,7 +221,6 @@ class FinanceEntitiesController extends Controller
 
 	public function actionExternalCreate()
 	{
-
 		if ( isset($_GET['tmltoken']) ) {
 			$tmltoken = $_GET['tmltoken'];
 		} else {
@@ -243,38 +246,38 @@ class FinanceEntitiesController extends Controller
 			Yii::app()->end();
 		}
 
-		$ios = new Ios;
+		$fe = new FinanceEntities;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($ios);
+		$this->performAjaxValidation($fe);
 
 		if(isset($_POST['Ios'])) {
 			echo "submited";
-			$ios = new Ios;
-			$ios->attributes=$_POST['Ios'];
-			$ios->prospect = NULL; // FIXME completar con prospect correspondiente
-			if( $ios->save() )
+			$fe = new FinanceEntities;
+			$fe->attributes=$_POST['Ios'];
+			$fe->prospect = NULL; // FIXME completar con prospect correspondiente
+			if( $fe->save() )
 				$this->render('externalCreate', array(
 					'action'=> 'submit',
 				));
 			else
-				echo "error saveing" . json_encode($ios->getErrors());
+				echo "error saveing" . json_encode($fe->getErrors());
 			Yii::app()->end();
 		}
 
-		$currency   = KHtml::enumItem($ios, 'currency');
-		$entity     = KHtml::enumItem($ios, 'entity');
+		$currency   = KHtml::enumItem($fe, 'currency');
+		$entity     = KHtml::enumItem($fe, 'entity');
 		$advertiser = Advertisers::model()->findByPk($external->advertisers_id);
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$commercial = Users::model()->findByPk($external->commercial_id);;
 
-		$ios->prospect = 1;	// FIXME completar con prospect correspondiente
-		$ios->commercial_id = $commercial->id;
-		$ios->advertisers_id = $advertiser->id;
+		$fe->prospect = 1;	// FIXME completar con prospect correspondiente
+		$fe->commercial_id = $commercial->id;
+		$fe->advertisers_id = $advertiser->id;
 
 		$this->render('externalCreate', array(
 			'action'     => 'form',
-			'model'      => $ios,
+			'model'      => $fe,
 			'currency'   => $currency,
 			'entity'     => $entity,
 			'commercial' => $commercial,

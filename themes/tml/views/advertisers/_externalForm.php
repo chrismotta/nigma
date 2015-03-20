@@ -15,7 +15,7 @@
 <div class="modal-body">
     <?php
     echo '
-    <p><button type="button" class="btn btn-default btn-sm">copy</button> <strong>External Form URL: </strong>' . $url . '</p>
+    <p><strong>External Form URL: </strong>' . $url . '</p>
     <hr/>
     ';
     ?>
