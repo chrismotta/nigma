@@ -14,7 +14,7 @@ if($is_archived){
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
 	$delete['confirm']    = 'Are you sure you want to archive this campaign?';
-	$breadcrumbs['title'] = 'Manage Campaigns';
+	$breadcrumbs['title'] = 'Campaigns';
 }
 
 $this->breadcrumbs=array(

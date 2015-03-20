@@ -11,11 +11,12 @@ if( isset($isArchived) ) {
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
 	$delete['confirm']    = 'Are you sure you want to archive this finance entitie?';
-	$breadcrumbs['title'] = 'Manage Regions';
+	$breadcrumbs['title'] = 'Regions';
 }
 
 $this->breadcrumbs=array(
-	'Regions'=>array('index'),
+	'Advertisers'=>array('advertisers/admin'),
+	'FinanceEntities'=>array('financeEntities/admin'),
 	$breadcrumbs['title'],
 );
 

@@ -12,12 +12,10 @@ if( isset($isArchived) ) {
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
 	$delete['confirm']    = 'Are you sure you want to archive this advertiser?';
-	$breadcrumbs['title'] = 'Manage Advertisers';
+	$breadcrumbs['title'] = 'Advertisers';
 }
 
-
 $this->breadcrumbs=array(
-	'Advertisers'=>array('index'),
 	$breadcrumbs['title'],
 );
 
