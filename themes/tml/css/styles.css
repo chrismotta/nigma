@@ -1,6 +1,6 @@
 /* Heder / Footer */
 .navbar-inner{
-	background-color: #089699;
+	background-color: #444;
     background-image: none;
     background-repeat: repeat-x;
     border: 1px solid #D4D4D4;
@@ -13,10 +13,10 @@
 }
 .navbar .brand{
 	background-image: url(../img/logo_tml.gif);
-	background-size: auto 52px;
-	width:111px;
-	height:30px;
-	margin:10px 0 10px 4px;
+	background-size: auto 47px;
+	width: 94px;
+	height: 45px;
+	margin: 2px 0 2px 4px;
 	padding: 0px;
 }
 
