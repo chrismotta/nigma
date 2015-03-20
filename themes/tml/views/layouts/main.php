@@ -30,6 +30,7 @@
                     //array('label'=>'IOs', 'url'=>array('/ios/admin')),
                     array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
                     array('label'=>'Regions', 'url'=>array('/regions/admin')),
+                    array('label'=>'Ios', 'url'=>array('/ios/admin')),
                     array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
                     //array('label'=>'Cierre y %', 'url'=>'#'),
                     //array('label'=>'Media Kit', 'url'=>'#'),

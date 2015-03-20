@@ -2,11 +2,28 @@
 /* @var $this IosController */
 /* @var $model Ios */
 
+// Config parameters depending if have to show Archived or Admin view
+if( isset($isArchived) ) {
+	$delete['icon']       = 'refresh';
+	$delete['label']      = 'Restore';
+	$delete['confirm']    = 'Are you sure you want to restore this IO?';
+	$breadcrumbs['title'] = 'Archived Insertion Orders';
+} else {
+	$delete['icon']       = 'trash';
+	$delete['label']      = 'Archive';
+	$delete['confirm']    = 'Are you sure you want to archive this IO?';
+	$breadcrumbs['title'] = 'Manage Insertion Orders';
+}
+
 $this->breadcrumbs=array(
-	'Ioses'=>array('index'),
-	'Manage',
+	'Ios'=>array('index'),
+	$breadcrumbs['title']
 );
 
+$this->menu=array(
+	array('label'=>'List Ios', 'url'=>array('index')),
+	array('label'=>'Create Ios', 'url'=>array('create')),
+);
 
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -22,7 +39,14 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<div class="botonera">
+<?php
+	$entity  = isset($_GET['entity']) ? $_GET['entity'] : NULL;
+	$cat     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
+	$country = isset($_GET['country']) ? $_GET['country'] : NULL;
+?>
+
+<?php if( !isset($isArchived) )  : ?>
+	<div class="botonera">
 	<?php
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
@@ -47,10 +71,32 @@ $('.search-form form').submit(function(){
 		)
 	);
 	?>
-</div>
+	</div>
+<?php endif; ?>
+<br>
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/ios/admin',
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+<fieldset>
+	<?php
+		echo KHtml::filterEntity($entity);
+		echo KHtml::filterAdvertisersCategory($cat);
+		echo KHtml::filterCountries($country);
+	?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+</fieldset>
+<?php $this->endWidget(); ?>
+
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       =>'ios-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($entity, $cat, $country),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
@@ -61,12 +107,38 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
-			'name'=>'date',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'name'=>'advertiser_name',
+			'value'=> '$data->advertisers->name',
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
 		array(
-			'name'=>'status',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'name'=>'name',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+		),
+		// 'status',
+		'commercial_name',
+		array(
+		 	'name'=>'country_name',
+		 	'value'=> '$data->country ? $data->country->name : ""',			
+		),
+		// 'address',
+		// 'state',
+		// 'zip_code',
+		// 'phone',
+		// 'email',
+		'contact_com',
+		'contact_adm',
+		// 'currency',
+		// 'ret',
+		// 'tax_id',
+		//'net_payment',
+		array(
+			'name'=>'com_lastname',
+			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
+		),
+		array(
+			'name'=>'entity',
+			'headerHtmlOptions' => array('style' => "width: 30px"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
@@ -187,10 +259,13 @@ $('.search-form form').submit(function(){
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
 					'options' => array('target' => '_blank'),
-					//'visible' => '$data->prospect == 10 ? true : false',
+					'visible' => '$data->prospect == 10 ? true : false',
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
+			'deleteButtonIcon'   => $delete['icon'],
+			'deleteButtonLabel'  => $delete['label'],
+			'deleteConfirmation' => $delete['confirm'],
+			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
 		),
 	),
 )); ?>

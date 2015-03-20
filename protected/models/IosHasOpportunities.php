@@ -1,26 +1,20 @@
 <?php
 
 /**
- * This is the model class for table "ios".
+ * This is the model class for table "ios_has_opportunities".
  *
- * The followings are the available columns in table 'ios':
- * @property integer $id
- * @property integer $finance_entities_id
- * @property string $date
- * @property string $status
- *
- * The followings are the available model relations:
- * @property FinanceEntities $financeEntities
- * @property Opportunities[] $opportunities
+ * The followings are the available columns in table 'ios_has_opportunities':
+ * @property integer $ios_id
+ * @property integer $opportunities_id
  */
-class Ios extends CActiveRecord
+class IosHasOpportunities extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'ios';
+		return 'ios_has_opportunities';
 	}
 
 	/**
@@ -31,12 +25,11 @@ class Ios extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('finance_entities_id, date', 'required'),
-			array('id, finance_entities_id', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>7),
+			array('ios_id, opportunities_id', 'required'),
+			array('ios_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, finance_entities_id, date, status', 'safe', 'on'=>'search'),
+			array('ios_id, opportunities_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -48,8 +41,6 @@ class Ios extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'financeEntities' => array(self::BELONGS_TO, 'FinanceEntities', 'finance_entities_id'),
-			'opportunities' => array(self::MANY_MANY, 'Opportunities', 'ios_has_opportunities(ios_id, opportunities_id)'),
 		);
 	}
 
@@ -59,10 +50,8 @@ class Ios extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'finance_entities_id' => 'Finance Entities',
-			'date' => 'Date',
-			'status' => 'Status',
+			'ios_id' => 'Ios',
+			'opportunities_id' => 'Opportunities',
 		);
 	}
 
@@ -84,10 +73,8 @@ class Ios extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('finance_entities_id',$this->finance_entities_id);
-		$criteria->compare('date',$this->date,true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('opportunities_id',$this->opportunities_id);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -98,7 +85,7 @@ class Ios extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return Ios the static model class
+	 * @return IosHasOpportunities the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
