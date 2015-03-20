@@ -187,7 +187,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 70px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
@@ -240,11 +240,37 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'duplicateAjax' => array(
+					'label' => 'Duplicate',
+					'icon'  => 'plus-sign',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalOpportunities").html(dataInicial);
+						$("#modalOpportunities").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"duplicate/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalOpportunities").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
+				),
 			),
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {duplicateAjax} {updateAjax} {delete}',
 		),
 	),
 )); ?>

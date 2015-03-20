@@ -28,7 +28,7 @@ class OpportunitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
+				'actions'=>array('index','view','create','update','duplicate','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -112,6 +112,29 @@ class OpportunitiesController extends Controller
 		}
 
 		$this->renderFormAjax($model);
+	}
+
+	public function actionDuplicate($id) 
+	{
+		$old = $this->loadModel($id);
+
+		$new = clone $old;
+		unset($new->id);
+		$new->unsetAttributes(array('id'));
+		$new->isNewRecord = true;
+		
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($new);
+
+		if(isset($_POST['Opportunities']))
+		{
+			$new->attributes       = $_POST['Opportunities'];
+			$new->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
+			if($new->save())
+				$this->redirect(array('admin'));
+		} 
+		
+		$this->renderFormAjax($new, 'Duplicate');
 	}
 
 	/**
@@ -220,9 +243,9 @@ class OpportunitiesController extends Controller
 		}
 	}
 
-	public function renderFormAjax($model)
+	public function renderFormAjax($model, $action=null)
 	{
-		if ( $model->isNewRecord ) {
+		if ( $model->isNewRecord) {
 			// Get only Advertisers and IOs that were created by the current user logged.
 			// comentado provisoriamente, generar permiso de admin
 			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );			
@@ -261,6 +284,7 @@ class OpportunitiesController extends Controller
 			'carrier'    =>$carrier,
 			'model_adv'  =>$model_adv,
 			'channels'   =>$channels,
+			'action'     =>$action,
 		), false, true);
 	}
 

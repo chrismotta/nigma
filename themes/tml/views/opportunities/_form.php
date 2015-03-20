@@ -14,7 +14,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Opportunity <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+    <h4><?php echo $action ?> Opportunity <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
 </div>
 
 
@@ -36,24 +36,26 @@
       echo "<hr>";
 
       if ( $model->isNewRecord ) {
-        echo $form->dropDownListRow($model, 'advertiser_name', $advertiser, 
-            array(
-              'prompt'   => 'Select an advertiser', 
-              'onChange' => '
-                  if ( ! this.value) {
-                    return;
-                  }
-                  $.post(
-                      "getRegions/"+this.value,
-                      "",
-                      function(data)
-                      {
-                          // alert(data);
-                        $(".regions-dropdownlist").html(data);
-                      }
-                  )
-                  '
-            ));
+        if($action != 'Duplicate'){
+          echo $form->dropDownListRow($model, 'advertiser_name', $advertiser, 
+              array(
+                'prompt'   => 'Select an advertiser', 
+                'onChange' => '
+                    if ( ! this.value) {
+                      return;
+                    }
+                    $.post(
+                        "getRegions/"+this.value,
+                        "",
+                        function(data)
+                        {
+                            // alert(data);
+                          $(".regions-dropdownlist").html(data);
+                        }
+                    )
+                    '
+              ));
+         }
          echo $form->dropDownListRow($model, 'regions_id', $regions, 
             array(
               'prompt'   => 'Select an region', 
