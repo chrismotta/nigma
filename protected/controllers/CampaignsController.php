@@ -217,7 +217,7 @@ class CampaignsController extends Controller
 				$this->redirect(array('admin'));
 		} 
 		
-		$this->renderFormAjax($new, 'Update');
+		$this->renderFormAjax($new, 'Duplicate');
 	}
 	public function actionGraphicCampaign()
 	{

@@ -125,7 +125,7 @@ if($action == "Create"){ ?>
 
         <?php 
 
-        if($action == "Create"){
+        if($action == 'Create' || $action == 'Duplicate'){
             echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array(
                 'prompt' => 'Select an opportunitiy',
                 'class'  => 'opportunities-dropdownlist',
