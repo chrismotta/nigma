@@ -170,6 +170,9 @@ if(!$is_archived){
 		array(
 			'name'              => 'model',
 			'headerHtmlOptions' => array('style' => 'width: 20px'),
+			'value'				=> '$data->model == "CPM" ? 
+									"CPM (" . $data->environment . ")" : 
+									$data->model',
         ),
 		array(
 			'name'              => 'net_currency',
@@ -181,6 +184,13 @@ if(!$is_archived){
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
 			'value'             => '$data->cap',
         ),
+        array(
+			//'name'              => 'cp_status',
+			'headerHtmlOptions' => array('style' => 'width: 10px; overflow: hidden;'),
+			'htmlOptions' => array('style' => 'width: 10px; overflow: hidden;'),
+			'value'             => '$data->status',
+        ),
+		// 'status',
 		// array(
 		// 	'name'              => 'status',
 		// 	'value'             => '$data->status', //== 0 ? "Active" : "Paused"',
