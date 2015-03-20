@@ -581,7 +581,7 @@ class CampaignsController extends Controller
 			case 2: // networks
 				$criteria       = new CDbCriteria;
 				$criteria->join = 'INNER JOIN networks n ON n.providers_id = t.id';
-				//$critera->compare('status', 'Active');
+				$criteria->compare('t.status', 'Active');
 				$model = Providers::model()->findAll( $criteria );
 				break;			
 			case 3: // publishers

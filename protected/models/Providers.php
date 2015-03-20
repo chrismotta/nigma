@@ -262,7 +262,10 @@ class Providers extends CActiveRecord
 			case 1:
 				return Affiliates::model()->with('providers')->findAll();
 			case 2:
-				return Networks::model()->with('providers')->findAll();
+				//return Networks::model()->with('providers')->findAll();
+				return Networks::model()->with(
+					array('providers'=>array('condition'=>'status = "Active"')))
+					->findAll();
 			case 3:
 				return Publishers::model()->with('providers')->findAll();
 		}
