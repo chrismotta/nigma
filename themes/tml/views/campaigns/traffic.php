@@ -10,9 +10,10 @@ $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
 $providers       = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 $totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
 
-if($accountManager==null && $opportunitie==null && $providers==null)
-	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
-else 
+// El caso esta comentado porque daba valores 0 - Revisar más adelante
+// if($accountManager==null && $opportunitie==null && $providers==null)
+// 	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
+// else 
 	$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$providers);
 
 // print_r($totals);
@@ -164,22 +165,22 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
 			'filter'			=> '',
-			'footerHtmlOptions'	=>array('style'=>'text-align:right;'),
+			'footerHtmlOptions'	=> array('style'=>'text-align:right;'),
 			'footer'			=> array_sum($totals["clics_redirect"]),
         ),
         array(
 			'name'              => 'conv',
 			'value'             => '$data->conv',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions' =>array('style'=>'text-align:right;'),
+			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'filter'            => '',
-			'footer'			=>array_sum($totals["conversions_s2s"]),
+			'footer'			=> array_sum($totals["conversions_s2s"]),
         ),
         array(
 			'name'              => 'rate',
 			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
+			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
 			'filter'            => '',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
         ),
@@ -188,7 +189,7 @@ Yii::app()->clientScript->registerScript('search', "
 			'value'             => '($data->conv * $data->getRateUSD("'.$dateEnd.'"))',
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'filter'            => '',
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
+			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
         ),
         array(
 			'name'              => 'spend',
