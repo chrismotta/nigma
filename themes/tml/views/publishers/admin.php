@@ -89,9 +89,11 @@ $('.search-form form').submit(function(){
 		array(
 			'name' => 'providers_id',
 		),
-		/*array(
-			'name' => 'name',
+		array(
+			'name' => 'providers_name',
+			'value' => '$data->providers->name',
 		),
+		/*
 		array( 
 			'name' => 'commercial_name',
 		),
