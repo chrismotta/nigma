@@ -13,12 +13,11 @@ class AjillionPublisher
 			$date = date('Y-m-d', strtotime('yesterday'));
 		}
 
-
 		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
-			return 2;
-		}
+		// if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
+		// 	Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
+		// 	return 2;
+		// }
 
 		$date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 		
@@ -33,25 +32,33 @@ class AjillionPublisher
 		foreach ($publishers as $pub) {
 			$pub_ids[] = $pub->id;
 		}
-echo json_encode($pub_ids) . "<hr>";
 		// get all campaigns from all advertisers
 		$params = array(
 				"columns"=>array("publisher", "placement"),
-				"sums"=>array("impressions", "hits", "revenue", "ecpm", "profit"),
+				"sums"=>array("impressions", "hits", "conversions", "profit", "ecpm", "ctr", "revenue"),
 				"placement_ids"=>array(),
 				"publisher_ids"=>$pub_ids,
 				"start_date"=>$date,
 				"end_date"=>$date,
 			);
+		echo json_encode($params);
+		echo "<hr>";
+		var_dump($params);
+		echo "<hr>";
 
 		$campaigns = $this->getResponse("report.publisher.get", $params);
 
-		if ( !$campaigns ) {
-			Yii::log("Can't get campaigns", 'error', 'system.model.api.ajillion');
-			return 1;
-		}
-echo json_encode($campaigns);
-return NULL;
+		echo json_encode($campaigns);
+		echo "<hr>";
+		Yii::app()->end("test 6");
+		
+		// if ( !$campaigns ) {
+		// 	Yii::log("Can't get campaigns", 'error', 'system.model.api.ajillion');
+		// 	return 1;
+		// }
+
+		// return NULL;
+
 		// foreach ($campaigns as $campaign) {
 
 		// 	if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
