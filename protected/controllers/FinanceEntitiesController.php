@@ -28,7 +28,7 @@ class FinanceEntitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect'),
+				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','getOpportunities'),
 				'roles'=>array('admin'),
 			),
 			// array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -408,6 +408,30 @@ class FinanceEntitiesController extends Controller
 			'advertiser' =>$advertiser,
 			'country'    =>$country,
 		), false, true);
+	}
+
+	public function actionGetOpportunities($id)
+	{
+		$format = isset($_GET['format']) ? $_GET['format'] : 'select';
+		$data=array();
+		$opportunities=array();
+		$criteria=new CDbCriteria;
+		$criteria->with=array('regions','regions.financeEntities');
+		$criteria->compare('financeEntities.id',$id);
+		$criteria->compare('t.status','Active');
+		$response='';
+		//$response='<option value="">All Carriers</option>';
+		$i=0;		
+		foreach (Opportunities::model()->findAll($criteria) as $opp) {
+			if($format=='select')
+				$response .= '<option value="' . $opp->id . '">' . $opp->getVirtualName() . '</option>';
+			elseif($format=='check')
+				$response.='<input value="'.$opp->id.'" id="opp_ids_'.$i.'" checked="checked" name="opp_ids[]" type="checkbox"> 
+							<label for="opp_ids_'.$i.'">'.$opp->getVirtualName().'</label><br>';
+			$i++;
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 
 }

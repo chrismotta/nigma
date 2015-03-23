@@ -752,5 +752,4 @@ class FinanceEntities extends CActiveRecord
 		return $consolidated;
 	}	
 
-
 }

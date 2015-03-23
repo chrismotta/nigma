@@ -91,4 +91,12 @@ class IosHasOpportunities extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function checkRelation($ios_id,$opportunities_id)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->compare('ios_id',$ios_id);
+		$criteria->compare('opportunities_id',$opportunities_id);
+		return $this->find($criteria) ? true : false;
+	}
 }

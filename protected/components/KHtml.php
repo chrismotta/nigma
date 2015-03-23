@@ -26,7 +26,8 @@ class KHtml extends CHtml
     public static function datePicker($name, $initialDate, $options = array(), $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
-            'style' => 'width: 80px',
+            //'style' => 'width: 80px',
+            'class'=>'span3'
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
@@ -711,6 +712,38 @@ class KHtml extends CHtml
         }
         if(isset($message))
             echo '<div class="alert alert-now">'.$message.'</div>';
+    }
+
+    /**
+     * Create dropdown of Account Managers
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function filterFinanceEntities($value, $htmlOptions = array(),$format='check',$name='financeEntities')
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All finance entities',
+            'onChange' => '
+                // if ( ! this.value) {
+                //   return;
+                // }
+                $.post(
+                    "' . Yii::app()->getBaseUrl() . '/financeEntities/getOpportunities/"+this.value+"?format=check",
+                    "",
+                    function(data)
+                    {
+                        // alert(data);
+                        $("#opp_ids").html(data);
+                    }
+                )'
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        $criteria=new CDbCriteria;
+        $criteria->compare('status','Active');
+        $financeentities = FinanceEntities::model()->findAll($criteria);
+        $list   = CHtml::listData($financeentities, 'id', 'name');
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 }
 ?>

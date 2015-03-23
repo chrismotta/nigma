@@ -63,7 +63,20 @@ class IosController extends Controller
 		{
 			$model->attributes=$_POST['Ios'];
 			if($model->save())
-				$this->redirect(array('admin'));
+			{
+				if(isset($_POST['opp_ids']))
+				{
+					foreach ($_POST['opp_ids'] as $value) {
+						if(IosHasOpportunities::model()->checkRelation($model->id,$value))
+							continue;
+						$modelHasIos = new IosHasOpportunities;
+						$modelHasIos->ios_id=$model->id;
+						$modelHasIos->opportunities_id=$value;
+						$modelHasIos->save();
+					}
+				}
+				$this->redirect(array('admin'));					
+			}
 		}
 
 		$this->renderFormAjax($model);
