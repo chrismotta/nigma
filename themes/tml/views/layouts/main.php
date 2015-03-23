@@ -43,16 +43,16 @@
                     array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                     array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Publishers', 'url'=>array('/publishers/admin')),
-                    array('label'=>'Placements', 'url'=>array('/placements/admin')),
-                    array('label'=>'Reporting', 'url'=>array('/dailyPublishers/admin')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'Providers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
+                    array('label'=>'Publishers', 'url'=>array('/publishers/admin')),
                     array('label'=>'Affiliates', 'url'=>array('/affiliates/admin')),
                     array('label'=>'Networks', 'url'=>array('/networks/admin')),
+                ), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Placements', 'url'=>array('/placements/admin')),
+                    array('label'=>'Reporting', 'url'=>array('/dailyPublishers/admin')),
                 ), 'visible'=>!Yii::app()->user->isGuest),
                 array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(

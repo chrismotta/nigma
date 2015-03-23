@@ -66,6 +66,10 @@ class PublishersController extends Controller
 
 		if(isset($_POST['Publishers']) && isset($_POST['Providers']))
 		{
+			
+			// print_r($_POST['Publishers']);
+			// echo "<hr/>";
+			// print_r($_POST['Providers']);
 			$modelProv->attributes=$_POST['Providers'];
 			if ($modelProv->save()) {
 				$modelPubl->attributes=$_POST['Publishers'];
@@ -200,7 +204,7 @@ class PublishersController extends Controller
 	{
 		$this->renderPartial('_form', array(
 			'modelProvs' =>$modelProv,
-			'modelPub' =>$modelPubl,
+			'modelPubl' =>$modelPubl,
 		), false, true);
 	}
 }

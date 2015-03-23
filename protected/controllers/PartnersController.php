@@ -68,6 +68,37 @@ class PartnersController extends Controller
 		// }	
 	}
 
+	public function actionPublishers()
+	{
+		// if(Yii::app()->user->id)
+		// {
+			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
+			
+			$dateStart = date('Y-m-d', strtotime($dateStart));
+			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
+			
+			$model     = new Publishers;
+			$provider  = Publishers::model()->findByUser(Yii::app()->user->id)->providers_id;
+			
+			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
+
+			$this->render('publishers',array(
+				'model'     =>$model,
+				'provider'  =>$provider,
+				'dateStart' =>$dateStart,
+				'dateEnd'   =>$dateEnd,
+				'sum'       =>$sum,
+				'data'      =>$data
+			));
+		// }
+		// else
+		// {			
+		// 	$this->redirect(Yii::app()->baseUrl);
+		// }	
+	}
+
 	public function actionAdvertisers()
 	{
 		$year  = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
@@ -75,7 +106,7 @@ class PartnersController extends Controller
 		
 		$advertiser = Advertisers::model()->findByUser(Yii::app()->user->id);
 		
-		$data = Ios::model()->getClients(
+		$data = FinanceEntities::model()->getClients(
 			$month, // month
 			$year, // year
 			null, // entity

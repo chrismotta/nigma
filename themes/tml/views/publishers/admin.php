@@ -73,7 +73,7 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  => array(
 		// 'state',

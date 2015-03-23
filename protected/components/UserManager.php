@@ -55,8 +55,11 @@ class UserManager
     	if ($this->isUserAssignToRole('affiliate'))
 			Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/affiliates');
 
-		if ($this->isUserAssignToRole('advertiser'))
-			Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/advertisers');
+        if ($this->isUserAssignToRole('advertiser'))
+            Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/advertisers');
+		
+        if ($this->isUserAssignToRole('publishers'))
+			Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/publishers');
     }
 
 }
