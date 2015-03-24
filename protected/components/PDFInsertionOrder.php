@@ -11,7 +11,7 @@ class PDFInsertionOrder extends PDF
     protected function initHeader()
     {
         $pdf = $this->getPdf();
-        $pdf->setHeaderData( Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/pdf-header.png', 190, '', '', array(), array(255, 255, 255));
+        $pdf->setHeaderData( Yii::getPathOfAlias('webroot') . '/themes/tml/img/logo_tml.gif', 50, '', '', array(), array(255, 255, 255));
     }
 
 
