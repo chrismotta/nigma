@@ -99,4 +99,11 @@ class IosHasOpportunities extends CActiveRecord
 		$criteria->compare('opportunities_id',$opportunities_id);
 		return $this->find($criteria) ? true : false;
 	}
+
+	public function getOpportunities($id)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->compare('ios_id',$id);
+		return $this->findAll($criteria);
+	}
 }

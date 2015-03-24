@@ -97,58 +97,6 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
-				'updateAjax' => array(
-					'label' => 'Update',
-					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-				    	
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalIos").html(dataInicial);
-						$("#modalIos").modal("toggle");
-
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalIos").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-				'duplicateAjax' => array(
-					'label' => 'Duplicate',
-					'icon'  => 'plus-sign',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalIos").html(dataInicial);
-						$("#modalIos").modal("toggle");
-
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"duplicate/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalIos").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
 				'generatePdf' => array(
 					'label'   => 'Generate PDF',
 					'icon'    => 'download',
@@ -190,7 +138,7 @@ $('.search-form form').submit(function(){
 					//'visible' => '$data->prospect == 10 ? true : false',
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
+			'template' => '{viewAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
 		),
 	),
 )); ?>

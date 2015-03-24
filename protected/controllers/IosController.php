@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect'),
+				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','generatePdf'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -178,5 +178,31 @@ class IosController extends Controller
 		$this->renderPartial('_form',array(
 			'model'      =>$model,
 		), false, true);
+	}
+
+
+	public function actionGeneratePdf($id) 
+	{
+		$model = $this->loadModel($id);
+	//	if (isset($_POST['submit'])) {
+			//print($model);
+			//return;
+			$opportunities=array();
+			foreach (IosHasOpportunities::model()->getOpportunities($id) as $value) {
+				$opportunities[]=$value->opportunities_id;
+			}
+			$pdf = PDFInsertionOrder::doc();
+	        $pdf->setData( array(
+				'advertiser'    => Advertisers::model()->findByPk($model->financeEntities->advertisers_id),
+				'io'            => $model,
+				'opportunities' => $opportunities,
+	        ));
+	        $pdf->output();
+	        Yii::app()->end();
+//	    }
+
+	  /*  $this->renderPartial('_generatePDF', array(
+	    	'model' => $model,
+	    ), false, true);*/
 	}
 }
