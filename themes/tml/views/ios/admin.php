@@ -2,28 +2,11 @@
 /* @var $this IosController */
 /* @var $model Ios */
 
-// Config parameters depending if have to show Archived or Admin view
-if( isset($isArchived) ) {
-	$delete['icon']       = 'refresh';
-	$delete['label']      = 'Restore';
-	$delete['confirm']    = 'Are you sure you want to restore this IO?';
-	$breadcrumbs['title'] = 'Archived Insertion Orders';
-} else {
-	$delete['icon']       = 'trash';
-	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this IO?';
-	$breadcrumbs['title'] = 'Manage Insertion Orders';
-}
-
 $this->breadcrumbs=array(
-	'Ios'=>array('index'),
-	$breadcrumbs['title']
+	'Ioses'=>array('index'),
+	'Manage',
 );
 
-$this->menu=array(
-	array('label'=>'List Ios', 'url'=>array('index')),
-	array('label'=>'Create Ios', 'url'=>array('create')),
-);
 
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
@@ -39,14 +22,7 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<?php
-	$entity  = isset($_GET['entity']) ? $_GET['entity'] : NULL;
-	$cat     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
-	$country = isset($_GET['country']) ? $_GET['country'] : NULL;
-?>
-
-<?php if( !isset($isArchived) )  : ?>
-	<div class="botonera">
+<div class="botonera">
 	<?php
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
@@ -71,32 +47,10 @@ $('.search-form form').submit(function(){
 		)
 	);
 	?>
-	</div>
-<?php endif; ?>
-<br>
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/ios/admin',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
-    )); ?> 
-<fieldset>
-	<?php
-		echo KHtml::filterEntity($entity);
-		echo KHtml::filterAdvertisersCategory($cat);
-		echo KHtml::filterCountries($country);
-	?>
-	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
-</fieldset>
-<?php $this->endWidget(); ?>
-
+</div>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       =>'ios-grid',
-	'dataProvider'             => $model->search($entity, $cat, $country),
+	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
@@ -107,38 +61,12 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
-			'name'=>'advertiser_name',
-			'value'=> '$data->advertisers->name',
-			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'name'=>'date',
+			'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
-			'name'=>'name',
-			'headerHtmlOptions' => array('style' => "width: 100px"),
-		),
-		// 'status',
-		'commercial_name',
-		array(
-		 	'name'=>'country_name',
-		 	'value'=> '$data->country ? $data->country->name : ""',			
-		),
-		// 'address',
-		// 'state',
-		// 'zip_code',
-		// 'phone',
-		// 'email',
-		'contact_com',
-		'contact_adm',
-		// 'currency',
-		// 'ret',
-		// 'tax_id',
-		//'net_payment',
-		array(
-			'name'=>'com_lastname',
-			'value'=> '$data->commercial ? $data->commercial->lastname . " " . $data->commercial->name : ""',
-		),
-		array(
-			'name'=>'entity',
-			'headerHtmlOptions' => array('style' => "width: 30px"),
+			'name'=>'status',
+			'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
@@ -158,58 +86,6 @@ $('.search-form form').submit(function(){
 
 				    	$.post(
 						"view/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalIos").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-				'updateAjax' => array(
-					'label' => 'Update',
-					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-				    	
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalIos").html(dataInicial);
-						$("#modalIos").modal("toggle");
-
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalIos").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-				'duplicateAjax' => array(
-					'label' => 'Duplicate',
-					'icon'  => 'plus-sign',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalIos").html(dataInicial);
-						$("#modalIos").modal("toggle");
-
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"duplicate/"+id,
 						"",
 						function(data)
 							{
@@ -259,13 +135,10 @@ $('.search-form form').submit(function(){
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->prospect == 10 ? true : false',
+					//'visible' => '$data->prospect == 10 ? true : false',
 				)
 			),
-			'deleteButtonIcon'   => $delete['icon'],
-			'deleteButtonLabel'  => $delete['label'],
-			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
+			'template' => '{viewAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
 		),
 	),
 )); ?>

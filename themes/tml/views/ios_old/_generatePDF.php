@@ -17,7 +17,7 @@
 		'data'=>$model,
 		'attributes'=>array(
 			'id',
-			//'name',
+			'name',
 			// array(
 			// 	'label' =>$model->getAttributeLabel('country_name'),
 			// 	'name'  =>'country.name'
@@ -28,12 +28,35 @@
 			// 'phone',
 			// 'email',
 			// 'contact_adm',
-			//'currency',
-			//'ret',
+			'currency',
+			'ret',
 			// 'tax_id',
 			// 'net_payment',
 		),
 	)); ?>
+
+	<h5>Opportunities</h5>
+	<?php foreach($opportunities as $opp) {
+		echo '<h5>Opportunity #' . $opp->id . '</h5>';
+		$this->widget('bootstrap.widgets.TbDetailView', array(
+		    'type'=>'striped bordered condensed',
+			'data'=>$opp,
+			'attributes'=>array(
+				'id',
+				'rate',
+				'model_adv',
+				'product',
+				array(
+					'label' =>$opp->getAttributeLabel('wifi'),
+					'value' =>$opp->wifi ? "Habilitado" : "Inhabilitado",
+				),
+				'budget',
+				'startDate',
+				'endDate',
+			),
+		));
+	}; ?>
+
 
 	<div class="form-actions">
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Generate PDF')); ?>

@@ -1,21 +1,19 @@
 <?php
 
 /**
- * This is the model class for table "finance_entities".
+ * This is the model class for table "ios".
  *
- * The followings are the available columns in table 'finance_entities':
+ * The followings are the available columns in table 'ios':
  * @property integer $id
- * @property integer $advertisers_id
- * @property integer $commercial_id
  * @property string $name
  * @property string $commercial_name
  * @property integer $prospect
- * @property string $status
  * @property string $address
+ * @property integer $country_id
  * @property string $state
  * @property string $zip_code
  * @property string $phone
- * @property string $contact_com
+ * @property string $email$contact_com
  * @property string $email_com
  * @property string $contact_adm
  * @property string $email_adm
@@ -23,32 +21,41 @@
  * @property string $currency
  * @property string $ret
  * @property string $tax_id
+ * @property integer $commercial_id
  * @property string $entity
  * @property string $net_payment
+ * @property integer $advertisers_id
  * @property string $pdf_name
+ * @property integer $status
  * @property string $description
- * @property integer $country_id
  *
  * The followings are the available model relations:
- * @property Advertisers $advertisers
  * @property GeoLocation $country
+ * @property Advertisers $advertisers
  * @property Users $commercial
- * @property IosValidation[] $iosValidations
- * @property Regions[] $regions
- * @property TransactionCount[] $transactionCounts
+ * @property Opportunities[] $opportunities
  */
-class FinanceEntities extends CActiveRecord
+class Ios extends CActiveRecord
 {
+
 	public $country_name;
 	public $com_name;
 	public $com_lastname;
 	public $advertiser_name;
+	public $rate;
+	public $conv;
+	public $revenue;
+	public $model;
+	public $buttons;
+	public $name;
+	public $email_validation;
+
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return 'finance_entities';
+		return 'ios';
 	}
 
 	/**
@@ -59,16 +66,17 @@ class FinanceEntities extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('advertisers_id, name, commercial_name, status, address, state, zip_code, currency, tax_id, entity, net_payment', 'required'),
-			array('advertisers_id, commercial_id, prospect, country_id', 'numerical', 'integerOnly'=>true),
-			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, ret, tax_id, net_payment, pdf_name', 'length', 'max'=>128),
+			array('name, commercial_name, address, country_id, state, zip_code, currency, tax_id, contact_com, email_com, contact_adm, email_adm, commercial_id, entity, net_payment, advertisers_id', 'required'),
+			array('prospect, country_id, commercial_id, advertisers_id', 'numerical', 'integerOnly'=>true),
+			array('email_com, email_adm, email_validation','email'),
+			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, pdf_name, ret, tax_id, pdf_name, net_payment', 'length', 'max'=>128),
+			array('currency', 'length', 'max'=>6),
+			array('entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
-			array('currency, entity', 'length', 'max'=>3),
 			array('description', 'length', 'max'=>255),
-			array('email_adm, email_com, email_validation', 'email'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, description, country_id', 'safe', 'on'=>'search'),
+			array('id, country_name, com_lastname, com_name, advertiser_name, name, address, status, country_id, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, currency, ret, tax_id, commercial_id, entity, net_payment, advertisers_id, pdf_name, description, prospect', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -80,12 +88,11 @@ class FinanceEntities extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'advertisers' => array(self::BELONGS_TO, 'Advertisers', 'advertisers_id'),
-			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
-			'commercial' => array(self::BELONGS_TO, 'Users', 'commercial_id'),
-			'iosValidations' => array(self::HAS_MANY, 'IosValidation', 'finance_entities_id'),
-			'regions' => array(self::HAS_MANY, 'Regions', 'finance_entities_id'),
-			'transactionCounts' => array(self::HAS_MANY, 'TransactionCount', 'finance_entities_id'),
+			'country'       => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'advertisers'   => array(self::BELONGS_TO, 'Advertisers', 'advertisers_id'),
+			'commercial'    => array(self::BELONGS_TO, 'Users', 'commercial_id'),
+			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'ios_id'),
+			'iosValidation' => array(self::HAS_MANY, 'IosValidation', 'ios_id'),
 		);
 	}
 
@@ -95,30 +102,40 @@ class FinanceEntities extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'advertisers_id' => 'Advertisers',
-			'commercial_id' => 'Commercial',
-			'name' => 'Fantasy Name',
-			'commercial_name' => 'Legal Name',
-			'prospect' => 'Prospect',
-			'status' => 'Status',
-			'address' => 'Address',
-			'state' => 'State',
-			'zip_code' => 'Zip Code',
-			'phone' => 'Phone',
-			'contact_com' => 'Commercial Contact',
-			'email_com' => 'Commercial Email',
-			'contact_adm' => 'Finance Contact',
-			'email_adm' => 'Finance Email',
+			'id'               => 'ID',
+			'name'             => 'Name',
+			'commercial_name'  => 'Legal Name',
+			'address'          => 'Address',
+			'prospect'         => 'Prospect',
+			'country_id'       => 'Country',
+			'state'            => 'State',
+			'zip_code'         => 'Zip Code',
+			'phone'            => 'Phone',
+			'contact_com'      => 'Com Contact Name',
+			'email_com'        => 'Com Contact Email',
+			'contact_adm'      => 'Adm Contact Name',
+			'email_adm'        => 'Adm Contact Email',
+			'currency'         => 'Currency',
+			'ret'              => 'Retentions',
+			'tax_id'           => 'Tax ID',
+			'commercial_id'    => 'Commercial',
+			'entity'           => 'Entity',
+			'net_payment'      => 'Net Payment',
+			'advertisers_id'   => 'Advertisers',
+			'pdf_name'         => 'Pdf Name',
+			// Custom attributes
+			'country_name'     => 'Country',
+			'com_name'         => 'Commercial',
+			'com_lastname'     => 'Commercial',
+			'advertiser_name'  => 'Advertiser',
+			'rate'             => 'Rate',
+			'conv'             => 'Conv.',
+			'revenue'          => 'Revenue',
+			'model'            => 'Model',
+			'name'             => 'Name',
+			'status'           => 'Status',
+			'description'      => 'Description',
 			'email_validation' => 'Email Validation',
-			'currency' => 'Currency',
-			'ret' => 'WHT',
-			'tax_id' => 'Tax ID',
-			'entity' => 'Entity',
-			'net_payment' => 'Net Payment',
-			'pdf_name' => 'Pdf Name',
-			'description' => 'Description',
-			'country_id' => 'Country',
 		);
 	}
 
@@ -134,20 +151,18 @@ class FinanceEntities extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($entity=NULL, $cat=NULL, $country_id=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('advertisers_id',$this->advertisers_id);
-		$criteria->compare('commercial_id',$this->commercial_id);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('commercial_name',$this->commercial_name,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('prospect',$this->prospect);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('t.commercial_name',$this->commercial_name,true);
 		$criteria->compare('address',$this->address,true);
+		$criteria->compare('country_id',$country_id);
 		$criteria->compare('state',$this->state,true);
 		$criteria->compare('zip_code',$this->zip_code,true);
 		$criteria->compare('phone',$this->phone,true);
@@ -155,22 +170,27 @@ class FinanceEntities extends CActiveRecord
 		$criteria->compare('email_com',$this->email_com,true);
 		$criteria->compare('contact_adm',$this->contact_adm,true);
 		$criteria->compare('email_adm',$this->email_adm,true);
-		$criteria->compare('email_validation',$this->email_validation,true);
 		$criteria->compare('currency',$this->currency,true);
 		$criteria->compare('ret',$this->ret,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
-		$criteria->compare('entity',$this->entity,true);
+		$criteria->compare('commercial_id',$this->commercial_id);
+		$criteria->compare('entity',$entity);
 		$criteria->compare('net_payment',$this->net_payment,true);
+		$criteria->compare('advertisers_id',$this->advertisers_id);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
-		$criteria->compare('description',$this->description,true);
-		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('t.status',$this->status,true);
+		$criteria->compare('t.description',$this->description,true);
+		$criteria->compare('t.email_validation',$this->email_validation,true);
 
-		$criteria->with=array('advertisers','country','commercial');
+		$criteria->with = array( 'advertisers', 'commercial', 'country');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
-		//$criteria->compare('advertisers.cat', $cat);
+		$criteria->compare('advertisers.cat', $cat);
 		$criteria->compare('commercial.name', $this->com_name, true);
 		$criteria->compare('commercial.lastname', $this->com_lastname, true);
 		$criteria->compare('country.name', $this->country_name, true);
+
+		FilterManager::model()->addUserFilter($criteria, 'ios');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			'pagination' => array(
@@ -206,13 +226,12 @@ class FinanceEntities extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return FinanceEntities the static model class
+	 * @return Ios the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
 	}
-
 
 	/**
 	 * [getClientsMulti description]
@@ -376,9 +395,9 @@ class FinanceEntities extends CActiveRecord
 		// Obtiene un array asociativo (con id incremental) que corresponde a un CModel 
 		// custom proveniente de la query de makeClientsQuery y modificado dentro de la
 		// logica de getClientsMulti
-		$dailysNoMulti   =FinanceEntities::model()->getClientsMulti($filters);
+		$dailysNoMulti   =Ios::model()->getClientsMulti($filters);
 		$filters['multi']=false;
-		$dailysMulti     =FinanceEntities::model()->getClientsMulti($filters);
+		$dailysMulti     =Ios::model()->getClientsMulti($filters);
 		$dailys          =array_merge($dailysNoMulti,$dailysMulti);
 
 		if($group=='profile')
@@ -464,10 +483,10 @@ class FinanceEntities extends CActiveRecord
 		// Define columns being selected
 		//
 		$criteria->select = array( // common columns for all opportunities
-			'finance_entities.id AS io_id',
-			'finance_entities.entity AS entity',
-			'finance_entities.currency AS currency',
-			'finance_entities.commercial_name AS commercial_name',
+			'ios.id AS io_id',
+			'ios.entity AS entity',
+			'ios.currency AS currency',
+			'ios.commercial_name AS commercial_name',
 			'country.name AS country',
 			'opportunities.id AS opp_id',
 			'opportunities.model_adv AS model',
@@ -521,8 +540,8 @@ class FinanceEntities extends CActiveRecord
 		$criteria->join = '
 				INNER JOIN campaigns ON campaigns.id=t.campaigns_id
 				INNER JOIN opportunities ON opportunities.id=campaigns.opportunities_id
-				INNER JOIN finance_entities ON finance_entities.id=opportunities.ios_id
-				INNER JOIN advertisers ON advertisers.id=finance_entities.advertisers_id
+				INNER JOIN ios ON ios.id=opportunities.ios_id
+				INNER JOIN advertisers ON advertisers.id=ios.advertisers_id
 				';
 
 		if ($isMulti) { // add relation for multi opportunities
@@ -543,8 +562,8 @@ class FinanceEntities extends CActiveRecord
 		// Define conditions
 		//
 		// FIXME hacer validacion de ternaria en scope superior
-		$criteria->compare('finance_entities.entity', $entity ? $entity : NULL);
-		$criteria->compare('finance_entities.id', $io ? $io : NULL);
+		$criteria->compare('ios.entity', $entity ? $entity : NULL);
+		$criteria->compare('ios.id', $io ? $io : NULL);
 		$criteria->compare('opportunities.account_manager_id', $accountManager ? $accountManager : NULL);
 		$criteria->compare('opportunities.id', $opportunitie_id ? $opportunitie_id : NULL);
 		$criteria->compare('advertisers.cat', $cat ? $cat : NULL);
@@ -575,7 +594,7 @@ class FinanceEntities extends CActiveRecord
 		//
 		// Define how to group results
 		//
-		$criteria->group = 'finance_entities.id, opportunities.id';
+		$criteria->group = 'ios.id, opportunities.id';
 		if($isMulti) {
 			$criteria->group .= ', multiRates.carriers_id_carrier, multiRates.rate';
 		} else {
@@ -699,7 +718,7 @@ class FinanceEntities extends CActiveRecord
 			
 			$totalCount[$daily['id']]=$transactions->getTotalTransactions($daily['id'],$year.'-'.$month.'-01');			
 			foreach ($totalCount as $key => $value) {
-				$currency=FinanceEntities::model()->findByPk($key)->currency;
+				$currency=Ios::model()->findByPk($key)->currency;
 				isset($totalCountCurrency[$currency]) ? : $totalCountCurrency[$currency]=0;
 				$totalCountCurrency[$currency]+=$value;
 
@@ -753,4 +772,5 @@ class FinanceEntities extends CActiveRecord
 		return $consolidated;
 	}	
 
+	
 }

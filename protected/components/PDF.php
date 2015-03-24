@@ -23,8 +23,8 @@ class PDF extends EPdfFactoryDoc
      */
     protected function printTitle($pdf, $title)
     {
-    	$pdf->SetFillColor(155, 187, 89);
-        $pdf->SetTextColor(255);
+    	$pdf->SetFillColor(255, 255, 255);
+        $pdf->SetTextColor(0);
         $pdf->Cell(0, 7, strtoupper($title), 0, 1, 'L', true);
     }
     
@@ -33,20 +33,20 @@ class PDF extends EPdfFactoryDoc
      * @param  $pdf  TCPDF object
      * @param  $info Associative array with values
      */
-    protected function printTable($pdf, $info)
+    protected function printTable($pdf, $info,$size=array(60,7))
     {
         $even = true;
 
 		foreach ($info as $key => $value) {
-			$pdf->SetFillColor(155, 187, 89);
+			$pdf->SetFillColor(8, 150, 153);
         	$pdf->SetTextColor(255);
             // $pdf->Cell(60, 7, strtoupper($key), 1, 0, 'L', true);
-        	$pdf->MultiCell(60, 7, strtoupper($key), 1, 'L', true, 0);
+        	$pdf->MultiCell($size[0], $size[1], strtoupper($key), 1, 'L', true, 0);
 
         	if ($even) {
-        		$pdf->SetFillColor(205, 221, 172);
+        		$pdf->SetFillColor(240, 240, 240);
         	} else {
-        		$pdf->SetFillColor(230, 238, 213);
+        		$pdf->SetFillColor(220, 220, 220);
         	}
         	$even = ! $even;
 
@@ -58,12 +58,38 @@ class PDF extends EPdfFactoryDoc
     }
 
     /**
+     * Print company information to pdf
+     * @param  $pdf TCPDF object
+     */
+    protected function printSpace($pdf,$space)
+    {
+
+        $pdf->SetFillColor(255, 255, 255);
+        $pdf->SetTextColor(255);
+        $pdf->Cell($space, 7, ' ', 0, 0, 'L', true);
+    }
+     /**
+     * Print company information to pdf
+     * @param  $pdf TCPDF object
+     */
+    protected function printInfo($pdf,$title,$table)
+    {
+
+        $pdf->SetFillColor(255, 255, 255);
+        $pdf->SetTextColor(0);
+        $pdf->Cell(80, 7, $title, 0, 1, 'L', true);
+        $table=$table;
+        $this->printTable($pdf,$table,array(40,7));
+    }
+
+    /**
      * Print Terms and Condictions to pdf
      * @param  $pdf TCPDF object
      */
 	protected function printTerms($pdf)
 	{
 		$pdf->SetTextColor(0);
+        $pdf->SetFont('helveticaB','',5);
 		$pdf->Write(0, $this->terms, 0, false, 'J', true);
 	}
 
@@ -71,7 +97,7 @@ class PDF extends EPdfFactoryDoc
      * Print signature section to pdf
      * @param  $pdf TCPDF object
      */
-    protected function printSignature($pdf,$name,$company='KICKADS S.R.L')
+    protected function printSignature($pdf,$name,$company='TML Media')
     {
         $pdf->SetTextColor(0);  
         $pdf->Cell(50, 10, '', 0, 0, 'L', false);
@@ -82,7 +108,7 @@ class PDF extends EPdfFactoryDoc
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 10, '_________________________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Image(Yii::getPathOfAlias('webroot') . '/themes/bootstrap/img/firma.png',$pdf->getX()+5,$pdf->getY()-20,'40%','40%');
+        $pdf->Image(Yii::getPathOfAlias('webroot') . '/themes/tml/img/firma.png',$pdf->getX()+5,$pdf->getY()-20,'40%','40%');
         $pdf->Cell(100, 10, '_________________________________', 0, 0, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
@@ -93,12 +119,12 @@ class PDF extends EPdfFactoryDoc
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 4, 'By:___________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Cell(100, 4, 'By: Pedro Forwe', 0, 1, 'L', false);
+        $pdf->Cell(100, 4, 'By: ', 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 4, 'Title:___________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Cell(100, 4, 'Title: Mobile Media Director', 0, 1, 'L', false);
+        $pdf->Cell(100, 4, 'Title:', 0, 1, 'L', false);
     }
 
     /**

@@ -178,7 +178,7 @@ $this->breadcrumbs=array(
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/providers/viewPdf/" . $data->providers_id',
 					'options' => array('target' => '_blank'),
-					'visible' => '$data->providers->prospect == 10 ? true : false',
+					//'visible' => '$data->providers->prospect == 10 ? true : false',
 				)
 			),
 			'template' => '{viewAjax} {updateAjax} {exportPdf} {uploadPdf} {viewPdf}',

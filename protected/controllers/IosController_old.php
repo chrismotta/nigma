@@ -1,6 +1,6 @@
 <?php
 
-class FinanceEntitiesController extends Controller
+class IosController extends Controller
 {
 	/**
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
@@ -32,47 +32,29 @@ class FinanceEntitiesController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','getOpportunities'),
-				'roles'=>array('admin'),
+				'actions'=>array('index','clients', 'view','create','update','admin','delete', 'duplicate', 'externalCreate', 'generatePdf', 'uploadPdf', 'viewPdf', 'archived'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
 				'roles'=>array('businness', 'finance'),
 			),
-			array('allow', // allow authenticated user to perform 'create' and 'update' actions
-				'actions'=>array('create','update'),
-				'users'=>array('@'),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('update','generatePdf','viewPdf','uploadPdf'),
+				'roles'=>array('finance'),
 			),
-			array('allow', // allow admin user to perform 'admin' and 'delete' actions
-				'actions'=>array('admin','delete'),
-				'users'=>array('admin'),
-			),
+			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
+			// 	'actions'=>array('create','update'),
+			// 	'users'=>array('@'),
+			// ),
+			// array('allow', // allow admin user to perform 'admin' and 'delete' actions
+			// 	'actions'=>array('admin','delete'),
+			// 	'users'=>array('admin'),
+			// ),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
 		);
-	}
-
-	/**
-	 * Manages all models.
-	 */
-	public function actionAdmin()
-	{
-		$model=new FinanceEntities('search');
-		$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-		$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
-		$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
-		$model->unsetAttributes();  // clear any default values
-		//$model->status = 'Active';
-		if(isset($_GET['FinanceEntities']))
-			$model->attributes=$_GET['FinanceEntities'];
-
-		$this->render('admin',array(
-			'model'=>$model,
-			'accountManager'=>$accountManager,
-			'advertiser'=>$advertiser,
-			'country'=>$country
-		));
 	}
 
 	/**
@@ -81,7 +63,7 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionView($id)
 	{
-	$model = $this->loadModel($id);
+		$model = $this->loadModel($id);
 		$this->renderPartial('_view', array( 
 			'model'=>$model 
 		), false, true);
@@ -93,20 +75,16 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionCreate()
 	{
-		$model=new FinanceEntities;
+		$model=new Ios;
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['FinanceEntities']))
+		if(isset($_POST['Ios']))
 		{
-			$model->attributes=$_POST['FinanceEntities'];
+			$model->attributes=$_POST['Ios'];
 			if($model->save())
 				$this->redirect(array('admin'));
-			else{
-				echo json_encode($model->getErrors());
-			return;
-			}
 		}
 
 		$this->renderFormAjax($model);
@@ -124,9 +102,9 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
-		if(isset($_POST['FinanceEntities']))
+		if(isset($_POST['Ios']))
 		{
-			$model->attributes=$_POST['FinanceEntities'];
+			$model->attributes=$_POST['Ios'];
 			if($model->save())
 				$this->redirect(array('admin'));
 		}
@@ -144,7 +122,7 @@ class FinanceEntitiesController extends Controller
 		$model = $this->loadModel($id);
 		switch ($model->status) {
 			case 'Active':
-				if ( Regions::model()->count("finance_entities_id=:finance_entities_id AND status='Active'", array(":finance_entities_id" => $id)) > 0 ) {
+				if ( Opportunities::model()->count("ios_id=:ios_id AND status='Active'", array(":ios_id" => $id)) > 0 ) {
 					echo "To remove this item must delete the opportunities associated with it.";
 					Yii::app()->end();
 				} else {
@@ -174,9 +152,25 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('FinanceEntities');
+		$dataProvider=new CActiveDataProvider('Ios');
 		$this->render('index',array(
 			'dataProvider'=>$dataProvider,
+		));
+	}
+
+	/**
+	 * Manages all models.
+	 */
+	public function actionAdmin()
+	{
+		$model=new Ios('search');
+		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
+		if(isset($_GET['Ios']))
+			$model->attributes=$_GET['Ios'];
+
+		$this->render('admin',array(
+			'model'=>$model,
 		));
 	}
 
@@ -185,11 +179,11 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionArchived()
 	{
-		$model=new FinanceEntities('search');
+		$model=new Ios('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Archived';
-		if(isset($_GET['FinanceEntities']))
-			$model->attributes=$_GET['FinanceEntities'];
+		if(isset($_GET['Ios']))
+			$model->attributes=$_GET['Ios'];
 
 		$this->render('admin',array(
 			'model'=>$model,
@@ -209,9 +203,9 @@ class FinanceEntitiesController extends Controller
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($new);
 
-		if(isset($_POST['FinanceEntities']))
+		if(isset($_POST['Ios']))
 		{
-			$new->attributes=$_POST['FinanceEntities'];
+			$new->attributes=$_POST['Ios'];
 			if($new->save())
 				$this->redirect(array('admin'));
 		} 
@@ -221,6 +215,7 @@ class FinanceEntitiesController extends Controller
 
 	public function actionExternalCreate()
 	{
+
 		if ( isset($_GET['tmltoken']) ) {
 			$tmltoken = $_GET['tmltoken'];
 		} else {
@@ -246,38 +241,38 @@ class FinanceEntitiesController extends Controller
 			Yii::app()->end();
 		}
 
-		$fe = new FinanceEntities;
+		$ios = new Ios;
 
 		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($fe);
+		$this->performAjaxValidation($ios);
 
 		if(isset($_POST['Ios'])) {
 			echo "submited";
-			$fe = new FinanceEntities;
-			$fe->attributes=$_POST['Ios'];
-			$fe->prospect = NULL; // FIXME completar con prospect correspondiente
-			if( $fe->save() )
+			$ios = new Ios;
+			$ios->attributes=$_POST['Ios'];
+			$ios->prospect = NULL; // FIXME completar con prospect correspondiente
+			if( $ios->save() )
 				$this->render('externalCreate', array(
 					'action'=> 'submit',
 				));
 			else
-				echo "error saveing" . json_encode($fe->getErrors());
+				echo "error saveing" . json_encode($ios->getErrors());
 			Yii::app()->end();
 		}
 
-		$currency   = KHtml::enumItem($fe, 'currency');
-		$entity     = KHtml::enumItem($fe, 'entity');
+		$currency   = KHtml::enumItem($ios, 'currency');
+		$entity     = KHtml::enumItem($ios, 'entity');
 		$advertiser = Advertisers::model()->findByPk($external->advertisers_id);
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		$commercial = Users::model()->findByPk($external->commercial_id);;
 
-		$fe->prospect = 1;	// FIXME completar con prospect correspondiente
-		$fe->commercial_id = $commercial->id;
-		$fe->advertisers_id = $advertiser->id;
+		$ios->prospect = 1;	// FIXME completar con prospect correspondiente
+		$ios->commercial_id = $commercial->id;
+		$ios->advertisers_id = $advertiser->id;
 
 		$this->render('externalCreate', array(
 			'action'     => 'form',
-			'model'      => $fe,
+			'model'      => $ios,
 			'currency'   => $currency,
 			'entity'     => $entity,
 			'commercial' => $commercial,
@@ -370,7 +365,7 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function loadModel($id)
 	{
-		$model=FinanceEntities::model()->findByPk($id);
+		$model=Ios::model()->findByPk($id);
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
@@ -382,7 +377,7 @@ class FinanceEntitiesController extends Controller
 	 */
 	protected function performAjaxValidation($model)
 	{
-		if(isset($_POST['ajax']) && $_POST['ajax']==='financeEntities-form')
+		if(isset($_POST['ajax']) && $_POST['ajax']==='ios-form')
 		{
 			echo CActiveForm::validate($model);
 			Yii::app()->end();
@@ -411,30 +406,6 @@ class FinanceEntitiesController extends Controller
 			'advertiser' =>$advertiser,
 			'country'    =>$country,
 		), false, true);
-	}
-
-	public function actionGetOpportunities($id)
-	{
-		$format = isset($_GET['format']) ? $_GET['format'] : 'select';
-		$data=array();
-		$opportunities=array();
-		$criteria=new CDbCriteria;
-		$criteria->with=array('regions','regions.financeEntities');
-		$criteria->compare('financeEntities.id',$id);
-		$criteria->compare('t.status','Active');
-		$response='';
-		//$response='<option value="">All Carriers</option>';
-		$i=0;		
-		foreach (Opportunities::model()->findAll($criteria) as $opp) {
-			if($format=='select')
-				$response .= '<option value="' . $opp->id . '">' . $opp->getVirtualName() . '</option>';
-			elseif($format=='check')
-				$response.='<input value="'.$opp->id.'" id="opp_ids_'.$i.'" checked="checked" name="opp_ids[]" type="checkbox"> 
-							<label for="opp_ids_'.$i.'">'.$opp->getVirtualName().'</label><br>';
-			$i++;
-		}
-		echo $response;
-		Yii::app()->end();
 	}
 
 }
