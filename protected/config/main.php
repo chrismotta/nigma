@@ -16,7 +16,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 					'connectionString'   => 'mysql:host=localhost;dbname=nigma',
 					'emulatePrepare'     => true,
 					'username'           => 'root',
-					'password'           => 'pernambuco',
+					'password'           => 'mil998',
 					'charset'            => 'utf8',
 					// Uncomment to show db log
 					// 'enableParamLogging' =>true,
