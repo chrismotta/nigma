@@ -19,17 +19,6 @@ class PDFProviders extends PDF
      * Print company information to pdf
      * @param  $pdf TCPDF object
      */
-    private function printSpace($pdf,$space)
-    {
-
-        $pdf->SetFillColor(255, 255, 255);
-        $pdf->SetTextColor(255);
-        $pdf->Cell($space, 7, ' ', 0, 0, 'L', true);
-    }
-    /**
-     * Print company information to pdf
-     * @param  $pdf TCPDF object
-     */
     private function printCompanyInfo($pdf, $io)
     {
         $title='Company Info';

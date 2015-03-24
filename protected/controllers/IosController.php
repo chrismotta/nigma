@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','generatePdf'),
+				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','generatePdf','uploadPdf','viewPdf'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -204,5 +204,52 @@ class IosController extends Controller
 	  /*  $this->renderPartial('_generatePDF', array(
 	    	'model' => $model,
 	    ), false, true);*/
+	}
+	
+	public function actionViewPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = PDF::getPath();
+
+		if ( file_exists($path . $model->pdf_name) ) {
+			$info = pathinfo($model->pdf_name);
+			if ( $info['extension'] == 'pdf') { // pdf file show in a new tab
+				$this->redirect( array('uploads/' . $model->pdf_name) );
+			} else { // other files download
+				Yii::app()->getRequest()->sendFile( $model->pdf_name, file_get_contents($path . $model->pdf_name) );
+			}
+		} else {
+			throw new CHttpException(404,"The file doesn't exist.");
+		}
+		Yii::app()->end();
+	}
+
+	public function actionUploadPdf($id) 
+	{
+		$model = $this->loadModel($id);
+		$path = PDF::getPath();
+
+		if(isset($_POST['submit'])) {
+
+			if ( is_uploaded_file($_FILES["upload-file"]["tmp_name"]) ) {
+				// Create new name for file
+				$extension = substr( $_FILES["upload-file"]["name"], strrpos($_FILES["upload-file"]["name"], '.') );
+				$newName = 'Adv-' . $model->financeEntities->advertisers_id . '_IO-' . $id . $extension;
+				
+				if ( ! move_uploaded_file($_FILES["upload-file"]['tmp_name'], $path . $newName) ) {
+					Yii::app()->end();
+				}
+
+				// Update prospect to complete
+				//$model->prospect = 10;
+				$model->pdf_name = $newName;
+				$model->save();
+			}
+			$this->redirect(array('admin'));
+		}
+
+		$this->renderPartial('_uploadPDF', array(
+			'model' => $model,
+		));
 	}
 }
