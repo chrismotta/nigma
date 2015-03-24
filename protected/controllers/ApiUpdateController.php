@@ -28,7 +28,7 @@ class ApiUpdateController extends Controller
 			),
 			array('allow',
 				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads', 'plugRush', 'jampp'),
-				'ips'=>array('54.88.85.63'),
+				'ips'=>array('54.172.221.175'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -40,6 +40,7 @@ class ApiUpdateController extends Controller
 	{
 		// $this->actionAirpush();
 		$this->actionAjillion();
+		$this->actionAjillionPublisher();
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
 		// $this->actionReporo();
@@ -54,7 +55,7 @@ class ApiUpdateController extends Controller
 		// $this->actionMobads();
 		// $this->actionPlugRush();
 		// $this->actionJampp();
-		$this->actionAffiliates();
+		// $this->actionAffiliates();
 	}
 
 	public function actionBingCode(){
