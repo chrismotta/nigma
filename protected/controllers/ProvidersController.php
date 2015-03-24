@@ -134,7 +134,8 @@ class ProvidersController extends Controller
 	{
 		$model = $this->loadModel($id);
 		$path = PDF::getPath();
-		$type = $_POST['type'];
+		//$type = $_POST['type'];
+		$type='io';
 		if(isset($_POST['submit'])) {
 			if($type=='io')
 			{

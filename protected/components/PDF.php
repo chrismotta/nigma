@@ -89,6 +89,7 @@ class PDF extends EPdfFactoryDoc
 	protected function printTerms($pdf)
 	{
 		$pdf->SetTextColor(0);
+        $pdf->SetFont('helveticaB','',5);
 		$pdf->Write(0, $this->terms, 0, false, 'J', true);
 	}
 
