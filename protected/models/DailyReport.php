@@ -80,7 +80,7 @@ class DailyReport extends CActiveRecord
 			array('date', 'date',  'format'=>'yyyy-M-d'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -134,6 +134,9 @@ class DailyReport extends CActiveRecord
 			'percent_off'		 => 'Percent Off',
 			'off'		 		 => 'Off',
 			'total'		 		 => 'Total',
+			'product' => 'Name',
+			'country' => 'Country',
+			'carrier' => 'Carrier',
 		);
 	}
 
@@ -332,6 +335,15 @@ class DailyReport extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
+	//graph
+	//graph
+	//graph
+
+	public function advertiserGetTotals($advertiser=null, $startDate=NULL, $endDate=NULL){
+		return null;
+	}
+
 
 	/**
 	 * [getTotals description]
@@ -756,6 +768,31 @@ class DailyReport extends CActiveRecord
 		return $dataTops;
 	}
 	
+	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL){
+		$criteria=new CDbCriteria;
+
+		// Related search criteria items added (use only table.columnName)
+		$criteria->with = array( 
+			'campaigns.opportunities',
+			'campaigns.opportunities.carriers',
+			'campaigns.opportunities.regions',
+			'campaigns.opportunities.regions.country',
+			'campaigns.opportunities.regions.financeEntities.advertisers', 
+		);
+		
+		$criteria->compare('opportunities.product', $this->product);
+		$criteria->compare('regions.region', $this->country);
+		$criteria->compare('carriers.mobile_brand', $this->carrier);
+		$criteria->compare('advertisers.id',$advertiser);
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
 
 	/**
 	 * [search description]
@@ -1027,6 +1064,53 @@ class DailyReport extends CActiveRecord
 				'attributes'   =>$sumArray,
 		    ),
 		));
+	}
+
+	// totals
+	// totals
+	// totals
+
+	public function advertiserSearchTotals($advertiser=null, $startDate=NULL, $endDate=NULL){
+		$criteria=new CDbCriteria;
+		// Related search criteria items added (use only table.columnName)
+		$criteria->with = array( 
+			'campaigns.opportunities',
+			'campaigns.opportunities.regions.country',
+			'campaigns.opportunities.regions.financeEntities.advertisers', 
+		);
+		
+		$criteria->compare('advertisers.id',$advertiser);
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+
+		$totals             =array();
+		$totals['imp']      =0;
+		$totals['imp_adv']  =0;
+		$totals['clics']    =0;
+		$totals['conv_api'] =0;
+		$totals['conv_adv'] =0;
+		$totals['conv']     =0;
+		$totals['revenue']  =0;
+		$totals['spend']    =0;
+		$totals['profit']   =0;
+
+		if($dailys=Self::model()->findAll($criteria))
+		{			
+			foreach ($dailys as $data) {
+				$totals['imp']      +=$data->imp;
+				$totals['imp_adv']  +=$data->imp_adv;
+				$totals['clics']    +=$data->clics;
+				$totals['conv_api'] +=$data->conv_api;
+				$totals['conv_adv'] +=$data->conv_adv;
+				$totals['conv']     +=$data->getConv();
+				$totals['revenue']  +=$data->getRevenueUSD();
+				$totals['spend']    +=$data->getSpendUSD();
+				$totals['profit']   +=$data->getProfit();
+			}
+		}
+		return $totals;
 	}
 
 	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null)

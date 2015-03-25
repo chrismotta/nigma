@@ -101,6 +101,24 @@ class PartnersController extends Controller
 
 	public function actionAdvertisers()
 	{
+		$model=new DailyReport('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['DailyReport']))
+			$model->attributes=$_GET['DailyReport'];
+
+		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
+		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
+
+		$this->render('advertisers',array(
+			'model'=>$model,
+			'advertiser_id' => $advertiser_id,
+		));
+	}
+
+
+
+	public function actionAdvertisersOld()
+	{
 		$year  = isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month = isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		

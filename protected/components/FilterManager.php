@@ -30,6 +30,7 @@ class FilterManager
 				'bussiness',
 				'finance',
 				'sem',
+				'advertisers',
 			)),
 		'daily.commercial' => array( 
 			'column' => 'ios.commercial_id', 
@@ -78,6 +79,11 @@ class FilterManager
 			'column' => 'affiliates.id', 
 			'roles'  => array( 
 				'affiliate',
+			)),
+		'advertiser' => array( 
+			'column' => 'advertisers.id', 
+			'roles'  => array( 
+				'advertiser',
 			)),
 		'clients.validateOpportunitie' => array( 
 			'column' => 'opportunities.account_manager_id', 
