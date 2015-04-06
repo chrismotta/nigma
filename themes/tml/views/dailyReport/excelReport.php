@@ -5,7 +5,7 @@
 set_time_limit(1000);
 
 $path = 'uploads/';
-$name = 'KickAds-DailyReport.xls';
+$name = 'TML-DailyReport.xls';
 
 $dateStart      = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
 $dateEnd        = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
