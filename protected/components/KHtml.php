@@ -27,7 +27,7 @@ class KHtml extends CHtml
     {
         $defaultHtmlOptions = array(
             //'style' => 'width: 80px',
-            'class'=>'span3'
+            'class'=>'span2'
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 

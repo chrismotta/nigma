@@ -143,7 +143,7 @@ class Ajillion
 			return NULL;
 		}
 
-		if ( $login->error !== NULL ) {
+		if ( isset($login->error) && $login->error !== NULL ) {
 			Yii::log($login->error->message, 'error', 'system.model.api.ajillion');
 			return NULL;	
 		}
@@ -168,8 +168,7 @@ class Ajillion
 			Yii::log("Error decoding json", 'error', 'system.model.api.ajillion');
 			return NULL;
 		}
-
-		if ( $response->error !== NULL ) {
+		if (  isset($response->error) && $response->error !== NULL ) {
 			Yii::log($response->error->message . " error", 'error', 'system.model.api.ajillion');
 			return NULL;	
 		}

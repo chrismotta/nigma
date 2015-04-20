@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 class AjillionPublisher
 { 
@@ -7,6 +7,8 @@ class AjillionPublisher
 
 	public function downloadInfo()
 	{
+
+
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
@@ -50,7 +52,6 @@ class AjillionPublisher
 
 		echo json_encode($campaigns);
 		echo "<hr>";
-		Yii::app()->end("test 6");
 		
 		// if ( !$campaigns ) {
 		// 	Yii::log("Can't get campaigns", 'error', 'system.model.api.ajillion');
@@ -106,7 +107,6 @@ class AjillionPublisher
 
 
 	private function getResponse($method, $params = array() ) {
-
 		// Get json from Ajillion API.
 		$network = Networks::model()->findbyPk($this->network_id);
 		$apiurl = $network->url;
@@ -139,7 +139,7 @@ class AjillionPublisher
 			return NULL;
 		}
 
-		if ( $login->error !== NULL ) {
+		if ( isset($login->error) && $login->error !== NULL ) {
 			Yii::log($login->error->message, 'error', 'system.model.api.ajillion');
 			return NULL;	
 		}
@@ -165,7 +165,7 @@ class AjillionPublisher
 			return NULL;
 		}
 
-		if ( $response->error !== NULL ) {
+		if ( isset($response->error) && $response->error !== NULL ) {
 			Yii::log($response->error->message . " error", 'error', 'system.model.api.ajillion');
 			return NULL;	
 		}
@@ -176,6 +176,7 @@ class AjillionPublisher
 		}
 
 		curl_close($curl);
+		//die($json_response);
 		return $response->result;
 	}
 }

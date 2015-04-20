@@ -23,87 +23,87 @@
     
 <?php 
     $items=array(
-                array('label'=>'Dashboard', 'url'=>array('/site/index'), 'itemOptions' => array('class'=>'showLoadingMenuItem'), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
-                    //array('label'=>'IOs', 'url'=>array('/ios/admin')),
-                    array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
-                    array('label'=>'Regions', 'url'=>array('/regions/admin')),
-                    array('label'=>'Ios', 'url'=>array('/ios/admin')),
-                    array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
-                    //array('label'=>'Cierre y %', 'url'=>'#'),
-                    //array('label'=>'Media Kit', 'url'=>'#'),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
-                    array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
-                    array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
-                    array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
-                    array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
-                    array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Providers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Publishers', 'url'=>array('/publishers/admin')),
-                    array('label'=>'Affiliates', 'url'=>array('/affiliates/admin')),
-                    array('label'=>'Networks', 'url'=>array('/networks/admin')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Placements', 'url'=>array('/placements/admin')),
-                    array('label'=>'Reporting', 'url'=>array('/dailyPublishers/admin')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Creatives', 'url'=>array('/sem/creative')),
-                    array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
-                    array('label'=>'Placements', 'url'=>array('/sem/placement')),
-                    array('label'=>'Search Query', 'url'=>array('/sem/searchCriteria')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Clients', 'url'=>array('/finance/clients')),
-                    array('label'=>'Providers', 'url'=>array('/finance/providers')),
-                    //array('label'=>'Cierre Mes', 'url'=>'#'),
-                    //array('label'=>'Invoices', 'url'=>'#'),
-                    array('label'=>'Currency', 'url'=>array('/currency/admin')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Dashboard', 'url'=>array('/site/index'), 'itemOptions' => array('class'=>'showLoadingMenuItem'), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
+            //array('label'=>'IOs', 'url'=>array('/ios/admin')),
+            array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
+            array('label'=>'Regions', 'url'=>array('/regions/admin')),
+            array('label'=>'Ios', 'url'=>array('/ios/admin')),
+            array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
+            //array('label'=>'Cierre y %', 'url'=>'#'),
+            //array('label'=>'Media Kit', 'url'=>'#'),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Media', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
+            array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
+            array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
+            array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
+            array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
+            array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Providers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Publishers', 'url'=>array('/publishers/admin')),
+            array('label'=>'Affiliates', 'url'=>array('/affiliates/admin')),
+            array('label'=>'Networks', 'url'=>array('/networks/admin')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Sites', 'url'=>array('/sites/admin')),
+            array('label'=>'Placements', 'url'=>array('/placements/admin')),
+            array('label'=>'Reporting', 'url'=>array('/dailyPublishers/admin')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Creatives', 'url'=>array('/sem/creative')),
+            array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
+            array('label'=>'Placements', 'url'=>array('/sem/placement')),
+            array('label'=>'Search Query', 'url'=>array('/sem/searchCriteria')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Clients', 'url'=>array('/finance/clients')),
+            array('label'=>'Providers', 'url'=>array('/finance/providers')),
+            //array('label'=>'Cierre Mes', 'url'=>'#'),
+            //array('label'=>'Invoices', 'url'=>'#'),
+            array('label'=>'Currency', 'url'=>array('/currency/admin')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
 
-                array('label'=>'Archive', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Advertisers', 'url'=>array('/advertisers/archived')),
-                    //array('label'=>'IOs', 'url'=>array('/ios/archived')),
-                    array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
-                    array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
-                    array('label'=>'Vectors', 'url'=>array('/vectors/archived')),
-                    array('label'=>'Publishers', 'url'=>array('/publishers/archived')),
-                    array('label'=>'Placements', 'url'=>array('/placements/archived')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                /*
-                array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Clients', 'url'=>'#'),
-                    array('label'=>'Networks', 'url'=>'#'),
-                    array('label'=>'Regions', 'url'=>'#'),
-                    array('label'=>'PNL', 'url'=>'#'),
-                    array('label'=>'AM', 'url'=>'#'),
-                    array('label'=>'Daily Revenue', 'url'=>'#'),
-                    array('label'=>'Budget', 'url'=>'#'),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                */
-                array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
-                'items'=>array(
-                    array('label'=>'Profile', 'url'=>array('/users/profile')),
-                    array('label'=>'Users', 'url'=>array('/users/admin')),
-                    array('label'=>'Configuration', 'url'=>'#'),
-                    array('label'=>'Meetings', 'url'=>array('/meetingroom')),
-                ), 'visible'=>!Yii::app()->user->isGuest),
-                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
-                array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
-            );
-
+        array('label'=>'Archive', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Advertisers', 'url'=>array('/advertisers/archived')),
+            //array('label'=>'IOs', 'url'=>array('/ios/archived')),
+            array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
+            array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),
+            array('label'=>'Vectors', 'url'=>array('/vectors/archived')),
+            array('label'=>'Publishers', 'url'=>array('/publishers/archived')),
+            array('label'=>'Placements', 'url'=>array('/placements/archived')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        /*
+        array('label'=>'Daily', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Clients', 'url'=>'#'),
+            array('label'=>'Networks', 'url'=>'#'),
+            array('label'=>'Regions', 'url'=>'#'),
+            array('label'=>'PNL', 'url'=>'#'),
+            array('label'=>'AM', 'url'=>'#'),
+            array('label'=>'Daily Revenue', 'url'=>'#'),
+            array('label'=>'Budget', 'url'=>'#'),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        */
+        array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        'items'=>array(
+            array('label'=>'Profile', 'url'=>array('/users/profile')),
+            array('label'=>'Users', 'url'=>array('/users/admin')),
+            array('label'=>'Configuration', 'url'=>'#'),
+            array('label'=>'Meetings', 'url'=>array('/meetingroom')),
+        ), 'visible'=>!Yii::app()->user->isGuest),
+        array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->user->isGuest),
+        array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
+    );
 
     
     if (FilterManager::model()->isUserTotalAccess('affiliate'))

@@ -68,7 +68,7 @@ class Publishers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'placements'     => array(self::HAS_MANY, 'Placements', 'publishers_id'),
+			'placements'     => array(self::HAS_MANY, 'Sites', 'sites_id'),
 			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 			'providers'      => array(self::BELONGS_TO, 'Providers', 'providers_id'),

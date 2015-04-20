@@ -60,7 +60,7 @@ class Placements extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'dailyPublishers' => array(self::HAS_MANY, 'DailyPublishers', 'placements_id'),
-			'publishers'      => array(self::BELONGS_TO, 'Publishers', 'publishers_id'),
+			'publishers'      => array(self::BELONGS_TO, 'Sites', 'sites_id'),
 			'exchanges'       => array(self::BELONGS_TO, 'Exchanges', 'exchanges_id'),
 			'sizes'           => array(self::BELONGS_TO, 'BannerSizes', 'sizes_id'),
 		);
