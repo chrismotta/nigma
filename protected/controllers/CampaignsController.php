@@ -525,13 +525,13 @@ class CampaignsController extends Controller
 
 		if ( $isAdmin ) {
 			$opportunities = CHtml::listData(Opportunities::model()->with('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'country')->findAll(
-				array('order'=>'advertisers.name, country.ISO2')), 
+				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'t.status="Active"')), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);
 		} else {
 			$opportunities = CHtml::listData(Opportunities::model()->with('regions','regions.financeEntities', 'regions.financeEntities.advertisers', 'regions.country')->findAll(
-				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'account_manager_id='.Yii::app()->user->id)), 
+				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'t.status="Active" AND account_manager_id='.Yii::app()->user->id)), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);
