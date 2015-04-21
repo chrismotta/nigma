@@ -40,10 +40,9 @@ class ApiUpdateController extends Controller
 	{
 		// $this->actionAirpush();
 		$this->actionAjillion();
-		$this->actionAjillionPublisher();
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
-		// $this->actionReporo();
+		$this->actionReporo();
 		// $this->actionAdWords();
 		// $this->actionVServ();
 		// $this->actionMobfox();
@@ -56,6 +55,8 @@ class ApiUpdateController extends Controller
 		// $this->actionPlugRush();
 		// $this->actionJampp();
 		// $this->actionAffiliates();
+		
+		$this->actionAjillionPublisher();
 	}
 
 	public function actionBingCode(){
