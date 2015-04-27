@@ -5,7 +5,8 @@ class PDFInsertionOrder extends PDF
 
 	public function getPdfName()
     {
-    	return 'IO-' . $this->getDataItem('io')->id . '-KickAds.pdf';
+		$io  = $this->getDataItem('io');
+    	return 'TML-' . $io->financeEntities->advertisers->name . '-'.$io->financeEntities->advertisers->cat.'-' . date("m_d_Y", strtotime($io->date)) . '-IO_' . $io->id . '.pdf';
     }
 
     protected function initHeader()
@@ -18,11 +19,11 @@ class PDFInsertionOrder extends PDF
     protected function initMargins()
     {
         $pdf = $this->getPdf();
-        $pdf->SetMargins(10, 35, 10);
-        $pdf->SetHeaderMargin(10);
-        $pdf->SetFooterMargin(38);
+        $pdf->SetMargins(10, 39, 10);
+        $pdf->SetHeaderMargin(8);
+        $pdf->SetFooterMargin(10);
 
-        $pdf->SetAutoPageBreak(TRUE, 38);
+        $pdf->SetAutoPageBreak(TRUE, 10);
     }
     /**
      * Print company information to pdf
@@ -32,18 +33,19 @@ class PDFInsertionOrder extends PDF
     {
 		$pdf->SetFillColor(8, 150, 153);
         $pdf->SetTextColor(255);
-    	$pdf->Cell(90, 7, 'TML Media LLC', 0, 0, 'L', true);
-    	$this->printSpace($pdf,4);
-		$pdf->SetFillColor(8, 150, 153);
-        $pdf->SetTextColor(255);
-    	$pdf->Cell(90, 7, 'MOBILE ADVERTISER ORDER #' . $io->financeEntities->id, 0, 1, 'L', true);
-
+    	$pdf->Cell(190, 7, 'TML Media LLC', 0, 1, 'L', true);
+		// $this->printSpace($pdf, 5);
+		// $pdf->SetFillColor(8, 150, 153);
+		// $pdf->SetTextColor(255);
+		// $pdf->Cell(90, 7, 'MOBILE ADVERTISER ORDER #' . $io->id, 0, 1, 'L', true);
     	
     	$pdf->SetTextColor(0);
-    	$pdf->Cell(90, 7, '30 East Pine Street', 0, 0, 'L', false);
-    	$pdf->Cell(90, 7, 'DATE: ' . date('d-m-Y', time()), 0, 1, 'L', false);
-    	$pdf->Cell(90, 7, 'Georgetown, Sussex County, Delaware 19947', 0, 0, 'L', false);
-    	$pdf->Cell(90, 7, 'ORDER NUMBER: #' . $io->id, 0, 1, 'L', false);
+    	$pdf->Ln(2);
+    	
+    	$pdf->Cell(100, 5, '30 East Pine Street, Georgetown', 0, 0, 'L', false);
+    	$pdf->Cell(90, 5, 'Date: ' . date('F j, Y', strtotime($io->date)), 0, 1, 'L', false);
+    	$pdf->Cell(100, 5, 'Sussex County, Delaware 19947, United States', 0, 0, 'L', false);
+    	$pdf->Cell(90, 5, 'Insertion Order Number: #' . $io->id, 0, 1, 'L', false);
     }
 
 	public function renderPdf()
@@ -68,34 +70,36 @@ class PDFInsertionOrder extends PDF
 		$values[$io->financeEntities->getAttributeLabel('address')]         = $io->financeEntities->address;
 		$values[$io->financeEntities->getAttributeLabel('state')]           = $io->financeEntities->state;
 		$values[$io->financeEntities->getAttributeLabel('zip_code')]        = $io->financeEntities->zip_code;
+		$values[$io->financeEntities->getAttributeLabel('country')]         = $io->financeEntities->country->name;
 		$values[$io->financeEntities->getAttributeLabel('phone')]           = $io->financeEntities->phone;
 		$values[$io->financeEntities->getAttributeLabel('contact_com')]     = $io->financeEntities->contact_com;
-		$values[$io->financeEntities->getAttributeLabel('email_adm')]       = $io->financeEntities->email_adm;
+		$values[$io->financeEntities->getAttributeLabel('email_com')]       = $io->financeEntities->email_com;
 		$values[$io->financeEntities->getAttributeLabel('contact_adm')]     = $io->financeEntities->contact_adm;
+		$values[$io->financeEntities->getAttributeLabel('email_adm')]       = $io->financeEntities->email_adm;
 		$values[$io->financeEntities->getAttributeLabel('currency')]        = $io->financeEntities->currency;
 		$values[$io->financeEntities->getAttributeLabel('ret')]             = $io->financeEntities->ret;
-		$this->printTitle($pdf, 'Io');
+		$this->printTitle($pdf, 'Insertion Order');
 		$this->printTable($pdf, $values);
 		$pdf->Ln();
 
 		// Print Opportunities section
 		$opp_ids = $this->getDataItem('opportunities');
-		$pdf->Ln();
+		//$pdf->Ln();
 		unset($values);
         $i = 1;
 		foreach ($opp_ids as $opp_id) {
 			$opp = Opportunities::model()->findByPk($opp_id);
 			$this->printTitle($pdf, 'Campaign #' . $i);
-			$values[$opp->getAttributeLabel('country_id')]  = $opp->country ? $opp->country->name : '';
-			$values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers ? $opp->carriers->mobile_brand : '';
-			$values[$opp->getAttributeLabel('rate')]        = $opp->rate;
-			$values[$opp->getAttributeLabel('model_adv')]   = $opp->model_adv;
-			$values[$opp->getAttributeLabel('product')]     = $opp->product;
-			$values[$opp->getAttributeLabel('comment')]     = $opp->comment;
-			$values[$opp->getAttributeLabel('wifi')]        = $opp->wifi ? 'Habilitado' : 'Inhabilitado';
-			$values[$opp->getAttributeLabel('budget')]      = $opp->budget;
-			$values[$opp->getAttributeLabel('startDate')]   = $opp->startDate == 0 ? '' : date('d-m-Y', strtotime($opp->startDate));
-			$values[$opp->getAttributeLabel('endDate')]     = $opp->endDate == 0 ? '' : date('d-m-Y', strtotime($opp->endDate));
+			if ($opp->regions->country_id) $values[$opp->getAttributeLabel('country_id')]  = $opp->regions->country->name;
+			if ($opp->carriers)            $values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers->mobile_brand;
+			if ($opp->rate)                $values[$opp->getAttributeLabel('rate')]        = $opp->rate;
+			if ($opp->model_adv)           $values[$opp->getAttributeLabel('model_adv')]   = $opp->model_adv;
+			if ($opp->product)             $values[$opp->getAttributeLabel('product')]     = $opp->product;
+			if ($opp->comment)             $values[$opp->getAttributeLabel('comment')]     = $opp->comment;
+			$values[$opp->getAttributeLabel('wifi')]                                       = $opp->wifi ? 'Enabled' : 'Disabled';
+			if ($opp->budget != 0)         $values[$opp->getAttributeLabel('budget')]      = $opp->budget;
+			if ($opp->startDate != 0)      $values[$opp->getAttributeLabel('startDate')]   = $opp->startDate == 0 ? '' : date('d-m-Y', strtotime($opp->startDate));
+			if ($opp->endDate != 0)        $values[$opp->getAttributeLabel('endDate')]     = $opp->endDate == 0 ? '' : date('d-m-Y', strtotime($opp->endDate));
 
             if ( $adv->cat == 'Branding' ) {
 				$values[$opp->getAttributeLabel('freq_cap')]            = $opp->freq_cap;
@@ -116,7 +120,7 @@ class PDFInsertionOrder extends PDF
 		$this->addPage();
 		$company='TML Media ';//.$io->financeEntities->entity[0];
 		$this->terms= "Terms and conditions:
-Section 1. Incorporation Terms. These Terms and Conditions (together with any Insertion Orders hereunder, the “Agreement”), dated as of the date of the latest signature below (the “Effective Date”), is entered into by and between TML Media, LLC, a Delaware limited liability partnership (“Media Company”), and                                           (Name of the Advertiser), a company organized in the                                             (Country of the Advertiser), (“Advertiser”) (each a “Party,” and, collectively, the “Parties”). The IAB/AAAA Standard Terms and Conditions for Internet Advertising Media Buys One Year or Less Version 3.0 (“IAB Terms”), located at http://www.iab.net/media/file/IAB_4As-tsandcs-FINAL.pdf, are hereby incorporated by reference, as modified herein. All capitalized terms not defined herein shall have the meanings set forth in the IAB Terms. 
+Section 1. Incorporation Terms. These Terms and Conditions (together with any Insertion Orders hereunder, the “Agreement”), dated as of the date of the latest signature below (the “Effective Date”), is entered into by and between TML Media, LLC, a Delaware limited liability partnership (“Media Company”), and ".$io->financeEntities->commercial_name." (“Advertiser”), a company organized in the ".$io->financeEntities->country->name." , (each a “Party,” and, collectively, the “Parties”). The IAB/AAAA Standard Terms and Conditions for Internet Advertising Media Buys One Year or Less Version 3.0 (“IAB Terms”), located at http://www.iab.net/media/file/IAB_4As-tsandcs-FINAL.pdf, are hereby incorporated by reference, as modified herein. All capitalized terms not defined herein shall have the meanings set forth in the IAB Terms. 
 1.1 Construction. Any conflict or inconsistency among terms will be resolved in the following order of precedence: (i) the Insertion Order (the “IO”), (ii) Terms and Conditions, and (iii) IAB Terms. (Items (i), (ii) and (iii) are referred to collectively as the “Agreement”). 
 1.2 Party Language. Any reference to “Agency” or “Advertiser” in the IAB Terms applies to Advertiser, as specified in the applicable Insertion Order, and any reference to Media Company in the IAB Terms applies TML Media, LLC. For sake of clarity, the party named as the Advertiser in any IO is assuming the responsibilities, rights, and obligations of both the “Advertiser” and the “Agency” under the IAB Terms. 
 

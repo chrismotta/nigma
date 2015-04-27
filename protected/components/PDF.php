@@ -41,7 +41,25 @@ class PDF extends EPdfFactoryDoc
 			$pdf->SetFillColor(8, 150, 153);
         	$pdf->SetTextColor(255);
             // $pdf->Cell(60, 7, strtoupper($key), 1, 0, 'L', true);
-        	$pdf->MultiCell($size[0], $size[1], strtoupper($key), 1, 'L', true, 0);
+        	
+            // $w,
+            // $h,
+            // $txt,
+            // $border = 0,
+            // $align = 'J',
+            // $fill = false,
+            // $ln = 1,
+            // $x = '',
+            // $y = '',
+            // $reseth = true,
+            // $stretch = 0,
+            // $ishtml = false,
+            // $autopadding = true,
+            // $maxh = 0,
+            // $valign = 'T',
+            // $fitcell = false 
+
+            $pdf->MultiCell($size[0], $size[1], strtoupper($key), 1, 'L', true, 0, '', '', true, 0, false, true, $size[1], 'M', false);
 
         	if ($even) {
         		$pdf->SetFillColor(240, 240, 240);
@@ -52,7 +70,7 @@ class PDF extends EPdfFactoryDoc
 
         	$pdf->SetTextColor(0);
             // $pdf->Cell(0, 7, strtoupper($value), 1, 1, 'L', true);
-        	$pdf->MultiCell(0, 7, strtoupper($value), 1, 'L', true, 1);
+        	$pdf->MultiCell(0, 7, strtoupper($value), 1, 'L', true, 1, '', '', true, 0, false, true, 7, 'M', false);
 
 		}
     }
