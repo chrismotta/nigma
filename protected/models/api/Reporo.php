@@ -18,16 +18,15 @@ class Reporo
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.reporo');
 			return 2;
 		}
-
 		$network = Networks::model()->findbyPk($this->provider_id);
 
 		// --- setting actions for requests
 		$actions = array(
-			"adv"		=> "?action=inventory/advertiser",
-			"group"		=> "?action=inventory/advertiser/campaign_group/",
-			"group_stats"	=> "?action=statistics/advertiser/campaign_group/",
-			"campaign"		=> "?action=inventory/advertiser/campaign/",
-			"campaign_stats"=> "?action=statistics/advertiser/campaign/"
+			"adv"            => "?action=inventory/advertiser",
+			"group"          => "?action=inventory/advertiser/campaign_group/",
+			"group_stats"    => "?action=statistics/advertiser/campaign_group/",
+			"campaign"       => "?action=inventory/advertiser/campaign/",
+			"campaign_stats" => "?action=statistics/advertiser/campaign/"
 			);
 
 		$params = '&from=' . $date .'&to=' . $date;
@@ -52,6 +51,9 @@ class Reporo
 
 			// --- getting compaigns ids from campaign_group id
 			$campaigns = $this->getResponse($actions["group"] . $group_id);
+
+			// var_dump($campaigns);
+			// die();
 
 			if (! $campaigns) { continue; }
 
