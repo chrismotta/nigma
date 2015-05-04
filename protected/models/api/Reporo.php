@@ -126,7 +126,8 @@ class Reporo
 		);
 		$context = stream_context_create($options);
 		$response = file_get_contents($reporoGateway . $params, false, $context);
-
+var_dump($options);
+die($reporoGateway.$params);
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
