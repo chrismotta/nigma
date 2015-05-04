@@ -53,6 +53,12 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 
 				$mailLog = array(
 					'class'   =>'CPhpMailerLogRoute',
+					'levels'  =>'',
+					'subject' =>'',
+					'emails'  =>array(),
+				);
+				/*$mailLog = array(
+					'class'   =>'CPhpMailerLogRoute',
 					'levels'  =>'error, mail',
 					'subject' =>'Automatic Mail Log',
 					'emails'  =>array(
@@ -69,7 +75,7 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 						// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
 						'CharSet'    => "UTF-8",
                     ),
-                );
+                );*/
 		break;
 
 	// amazon test
@@ -190,6 +196,7 @@ return array(
 				'<controller:\w+>/<action:\w+>'                       =>'<controller>/<action>',
 				// custom parameters //
 				'<controller:externalForms>/<action:\w+>/<hash:\w+>'  =>'<controller>/<action>',
+				'<controller:wurfl>/<action:\w+>/<hash:\w+>'          =>'<controller>/<action>',
 				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>' =>'<controller>/<action>',
 			),
 		),
