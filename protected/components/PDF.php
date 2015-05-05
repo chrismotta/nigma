@@ -115,7 +115,7 @@ class PDF extends EPdfFactoryDoc
      * Print signature section to pdf
      * @param  $pdf TCPDF object
      */
-    protected function printSignature($pdf,$name,$company='TML Media')
+    protected function printSignature($pdf,$name,$company='TML Media LLC')
     {
         $pdf->SetTextColor(0);  
         $pdf->Cell(50, 10, '', 0, 0, 'L', false);
@@ -135,9 +135,9 @@ class PDF extends EPdfFactoryDoc
         $pdf->Cell(100, 4, $company, 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
-        $pdf->Cell(80, 4, 'By:___________________', 0, 0, 'L', false);
+        $pdf->Cell(80, 4, 'Name:___________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Cell(100, 4, 'By: ', 0, 1, 'L', false);
+        $pdf->Cell(100, 4, 'Name: ', 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 4, 'Title:___________________', 0, 0, 'L', false);

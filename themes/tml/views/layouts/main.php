@@ -30,8 +30,8 @@
             //array('label'=>'IOs', 'url'=>array('/ios/admin')),
             array('label'=>'Finance Entities', 'url'=>array('/financeEntities/admin')),
             array('label'=>'Regions', 'url'=>array('/regions/admin')),
-            array('label'=>'Ios', 'url'=>array('/ios/admin')),
             array('label'=>'Opportunities', 'url'=>array('/opportunities/admin')),
+            array('label'=>'IOs', 'url'=>array('/ios/admin')),
             //array('label'=>'Cierre y %', 'url'=>'#'),
             //array('label'=>'Media Kit', 'url'=>'#'),
         ), 'visible'=>!Yii::app()->user->isGuest),
@@ -40,7 +40,7 @@
             array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
             array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
             array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
-            array('label'=>'Traffic', 'url'=>array('/campaigns/traffic')),
+            array('label'=>'Traffic Log', 'url'=>array('/campaigns/traffic')),
             array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
             array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),
         ), 'visible'=>!Yii::app()->user->isGuest),
@@ -111,6 +111,20 @@
                 array('label'=>'Affiliate', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Dashboard', 'url'=>array('/affiliates/index')),
+                ), 'visible'=>!Yii::app()->user->isGuest),             
+                array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Profile', 'url'=>array('/users/profile')),
+                ), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->controller->id.'/'.Yii::app()->controller->action->id=='externalForms/revenueValidation' ? false : Yii::app()->user->isGuest),
+                array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
+            );
+
+    if (FilterManager::model()->isUserTotalAccess('publisher'))
+        $items=array(  
+                array('label'=>'Publisher', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Dashboard', 'url'=>array('/publishers/index')),
                 ), 'visible'=>!Yii::app()->user->isGuest),             
                 array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(

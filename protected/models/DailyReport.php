@@ -110,7 +110,7 @@ class DailyReport extends CActiveRecord
 			'providers_id'       => 'Providers',
 			'imp'                => 'Imp',
 			'imp_adv'            => 'Imp Adv',
-			'clics'              => 'Clics',
+			'clics'              => 'Clikcs',
 			'conv_api'           => 'Conv s2s',
 			'conv_adv'           => 'Conv Adv',
 			'spend'              => 'Spend',
