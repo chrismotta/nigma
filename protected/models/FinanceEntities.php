@@ -435,7 +435,7 @@ class FinanceEntities extends CActiveRecord
 	 */
 	public function getOpportunities()
 	{
-		return Opportunities::model()->findAll('ios_id=:iosid', array(':iosid' => $this->id));
+		return Opportunities::model()->findAll('regions.finance_entities_id=:iosid', array(':iosid' => $this->id));
 	}
 
 	/**
@@ -521,7 +521,8 @@ class FinanceEntities extends CActiveRecord
 		$criteria->join = '
 				INNER JOIN campaigns ON campaigns.id=t.campaigns_id
 				INNER JOIN opportunities ON opportunities.id=campaigns.opportunities_id
-				INNER JOIN finance_entities ON finance_entities.id=opportunities.ios_id
+				INNER JOIN regions ON regions.id=opportunities.regions_id
+				INNER JOIN finance_entities ON finance_entities.id=regions.finance_entities_id
 				INNER JOIN advertisers ON advertisers.id=finance_entities.advertisers_id
 				';
 

@@ -10,7 +10,7 @@
  * @property string $rate
  * @property integer $users_id
  * @property string $date
- * @property integer $ios_id
+ * @property integer $finance_entities_id
  * @property integer $carriers_id_carrier
  *
  * The followings are the available model relations:
@@ -37,12 +37,12 @@ class TransactionCount extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('period, volume, rate, users_id, date, ios_id', 'required'),
-			array('volume, users_id, ios_id, carriers_id_carrier', 'numerical', 'integerOnly'=>true),
+			array('period, volume, rate, users_id, date, finance_entities_id', 'required'),
+			array('volume, users_id, finance_entities_id, carriers_id_carrier', 'numerical', 'integerOnly'=>true),
 			array('rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, period, volume, rate, users_id, date, ios_id, carriers_id_carrier', 'safe', 'on'=>'search'),
+			array('id, period, volume, rate, users_id, date, finance_entities_id, carriers_id_carrier', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,7 +55,7 @@ class TransactionCount extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'users'    => array(self::BELONGS_TO, 'Users', 'users_id'),
-			'ios'      => array(self::BELONGS_TO, 'Ios', 'ios_id'),
+			'finance_entities'      => array(self::BELONGS_TO, 'FinanceEntities', 'finance_entities_id'),
 			'carriers' => array(self::BELONGS_TO, 'Carriers', 'carriers_id_carrier'),
 			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country'),
 		);
@@ -73,7 +73,7 @@ class TransactionCount extends CActiveRecord
 			'rate'                => 'Rate',
 			'users_id'            => 'Users',
 			'date'                => 'Date',
-			'ios_id'              => 'Ios',
+			'finance_entities_id'              => 'FinanceEntities',
 			'carriers_id_carrier' => 'Carriers',
 			'total'               => 'Total',
 			'currency'            => 'Currency',
@@ -105,7 +105,7 @@ class TransactionCount extends CActiveRecord
 		$criteria->compare('rate',$this->rate,true);
 		$criteria->compare('users_id',$this->users_id);
 		$criteria->compare('date',$this->date,true);
-		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('carriers_id_carrier',$this->carriers_id_carrier);
 		$criteria->compare('country',$this->country);
 
@@ -127,15 +127,15 @@ class TransactionCount extends CActiveRecord
 
 	/**
 	 * [getTransactions description]
-	 * @param  [type] $ios_id [description]
+	 * @param  [type] $finance_entities_id [description]
 	 * @param  [type] $period [description]
 	 * @return [type]         [description]
 	 */
-	public function getTransactions($ios_id,$period)
+	public function getTransactions($finance_entities_id,$period)
 	{
 		$criteria=new CDbCriteria;
 		// $criteria->with=array('opportunities');
-		$criteria->compare('ios_id',$ios_id);
+		$criteria->compare('finance_entities_id',$finance_entities_id);
 		$criteria->compare('period',$period);
 		return new CActiveDataProvider($this,array(
 				'criteria'=>$criteria,
@@ -144,18 +144,18 @@ class TransactionCount extends CActiveRecord
 
 	/**
 	 * [getTotalTransactions description]
-	 * @param  [type] $ios_id [description]
+	 * @param  [type] $finance_entities_id [description]
 	 * @param  [type] $period [description]
 	 * @return [type]         [description]
 	 */
-	public function getTotalTransactions($ios_id,$period)
+	public function getTotalTransactions($finance_entities_id,$period)
 	{
 		$criteria=new CDbCriteria;
 		$criteria->select='sum(t.rate*t.volume) as total';
 		// $criteria->with=array('opportunities');
 		// $criteria->addCondition('t.opportunities_id=opportunities.id');
-		// $criteria->addCondition('opportunities.ios_id='.$ios_id);
-		$criteria->compare('t.ios_id',$ios_id);
+		// $criteria->addCondition('opportunities.finance_entities_id='.$finance_entities_id);
+		$criteria->compare('t.finance_entities_id',$finance_entities_id);
 		$criteria->compare('t.period',$period);
 		return self::model()->find($criteria) ? self::model()->find($criteria)['total'] : 0;
 		
@@ -170,15 +170,15 @@ class TransactionCount extends CActiveRecord
 	{
 		// SELECT sum(t.rate*t.volume),i.currency FROM transaction_count t
 		// inner join opportunities o on t.opportunities_id=o.id
-		// inner join ios i on o.ios_id=i.id
+		// inner join finance_entities i on o.finance_entities_id=i.id
 		// group by i.currency;
 
 		$criteria         =new CDbCriteria;
-		// $criteria->with  =array('opportunities','opportunities.ios');
-		$criteria->with  =array('ios');
+		// $criteria->with  =array('opportunities','opportunities.finance_entities');
+		$criteria->with  =array('finance_entities');
 		$criteria->compare('t.period',$period);		
-		$criteria->select ='sum(t.rate*t.volume) as total, ios.currency as currency';
-		$criteria->group  ='ios.currency';
+		$criteria->select ='sum(t.rate*t.volume) as total, finance_entities.currency as currency';
+		$criteria->group  ='finance_entities.currency';
 		return Self::model()->findAll($criteria);
 	}
 
@@ -192,30 +192,30 @@ class TransactionCount extends CActiveRecord
 	//agregar filtros para que coincidan las cuentas
 		// SELECT sum(t.rate*t.volume),i.currency FROM transaction_count t
 		// inner join opportunities o on t.opportunities_id=o.id
-		// inner join ios i on o.ios_id=i.id
+		// inner join finance_entities i on o.finance_entities_id=i.id
 		// group by i.currency;
 
 		$criteria         =new CDbCriteria;
-		// $criteria->with  =array('opportunities','opportunities.ios','opportunities.ios.iosValidation');
-		$criteria->with  =array('ios','ios.iosValidation');
+		// $criteria->with  =array('opportunities','opportunities.finance_entities','opportunities.finance_entities.finance_entitiesValidation');
+		$criteria->with  =array('finance_entities','finance_entities.iosValidation');
 		$criteria->compare('t.period',$period);		
 		$criteria->compare('iosValidation.status','Invoiced');
-		$criteria->select ='sum(t.rate*t.volume) as total, ios.currency as currency';
-		$criteria->group  ='ios.currency';
+		$criteria->select ='sum(t.rate*t.volume) as total, finance_entities.currency as currency';
+		$criteria->group  ='finance_entities.currency';
 		return Self::model()->findAll($criteria);
 	}
 
 	/**
 	 * [getTotalsCarrier description]
-	 * @param  [type] $ios_id [description]
+	 * @param  [type] $finance_entities_id [description]
 	 * @param  [type] $period [description]
 	 * @return [type]         [description]
 	 */
-	public function getTotalsCarrier($ios_id,$period)
+	public function getTotalsCarrier($finance_entities_id,$period)
 	{
 		$criteria=new CDbCriteria;
 		$criteria->select='carriers_id_carrier,rate,sum(volume) as volume,sum(rate*volume) as total, product, country';
-		$criteria->compare('ios_id',$ios_id);
+		$criteria->compare('finance_entities_id',$finance_entities_id);
 		$criteria->compare('period',$period);
 		$criteria->group='carriers_id_carrier,product,country,rate';
 		return self::model()->findAll($criteria);
