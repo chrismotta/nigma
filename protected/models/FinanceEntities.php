@@ -664,8 +664,8 @@ class FinanceEntities extends CActiveRecord
 			$data[$groupBy]['rate']            =$daily['rate'];
 			#Make array like CArrayDataProvider
 			$consolidated=array();
-			foreach ($data as $ios) {				
-				$consolidated[]=$ios;					
+			foreach ($data as $financeEntity) {				
+				$consolidated[]=$financeEntity;					
 			}
 		}
 		return $consolidated;

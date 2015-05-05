@@ -109,7 +109,7 @@ class FinanceController extends Controller
 		$entity     =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat        =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status     =isset($_GET['status']) ? $_GET['status'] : null;
-		$model      =new Ios;
+		$model      =new FinanceEntities;
 		$totalsdata =array();
 		$transactions=new TransactionCount;
 

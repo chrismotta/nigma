@@ -690,7 +690,7 @@ class KHtml extends CHtml
         {
             $mainVar['date']   = Utilities::weekDaysSum(date('Y-m-01'),2);
             $mainVar['option'] ='opportunities';
-            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
+            foreach(FinanceEntities::model()->getClients($mainVar['month'],$mainVar['year'],null,null,Yii::App()->user->getId(),null,null,null,null)['data'] as $opportunitie)
             {
                 if(!$opportunitie['status_opp'])$mainVar['count']++;
             }
@@ -702,7 +702,7 @@ class KHtml extends CHtml
             $mainVar['year']  =date('Y', $mainVar['date']);
             $mainVar['month'] =date('m', $mainVar['date']);
             $mainVar['option'] ='opportunities closed deal';
-            foreach(Ios::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
+            foreach(FinanceEntities::model()->getClients($mainVar['month'],$mainVar['year'],null,null,null,null,null,null,null,true)['data'] as $opportunitie)
             {
                 $opp=Opportunities::model()->findByPk($opportunitie['opportunitie_id']);
                 if($opp->checkIsAbleInvoice() && !OpportunitiesValidation::model()->checkValidation($opp->id, $mainVar['year'].'-'.$mainVar['month'].'-01'))$mainVar['count']++;

@@ -45,7 +45,7 @@ echo KHtml::currencyTotals($totals->getData());
 			$criteria->select               ='entity';
 			$criteria->group                ='entity';
 			$criteria->addCondition('entity !=""');
-			$io                             =new Ios;
+			$io                             =new FinanceEntities;
 			$entity                         =$io->findAll($criteria);
 			$entities[0]                    ='All entities';
 			foreach ($entity as $value) {

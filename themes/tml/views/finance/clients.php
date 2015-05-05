@@ -11,14 +11,14 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo KHtml::currencyTotalsClients($totals->getData());
+echo KHtml::currencyTotals($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
 	array('label'=>'Manage Ios', 'url'=>array('admin')),
 );
 $log    =new ValidationLog;
-$ios    =new Ios;
+$financeEntity    =new FinanceEntities;
 $buttonsColumn='
 				CHtml::ajaxLink(
 					"<i style=\"cursor:default\" id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>", 
@@ -148,7 +148,7 @@ else
 				$years[$y]=$y;
 			}
 
-			$entities=KHtml::enumItem(new Ios,'entity');
+			$entities=KHtml::enumItem(new FinanceEntities,'entity');
 			$entities[0]='All Entities';
 			$categories=KHtml::enumItem(new Advertisers,'cat');
 			$categories[0]='All Categories';
@@ -161,7 +161,7 @@ else
 			$status[0]='All Status';
 			echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:15%;', 'options' => array(intval($month)=>array('selected'=>true))));
 			echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:15%; margin-left:1em;','options' => array($year=>array('selected'=>true))));
-			echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
+			echo $form->dropDownList(new FinanceEntities,'entity',$entities,array('name'=>'entity', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true))));
 			echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true))));
 			echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:15%; margin-left:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true))));
 		
