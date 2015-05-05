@@ -116,8 +116,9 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style'=>'width:10px'),
 		),
 		array( 
-			'name'              =>'regions_name',
-			'value'             =>'$data->regions->region',
+			'name'              => 'regions_name',
+			'header'            => 'Finance Entity',
+			'value'             => '$data->regions->region',
 			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
 		array( 

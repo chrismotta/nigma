@@ -431,7 +431,7 @@ $('.search-form form').submit(function(){
 		*/
         array(
 			'name'              => 'revenue',
-			'header'            => 'Spent',
+			'header'            => 'Spend',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'value'             => '"\$ ".number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),

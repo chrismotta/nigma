@@ -5,7 +5,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Finance Entitie <?php echo "#".$model->id ?></h4>
+    <h4>Finance Entity <?php echo "#".$model->id ?></h4>
 </div>
 
 <div class="modal-body">
