@@ -37,8 +37,8 @@ echo KHtml::currencyTotals($totals->getData());
 			$months[11] ='November';
 			$months[12] ='December';
 			$years[0]   ='Select a year';
-			foreach (range(date('Y'), 2014) as $year) {
-				$years[$year]=$year;
+			foreach (range(date('Y'), 2014) as $y) {
+				$years[$y]=$y;
 			}
 
 			$criteria                       =new CDbCriteria;
