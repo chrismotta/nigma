@@ -13,7 +13,7 @@
 
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Ios <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+    <h4>IOs <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
 </div>
 
 
@@ -50,7 +50,7 @@
                     )
             );
             echo'<div class="control-group">
-                    <label class="control-label required" for="Ios_date">Fiance Enttitie <span class="required">*</span></label>
+                    <label class="control-label required" for="Ios_date">Fiance Enttity <span class="required">*</span></label>
                     <div class="controls">';
             echo KHtml::filterFinanceEntities(null,array('class'=>'span3'),'check','Ios[finance_entities_id]');
             //echo $form->textFieldRow($model, 'finance_entities_id', array('class'=>'span3'));
