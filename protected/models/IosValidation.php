@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'ios_validation':
  * @property integer $id
- * @property integer $ios_id
+ * @property integer $finance_entities_id
  * @property string $period
  * @property string $date
  * @property string $status
@@ -14,7 +14,7 @@
  * @property string $invoice_id
  *
  * The followings are the available model relations:
- * @property Ios $ios
+ * @property FinanceEntities $ios
  */
 class IosValidation extends CActiveRecord
 {
@@ -35,14 +35,14 @@ class IosValidation extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('period, date, validation_token', 'required'),
-			array('ios_id', 'numerical', 'integerOnly'=>true),
+			array('finance_entities_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>255),
 			array('comment', 'length', 'max'=>255),
 			array('invoice_id', 'length', 'max'=>255),
 			array('validation_token', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, ios_id, period, date, status, comment, validation_token, invoice_id', 'safe', 'on'=>'search'),
+			array('id, finance_entities_id, period, date, status, comment, validation_token, invoice_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -54,7 +54,7 @@ class IosValidation extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'ios' => array(self::BELONGS_TO, 'Ios', 'ios_id'),
+			'financeEntities' => array(self::BELONGS_TO, 'FinanceEntities', 'finance_entities_id'),
 		);
 	}
 
@@ -65,7 +65,7 @@ class IosValidation extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'ios_id' => 'Ios',
+			'finance_entities_id' => 'FinanceEntities',
 			'period' => 'Period',
 			'date' => 'Date',
 			'status' => 'Status',
@@ -94,7 +94,7 @@ class IosValidation extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('ios_id',$this->ios_id);
+		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('period',$this->period,true);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('status',$this->status,true);
@@ -142,7 +142,7 @@ class IosValidation extends CActiveRecord
 	public function loadModelByIo($io,$period=null)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->addCondition("ios_id=".$io);
+		$criteria->addCondition("finance_entities_id=".$io);
 		if($period)
 		{
 			$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
@@ -164,7 +164,7 @@ class IosValidation extends CActiveRecord
 	public function checkValidationOpportunities($io,$period)
 	{
 		$check=false;
-		$ios=new Ios;
+		$ios=new FinanceEntities;
 		$opportunitiesValidation=new OpportunitiesValidation;
 		$clients = $ios->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$io,null,null,null,null,'otro');
 		// foreach ($clients as $client) {			
@@ -188,7 +188,7 @@ class IosValidation extends CActiveRecord
 	public function checkValidation($io,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->addCondition("ios_id=".$io);
+		$criteria->addCondition("finance_entities_id=".$io);
 		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
 		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
 		$criteria->order="period DESC";
@@ -207,7 +207,7 @@ class IosValidation extends CActiveRecord
 	public function getCommentByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition('finance_entities_id='.$id);
 		$criteria->compare("period",date('Y-m-d', strtotime($period)));
 		if($validation = self::find($criteria))
 			return $validation->comment;
@@ -224,7 +224,7 @@ class IosValidation extends CActiveRecord
 	public function getStatusByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition('finance_entities_id='.$id);
 		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
 		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
 		if($validation = self::find($criteria))
@@ -242,7 +242,7 @@ class IosValidation extends CActiveRecord
 	public function getDateByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition('finance_entities_id='.$id);
 		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
 		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
 		if($validation = self::find($criteria))
@@ -260,7 +260,7 @@ class IosValidation extends CActiveRecord
 	public function loadByIo($id,$period)
 	{
 		$criteria=new CDbCriteria;
-		$criteria->addCondition('ios_id='.$id);
+		$criteria->addCondition('finance_entities_id='.$id);
 		$criteria->addCondition("MONTH(period)='".date('m', strtotime($period))."'");
 		$criteria->addCondition("YEAR(period)='".date('Y', strtotime($period))."'");
 		if($validation = self::model()->find($criteria))

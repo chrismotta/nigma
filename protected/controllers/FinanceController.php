@@ -212,7 +212,7 @@ class FinanceController extends Controller
 		$entity =isset($_GET['entity']) ? $_GET['entity'] : null;
 		$cat    =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status    =isset($_GET['status']) ? $_GET['status'] : null;
-		$model  =new Ios;
+		$model  =new FinanceEntities;
 		$transactions=new TransactionCount;
 		if(FilterManager::model()->isUserTotalAccess('finance.clients'))
 			$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
@@ -330,7 +330,7 @@ class FinanceController extends Controller
 				'opportunitie_id' =>$id,
 				'multi'           =>true,		
 				);
-		$data  =Ios::model()->getClientsMulti($filters);
+		$data  =FinanceEntities::model()->getClientsMulti($filters);
 		$dataProvider=new CArrayDataProvider($data, array(
 		    'id'=>'clients',
 		    'sort'=>array(
@@ -355,7 +355,7 @@ class FinanceController extends Controller
 	 */
 	public function actionView($id)
 	{
-		$model = Ios::model()->findByPk($id);
+		$model = FinanceEntities::model()->findByPk($id);
 
 		$this->renderPartial('_view',array(
 			'model'=>$model,
@@ -369,7 +369,7 @@ class FinanceController extends Controller
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-clients-form']) ) {
-			$model  =new Ios;
+			$model  =new $financeEntity;
 			$transactions=new TransactionCount;	
 			$year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 			$month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
@@ -427,7 +427,7 @@ class FinanceController extends Controller
 	 */
 	public function actionRevenueValidation()
 	{
-		$model             =new Ios;
+		$model             =new FinanceEntities;
 		$transactionCount  =new TransactionCount;
 		$year              =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month             =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
@@ -516,7 +516,7 @@ class FinanceController extends Controller
 		$year    =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month   =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
 		$op      =isset($_GET['op']) ? $_GET['op'] : null;
-		$model   =new Ios;
+		$model   =new FinanceEntities;
 		$modelOp=new Opportunities;
 		$opportunitie=$modelOp->findByPk($op);
 		if(is_null($opportunitie->rate)){
@@ -713,7 +713,7 @@ class FinanceController extends Controller
 	                	';
 	            $subject = 'KickAds - Statement of account as per '.date('M j, Y');
 
-	            $io = Ios::model()->findByPk($ioValidation->ios_id);         
+	            $io = FinanceEntities::model()->findByPk($ioValidation->ios_id);         
 				$email_validation=is_null($io->email_validation) ? $io->email_adm : $io->email_validation;
 
 				if(isset($email_validation)){
@@ -772,7 +772,7 @@ class FinanceController extends Controller
 		$id     = isset($_GET['id']) ? $_GET['id'] : null;
 		$model  = new TransactionCount;
 		$carriers=array();
-		$clients =Ios::model()->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$id,null,null,null,null,'profile');
+		$clients =FinanceEntities::model()->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$id,null,null,null,null,'profile');
 		foreach ($clients['data'] as $value) {
 			if($value['carrier'])
 			{
@@ -849,7 +849,7 @@ class FinanceController extends Controller
         if($options['date'] == strtotime ( date('Y-m-d',strtotime('NOW')) ))
 		{
 			echo '<hr/>Opportunities not validated:<br>';
-			foreach(Ios::model()->getClients($options['month'],$options['year'],null,null,null,null,null,null,null)['data'] as $opportunitie)
+			foreach(FinanceEntities::model()->getClients($options['month'],$options['year'],null,null,null,null,null,null,null)['data'] as $opportunitie)
 	        {
        			if(!$opportunitie['status_opp'])
        				$opportunities[]=Opportunities::model()->findByPk($opportunitie['opportunitie_id'])->getVirtualName();
