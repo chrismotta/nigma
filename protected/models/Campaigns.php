@@ -144,7 +144,7 @@ class Campaigns extends CActiveRecord
 			'banner_sizes_id'        => 'Banner Sizes',
 			'net_currency'           => 'Prov Currency',
 			'clicks'                 => 'Clicks Log',
-			'conv'                   => 'Convertions Log',
+			'conv'                   => 'Conversions Log',
 			'account_manager'        => 'Account Manager',
 			'rate'                   => 'Rate',
 			'revenue'                => 'Revenue',
