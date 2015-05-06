@@ -2,7 +2,7 @@
 /* @var $this FinanceController */
 /* @var $model Finance */
 $path    = 'uploads/';
-$name    = 'KickAds-Providers.xls';
+$name    = 'TheMediaLab-Providers.xls';
 $year    =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 $month   =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
 //echo json_encode($model->getClients($month,$year));

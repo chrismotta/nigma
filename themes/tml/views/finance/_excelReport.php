@@ -36,11 +36,11 @@
             $months[11] ='November';
             $months[12] ='December';
             $years[0]   ='Select a year';
-            foreach (range(date('Y'), 2014) as $year) {
-                $years[$year]=$year;
+            foreach (range(date('Y'), 2014) as $y) {
+                $years[$y]=$y;
             }
 
-            $entities=KHtml::enumItem(new Ios,'entity');
+            $entities=KHtml::enumItem(new FinanceEntities,'entity');
             $entities[0]='All Entities';
             $categories=KHtml::enumItem(new Advertisers,'cat');
             $categories[0]='All Categories';
@@ -53,7 +53,7 @@
             $status[0]='All Status';
             echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;', 'options' => array(isset($_GET['month']) ? $_GET['month'] : 0=>array('selected'=>true)))) . "<br>";
             echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['year']) ? $_GET['year'] : 0=>array('selected'=>true)))) . "<br>";
-            echo $form->dropDownList(new Ios,'entity',$entities,array('name'=>'entity', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true)))) . "<br>";
+            echo $form->dropDownList(new FinanceEntities,'entity',$entities,array('name'=>'entity', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['entity']) ? $_GET['entity'] : 0=>array('selected'=>true)))) . "<br>";
             echo $form->dropDownList(new Advertisers,'cat',$categories,array('name'=>'cat', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['cat']) ? $_GET['cat'] : 0=>array('selected'=>true)))) . "<br>";
             echo $form->dropDownList(new IosValidation,'status',$status,array('name'=>'status', 'style'=>'width:25%; margin-left:35%; margin-bottom:1em;','options' => array(isset($_GET['status']) ? $_GET['status'] : 0=>array('selected'=>true)))) . "<br>";
         

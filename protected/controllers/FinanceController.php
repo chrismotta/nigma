@@ -369,18 +369,24 @@ class FinanceController extends Controller
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-clients-form']) ) {
-			$model  =new $financeEntity;
-			$transactions=new TransactionCount;	
+			
+			$model        =new FinanceEntities;
+			$transactions =new TransactionCount;	
 			$year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 			$month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
 			$entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
 			$cat          =isset($_POST['cat']) ? $_POST['cat'] : null;
 			$status       =isset($_POST['status']) ? $_POST['status'] : null;		
 			$closed_deal  =isset($_POST['closed_deal']) ? $_POST['closed_deal'] : null;		
-			if($closed_deal=='false')
+			
+			//var_dump($clients);die();
+			
+			if($closed_deal=='false' || $closed_deal==null)
 				$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null);
 			else
 				$clients =$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
+			
+			
 			$consolidated=array();
 			foreach ($clients['data'] as $client) {
 				$client['total_revenue']     =$clients['totals_io'][$client['id']];
@@ -390,6 +396,7 @@ class FinanceController extends Controller
 				//isset($totalCount[$client['id']]) ? : $totalCount[$client['id']]=0;
 				//$totalCount[$client['id']]=$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 			}
+			
 			$dataProvider =new CArrayDataProvider($consolidated, array(
 			    'id'=>'clients',
 			    'pagination'=>array(
@@ -488,7 +495,7 @@ class FinanceController extends Controller
 		            
 		if( isset($_POST['revenue-validation-form']) ) {
 			$this->renderPartial('sendMail', array(
-				'io_id'  => $_POST['ios_id'],
+				'fe_id'  => $_POST['finance_entities_id'],
 				'period' => $_POST['period'],
 			));
 		}
@@ -575,13 +582,13 @@ class FinanceController extends Controller
 			if($opportunitiesValidation->save())
 			{
 			    echo 'Oportunidad aprobada';
-				if($iosValidation->checkValidationOpportunities($opportunitie->ios_id,$period))
+				if($iosValidation->checkValidationOpportunities($opportunitie->regions->finance_entities_id,$period))
 				{
 
 					$status  ="Validated";
 					$comment =null;
-					$validation_token=md5($date.$opportunitie->ios_id);
-					$iosValidation->attributes=array('ios_id'=>$opportunitie->ios_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
+					$validation_token=md5($date.$opportunitie->regions->finance_entities_id);
+					$iosValidation->attributes=array('finance_entities_id'=>$opportunitie->regions->finance_entities_id,'period'=>$period,'date'=>$date, 'status'=>$status, 'comment'=>$comment,'validation_token'=>$validation_token);
 					if($iosValidation->save())
 					{
 					    echo 'IO Validated';
@@ -610,10 +617,10 @@ class FinanceController extends Controller
 		$period     =$_POST['period'];
 		$invoice_id =$_POST['invoice_id'];
 		$log=new ValidationLog;
-		if(isset($_POST['io_id']))
+		if(isset($_POST['fe_id']))
 		{
-			$io_id      =$_POST['io_id'];
-			if($revenueValidation= IosValidation::model()->loadByIo($io_id,$period))
+			$fe_id      =$_POST['fe_id'];
+			if($revenueValidation= IosValidation::model()->loadByIo($fe_id,$period))
 			{
 				if($revenueValidation->status=='Approved' || $revenueValidation->status=='Expired')
 				{
@@ -621,7 +628,7 @@ class FinanceController extends Controller
 					if($revenueValidation->save())
 					{
 						//ENVIAR MAIL AQUI
-					    echo 'Io #'.$revenueValidation->ios_id.' invoiced';
+					    echo 'Io #'.$revenueValidation->finance_entities_id.' invoiced';
 						$log->loadLog($revenueValidation->id,$status);
 					}
 					else 
@@ -675,7 +682,7 @@ class FinanceController extends Controller
 	 */
 	public function actionSendMail()
 	{
-		$io_id  = $_POST['io_id'];
+		$fe_id  = $_POST['fe_id'];
 		$period = $_POST['period'];
 		
 		$date    = date('Y-m-d H:i:s', strtotime('NOW'));
@@ -684,9 +691,9 @@ class FinanceController extends Controller
 
 		$revenueValidation = new IosValidation;
 		$log               = new ValidationLog;
-		if($revenueValidation->checkValidation($io_id,$period))
+		if($revenueValidation->checkValidation($fe_id,$period))
 		{
-			$ioValidation=$revenueValidation->loadByIo($io_id,$period);
+			$ioValidation=$revenueValidation->loadByIo($fe_id,$period);
 			$ioValidation->attributes=array('status'=>$status, 'date'=>$date);
 			if($ioValidation->save())
 			{
@@ -713,16 +720,16 @@ class FinanceController extends Controller
 	                	';
 	            $subject = 'KickAds - Statement of account as per '.date('M j, Y');
 
-	            $io = FinanceEntities::model()->findByPk($ioValidation->ios_id);         
+	            $io = FinanceEntities::model()->findByPk($ioValidation->finance_entities_id);         
 				$email_validation=is_null($io->email_validation) ? $io->email_adm : $io->email_validation;
 
 				if(isset($email_validation)){
 		            $mail = new CPhpMailerLogRoute;  
 	            		$mail->send(array($email_validation), $subject, $body);
-	            		echo 'Io #'.$ioValidation->ios_id.' email sent';
+	            		echo 'Io #'.$ioValidation->finance_entities_id.' email sent';
 					
 				}else{
-				    echo 'Io #'.$ioValidation->ios_id.' - Mail contact is undefined';
+				    echo 'Io #'.$ioValidation->finance_entities_id.' - Mail contact is undefined';
 					$ioValidation->attributes=array('status'=>'Validated', 'date'=>$date);
 					$ioValidation->save();
 				}
@@ -809,7 +816,7 @@ class FinanceController extends Controller
 			$transaction->volume              = $_POST['TransactionCount']['volume'];
 			$transaction->rate                = $_POST['TransactionCount']['rate'];
 			$transaction->users_id            = $_POST['TransactionCount']['users_id'];
-			$transaction->ios_id              = $_POST['TransactionCount']['ios_id'];
+			$transaction->finance_entities_id              = $_POST['TransactionCount']['finance_entities_id'];
 			$transaction->date                = $_POST['TransactionCount']['date'];
 
 			if(!$transaction->save())echo'<script>alert('.json_encode($transaction->getErrors()).')</script>';
@@ -878,17 +885,17 @@ class FinanceController extends Controller
 			$criteria=new CDbCriteria;
 			$criteria->compare('t.status','Validated');
 			$criteria->compare('t.period',$options['year'].'-'.$options['month'].'-01');
-			$criteria->with=array('ios');
+			$criteria->with=array('finance_entities');
 			foreach(IosValidation::model()->findAll($criteria) as $value)
 	        {
-       			$ios[]=$value->ios->id.' - '.$value->ios->name;
+       			$finance_entities[]=$value->finance_entities->id.' - '.$value->finance_entities->name;
 	        }
-	        if(isset($ios))
+	        if(isset($finance_entities))
 	    	{
 	    		$body = '
 					<span style="color:#000">
 					  <p>Ios Mails not sent:</p>';
-	    		foreach ($ios as $value) {
+	    		foreach ($finance_entities as $value) {
 	    			echo 'io #'.$value.'<br>';
 	    			$body .=  '<p>'.$value.'</p>';
 	    		}
@@ -909,7 +916,7 @@ class FinanceController extends Controller
 	public function actionGetCarriers()
 	{
 		// comentado provisoriamente, generar permiso de admin
-		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		//$finance_entities = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$criteria=new CDbCriteria;
 		$id_country = isset($_GET['country']) ? $_GET['country'] : null;
 			if($id_country)

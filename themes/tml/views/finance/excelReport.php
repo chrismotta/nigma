@@ -3,7 +3,7 @@
 /* @var $model Finance */
 
 $path         = 'uploads/';
-$name         = 'KickAds-Clients.xls';
+$name         = 'TheMediaLab-Clients.xls';
 // $year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 // $month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
 // $entity       =isset($_POST['entity']) ? $_POST['entity'] : null;

@@ -44,7 +44,7 @@
         <div class="subnav navbar navbar-fixed-bottom">
             <div class="navbar-inner">
                 <div class="container text-center">
-                	<small>Copyright &copy; <?php echo date('Y'); ?> All Rights Reserved. Powered by <a href="http://www.kickads.mobi" title="Kickads.mobi" target="_new">Kickads.mobi</a></small>
+                	<small>Copyright &copy; <?php echo date('Y'); ?> All Rights Reserved. Powered by <a href="http://www.themedialab.co" title="TheMediaLab.co" target="_new">TheMediaLab.co</a></small>
                 </div>
             </div>
         </div>      
