@@ -22,39 +22,39 @@ echo KHtml::currencyTotals($totals->getData());
     )); ?> 
 
 	<fieldset>
-		<?php
-			$months[0]	='Select a month';
-			$months[1]  ='January';
-			$months[2]  ='February';
-			$months[3]  ='March';
-			$months[4]  ='April';
-			$months[5]  ='May';
-			$months[6]  ='June';
-			$months[7]  ='July';
-			$months[8]  ='August';
-			$months[9]  ='September';
-			$months[10] ='October';
-			$months[11] ='November';
-			$months[12] ='December';
-			$years[0]   ='Select a year';
-			foreach (range(date('Y'), 2014) as $y) {
-				$years[$y]=$y;
-			}
+	<?php
+		$months[0]	='Select a month';
+		$months[1]  ='January';
+		$months[2]  ='February';
+		$months[3]  ='March';
+		$months[4]  ='April';
+		$months[5]  ='May';
+		$months[6]  ='June';
+		$months[7]  ='July';
+		$months[8]  ='August';
+		$months[9]  ='September';
+		$months[10] ='October';
+		$months[11] ='November';
+		$months[12] ='December';
+		$years[0]   ='Select a year';
+		foreach (range(date('Y'), 2014) as $y) {
+			$years[$y]=$y;
+		}
 
-			$criteria                       =new CDbCriteria;
-			$criteria->select               ='entity';
-			$criteria->group                ='entity';
-			$criteria->addCondition('entity !=""');
-			$io                             =new FinanceEntities;
-			$entity                         =$io->findAll($criteria);
-			$entities[0]                    ='All entities';
-			foreach ($entity as $value) {
-				$entities[$value->entity]=$value->entity;
-			}
-		echo $form->dropDownList(new DailyReport,'date',$months,array('name'=>'month', 'options' => array($month=>array('selected'=>true))));
-		echo $form->dropDownList(new DailyReport,'date',$years,array('name'=>'year','options' => array($year=>array('selected'=>true))));
-		
-		            ?>
+		$criteria                       =new CDbCriteria;
+		$criteria->select               ='entity';
+		$criteria->group                ='entity';
+		$criteria->addCondition('entity !=""');
+		$io                             =new FinanceEntities;
+		$entity                         =$io->findAll($criteria);
+		$entities[0]                    ='All entities';
+		foreach ($entity as $value) {
+			$entities[$value->entity]=$value->entity;
+		}
+
+		echo $form->dropDownList(new DailyReport, 'date', $months, array('name'=>'month', 'options' => array(intval($month)=>array('selected'=>true))));
+		echo $form->dropDownList(new DailyReport, 'date', $years, array('name'=>'year','options' => array($year=>array('selected'=>true))));	
+	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',

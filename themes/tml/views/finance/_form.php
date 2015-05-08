@@ -17,7 +17,7 @@
 			'htmlOptions'          =>array('class'=>'well'),
 			'action'               =>$this->createUrl('finance/addTransaction/'),
 			// to enable ajax validation
-			'enableAjaxValidation' =>true,
+			'enableAjaxValidation' =>false,
 			'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
 		)); 
 		echo '<fieldset>';
@@ -32,7 +32,7 @@
 			echo $form->textFieldRow($model, 'volume', array('class'=>'span3')); 
 			echo $form->textFieldRow($model, 'rate', array('class'=>'span3')); 
 			// echo $form->hiddenField($model, 'opportunities_id',array('value'=>$id)); 
-			echo $form->hiddenField($model, 'ios_id',array('value'=>$id)); 
+			echo $form->hiddenField($model, 'finance_entities_id',array('value'=>$id)); 
 			echo $form->hiddenField($model, 'period',array('value'=>$period)); 
 			echo $form->hiddenField($model, 'date',array('value'=>date('Y-m-d H:i:s', strtotime('NOW')))); 
 			echo $form->hiddenField($model, 'users_id',array('value'=>Yii::App()->user->getId())); 
@@ -42,12 +42,13 @@
 				'buttonType'  => 'ajaxSubmit',
 				'type'        => 'primary',
 				'label'       => 'Add',
-				'htmlOptions' => array('name' => 'submit'),
+				'url'         => $this->createUrl('finance/addTransaction/'),
+				'htmlOptions' => array('name' => 'submit', 'id'=>'submitAddTransactionCount'),
 				'ajaxOptions' => array(
-						'type'   => 'post',
-						'data'   => "javascript:$('#transaction-count-form').serialize();",
-						'success' => 'js:function(data){
-							// console.log(data);
+						'type'       => 'post',
+						'beforeSend' => 'function(){$("body").undelegate("#submitAddTransactionCount","click");}',
+						'success'    => 'js:function(data){
+							console.log("Return: "+data);
 		                	$.fn.yiiGridView.update("transaction-count-grid");
 		            	}',
 		        )
@@ -60,11 +61,11 @@
 
 	<?php 
             $this->widget('yiibooster.widgets.TbExtendedGridView', array(
-            'id'                         => 'transaction-count-grid',
-            'dataProvider'               => $model->getTransactions($id,$period),
-            'type'                       => 'striped bordered',    
-            'template'                   => '{items} {pager} {summary}',
-            'columns'                    => array(
+			'id'           => 'transaction-count-grid',
+			'dataProvider' => $model->getTransactions($id,$period),
+			'type'         => 'striped bordered',    
+			'template'     => '{items} {pager} {summary}',
+			'columns'      => array(
                 array('name'              =>'id'),
                 // array('name'              =>'ios_id'),
                 array('name'              =>'carriers_id_carrier', 'value'=>'$data->getCarrier()'),
@@ -80,7 +81,7 @@
 					  'header'            =>false,
 				      'filter'            =>false,
 					  'headerHtmlOptions' => array('width' => '5'),
-					  'htmlOptions'		=>array('style'=>'text-align:left !important'),
+					  'htmlOptions'		  =>array('style'=>'text-align:left !important'),
                 	  'value' 			  =>'CHtml::link(
 												"<i class=\"icon-remove\"></i>",
 												array(),
@@ -99,7 +100,7 @@
 													")
 												);',
                 ),
-    //             array(
+    			// array(
 				// 	    'class'=>'CButtonColumn',
 				// 	    'template'=>'{delete}',
 				// )

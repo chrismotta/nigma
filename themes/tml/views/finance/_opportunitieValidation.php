@@ -9,7 +9,7 @@
 
 <div class="modal-body">
         <h5>Carrier: <?php //echo $opportunitie->carriers->mobile_brand ? $opportunitie->carriers->mobile_brand  : ""; ?></h5>
-        <h5>Country: <?php echo $opportunitie->country->name; ?></h5>
+        <h5>Country: <?php //echo $opportunitie->regions->country->name; ?></h5>
         <?php 
             $this->widget('yiibooster.widgets.TbExtendedGridView', array(
             'id'                         => 'revenue-validation-grid',

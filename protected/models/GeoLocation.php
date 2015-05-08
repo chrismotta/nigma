@@ -39,7 +39,7 @@ class GeoLocation extends CActiveRecord
 		return array(
 			array('status', 'required'),
 			array('id_location', 'numerical', 'integerOnly'=>true),
-			array('status', 'length', 'max'=>8),
+			array('status', 'length', 'max'=>9),
 			array('name, detail, code', 'length', 'max'=>255),
 			array('ISO2_CITY', 'length', 'max'=>10),
 			array('ISO2', 'length', 'max'=>2),

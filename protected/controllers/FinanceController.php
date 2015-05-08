@@ -806,20 +806,32 @@ class FinanceController extends Controller
 	 */
 	public function actionAddTransaction()
 	{
-		if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
-		{
-			$transaction                      = new TransactionCount;
-			$transaction->carriers_id_carrier = $_POST['TransactionCount']['carrier']=='multi' ? null : $_POST['TransactionCount']['carrier'];
-			$transaction->product             = $_POST['product']=='Without Product' ? '' : $_POST['product'];
-			$transaction->country             = $_POST['country'];
-			$transaction->period              = $_POST['TransactionCount']['period'];
-			$transaction->volume              = $_POST['TransactionCount']['volume'];
-			$transaction->rate                = $_POST['TransactionCount']['rate'];
-			$transaction->users_id            = $_POST['TransactionCount']['users_id'];
-			$transaction->finance_entities_id              = $_POST['TransactionCount']['finance_entities_id'];
-			$transaction->date                = $_POST['TransactionCount']['date'];
+		// var_dump($_POST);
+		// die();
+		if(isset($_POST['TransactionCount'])){
 
-			if(!$transaction->save())echo'<script>alert('.json_encode($transaction->getErrors()).')</script>';
+			// if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
+			// {
+				$transaction                      = new TransactionCount;
+				$transaction->carriers_id_carrier = $_POST['TransactionCount']['carrier']=='multi' ? null : $_POST['TransactionCount']['carrier'];
+				$transaction->product             = $_POST['product']=='Without Product' ? '' : $_POST['product'];
+				$transaction->country             = $_POST['country'];
+				$transaction->period              = $_POST['TransactionCount']['period'];
+				$transaction->volume              = $_POST['TransactionCount']['volume'];
+				$transaction->rate                = $_POST['TransactionCount']['rate'];
+				$transaction->users_id            = $_POST['TransactionCount']['users_id'];
+				$transaction->finance_entities_id = $_POST['TransactionCount']['finance_entities_id'];
+				$transaction->date                = $_POST['TransactionCount']['date'];
+
+				if(!$transaction->save())
+					echo json_encode($transaction->getErrors());
+				else
+					echo 'transaction ok';
+			// }else{
+			// 	echo 'data not loaded';
+			// }
+		}else{
+			echo 'post not loaded';
 		}
 	}
 

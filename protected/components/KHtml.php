@@ -124,7 +124,7 @@ class KHtml extends CHtml
         return CHtml::dropDownList('carrier', $value, $list, $htmlOptions);
     }
 
-    public static function filterProduct($value, $htmlOptions = array(),$io_id=null,$optionAll=true)
+    public static function filterProduct($value, $htmlOptions = array(), $feId=null, $optionAll=true)
     {
         $defaultHtmlOptions = array(
             'class' => 'product-dropdownlist',
@@ -134,9 +134,10 @@ class KHtml extends CHtml
 
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         $criteria = new CDbCriteria;
-        $criteria->select='*, if(product="","Without Product",product) as product';
-        if ( $io_id != NULL )
-            $criteria->compare('ios_id', $io_id);
+        $criteria->select = array(new CDbExpression('IF( t.product="", "Without Product", t.product) as product'));
+        $criteria->with  = array('regions');
+        if ( $feId != NULL )
+            $criteria->compare('regions.finance_entities_id', $feId);
         $criteria->group='product';
         $opps = Opportunities::model()->findAll($criteria);
         $list   = CHtml::listData($opps, 'product', 'product');
@@ -239,7 +240,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterCountries($value, $htmlOptions = array(),$io=null,$dropdownLoad=null,$optionAll=true)
+    public static function filterCountries($value, $htmlOptions=array(), $feId=null, $dropdownLoad=null, $optionAll=true)
     {
         $defaultHtmlOptions = $optionAll ? array(
             'empty' => 'All countries',            
@@ -259,12 +260,12 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         $criteria = new CDbCriteria;
-        $criteria->with  = array('country');
+        $criteria->with  = array('regions','regions.country');
         $criteria->order = 'country.name';
-        if(!is_null($io))
-            $criteria->compare('ios_id',$io);
+        if(!is_null($feId))
+            $criteria->compare('regions.finance_entities_id',$feId);
         $opps            = Opportunities::model()->findAll($criteria);
-        $list            = CHtml::listData($opps, 'country.id_location', 'country.name');
+        $list            = CHtml::listData($opps, 'regions.country.id_location', 'regions.country.name');
         return CHtml::dropDownList('country', $value, $list, $htmlOptions);
     }
 

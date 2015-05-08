@@ -206,11 +206,11 @@ else
 			'name'              => 'name',
 			'value'             => '$data["id"] . " - " . $data["name"]',
 			'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'            => 'IO - Commercial Name',
+			'header'            => 'Commercial Name',
 			),
 		array(
 			'name'              => 'opportunitie',
-			'value'             => '$data["opportunitie_id"]." - ".$data["opportunitie"]',	
+			'value'             => '$data["opportunitie"]',	
 			'htmlOptions'       => array('id'=>'alignLeft'),
 			'header'            => 'Opportunitie',                           
 			),	

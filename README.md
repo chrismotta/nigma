@@ -1,4 +1,4 @@
-## Kickads Appserver
+## Nigma Appserver
 ### Install Environment
 
 #### Programs
@@ -54,13 +54,13 @@ echo "<?php phpinfo(); ?>" >> /var/www/html/phpinfo.php
 - Change Behavior executable text files
   - http://askubuntu.com/questions/83470/how-do-i-change-how-executable-files-are-handled-by-the-file-manager
 - Edit smartgithg.sh to correct openjdk-7-jre path
-- Create db kickads_appserver and import backup_data
+- Create db nigma_appserver and import backup_data
 ```
 sudo gedit /etc/apache2/apache2.conf AllowOverride All in /var/www section and execute sudo a2enmod rewrite
-sudo chmod -R 777 /var/www/html/kickads/appserver
+sudo chmod -R 777 /var/www/html/nigma/appserver
 - Ignore chmod changes in git
 ```
-cd /var/www/html/kickads/appserver 
+cd /var/www/html/nigma/appserver 
 git config core.fileMode false
 - Plugins Sublime
   - https://sublime.wbond.net/installation#st2

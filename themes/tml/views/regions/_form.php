@@ -30,12 +30,12 @@
     <fieldset>
         <?php 
 
-        if ( ! $model->isNewRecord ) {
-    		echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
-    	}
-        echo $form->textFieldRow($model, 'region', array('class'=>'span3'));
-        echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
+        // if ( ! $model->isNewRecord ) {
+    	// 	echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
+    	// }
         echo $form->dropDownListRow($model, 'finance_entities_id', $financeEntities, array('prompt' => 'Select a finance entities'));
+        echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
+        echo $form->textFieldRow($model, 'region', array('class'=>'span3'));
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

@@ -5,10 +5,11 @@ $path    = 'uploads/';
 $name    = 'TheMediaLab-Providers.xls';
 $year    =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 $month   =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
-//echo json_encode($model->getClients($month,$year));
-
+$model_dp = $model->getProviders($month,$year);
+var_dump($model_dp['dataProvider']);
+die();
 $this->widget('EExcelWriter', array(
-    'dataProvider' => $model->getProviders($month,$year)['dataProvider'],
+    'dataProvider' => $model_dp['dataProvider'],
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,

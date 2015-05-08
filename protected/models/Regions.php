@@ -34,7 +34,7 @@ class Regions extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('finance_entities_id', 'required'),
+			array('finance_entities_id, country_id', 'required'),
 			array('finance_entities_id, country_id', 'numerical', 'integerOnly'=>true),
 			array('region', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
@@ -66,8 +66,8 @@ class Regions extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'finance_entities_id' => 'Finance Entities',
-			'country_id' => 'Country',
-			'region' => 'Region',
+			'country_id' => 'Region',
+			'region' => 'Alternative Name',
 		);
 	}
 
