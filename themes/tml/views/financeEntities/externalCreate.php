@@ -29,7 +29,7 @@ $this->menu=array();
 
 <?php if ( $action == 'form') : ?>
 	
-	<h2>Advertiser #<?php echo $advertiser->id ?> - <?php echo $advertiser->name ?></h2>
+	<h2>Advertiser - <?php echo $advertiser->name ?></h2>
 	<hr>
 	<h4>Commercial and financial data.</h4>
 
@@ -62,10 +62,11 @@ $this->menu=array();
 	        echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
 	        echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
 			echo "<hr/>";
-	        echo $form->dropDownListRow($model, 'currency', $currency, array('prompt' => 'Select a currency'));
+	        // echo $form->dropDownListRow($model, 'currency', $currency, array('prompt' => 'Select a currency'));
 			echo $form->textFieldRow($model, 'ret', array('class'=>'span2'), array('prepend'=>'%'));
 			echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
 	        //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
+	        echo $form->hiddenField($model, 'currency', array('value'=>'USD'));
 	        echo $form->hiddenField($model, 'entity', array('value'=>'LLC'));
 	    	echo $form->hiddenField($model, 'net_payment', array('value'=>'0'));
 	    	//echo $form->textFieldRow($model, 'advertisers_id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
