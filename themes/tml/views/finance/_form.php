@@ -10,6 +10,8 @@
 
 <div class="modal-body">
 	<?php 
+	reset($countries);
+	$first_country = key($countries);
 	if (FilterManager::model()->isUserTotalAccess('clients.validateIo')){
 		$form = $this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 			'id'                   =>'transaction-count-form',
@@ -25,9 +27,9 @@
 			$year=date('Y', strtotime($period));
 			$startDate=date('Y-m-d', strtotime($year.'-'.$month.'-01'));
 			$endDate=date('Y-m-d', strtotime($year.'-'.$month.'-31'));
-			 
-			echo KHtml::filterCountries(NULL,array(),$id,null,false);
-			echo $form->dropDownList($model,'carrier',$carriers); 
+			echo KHtml::filterCountries(NULL,array(),$id,'carrier',false);
+			echo KHtml::filterCarrier(NULL,NULL,array(),$first_country,'carrier');
+			//echo $form->dropDownList($model,'carrier',$carriers); 
 			echo KHtml::filterProduct(NULL,array(),$id,false);
 			echo $form->textFieldRow($model, 'volume', array('class'=>'span3')); 
 			echo $form->textFieldRow($model, 'rate', array('class'=>'span3')); 

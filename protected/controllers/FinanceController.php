@@ -780,23 +780,26 @@ class FinanceController extends Controller
 		$model  = new TransactionCount;
 		$carriers=array();
 		$clients =FinanceEntities::model()->getClients(date('m', strtotime($period)),date('Y', strtotime($period)),null,$id,null,null,null,null,'profile');
+		/*
 		foreach ($clients['data'] as $value) {
 			if($value['carrier'])
 			{
-				$carrier=Carriers::model()->findByPk($value['carrier']);
-				$country=GeoLocation::model()->findByPk($carrier->id_country)->name;
-				$carriers[$value['carrier']]=$carrier->mobile_brand.' - '.$country;
+				$carrier                     = Carriers::model()->findByPk($value['carrier']);
+				$country                     = GeoLocation::model()->findByPk($carrier->id_country)->name;
+				$carriers[$value['carrier']] = $carrier->mobile_brand.' - '.$country;
 			}
 			else
 			{
 				$carriers['multi']='Multi';
 			}
 		}
+		*/
+
 		$this->renderPartial('_form',array(
-			'id'     => $id,
-			'period' => $period,
-			'model'  => $model,
-			'carriers'=>$carriers
+			'id'        => $id,
+			'period'    => $period,
+			'model'     => $model,
+			'countries' => KHtml::getCountryByFE($id),
 		), false, true);
 	}
 
@@ -813,7 +816,7 @@ class FinanceController extends Controller
 			// if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
 			// {
 				$transaction                      = new TransactionCount;
-				$transaction->carriers_id_carrier = $_POST['TransactionCount']['carrier']=='multi' ? null : $_POST['TransactionCount']['carrier'];
+				$transaction->carriers_id_carrier = $_POST['carrier']=='multi' ? null : $_POST['carrier'];
 				$transaction->product             = $_POST['product']=='Without Product' ? '' : $_POST['product'];
 				$transaction->country             = $_POST['country'];
 				$transaction->period              = $_POST['TransactionCount']['period'];

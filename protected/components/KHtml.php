@@ -108,20 +108,20 @@ class KHtml extends CHtml
         return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
     }
 
-    public static function filterCarrier($value, $accountManagerId=NULL, $htmlOptions = array(),$country=null)
+    public static function filterCarrier($value, $accountManagerId=NULL, $htmlOptions = array(), $country=null, $name='carrier')
     {
         $defaultHtmlOptions = array(
-            'empty' => 'All carriers',
+            'empty' => 'All Carriers',
             'class' => 'carrier-dropdownlist',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
-        $criteria=new CDbCriteria;
+        $criteria    = new CDbCriteria;
         if($country)
             $criteria->compare('id_country',$country);
 
-        $carriers            = Carriers::model()->findAll($criteria);
-        $list            = CHtml::listData($carriers, 'id_carrier', 'mobile_brand');
-        return CHtml::dropDownList('carrier', $value, $list, $htmlOptions);
+        $carriers = Carriers::model()->findAll($criteria);
+        $list     = CHtml::listData($carriers, 'id_carrier', 'mobile_brand');
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 
     public static function filterProduct($value, $htmlOptions = array(), $feId=null, $optionAll=true)
@@ -233,7 +233,6 @@ class KHtml extends CHtml
         return CHtml::dropDownList('advertiser', $value, $list, $htmlOptions);
     }
 
-
     /**
      * Create dropdown of Countries
      * @param  $value
@@ -245,20 +244,25 @@ class KHtml extends CHtml
         $defaultHtmlOptions = $optionAll ? array(
             'empty' => 'All countries',            
         ) : array();
-        if(!is_null($dropdownLoad))
-            $defaultHtmlOptions = array_merge($defaultHtmlOptions, array(
+
+        if(!is_null($dropdownLoad)){
+
+            $defaultHtmlOptions = array(
                 'onChange' => '
                 $.post(
                     "' . Yii::app()->getBaseUrl() . '/finance/getCarriers/?country="+this.value,
                     "",
                     function(data)
                     {
-                        // alert(data);
+                        // console.log(data);
                         $("#'.$dropdownLoad.'").html(data);
                     }
-                )'));
-        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+                )');
+            $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        
+        }
 
+        /*
         $criteria = new CDbCriteria;
         $criteria->with  = array('regions','regions.country');
         $criteria->order = 'country.name';
@@ -266,7 +270,19 @@ class KHtml extends CHtml
             $criteria->compare('regions.finance_entities_id',$feId);
         $opps            = Opportunities::model()->findAll($criteria);
         $list            = CHtml::listData($opps, 'regions.country.id_location', 'regions.country.name');
-        return CHtml::dropDownList('country', $value, $list, $htmlOptions);
+        */
+
+        return CHtml::dropDownList('country', $value, self::getCountryByFE($feId), $htmlOptions);
+    }
+
+    public static function getCountryByFE($feId=null){
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('regions','regions.country');
+        $criteria->order = 'country.name';
+        if(!is_null($feId))
+            $criteria->compare('regions.finance_entities_id',$feId);
+        $opps            = Opportunities::model()->findAll($criteria);
+        return CHtml::listData($opps, 'regions.country.id_location', 'regions.country.name');
     }
 
     /**
