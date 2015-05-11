@@ -114,7 +114,7 @@ class ClicksLog extends CActiveRecord
 			'device'       => 'Device',
 			'os'           => 'Os',
 			'app'          => 'App',
-			'clics'        => 'Clics',
+			'clics'        => 'Clicks',
 			'redirect_url' => 'Redirect Url',
 			'totalClicks'  => 'Clicks',
 			'totalConv'    => 'Conversions',

@@ -67,7 +67,7 @@ class Regions extends CActiveRecord
 			'id' => 'ID',
 			'finance_entities_id' => 'Finance Entities',
 			'country_id' => 'Region',
-			'region' => 'Alternative Name',
+			'region' => 'Comment',
 		);
 	}
 
