@@ -1,4 +1,4 @@
 #!/bin/bash
-curl http://test.kickadserver.mobi/apiUpdate/
-curl http://app.kickadserver.mobi/apiUpdate/
+curl http://test.tmlbox.co/apiUpdate/
+curl http://tmlbox.co/apiUpdate/
 
