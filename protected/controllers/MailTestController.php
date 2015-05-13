@@ -28,7 +28,7 @@ class MailTestController extends Controller
 <p>If you weren’t the right contact person to verify the invoice, we ask you to follow the link above and update the information. Do not reply to this email with additional information.</p>
 <p>This process allows us to audit the invoice together beforehand and expedite any paperwork required and payment.</p>
 <p>Thanks</p>
-<p>KickAds</p>
+<p>TheMediaLab</p>
 <br/>
 <span style="color:#555">
 <p>Estimado cliente:</p>
@@ -37,12 +37,12 @@ class MailTestController extends Controller
 <p>Si usted no fuese la persona indicada para hacer esta verificación, le solicitamos ingrese al link anterior y actualice los datos. No responda a este correo con información adicional.</p>
 <p>Este proceso nos permite auditar en conjunto la facturación previo a realizar y agilizar en lo posible el intercambio de documentos y el pago.</p>
 <p>Gracias</p> 
-<p>KickAds</p>
+<p>TheMediaLab</p>
 </span>
 		';
 
 		$mail = new CPhpMailerLogRoute;
-		$mail->send(array('christian.motta@kickads.mobi'), 'Custom Mail', $body, true);
+		$mail->send(array('chris@themedialab.co'), 'Custom Mail', $body, true);
 
 		echo 'Enviado '.date('H:m:s');
 	}

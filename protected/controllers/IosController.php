@@ -185,8 +185,7 @@ class IosController extends Controller
 	{
 		$model = $this->loadModel($id);
 	//	if (isset($_POST['submit'])) {
-			//print($model);
-			//return;
+
 			$opportunities=array();
 			foreach (IosHasOpportunities::model()->getOpportunities($id) as $value) {
 				$opportunities[]=$value->opportunities_id;
