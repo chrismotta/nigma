@@ -57,7 +57,7 @@ class PDFInsertionOrder extends PDF
 
         // Print presentation
 		$io  = $this->getDataItem('io');
-        $this->printCompanyInfo($pdf, $io);
+    	$this->printCompanyInfo($pdf, $io);
         $pdf->Ln();
 
         // get advertisers.
@@ -119,7 +119,27 @@ class PDFInsertionOrder extends PDF
 		// Print terms and signature in a new page
 		$this->addPage();
 		$company='TML Media ';//.$io->financeEntities->entity[0];
-		$this->terms= "Terms and conditions:
+
+		$vasTerms = "Terms and conditions:
+
+Advertiser accepts and acknowledges the terms and conditions from TML Media LLC by signing this “Insertion Order“. TML Media LLC and the Advertiser have the right to cancel the campaign, any time, providing the other party 48-labor hours notice. TML Media LLC will invoice based on records from proprietary technology, plus extra validation with Advertiser if needed.
+
+Advertiser declares that it’s authorized and empowered enough to sign this agreement and have received a copy. The Parties agree that any work orders, proposals and insertion order are subject to modifications or amendments to the sole discretion of TML Media LLC. The terms of this document override any other terms and will be taken as valid in case of conflict. 
+
+";
+		// enable with prepayment
+		//if($prepayment) $vasTerms.= "Advertiser will be invoiced the same day the IO is fully consumed or at the end of month, whichever comes first. The Advertiser has [30] days to pay the invoice from the invoicing date.
+ 		
+ 		//";
+		$vasTerms.= "Advertiser shall immediately notify TML Media LLC of any suspected fraudulent or illegal activity, and shall submit any “action” disputes no later than 5 days after suspected fraudulent “action” has been registered. For all “action” disputes, Advertiser shall provide valid and reasonable evidence supporting the basis for such dispute, including but not limited to contact information, timestamp, IP address, proof of multiple uses of the fraudulent information, among others.
+
+As part of this agreement with TML Media LLC, the Advertiser agrees to implement a server-to-server conversion tracking that will enable TML Media LLC to independently validate any conversions that are generated. TML Media LLC will assist the Advertiser with the technical requirements for the implementation, which will allow TML Media LLC to manage performance campaigns more effectively. 
+
+Taxes: Except it's expressly stated in an IO, all taxes and/or deductions on TML Media LLC's net income, all value added, sales, and other taxes arising out of or relating to these Terms, shall be the responsibility of Advertiser.
+
+";
+
+        $defaultTerms = "Terms and conditions:
 Section 1. Incorporation Terms. These Terms and Conditions (together with any Insertion Orders hereunder, the “Agreement”), dated as of the date of the latest signature below (the “Effective Date”), is entered into by and between TML Media, LLC, a Delaware limited liability partnership (“Media Company”), and ".$io->financeEntities->commercial_name." (“Advertiser”), a company organized in the ".$io->financeEntities->country->name." , (each a “Party,” and, collectively, the “Parties”). The IAB/AAAA Standard Terms and Conditions for Internet Advertising Media Buys One Year or Less Version 3.0 (“IAB Terms”), located at http://www.iab.net/media/file/IAB_4As-tsandcs-FINAL.pdf, are hereby incorporated by reference, as modified herein. All capitalized terms not defined herein shall have the meanings set forth in the IAB Terms. 
 1.1 Construction. Any conflict or inconsistency among terms will be resolved in the following order of precedence: (i) the Insertion Order (the “IO”), (ii) Terms and Conditions, and (iii) IAB Terms. (Items (i), (ii) and (iii) are referred to collectively as the “Agreement”). 
 1.2 Party Language. Any reference to “Agency” or “Advertiser” in the IAB Terms applies to Advertiser, as specified in the applicable Insertion Order, and any reference to Media Company in the IAB Terms applies TML Media, LLC. For sake of clarity, the party named as the Advertiser in any IO is assuming the responsibilities, rights, and obligations of both the “Advertiser” and the “Agency” under the IAB Terms. 
@@ -148,9 +168,20 @@ Section 3. Additional Provisions
 3.6 IOs and Amendments to IOs. Advertiser agrees and acknowledges that every request for a new campaign must be submitted on an executed IO with the Media Company.
 
         ";
+
+        switch ($io->financeEntities->advertisers->cat) {
+        	case 'VAS':
+        	case 'App Owners':
+				$this->terms = $vasTerms;
+        		break;
+        	default:
+				$this->terms = $defaultTerms;
+        		break;
+        }
+
 		$this->printTerms($pdf);
 		$pdf->Ln();
 		$pdf->Ln();
-		$this->printSignature($pdf,$io->financeEntities->commercial_name);
+		$this->printSignature($pdf, $io->financeEntities->commercial_name, 'TML Media LLC', 'Matt');
     }
 }

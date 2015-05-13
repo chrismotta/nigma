@@ -6,7 +6,7 @@ class PDF extends EPdfFactoryDoc
     protected function initDocInfo()
     {
     	$pdf = $this->getPdf();
-    	$pdf->SetTitle('KickAds');
+    	$pdf->SetTitle('TheMediaLab');
         $pdf->SetSubject('IO');
         // $pdf->SetKeywords('x, y, z');
     }
@@ -115,7 +115,7 @@ class PDF extends EPdfFactoryDoc
      * Print signature section to pdf
      * @param  $pdf TCPDF object
      */
-    protected function printSignature($pdf,$name,$company='TML Media LLC')
+    protected function printSignature($pdf,$name,$company='TML Media LLC',$signature=null)
     {
         $pdf->SetTextColor(0);  
         $pdf->Cell(50, 10, '', 0, 0, 'L', false);
@@ -126,7 +126,8 @@ class PDF extends EPdfFactoryDoc
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
         $pdf->Cell(80, 10, '_________________________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Image(Yii::getPathOfAlias('webroot') . '/themes/tml/img/firma.png',$pdf->getX()+5,$pdf->getY()-20,'40%','40%');
+        if($signature == 'Matt')
+            $pdf->Image(Yii::getPathOfAlias('webroot') . '/themes/tml/img/matt_signature.png',$pdf->getX()+8,$pdf->getY()-17,'40%','40%');
         $pdf->Cell(100, 10, '_________________________________', 0, 0, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
@@ -135,14 +136,16 @@ class PDF extends EPdfFactoryDoc
         $pdf->Cell(100, 4, $company, 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
-        $pdf->Cell(80, 4, 'Name:___________________', 0, 0, 'L', false);
+        $pdf->Cell(80, 4, 'Name:___________________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Cell(100, 4, 'Name: ', 0, 1, 'L', false);
+        $sigName = $signature == 'Matt' ? 'Matías Vernetti' : '';
+        $pdf->Cell(100, 4, 'Name: '.$sigName, 0, 1, 'L', false);
         $pdf->Ln();
         $pdf->Cell(10, 10, '', 0, 0, 'L', false);
-        $pdf->Cell(80, 4, 'Title:___________________', 0, 0, 'L', false);
+        $pdf->Cell(80, 4, 'Title:____________________________', 0, 0, 'L', false);
         $pdf->Cell('10%', 10, '', 0, 0, 'L', false);
-        $pdf->Cell(100, 4, 'Title:', 0, 1, 'L', false);
+        $sigTittle = $signature == 'Matt' ? 'Jack of All Trades' : '';
+        $pdf->Cell(100, 4, 'Title: '.$sigTittle, 0, 1, 'L', false);
     }
 
     /**
@@ -156,19 +159,7 @@ class PDF extends EPdfFactoryDoc
         $pdf->SetFont('helvetica','',10);
     }
 
-    protected $terms = "Payment terms: Payment net 30 days from invoicing date.
-		
-		Aditional terms:
-		If any deduction/tax applies, it must be paid by customer. signing this \"insertion order\" we do accept the terms and conditions from KICKADS. KICKADS and the company has the right to cancel the campaign, any time, providing the other party 24 hours labour days notice. KICKADS will invoice based on records from current systems. 
-
-		Client is invoiced on the date the io is consumed or end of month, whichever comes first. The client has 30 days to pay the invoice from the invoice date. 
-
-		I hereby agree to the terms and conditions. I also declare that i'm authorized and empowered enough to sign this document and i have received a copy. The parties agree that any work orders, proposals and insertion order are subject to modifications or amendments to the sole discretion of the company. In case of conflict between terms and conditions and the terms of this agreement be taken as valid signed terms here.
-
-		Advertiser shall immediately notify KICKADS of any suspected fraudulent or illegal activity, and shall submit any lead disputes no later than 5 days after suspected fraudulent lead has been registered. For all lead disputes, advertiser shall provide valid and reasonable evidence supporting the basis for such dispute, including but not limited to contact information, timestamp, ip address, proof of multiple uses of the same credit card and fraudulent information entered.
-
-		As part of this agreement with KICKADS, the client agrees to implement a server side pixel that will enable KICKADS to independently validate any conversions that are received. KICKADS will assist the client regarding the technical requirements for implementing this pixel, which when validated will allow KICKADS manage cpa campaigns effectively.
-        ";
+    protected $terms = "Payment terms: Payment net 30 days from invoicing date.";
 
     public static function getPath() 
     {

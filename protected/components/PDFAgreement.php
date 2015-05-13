@@ -5,7 +5,7 @@ class PDFAgreement extends PDF
 
 	public function getPdfName()
     {
-    	return 'ServiceAgreement-' . $this->getDataItem('provider')->id . '-KickAds.pdf';
+    	return 'ServiceAgreement-' . $this->getDataItem('provider')->id . '-TheMediaLab.pdf';
     }
 
 
@@ -27,7 +27,7 @@ class PDFAgreement extends PDF
 
         // Print presentation
 		$provider  = $this->getDataItem('provider');
-        $company='KICKADS '.$provider->entity[0].'.'.$provider->entity[1].'.'.$provider->entity[2];
+        $company='TheMediaLab '.$provider->entity[0].'.'.$provider->entity[1].'.'.$provider->entity[2];
         if(Networks::model()->findByPk($provider->id))
             $type='network';
         if(Affiliates::model()->findByPk($provider->id))
@@ -62,8 +62,8 @@ class PDFAgreement extends PDF
 <b>TAX ID:</b> 30-71447415-0<br/>
 <b>Full Address:</b> Av. Dr Honorio Pueyrredón 1309, 1°C, 1414, Ciudad Autónoma de Buenos Aires Argentina<br/>
 <b>Phone No.:</b> +54 (011) 4777-6274<br/>
-<b>Billing Contact (Full Name & Email):</b> Silvina Shimojo – silvina.shimojo@kickads.mobi<br/>
-<b>Business Contact (Full Name & Email):</b> Pedro Forwe -pedro.forwe@kickads.mobi</p>
+<b>Billing Contact (Full Name & Email):</b> Silvina Shimojo – finance@themedialab.co<br/>
+<b>Business Contact (Full Name & Email):</b> Pedro Forwe -info@themedialab.co</p>
 
 <p><b>ii. Fees</b><br/>
 a. Service Fees:</p>
