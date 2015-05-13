@@ -4,8 +4,8 @@ class CPhpMailerLogRoute extends CEmailLogRoute
 {
 
     private $_config = array(
-        'From'       => 'no-reply@kickads.mobi',
-        'FromName'   => 'no-reply Kickads adServer',
+        'From'       => 'no-reply@themedialab.co',
+        'FromName'   => 'no-reply TheMediaLab adServer',
         // 'Host'       => "email-smtp.us-east-1.amazonaws.com",
         // 'SMTPAuth'   => true,
         // 'SMTPSecure' => "tls",
@@ -42,9 +42,9 @@ class CPhpMailerLogRoute extends CEmailLogRoute
             // amazon prod
             case '54.88.85.63':
             case 'ec2-54-88-85-63.compute-1.amazonaws.com':
-            case 'test.kickadserver.mobi':
-            case 'app.kickadserver.mobi':
-            case 'kickadserver.mobi':
+            case 'test.TheMediaLaberver.mobi':
+            case 'app.TheMediaLaberver.mobi':
+            case 'TheMediaLaberver.mobi':
                 foreach ($emails as $email) {
                     $this->sendEmail($email, $subject, $message, $isHTML);
                 }

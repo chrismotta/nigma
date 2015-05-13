@@ -16,7 +16,7 @@ class KHtml extends CHtml
     } 
 
     /**
-     * Create a TbDatePicker customize for KickAds adServer
+     * Create a TbDatePicker customize for TheMediaLab adServer
      * @param  string   $name 
      * @param  Date     $initialDate
      * @param  array()  $options
