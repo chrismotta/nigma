@@ -1,2 +1,2 @@
 #!/bin/bash
-curl http://kickadserver.mobi/clicksLog/updateClicksData
+curl http://tmlbox.co/clicksLog/updateClicksData

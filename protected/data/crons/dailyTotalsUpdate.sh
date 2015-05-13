@@ -1,2 +1,2 @@
 #!/bin/bash
-curl http://kickadserver.mobi/dailyTotals/consolidated
+curl http://tmlbox.co/dailyTotals/consolidated

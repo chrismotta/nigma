@@ -1,6 +1,6 @@
 #!/bin/bash
-convStorage=$(curl http://kickadserver.mobi/convLog/storage)
-clickStorage=$(curl http://kickadserver.mobi/clicksLog/storage)
+convStorage=$(curl http://tmlbox.co/convlog/storage)
+clickStorage=$(curl http://tmlbox.co/clickslog/storage)
 
 cd
 echo $(date)        >> storage_status.log

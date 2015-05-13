@@ -1,5 +1,5 @@
 #!/bin/bash
-updateValidationStatus=$(curl http://kickadserver.mobi/finance/updateValidationStatus)
+updateValidationStatus=$(curl http://tmlbox.co/finance/updateValidationStatus)
 
 cd
 echo $(date)                   >> updateValidationStatus.log
