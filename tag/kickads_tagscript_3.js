@@ -16,7 +16,7 @@ function initDefaultState() {
 }
 
 function clickBanner(){
-	mraid.expand("http://www.kickads.mobi/propuestas/ledesma/index.html");
+	mraid.expand("/propuestas/ledesma/index.html");
 	console.log("= "+mraid.getState());
 }
 

@@ -164,7 +164,7 @@ window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jq
 
 
 <div class="initial"><a href="javascript:;" onclick="clickBanner()" >
-	<img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
+	<img src="/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
 </a></div>
 <script>
 	console.log("* "+mraid.getState());
@@ -185,7 +185,7 @@ window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jq
 		    height : 480,
 		  });
 
-		mraid.expand("http://kickads.mobi/propuestas/dermaglos/");
+		mraid.expand("/propuestas/dermaglos/");
 		console.log("= "+mraid.getState());
 
 	}
@@ -193,7 +193,7 @@ window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jq
 
 
 <a href="javascript:;" onclick="clickBanner()" >
-	<img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
+	<img src="/propuestas/dermaglos/banners/dermaglos_300x50.gif" />
 </a>
 <script>
 	if (mraid.getState() == 'loading') {
@@ -214,13 +214,13 @@ window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jq
 	}
 
 	function clickBanner(){
-		mraid.expand("http://www.kickads.mobi/propuestas/dermaglos/index4.html");
+		mraid.expand("/propuestas/dermaglos/index4.html");
 		console.log("= "+mraid.getState());
 	}
 </script>
 
-<a id="bannerLink" href="javascript:;" onclick="clickBanner()" ><img src="http://www.kickads.mobi/propuestas/dermaglos/banners/dermaglos_320x50.gif" /></a>
-<script type="text/javascript" src="http://kickadserver.mobi/tag/kickads_tagscript.js"></script>
+<a id="bannerLink" href="javascript:;" onclick="clickBanner()" ><img src="/propuestas/dermaglos/banners/dermaglos_320x50.gif" /></a>
+<script type="text/javascript" src="/tag/tml_tagscript.js"></script>
 
 </body>
 </html>
