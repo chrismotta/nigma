@@ -99,8 +99,16 @@ class ClicklogController extends Controller
 			}
 		}
 
-		// levanto ntoken
-		$ntoken = isset($_GET['ntoken']) ? $_GET['ntoken'] : null;
+		if ( isset($_GET['ntoken'] )) {
+			// get ntoken if exists
+			$ntoken = $_GET['ntoken'];
+		} else if (isset($_GET['kp'] )) {
+			// get kimia token if exists
+			$ntoken = $_GET['kp'];
+		} else {
+			// unset ktoken
+			$ntoken = null;
+		}
 
 		// Get Campaign
 		if($cid){
