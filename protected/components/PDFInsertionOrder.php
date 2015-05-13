@@ -85,9 +85,9 @@ class PDFInsertionOrder extends PDF
 		// Print Opportunities section
 		$opp_ids = $this->getDataItem('opportunities');
 		//$pdf->Ln();
-		unset($values);
         $i = 1;
 		foreach ($opp_ids as $opp_id) {
+			unset($values);
 			$opp = Opportunities::model()->findByPk($opp_id);
 			$this->printTitle($pdf, 'Campaign #' . $i);
 			if ($opp->regions->country_id) $values[$opp->getAttributeLabel('country_id')]  = $opp->regions->country->name;
