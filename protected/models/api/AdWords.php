@@ -81,7 +81,7 @@ class AdWords
 	{
 		$dailyReport = new DailyReport();
 				
-		// get campaign ID used in KickAds Server, from the campaign name use in the external provider
+		// get campaign ID used in Server, from the campaign name use in the external provider
 		$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign['campaign']);
 
 		if ( !$dailyReport->campaigns_id ) {

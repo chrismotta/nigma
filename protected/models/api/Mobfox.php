@@ -66,7 +66,7 @@ class Mobfox
 			}
 
 			$dailyReport = new DailyReport();			
-			// get campaign ID used in KickAds Server, from the campaign name use in the external network
+			// get campaign ID used in Server, from the campaign name use in the external network
 			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaignInfo['response']['report']['name']['value']);
 
 			if ( !$dailyReport->campaigns_id ) {

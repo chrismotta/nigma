@@ -69,7 +69,7 @@ class Reporo
 				$dailyReport = new DailyReport();
 				
 				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
-				// get campaign ID used in KickAds Server, from the campaign name use in the external provider
+				// get campaign ID used in Server, from the campaign name use in the external provider
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name, $network->use_alternative_convention_name);
 
 				if ( !$dailyReport->campaigns_id ) {

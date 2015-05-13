@@ -254,7 +254,7 @@ class BingAds
 
 	public function getAuthorizationToken($ClientID, $ClientSecretKey, $RefreshToken)
 	{
-		$url = "https://login.live.com/oauth20_token.srf?client_id=" . $ClientID . "&client_secret=" . $ClientSecretKey . "&grant_type=refresh_token&redirect_uri=http://kickadserver.mobi/apiUpdate/bingCode&refresh_token=" . $RefreshToken;
+		$url = "https://login.live.com/oauth20_token.srf?client_id=" . $ClientID . "&client_secret=" . $ClientSecretKey . "&grant_type=refresh_token&redirect_uri=http://tmlbox.co/apiUpdate/bingCode&refresh_token=" . $RefreshToken;
 
 		$curl   = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -333,7 +333,7 @@ class BingAds
 
 				$dailyReport = new DailyReport();
 				
-				// get campaign ID used in KickAds Server, from the campaign name use in the external provider
+				// get campaign ID used in Server, from the campaign name use in the external provider
 				$dailyReport->campaigns_id = Utilities::parseCampaignID($row[0]);
 				//$dailyReport->campaigns_id = 11;//borrar harcodes por favor
 
