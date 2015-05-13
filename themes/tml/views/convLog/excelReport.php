@@ -3,7 +3,7 @@
 /* @var $model Campaigns */
 
 $path = 'uploads/';
-$name = 'KickAds-Report-' . date( 'd-m-Y', strtotime($model->date) ) . '.xls';
+$name = 'TheMediaLab-Report-' . date( 'd-m-Y', strtotime($model->date) ) . '.xls';
 
 $this->widget('EExcelWriter', array(
     'dataProvider' => $model->excel(),

@@ -5,7 +5,7 @@
 set_time_limit(1000);
 
 $path = 'uploads/';
-$name = 'KickAds-SEM-query.xls';
+$name = 'TheMediaLab-SEM-query.xls';
 
 $onlyConversions = isset($_GET['only-conv']) ? $_GET['only-conv'] : false ;
 $searchCriteria  = isset($_GET['criteria']) ? $_GET['criteria'] : NULL ;

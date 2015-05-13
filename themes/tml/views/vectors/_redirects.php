@@ -18,7 +18,7 @@
     <hr/>
     ';
     echo '
-    <p><strong>Redirect: </strong>http://kickadserver.mobi/clicksLog/vector/'.$model->id.'/</p>
+    <p><strong>Redirect: </strong>http://tmlbox.co/clicksLog/vector/'.$model->id.'/</p>
     ';
     //<button type="button" class="btn btn-default btn-sm">copy</button> 
     ?>
