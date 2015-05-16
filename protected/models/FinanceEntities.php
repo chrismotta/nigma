@@ -385,6 +385,10 @@ class FinanceEntities extends CActiveRecord
 		{
 			$groupBy=array('io','carrier','product','rate');
 		}
+		if($group=='io')
+		{
+			$groupBy=array('io');
+		}
 		else
 		{
 			$groupBy=array('io','opportunitie','multi');
