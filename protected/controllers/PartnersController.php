@@ -128,13 +128,13 @@ class PartnersController extends Controller
 		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
 
 
-		$modelOpp=new Opportunities('search');
-		$modelOpp->unsetAttributes();  // clear any default values
+		// $modelOpp=new Opportunities('search');
+		// $modelOpp->unsetAttributes();  // clear any default values
 
 		$this->render('advertisers',array(
 			'model'=>$model,
 			'advertiser_id' => $advertiser_id,
-			'modelOpp' => $modelOpp,
+			// 'modelOpp' => $modelOpp,
 		));
 	}
 
