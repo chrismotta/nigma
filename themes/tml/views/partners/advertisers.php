@@ -331,7 +331,7 @@ $('.search-form form').submit(function(){
 		*/
 		array(	
 			'name'              => 'imp',
-			'value'				=> 'number_format($data->sum_imp)',
+			'value'				=> 'number_format($data->imp)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
@@ -339,7 +339,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'clics',
-			'value'				=> 'number_format($data->sum_clics)',
+			'value'				=> 'number_format($data->clics)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
@@ -347,7 +347,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'conv_api',
-			'value'				=> 'number_format($data->sum_conv_api)',
+			'value'				=> 'number_format($data->conv_api)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
