@@ -261,7 +261,7 @@ $('.search-form form').submit(function(){
 		*/
 		array(
 			'name'              => 'date',
-			//'value'             => 'date("d-m-Y", strtotime($data->date))',
+			'value'             => 'date("Y-m-d", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'htmlOptions'       => array(
 					'class' => 'date', 
