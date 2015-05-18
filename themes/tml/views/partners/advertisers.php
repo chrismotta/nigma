@@ -248,7 +248,7 @@ $('.search-form form').submit(function(){
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
-	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	//'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		/*
 		array(
@@ -461,7 +461,6 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? number_format(($totals['profit'] / $totals['revenue']) * 100)."%" : 0,
 		),
-		*/
 		array(
 			'name'              => 'click_through_rate',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
@@ -502,6 +501,7 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? round($totals['spend'] / $totals['conv'], 2) : 0,
 		),
+		*/
         /*
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
