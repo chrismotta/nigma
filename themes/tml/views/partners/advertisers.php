@@ -261,7 +261,7 @@ $('.search-form form').submit(function(){
 		*/
 		array(
 			'name'              => 'date',
-			'value'             => 'date("d-m-Y", strtotime($data->date))',
+			//'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'htmlOptions'       => array(
 					'class' => 'date', 
@@ -331,10 +331,25 @@ $('.search-form form').submit(function(){
 		*/
 		array(	
 			'name'              => 'imp',
+			'value'				=> 'number_format($data->imp)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => number_format($totals['imp']),
+			//'footer'            => number_format($totals['imp']),
+        ),
+        array(
+			'name'              => 'clics',
+			'headerHtmlOptions' => array('style' => "width: 40px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			//'footer'            => number_format($totals['clics']),
+        ),
+        array(
+			'name'              => 'conv_api',
+			'headerHtmlOptions' => array('style' => "width: 40px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			//'footer'            => number_format($totals['conv_api']),
         ),
         /*
         array(	
@@ -358,20 +373,6 @@ $('.search-form form').submit(function(){
             ),
         ),
         */
-        array(
-			'name'              => 'clics',
-			'headerHtmlOptions' => array('style' => "width: 40px"),
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => number_format($totals['clics']),
-        ),
-        array(
-			'name'              => 'conv_api',
-			'headerHtmlOptions' => array('style' => "width: 40px"),
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => number_format($totals['conv_api']),
-        ),
         /*
 		array(
 			'name'              => 'conv_adv',
