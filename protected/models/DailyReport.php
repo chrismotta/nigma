@@ -784,6 +784,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('regions.region', $this->country);
 		$criteria->compare('carriers.mobile_brand', $this->carrier);
 		$criteria->compare('advertisers.id',$advertiser);
+		$criteria->group = 'opportunities.id';
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
