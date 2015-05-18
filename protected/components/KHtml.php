@@ -23,7 +23,7 @@ class KHtml extends CHtml
      * @param  array()  $htmlOptions
      * @return html for date picker
      */
-    public static function datePicker($name, $initialDate, $options = array(), $htmlOptions = array())
+    public static function datePicker($name, $initialDate, $options = array(), $htmlOptions = array(), $append=null)
     {
         $defaultHtmlOptions = array(
             //'style' => 'width: 80px',
@@ -40,7 +40,8 @@ class KHtml extends CHtml
         );
         $options = array_merge($defaultOptions, $options);
 
-        $r = '<label><div class="input-append">';
+        $r = '<label><div class="input-append input-prepend">';
+        if(isset($append)) $r .= '<span class="add-on" style="width:35px">'.$append.'</span>';
         $r .= Yii::app()->controller->widget('bootstrap.widgets.TbDatePicker', array(
             'name'        => $name,
             'value'       => date('d-m-Y', strtotime($initialDate)),
