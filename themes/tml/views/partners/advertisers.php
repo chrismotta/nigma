@@ -299,7 +299,7 @@ $('.search-form form').submit(function(){
 			'header'=> 'Carrier',
 			'value' => '$data->campaigns->opportunities->carriers_id ?
 						$data->campaigns->opportunities->carriers->mobile_brand:
-						"no carrier"',
+						""',
 			'filter'=> false,
 		),
         /*
