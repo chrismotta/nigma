@@ -197,11 +197,11 @@ $('.search-form form').submit(function(){
 
 <fieldset class="formfilter">
 	<div class="formfilter-date">
-		<p>From:</p> 
-		<?php echo KHtml::datePicker('dateStart', $dateStart); ?>
+		<!-- <p>From:</p>  -->
+		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
 		
-		<p>To:</p> 
-		<?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+		<!-- <p>To:</p>  -->
+		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
 	</div>
 	<?php 
 		//Load Filters
@@ -313,6 +313,13 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => number_format($totals['clics']),
         ),
+        /*array(
+            'name'  => 'clics_redirect',
+            'value' => '$data->getClicksRedirect()',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => number_format($totals['clics']),
+        ),*/
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
