@@ -789,10 +789,13 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 		}
 		$criteria->group = 'date(t.date), opportunities.id';
-		$criteria->select = 'SUM(imp) AS imp, SUM(clics) AS clics, SUM(conv_api) AS conv_api';
+		$criteria->select = 'date, SUM(imp) AS imp, SUM(clics) AS clics, SUM(conv_api) AS conv_api, SUM(revenue) AS revenue';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+		    'pagination'=>array(
+		        'pageSize'=>50,
+		    ),
 		));
 	}
 

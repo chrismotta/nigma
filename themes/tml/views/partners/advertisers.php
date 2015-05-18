@@ -244,9 +244,9 @@ $('.search-form form').submit(function(){
 	'headerOffset'             => 50,
 	'dataProvider'             => $dataProvider,
 	'filter'                   => $model,
-	'selectionChanged'         => 'js:selectionChangedDailyReport',
+	//'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	//'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
@@ -261,11 +261,11 @@ $('.search-form form').submit(function(){
 		*/
 		array(
 			'name'              => 'date',
-			'value'             => 'date("Y-m-d", strtotime($data->date))',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'value'             => 'date("d-m-Y", strtotime($data->date))',
+			'headerHtmlOptions' => array('style' => "width: 70px"),
 			'htmlOptions'       => array(
 					'class' => 'date', 
-					'style' =>'text-align:right;'
+					// 'style' =>'text-align:right;'
 				),
 			'filter'      => false,
         ),
@@ -280,13 +280,13 @@ $('.search-form form').submit(function(){
 		array(
 			'name'	=> 'product',
 			'header'=> 'Name',
-			'headerHtmlOptions' => array('style' => "width: 200px"),
+			// 'headerHtmlOptions' => array('style' => "width: 200px"),
 			'value' => '$data->campaigns->opportunities->product',
 			'filter'=> false,
 		),
 		array(
 			'name'	=> 'country',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 150px"),
 			'header'=> 'Country',
 			'value' => '$data->campaigns->opportunities->regions->country_id ? 
 						$data->campaigns->opportunities->regions->country->name:
@@ -295,7 +295,7 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'	=> 'carrier',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 150px"),
 			'header'=> 'Carrier',
 			'value' => '$data->campaigns->opportunities->carriers_id ?
 						$data->campaigns->opportunities->carriers->mobile_brand:
@@ -332,7 +332,7 @@ $('.search-form form').submit(function(){
 		array(	
 			'name'              => 'imp',
 			'value'				=> 'number_format($data->imp)',
-			'headerHtmlOptions' => array('style' => "width: 40px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['imp']),
@@ -340,7 +340,7 @@ $('.search-form form').submit(function(){
         array(
 			'name'              => 'clics',
 			'value'				=> 'number_format($data->clics)',
-			'headerHtmlOptions' => array('style' => "width: 40px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['clics']),
@@ -348,10 +348,20 @@ $('.search-form form').submit(function(){
         array(
 			'name'              => 'conv_api',
 			'value'				=> 'number_format($data->conv_api)',
-			'headerHtmlOptions' => array('style' => "width: 40px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['conv_api']),
+        ),
+        array(
+			'name'              => 'revenue',
+			'header'            => 'Spend',
+			'value'				=> '"$ ".number_format($data->revenue, 2)',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+			//'value'             => '"\$ ".number_format($data->getRevenueUSD(), 2)',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			// 'footer'            => "\$ ".number_format($totals['revenue'],2),
         ),
         /*
         array(	
@@ -434,15 +444,6 @@ $('.search-form form').submit(function(){
         ),
 		*/
         /*
-        array(
-			'name'              => 'revenue',
-			'header'            => 'Spend',
-			'headerHtmlOptions' => array('style' => "width: 40px"),
-			'value'             => '"\$ ".number_format($data->getRevenueUSD(), 2)',
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => "\$ ".number_format($totals['revenue'],2),
-        ),
 		array(
 			'name'              => 'spend',
 			'value'             => 'number_format($data->getSpendUSD(), 2)',
