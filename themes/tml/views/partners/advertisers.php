@@ -109,8 +109,9 @@ $('.search-form form').submit(function(){
 		)
 	); ?>
 	<?php 
-	//Create link to load filters in modal
-	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
+	//Create link to load filters in modal*/
+	$link='excelReportAdvertisers?dateStart='.$dateStart.'&dateEnd='.$dateEnd;//.'&sum='.$sum;
+	/*
 	if(isset($accountManager))
 	{
 		if(is_array($accountManager))
@@ -162,7 +163,7 @@ $('.search-form form').submit(function(){
 		{
 			$link.='&advertisers-cat='.$adv_categories;
 		}
-	}
+	}*/
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
@@ -188,7 +189,7 @@ $('.search-form form').submit(function(){
 </div>
 
 <br>
-*/ ?>
+ 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',

@@ -28,7 +28,7 @@ class PartnersController extends Controller
 				'roles'=>array('admin','affiliate'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('advertisers'),
+				'actions'=>array('advertisers','excelReportAdvertisers'),
 				'roles'=>array('admin','advertiser'),
 			),
 			array('deny',  // deny all users
@@ -97,6 +97,24 @@ class PartnersController extends Controller
 		// {			
 		// 	$this->redirect(Yii::app()->baseUrl);
 		// }	
+	}
+	public function actionExcelReportAdvertisers()
+	{
+		$model = new DailyReport;
+		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
+		$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : NULL;
+		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
+		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd);	
+		if( isset($_POST['excel-report-form']) ) {
+			$this->renderPartial('excelReportAdvertisers', array(
+				'model' => $model,
+				'dataProvider' => $dataProvider,
+				'sum'=>true,
+			));
+		}
+		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : NULL;
+		$dateEnd = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : NULL;
+		$this->renderPartial('_excelReportAdvertisers', array('dateStart'=>$dateStart, 'dateEnd'=>$dateEnd), false, true);
 	}
 
 	public function actionAdvertisers()
