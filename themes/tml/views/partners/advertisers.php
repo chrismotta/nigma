@@ -299,7 +299,7 @@ $('.search-form form').submit(function(){
 			'header'=> 'Carrier',
 			'value' => '$data->campaigns->opportunities->carriers_id ?
 						$data->campaigns->opportunities->carriers->mobile_brand:
-						""',
+						"All Carriers"',
 			'filter'=> false,
 		),
         /*
@@ -331,7 +331,7 @@ $('.search-form form').submit(function(){
 		*/
 		array(	
 			'name'              => 'imp',
-			'value'				=> 'number_format($data->imp)',
+			'value'				=> 'number_format($data->sum_imp)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
@@ -339,6 +339,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'clics',
+			'value'				=> 'number_format($data->sum_clics)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
@@ -346,6 +347,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'conv_api',
+			'value'				=> 'number_format($data->sum_conv_api)',
 			'headerHtmlOptions' => array('style' => "width: 40px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
