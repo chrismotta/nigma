@@ -430,6 +430,7 @@ $('.search-form form').submit(function(){
 				',
         ),
 		*/
+        /*
         array(
 			'name'              => 'revenue',
 			'header'            => 'Spend',
@@ -439,7 +440,6 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => "\$ ".number_format($totals['revenue'],2),
         ),
-        /*
 		array(
 			'name'              => 'spend',
 			'value'             => 'number_format($data->getSpendUSD(), 2)',
