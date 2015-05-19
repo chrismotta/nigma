@@ -342,6 +342,7 @@ fieldset hr {
 .formfilter-date { display: inline-block; width: 200px; }
 .formfilter-space { display: inline-block; width: 10px; }
 .formfilter-date-large { display: inline-block; width: 100%; }
+.formfilter-date-large label { margin: 0px; }
 .formfilter-date p { display: inline-block; width: 50px; }
 
 .formfilter-submit { float: right; }
