@@ -304,9 +304,7 @@ $('.search-form form').submit(function(){
 			'name'              => 'country',
 			'headerHtmlOptions' => array('style' => "width: 150px"),
 			'header'            => 'Country',
-			'value'             => '$data->campaigns->opportunities->regions->country_id ? 
-									$data->campaigns->opportunities->regions->country->name:
-									$data->campaigns->opportunities->regions->region',
+			'value'             => '$data->campaigns->opportunities->regions->country->name',
 			'filter'			=> false,
 		),
 		array(

@@ -124,20 +124,16 @@ class PartnersController extends Controller
 	{
 		$model=new DailyReport('search');
 		$model->unsetAttributes();  // clear any default values
+
 		if(isset($_GET['DailyReport']))
 			$model->attributes=$_GET['DailyReport'];
 
 		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
 		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
 
-
-		// $modelOpp=new Opportunities('search');
-		// $modelOpp->unsetAttributes();  // clear any default values
-
 		$this->render('advertisers',array(
 			'model'=>$model,
 			'advertiser_id' => $advertiser_id,
-			// 'modelOpp' => $modelOpp,
 		));
 	}
 

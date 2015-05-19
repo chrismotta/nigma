@@ -81,6 +81,7 @@ class DailyReport extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country', 'safe', 'on'=>'search'),
+			// array('imp, clics, conv_api, revenue, rate', 'safe', 'on'=>'searchAdvertisers'),
 		);
 	}
 
@@ -129,14 +130,14 @@ class DailyReport extends CActiveRecord
 			'eCPC'               => 'eCPC',
 			'eCPA'               => 'eCPA',
 			'comment'            => 'Com.',
-			'mr'				 => '',
-			'currency'			 => 'Currency',
-			'percent_off'		 => 'Percent Off',
-			'off'		 		 => 'Off',
-			'total'		 		 => 'Total',
-			'product' => 'Name',
-			'country' => 'Country',
-			'carrier' => 'Carrier',
+			'mr'                 => '',
+			'currency'           => 'Currency',
+			'percent_off'        => 'Percent Off',
+			'off'                => 'Off',
+			'total'              => 'Total',
+			'product'            => 'Name',
+			'country'            => 'Country',
+			'carrier'            => 'Carrier',
 		);
 	}
 
@@ -778,8 +779,8 @@ class DailyReport extends CActiveRecord
 	 * @return [type]              [description]
 	 */
 	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL, $sum=0, $totals=false){
-		$criteria=new CDbCriteria;
 
+		$criteria = new CDbCriteria;
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 
 			'campaigns.opportunities',
@@ -794,6 +795,7 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('regions.region', $this->country);
 		$criteria->compare('carriers.mobile_brand', $this->carrier);
 		$criteria->compare('advertisers.id',$advertiser);
+		
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
@@ -820,6 +822,43 @@ class DailyReport extends CActiveRecord
 				'criteria'=>$criteria,
 			    'pagination'=>array(
 			        'pageSize'=>50,
+			    ),
+				'sort'=>array(
+					'defaultOrder' => 't.id DESC',
+					'attributes'   => array(
+						'product' => array(
+							'asc'  =>'opportunities.product',
+							'desc' =>'opportunities.product DESC',
+			            ),
+						'country' => array(
+							'asc'  =>'country.name',
+							'desc' =>'country.name DESC',
+			            ),
+						'carrier' => array(
+							'asc'  =>'carriers.mobile_brand',
+							'desc' =>'carriers.mobile_brand DESC',
+			            ),
+						'rate' => array(
+							'asc'  =>'opportunities.rate',
+							'desc' =>'opportunities.rate DESC',
+			            ),
+						'imp' => array(
+							'asc'  =>'SUM(imp)',
+							'desc' =>'SUM(imp) DESC',
+			            ),
+						'clics' => array(
+							'asc'  =>'SUM(clics)',
+							'desc' =>'SUM(clics) DESC',
+			            ),
+						'conv_api' => array(
+							'asc'  =>'SUM(conv_api)',
+							'desc' =>'SUM(conv_api) DESC',
+			            ),
+						'revenue' => array(
+							'asc'  =>'SUM(revenue)',
+							'desc' =>'SUM(revenue) DESC',
+			            ),
+					),
 			    ),
 			));
 		}
