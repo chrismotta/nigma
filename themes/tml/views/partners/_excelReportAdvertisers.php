@@ -64,7 +64,7 @@
         </div></label>
     
         <?php 
-        echo CHtml::hiddenField('sum', '0', array('id'=>'sum'));
+        echo CHtml::hiddenField('sum', $sum, array('id'=>'sumExcel'));
 
         $this->widget(
             'bootstrap.widgets.TbButtonGroup',
@@ -72,8 +72,8 @@
                 'toggle' => 'radio',
                 // 'type' => 'inverse',
                 'buttons' => array(
-                    array('label' => 'Daily Stats', 'active'=>boolval(1-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("0");')),
-                    array('label' => 'Merged Stats', 'active'=>boolval(0-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("1");')),
+                    array('label' => 'Daily Stats', 'active'=>boolval(1-$sum), 'htmlOptions'=>array('onclick'=>'$("#sumExcel").val("0");')),
+                    array('label' => 'Merged Stats', 'active'=>boolval(0-$sum), 'htmlOptions'=>array('onclick'=>'$("#sumExcel").val("1");')),
                 ),
 
             )
