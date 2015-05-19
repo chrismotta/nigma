@@ -22,7 +22,7 @@ $this->widget('EExcelWriter', array(
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
-    // 'filePath'     => $path,
+    'filePath'     => $path,
     'columns'      => array(
         array(
             'name'              => 'date',
@@ -37,9 +37,7 @@ $this->widget('EExcelWriter', array(
         array(
             'name'  => 'country',
             'header'=> 'Country',
-            'value' => '$data->campaigns->opportunities->regions->country_id ? 
-                        $data->campaigns->opportunities->regions->country->name:
-                        $data->campaigns->opportunities->regions->region',
+            'value' => '$data->campaigns->opportunities->regions->country->name',
         ),
         array(
             'name'  => 'carrier',

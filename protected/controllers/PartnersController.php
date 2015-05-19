@@ -105,15 +105,16 @@ class PartnersController extends Controller
 		
 		$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : NULL;
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
-		$sum = isset($_POST['excel-sum']) ? $_POST['excel-sum'] : 0;
+		$sum = isset($_POST['sum']) ? $_POST['sum'] : 0;
 
-		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum);	
+		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);	
 		if( isset($_POST['excel-report-form']) ) {
 			$this->renderPartial('excelReportAdvertisers', array(
 				'model' => $model,
 				'dataProvider' => $dataProvider,
 			));
 		}
+
 		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : NULL;
 		$dateEnd = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : NULL;
 		$sum = isset($_GET['sum']) ? $_GET['sum'] : 0;
