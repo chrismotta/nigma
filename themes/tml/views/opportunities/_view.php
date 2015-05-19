@@ -120,8 +120,9 @@
 	'id'                       => 'campaigns-grid',
 	'dataProvider'             => $campaign->findByOpportunities($model->id),
 	'type'                     => 'striped condensed',
-	'fixedHeader'              => true,
+	// 'fixedHeader'              => true,
 	'headerOffset'             => 50,
+	'enableSorting' => false,
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 =>'{items} {pager} {summary}',
 	
@@ -133,12 +134,12 @@
 		),
 		array(
 			'name'              => 'advertisers_name',
-			'value'             => '$data->opportunities->ios->advertisers->name',
+			'value'             => '$data->opportunities->regions->financeEntities->advertisers->name',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
 		array(
 			'name'              => 'ios_name',
-			'value'             => '$data->opportunities->ios->name',
+			'value'             => '$data->opportunities->regions->financeEntities->name',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
         ),
 		array(
