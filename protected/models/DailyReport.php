@@ -790,6 +790,7 @@ class DailyReport extends CActiveRecord
 		);
 		
 		$criteria->compare('opportunities.product', $this->product);
+		$criteria->compare('opportunities.rate', $this->rate);
 		$criteria->compare('regions.region', $this->country);
 		$criteria->compare('carriers.mobile_brand', $this->carrier);
 		$criteria->compare('advertisers.id',$advertiser);

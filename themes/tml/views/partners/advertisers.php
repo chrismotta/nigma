@@ -294,29 +294,35 @@ $('.search-form form').submit(function(){
 		),
 		*/
 		array(
-			'name'	=> 'product',
-			'header'=> 'Name',
+			'name'                 => 'product',
+			'header'               => 'Name',
 			// 'headerHtmlOptions' => array('style' => "width: 200px"),
-			'value' => '$data->campaigns->opportunities->product',
-			'filter'=> false,
+			'value'                => '$data->campaigns->opportunities->product',
+			'filter'               => false,
 		),
 		array(
-			'name'	=> 'country',
+			'name'              => 'country',
 			'headerHtmlOptions' => array('style' => "width: 150px"),
-			'header'=> 'Country',
-			'value' => '$data->campaigns->opportunities->regions->country_id ? 
-						$data->campaigns->opportunities->regions->country->name:
-						$data->campaigns->opportunities->regions->region',
-			'filter'=> false,
+			'header'            => 'Country',
+			'value'             => '$data->campaigns->opportunities->regions->country_id ? 
+									$data->campaigns->opportunities->regions->country->name:
+									$data->campaigns->opportunities->regions->region',
+			'filter'			=> false,
 		),
 		array(
-			'name'	=> 'carrier',
+			'name'              => 'carrier',
 			'headerHtmlOptions' => array('style' => "width: 150px"),
-			'header'=> 'Carrier',
-			'value' => '$data->campaigns->opportunities->carriers_id ?
-						$data->campaigns->opportunities->carriers->mobile_brand:
-						"All Carriers"',
-			'filter'=> false,
+			'header'            => 'Carrier',
+			'value'             => '$data->campaigns->opportunities->carriers_id ?
+									$data->campaigns->opportunities->carriers->mobile_brand:
+									"All Carriers"',
+			'filter'            => false,
+		),
+		array(
+			'name'        => 'rate',
+			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'value'       => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
+			'htmlOptions' => array('style'=>'text-align:right;'),
 		),
         /*
         array(	
@@ -358,37 +364,37 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'clics',
-			'value'				=> 'number_format($data->clics)',
+			'value'             => 'number_format($data->clics)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			'footer'            => number_format($totals->clics),
-			'filter'=> false,
-			'visible'     => false,
+			'filter'            => false,
+			'visible'           => false,
         ),
         array(
 			'name'              => 'conv_api',
-			'header'			=> 'Conversions',
-			'value'				=> 'number_format($data->conv_api)',
+			'header'            => 'Conversions',
+			'value'             => 'number_format($data->conv_api)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			'footer'            => number_format($totals->conv_api),
-			'filter'=> false,
-			'visible'     => false,
+			'filter'            => false,
+			'visible'           => false,
         ),
         array(
 			'name'              => 'revenue',
 			'header'            => 'Spend',
-			'value'				=> '"$ ".number_format($data->revenue, 2)',
+			'value'             => '"$ ".number_format($data->revenue, 2)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
-			//'value'             => '"\$ ".number_format($data->getRevenueUSD(), 2)',
+			//'value'           => '"\$ ".number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
-			// 'footer'            => "\$ ".number_format($totals['revenue'],2),
+			// 'footer'         => "\$ ".number_format($totals['revenue'],2),
 			'footer'            => '$ '.number_format($totals->revenue, 2),
-			'filter'=> false,
-			'visible'     => true,
+			'filter'            => false,
+			'visible'           => true,
         ),
         /*
         array(	
