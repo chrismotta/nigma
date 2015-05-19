@@ -768,7 +768,16 @@ class DailyReport extends CActiveRecord
 		return $dataTops;
 	}
 	
-	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL, $sum=0){
+	/**
+	 * Search stats for advertisers report page, grouped by opportunities
+	 * @param  [type]  $advertiser [description]
+	 * @param  [type]  $startDate  [description]
+	 * @param  [type]  $endDate    [description]
+	 * @param  integer $sum        [description]
+	 * @param  boolean $totals     [description]
+	 * @return [type]              [description]
+	 */
+	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL, $sum=0, $totals=false){
 		$criteria=new CDbCriteria;
 
 		// Related search criteria items added (use only table.columnName)
@@ -788,16 +797,81 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 		}
-		if(!$sum) $criteria->group = 'date(t.date),';
-		$criteria->group .= 'opportunities.id';
-		$criteria->select = 'date, SUM(imp) AS imp, SUM(clics) AS clics, SUM(conv_api) AS conv_api, SUM(revenue) AS revenue';
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		    'pagination'=>array(
-		        'pageSize'=>50,
-		    ),
-		));
+		$criteria->select = '';
+		
+		if(!$totals){
+
+			$criteria->group = '';
+			if(!$sum) $criteria->select .= 'date, ';
+			if(!$sum) $criteria->group  .= 'date(t.date), ';
+			
+			$criteria->group .= 'opportunities.id';
+			
+		}
+				
+		$criteria->select .= 'SUM(imp) AS imp, SUM(clics) AS clics, SUM(conv_api) AS conv_api, SUM(revenue) AS revenue';
+
+		if($totals){
+			return Self::model()->find($criteria);
+		}else{
+			return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+			    'pagination'=>array(
+			        'pageSize'=>50,
+			    ),
+			));
+		}
+	}
+
+	/**
+	 * DEPRECATED
+	 * @param  [type] $advertiser [description]
+	 * @param  [type] $startDate  [description]
+	 * @param  [type] $endDate    [description]
+	 * @return [type]             [description]
+	 */
+	public function advertiserSearchTotals($advertiser=null, $startDate=NULL, $endDate=NULL){
+		$criteria=new CDbCriteria;
+		// Related search criteria items added (use only table.columnName)
+		$criteria->with = array( 
+			'campaigns.opportunities',
+			'campaigns.opportunities.regions.country',
+			'campaigns.opportunities.regions.financeEntities.advertisers', 
+		);
+		
+		$criteria->compare('advertisers.id',$advertiser);
+		if ( $startDate != NULL && $endDate != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+
+		$totals             =array();
+		$totals['imp']      =0;
+		$totals['imp_adv']  =0;
+		$totals['clics']    =0;
+		$totals['conv_api'] =0;
+		$totals['conv_adv'] =0;
+		$totals['conv']     =0;
+		$totals['revenue']  =0;
+		$totals['spend']    =0;
+		$totals['profit']   =0;
+
+		if($dailys=Self::model()->findAll($criteria))
+		{			
+			foreach ($dailys as $data) {
+				$totals['imp']      +=$data->imp;
+				$totals['imp_adv']  +=$data->imp_adv;
+				$totals['clics']    +=$data->clics;
+				$totals['conv_api'] +=$data->conv_api;
+				$totals['conv_adv'] +=$data->conv_adv;
+				$totals['conv']     +=$data->getConv();
+				$totals['revenue']  +=$data->getRevenueUSD();
+				$totals['spend']    +=$data->getSpendUSD();
+				$totals['profit']   +=$data->getProfit();
+			}
+		}
+		return $totals;
 	}
 
 	/**
@@ -1072,52 +1146,6 @@ class DailyReport extends CActiveRecord
 		));
 	}
 
-	// totals
-	// totals
-	// totals
-
-	public function advertiserSearchTotals($advertiser=null, $startDate=NULL, $endDate=NULL){
-		$criteria=new CDbCriteria;
-		// Related search criteria items added (use only table.columnName)
-		$criteria->with = array( 
-			'campaigns.opportunities',
-			'campaigns.opportunities.regions.country',
-			'campaigns.opportunities.regions.financeEntities.advertisers', 
-		);
-		
-		$criteria->compare('advertisers.id',$advertiser);
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
-		}
-
-		$totals             =array();
-		$totals['imp']      =0;
-		$totals['imp_adv']  =0;
-		$totals['clics']    =0;
-		$totals['conv_api'] =0;
-		$totals['conv_adv'] =0;
-		$totals['conv']     =0;
-		$totals['revenue']  =0;
-		$totals['spend']    =0;
-		$totals['profit']   =0;
-
-		if($dailys=Self::model()->findAll($criteria))
-		{			
-			foreach ($dailys as $data) {
-				$totals['imp']      +=$data->imp;
-				$totals['imp_adv']  +=$data->imp_adv;
-				$totals['clics']    +=$data->clics;
-				$totals['conv_api'] +=$data->conv_api;
-				$totals['conv_adv'] +=$data->conv_adv;
-				$totals['conv']     +=$data->getConv();
-				$totals['revenue']  +=$data->getRevenueUSD();
-				$totals['spend']    +=$data->getSpendUSD();
-				$totals['profit']   +=$data->getProfit();
-			}
-		}
-		return $totals;
-	}
 
 	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null)
 	{

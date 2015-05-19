@@ -250,9 +250,8 @@ $('.search-form form').submit(function(){
 
 <?php 
 	
-	$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum);	
-	//$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
-	$totals = $model->advertiserSearchTotals($advertiser_id, $dateStart, $dateEnd);
+	$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);	
+	$totals       = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, true);
 
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
@@ -348,22 +347,22 @@ $('.search-form form').submit(function(){
 		*/
 		array(	
 			'name'              => 'imp',
-			'header'			=> 'Impressions',
-			'value'				=> 'number_format($data->imp)',
+			'header'            => 'Impressions',
+			'value'             => 'number_format($data->imp)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			//'footer'            => number_format($totals['imp']),
-			'filter'=> false,
-			'visible'     => true,
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => number_format($totals->imp),
+			'filter'            => false,
+			'visible'           => true,
         ),
         array(
 			'name'              => 'clics',
 			'value'				=> 'number_format($data->clics)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			//'footer'            => number_format($totals['clics']),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => number_format($totals->clics),
 			'filter'=> false,
 			'visible'     => false,
         ),
@@ -373,8 +372,8 @@ $('.search-form form').submit(function(){
 			'value'				=> 'number_format($data->conv_api)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			//'footer'            => number_format($totals['conv_api']),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => number_format($totals->conv_api),
 			'filter'=> false,
 			'visible'     => false,
         ),
@@ -385,8 +384,9 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			//'value'             => '"\$ ".number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			// 'footer'            => "\$ ".number_format($totals['revenue'],2),
+			'footer'            => '$ '.number_format($totals->revenue, 2),
 			'filter'=> false,
 			'visible'     => true,
         ),
