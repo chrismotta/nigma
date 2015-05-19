@@ -354,6 +354,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['imp']),
+			'visible'     => true,
         ),
         array(
 			'name'              => 'clics',
@@ -362,6 +363,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['clics']),
+			'visible'     => false,
         ),
         array(
 			'name'              => 'conv_api',
@@ -371,6 +373,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['conv_api']),
+			'visible'     => false,
         ),
         array(
 			'name'              => 'revenue',
@@ -381,6 +384,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			// 'footer'            => "\$ ".number_format($totals['revenue'],2),
+			'visible'     => true,
         ),
         /*
         array(	
