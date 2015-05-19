@@ -858,6 +858,8 @@ class DailyReport extends CActiveRecord
 							'asc'  =>'SUM(revenue)',
 							'desc' =>'SUM(revenue) DESC',
 			            ),
+			            // Adding all the other default attributes
+			            '*',
 					),
 			    ),
 			));
