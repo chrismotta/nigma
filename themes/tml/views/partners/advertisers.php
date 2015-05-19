@@ -321,6 +321,7 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'value'       => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
 			'htmlOptions' => array('style'=>'text-align:right;'),
+			'visible'     => !$sum,
 		),
         /*
         array(	
