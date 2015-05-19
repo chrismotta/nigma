@@ -768,7 +768,7 @@ class DailyReport extends CActiveRecord
 		return $dataTops;
 	}
 	
-	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL){
+	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL, $sum=0){
 		$criteria=new CDbCriteria;
 
 		// Related search criteria items added (use only table.columnName)
@@ -788,7 +788,8 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 		}
-		$criteria->group = 'date(t.date), opportunities.id';
+		if(!$sum) $criteria->group = 'date(t.date),';
+		$criteria->group .= 'opportunities.id';
 		$criteria->select = 'date, SUM(imp) AS imp, SUM(clics) AS clics, SUM(conv_api) AS conv_api, SUM(revenue) AS revenue';
 
 		return new CActiveDataProvider($this, array(

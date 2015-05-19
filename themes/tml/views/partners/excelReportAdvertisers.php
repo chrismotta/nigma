@@ -3,7 +3,7 @@
 /* @var $model Finance */
 
 $path         = 'uploads/';
-$name         = 'TheMediaLab-Clients.xls';
+$name         = 'TheMediaLab-Advertiser.xls';
 // $year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 // $month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
 // $entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
@@ -22,60 +22,50 @@ $this->widget('EExcelWriter', array(
     'title'        => 'EExcelWriter',
     'stream'       => TRUE,
     'fileName'     => $name,
-    'filePath'     => $path,
-    'columns'                  => array(
+    // 'filePath'     => $path,
+    'columns'      => array(
         array(
             'name'              => 'date',
-            'value'             => 'date("d-m-Y", strtotime($data->date))',            
+            'value'             => 'date("d-m-Y", strtotime($data->date))',
+            // 'visible'     => !$sum,
         ),
         array(
             'name'  => 'product',
+            'header'=> 'Name',
             'value' => '$data->campaigns->opportunities->product',
         ),
         array(
             'name'  => 'country',
+            'header'=> 'Country',
             'value' => '$data->campaigns->opportunities->regions->country_id ? 
                         $data->campaigns->opportunities->regions->country->name:
                         $data->campaigns->opportunities->regions->region',
         ),
         array(
             'name'  => 'carrier',
+            'header'=> 'Carrier',
             'value' => '$data->campaigns->opportunities->carriers_id ?
                         $data->campaigns->opportunities->carriers->mobile_brand:
-                        "no carrier"',
+                        "All Carriers"',
         ),
         array(  
             'name'              => 'imp',
+            'header'            => 'Impressions',
+            'value'             => 'number_format($data->imp)',
         ),
         array(
             'name'              => 'clics',
+            'value'             => 'number_format($data->clics)',
         ),
         array(
             'name'              => 'conv_api',
-        ),        
+            'header'            => 'Conversions',
+            'value'             => 'number_format($data->conv_api)',
+        ),
         array(
             'name'              => 'revenue',
-            'value'             => '"\$ ".number_format($data->getRevenueUSD(), 2)',
-        ),
-        array(
-            'name'              => 'click_through_rate',
-            'value'             => $sum ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
-        ),
-        array(
-            'name'              => 'conversion_rate',
-            'value'             => $sum ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
-        ),
-        array(
-            'name'              => 'eCPM',            
-            'value'             => $sum ? 'number_format($data->getECPM(), 2)' : '$data->eCPM', // FIX for sum feature
-        ),
-        array(
-            'name'              => 'eCPC',
-            'value'             => $sum ? 'number_format($data->getECPC(), 2)' : '$data->eCPC', // FIX for sum feature
-        ),
-        array(
-            'name'              => 'eCPA',
-            'value'             => $sum ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
+            'header'            => 'Spend',
+            'value'             => '"$ ".number_format($data->revenue, 2)',
         ),
     ),
 ));

@@ -32,8 +32,7 @@ $('.search-form form').submit(function(){
 	// $opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	// $providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	// $adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
-	// $sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
-	$sum = 0;
+	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
@@ -110,7 +109,7 @@ $('.search-form form').submit(function(){
 	); ?>
 	<?php 
 	//Create link to load filters in modal*/
-	$link='excelReportAdvertisers?dateStart='.$dateStart.'&dateEnd='.$dateEnd;//.'&sum='.$sum;
+	$link='excelReportAdvertisers?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
 	/*
 	if(isset($accountManager))
 	{
@@ -164,51 +163,45 @@ $('.search-form form').submit(function(){
 			$link.='&advertisers-cat='.$adv_categories;
 		}
 	}*/
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Excel Report',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => $link,
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalDailyReport").html(dataInicial);
-					$("#modalDailyReport").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalDailyReport").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'excelReport'),
-		)
-	); ?>
-</div>
 
-<br>
+?>
+
  
+<fieldset class="formfilter well">
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
-		'htmlOptions'          =>array('class'=>'well'),
-		'enableAjaxValidation' =>true,
+		'htmlOptions'          =>array('style'=>'display:inline-block;margin:0px'),
+		'enableAjaxValidation' =>false,
 		'action'               => Yii::app()->getBaseUrl() . '/partners/advertisers',
 		'method'               => 'GET',
-		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		// 'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
-
-<fieldset class="formfilter">
 	<div class="formfilter-date-large">
-		From: 
-		<?php echo KHtml::datePicker('dateStart', $dateStart); ?>
+		<!-- From:  -->
+		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array(), 'From'); ?>
 		<span class='formfilter-space'></span>		
-		To: 
-		<?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
-		<span class='formfilter-space'></span>		
-    	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+		<!-- To:  -->
+		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array(), 'To'); ?>
+    	
+    	<?php echo CHtml::hiddenField('sum', $sum, array('id'=>'sum')); ?>
+
+		<span class='formfilter-space'></span>
+		<?php $this->widget(
+		    'bootstrap.widgets.TbButtonGroup',
+		    array(
+		        'toggle' => 'radio',
+		        // 'type' => 'inverse',
+		        'buttons' => array(
+		            array('label' => 'Daily Stats', 'active'=>boolval(1-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("0");')),
+		            array('label' => 'Merged Stats', 'active'=>boolval(0-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("1");')),
+		        ),
+
+		    )
+		); ?>
+		<span class='formfilter-space'></span>
+    	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 	</div>
 	<?php 
 		//Load Filters
@@ -228,13 +221,36 @@ $('.search-form form').submit(function(){
 	</div>
 		*/
 	?>
+<?php $this->endWidget(); ?>
+
+<?php $this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Excel Report',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => $link,
+	'ajaxOptions' => array(
+		'type'    => 'POST',
+		'beforeSend' => 'function(data)
+			{
+		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				$("#modalDailyReport").html(dataInicial);
+				$("#modalDailyReport").modal("toggle");
+			}',
+		'success' => 'function(data)
+			{
+				$("#modalDailyReport").html(data);
+			}',
+		),
+	'htmlOptions' => array('id' => 'excelReport', 'style' => 'float:right'),
+	)
+); ?>
 
 </fieldset>
-<?php $this->endWidget(); ?>
 
 <?php 
 	
-	$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd);	
+	$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum);	
 	//$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
 	$totals = $model->advertiserSearchTotals($advertiser_id, $dateStart, $dateEnd);
 
@@ -268,6 +284,7 @@ $('.search-form form').submit(function(){
 					// 'style' =>'text-align:right;'
 				),
 			'filter'      => false,
+			'visible'     => !$sum,
         ),
         /*
 		array(
@@ -331,6 +348,7 @@ $('.search-form form').submit(function(){
 		*/
 		array(	
 			'name'              => 'imp',
+			'header'			=> 'Impressions',
 			'value'				=> 'number_format($data->imp)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
@@ -347,6 +365,7 @@ $('.search-form form').submit(function(){
         ),
         array(
 			'name'              => 'conv_api',
+			'header'			=> 'Conversions',
 			'value'				=> 'number_format($data->conv_api)',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),

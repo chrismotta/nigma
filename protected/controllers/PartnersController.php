@@ -102,19 +102,22 @@ class PartnersController extends Controller
 	{
 		$model = new DailyReport;
 		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
+		
 		$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : NULL;
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
-		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd);	
+		$sum = isset($_POST['excel-sum']) ? $_POST['excel-sum'] : 0;
+
+		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum);	
 		if( isset($_POST['excel-report-form']) ) {
 			$this->renderPartial('excelReportAdvertisers', array(
 				'model' => $model,
 				'dataProvider' => $dataProvider,
-				'sum'=>true,
 			));
 		}
 		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : NULL;
 		$dateEnd = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : NULL;
-		$this->renderPartial('_excelReportAdvertisers', array('dateStart'=>$dateStart, 'dateEnd'=>$dateEnd), false, true);
+		$sum = isset($_GET['sum']) ? $_GET['sum'] : 0;
+		$this->renderPartial('_excelReportAdvertisers', array('dateStart'=>$dateStart, 'dateEnd'=>$dateEnd, 'sum'=>$sum), false, true);
 	}
 
 	public function actionAdvertisers()

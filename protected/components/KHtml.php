@@ -26,7 +26,7 @@ class KHtml extends CHtml
     public static function datePicker($name, $initialDate, $options = array(), $htmlOptions = array(), $append=null)
     {
         $defaultHtmlOptions = array(
-            //'style' => 'width: 80px',
+            'style' => 'width: 73px',
             'class'=>'span2'
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
