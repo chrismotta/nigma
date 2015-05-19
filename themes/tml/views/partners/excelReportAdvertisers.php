@@ -4,6 +4,8 @@
 
 $path         = 'uploads/';
 $name         = 'TheMediaLab-Advertiser.xls';
+$sum            = isset($_POST['sum']) ? $_POST['sum'] : 0;
+
 // $year         =isset($_POST['year']) ? $_POST['year'] : date('Y', strtotime('today'));
 // $month        =isset($_POST['month']) ? $_POST['month'] : date('m', strtotime('today'));
 // $entity       =isset($_POST['entity']) ? $_POST['entity'] : null;
@@ -27,7 +29,7 @@ $this->widget('EExcelWriter', array(
         array(
             'name'              => 'date',
             'value'             => 'date("d-m-Y", strtotime($data->date))',
-            // 'visible'     => !$sum,
+            'visible'     => !$sum,
         ),
         array(
             'name'  => 'product',
@@ -46,24 +48,33 @@ $this->widget('EExcelWriter', array(
                         $data->campaigns->opportunities->carriers->mobile_brand:
                         "All Carriers"',
         ),
+        array(
+            'name'   => 'rate',
+            'header' => 'Rate',
+            'value'  => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
+        ),
         array(  
             'name'              => 'imp',
             'header'            => 'Impressions',
             'value'             => 'number_format($data->imp)',
+            'visible'           => true,
         ),
         array(
             'name'              => 'clics',
             'value'             => 'number_format($data->clics)',
+            'visible'           => false,
         ),
         array(
             'name'              => 'conv_api',
             'header'            => 'Conversions',
             'value'             => 'number_format($data->conv_api)',
+            'visible'           => false,
         ),
         array(
             'name'              => 'revenue',
             'header'            => 'Spend',
             'value'             => '"$ ".number_format($data->revenue, 2)',
+            'visible'           => true,
         ),
     ),
 ));
