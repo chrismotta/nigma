@@ -3,7 +3,7 @@
 /* @var $model Users */
 
 $this->breadcrumbs=array(
-	'Users'=>array('index'),
+	// 'Users'=>array('index'),
 	'Manage Users',
 );
 
