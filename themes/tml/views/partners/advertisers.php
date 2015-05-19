@@ -259,7 +259,7 @@ $('.search-form form').submit(function(){
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
 	'dataProvider'             => $dataProvider,
-	'filter'                   => $model,
+	// 'filter'                   => $model,
 	//'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
@@ -354,6 +354,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['imp']),
+			'filter'=> false,
 			'visible'     => true,
         ),
         array(
@@ -363,6 +364,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['clics']),
+			'filter'=> false,
 			'visible'     => false,
         ),
         array(
@@ -373,6 +375,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			//'footer'            => number_format($totals['conv_api']),
+			'filter'=> false,
 			'visible'     => false,
         ),
         array(
@@ -384,6 +387,7 @@ $('.search-form form').submit(function(){
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			// 'footer'            => "\$ ".number_format($totals['revenue'],2),
+			'filter'=> false,
 			'visible'     => true,
         ),
         /*
