@@ -56,24 +56,24 @@ $this->widget('EExcelWriter', array(
         array(  
             'name'              => 'imp',
             'header'            => 'Impressions',
-            'value'             => 'number_format($data->imp)',
+            'value'             => '$data->imp',
             'visible'           => true,
         ),
         array(
             'name'              => 'clics',
-            'value'             => 'number_format($data->clics)',
+            'value'             => '$data->clics',
             'visible'           => false,
         ),
         array(
             'name'              => 'conv_api',
             'header'            => 'Conversions',
-            'value'             => 'number_format($data->conv_api)',
+            'value'             => '$data->conv_api',
             'visible'           => false,
         ),
         array(
             'name'              => 'revenue',
             'header'            => 'Spend',
-            'value'             => '"$ ".number_format($data->revenue, 2)',
+            'value'             => '$data->revenue',
             'visible'           => true,
         ),
     ),
