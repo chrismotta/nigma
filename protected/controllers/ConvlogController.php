@@ -87,7 +87,7 @@ class ConvlogController extends Controller
 		$gc_callback.= "?label=wAWJCLyWhQoQpPDrzgM";
 		$gc_callback.= "&guid=ON&script=0";
 
-		$gc_callback = "http://localhost/kickads/appserver/conv.php?mytoken=".$_GET['mytoken'];
+		$gc_callback = "http://localhost/nigma/appserver/conv.php?mytoken=".$_GET['mytoken'];
 		//print $gc_callback ."<hr/>";
 		// Crea un nuevo recurso cURL
 		$curl = curl_init();
@@ -152,8 +152,18 @@ class ConvlogController extends Controller
 
 				if( Providers::model()->findByPk($conv->campaign->providers_id)->has_s2s ) {
 
-					$s4s_url = $conv->campaign->providers->callback . $tid;
+					$haystack = $conv->campaign->providers->callback;
+					$needle   = '{ntoken}';
 					
+					// if there is ntoken macro in the callback
+					if( strpos($haystack, $needle)!==false ){
+						// replace placeholder macro with value
+						$s4s_url = str_replace('{ntoken}', $tid, $conv->campaign->providers->callback);
+					} else {
+						// add value at the end of callback
+						$s4s_url = $conv->campaign->providers->callback . $tid;
+					}
+
 					if ( isset($click->custom_params) && $click->custom_params != NULL ) {
 						if( strpos($s4s_url, "?") ){
 							$s4s_url.= "&";
@@ -166,7 +176,7 @@ class ConvlogController extends Controller
 					//enviar macros
 					if($conv->hasMacro($s4s_url))
 						$s4s_url = $conv->replaceMacro($s4s_url);
-					
+
 					echo $s4s_url;
 					echo '<hr/>';
 
