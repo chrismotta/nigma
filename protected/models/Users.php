@@ -60,7 +60,14 @@ class Users extends CActiveRecord
 		return array(
 			'advertisers' => array(self::HAS_MANY, 'Advertisers', 'commercial_id'),
 			'ioses' => array(self::HAS_MANY, 'Ios', 'commercial_id'),
+			'affiliates' => array(self::HAS_MANY, 'Affiliates', 'users_id'),
+			'externalIoForms' => array(self::HAS_MANY, 'ExternalIoForm', 'commercial_id'),
+			'financeEntities' => array(self::HAS_MANY, 'FinanceEntities', 'commercial_id'),
 			'opportunities' => array(self::HAS_MANY, 'Opportunities', 'account_manager_id'),
+			'publishers' => array(self::HAS_MANY, 'Publishers', 'account_manager_id'),
+			'transactionCounts' => array(self::HAS_MANY, 'TransactionCount', 'users_id'),
+			'transactionProviders' => array(self::HAS_MANY, 'TransactionProviders', 'users_id'),
+			'visibilities' => array(self::HAS_MANY, 'Visibility', 'users_id'),
 		);
 	}
 

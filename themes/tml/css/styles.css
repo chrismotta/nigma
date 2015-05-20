@@ -348,11 +348,18 @@ fieldset hr {
 .formfilter-submit { float: right; }
 
 .alert-now {
-background-color: #b94a48;
-border-color: #b94a48;
-color: #ffffff;
-font-size: 12px;
-padding-top: 5px;
-padding-bottom: 5px;
-margin-bottom: 6px;
+	background-color: #b94a48;
+	border-color: #b94a48;
+	color: #ffffff;
+	font-size: 12px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	margin-bottom: 6px;
+}
+
+#visibility-form .control-group {
+	margin: 0px;
+}
+#visibility-form .form-actions {
+	margin-top: 15px;
 }

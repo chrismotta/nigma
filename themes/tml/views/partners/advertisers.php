@@ -252,6 +252,7 @@ $('.search-form form').submit(function(){
 	
 	$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);	
 	$totals       = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, true);
+	//var_dump($user_visibility->imp);
 
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
@@ -306,6 +307,7 @@ $('.search-form form').submit(function(){
 			'header'            => 'Country',
 			'value'             => '$data->campaigns->opportunities->regions->country->name',
 			'filter'			=> false,
+			'visible'           => $user_visibility->country,
 		),
 		array(
 			'name'              => 'carrier',
@@ -315,13 +317,14 @@ $('.search-form form').submit(function(){
 									$data->campaigns->opportunities->carriers->mobile_brand:
 									"All Carriers"',
 			'filter'            => false,
+			'visible'           => $user_visibility->carrier,
 		),
 		array(
-			'name'        => 'rate',
+			'name'              => 'rate',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
-			'value'       => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
-			'htmlOptions' => array('style'=>'text-align:right;'),
-			// 'visible'     => !$sum,
+			'value'             => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'visible'           => $user_visibility->rate,
 		),
         /*
         array(	
@@ -359,7 +362,7 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			'footer'            => number_format($totals->imp),
 			'filter'            => false,
-			'visible'           => true,
+			'visible'           => $user_visibility->imp,
         ),
         array(
 			'name'              => 'clics',
@@ -369,7 +372,7 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			'footer'            => number_format($totals->clics),
 			'filter'            => false,
-			'visible'           => false,
+			'visible'           => $user_visibility->clicks,
         ),
         array(
 			'name'              => 'conv_api',
@@ -380,7 +383,7 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			'footer'            => number_format($totals->conv_api),
 			'filter'            => false,
-			'visible'           => false,
+			'visible'           => $user_visibility->conv,
         ),
         array(
 			'name'              => 'revenue',
@@ -393,7 +396,7 @@ $('.search-form form').submit(function(){
 			// 'footer'         => "\$ ".number_format($totals['revenue'],2),
 			'footer'            => '$ '.number_format($totals->revenue, 2),
 			'filter'            => false,
-			'visible'           => true,
+			'visible'           => $user_visibility->spend,
         ),
         /*
         array(	

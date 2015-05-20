@@ -72,7 +72,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'status',
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -149,9 +149,35 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						return false;
 				    }
 				    ',
+				),
+				'visibility' => array(
+					'label' => 'Visibility',
+					'icon'  => 'th-list',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalUser").html(dataInicial);
+						$("#modalUser").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"visibility/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalUser").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
 				)
 			),
-			'template' => '{viewAjax} {updateAjax} {permissions} {delete}',
+			'template' => '{viewAjax} {updateAjax} {permissions} {visibility} {delete}',
 		),
 	),
 )); ?>

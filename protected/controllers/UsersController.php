@@ -28,7 +28,7 @@ class UsersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles','profile'),
+				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles','profile','visibility'),
 				'roles'=>array('admin'),
 			),
 			array('allow', 
@@ -197,6 +197,30 @@ class UsersController extends Controller
 		$this->renderPartial('_roles',array(
 			'model'=>$user,
 			'roles'=>$roles,
+		), false, true);
+	}
+
+	public function actionVisibility($id) 
+	{
+		$model = Visibility::model()->findByAttributes( array('users_id'=>$id) );
+		if($model===null){
+			$model = new Visibility();
+			$model->users_id = $id;
+		}
+
+		if ( isset($_POST['Visibility']) ) {
+			$model->attributes = $_POST['Visibility'];
+			if($model->save())
+				$this->redirect(array('admin'));
+		}
+
+		$user       = Users::model()->findByPk($id);
+		$advertiser = Advertisers::model()->findByAttributes( array('users_id' => $id) );
+
+		$this->renderPartial('_visibility',array(
+			'model'      => $model,
+			'user'       => $user,
+			'advertiser' => $advertiser,
 		), false, true);
 	}
 

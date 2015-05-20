@@ -40,6 +40,7 @@ $this->widget('EExcelWriter', array(
             'name'  => 'country',
             'header'=> 'Country',
             'value' => '$data->campaigns->opportunities->regions->country->name',
+            'visible'           => $user_visibility->country,
         ),
         array(
             'name'  => 'carrier',
@@ -47,34 +48,36 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->campaigns->opportunities->carriers_id ?
                         $data->campaigns->opportunities->carriers->mobile_brand:
                         "All Carriers"',
+            'visible'           => $user_visibility->carrier,
         ),
         array(
             'name'   => 'rate',
             'header' => 'Rate',
             'value'  => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
+            'visible'           => $user_visibility->rate,
         ),
         array(  
             'name'              => 'imp',
             'header'            => 'Impressions',
             'value'             => '$data->imp',
-            'visible'           => true,
+            'visible'           => $user_visibility->imp,
         ),
         array(
             'name'              => 'clics',
             'value'             => '$data->clics',
-            'visible'           => false,
+            'visible'           => $user_visibility->clicks,
         ),
         array(
             'name'              => 'conv_api',
             'header'            => 'Conversions',
             'value'             => '$data->conv_api',
-            'visible'           => false,
+            'visible'           => $user_visibility->conv,
         ),
         array(
             'name'              => 'revenue',
             'header'            => 'Spend',
             'value'             => '$data->revenue',
-            'visible'           => true,
+            'visible'           => $user_visibility->spend,
         ),
     ),
 ));

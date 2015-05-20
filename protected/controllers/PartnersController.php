@@ -107,11 +107,14 @@ class PartnersController extends Controller
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
 		$sum = isset($_POST['sum']) ? $_POST['sum'] : 0;
 
-		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);	
+		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);
+		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => Yii::app()->user->id));
+
 		if( isset($_POST['excel-report-form']) ) {
 			$this->renderPartial('excelReportAdvertisers', array(
 				'model' => $model,
 				'dataProvider' => $dataProvider,
+				'user_visibility'    => $user_visibility,
 			));
 		}
 
@@ -130,11 +133,13 @@ class PartnersController extends Controller
 			$model->attributes=$_GET['DailyReport'];
 
 		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
-		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
+		$advertiser_id   = Advertisers::model()->findByUser(Yii::app()->user->id);
+		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => Yii::app()->user->id));
 
 		$this->render('advertisers',array(
-			'model'=>$model,
-			'advertiser_id' => $advertiser_id,
+			'model'              => $model,
+			'advertiser_id'      => $advertiser_id,
+			'user_visibility'    => $user_visibility,
 		));
 	}
 
