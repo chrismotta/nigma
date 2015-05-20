@@ -175,9 +175,15 @@ $this->widget('bootstrap.widgets.TbButton', array(
 						return false;
 				    }
 				    ',
-				)
+				),
+				'preview' => array(
+					'label'   => 'Preview External Login',
+					'icon'    => 'eye-close',
+					'url'     => 'Yii::app()->createUrl("partners/previewAdvertisers",array("id"=>$data->primaryKey))',
+					'options' => array('target'=>'_blank'),
+				),
 			),
-			'template' => '{viewAjax} {updateAjax} {permissions} {visibility} {delete}',
+			'template' => '{viewAjax} {updateAjax} {permissions} {visibility} {preview} {delete}',
 		),
 	),
 )); ?>

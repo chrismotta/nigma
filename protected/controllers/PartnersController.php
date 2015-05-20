@@ -31,6 +31,10 @@ class PartnersController extends Controller
 				'actions'=>array('advertisers','excelReportAdvertisers'),
 				'roles'=>array('admin','advertiser'),
 			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('previewAdvertisers', 'previewExcelReportAdvertisers'),
+				'roles'=>array('admin'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -98,17 +102,26 @@ class PartnersController extends Controller
 		// 	$this->redirect(Yii::app()->baseUrl);
 		// }	
 	}
-	public function actionExcelReportAdvertisers()
-	{
+
+	public function actionExcelReportAdvertisers(){
+		$this->renderExcelReportAdvertisers(Yii::app()->user->id, false);
+	}
+	public function actionPreviewExcelReportAdvertisers($id){
+		$this->renderExcelReportAdvertisers($id, true);
+	}
+
+	public function renderExcelReportAdvertisers($userId, $preview){
+		// $userId = Yii::app()->user->id;
+
 		$model = new DailyReport;
-		$advertiser_id = Advertisers::model()->findByUser(Yii::app()->user->id);
+		$advertiser_id = Advertisers::model()->findByUser($userId);
 		
 		$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : NULL;
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
 		$sum = isset($_POST['sum']) ? $_POST['sum'] : 0;
 
 		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);
-		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => Yii::app()->user->id));
+		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
 		if( isset($_POST['excel-report-form']) ) {
 			$this->renderPartial('excelReportAdvertisers', array(
@@ -124,8 +137,14 @@ class PartnersController extends Controller
 		$this->renderPartial('_excelReportAdvertisers', array('dateStart'=>$dateStart, 'dateEnd'=>$dateEnd, 'sum'=>$sum), false, true);
 	}
 
-	public function actionAdvertisers()
-	{
+	public function actionAdvertisers(){
+		$this->renderAdvertisers(Yii::app()->user->id, false);
+	}
+	public function actionPreviewAdvertisers($id){
+		$this->renderAdvertisers($id, true);
+	}
+
+	private function renderAdvertisers($userId, $preview){
 		$model=new DailyReport('search');
 		$model->unsetAttributes();  // clear any default values
 
@@ -133,13 +152,15 @@ class PartnersController extends Controller
 			$model->attributes=$_GET['DailyReport'];
 
 		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
-		$advertiser_id   = Advertisers::model()->findByUser(Yii::app()->user->id);
-		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => Yii::app()->user->id));
+		$advertiser_id   = Advertisers::model()->findByUser($userId);
+		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
 		$this->render('advertisers',array(
-			'model'              => $model,
-			'advertiser_id'      => $advertiser_id,
-			'user_visibility'    => $user_visibility,
+			'model'           => $model,
+			'advertiser_id'   => $advertiser_id,
+			'user_visibility' => $user_visibility,
+			'preview'         => $preview,
+			'userId'          => $userId,
 		));
 	}
 
