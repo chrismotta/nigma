@@ -308,9 +308,9 @@ class OpportunitiesController extends Controller
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$regions = Regions::model()->findByAdvertisers($id);
 
-		$response='<option value="">Select an Regions</option>';
+		$response='<option value="">Select a Region</option>';
 		foreach ($regions as $region) {
-			$response .= '<option value="' . $region->id . '">' . $region->region . '</option>';
+			$response .= '<option value="' . $region->id . '">' . $region->country->name . '</option>';
 		}
 		echo $response;
 		Yii::app()->end();
