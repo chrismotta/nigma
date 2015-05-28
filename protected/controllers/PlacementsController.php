@@ -28,7 +28,7 @@ class PlacementsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','archived'),
+				'actions'=>array('index','view','create','update','admin','delete','archived','getSites'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -197,13 +197,31 @@ class PlacementsController extends Controller
 	{
 		$sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		$exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
+		$sites      = CHtml::listData( Sites::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$publishers = CHtml::listData( Publishers::model()->with('providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
+		// $publishers = CHtml::listData( Publishers::model()->with('sites.providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 
 		$this->renderPartial('_form', array(
 			'model'      => $model,
 			'sizes'      => $sizes,
 			'exchanges'  => $exchanges,
+			'sites'      => $sites,
 			'publishers' => $publishers,
 		), false, true);
+	}
+
+	public function actionGetSites($id)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+		$sites = Sites::model()->findByPublishersId($id);
+		var_dump($sites);
+		die();
+		$response = '<option value="">Select a site</option>';
+		foreach ($sites as $site) {
+			$response .= '<option value="' . $site->id . '">' . $site->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 }

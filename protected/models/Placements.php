@@ -6,7 +6,7 @@
  * The followings are the available columns in table 'placements':
  * @property integer $id
  * @property integer $exchanges_id
- * @property integer $publishers_id
+ * @property integer $sites_id
  * @property integer $sizes_id
  * @property string $status
  * @property string $name
@@ -40,14 +40,14 @@ class Placements extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('publishers_id, exchanges_id, name', 'required'),
-			array('exchanges_id, publishers_id, sizes_id', 'numerical', 'integerOnly'=>true),
+			array('sites_id, exchanges_id, name', 'required'),
+			array('exchanges_id, sites_id, sizes_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>8),
 			array('name', 'length', 'max'=>128),
 			array('product', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, exchanges_id, publishers_id, sizes_id, name, product, status', 'safe', 'on'=>'search'),
+			array('id, exchanges_id, sites_id, sizes_id, name, product, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,7 +60,7 @@ class Placements extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'dailyPublishers' => array(self::HAS_MANY, 'DailyPublishers', 'placements_id'),
-			'publishers'      => array(self::BELONGS_TO, 'Sites', 'sites_id'),
+			'sites'           => array(self::BELONGS_TO, 'Sites', 'sites_id'),
 			'exchanges'       => array(self::BELONGS_TO, 'Exchanges', 'exchanges_id'),
 			'sizes'           => array(self::BELONGS_TO, 'BannerSizes', 'sizes_id'),
 		);
@@ -74,7 +74,7 @@ class Placements extends CActiveRecord
 		return array(
 			'id'              => 'ID',
 			'exchanges_id'    => 'Exchanges',
-			'publishers_id'   => 'Publishers',
+			'sites_id'        => 'Sites',
 			'sizes_id'        => 'Sizes',
 			'name'            => 'Name',
 			'product'         => 'Product',
@@ -104,13 +104,13 @@ class Placements extends CActiveRecord
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.exchanges_id',$this->exchanges_id);
-		$criteria->compare('t.publishers_id',$this->publishers_id);
+		$criteria->compare('t.sites_id',$this->sites_id);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('t.sizes_id',$this->sizes_id);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('t.product',$this->product,true);
 
-		$criteria->with = array('publishers', 'publishers.providers','exchanges', 'sizes');
+		$criteria->with = array('sites', 'sites.publishersProviders', 'sites.publishersProviders.providers','exchanges', 'sizes');
 		$criteria->compare('providers.name',$this->publishers_name,true);
 		$criteria->compare('exchanges.name',$this->exchanges_name,true);
 		$criteria->compare('sizes.size',$this->size,true);
@@ -123,10 +123,10 @@ class Placements extends CActiveRecord
 			'sort'     	 =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
-		            'publishers_name'=>array(
-						'asc'  =>'providers.name',
-						'desc' =>'providers.name DESC',
-		            ),
+		            // 'publishers_name'=>array(
+						// 'asc'  =>'providers.name',
+						// 'desc' =>'providers.name DESC',
+		            // ),
 		            'exchanges_name'=>array(
 						'asc'  =>'exchanges.name',
 						'desc' =>'exchanges.name DESC',
@@ -141,10 +141,10 @@ class Placements extends CActiveRecord
 		));
 	}
 
-	public function findByPublisherId($id)
+	public function findBySitesId($id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->compare("t.publishers_id", $id);
+		$criteria->compare("t.sites_id", $id);
 		
 		return new CActiveDataProvider($this, array(
 			'criteria'   =>$criteria,

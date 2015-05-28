@@ -30,7 +30,7 @@ class Sites extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id', 'required'),
+			// array('id', 'required'),
 			array('id, publishers_providers_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>255),
 			// The following rule is used by search().
@@ -100,5 +100,17 @@ class Sites extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+
+	public function findByPublishersId($id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->compare("publishers_providers_id", $id);
+		
+		return new CActiveDataProvider($this, array(
+			'criteria'   =>$criteria,
+			'pagination' =>false,
+		));
 	}
 }

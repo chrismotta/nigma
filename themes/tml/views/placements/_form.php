@@ -27,7 +27,29 @@
 	<?php 
 
     	if ( $model->isNewRecord ) {
-      		echo $form->dropDownListRow($model, 'publishers_id', $publishers, array('prompt' => 'Select a publisher'));
+            echo $form->dropDownListRow($model, 'publishers_name', $publishers, 
+                array(
+                    'prompt'   => 'Select a publisher',
+                    'onChange' => '
+                        if ( ! this.value) {
+                          return;
+                        }
+                        $.post(
+                            "getSites/"+this.value,
+                            "",
+                            function(data)
+                            {
+                                alert(data);
+                                $(".sites-dropdownlist").html(data);
+                            }
+                        )
+                    '
+                    ));
+      		echo $form->dropDownListRow($model, 'sites_id', $sites, 
+                array(
+                    'prompt' => 'Select a site',
+                    'class'    => 'sites-dropdownlist',
+                    ));
       	}
       
         echo $form->dropDownListRow($model, 'exchanges_id', $exchanges, array('prompt' => 'Select exchange'));

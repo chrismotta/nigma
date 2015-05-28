@@ -58,7 +58,7 @@
          }
          echo $form->dropDownListRow($model, 'regions_id', $regions, 
             array(
-              'prompt'   => 'Select an region', 
+              'prompt'   => 'Select a Region', 
               'class'=>'regions-dropdownlist',
               'onChange' => '
                       if ( ! this.value) {

@@ -1532,6 +1532,7 @@ class DailyReport extends CActiveRecord
 		$c    = Campaigns::model()->findByPk($this->campaigns_id);
 		$opp  = Opportunities::model()->findByPk($c->opportunities_id);
 
+
 		// update revenue for multi carriers
 		if ($opp->rate == NULL && $opp->carriers_id == NULL) {
 			$multi_rates = MultiRate::model()->findAll(array('order'=>'daily_report_id', 'condition'=>'daily_report_id=:id', 'params'=>array(':id'=>$this->id)));
@@ -1539,7 +1540,7 @@ class DailyReport extends CActiveRecord
 			foreach ($multi_rates as $multi_rate) {
 				$this->revenue += ($multi_rate->conv * $multi_rate->rate);
 			}
-			return;
+			return "ok multi";
 		}
 
 		// update revenue for single rate
@@ -1547,6 +1548,7 @@ class DailyReport extends CActiveRecord
 		switch ($opp->model_adv) {
 			case 'CPM':
 				$this->revenue = $this->imp_adv != NULL ? $this->imp_adv * $rate / 1000 : $this->imp * $rate / 1000;
+				return "ok rate: ".$opp->getRate($this->date);
 				break;
 			case 'CPC':
 			case 'CPV':

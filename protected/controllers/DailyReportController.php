@@ -454,11 +454,13 @@ class DailyReportController extends Controller
 	}
 
 	public function actionSetRevenue($id){
+		$rate = isset($_GET['rate']) ? $_GET['rate'] : null;
 		if($model = DailyReport::model()->findByPk($id)){
-			$model->updateRevenue();
+			$msj = $model->updateRevenue($rate);
 			$model->setNewFields();
 			$model->save();
-			echo $id . " - updated";
+			echo $id . " - updated: ".$msj;
+			echo '<hr>imp: '.$model->imp.' - revenue: '.$model->revenue;
 		}else{
 			echo $id . "- not exists";
 		}
