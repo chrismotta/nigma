@@ -284,6 +284,7 @@ class Opportunities extends CActiveRecord
 		
 		return $this->id . '-' . $adv . $country . $carrier . '-' . $this->rate . $product;
 	}
+	
 	public function findByIo($io)
 	{		
 		$criteria = new CDbCriteria;

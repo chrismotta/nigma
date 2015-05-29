@@ -3,28 +3,28 @@ $this->breadcrumbs=array(
 	'Sites'=>array('index'),
 	'Manage',
 );
-
-$this->menu=array(
-array('label'=>'List Sites','url'=>array('index')),
-array('label'=>'Create Sites','url'=>array('create')),
-);
-
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-$('.search-form').toggle();
-return false;
-});
-$('.search-form form').submit(function(){
-$.fn.yiiGridView.update('sites-grid', {
-data: $(this).serialize()
-});
-return false;
-});
-");
 ?>
 
 <?php 
 /*
+$this->menu=array(
+	array('label'=>'List Sites','url'=>array('index')),
+	array('label'=>'Create Sites','url'=>array('create')),
+);
+
+Yii::app()->clientScript->registerScript('search', "
+	$('.search-button').click(function(){
+		$('.search-form').toggle();
+		return false;
+	});
+	$('.search-form form').submit(function(){
+		$.fn.yiiGridView.update('sites-grid', {
+			data: $(this).serialize()
+		});
+		return false;
+	});
+");
+
 echo '
 <h1>Manage Sites</h1>
 
@@ -44,16 +44,22 @@ echo '</div><!-- search-form -->'
 */
 ?>
 
+<?php BuildGridView::createButton($this, 'modalSites', 'Create Site'); ?>
+
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
-'id'=>'sites-grid',
-'dataProvider'=>$model->search(),
-'filter'=>$model,
-'columns'=>array(
+	'id'=>'sites-grid',
+	'dataProvider' => $model->search(),
+	'filter'       => $model,
+	'type'                     => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'template'                 => '{items} {pager} {summary}',
+	'columns'    => array(
 		'id',
 		'name',
 		'publishers_providers_id',
-array(
-'class'=>'bootstrap.widgets.TbButtonColumn',
-),
-),
+		BuildGridView::buttonColumn('modalSites'),
+	),
 )); ?>
+
+<?php BuildGridView::printModal($this, 'modalSites', 'Sites'); ?>
+

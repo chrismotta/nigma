@@ -763,5 +763,6 @@ class KHtml extends CHtml
         $list   = CHtml::listData($financeentities, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
+    
 }
 ?>

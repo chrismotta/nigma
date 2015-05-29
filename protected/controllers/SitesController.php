@@ -6,7 +6,7 @@ class SitesController extends Controller
 	* @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	* using two-column layout. See 'protected/views/layouts/column2.php'.
 	*/
-	public $layout='//layouts/column2';
+	public $layout='//layouts/column1';
 
 	/**
 	* @return array action filters
@@ -15,6 +15,7 @@ class SitesController extends Controller
 	{
 		return array(
 			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete', // we only allow deletion via POST request
 		);
 	}
 
@@ -42,9 +43,9 @@ class SitesController extends Controller
 	*/
 	public function actionView($id)
 	{
-		$this->render('view',array(
+		$this->renderPartial('view',array(
 			'model'=>$this->loadModel($id),
-		));
+		), false, true);
 	}
 
 	/**
@@ -65,7 +66,7 @@ class SitesController extends Controller
 				$this->redirect(array('view','id'=>$model->id));
 		}
 
-		$this->renderFormAjax($model);
+		$this->renderFormAjax($model, 'Create');
 	}
 
 	/**
@@ -87,7 +88,7 @@ class SitesController extends Controller
 				$this->redirect(array('view','id'=>$model->id));
 		}
 
-		$this->renderFormAjax($model);
+		$this->renderFormAjax($model, 'Update');
 	}
 
 	/**
@@ -162,7 +163,7 @@ class SitesController extends Controller
 		}
 	}
 
-	private function renderFormAjax($model) 
+	private function renderFormAjax($model, $action=null) 
 	{
 		// $sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		// $exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
@@ -173,6 +174,7 @@ class SitesController extends Controller
 			// 'sizes'      => $sizes,
 			// 'exchanges'  => $exchanges,
 			'publishers' => $publishers,
+			'action'	 => $action,
 		), false, true);
 	}
 }

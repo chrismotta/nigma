@@ -12,8 +12,13 @@ array('label'=>'Delete Sites','url'=>'#','linkOptions'=>array('submit'=>array('d
 array('label'=>'Manage Sites','url'=>array('admin')),
 );
 ?>
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+	<h4>View Site #<?php echo $model->id; ?></h4>
+</div>
 
-<h1>View Sites #<?php echo $model->id; ?></h1>
+<div class="modal-body">
+
 
 <?php $this->widget('bootstrap.widgets.TbDetailView',array(
 'data'=>$model,
@@ -23,3 +28,10 @@ array('label'=>'Manage Sites','url'=>array('admin')),
 		'publishers_providers_id',
 ),
 )); ?>
+
+
+</div>
+
+<div class="modal-footer">
+    View site detail.
+</div>

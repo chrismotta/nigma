@@ -5,7 +5,7 @@
 if( isset($isArchived) ) {
 	$delete['icon']       = 'refresh';
 	$delete['label']      = 'Restore';
-	$delete['confirm']    = 'Are you sure you want to restore this opportunities?';
+	$delete['confirm']    = 'Are you sure you want to restore this opportunity?';
 	$breadcrumbs['title'] = 'Archived Opportunities';
 } else {
 	$delete['icon']       = 'trash';
@@ -19,11 +19,6 @@ $this->breadcrumbs=array(
 	'FinanceEntities'=>array('financeEntities/admin'),
 	'Regions'=>array('regions/admin'),
 	$breadcrumbs['title'],
-);
-
-$this->menu=array(
-	array('label'=>'List Opportunities', 'url'=>array('index')),
-	array('label'=>'Create Opportunities', 'url'=>array('create')),
 );
 
 Yii::app()->clientScript->registerScript('search', "
