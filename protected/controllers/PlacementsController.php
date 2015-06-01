@@ -215,8 +215,7 @@ class PlacementsController extends Controller
 		// comentado provisoriamente, generar permiso de admin
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
 		$sites = Sites::model()->findByPublishersId($id);
-		var_dump($sites);
-		die();
+		
 		$response = '<option value="">Select a site</option>';
 		foreach ($sites as $site) {
 			$response .= '<option value="' . $site->id . '">' . $site->name . '</option>';

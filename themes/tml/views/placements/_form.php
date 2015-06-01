@@ -32,23 +32,26 @@
                     'prompt'   => 'Select a publisher',
                     'onChange' => '
                         if ( ! this.value) {
-                          return;
+                            $(".sites-dropdownlist").html("<option value=\"\">Select a site</option>");
+                            $(".sites-dropdownlist").prop( "disabled", true );
+                            return;
                         }
                         $.post(
                             "getSites/"+this.value,
                             "",
                             function(data)
                             {
-                                alert(data);
                                 $(".sites-dropdownlist").html(data);
+                                $(".sites-dropdownlist").prop("disabled", false);
                             }
                         )
                     '
                     ));
       		echo $form->dropDownListRow($model, 'sites_id', $sites, 
                 array(
-                    'prompt' => 'Select a site',
+                    'prompt'   => 'Select a site',
                     'class'    => 'sites-dropdownlist',
+                    'disabled' => true,
                     ));
       	}
       
