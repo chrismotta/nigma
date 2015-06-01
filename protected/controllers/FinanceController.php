@@ -34,8 +34,8 @@ class FinanceController extends Controller
 				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers'),
 				'roles'=>array('admin', 'finance','media_manager','businness', 'affiliates_manager'),
 			),
-			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('updateValidationStatus'),
+			array('allow',  // admin allow
+				'actions'=>array('updateValidationStatus', 'validateOpportunitiesByAdvertiser'),
 				'roles'=>array('admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -604,6 +604,38 @@ class FinanceController extends Controller
 		else
 			echo 'La oportunidad ya ha sido validada anteriormente';
  		Yii::app()->end();
+	}
+
+	public function actionValidateOpportunitiesByAdvertiser($id)
+	{
+		if (!isset($_GET['period'])) 
+			die('ERROR: $_GET["period"] required');
+		$year       = date('Y', strtotime($_GET['period']));
+		$month      = date('m', strtotime($_GET['period']));
+		$period     = date('Y-m-d', mktime(0,0,0, $month, '01', $year));
+		$date       = date('Y-m-d H:i:s', strtotime('NOW'));
+
+		$advertiser = Advertisers::model()->findByPk($id);
+		
+		$criteria        = new CDbCriteria();
+		$criteria->with  = array('regions.financeEntities');
+		$criteria->compare('financeEntities.advertisers_id', $id);
+		$opportunities   = Opportunities::model()->findAll($criteria);
+		foreach ($opportunities as $opportunity) {
+			echo "#".$opportunity->id.": ";
+			$opportunitiesValidation = new OpportunitiesValidation;
+			if(!$opportunitiesValidation->checkValidation($opportunity->id, $period))
+			{
+				$opportunitiesValidation->attributes=array('opportunities_id'=>$opportunity->id,'period'=>$period,'date'=>$date);
+				if($opportunitiesValidation->save())
+				{
+					echo "opportunity validated successfully";
+				}
+			}else{
+				echo "opportunity already validated";
+			}
+			echo '<br/>';
+		}
 	}
 
 	/**

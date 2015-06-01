@@ -20,7 +20,7 @@
 			'action'               =>$this->createUrl('finance/addTransaction/'),
 			// to enable ajax validation
 			'enableAjaxValidation' =>false,
-			'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+			//'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
 		)); 
 		echo '<fieldset>';
 			$month=date('m', strtotime($period));
