@@ -63,7 +63,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->renderFormAjax($model, 'Create');
@@ -85,7 +85,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->renderFormAjax($model, 'Update');

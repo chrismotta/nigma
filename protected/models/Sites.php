@@ -14,6 +14,8 @@
  */
 class Sites extends CActiveRecord
 {
+	public $publishers_name;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -35,7 +37,7 @@ class Sites extends CActiveRecord
 			array('name', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, publishers_providers_id', 'safe', 'on'=>'search'),
+			array('id, name, publishers_providers_id, publishers_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -47,7 +49,7 @@ class Sites extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'placements' => array(self::HAS_MANY, 'Placements', 'sites_id'),
+			'placements'          => array(self::HAS_MANY, 'Placements', 'sites_id'),
 			'publishersProviders' => array(self::BELONGS_TO, 'Publishers', 'publishers_providers_id'),
 		);
 	}
@@ -58,9 +60,10 @@ class Sites extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => 'Name',
+			'id'                      => 'ID',
+			'name'                    => 'Name',
 			'publishers_providers_id' => 'Publishers Providers',
+			'publishers_name'         => 'Publishers',
 		);
 	}
 
@@ -82,12 +85,27 @@ class Sites extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('publishers_providers_id',$this->publishers_providers_id);
+		$criteria->with = array('publishersProviders', 'publishersProviders.providers');
+		$criteria->compare('LOWER(providers.name)', strtolower($this->publishers_name), true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination' => array(
+                'pageSize' => 50,
+            ),
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'publishers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),
+		            '*',
+	            ),
+	        ),
 		));
 	}
 

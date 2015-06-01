@@ -54,9 +54,15 @@ echo '</div><!-- search-form -->'
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'    => array(
-		'id',
+		array(
+			'name'              =>'id',
+			'headerHtmlOptions' => array('style'=>'width:100px'),
+		),
 		'name',
-		'publishers_providers_id',
+		array( 
+			'name'  => 'publishers_name',
+			'value' => '$data->publishersProviders->providers->name',
+		),
 		BuildGridView::buttonColumn('modalSites'),
 	),
 )); ?>
