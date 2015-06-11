@@ -12,11 +12,12 @@ if( isset($isArchived) ) {
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
 	$delete['confirm']    = 'Are you sure you want to archive this placements?';
-	$breadcrumbs['title'] = 'Manage Placements';
+	$breadcrumbs['title'] = 'Placements';
 }
 
 $this->breadcrumbs=array(
-	'Placements'=>array('index'),
+	'Publishers'=>array('publishers/admin'),
+	'Sites'=>array('sites/admin'),
 	$breadcrumbs['title'],
 );
 

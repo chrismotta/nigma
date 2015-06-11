@@ -1,7 +1,7 @@
 <?php
 $this->breadcrumbs=array(
-	'Sites'=>array('index'),
-	'Manage',
+	'Publishers'=>array('publishers/admin'),
+	'Sites',
 );
 ?>
 
