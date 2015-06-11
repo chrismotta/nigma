@@ -96,10 +96,10 @@ $('.search-form form').submit(function(){
 			'name'  => 'publishers_name',
 			'value' => '$data->sites->publishersProviders->providers->name',
 		),
-		array( 
-			'name'  => 'exchanges_name',
-			'value' => '$data->exchanges->name',
-		),
+		// array( 
+		// 	'name'  => 'exchanges_name',
+		// 	'value' => '$data->exchanges->name',
+		// ),
 		array( 
 			'name'  => 'size',
 			'value' => '$data->sizes->size',
@@ -160,19 +160,57 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'waterfall' => array(
+					'label' => 'Waterfall',
+					'icon'  => 'tint',
+					'click' => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	
+						var dataInicial = "<img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" />";
+						
+						$("#modalPlacements .modal-body").html(dataInicial);
+						$("#modalPlacements").modal("toggle");
+
+						var dataInicial = "<iframe src=\"'.$this->createUrl('placements/waterfall/1').'\" width=\"100%\" height=\"300px\" frameborder=\"0\" ></iframe>";
+						$("#modalPlacements .modal-body").html(dataInicial);
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	/*
+				    	$.post(
+						"waterfall/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								console.log("modal")
+								$("#modalPlacements").html(data);
+							}
+						)
+						*/
+						return false;
+				    }
+				    ',
+				),
 			),
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {updateAjax} {waterfall} {delete}',
 		),
 	),
 )); ?>
 
 <?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalPlacements')); ?>
 
-		<div class="modal-header"></div>
+		<div class="modal-header">
+		    <a class="close" data-dismiss="modal">&times;</a>
+		    <h4>Waterfall for Placement <?php echo "#". $model->id; ?></h4>
+		</div>
         <div class="modal-body"></div>
-        <div class="modal-footer"></div>
+		<div class="modal-footer">
+		    Edit Placemente Waterfall. Fields with <span class="required">*</span> are required.
+		</div>
 
 <?php $this->endWidget(); ?>

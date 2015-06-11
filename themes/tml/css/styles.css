@@ -363,3 +363,27 @@ fieldset hr {
 #visibility-form .form-actions {
 	margin-top: 15px;
 }
+
+tbody [class^="icon-"]{
+	  vertical-align: sub;
+}
+
+/* WATTERFALL */
+
+.waterfall .custom-block1 {
+	width: 240px;
+	display: inline-block;
+	margin: 0px 10px;
+}
+.waterfall .custom-block2 {
+	width: 190px;
+	display: inline-block;
+	margin: 0px 10px;
+}
+.waterfall .custom-separator {
+	width: 10px;
+	display: inline-block;
+}
+.waterfall .grid-view {
+  font-size: 13px;
+}

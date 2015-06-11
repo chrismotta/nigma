@@ -28,7 +28,7 @@ class PlacementsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','archived','getSites'),
+				'actions'=>array('index','view','create','update','admin','delete','archived','getSites','waterfall','waterfallSort','waterfallAdd','waterfallDel'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -223,4 +223,91 @@ class PlacementsController extends Controller
 		echo $response;
 		Yii::app()->end();
 	}
+
+	public function actionWaterfall($id){
+
+		$this->layout='//layouts/modal';
+
+		$placementsModel = $this->loadModel($id);
+		$exchangesModel  = new Exchanges('search');
+		$waterfallModel  = new PlacementsHasExchanges('search');
+		
+		$exchangesModel->unsetAttributes();
+		$waterfallModel->unsetAttributes();
+		$waterfallModel->placements_id = $id;
+		
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
+
+		// if(isset($_POST['Placements']))
+		// {
+		// 	$model->attributes=$_POST['Placements'];
+		// 	if($model->save())
+		// 		$this->redirect(array('admin'));
+		// }
+
+		$this->render('_waterfall', array(
+			'placementsModel' => $placementsModel,
+			'waterfallModel'  => $waterfallModel,
+			'exchangesModel'  => $exchangesModel,
+			// 'sizes'      => $sizes,
+			// 'sites'      => $sites,
+			// 'publishers' => $publishers,
+		));
+	}
+	public function actionWaterfallSort(){
+
+		$pid = $_POST['pid'];
+		$eid = json_decode( $_POST['eid'] );
+
+		foreach ($eid as $key => $value) {
+			$model = PlacementsHasExchanges::model()->findByAttributes(
+				array(
+					'placements_id' => $pid,
+					'exchanges_id'  => $value,
+					));
+			$model->step = $key+1;
+			$model->save();
+		}
+
+		echo "sort: \n";
+		echo "pid = ".$pid."\n";
+		echo "eid = ".$_POST['eid']."\n";
+	}
+
+	public function actionWaterfallAdd(){
+
+		$pid = $_POST['pid'];
+		$eid = $_POST['eid'];
+		
+		$query = Yii::app()->db->createCommand()
+		    ->select('count(*) AS total')
+		    ->from('placements_has_exchanges')
+		    ->where('placements_id = 1')
+		    ->queryAll();
+
+	    $count = $query[0]['total'] +1;
+
+		$model = new PlacementsHasExchanges();
+		$model->placements_id = $pid;
+		$model->exchanges_id = $eid;
+		$model->step = $count;
+		$model->save();
+
+		echo 'Step: '.$count;
+
+	}
+	public function actionWaterfallDel(){
+		
+		$pid = $_POST['pid'];
+		$eid = $_POST['eid'];
+
+		$model = PlacementsHasExchanges::model()->findByAttributes(
+			array('placements_id' => $pid, 'exchanges_id' => $eid));
+		$model->delete();
+		
+		PlacementsHasExchanges::reSort($pid);
+		echo var_dump($_POST);
+	}
+
 }

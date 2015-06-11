@@ -5,18 +5,22 @@
  *
  * The followings are the available columns in table 'placements':
  * @property integer $id
- * @property integer $exchanges_id
  * @property integer $sites_id
  * @property integer $sizes_id
- * @property string $status
  * @property string $name
  * @property string $product
+ * @property string $status
+ * @property integer $ext_id
+ * @property string $model
+ * @property integer $publisher_percentage
+ * @property string $rate
  *
  * The followings are the available model relations:
  * @property DailyPublishers[] $dailyPublishers
  * @property Publishers $publishers
- * @property Exchanges $exchanges
  * @property BannerSizes $sizes
+ * @property Sites $sites
+ * @property Exchanges[] $exchanges
  */
 class Placements extends CActiveRecord
 {
@@ -40,14 +44,16 @@ class Placements extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('sites_id, exchanges_id, name', 'required'),
-			array('exchanges_id, sites_id, sizes_id', 'numerical', 'integerOnly'=>true),
+			array('sites_id, name', 'required'),
+			array('sites_id, sizes_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>8),
 			array('name', 'length', 'max'=>128),
+			array('model', 'length', 'max'=>3),
+			array('rate', 'length', 'max'=>11),
 			array('product', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, exchanges_id, sites_id, sizes_id, name, product, status', 'safe', 'on'=>'search'),
+			array('id, sites_id, sizes_id, name, product, status, ext_id, model, publisher_percentage, rate', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,8 +67,9 @@ class Placements extends CActiveRecord
 		return array(
 			'dailyPublishers' => array(self::HAS_MANY, 'DailyPublishers', 'placements_id'),
 			'sites'           => array(self::BELONGS_TO, 'Sites', 'sites_id'),
-			'exchanges'       => array(self::BELONGS_TO, 'Exchanges', 'exchanges_id'),
+			// 'exchanges'       => array(self::BELONGS_TO, 'Exchanges', 'exchanges_id'),
 			'sizes'           => array(self::BELONGS_TO, 'BannerSizes', 'sizes_id'),
+			'exchanges'       => array(self::MANY_MANY, 'Exchanges','placements_has_exchanges(placements_id, exchanges_id)'),
 		);
 	}
 
@@ -73,7 +80,7 @@ class Placements extends CActiveRecord
 	{
 		return array(
 			'id'              => 'ID',
-			'exchanges_id'    => 'Exchanges',
+			// 'exchanges_id'    => 'Exchanges',
 			'sites_id'        => 'Sites',
 			'sizes_id'        => 'Sizes',
 			'name'            => 'Name',
@@ -81,6 +88,11 @@ class Placements extends CActiveRecord
 			'publishers_name' => 'Publishers',
 			'exchanges_name'  => 'Exchanges',
 			'size'            => 'Size',
+			'status' => 'Status',
+			'ext_id' => 'Ext',
+			'model' => 'Model',
+			'publisher_percentage' => 'Publisher Percentage',
+			'rate' => 'Rate',
 		);
 	}
 
@@ -103,16 +115,20 @@ class Placements extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('t.id',$this->id);
-		$criteria->compare('t.exchanges_id',$this->exchanges_id);
+		// $criteria->compare('t.exchanges_id',$this->exchanges_id);
 		$criteria->compare('t.sites_id',$this->sites_id);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('t.sizes_id',$this->sizes_id);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('t.product',$this->product,true);
+		$criteria->compare('t.ext_id',$this->ext_id);
+		$criteria->compare('t.model',$this->model,true);
+		$criteria->compare('t.publisher_percentage',$this->publisher_percentage);
+		$criteria->compare('t.rate',$this->rate,true);
 
 		$criteria->with = array('sites', 'sites.publishersProviders', 'sites.publishersProviders.providers','exchanges', 'sizes');
 		$criteria->compare('providers.name',$this->publishers_name,true);
-		$criteria->compare('exchanges.name',$this->exchanges_name,true);
+		// $criteria->compare('exchanges.name',$this->exchanges_name,true);
 		$criteria->compare('sizes.size',$this->size,true);
 
 		return new CActiveDataProvider($this, array(
@@ -127,10 +143,10 @@ class Placements extends CActiveRecord
 						// 'asc'  =>'providers.name',
 						// 'desc' =>'providers.name DESC',
 		            // ),
-		            'exchanges_name'=>array(
-						'asc'  =>'exchanges.name',
-						'desc' =>'exchanges.name DESC',
-		            ),
+		    //         'exchanges_name'=>array(
+						// 'asc'  =>'exchanges.name',
+						// 'desc' =>'exchanges.name DESC',
+		    //         ),
 		            'size'=>array(
 						'asc'  =>'sizes.size',
 						'desc' =>'sizes.size DESC',

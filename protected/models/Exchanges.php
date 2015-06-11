@@ -54,7 +54,8 @@ class Exchanges extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'placements' => array(self::HAS_MANY, 'Placements', 'exchanges_id'),
+			'p_e' => array(self::HAS_MANY, 'PlacementsHasExchanges', 'exchanges_id'),
+			'placements' => array(self::MANY_MANY, 'Placements', 'placements_has_exchanges(exchanges_id, placements_id)'),
 		);
 	}
 
@@ -87,7 +88,7 @@ class Exchanges extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($placement=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -101,6 +102,21 @@ class Exchanges extends CActiveRecord
 		$criteria->compare('token1',$this->token1,true);
 		$criteria->compare('token2',$this->token2,true);
 		$criteria->compare('token3',$this->token3,true);
+
+		if(isset($placement)){
+			$criteria->with = array('p_e');
+			$criteria->together = true;
+			// $criteria->addCondition('p_e.exchanges_id IS NULL AND p_e.placements_id != '.$placement);
+			
+			$list = CHtml::listData(
+				PlacementsHasExchanges::model()->findAll(
+					array('condition'=>'placements_id = '.$placement) 
+					), 
+				'exchanges_id','exchanges_id' );
+
+			$criteria->addNotInCondition('id', $list);
+			// $criteria->addCondition('(p_e.exchanges_id != t.id AND p_e.placements_id != '.$placement.')', 'OR');
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

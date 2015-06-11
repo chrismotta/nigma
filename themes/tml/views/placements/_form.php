@@ -55,7 +55,7 @@
                     ));
       	}
       
-        echo $form->dropDownListRow($model, 'exchanges_id', $exchanges, array('prompt' => 'Select exchange'));
+        // echo $form->dropDownListRow($model, 'exchanges_id', $exchanges, array('prompt' => 'Select exchange'));
         echo $form->dropDownListRow($model, 'sizes_id', $sizes, array('prompt' => 'Select size'));
         
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
