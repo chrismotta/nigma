@@ -116,11 +116,12 @@ $('.search-form form').submit(function(){
 		),/*
 		array( 
 			'name' => 'model',
-		),*/
+		),
 		array( 
 			'name'  => 'RS_perc',
 			'value' => 'number_format($data->RS_perc, 2)',
 		),
+		*/
 		array( 
 			'name' => 'rate',
 			'value' => 'number_format($data->rate, 2)',

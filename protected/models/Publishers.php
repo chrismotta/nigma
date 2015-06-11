@@ -68,10 +68,10 @@ class Publishers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'placements'     => array(self::HAS_MANY, 'Sites', 'sites_id'),
 			'country'        => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'accountManager' => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 			'providers'      => array(self::BELONGS_TO, 'Providers', 'providers_id'),
+			'sites'          => array(self::HAS_MANY, 'Sites', 'publishers_providers_id'),
 		);
 	}
 
@@ -112,7 +112,7 @@ class Publishers extends CActiveRecord
 		$criteria->compare('providers.status','Active',true);
 		// $criteria->compare('t.name',$this->name,true);
 		$criteria->compare('account_manager_id',$this->account_manager_id);
-		$criteria->compare('RS_perc',$this->RS_perc,true);
+		// $criteria->compare('RS_perc',$this->RS_perc,true);
 		$criteria->compare('rate',$this->rate,true);
 
 		$criteria->compare('accountManager.name',$this->account_name,true);
