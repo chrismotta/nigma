@@ -101,6 +101,18 @@ class PDF extends EPdfFactoryDoc
     }
 
     /**
+     * [printPayment description]
+     * @param  [type] $pdf [description]
+     * @return [type]      [description]
+     */
+    protected function printPayment($pdf)
+    {
+        $pdf->SetTextColor(0);
+        $pdf->SetFont('helveticaB','',7);
+        $pdf->Write(0, $this->payment, 0, false, 'L', true);
+    }
+
+    /**
      * Print Terms and Condictions to pdf
      * @param  $pdf TCPDF object
      */
@@ -159,7 +171,8 @@ class PDF extends EPdfFactoryDoc
         $pdf->SetFont('helvetica','',10);
     }
 
-    protected $terms = "Payment terms: Payment net 30 days from invoicing date.";
+    protected $payment = "";
+    protected $terms = "";
 
     public static function getPath() 
     {

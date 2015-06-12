@@ -120,6 +120,9 @@ class PDFInsertionOrder extends PDF
 		$this->addPage();
 		$company='TML Media ';//.$io->financeEntities->entity[0];
 
+		$this->payment = "Payment Terms: ".$io->financeEntities->net_payment;
+		if(is_numeric($io->financeEntities->net_payment)) $this->payment .= " days.";
+
 		$vasTerms = "Terms and conditions:
 
 Advertiser accepts and acknowledges the terms and conditions from TML Media LLC by signing this “Insertion Order“. TML Media LLC and the Advertiser have the right to cancel the campaign, any time, providing the other party 48-labor hours notice. TML Media LLC will invoice based on records from proprietary technology, plus extra validation with Advertiser if needed.
@@ -127,6 +130,7 @@ Advertiser accepts and acknowledges the terms and conditions from TML Media LLC 
 Advertiser declares that it’s authorized and empowered enough to sign this agreement and have received a copy. The Parties agree that any work orders, proposals and insertion order are subject to modifications or amendments to the sole discretion of TML Media LLC. The terms of this document override any other terms and will be taken as valid in case of conflict. 
 
 ";
+
 		// enable with prepayment
 		//if($prepayment) $vasTerms.= "Advertiser will be invoiced the same day the IO is fully consumed or at the end of month, whichever comes first. The Advertiser has [30] days to pay the invoice from the invoicing date.
  		
@@ -179,6 +183,8 @@ Section 3. Additional Provisions
         		break;
         }
 
+		$this->printPayment($pdf);
+		$pdf->Ln();
 		$this->printTerms($pdf);
 		$pdf->Ln();
 		$pdf->Ln();
