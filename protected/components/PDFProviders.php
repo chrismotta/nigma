@@ -263,6 +263,9 @@ Section 3. Additional Provisions
                                                                                  ";
         }
 		$this->addPage();
+        
+        $this->printPayment($pdf, $provider->net_payment);
+        $pdf->Ln();
         $this->printTerms($pdf);
         $pdf->Ln();
         $pdf->Ln();

@@ -105,8 +105,11 @@ class PDF extends EPdfFactoryDoc
      * @param  [type] $pdf [description]
      * @return [type]      [description]
      */
-    protected function printPayment($pdf)
+    protected function printPayment($pdf, $payment)
     {
+        $this->payment = "Payment Terms: ".$payment;
+        if(is_numeric($payment)) $this->payment .= " days.";
+
         $pdf->SetTextColor(0);
         $pdf->SetFont('helveticaB','',7);
         $pdf->Write(0, $this->payment, 0, false, 'L', true);

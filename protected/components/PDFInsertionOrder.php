@@ -120,8 +120,8 @@ class PDFInsertionOrder extends PDF
 		$this->addPage();
 		$company='TML Media ';//.$io->financeEntities->entity[0];
 
-		$this->payment = "Payment Terms: ".$io->financeEntities->net_payment;
-		if(is_numeric($io->financeEntities->net_payment)) $this->payment .= " days.";
+		// $this->payment = "Payment Terms: ".$io->financeEntities->net_payment;
+		// if(is_numeric($io->financeEntities->net_payment)) $this->payment .= " days.";
 
 		$vasTerms = "Terms and conditions:
 
@@ -183,7 +183,7 @@ Section 3. Additional Provisions
         		break;
         }
 
-		$this->printPayment($pdf);
+		$this->printPayment($pdf, $io->financeEntities->net_payment);
 		$pdf->Ln();
 		$this->printTerms($pdf);
 		$pdf->Ln();
