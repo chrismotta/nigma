@@ -34,7 +34,7 @@
         ));
 
         echo $form->hiddenField($modelPubl, 'account_manager_id', array('type'=>"hidden") );
-        echo $form->textFieldRow($modelPubl, 'RS_perc', array('class'=>'span2'), array('prepend'=>'%'));
+        echo $form->textFieldRow($modelPubl, 'publisher_percentage', array('class'=>'span2'), array('prepend'=>'%'));
         echo $form->textFieldRow($modelPubl, 'rate', array('class'=>'span2'), array('prepend'=>'$'));
     ?>
 
