@@ -105,6 +105,9 @@ $('.search-form form').submit(function(){
 			'name'  => 'size',
 			'value' => '$data->sizes->size',
 		),
+		'model',
+		'publisher_percentage',
+		'rate',
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),

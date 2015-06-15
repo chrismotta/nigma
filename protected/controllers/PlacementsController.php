@@ -200,6 +200,7 @@ class PlacementsController extends Controller
 		$sites      = CHtml::listData( Sites::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$publishers = CHtml::listData( Publishers::model()->with('providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		// $publishers = CHtml::listData( Publishers::model()->with('sites.providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
+		$model_pub = KHtml::enumItem($model, 'model');
 
 		$this->renderPartial('_form', array(
 			'model'      => $model,
@@ -207,6 +208,7 @@ class PlacementsController extends Controller
 			'exchanges'  => $exchanges,
 			'sites'      => $sites,
 			'publishers' => $publishers,
+			'model_pub'  => $model_pub,
 		), false, true);
 	}
 

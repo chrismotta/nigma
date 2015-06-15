@@ -63,6 +63,9 @@ echo '</div><!-- search-form -->'
 			'name'  => 'publishers_name',
 			'value' => '$data->publishersProviders->providers->name',
 		),
+		'model',
+		'publisher_percentage',
+		'rate',
 		BuildGridView::buttonColumn('modalSites'),
 	),
 )); ?>

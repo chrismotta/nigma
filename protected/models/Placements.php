@@ -79,20 +79,20 @@ class Placements extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'              => 'ID',
-			// 'exchanges_id'    => 'Exchanges',
-			'sites_id'        => 'Sites',
-			'sizes_id'        => 'Sizes',
-			'name'            => 'Name',
-			'product'         => 'Product',
-			'publishers_name' => 'Publishers',
-			'exchanges_name'  => 'Exchanges',
-			'size'            => 'Size',
-			'status' => 'Status',
-			'ext_id' => 'Ext',
-			'model' => 'Model',
-			'publisher_percentage' => 'Publisher Percentage',
-			'rate' => 'Rate',
+			'id'                   => 'ID',
+			// 'exchanges_id'      => 'Exchanges',
+			'sites_id'             => 'Sites',
+			'sizes_id'             => 'Sizes',
+			'name'                 => 'Name',
+			'product'              => 'Product',
+			'publishers_name'      => 'Publishers',
+			'exchanges_name'       => 'Exchanges',
+			'size'                 => 'Size',
+			'status'               => 'Status',
+			'ext_id'               => 'Ext',
+			'model'                => 'Model',
+			'publisher_percentage' => 'RS Perc.',
+			'rate'                 => 'Rate',
 		);
 	}
 

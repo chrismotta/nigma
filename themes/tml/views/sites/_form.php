@@ -9,6 +9,7 @@
 	<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 		'id'=>'sites-form',
 		'enableAjaxValidation'=>false,
+		'type'                 =>'horizontal',
 	)); ?>
 
 	<?php echo $form->errorSummary($model); ?>
@@ -18,8 +19,11 @@
 		if ( $model->isNewRecord )
 	  		echo $form->dropDownListRow($model, 'publishers_providers_id', $publishers, array('prompt' => 'Select a publisher'));
 
-		echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>255));
-		// echo $form->textFieldRow($model,'publishers_providers_id',array('class'=>'span5'));
+		echo $form->textFieldRow($model,'name',array('class'=>'span3','maxlength'=>255));
+		// echo $form->textFieldRow($model,'model',array('class'=>'span5','maxlength'=>255));
+  		echo $form->dropDownListRow($model, 'model', $model_pub, array('prompt' => 'Select a model'));
+		echo $form->textFieldRow($model,'rate',array('class'=>'span2','maxlength'=>255), array('append' => '$'));
+		echo $form->textFieldRow($model,'publisher_percentage',array('class'=>'span2','maxlength'=>255), array('prepend' => '%'));
 		
 		?>
 
