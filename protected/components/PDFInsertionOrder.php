@@ -6,7 +6,7 @@ class PDFInsertionOrder extends PDF
 	public function getPdfName()
     {
 		$io  = $this->getDataItem('io');
-    	return 'TML-' . $io->financeEntities->advertisers->name . '-'.$io->financeEntities->advertisers->cat.'-' . date("m_d_Y", strtotime($io->date)) . '-IO_' . $io->id . '.pdf';
+    	return 'TML-' . $io->financeEntities->advertisers->name . '-' . date("m_d_Y", strtotime($io->date)) . '-IO_' . $io->id . '.pdf';
     }
 
     protected function initHeader()
