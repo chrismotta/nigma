@@ -53,10 +53,10 @@ class Publishers extends CActiveRecord
 		return array(
 			array('account_manager_id', 'numerical', 'integerOnly'=>true),
 			// array('prefix','unique', 'message'=>'This prefix already exists.'),
-			array('RS_perc, rate', 'length', 'max'=>11),
+			array('publisher_percentage, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, account_manager_id, RS_perc, rate', 'safe', 'on'=>'search'),
+			array('providers_id, account_manager_id, publisher_percentage, rate', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -83,7 +83,7 @@ class Publishers extends CActiveRecord
 		return array(
 			'providers_id'       => 'ID',
 			'providers_name'     => 'Name',
-			'RS_perc'            => 'Revenue Share',
+			'publisher_percentage'  => 'RS Perc.',
 			'rate'               => 'Rate',
 			'account_name'       => 'Account Name'
 		);
@@ -112,7 +112,7 @@ class Publishers extends CActiveRecord
 		$criteria->compare('providers.status','Active',true);
 		// $criteria->compare('t.name',$this->name,true);
 		$criteria->compare('account_manager_id',$this->account_manager_id);
-		// $criteria->compare('RS_perc',$this->RS_perc,true);
+		$criteria->compare('publisher_percentage',$this->publisher_percentage,true);
 		$criteria->compare('rate',$this->rate,true);
 
 		$criteria->compare('accountManager.name',$this->account_name,true);
