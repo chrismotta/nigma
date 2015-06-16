@@ -114,17 +114,14 @@ $('.search-form form').submit(function(){
 		array( 
 			'name'  => 'model',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
-			'value' => '$data->sizes->size',
 		),
 		array( 
 			'name'  => 'publisher_percentage',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
-			'value' => '$data->sizes->size',
 		),
 		array( 
 			'name'  => 'rate',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
-			'value' => '$data->sizes->size',
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
