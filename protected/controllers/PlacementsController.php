@@ -28,7 +28,7 @@ class PlacementsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','archived','getSites','waterfall','waterfallSort','waterfallAdd','waterfallDel'),
+				'actions'=>array('index','view','create','update','admin','delete','archived','getSites','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -238,6 +238,8 @@ class PlacementsController extends Controller
 		$waterfallModel->unsetAttributes();
 		$waterfallModel->placements_id = $id;
 		
+		$modelPub = KHtml::enumItem($waterfallModel, 'model');
+
 		// Uncomment the following line if AJAX validation is needed
 		// $this->performAjaxValidation($model);
 
@@ -252,6 +254,7 @@ class PlacementsController extends Controller
 			'placementsModel' => $placementsModel,
 			'waterfallModel'  => $waterfallModel,
 			'exchangesModel'  => $exchangesModel,
+			'modelPub'        => $modelPub,
 			// 'sizes'      => $sizes,
 			// 'sites'      => $sites,
 			// 'publishers' => $publishers,
@@ -309,6 +312,20 @@ class PlacementsController extends Controller
 		$model->delete();
 		
 		PlacementsHasExchanges::reSort($pid);
+		echo var_dump($_POST);
+	}
+	public function actionWaterfallUpd(){
+		
+		$pid    = $_POST['pk']['placements_id'];
+		$eid    = $_POST['pk']['exchanges_id'];
+		$column = $_POST['name'];
+		$value  = $_POST['value'];
+
+		$model = PlacementsHasExchanges::model()->findByAttributes(
+			array('placements_id' => $pid, 'exchanges_id' => $eid));
+		$model[$column] = $value == 'NULL' ? NULL : $value;
+		$model->save();
+
 		echo var_dump($_POST);
 	}
 

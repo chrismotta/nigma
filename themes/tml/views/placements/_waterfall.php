@@ -117,6 +117,36 @@ $('.customDelete').click(function(e){
 
 Yii::app()->clientScript->registerScript('customDelete', $customDelete, CClientScript::POS_READY);
 
+$modelUpdate = "
+$('.modelUpdate').change(function(e){
+
+    e.preventDefault();
+
+    var pid = ".$placementsModel->id.";
+    var eid = $(this).parents('tr').attr('data-row-eid');
+    var model = $(this).val();
+    var data = {'name':'model', 'value':model, 'pk':{'placements_id':pid, 'exchanges_id':eid}};
+
+    $.post(
+        '". $this->createUrl('placements/waterfallUpd/') ."',
+        data,
+        function(data)
+            {
+                console.log(data);
+                // $.fn.yiiGridView.update('waterfall-grid');
+            }
+    );
+});
+";
+
+Yii::app()->clientScript->registerScript('modelUpdate', $modelUpdate, CClientScript::POS_READY);
+
+?>
+<?php 
+$headerStyle    = 'font-size:10px; padding:0px';
+$modelPub       = implode(",",$modelPub);
+$modelPubKeys   = 'NULL,'.$modelPub;
+$modelPubValues = 'None,'.$modelPub;
 ?>
 
 <div class='waterfall well'>
@@ -129,37 +159,121 @@ Yii::app()->clientScript->registerScript('customDelete', $customDelete, CClientS
             'htmlOptions'              => array('style'=>'padding-top:0px;'),
             'rowHtmlOptionsExpression' => 'array("data-row-eid" => $data->exchanges_id)',
             'template'                 => '{items}',
-            'afterAjaxUpdate'       => "function(){ ". $customDelete . "}",
+            'afterAjaxUpdate'       => "function(){". $customDelete . $modelUpdate ."}",
             'sortableRows'             => true,
-            'hideHeader'               => true,
+            // 'hideHeader'               => true,
+            'enableSorting'            => false,
             'afterSortableUpdate'      => 'js:function(id, position){ ajaxSort(); }',
             'columns'                  => array(
                 array(
                     'type'        => 'raw',
                     'value'       => '"<i class=\"icon-resize-vertical\"></i>"',
+                    'headerHtmlOptions' => array('style' => $headerStyle),
                     'htmlOptions' => array('style' => 'width: 14px'),
                 ),
                 array(
                     'name'              => 'step',
+                    'headerHtmlOptions' => array('style' => $headerStyle),
                     'htmlOptions' => array('style' => 'width: 10px; text-align: right;'),
                     // 'visible'           => false,
                 ),
                 array(
                     'name'  => 'exchanges_name',
                     'value' => '$data->exchanges->name',
+                    'headerHtmlOptions' => array('style' => $headerStyle),
                     'htmlOptions' => array('style' => 'width: 138px;'),
                 ),
+
+                array(  
+                    'name'        => 'model',
+                    'headerHtmlOptions' => array('style' => $headerStyle),
+                    'htmlOptions' => array('style' => 'text-align: right'),
+                    'type'        => 'raw',
+                    'value'=> 'CHtml::dropDownList(
+                        "someName", 
+                        $data->model,
+                        array_combine(explode(",","'.$modelPubKeys.'"),explode(",","'.$modelPubValues.'")),
+                        array(
+                            "style" => "width: 55px; font-size: 10px; padding: 2px; height: 25px; margin: 0px;",
+                            "class" => "modelUpdate"
+                            )
+                        )',  
+                ),
+                array(  
+                    'name'        => 'rate',
+                    'headerHtmlOptions' => array('style' => $headerStyle),
+                    'htmlOptions' => array('style' => 'width: 50px; text-align: right'),
+                    'class'       => 'bootstrap.widgets.TbEditableColumn',
+                    'editable'    => array(
+                        'title'      => 'Rate',
+                        'type'       => 'text',
+                        'url'        => $this->createUrl('placements/waterfallUpd/'),
+                        'emptytext'  => 'None',
+                        'inputclass' => 'input-mini',
+                        'success'    => 'js: function(response, newValue) {
+                                if (!response.success) {
+                                    console.log(response);
+                                    $.fn.yiiGridView.update("waterfall-grid");
+                                }
+                            }',
+                    ),
+                ),
+                array(  
+                    'name'        => 'publisher_percentage',
+                    'headerHtmlOptions' => array('style' => $headerStyle),
+                    'htmlOptions' => array('style' => 'width: 50px; text-align: right'),
+                    'class'       => 'bootstrap.widgets.TbEditableColumn',
+                    'editable'    => array(
+                        'title'      => 'RS Perc.',
+                        'type'       => 'text',
+                        'url'        => $this->createUrl('placements/waterfallUpd/'),
+                        'emptytext'  => 'None',
+                        'inputclass' => 'input-mini',
+                        'success'    => 'js: function(response, newValue) {
+                                if (!response.success) {
+                                    console.log(response);
+                                    $.fn.yiiGridView.update("waterfall-grid");
+                                }
+                            }',
+                    ),
+                ),
+
                 array(
                     'type'              => 'raw',
                     'header'            => '',
                     'filter'            => false,
-                    'headerHtmlOptions' => array('width' => '40'),
+                    'headerHtmlOptions' => array('style' => $headerStyle),
+                    'htmlOptions' => array('style' => 'width: 20px; text-align: right'),
                     'value'             => 'CHtml::ajaxLink("<i class=\"icon-trash\"></i>", "", array(), array(
                             "data-original-title" => "Delete",
                             "data-toggle"         => "tooltip",
                             "class"               => "customDelete"
                         ))',
                 ),
+                /*array(
+                    'class'             => 'bootstrap.widgets.TbButtonColumn',
+                    'headerHtmlOptions' => array('style' => "width: 120px"),
+                    'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
+                    'buttons'           => array(
+                        'customDelete' => array(
+                            'label' => 'Waterfall',
+                            'icon'  => 'tint',
+                            'click' => '',
+                        ),
+                    ),
+                    'template' => '{customDelete}',
+                ),
+                array(
+                    'type'              => 'raw',
+                    'header'            => '',
+                    'filter'            => false,
+                    'headerHtmlOptions' => array('width' => '40'),
+                    'value'             => 'CHtml::ajaxLink("<i class=\"icon-pencil\"></i>", "", array(), array(
+                            "data-original-title" => "Update",
+                            "data-toggle"         => "tooltip",
+                            "class"               => "customUpdate"
+                        ))',
+                ),*/
             )
         )); ?>
     </div>

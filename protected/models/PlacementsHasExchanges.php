@@ -7,6 +7,9 @@
  * @property integer $placements_id
  * @property integer $exchanges_id
  * @property integer $step
+ * @property string $model
+ * @property string $rate
+ * @property integer $publisher_percentage
  */
 class PlacementsHasExchanges extends CActiveRecord
 {
@@ -29,10 +32,12 @@ class PlacementsHasExchanges extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('placements_id, exchanges_id', 'required'),
-			array('placements_id, exchanges_id, step', 'numerical', 'integerOnly'=>true),
+			array('placements_id, exchanges_id, step, publisher_percentage', 'numerical', 'integerOnly'=>true),
+			array('model', 'length', 'max'=>3),
+			array('rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('placements_id, exchanges_id, step, exchanges_name', 'safe', 'on'=>'search'),
+			array('placements_id, exchanges_id, step, exchanges_name, model, rate, publisher_percentage', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -55,10 +60,13 @@ class PlacementsHasExchanges extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'placements_id'  => 'Placements',
-			'exchanges_id'   => 'Exchanges',
-			'step'           => 'Step',
-			'exchanges_name' => 'Exchange',
+			'placements_id'        => 'Placements',
+			'exchanges_id'         => 'Exchanges',
+			'step'                 => 'Step',
+			'exchanges_name'       => 'Exchange',
+			'model'                => 'Model',
+			'rate'                 => 'Rate',
+			'publisher_percentage' => 'RS Perc.',
 		);
 	}
 
@@ -83,6 +91,9 @@ class PlacementsHasExchanges extends CActiveRecord
 		$criteria->compare('placements_id',$this->placements_id);
 		$criteria->compare('exchanges_id',$this->exchanges_id);
 		$criteria->compare('step',$this->step);
+		$criteria->compare('model',$this->model,true);
+		$criteria->compare('rate',$this->rate,true);
+		$criteria->compare('publisher_percentage',$this->publisher_percentage);
 
 		$criteria->with = array('exchanges');
 		$criteria->compare('exchanges.name',$this->exchanges_name);
