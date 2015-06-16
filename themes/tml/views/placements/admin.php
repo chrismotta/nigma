@@ -197,11 +197,38 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'labelAjax' => array(
+					'label' =>'Label',
+					'icon'  =>'repeat',
+					'click' =>'
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
+				    	
+						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						
+						$("#modalPlacements").html(dataInicial);
+						$("#modalPlacements").modal("toggle");
+
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"labelAjax/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalPlacements").html(data);
+							}
+						)
+						return false;
+				    }
+				    ',
+				),
 			),
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {updateAjax} {waterfall} {delete}',
+			'template' => '{viewAjax} {updateAjax} {labelAjax} {waterfall} {delete}',
 		),
 	),
 )); ?>

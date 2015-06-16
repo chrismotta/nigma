@@ -179,4 +179,12 @@ class Placements extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	public function getExternalName()
+	{
+		$return = $this->id . '-';
+		$return.= $this->sites->publishersProviders->providers->prefix . '-';
+		$return.= $this->name;
+		return $return;
+	}
 }

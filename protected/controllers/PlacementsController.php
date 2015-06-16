@@ -28,7 +28,7 @@ class PlacementsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','archived','getSites','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
+				'actions'=>array('index','view','create','update','admin','delete','archived','getSites','labelAjax','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -226,6 +226,19 @@ class PlacementsController extends Controller
 		Yii::app()->end();
 	}
 
+	/**
+	 * Generate label.
+	 */
+	public function actionLabelAjax($id)
+	{
+		$model    = $this->loadModel($id);
+
+		$this->renderPartial('_label',array(
+			'model' => $model,
+			'label' => $model->getExternalName(),
+		), false, true);
+	}
+
 	public function actionWaterfall($id){
 
 		$this->layout='//layouts/modal';
@@ -260,6 +273,7 @@ class PlacementsController extends Controller
 			// 'publishers' => $publishers,
 		));
 	}
+
 	public function actionWaterfallSort(){
 
 		$pid = $_POST['pid'];
