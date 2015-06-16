@@ -89,9 +89,14 @@ $('.search-form form').submit(function(){
 		// 'email_adm',
 		array(
 			'name' => 'id',
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
 		array(
 			'name' => 'name',
+		),
+		array( 
+			'name'  => 'sites_name',
+			'value' => '$data->sites->name',
 		),
 		array( 
 			'name'  => 'publishers_name',

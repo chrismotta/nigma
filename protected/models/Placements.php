@@ -25,6 +25,7 @@
 class Placements extends CActiveRecord
 {
 	public $publishers_name;
+	public $sites_name;
 	public $exchanges_name;
 	public $size;
 
@@ -184,6 +185,7 @@ class Placements extends CActiveRecord
 	{
 		$return = $this->id . '-';
 		$return.= $this->sites->publishersProviders->providers->prefix . '-';
+		$return.= $this->sites->name . '-';
 		$return.= $this->name;
 		return $return;
 	}
