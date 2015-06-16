@@ -192,7 +192,7 @@ $('.search-form form').submit(function(){
 						$("#modalPlacements .modal-body").html(dataInicial);
 						$("#modalPlacements").modal("toggle");
 
-						var dataInicial = "<iframe src=\"'.$this->createUrl('placements/waterfall/1').'\" width=\"100%\" height=\"300px\" frameborder=\"0\" ></iframe>";
+						var dataInicial = "<iframe src=\"'.$this->createUrl('placements/waterfall/').'/"+id+"\" width=\"100%\" height=\"300px\" frameborder=\"0\" ></iframe>";
 						$("#modalPlacements .modal-body").html(dataInicial);
 
 				    	// use jquery post method to get updateAjax view in a modal window
