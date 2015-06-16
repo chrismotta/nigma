@@ -54,7 +54,7 @@ class Placements extends CActiveRecord
 			array('product', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sites_id, sizes_id, name, product, status, ext_id, model, publisher_percentage, rate', 'safe', 'on'=>'search'),
+			array('id, sites_id, sizes_id, name, product, status, ext_id, model, publisher_percentage, rate, publishers_name, sites_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -128,7 +128,8 @@ class Placements extends CActiveRecord
 		$criteria->compare('t.rate',$this->rate,true);
 
 		$criteria->with = array('sites', 'sites.publishersProviders', 'sites.publishersProviders.providers','exchanges', 'sizes');
-		$criteria->compare('providers.name',$this->publishers_name,true);
+		$criteria->compare('LOWER(providers.name)',strtolower($this->publishers_name),true);
+		$criteria->compare('LOWER(sites.name)',strtolower($this->sites_name),true);
 		// $criteria->compare('exchanges.name',$this->exchanges_name,true);
 		$criteria->compare('sizes.size',$this->size,true);
 
@@ -140,14 +141,18 @@ class Placements extends CActiveRecord
 			'sort'     	 =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes
-		            // 'publishers_name'=>array(
-						// 'asc'  =>'providers.name',
-						// 'desc' =>'providers.name DESC',
-		            // ),
-		    //         'exchanges_name'=>array(
+		            'publishers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),
+		            'sites_name'=>array(
+						'asc'  =>'sites.name',
+						'desc' =>'sites.name DESC',
+		            ),
+		    		// 'exchanges_name'=>array(
 						// 'asc'  =>'exchanges.name',
 						// 'desc' =>'exchanges.name DESC',
-		    //         ),
+		    		// ),
 		            'size'=>array(
 						'asc'  =>'sizes.size',
 						'desc' =>'sizes.size DESC',
