@@ -259,7 +259,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		array(
 			'name'              => 'rate',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
-			'value'             => '"$ ".number_format($data->campaigns->opportunities->rate,2)',
+			'value'             => '"$ ".number_format($data->campaigns->opportunities->getRate($data->date),2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'visible'           => $user_visibility->rate,
 		),
