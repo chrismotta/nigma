@@ -33,7 +33,7 @@
 				),
 			array(
 				'name'  => 'placements_id',
-				'value' => '$data->placements_id . "-" . $data->placements->name',
+				'value' => '"#".$data->placements_id . ": " . $data->placements->name',
 				),
 			array(
 				'header'=> 'Sites',

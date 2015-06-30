@@ -146,6 +146,12 @@ class DailyPublishers extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+		    'pagination'=>array(
+		        'pageSize'=>50,
+		    ),
+			'sort'=>array(
+				'defaultOrder' => 't.date DESC, t.placements_id ASC, t.exchanges_id ASC',
+			)
 		));
 	}
 
