@@ -33,13 +33,15 @@
 				),
 			array(
 				'name'  => 'placements_id',
-				'value' => '$data->placements->name',
+				'value' => '$data->placements_id . "-" . $data->placements->name',
 				),
 			array(
+				'header'=> 'Sites',
 				'name'  => 'placements_id',
 				'value' => '$data->placements->sites->name',
 				),
 			array(
+				'header'=> 'Publishers',
 				'name'  => 'placements_id',
 				'value' => '$data->placements->sites->publishersProviders->providers->name',
 				),
