@@ -117,7 +117,7 @@ class AjillionPublisher
 			if(isset($value['Delivered to exchange']))
 				$dailyPublishers->imp_exchange   = $value['Delivered to exchange']->impressions;
 			if(isset($value['Ad served successfully']))
-				$dailyPublishers->imp_advertiser = $value['Ad served successfully']->impressions;
+				$dailyPublishers->imp_publishers = $value['Ad served successfully']->impressions;
 			if(isset($value['Fallback tag displayed.']))
 				$dailyPublishers->imp_passback   = $value['Fallback tag displayed.']->impressions;
 
