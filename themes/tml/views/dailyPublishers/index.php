@@ -18,17 +18,49 @@
 		'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 		'template'                 => '{items} {pager} {summary}',
 		'columns' => array(
-			'id',
-			'date',
-			'exchanges_id',
-			'placements_id',
-			'country_id',
-			'devices_id',
-			'ad_request',
-			'imp_exchange',
-			'imp_publishers',
-			'imp_passback',
-			'revenue',
+			array(
+				'name'        => 'id',
+				'htmlOptions' => array('style'=>'width:40px'),
+				),
+			array(
+				'name'        => 'date',
+				'htmlOptions' => array('style'=>'width:70px'),
+				),
+			array(
+				'name'  => 'exchanges_id',
+				'value' => '$data->exchanges->name',
+				'htmlOptions' => array('style'=>'width:60px'),
+				),
+			array(
+				'name'  => 'placements_id',
+				'value' => '$data->placements->name',
+				),
+			array(
+				'name'  => 'placements_id',
+				'value' => '$data->placements->sites->name',
+				),
+			array(
+				'name'  => 'placements_id',
+				'value' => '$data->placements->sites->publishersProviders->providers->name',
+				),
+			// 'country_id',
+			// 'devices_id',
+			array(
+				'name'        => 'ad_request',
+				'htmlOptions' => array('style'=>'width:70px; text-align:right;'),
+				),
+			array(
+				'name'        => 'imp_publishers',
+				'htmlOptions' => array('style'=>'width:70px; text-align:right;'),
+				),
+			array(
+				'name'        => 'imp_passback',
+				'htmlOptions' => array('style'=>'width:70px; text-align:right;'),
+				),
+			array(
+				'name'        => 'revenue',
+				'htmlOptions' => array('style'=>'width:70px; text-align:right;'),
+				),
 			)
 		));
 ?>
