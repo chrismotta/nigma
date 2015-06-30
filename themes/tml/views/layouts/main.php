@@ -55,6 +55,7 @@
             array('label'=>'Sites', 'url'=>array('/sites/admin')),
             array('label'=>'Placements', 'url'=>array('/placements/admin')),
             array('label'=>'Reporting', 'url'=>array('/dailyPublishers')),
+            array('label'=>'Upload CSV Report', 'url'=>array('/dailyPublishers/uploadCSV')),
         ), 'visible'=>!Yii::app()->user->isGuest),
         array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(

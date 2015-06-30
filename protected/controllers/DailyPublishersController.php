@@ -47,7 +47,7 @@ class DailyPublishersController extends Controller
 	public function actionUploadCSV() {
 		$tempFile = Yii::getPathOfAlias('webroot') . '/uploads/temp_daily.csv';
 		$model    = new DailyPublishers('dump');
-
+		$return   = '';
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
@@ -69,8 +69,9 @@ class DailyPublishersController extends Controller
 						$placementID = substr($line[0], 0, strpos($line[0], '-'));
 						if(is_numeric($placementID)){
 							
-							echo $placementID . ": " . $line[0] . "<br/>";
-							var_dump($line);
+							$return.= '<hr/>';
+							$return.= "#" . $line[0] . "<br/>";
+							$return.= "data: " . json_encode($line);
 
 							$lineModel = DailyPublishers::model()->findByAttributes(array(
 								'placements_id' => $placementID,
@@ -78,7 +79,7 @@ class DailyPublishersController extends Controller
 								'date'          => $model->date
 								));
 							if(isset($lineModel)){
-								echo "<br/>===>EXISTS!!";
+								$return.= "<br/>===> EXISTS!!";
 							}else{
 								$lineModel = new DailyPublishers;
 								$lineModel->date          = $model->date;
@@ -88,21 +89,19 @@ class DailyPublishersController extends Controller
 								$lineModel->imp_exchange  = $line[5];
 								$lineModel->clicks        = $line[8];
 								$lineModel->revenue       = $line[1];
-								if($lineModel->save()) echo "<br/>===>SAVED!!";
-							}
-							
-							echo '<hr/>';
+								if($lineModel->save()) $return.= "<br/>===> SAVED!!";
+							}	
 						}
-				      
-				   }
+				    }
+							$return.= '<hr/>';
+
 				}
 	            
-	            die('=> ok csv');
+        		$this->render('_uploadCSVreturn', array('return'=>$return));
 
 			}else{
-				echo json_encode($model->getErrors());
+				$return.= json_encode($model->getErrors());
 			}
-	        // die('=> ok form');
         }
 
 		$exchangesList = CHtml::listData(Exchanges::model()->findAll( array('order'=>'name') ), 'id', 'name' );
