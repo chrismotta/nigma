@@ -28,7 +28,7 @@ class UsersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles','profile','visibility'),
+				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles','profile','visibility','notAssigned'),
 				'roles'=>array('admin'),
 			),
 			array('allow', 
@@ -260,6 +260,10 @@ class UsersController extends Controller
 			'model'        =>$model,
 			'status'       =>$status,
 		), false, true);
+	}
+
+	public function actionNotAssigned(){
+		$this->render('notAssigned');
 	}
 
 	public function actionProfile()

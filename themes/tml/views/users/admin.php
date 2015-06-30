@@ -44,8 +44,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			}',
 		'success' => 'function(data)
 			{
-                    // console.log(this.url);
-	                //alert("create");
+                    console.log(data);
+	                // alert("create");
 					$("#modalUser").html(data);
 			}',
 		),
