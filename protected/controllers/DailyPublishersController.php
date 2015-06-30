@@ -40,6 +40,7 @@ class DailyPublishersController extends Controller
 	public function actionIndex()
 	{
 		$model = new DailyPublishers('search');
+		$model->unsetAttributes();
 		$this->render('index', array('model'=>$model));
 	}
 
