@@ -112,7 +112,7 @@ class AjillionPublisher
 			$dailyPublishers->date           = $date;
 			
 			$dailyPublishers->ad_request     = $value['generic']->impressions;
-			$dailyPublishers->revenue        = $value['generic']->revenue;
+			$dailyPublishers->revenue        = $value['generic']->revenue + $value['generic']->profit;
 
 			if(isset($value['Delivered to exchange']))
 				$dailyPublishers->imp_exchange   = $value['Delivered to exchange']->impressions;
