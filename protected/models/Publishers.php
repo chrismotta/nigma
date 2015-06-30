@@ -24,6 +24,7 @@
  * @property string $model
  * @property string $RS_perc
  * @property string $rate
+ * @property integer $users_id
  *
  * The followings are the available model relations:
  * @property Providers $providers
@@ -51,12 +52,12 @@ class Publishers extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('account_manager_id', 'numerical', 'integerOnly'=>true),
+			array('account_manager_id, users_id', 'numerical', 'integerOnly'=>true),
 			// array('prefix','unique', 'message'=>'This prefix already exists.'),
 			array('publisher_percentage, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, account_manager_id, publisher_percentage, rate', 'safe', 'on'=>'search'),
+			array('providers_id, account_manager_id, publisher_percentage, rate, users_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -134,6 +135,14 @@ class Publishers extends CActiveRecord
 		        ),
 		    ),
 		));
+	}
+
+	public function findByUser($id)
+	{
+		$criteria=new CDbCriteria;
+		$criteria->addCondition('users_id='.$id);
+		if($pub=Self::model()->find($criteria))
+			return $pub->providers_id;
 	}
 
 	/**

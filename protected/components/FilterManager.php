@@ -85,6 +85,11 @@ class FilterManager
 			'roles'  => array( 
 				'advertiser',
 			)),
+		'publisher' => array( 
+			'column' => 'publishers.providers_id', 
+			'roles'  => array( 
+				'publisher',
+			)),
 		'clients.validateOpportunitie' => array( 
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 

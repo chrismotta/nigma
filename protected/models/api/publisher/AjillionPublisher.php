@@ -4,10 +4,11 @@ class AjillionPublisher
 { 
 
 	private $network_id = 3;
+	private $exchange_id = 1;
 
 	public function downloadInfo()
 	{
-
+		$return = '';
 
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
@@ -21,88 +22,118 @@ class AjillionPublisher
 		// 	return 2;
 		// }
 
-		$date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
+		$ajillionDate = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 		
 		// get all publishers
-		$publishers = $this->getResponse("publisher.get");
-		if ( !$publishers ) {
-			Yii::log("Can't get publishers", 'error', 'system.model.api.ajillion');
+		$placements = $this->getResponse("publisher.placement.get");
+		if ( !$placements ) {
+			Yii::log("Can't get placements", 'error', 'system.model.api.ajillion');
 			return 1;
 		}
 
-		$pub_ids = array();
-		foreach ($publishers as $pub) {
-			$pub_ids[] = $pub->id;
+		$placements_ids = array();
+		foreach ($placements as $placement) {
+			$placements_ids[] = $placement->id;
 		}
-		// get all campaigns from all advertisers
-		$params = array(
-				"columns"=>array("publisher", "placement"),
-				"sums"=>array("impressions", "hits", "conversions", "profit", "ecpm", "ctr", "revenue"),
-				"placement_ids"=>array(),
-				"publisher_ids"=>$pub_ids,
-				"start_date"=>$date,
-				"end_date"=>$date,
-			);
-		echo json_encode($params);
-		echo "<hr>";
-		var_dump($params);
-		echo "<hr>";
-
-		$campaigns = $this->getResponse("report.publisher.get", $params);
-
-		echo json_encode($campaigns);
-		echo "<hr>";
+		// var_dump($placements_ids);
+		// $return.=  "<hr/>";
 		
-		// if ( !$campaigns ) {
-		// 	Yii::log("Can't get campaigns", 'error', 'system.model.api.ajillion');
-		// 	return 1;
-		// }
+		// generic //
 
-		// return NULL;
+		$params1 = array(
+				"columns"       =>array("placement"),
+				"sums"          =>array("impressions","profit","revenue","hits","conversions"),
+				"publisher_ids" =>array(),
+				"placement_ids" =>$placements_ids,
+				"start_date"    =>$ajillionDate,
+				"end_date"      =>$ajillionDate,
+			);
+		
+		$data1 = $this->getResponse("report.publisher.get", $params1);
+		
+		foreach ($data1 as $line) {
+			$placementID = substr($line->placement, 0, strpos($line->placement, '-'));
+			if(is_numeric($placementID)){
+				// $return.=  json_encode($line);
+				// $return.=  "<br>";
+				$placementsData[$placementID]['generic'] = $line;
+			}
+		}
 
-		// foreach ($campaigns as $campaign) {
+		// by status //
 
-		// 	if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
-		// 		continue;
-		// 	}
+		$params2 = array(
+				"columns"       =>array("placement", "status"),
+				"sums"          =>array("impressions"),
+				"publisher_ids" =>array(),
+				"placement_ids" =>$placements_ids,
+				"start_date"    =>$ajillionDate,
+				"end_date"      =>$ajillionDate,
+			);
+		$data2 = $this->getResponse("report.publisher.get", $params2);
+		
+		foreach ($data2 as $line) {
+			$placementID = substr($line->placement, 0, strpos($line->placement, '-'));
+			if(is_numeric($placementID)){
+				// $return.=  json_encode($line);
+				// $return.=  "<br>";
+				$placementsData[$placementID][$line->status] = $line;
+			}
+		}
 
-		// 	// Save campaign information
-		// 	$dailyReport = new DailyReport();
+		// build data to dump //
+
+		foreach ($placementsData as $key=>$value) {
+			$return.=  $key."::";
+			$return.=  json_encode($value);
 			
-		// 	// get campaign ID used in Server, from the campaign name use in the external network
-		// 	$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign);
+			// validate placement
+			$placementModel = Placements::model()->findByPk($key);
+			if(!isset($placementModel)){
+				$return.=  "<br/>===>PLACEMENT NOT FOUND!!<hr/>";
+				continue;
+			}
 
-		// 	if ( !$dailyReport->campaigns_id ) {
-		// 		Yii::log("invalid external campaign name: '" . $campaign->campaign, 'warning', 'system.model.api.ajillion');
-		// 		continue;
-		// 	}
+			// check for duplicates
+			$dailyPublishers = DailyPublishers::model()->findByAttributes(array(
+								'placements_id' => $key,
+								'exchanges_id'  => $this->exchange_id,
+								'date'          => $date
+								));
+			if(isset($dailyPublishers)){
+				$return.=  "<br/>===>EXISTS!!<hr/>";
+				continue;
+			}
 
-		// 	$returnAfterSave = false;
-		// 	if ( isset($cid) ) {
-		// 		if ( $cid == $dailyReport->campaigns_id )
-		// 			$returnAfterSave = true;
-		// 		else
-		// 			continue;
-		// 	}
+			$dailyPublishers = new DailyPublishers;
 
-		// 	$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
-		// 	$dailyReport->networks_id = $this->network_id;
-		// 	$dailyReport->imp = $campaign->impressions;
-		// 	$dailyReport->clics = $campaign->hits;
-		// 	$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
-		// 	//$dailyReport->conv_adv = 0;
-		// 	$dailyReport->spend = number_format($campaign->cost, 2);
-		// 	$dailyReport->updateRevenue();
-		// 	$dailyReport->setNewFields();
-		// 	if ( !$dailyReport->save() ) {
-		// 		Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
-		// 	}
+			$dailyPublishers->placements_id  = $key;
+			$dailyPublishers->exchanges_id   = $this->exchange_id;
+			$dailyPublishers->date           = $date;
+			
+			$dailyPublishers->ad_request     = $value['generic']->impressions;
+			$dailyPublishers->revenue        = $value['generic']->revenue;
 
-		// 	if ( $returnAfterSave ) // return if only has to update one campaign
-		// 		break;
-		// }
+			if(isset($value['Delivered to exchange']))
+				$dailyPublishers->imp_exchange   = $value['Delivered to exchange']->impressions;
+			if(isset($value['Ad served successfully']))
+				$dailyPublishers->imp_advertiser = $value['Ad served successfully']->impressions;
+			if(isset($value['Fallback tag displayed.']))
+				$dailyPublishers->imp_passback   = $value['Fallback tag displayed.']->impressions;
+
+			// var_dump($dailyPublishers);
+			
+			if($dailyPublishers->save())
+				$return.=  "<br/>===>SAVED!!";
+			else
+				$return.=  "<br/>===>NOT SAVED: " . json_encode($dailyPublishers->getErrors());
+			$return.=  "<hr/>";
+
+		}
+		
+		$return.= "<hr/>ajillion publishers";
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
-		return 0;
+		return $return;
 	}
 
 

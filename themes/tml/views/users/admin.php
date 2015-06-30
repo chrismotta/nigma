@@ -179,7 +179,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 				'preview' => array(
 					'label'   => 'Preview External Login',
 					'icon'    => 'eye-close',
-					'url'     => 'Yii::app()->createUrl("partners/previewAdvertisers",array("id"=>$data->primaryKey))',
+					'url'     => 'Yii::app()->createUrl(Users::getPartnerPreview($data->primaryKey),array("id"=>$data->primaryKey))',
 					'options' => array('target'=>'_blank'),
 				),
 			),

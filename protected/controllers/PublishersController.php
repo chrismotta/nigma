@@ -202,9 +202,12 @@ class PublishersController extends Controller
 
 	private function renderFormAjax($modelPubl, $modelProv) 
 	{
+		$users = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
+
 		$this->renderPartial('_form', array(
 			'modelProvs' =>$modelProv,
-			'modelPubl' =>$modelPubl,
+			'modelPubl'  =>$modelPubl,
+			'users'      =>$users,
 		), false, true);
 	}
 }

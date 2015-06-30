@@ -36,6 +36,8 @@
         echo $form->hiddenField($modelPubl, 'account_manager_id', array('type'=>"hidden") );
         echo $form->textFieldRow($modelPubl, 'publisher_percentage', array('class'=>'span2'), array('prepend'=>'%'));
         echo $form->textFieldRow($modelPubl, 'rate', array('class'=>'span2'), array('prepend'=>'$'));
+        echo '<hr/>';
+        echo $form->dropDownListRow($modelPubl, 'users_id', $users, array('prompt' => 'Select a user to associate'));
     ?>
 
     <div class="form-actions">

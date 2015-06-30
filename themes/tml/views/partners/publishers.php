@@ -1,10 +1,16 @@
 <?php
-/* @var $this AffiliatesController */
+/* @var $this DailyReportController */
+/* @var $model DailyReport */
 
 $this->breadcrumbs=array(
 	'Publishers',
 );
-
+/*
+$this->menu=array(
+	array('label'=>'List DailyReport', 'url'=>array('index')),
+	array('label'=>'Create DailyReport', 'url'=>array('create')),
+);
+*/
 Yii::app()->clientScript->registerScript('search', "
 $('.search-button').click(function(){
 	$('.search-form').toggle();
@@ -17,25 +23,13 @@ $('.search-form form').submit(function(){
 	return false;
 });
 ");
-
-$alert = array('error', 'info', 'success', 'warning', 'muted');
 ?>
-<div class="row totals-bar ">
-	<div class="span6">
-		<div class="alert alert-error">
-			<small >TOTAL</small>
-			<h3 class="">Conversions: <?php echo number_format(array_sum($data['graphic']['convs'])) ?></h3>
-			<br>
-		</div>
-	</div>
-	<div class="span6">
-		<div class="alert alert-info">
-			<small >TOTAL</small>
-			<h3 class="">Revenue: <?php echo Providers::model()->findByPk($provider)->currency . " " . number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
-			<br>
-		</div>
-	</div>
-</div>
+
+<?php
+/*
+	// $totalsGrap = $model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$providers, $adv_categories);
+	$totalsGrap = $model->advertiserGetTotals($advertiser_id, $dateStart, $dateEnd);
+?>
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
@@ -45,26 +39,29 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 			'chart' => array('type' => 'area'),
 			'title' => array('text' => ''),
 			'xAxis' => array(
-				'categories' => $data['graphic']['dates']
+				'categories' => $totalsGrap['dates']
 				),
 			'tooltip' => array('crosshairs'=>'true', 'shared'=>'true'),
-			'yAxis' => array(
+			'yAxis'   => array(
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Clicks', 'data' => $data['graphic']['clics'],),
-				array('name' => 'Conversions', 'data' => $data['graphic']['convs'],),
-				array('name' => 'Revenues', 'data' => $data['graphic']['spends'],),
+				array('name' => 'Impressions', 'data' => $totalsGrap['impressions'],),
+				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
+				array('name' => 'Conv','data' => $totalsGrap['conversions'],),
+				array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
+				array('name' => 'Spend','data' => $totalsGrap['spends'],),
+				array('name' => 'Profit','data' => $totalsGrap['profits'],),
 				),
 	        'legend' => array(
-	            'layout' => 'vertical',
-	            'align' =>  'left',
-	            'verticalAlign' =>  'top',
-	            'x' =>  40,
-	            'y' =>  3,
-	            'floating' =>  true,
-	            'borderWidth' =>  1,
-	            'backgroundColor' => '#FFFFFF'
+				'layout'          => 'vertical',
+				'align'           =>  'left',
+				'verticalAlign'   =>  'top',
+				'x'               =>  40,
+				'y'               =>  3,
+				'floating'        =>  true,
+				'borderWidth'     =>  1,
+				'backgroundColor' => '#FFFFFF'
 	        	)
 			),
 		)
@@ -77,93 +74,213 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 <hr>
 
 <div class="botonera">
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Add Daily Report Manualy',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'create',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalDailyReport").html(dataInicial);
+					$("#modalDailyReport").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalDailyReport").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'createAjax'),
+		)
+	); ?>
 	<?php 
-	//Create link to load filters in modal
-	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&sum='.$sum;
-	?>
-</div>
+*/
+?>
 
-<br>
+<?php
+
+	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-8 days';
+	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : '-1 days';
+	// $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	// $opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
+	// $providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
+	// $adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
+	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
+
+	$dateStart  = date('Y-m-d', strtotime($dateStart));
+	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
+?>
+ 
+<fieldset class="formfilter well">
+
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
-		'htmlOptions'          =>array('class'=>'well'),
-		'enableAjaxValidation' =>true,
-		'action'               => Yii::app()->getBaseUrl() . '/partners/affiliates',
+		'htmlOptions'          =>array('style'=>'display:inline-block;margin:0px'),
+		'enableAjaxValidation' =>false,
+		'action'               => Yii::app()->request->url,
 		'method'               => 'GET',
-		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+		// 'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
+	<div class="formfilter-date-large">
+		<!-- From:  -->
+		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array(), 'From'); ?>
+		<span class='formfilter-space'></span>		
+		<!-- To:  -->
+		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array(), 'To'); ?>
+    	
+    	<?php echo CHtml::hiddenField('sum', $sum, array('id'=>'sum')); ?>
 
-<fieldset>
-	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
-	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
-		
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+		<span class='formfilter-space'></span>
+		<?php $this->widget(
+		    'bootstrap.widgets.TbButtonGroup',
+		    array(
+		        'toggle' => 'radio',
+		        // 'type' => 'inverse',
+		        'buttons' => array(
+		            array('label' => 'Daily Stats', 'active'=>boolval(1-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("0");')),
+		            array('label' => 'Merged Stats', 'active'=>boolval(0-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("1");')),
+		        ),
 
-</fieldset>
+		    )
+		); ?>
+		<span class='formfilter-space'></span>
+    	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+	</div>
+	<?php 
+		//Load Filters
+		/*
+	
+		if (FilterManager::model()->isUserTotalAccess('daily'))
+			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
+		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
+		KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
+		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
+	<hr>
+	<div class="formfilter-submit">
+		SUM
+		<div class="input-append">
+			<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
+		</div>
+	</div>
+		*/
+	?>
 <?php $this->endWidget(); ?>
 
 <?php 
-	$this->widget('bootstrap.widgets.TbGroupGridView', array(
-	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $data['dataProvider'],
-	'filter'                   => $model,
-	'type'                     => 'striped condensed',
-	'template'                 => '{items} {pager} {summary}',
-	'extraRowColumns'=> array('firstLetter'),
-	'extraRowExpression' => '"<b style=\"font-size: 2em; color: #333;\">".$data["date"]."</b>"',
-	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
-	'columns'      =>array(
-                array(
-					'name'        =>'date', 
-					'header'      =>'Date',
-					'htmlOptions' => array('style' => 'width: 200px;') ,
-                ),
-                array(
-					'name'        =>'name', 
-					'header'      =>'Name', 
-					'htmlOptions' => array('style' => 'width: 600px;') ,
-                ),
-                array(
-					'name'        =>'rate', 
-					'header'      =>'Rate',
-					'htmlOptions' =>array('style'=>'text-align: right')
-                ),
-                array(
-					'name'        =>'clics', 
-					'header'      =>'Clicks',
-					'value'       =>'number_format($data["clics"])',
-					'htmlOptions' =>array('style'=>'text-align: right')
-                ),
-                array(
-					'name'        =>'conv', 
-					'header'      =>'Conv',
-					'value'       =>'number_format($data["conv"])',
-					'htmlOptions' =>array('style'=>'text-align: right')
-                ),
-                array(
-					'name'        =>'convrate', 
-					'header'      =>'Conv. Rate',
-					'value'       =>'number_format($data["convrate"] * 100, 2) . " %"',
-					'htmlOptions' =>array('style'=>'text-align: right')
-                ),
-                array(
-					'name'        =>'spend', 
-					'header'      =>'Revenue',
-					'value'       =>'number_format($data["spend"], 2)',
-					'htmlOptions' =>array('style'=>'text-align:right')
-                ),
-                array(
-					'name'              =>'firstLetter',
-					'value'             =>'$data["date"]',
-					'headerHtmlOptions' =>array('style'=>'display:none'),
-					'htmlOptions'       =>array('style'=>'display:none')
-					),
-            ),
-	)
-); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalAffiliates')); ?>
+//Create link to load filters in modal
+$currentAction = $preview ? 'previewExcelReportAdvertisers' : 'excelReportAdvertisers'; 
+$link = Yii::app()->createUrl('partners/'.$currentAction, array('id'=>$userId, 'dateStart'=>$dateStart, 'dateEnd'=>$dateEnd, 'sum'=>$sum));
+/*
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Excel Report',
+	'block'       => false,
+	'buttonType'  => 'ajaxButton',
+	'url'         => $link,
+	'ajaxOptions' => array(
+		'type'    => 'POST',
+		'beforeSend' => 'function(data)
+			{
+		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				$("#modalDailyReport").html(dataInicial);
+				$("#modalDailyReport").modal("toggle");
+			}',
+		'success' => 'function(data)
+			{
+				$("#modalDailyReport").html(data);
+			}',
+		),
+	'htmlOptions' => array('id' => 'excelReport', 'style' => 'float:right'),
+	)
+);
+*/
+?>
+
+</fieldset>
+
+<?php 
+	
+	$dataProvider = $model->publisherSearch($publisher_id, $dateStart, $dateEnd, $sum, false);	
+	$totals       = $model->publisherSearch($publisher_id, $dateStart, $dateEnd, $sum, true);
+	//var_dump($user_visibility->imp);
+
+	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+	'id'                       => 'daily-report-grid',
+	'fixedHeader'              => true,
+	'headerOffset'             => 50,
+	'dataProvider'             => $dataProvider,
+	// 'filter'                   => $model,
+	//'selectionChanged'         => 'js:selectionChangedDailyReport',
+	'type'                     => 'striped condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'template'                 => '{items} {pager} {summary}',
+	//'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	'columns'                  => array(
+		array(
+			'name'              => 'date',
+			'value'             => 'date("d-m-Y", strtotime($data->date))',
+			// 'headerHtmlOptions' => array('style' => "width: 70px"),
+			'htmlOptions'       => array(
+					'class' => 'date', 
+					// 'style' =>'text-align:right;'
+				),
+			'filter'      => false,
+			'visible'     => !$sum,
+        ),
+        // 'exchanges_id',
+		array(	
+			'name'              => 'ad_request',
+			'header'            => 'Ad Requests',
+			'value'             => 'number_format($data->ad_request)',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => isset($totals) ? number_format($totals->ad_request) : '',
+			'filter'            => false,
+			// 'visible'           => $user_visibility->imp,
+        ),
+		array(	
+			'name'              => 'impressions',
+			'header'            => 'Impressions',
+			'value'             => 'number_format($data->impressions)',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => isset($totals) ? number_format($totals->impressions) : '',
+			'filter'            => false,
+			// 'visible'           => $user_visibility->imp,
+        ),
+        array(
+			'name'              => 'revenue',
+			'header'            => 'Revenue',
+			'value'             => '"$ ".number_format($data->revenue, 2)',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => isset($totals) ? '$ '.number_format($totals->revenue, 2) : '',
+			'filter'            => false,
+			// 'visible'           => $user_visibility->spend,
+        ),
+        array(
+			'name'              => 'eCPM',
+			'header'            => 'eCPM',
+			'value'             => '"$ ".number_format($data->revenue / $data->impressions * 1000, 3)',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => isset($totals) ? '$ '.number_format($totals->revenue / $totals->impressions * 1000, 3) : '',
+			'filter'            => false,
+			// 'visible'           => $user_visibility->spend,
+        ),
+	),
+)); ?>
+
+<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalDailyReport')); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>

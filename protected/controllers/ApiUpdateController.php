@@ -210,11 +210,13 @@ class ApiUpdateController extends Controller
 		}
 	}
 
-	public function actionAjillionPublisher()
+	public function actionAjillionPublisher($hash=null)
 	{
 		try {
 			$ajillion = new AjillionPublisher;
-			$ajillion->downloadInfo();
+			$return = $ajillion->downloadInfo();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.publisher');			
 		}

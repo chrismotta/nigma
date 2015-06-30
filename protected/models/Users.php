@@ -144,4 +144,24 @@ class Users extends CActiveRecord
 	{		
         return $this->lastname.' '.$this->name;
 	}
+
+	public static function getPartnerPreview($user_id){
+		$roles=Yii::app()->authManager->getRoles($user_id);
+		foreach ($roles as $role){
+		    $currentRole = $role->name;
+		    break;
+		}
+		switch ($currentRole) {
+			case 'advertiser':
+				$return = "partners/previewAdvertisers";
+				break;
+			case 'publisher':
+				$return = "partners/previewPublishers";
+				break;
+			default:
+				$return = "users/admin";
+				break;
+		}
+		return $return;
+	}
 }

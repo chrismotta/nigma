@@ -54,7 +54,7 @@
         'items'=>array(
             array('label'=>'Sites', 'url'=>array('/sites/admin')),
             array('label'=>'Placements', 'url'=>array('/placements/admin')),
-            array('label'=>'Reporting', 'url'=>array('/dailyPublishers/admin')),
+            array('label'=>'Reporting', 'url'=>array('/dailyPublishers')),
         ), 'visible'=>!Yii::app()->user->isGuest),
         array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
@@ -124,7 +124,7 @@
         $items=array(  
                 array('label'=>'Publisher', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
-                    array('label'=>'Dashboard', 'url'=>array('/publishers/index')),
+                    array('label'=>'Dashboard', 'url'=>array('/partners/publishers')),
                 ), 'visible'=>!Yii::app()->user->isGuest),             
                 array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(

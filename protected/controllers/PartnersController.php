@@ -32,7 +32,11 @@ class PartnersController extends Controller
 				'roles'=>array('admin','advertiser'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('previewAdvertisers', 'previewExcelReportAdvertisers'),
+				'actions'=>array('publishers','excelReportPublishers'),
+				'roles'=>array('admin','publisher'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('previewAdvertisers', 'previewExcelReportAdvertisers', 'previewPublishers', 'previewExcelReportPublishers'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -72,36 +76,7 @@ class PartnersController extends Controller
 		// }	
 	}
 
-	public function actionPublishers()
-	{
-		// if(Yii::app()->user->id)
-		// {
-			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
-			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
-			
-			$dateStart = date('Y-m-d', strtotime($dateStart));
-			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
-			
-			$model     = new Publishers;
-			$provider  = Publishers::model()->findByUser(Yii::app()->user->id)->providers_id;
-			
-			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
-
-			$this->render('publishers',array(
-				'model'     =>$model,
-				'provider'  =>$provider,
-				'dateStart' =>$dateStart,
-				'dateEnd'   =>$dateEnd,
-				'sum'       =>$sum,
-				'data'      =>$data
-			));
-		// }
-		// else
-		// {			
-		// 	$this->redirect(Yii::app()->baseUrl);
-		// }	
-	}
+	// ADVERTISERS //
 
 	public function actionExcelReportAdvertisers(){
 		$this->renderExcelReportAdvertisers(Yii::app()->user->id, false);
@@ -165,6 +140,65 @@ class PartnersController extends Controller
 	}
 
 
+	// PUBLISHERS //
+
+	public function actionPublishers(){
+		$this->renderPublishers(Yii::app()->user->id, false);
+	}
+	public function actionPreviewPublishers($id){
+		$this->renderPublishers($id, true);
+	}
+
+	private function renderPublishers($userId, $preview){
+		$model=new DailyPublishers('search');
+		$model->unsetAttributes();  // clear any default values
+
+		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
+		$publisher_id   = Publishers::model()->findByUser($userId);
+		// $user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
+
+		$this->render('publishers',array(
+			'model'           => $model,
+			'publisher_id'    => $publisher_id,
+			// 'user_visibility' => $user_visibility,
+			'preview'         => $preview,
+			'userId'          => $userId,
+		));
+	}
+
+
+	// OLD //
+
+	public function actionPublishersOld()
+	{
+		// if(Yii::app()->user->id)
+		// {
+			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
+			
+			$dateStart = date('Y-m-d', strtotime($dateStart));
+			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
+			
+			$model     = new Publishers;
+			$provider  = Publishers::model()->findByUser(Yii::app()->user->id)->providers_id;
+			
+			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
+
+			$this->render('publishers',array(
+				'model'     =>$model,
+				'provider'  =>$provider,
+				'dateStart' =>$dateStart,
+				'dateEnd'   =>$dateEnd,
+				'sum'       =>$sum,
+				'data'      =>$data
+			));
+		// }
+		// else
+		// {			
+		// 	$this->redirect(Yii::app()->baseUrl);
+		// }	
+	}
 
 	public function actionAdvertisersOld()
 	{
