@@ -33,6 +33,8 @@ class AjillionPublisher
 
 		$placements_ids = array();
 		foreach ($placements as $placement) {
+			// $return.=  json_encode($placement);
+			// $return.=  "<br>";
 			$placements_ids[] = $placement->id;
 		}
 		// var_dump($placements_ids);
@@ -41,8 +43,8 @@ class AjillionPublisher
 		// generic //
 
 		$params1 = array(
-				"columns"       =>array("placement"),
-				"sums"          =>array("impressions","profit","revenue","hits","conversions"),
+				"columns"       =>array("placement","val1"),
+				"sums"          =>array("impressions","profit","revenue","hits","conversions","ltv"),
 				"publisher_ids" =>array(),
 				"placement_ids" =>$placements_ids,
 				"start_date"    =>$ajillionDate,
@@ -112,7 +114,7 @@ class AjillionPublisher
 			$dailyPublishers->date           = $date;
 			
 			$dailyPublishers->ad_request     = $value['generic']->impressions;
-			$dailyPublishers->revenue        = $value['generic']->revenue + $value['generic']->profit;
+			$dailyPublishers->revenue        = $value['generic']->revenue;// + $value['generic']->profit;
 
 			if(isset($value['Delivered to exchange']))
 				$dailyPublishers->imp_exchange   = $value['Delivered to exchange']->impressions;

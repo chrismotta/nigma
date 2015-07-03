@@ -176,7 +176,8 @@ class DailyPublishers extends CActiveRecord
 
 		$sel_ad_request  = 'SUM( IF(exchanges_id='.$croupier.',ad_request,0) )';
 		$sel_impressions = 'SUM(imp_exchange) + SUM(imp_publishers)';
-		$sel_revenue     = 'SUM( revenue * '.$rs_perc.' /100 )';
+		$sel_revenue     = 'SUM( IF(exchanges_id='.$croupier.',revenue, revenue * '.$rs_perc.' /100) )';
+		// $sel_revenue     = 'SUM( revenue * '.$rs_perc.' /100 )';
 		
 		$select = array(
 			$sel_ad_request . ' AS ad_request', 
