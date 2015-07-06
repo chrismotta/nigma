@@ -30,6 +30,10 @@ class ApiUpdateController extends Controller
 				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads', 'plugRush', 'jampp'),
 				'ips'=>array('54.172.221.175'),
 			),
+			array('allow',
+				'actions'=>array('oAuthRedirect'),
+				'users'=>array('*'),
+			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
 			),
@@ -287,5 +291,10 @@ class ApiUpdateController extends Controller
 		echo "IMPORTANT - Implemented only for Ajillion <br>";
 		$ajillion = new Ajillion;
 		$ajillion->downloadInfo();
+	}
+
+	public function actionOAuthRedirect(){
+		echo "OAuth Autentication Data:<hr/>";
+		if(isset($_POST)) echo json_encode($_POST);
 	}
 }
