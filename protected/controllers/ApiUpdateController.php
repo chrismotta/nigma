@@ -295,6 +295,6 @@ class ApiUpdateController extends Controller
 
 	public function actionOAuthRedirect(){
 		echo "OAuth Autentication Data:<hr/>";
-		if(isset($_POST)) echo json_encode($_POST);
+		if(isset($_REQUEST)) echo json_encode($_REQUEST);
 	}
 }
