@@ -141,8 +141,8 @@ class AjillionPublisher
 
 	private function getResponse($method, $params = array() ) {
 		// Get json from Ajillion API.
-		$network = Networks::model()->findbyPk($this->network_id);
-		$apiurl = $network->url;
+		$network = Exchanges::model()->findbyPk($this->exchange_id);
+		$apiurl = $network->api_url;
 		$user = $network->token1;
 		$pass = $network->token2;
 
