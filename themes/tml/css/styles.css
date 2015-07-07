@@ -387,3 +387,7 @@ tbody [class^="icon-"]{
 .waterfall .grid-view {
   font-size: 13px;
 }
+
+.merged-td, tfoot tr {
+	border-top: 2px solid #CCC !important;
+}

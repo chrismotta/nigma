@@ -229,7 +229,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'htmlOptions'       => array(
-					'class' => 'date', 
+					'id' => 'date', 
 					'style' =>'text-align:left !important;'
 				),
 			'filter'      => false,

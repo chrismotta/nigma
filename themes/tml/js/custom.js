@@ -35,6 +35,8 @@ $(document).ready(function(){
 
 	if(window['Highcharts'] != undefined)
 		chartsTheme();
+
+	$('tr:has(td#date)').addClass('merged-td');
 });
 
 function imageEgg(word, image, height){
