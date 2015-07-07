@@ -209,30 +209,43 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	$totals       = $model->publisherSearch($publisher_id, $dateStart, $dateEnd, $sum, true);
 	//var_dump($user_visibility->imp);
 
-	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                       => 'daily-report-grid',
-	'fixedHeader'              => true,
-	'headerOffset'             => 50,
+	// 'fixedHeader'              => true,
+	// 'headerOffset'             => 50,
 	'dataProvider'             => $dataProvider,
 	// 'filter'                   => $model,
 	//'selectionChanged'         => 'js:selectionChangedDailyReport',
-	'type'                     => 'striped condensed',
+	'type'                     => 'condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	//'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	'mergeColumns' => array('date', 'placements.sites.name'),
 	'columns'                  => array(
 		array(
 			'name'              => 'date',
 			'value'             => 'date("d-m-Y", strtotime($data->date))',
-			// 'headerHtmlOptions' => array('style' => "width: 70px"),
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'htmlOptions'       => array(
 					'class' => 'date', 
-					// 'style' =>'text-align:right;'
+					'style' =>'text-align:left !important;'
 				),
 			'filter'      => false,
 			'visible'     => !$sum,
         ),
-        // 'exchanges_id',
+        array(
+        	'header' => 'Site',
+        	'name' => 'placements.sites.name',
+        	'htmlOptions' => array('style' =>'text-align:left !important;')
+        ),
+        array(
+        	'header' => 'Placement',
+        	'name' => 'placements.name',
+        ),
+        array(
+        	'header' => 'Size',
+        	'name' => 'placements.sizes.size',
+        ),
 		array(	
 			'name'              => 'ad_request',
 			'header'            => 'Ad Requests',
@@ -269,11 +282,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
         array(
 			'name'              => 'eCPM',
 			'header'            => 'eCPM',
-			'value'             => '"$ ".number_format($data->revenue / $data->impressions * 1000, 3)',
+			'value'             => '$data->impressions > 0 ? "$ ".number_format($data->revenue / $data->impressions * 1000, 2) : 0',
 			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
-			'footer'            => isset($totals) ? '$ '.number_format($totals->revenue / $totals->impressions * 1000, 3) : '',
+			'footer'            => isset($totals) ? '$ '.number_format($totals->revenue / $totals->impressions * 1000, 2) : '',
 			'filter'            => false,
 			// 'visible'           => $user_visibility->spend,
         ),

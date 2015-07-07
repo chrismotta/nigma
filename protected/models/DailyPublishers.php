@@ -162,6 +162,7 @@ class DailyPublishers extends CActiveRecord
 		$criteria->with = array( 
 			'placements',
 			'placements.sites',
+			'placements.sizes',
 			// 'placements.sites.publishersProviders',
 		);
 		$criteria->compare('sites.publishers_providers_id', $publisher);
@@ -180,6 +181,7 @@ class DailyPublishers extends CActiveRecord
 		// $sel_revenue     = 'SUM( revenue * '.$rs_perc.' /100 )';
 		
 		$select = array(
+			'placements_id',
 			$sel_ad_request . ' AS ad_request', 
 			$sel_impressions . ' AS impressions', 
 			$sel_revenue . ' AS revenue'
@@ -187,7 +189,7 @@ class DailyPublishers extends CActiveRecord
 
 		if(!$totals){
 			if(!$sum) $select[] = 't.date';
-			if(!$sum) $criteria->group  = 'date(t.date)';
+			if(!$sum) $criteria->group  = 'date(t.date), placements_id';
 		}
 		
 		$criteria->select = $select;
@@ -201,7 +203,7 @@ class DailyPublishers extends CActiveRecord
 			        'pageSize'=>50,
 			    ),
 				'sort'=>array(
-					'defaultOrder' => 't.date DESC, t.exchanges_id ASC',
+					'defaultOrder' => 't.date DESC, placements.sites_id ASC, t.exchanges_id ASC',
 					'attributes'   => array(
 						'ad_request' => array(
 							'asc'  =>$sel_ad_request. ' ASC',
