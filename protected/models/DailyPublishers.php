@@ -181,6 +181,7 @@ class DailyPublishers extends CActiveRecord
 		// $sel_revenue     = 'SUM( revenue * '.$rs_perc.' /100 )';
 		
 		$select = array(
+			't.date',
 			'placements_id',
 			$sel_ad_request . ' AS ad_request', 
 			$sel_impressions . ' AS impressions', 
@@ -188,8 +189,9 @@ class DailyPublishers extends CActiveRecord
 			);
 
 		if(!$totals){
-			if(!$sum) $select[] = 't.date';
-			if(!$sum) $criteria->group  = 'date(t.date), placements_id';
+			// if(!$sum) $select[] = '';
+			if($sum) $criteria->group  = 'date(t.date)';
+			else $criteria->group  = 'date(t.date), placements_id';
 		}
 		
 		$criteria->select = $select;

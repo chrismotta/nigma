@@ -209,6 +209,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	$totals       = $model->publisherSearch($publisher_id, $dateStart, $dateEnd, $sum, true);
 	//var_dump($user_visibility->imp);
 
+	$mergeColumns = $sum ? array('date') : array('date', 'placements.sites.name');
+
 	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                       => 'daily-report-grid',
 	// 'fixedHeader'              => true,
@@ -220,7 +222,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	//'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
-	'mergeColumns' => array('date', 'placements.sites.name'),
+	'mergeColumns' 			   => $mergeColumns,
 	'columns'                  => array(
 		array(
 			'name'              => 'date',
@@ -231,20 +233,29 @@ $this->widget('bootstrap.widgets.TbButton', array(
 					'style' =>'text-align:left !important;'
 				),
 			'filter'      => false,
-			'visible'     => !$sum,
+        ),
+        array(
+        	'name'  => 'placements_id',
+        	'header' => '',
+			'headerHtmlOptions' => array('style' => "width: 200px"),
+        	'value' => '""',
+			'visible'     => $sum,
         ),
         array(
         	'header' => 'Site',
         	'name' => 'placements.sites.name',
-        	'htmlOptions' => array('style' =>'text-align:left !important;')
+        	'htmlOptions' => array('style' =>'text-align:left !important;'),
+			'visible'     => !$sum,
         ),
         array(
         	'header' => 'Placement',
         	'name' => 'placements.name',
+			'visible'     => !$sum,
         ),
         array(
         	'header' => 'Size',
         	'name' => 'placements.sizes.size',
+			'visible'     => !$sum,
         ),
 		array(	
 			'name'              => 'ad_request',
