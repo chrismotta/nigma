@@ -174,10 +174,11 @@ class DailyPublishers extends CActiveRecord
 
 		$rs_perc  = '(SELECT publisher_percentage FROM placements_has_exchanges WHERE placements_id = t.placements_id AND exchanges_id = t.exchanges_id)';
 		$croupier = '(SELECT exchanges_id FROM placements_has_exchanges WHERE placements_id = t.placements_id AND step = 1)';
+		$ajillion_id = 1;
 
 		$sel_ad_request  = 'SUM( IF(exchanges_id='.$croupier.',ad_request,0) )';
 		$sel_impressions = 'SUM(imp_exchange) + SUM(imp_publishers)';
-		$sel_revenue     = 'SUM( IF(exchanges_id='.$croupier.',revenue, revenue * '.$rs_perc.' /100) )';
+		$sel_revenue     = 'SUM( IF(exchanges_id='.$ajillion_id.',revenue, revenue * '.$rs_perc.' /100) )';
 		// $sel_revenue     = 'SUM( revenue * '.$rs_perc.' /100 )';
 		
 		$select = array(
