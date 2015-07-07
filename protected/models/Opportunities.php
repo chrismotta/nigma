@@ -300,7 +300,7 @@ class Opportunities extends CActiveRecord
 
 			));
 	}
-
+	
 	public function getManagersDistribution($accountManager=NULL,$advertisers=NULL,$countries=NULL,$models=NULL)
 	{
 		/*

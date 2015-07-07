@@ -126,10 +126,28 @@ if($action == "Create"){ ?>
         <?php 
 
         if($action == 'Create' || $action == 'Duplicate'){
+            echo $form->dropDownListRow($model, 'advertisers_name', $advertisers, 
+              array(
+                'prompt'   => 'Select an advertiser', 
+                'onChange' => '
+                    if ( ! this.value) {
+                      return;
+                    }
+                    $.post(
+                        "getOppByAdv/"+this.value,
+                        "",
+                        function(data)
+                        {
+                            // console.log(data);
+                            $(".opportunities-dropdownlist").html(data);
+                        }
+                    )
+                    '
+                ));
             echo $form->dropDownListRow($model, 'opportunities_id', $opportunities, array(
                 'prompt' => 'Select an opportunitiy',
                 'class'  => 'opportunities-dropdownlist',
-            ));
+                ));
         } else {
             echo $form->hiddenField($model, 'opportunities_id', array('class' => 'opportunities-dropdownlist'));
         }

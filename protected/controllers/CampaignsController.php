@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
+				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','getOppByAdv','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
 				'roles'=>array('admin', 'media', 'media_manager','affiliates_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -465,11 +465,29 @@ class CampaignsController extends Controller
 	{
 		// comentado provisoriamente, generar permiso de admin
 		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
-		if($id)$opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
-		else $opps =Opportunities::model()->findAll();
+		if($id) $opps = Opportunities::model()->findAll( "account_manager_id=:accountManager", array(':accountManager'=>$id) );
+		else $opps    = Opportunities::model()->findAll();
 		$response='<option value="">All opportunities</option>';
 		foreach ($opps as $op) {
 			$response .= '<option value="' . $op->id . '">' . $op->getVirtualName() . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
+
+	public function actionGetOppByAdv($id)
+	{
+		// comentado provisoriamente, generar permiso de admin
+		//$ios = Ios::model()->findAll( "advertisers_id=:advertiser AND commercial_id=:c_id", array(':advertiser'=>$id, ':c_id'=>Yii::app()->user->id) );
+
+		$criteria = new CDbCriteria;
+		$criteria->with = array('regions.financeEntities');
+		$criteria->addCondition("financeEntities.advertisers_id=".$id."");
+		$opportunities = Opportunities::model()->findAll($criteria);
+
+		$response='<option value="">Select an Opportunity</option>';
+		foreach ($opportunities as $opportunity) {
+			$response .= '<option value="' . $opportunity->id . '">' . $opportunity->getVirtualName() . '</option>';
 		}
 		echo $response;
 		Yii::app()->end();
@@ -524,12 +542,25 @@ class CampaignsController extends Controller
 		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
+			/*$advertisers = CHtml::listData(
+				Opportunities::model()->with('regions.financeEntities.advertisers')->findAll(
+					array('order'=>'advertisers.name', 'condition'=>'t.status="Active"')), 
+					'advertisers.id', 
+					'advertisers.name'
+			);*/
+			$advertisers = CHtml::listData(
+				Advertisers::model()->findAll(
+					array('order'=>'name')), 
+				'id', 
+				'name'
+			);
 			$opportunities = CHtml::listData(Opportunities::model()->with('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'country')->findAll(
 				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'t.status="Active"')), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);
 		} else {
+			$advertisers = array();
 			$opportunities = CHtml::listData(Opportunities::model()->with('regions','regions.financeEntities', 'regions.financeEntities.advertisers', 'regions.country')->findAll(
 				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'t.status="Active" AND account_manager_id='.Yii::app()->user->id)), 
 				'id', 
@@ -555,6 +586,7 @@ class CampaignsController extends Controller
 		$this->renderPartial('_formAjax',array(
 			'model'            => $model,
 			'modelProv'        => $modelProv,
+			'advertisers'      => $advertisers,
 			'opportunities'    => $opportunities,
 			'categories'       => $categories,
 			'providers_type'   => $providers_type,
