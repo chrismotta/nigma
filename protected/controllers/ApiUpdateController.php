@@ -48,7 +48,7 @@ class ApiUpdateController extends Controller
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
 		
-		// $this->actionReporo(); 
+		$this->actionReporo(); 
 		// reporo disabled (works on localhost only)
 		// error:
 		/*
@@ -75,7 +75,7 @@ class ApiUpdateController extends Controller
 		// $this->actionMobads();
 		// $this->actionPlugRush();
 		// $this->actionJampp();
-		// $this->actionAffiliates();
+		$this->actionAffiliates();
 		
 		$this->actionAjillionPublisher();
 	}
@@ -134,11 +134,13 @@ class ApiUpdateController extends Controller
 		}
 	}
 
-	public function actionReporo()
+	public function actionReporo($hash=null)
 	{
 		try {
 			$reporo = new Reporo;
-			$reporo->downloadInfo();
+			$return = $reporo->downloadInfo();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}

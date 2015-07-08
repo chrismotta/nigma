@@ -7,6 +7,8 @@ class Reporo
 
 	public function downloadInfo()
 	{
+		$return = '';
+
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
@@ -65,6 +67,8 @@ class Reporo
 					continue; 
 				}
 
+				$return.= json_encode($campaign_stats) . '<hr/>';
+
 				// Save campaign information
 				$dailyReport = new DailyReport();
 				
@@ -95,7 +99,7 @@ class Reporo
 		}
 		// --- end getting compaign_groups ids
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.reporo');
-		return 0;
+		return $return;
 	}
 
 	/**
@@ -126,8 +130,8 @@ class Reporo
 		);
 		$context = stream_context_create($options);
 		$response = file_get_contents($reporoGateway . $params, false, $context);
-var_dump($options);
-die($reporoGateway.$params);
+// var_dump($options);
+// die($reporoGateway.$params);
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
