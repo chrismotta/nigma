@@ -105,7 +105,7 @@ class Exchanges extends CActiveRecord
 
 		if(isset($placement)){
 			$criteria->with = array('p_e');
-			$criteria->together = true;
+			// $criteria->together = true;
 			// $criteria->addCondition('p_e.exchanges_id IS NULL AND p_e.placements_id != '.$placement);
 			
 			$list = CHtml::listData(

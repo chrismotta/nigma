@@ -244,12 +244,14 @@ class PlacementsController extends Controller
 		$this->layout='//layouts/modal';
 
 		$placementsModel = $this->loadModel($id);
+
 		$exchangesModel  = new Exchanges('search');
-		$waterfallModel  = new PlacementsHasExchanges('search');
-		
 		$exchangesModel->unsetAttributes();
+		
+		$waterfallModel  = new PlacementsHasExchanges('search');
 		$waterfallModel->unsetAttributes();
 		$waterfallModel->placements_id = $id;
+		
 		
 		$modelPub = KHtml::enumItem($waterfallModel, 'model');
 
