@@ -230,7 +230,14 @@ class DailyReportController extends Controller
 		if(isset($_GET['DailyReport']))
 			$model->attributes=$_GET['DailyReport'];
 
-		$providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
+		$criteria       = new CDbCriteria;
+		// $criteria->join = 'RIGHT JOIN networks ON t.id = networks.providers_id';
+		// $criteria->join = 'RIGHT JOIN affiliates ON t.id = affiliates.providers_id';
+		$criteria->with = array('networks','affiliates');
+		$criteria->compare('networks.providers_id','<>NULL', false, 'OR');
+		$criteria->compare('affiliates.providers_id','<>NULL', false, 'OR');
+		$criteria->compare('t.status','Active', false, 'AND');
+		$providers = CHtml::listData( Providers::model()->findAll($criteria) , 'name', 'name');
 
 		$this->render('admin',array(
 			'model'=>$model,
