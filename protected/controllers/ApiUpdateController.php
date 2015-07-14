@@ -21,14 +21,39 @@ class ApiUpdateController extends Controller
 	//  */
 	public function accessRules()
 	{
+		$adminAllowedActions = array(
+			'index', 
+			'log', 
+			'adWords', 
+			'airpush', 
+			'ajillion', 
+			'buzzCity', 
+			'leadBolt', 
+			'reporo', 
+			'vServ', 
+			'mobfox', 
+			'eroAdvertising', 
+			'inMobi', 
+			'bingAds', 
+			'adultmoda', 
+			'smaato', 
+			'campaign', 
+			'ajillionPublisher', 
+			'smaatoExchange', 
+			'affiliates', 
+			'mobads', 
+			'plugRush', 
+			'jampp'
+			);
+		
 		return array(
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads', 'plugRush', 'jampp'),
-				'roles'=>array('admin', 'media_manager'),
+				'actions' => $adminAllowedActions,
+				'roles'   => array('admin', 'media_manager'),
 			),
 			array('allow',
-				'actions'=>array('index', 'log', 'adWords', 'airpush', 'ajillion', 'buzzCity' , 'leadBolt', 'reporo', 'vServ', 'mobfox', 'eroAdvertising', 'inMobi', 'bingAds', 'adultmoda', 'smaato', 'campaign', 'ajillionPublisher', 'affiliates', 'mobads', 'plugRush', 'jampp'),
-				'ips'=>array('54.172.221.175'),
+				'actions' => $adminAllowedActions,
+				'ips'     => array('54.172.221.175'),
 			),
 			array('allow',
 				'actions'=>array('oAuthRedirect'),
@@ -228,6 +253,18 @@ class ApiUpdateController extends Controller
 		}
 	}
 
+	public function actionSmaatoExchange($hash=null)
+	{
+		try {
+			$smaato = new SmaatoExchange;
+			$return = $smaato->downloadInfo();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.publisher');			
+		}
+	}
+
 	public function actionAffiliates()
 	{
 		try {
@@ -296,7 +333,7 @@ class ApiUpdateController extends Controller
 	}
 
 	public function actionOAuthRedirect(){
-		echo "OAuth Autentication Data:<hr/>";
+		// echo "OAuth Autentication Data:<hr/>";
 		if(isset($_REQUEST)) echo json_encode($_REQUEST);
 	}
 }
