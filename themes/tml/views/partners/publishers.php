@@ -222,7 +222,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	//'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
-	'mergeColumns' 			   => $mergeColumns,
+	// 'mergeColumns' 			   => $mergeColumns,
 	'columns'                  => array(
 		array(
 			'name'              => 'date',
@@ -297,7 +297,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
-			'footer'            => isset($totals) ? '$ '.number_format($totals->revenue / $totals->impressions * 1000, 2) : '',
+			'footer'            => isset($totals && $totals->impressions>0) ? '$ '.number_format($totals->revenue / $totals->impressions * 1000, 2) : '',
 			'filter'            => false,
 			// 'visible'           => $user_visibility->spend,
         ),

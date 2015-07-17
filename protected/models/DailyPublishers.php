@@ -33,6 +33,7 @@ class DailyPublishers extends CActiveRecord
 {
     public $csvFile;
     public $impressions;
+    public $site;
 
 	/**
 	 * @return string the associated database table name
@@ -58,7 +59,7 @@ class DailyPublishers extends CActiveRecord
             array('csvFile', 'file', 'wrongType'=>'ERROR: Wrong File Type', 'types'=>'csv', 'allowEmpty'=>false, 'on'=>'dump'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, date, placements_id, country_id, devices_id, ad_request, imp_exchange, imp_publishers, imp_passback, imp_count, impressions, clicks, revenue, spend, profit, profit_percent, eCPM, comment, exchanges_id', 'safe', 'on'=>'search'),
+			array('id, date, placements_id, site, country_id, devices_id, ad_request, imp_exchange, imp_publishers, imp_passback, imp_count, impressions, clicks, revenue, spend, profit, profit_percent, eCPM, comment, exchanges_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -103,6 +104,7 @@ class DailyPublishers extends CActiveRecord
 			'exchanges_id'   => 'Exchanges',
 			'csvFile'        => 'CSV File',
 			'impressions'    => 'Impressions',
+			'impressions'    => 'Site',
 		);
 	}
 
@@ -208,18 +210,30 @@ class DailyPublishers extends CActiveRecord
 				'sort'=>array(
 					'defaultOrder' => 't.date DESC, placements.sites_id ASC, t.exchanges_id ASC',
 					'attributes'   => array(
+						'placements.sites.name' => array(
+							'asc'  => 'sites.name ASC, date ASC',
+							'desc' => 'sites.name DESC, date ASC',
+						        ),
+						'placements.name' => array(
+							'asc'  => 'placements.name ASC, date ASC',
+							'desc' => 'placements.name DESC, date ASC',
+						        ),
+						'placements.sizes.size' => array(
+							'asc'  => 'sizes.size ASC, date ASC',
+							'desc' => 'sizes.size DESC, date ASC',
+						        ),
 						'ad_request' => array(
 							'asc'  =>$sel_ad_request. ' ASC',
 							'desc' =>$sel_ad_request. ' DESC',
-						         ),
+						        ),
 						'impressions' => array(
 							'asc'  =>$sel_impressions. ' ASC',
 							'desc' =>$sel_impressions. ' DESC',
-						         ),
+						        ),
 						'revenue' => array(
 							'asc'  =>$sel_revenue. ' ASC',
 							'desc' =>$sel_revenue. ' DESC',
-						         ),
+						        ),
 			            // Adding all the other default attributes
 			            'date',
 					),
