@@ -105,8 +105,8 @@ class SmaatoExchange
             $this->date = date('Y-m-d', strtotime('yesterday'));
         }
 
-        // $access_token = $this->oAuthLogin();
-        $access_token = 'KNCDc32tEwo8DEKSQQNb3ks4kXNlOo';
+        $access_token = $this->oAuthLogin();
+        // $access_token = 'KNCDc32tEwo8DEKSQQNb3ks4kXNlOo';
         if(is_array($access_token)) 
             return $access_token['ERROR'];
 

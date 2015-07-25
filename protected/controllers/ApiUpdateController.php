@@ -104,6 +104,7 @@ class ApiUpdateController extends Controller
 		$this->actionAffiliates();
 		
 		$this->actionAjillionPublisher();
+		$this->actionSmaatoExchange();
 	}
 
 	public function actionBingCode(){
