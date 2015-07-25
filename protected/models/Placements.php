@@ -45,7 +45,7 @@ class Placements extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('sites_id, name', 'required'),
+			array('sites_id, sizes_id, name', 'required'),
 			array('sites_id, sizes_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>8),
 			array('name', 'length', 'max'=>128),
@@ -136,7 +136,7 @@ class Placements extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination' =>array(
-                'pageSize' => 30,
+                'pageSize' => 50,
             ),
 			'sort'     	 =>array(
 		        'attributes'=>array(

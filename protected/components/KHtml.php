@@ -41,7 +41,7 @@ class KHtml extends CHtml
         $options = array_merge($defaultOptions, $options);
 
         $r = '<label><div class="input-append input-prepend">';
-        if(isset($append)) $r .= '<span class="add-on" style="width:35px">'.$append.'</span>';
+        if(isset($append)) $r .= '<span class=" btn btn-info disabled" style="width:35px">'.$append.'</span>';
         $r .= Yii::app()->controller->widget('bootstrap.widgets.TbDatePicker', array(
             'name'        => $name,
             'value'       => date('d-m-Y', strtotime($initialDate)),

@@ -143,7 +143,8 @@ class PartnersController extends Controller
 	// PUBLISHERS //
 
 	public function actionPublishers(){
-		$this->renderPublishers(Yii::app()->user->id, false);
+		$this->render('maintenance');
+		// $this->renderPublishers(Yii::app()->user->id, false);
 	}
 	public function actionPreviewPublishers($id){
 		$this->renderPublishers($id, true);

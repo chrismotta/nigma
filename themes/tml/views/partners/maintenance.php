@@ -1,0 +1,2 @@
+<div class="maintenance"><img src="<?php echo Yii::app()->theme->baseUrl; ?>/img/caution.jpg"></div>
+<div class="maintenance">This platform is under maintenance. Please try again in a few minutes.</div>

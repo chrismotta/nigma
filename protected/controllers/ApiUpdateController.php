@@ -40,6 +40,7 @@ class ApiUpdateController extends Controller
 			'campaign', 
 			'ajillionPublisher', 
 			'smaatoExchange', 
+			'inmobiExchange', 
 			'affiliates', 
 			'mobads', 
 			'plugRush', 
@@ -258,6 +259,18 @@ class ApiUpdateController extends Controller
 		try {
 			$smaato = new SmaatoExchange;
 			$return = $smaato->downloadInfo();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.publisher');			
+		}
+	}
+
+	public function actionInmobiExchange($hash=null)
+	{
+		try {
+			$inmobi = new InmobiExchange;
+			$return = $inmobi->downloadInfo();
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {

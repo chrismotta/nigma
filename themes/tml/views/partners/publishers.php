@@ -108,7 +108,11 @@ $('.search-form form').submit(function(){
 	// $opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	// $providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	// $adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
-	$sum            = isset($_GET['sum']) ? $_GET['sum'] : 0;
+	// $sum         = isset($_GET['sum']) ? $_GET['sum'] : 0;
+	
+	$g_date      = isset($_GET['g_date']) ? $_GET['g_date'] : 1;
+	$g_placement = isset($_GET['g_placement']) ? $_GET['g_placement'] : 1;
+	$g_country   = isset($_GET['g_country']) ? $_GET['g_country'] : 1;
 
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
@@ -117,11 +121,11 @@ $('.search-form form').submit(function(){
 <fieldset class="formfilter well">
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-		'id'                   =>'date-filter-form',
-		'type'                 =>'search',
-		'htmlOptions'          =>array('style'=>'display:inline-block;margin:0px'),
-		'enableAjaxValidation' =>false,
-		'action'               => Yii::app()->request->url,
+		'id'                   => 'date-filter-form',
+		'type'                 => 'search',
+		'htmlOptions'          => array('style'=>'display:inline-block;margin:0px'),
+		'enableAjaxValidation' => false,
+		'action'               => Yii::app()->controller->createUrl(Yii::app()->controller->id . '/' .Yii::app()->controller->action->id . '/' . $userId),
 		'method'               => 'GET',
 		// 'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
@@ -131,18 +135,24 @@ $('.search-form form').submit(function(){
 		<span class='formfilter-space'></span>		
 		<!-- To:  -->
 		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array(), 'To'); ?>
-    	
-    	<?php echo CHtml::hiddenField('sum', $sum, array('id'=>'sum')); ?>
-
 		<span class='formfilter-space'></span>
+
+    	<?php echo CHtml::hiddenField('g_date', $g_date, array('id'=>'g_date')); ?>
+    	<?php echo CHtml::hiddenField('g_placement', $g_placement, array('id'=>'g_placement')); ?>
+    	<?php echo CHtml::hiddenField('g_country', $g_country, array('id'=>'g_country')); ?>
 		<?php $this->widget(
 		    'bootstrap.widgets.TbButtonGroup',
 		    array(
-		        'toggle' => 'radio',
+		        'toggle' => 'checkbox',
 		        // 'type' => 'inverse',
 		        'buttons' => array(
-		            array('label' => 'Daily Stats', 'active'=>boolval(1-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("0");')),
-		            array('label' => 'Merged Stats', 'active'=>boolval(0-$sum), 'htmlOptions'=>array('onclick'=>'$("#sum").val("1");')),
+		        	array('label' => 'Columns', 'disabled' => 'disabled', 'type' => 'info'),
+		            array('label' => 'Date', 'active'=>$g_date, 
+		            	'htmlOptions'=>array('onclick' => '$("#g_date").val( 1 - $("#g_date").val() );')),
+		            array('label' => 'Placement', 'active'=>$g_placement, 
+		            	'htmlOptions'=>array('onclick' => '$("#g_placement").val( 1 - $("#g_placement").val() );')),
+		            array('label' => 'Country', 'active'=>$g_country, 
+		            	'htmlOptions'=>array('onclick' => '$("#g_country").val( 1 - $("#g_country").val() );')),
 		        ),
 
 		    )
@@ -174,7 +184,15 @@ $('.search-form form').submit(function(){
 
 //Create link to load filters in modal
 $currentAction = $preview ? 'previewExcelReportAdvertisers' : 'excelReportAdvertisers'; 
-$link = Yii::app()->createUrl('partners/'.$currentAction, array('id'=>$userId, 'dateStart'=>$dateStart, 'dateEnd'=>$dateEnd, 'sum'=>$sum));
+$link = Yii::app()->createUrl('partners/'.$currentAction, 
+	array(
+		'id'          => $userId, 
+		'dateStart'   => $dateStart, 
+		'dateEnd'     => $dateEnd, 
+		'g_date'      => $g_date,
+		'g_placement' => $g_placement,
+		'g_country'   => $g_country,
+		));
 /*
 $this->widget('bootstrap.widgets.TbButton', array(
 	'type'        => 'info',
@@ -204,12 +222,20 @@ $this->widget('bootstrap.widgets.TbButton', array(
 </fieldset>
 
 <?php 
+	$modelData = array(
+		'publisherID'  => $publisher_id, 
+		'dateStart'    => $dateStart, 
+		'dateEnd'      => $dateEnd, 
+		'g_date'       => $g_date,
+		'g_placement'  => $g_placement,
+		'g_country'    => $g_country,
+		);
 	
-	$dataProvider = $model->publisherSearch($publisher_id, $dateStart, $dateEnd, $sum, false);	
-	$totals       = $model->publisherSearch($publisher_id, $dateStart, $dateEnd, $sum, true);
+	$dataProvider = $model->publisherSearch($modelData, false);	
+	$totals       = $model->publisherSearch($modelData, true);
 	//var_dump($user_visibility->imp);
 
-	$mergeColumns = $sum ? array('date') : array('date', 'placements.sites.name');
+	// $mergeColumns = $sum ? array('date') : array('date', 'placements.sites.name', 'placements.name');
 
 	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                       => 'daily-report-grid',
@@ -228,34 +254,39 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'name'              => 'date',
 			'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'filter'            => false,
 			'htmlOptions'       => array(
 					'id' => 'date', 
 					'style' =>'text-align:left !important;'
 				),
-			'filter'      => false,
+			'visible' => $g_date,
         ),
         array(
-        	'name'  => 'placements_id',
-        	'header' => '',
-			'headerHtmlOptions' => array('style' => "width: 200px"),
-        	'value' => '""',
-			'visible'     => $sum,
+			'header'  => '',
+			'value'   => '""',
+			'visible' => $g_placement || $g_country ? false : true,
         ),
         array(
-        	'header' => 'Site',
-        	'name' => 'placements.sites.name',
-        	'htmlOptions' => array('style' =>'text-align:left !important;'),
-			'visible'     => !$sum,
+			'header'  => 'Placement',
+			'name'    => 'placements.name',
+			'visible' => $g_placement,
         ),
         array(
-        	'header' => 'Placement',
-        	'name' => 'placements.name',
-			'visible'     => !$sum,
+			'header'  => 'Country',
+			'name'    => 'country.name',
+			'value'   => '$data->country_id ? $data->country->name : "Unknown"',
+			'visible' => $g_country,
         ),
         array(
-        	'header' => 'Size',
-        	'name' => 'placements.sizes.size',
-			'visible'     => !$sum,
+			'header'      => 'Site',
+			'name'        => 'placements.sites.name',
+			'htmlOptions' => array('style' =>'text-align:left !important;'),
+			'visible'     => $g_placement,
+        ),
+        array(
+			'header'  => 'Size',
+			'name'    => 'placements.sizes.size',
+			'visible' => $g_placement,
         ),
 		array(	
 			'name'              => 'ad_request',
@@ -266,7 +297,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
 			'footer'            => isset($totals) ? number_format($totals->ad_request) : '',
 			'filter'            => false,
-			// 'visible'           => $user_visibility->imp,
+			// 'visible'        => $user_visibility->imp,
         ),
 		array(	
 			'name'              => 'impressions',

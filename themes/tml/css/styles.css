@@ -391,3 +391,8 @@ tbody [class^="icon-"]{
 .merged-td, tfoot tr {
 	border-top: 2px solid #CCC !important;
 }
+
+.maintenance{
+    text-align: center;
+    margin: 10px;
+}

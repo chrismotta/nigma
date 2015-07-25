@@ -33,6 +33,7 @@ class DailyPublishers extends CActiveRecord
 {
     public $csvFile;
     public $impressions;
+    public $countryName;
 
 	/**
 	 * @return string the associated database table name
@@ -155,7 +156,7 @@ class DailyPublishers extends CActiveRecord
 		));
 	}
 
-	public function publisherSearch($publisher=null, $startDate=NULL, $endDate=NULL, $sum=0, $totals=false){
+	public function publisherSearch($modelData, $totals=false){
 
 		$criteria = new CDbCriteria;
 		// Related search criteria items added (use only table.columnName)
@@ -163,13 +164,14 @@ class DailyPublishers extends CActiveRecord
 			'placements',
 			'placements.sites',
 			'placements.sizes',
+			'country',
 			// 'placements.sites.publishersProviders',
 		);
-		$criteria->compare('sites.publishers_providers_id', $publisher);
+		$criteria->compare('sites.publishers_providers_id', $modelData['publisherID']);
 		
-		if ( $startDate != NULL && $endDate != NULL ) {
-			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
-			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		if ( $modelData['dateStart'] != NULL && $modelData['dateEnd'] != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($modelData['dateStart'])));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($modelData['dateEnd'])));
 		}
 
 		$rs_perc  = '(SELECT publisher_percentage FROM placements_has_exchanges WHERE placements_id = t.placements_id AND exchanges_id = t.exchanges_id)';
@@ -184,6 +186,7 @@ class DailyPublishers extends CActiveRecord
 		$select = array(
 			't.date',
 			'placements_id',
+			'country_id',
 			$sel_ad_request . ' AS ad_request', 
 			$sel_impressions . ' AS impressions', 
 			$sel_revenue . ' AS revenue'
@@ -191,8 +194,21 @@ class DailyPublishers extends CActiveRecord
 
 		if(!$totals){
 			// if(!$sum) $select[] = '';
-			if($sum) $criteria->group  = 'date(t.date)';
-			else $criteria->group  = 'date(t.date), placements_id';
+			if($modelData['g_date']){
+				$groupBy[] = 'date(t.date)';
+				$orderBy[] = 't.date DESC';
+			}
+			if($modelData['g_placement']){
+				$groupBy[] = 'placements_id';
+				$orderBy[] = 'placements.name ASC';
+			}
+			if($modelData['g_country']){
+				$groupBy[] = 'country_id';
+				$orderBy[] = 'country.name ASC';
+			}
+
+			if(isset($groupBy)) $criteria->group  = implode(',', $groupBy);
+
 		}
 		
 		$criteria->select = $select;
@@ -206,7 +222,7 @@ class DailyPublishers extends CActiveRecord
 			        'pageSize'=>50,
 			    ),
 				'sort'=>array(
-					'defaultOrder' => 't.date DESC, placements.sites_id ASC, t.exchanges_id ASC',
+					'defaultOrder' => isset($orderBy) ? implode(',', $orderBy) : '',
 					'attributes'   => array(
 						'placements.sites.name' => array(
 							'asc'  => 'sites.name ASC, date ASC',
@@ -219,6 +235,10 @@ class DailyPublishers extends CActiveRecord
 						'placements.sizes.size' => array(
 							'asc'  => 'sizes.size ASC, date ASC',
 							'desc' => 'sizes.size DESC, date ASC',
+						        ),
+						'country.name' => array(
+							'asc'  => 'country.name ASC, date ASC',
+							'desc' => 'country.name DESC, date ASC',
 						        ),
 						'ad_request' => array(
 							'asc'  =>$sel_ad_request. ' ASC',

@@ -28,7 +28,7 @@ class AjillionPublisher
 		$placements = $this->getResponse("publisher.placement.get");
 		if ( !$placements ) {
 			Yii::log("Can't get placements", 'error', 'system.model.api.ajillion');
-			return 1;
+			return "Can't get placements";
 		}
 
 		$placements_ids = array();
@@ -43,12 +43,12 @@ class AjillionPublisher
 		// generic //
 
 		$params1 = array(
-				"columns"       =>array("placement","val1"),
-				"sums"          =>array("impressions","profit","revenue","hits","conversions","ltv"),
-				"publisher_ids" =>array(),
-				"placement_ids" =>$placements_ids,
-				"start_date"    =>$ajillionDate,
-				"end_date"      =>$ajillionDate,
+				"columns"       => array("placement", "country"),
+				"sums"          => array("impressions","profit","revenue","hits","conversions","ltv"),
+				"publisher_ids" => array(),
+				"placement_ids" => $placements_ids,
+				"start_date"    => $ajillionDate,
+				"end_date"      => $ajillionDate,
 			);
 		
 		$data1 = $this->getResponse("report.publisher.get", $params1);
@@ -58,39 +58,70 @@ class AjillionPublisher
 			if(is_numeric($placementID)){
 				// $return.=  json_encode($line);
 				// $return.=  "<br>";
-				$placementsData[$placementID]['generic'] = $line;
+				$placementsData[$placementID.'-'.$line->country]['generic'] = $line;
 			}
 		}
-
+		
 		// by status //
 
 		$params2 = array(
-				"columns"       =>array("placement", "status"),
-				"sums"          =>array("impressions"),
-				"publisher_ids" =>array(),
-				"placement_ids" =>$placements_ids,
-				"start_date"    =>$ajillionDate,
-				"end_date"      =>$ajillionDate,
+				"columns"       => array("placement", "country", "status"),
+				"sums"          => array("impressions"),
+				"publisher_ids" => array(),
+				"placement_ids" => $placements_ids,
+				"start_date"    => $ajillionDate,
+				"end_date"      => $ajillionDate,
 			);
 		$data2 = $this->getResponse("report.publisher.get", $params2);
 		
+		$unknownCountries = array();
+
 		foreach ($data2 as $line) {
 			$placementID = substr($line->placement, 0, strpos($line->placement, '-'));
 			if(is_numeric($placementID)){
 				// $return.=  json_encode($line);
 				// $return.=  "<br>";
-				$placementsData[$placementID][$line->status] = $line;
+				$placementsData[$placementID.'-'.$line->country][$line->status] = $line;
+				
+				// list of country names
+				if(!in_array($line->country, $unknownCountries))
+	            	$unknownCountries[] = $line->country;		
 			}
 		}
 
-		// build data to dump //
+		$countryCodeList = $this->getCountryCodes($unknownCountries);
+		// $return.= "<hr/>Countries:<br/>".json_encode($countryCodeList)."<hr/>";
 
+		// build data to dump //
 		foreach ($placementsData as $key=>$value) {
 			$return.=  $key."::";
-			$return.=  json_encode($value);
+			// $return.=  json_encode($value);
+
+			$placementID  = substr($value['generic']->placement, 0, strpos($value['generic']->placement, '-'));
+			$countryName  = $value['generic']->country;
+			$return.= $countryName;
+			$return.= '<br/>';
 			
+			if($countryName != ''){
+
+				$return.= $countryCodeList[$countryName];
+	            $countryModel = GeoLocation::model()->findByAttributes(array('ISO2'=>$countryCodeList[$countryName]));
+
+	            if(isset($countryModel)){
+	                $countryID = $countryModel->id_location;
+					$return.= '<br/>==> '.$countryID.'<br/>';
+	            }else{
+	                $countryID = null;
+					$return.= '<br/>==> not-match<br/>';
+	            }
+
+			}else{
+                $countryID = null;
+				$return.= '<br/>==> not-match<br/>';
+            }
+
 			// validate placement
-			$placementModel = Placements::model()->findByPk($key);
+			$placementModel = Placements::model()->findByPk($placementID);
 			if(!isset($placementModel)){
 				$return.=  "<br/>===>PLACEMENT NOT FOUND!!<hr/>";
 				continue;
@@ -98,9 +129,10 @@ class AjillionPublisher
 
 			// check for duplicates
 			$dailyPublishers = DailyPublishers::model()->findByAttributes(array(
-								'placements_id' => $key,
+								'placements_id' => $placementID,
 								'exchanges_id'  => $this->exchange_id,
-								'date'          => $date
+								'date'          => $date,
+								'country_id'    => $countryID,
 								));
 			if(isset($dailyPublishers)){
 				$return.=  "<br/>===>EXISTS!!<hr/>";
@@ -109,8 +141,9 @@ class AjillionPublisher
 
 			$dailyPublishers = new DailyPublishers;
 
-			$dailyPublishers->placements_id  = $key;
+			$dailyPublishers->placements_id  = $placementID;
 			$dailyPublishers->exchanges_id   = $this->exchange_id;
+			$dailyPublishers->country_id     = $countryID;
 			$dailyPublishers->date           = $date;
 			
 			$dailyPublishers->ad_request     = $value['generic']->impressions;
@@ -136,6 +169,17 @@ class AjillionPublisher
 		$return.= "<hr/>ajillion publishers";
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
 		return $return;
+	}
+
+	private function getCountryCodes($countryNames){
+		$params = array(
+			"search"=>$countryNames
+			);
+		$data = $this->getResponse("core.country.get", $params);
+		foreach ($data as $key => $value) {
+			$list[$value->name] = $value->country_code;
+		}
+		return $list;
 	}
 
 
