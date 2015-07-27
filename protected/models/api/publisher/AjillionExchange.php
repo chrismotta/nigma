@@ -1,6 +1,6 @@
  <?php
 
-class AjillionPublisher
+class AjillionExchange
 { 
 
 	private $network_id = 3;

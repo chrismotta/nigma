@@ -38,7 +38,7 @@ class ApiUpdateController extends Controller
 			'adultmoda', 
 			'smaato', 
 			'campaign', 
-			'ajillionPublisher', 
+			'ajillionExchange', 
 			'smaatoExchange', 
 			'inmobiExchange', 
 			'affiliates', 
@@ -103,7 +103,7 @@ class ApiUpdateController extends Controller
 		// $this->actionJampp();
 		$this->actionAffiliates();
 		
-		$this->actionAjillionPublisher();
+		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
 	}
 
@@ -243,10 +243,10 @@ class ApiUpdateController extends Controller
 		}
 	}
 
-	public function actionAjillionPublisher($hash=null)
+	public function actionAjillionExchange($hash=null)
 	{
 		try {
-			$ajillion = new AjillionPublisher;
+			$ajillion = new AjillionExchange;
 			$return = $ajillion->downloadInfo();
 			if(isset($hash) && $hash=='echo')
 				echo $return;
