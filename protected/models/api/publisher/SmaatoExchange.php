@@ -64,6 +64,10 @@ class SmaatoExchange
 
     private function verifyPlacement($placementID, $countryID){
 
+        if(!$placementID){
+            return array('status'=>false,'msg'=>'<hr/>===>WRONG PLACEMENT NAME!!<hr/>');
+        }
+        
         // validate placement
         $placementModel = Placements::model()->findByPk($placementID);
         if(!isset($placementModel)){

@@ -2,18 +2,16 @@
 
 class InmobiExchange
 { 
-    private $exchange_id = 2;//Smaato
+    private $exchange_id = 3;//inmobi
+    private $date;
 
-    public function downloadInfo()
-    {
-        $return = '';
-
+    private function oAuthLogin(){
         // Get json from InMobi API.
-        $network = Networks::model()->findbyPk($this->provider_id);
+        $network = Exchanges::model()->findbyPk($this->exchange_id);
         $apikey  = $network->token3;
         $user    = $network->token1;
         $pass    = $network->token2;
-        $apiurl  = $network->url;
+        $apiurl  = $network->api_url;
 
         // Create Session
         $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
@@ -25,136 +23,172 @@ class InmobiExchange
 
         // Json to array
         $newresponse = json_decode($response); 
-        $sessionId   = $newresponse->respList[0]->sessionId; // guardo  el id de la session
-        $accountId   = $newresponse->respList[0]->accountId; // guardo  el id de la cuenta
 
         curl_close($ch);
 
-        
-        return $return;
+        $loginData['sessionId'] = $newresponse->respList[0]->sessionId; // guardo  el id de la session
+        $loginData['accountId'] = $newresponse->respList[0]->accountId; // guardo  el id de la cuenta
+        $loginData['apiurl']    = $apiurl;
+        $loginData['apikey']    = $apikey;
 
-
-
-        // Client Key: 552adc600b8a428e8223e211fe1ea418
-        // Client Secret: 05be2e86777247c28900432ac8953e361c02a821b1b14ffaa3f521e95b4490a98dbfd87f2ac54bf1986e6d77e7008865
-
-        $return = $this->getResponse(null);
-
-        // https://api.smaato.com/v1/auth/authorize/?response_type=code&client_id=552adc600b8a428e8223e211fe1ea418
-        // {"code":"9movwiWm7MzSpa8HGX81w3O5kMPPI1"}
-        return $return;
+        return $loginData;
     }
 
-    private function getResponse($method, $params = array() ) {
-        // Get json from Ajillion API.
+    private function getCountryID($countryName){
+
+        $countryModel  = GeoLocation::model()->findByAttributes(array('name'=>$countryName));
+        if(isset($countryModel))
+            $countryID = $countryModel->id_location;
+        else
+            $countryID = null;
+
+        return $countryID;
+    }
+
+    private function verifyPlacement($placementID, $countryID){
+
+        if(!$placementID){
+            return array('status'=>false,'msg'=>'<hr/>===>WRONG PLACEMENT NAME!!<hr/>');
+        }
+
+        // validate placement
+        $placementModel = Placements::model()->findByPk($placementID);
+        if(!isset($placementModel)){
+            return array('status'=>false,'msg'=>'<hr/>===>PLACEMENT NOT FOUND!!<hr/>');
+        }
+
+        // check for duplicates
+        $dailyPublishers = DailyPublishers::model()->findByAttributes(array(
+                            'placements_id' => $placementID,
+                            'country_id'    => $countryID,
+                            'exchanges_id'  => $this->exchange_id,
+                            'date'          => $this->date,
+                            ));
+        if(isset($dailyPublishers)){
+            return array('status'=>false,'msg'=>'<hr/>===>EXISTS!!<hr/>');
+        }
+
+        return array('status'=>true);
+    }
+
+    public function downloadInfo()
+    {
         $return = '';
+        $loginData = $this->oAuthLogin();
+        // return json_encode($login);
 
-        // GET {code} //
+        if ( isset( $_GET['date']) ) {
+            $this->date = $_GET['date'];
+        } else {
+            $this->date = date('Y-m-d', strtotime('yesterday'));
+        }
 
-        // $network = Exchanges::model()->findbyPk($this->exchange_id);
-        // $apiURL = $network->api_url;
-        $oAuthURL = 'https://api.smaato.com/v1/auth/authorize/?response_type=code&client_id=552adc600b8a428e8223e211fe1ea418';
-
-        // $curl = curl_init($oAuthURL);
-        // curl_setopt($curl, CURLOPT_HEADER, false);
-        // curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        // curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json-rpc"));
-        // curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-        // $json_response = curl_exec($curl);
-        // $response = json_decode($json_response);
-
-        // return $response->code;
-        
-
-
-        // GET {access_token} //
-
-        /*
-        $tokenURL = 'https://api.smaato.com/v1/auth/token/?grant_type=authorization_code';
-        $client_id = '552adc600b8a428e8223e211fe1ea418';//$network->token1;
-        $client_secret = '05be2e86777247c28900432ac8953e361c02a821b1b14ffaa3f521e95b4490a98dbfd87f2ac54bf1986e6d77e7008865';
-        $code = '9YN7qNxMJhidO1vmDXIXE6SYis1d5z';
-        $data = array(
-             "client_id"     => $client_id,
-             "client_secret" => $client_secret,
-             "code"          => $code,
-         );
-        $data = 'client_id='.$client_id.'&client_secret='.$client_secret.'&code='.$code;
-
-        $curl = curl_init($tokenURL);
-        // curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_HEADER, false);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        // curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json-rpc"));
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-
-        $json_response = curl_exec($curl);
-        return $json_response;//levantar post
-        */
-
-        // first token
-        // {"expires_in":86400,"token_type":"Bearer","refresh_token":"zkeKsD7yzzGrFklepX6qvp1mkjkmZ2","scope":"","access_token":"nrUQcc6pHR8jLf0YNeGPuLK7bUVVLz","state":""}
-        
-
-        set_time_limit(0);
-
-        // GET REPORT //
-
-        $data_json = '{
-            "criteria": {
-                "dimension": "CountryCode",
-                "child": null
-            },
-            "period": {
-                "period_type": "fixed",
-                "start_date": "2015-07-10",
-                "end_date": "2015-07-10"
+        // get data Json
+        $getReportJson = '{
+            "reportRequest": {
+                "metrics": [
+                    "adRequests","adImpressions","clicks","earnings"
+                ],
+                "groupBy": [
+                    "site","country"
+                ],
+                "orderBy": [
+                    "site","country"
+                    ],
+                "orderType": "asc",
+                "timeFrame":"'.$this->date.':'.$this->date.'",
             }
         }';
 
-        $data = array(
-            'criteria'=>array(
-                'dimension'=>'CountryCode',
-                'child'=>null
-                ),
-            'period'=>array(
-                'period_type'=>'fixed',
-                'start_date'=>'2015-07-10',
-                'end_date'=>'2015-07-11'
-                )
-            );
-        $data_json = json_encode($data);
-        $data_json_len = strlen($data_json);
-        // $data_post = http_build_query($data);
-
-        $return.=$data_json;
-        $return.="<hr/>";
-        $return.=$data_json_len;
-        $return.="<hr/>";
-
-        $apiURL = 'http://api.smaato.com/v1/reporting';
-        $access_token = 'D84yuZwPWKXVnsLfSTwvtWM4hM0nHW';
-        $headers = array(
-            'Content-type: application/json',
-            'Accept: application/json',
-            'Authorization: Bearer '.$access_token,
-            // 'Content-Length: '.$data_json_len,
-        );
-
-
-        $curl = curl_init($apiURL);
-        curl_setopt($curl, CURLOPT_HEADER, true);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
-        curl_setopt($curl, CURLOPT_POST, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, TRUE);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_json);
-
-        $json_response = curl_exec($curl);
+        $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
+        curl_setopt($ch, CURLOPT_URL, $loginData['apiurl']);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'accountId:'.$loginData['accountId'],
+            'secretKey:'.$loginData['apikey'],
+            'sessionId:'.$loginData['sessionId'],
+            'Content-Type:application/json'
+            ));
+        curl_setopt($ch, CURLOPT_POST,true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $getReportJson);
+        $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
         
-        $return.= $json_response;
+        $newresponse = json_decode($response);
+        if (!$newresponse) {
+            Yii::log("InMobi: ERROR - decoding json. ".curl_error(), 'error', 'system.model.api.inmobi');
+            return 1;
+        }
+        curl_close($ch);
+
+
+        /*
+        if($newresponse->error=='true')
+        {
+            if($newresponse->errorList[0]->code==5001){
+                Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
+                return 0;
+            }
+            else {
+                Yii::log($newresponse->errorList[0]->message,'error', 'system.model.api.inmobi');
+                return 0;
+            }
+        }
+
+        if ( !isset($newresponse->respList) ) { // validation add after initial implementation
+            Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
+            return 0;
+        }
+        */
+
+        foreach ($newresponse->respList as $line) {
+
+            $return.= json_encode($line);
+            $return.= '<br/>';
+
+            $placementName = $line->siteName;
+            $placementID   = substr($placementName, 0, strpos($placementName, '-'));
+
+            $countryID = $this->getCountryID($line->country);
+
+            // verify placement
+            $verified = $this->verifyPlacement($placementID, $countryID);
+            $return.= json_encode($verified);
+
+            // $return.= $placementID ? $placementID : 'Unknown';
+            // $return.= ' - ';
+            // $return.= $line->country;
+            // $return.= ' - ';
+            // $return.= $countryID ? $countryID : 'Unknown';
+            $return.= '<br/>';
+
+            if($verified['status']){
+                $daily = new DailyPublishers();
+                $daily->date          = $this->date;
+                $daily->placements_id = $placementID;
+                $daily->exchanges_id  = $this->exchange_id;
+                $daily->country_id    = $countryID;
+                $daily->ad_request    = $line->adRequests;
+                $daily->imp_exchange  = $line->adImpressions;
+                $daily->clicks        = $line->clicks;
+                $daily->revenue       = $line->earnings;
+            
+                if($daily->save()) {
+                    $return.= '-->Saved<br>';
+                } else {
+                    $return.= '-->NOT Saved<br>';
+                    $return.= var_export($daily->getErrors(), true);
+                }
+            }else{
+                $return.= '-->NOT Valid<br>';
+            }
+
+            $return.= '<hr/>';
+        }
+
         return $return;
+
     }
+
 }
