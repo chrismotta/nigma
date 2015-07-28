@@ -295,8 +295,10 @@ class CampaignsController extends Controller
 	public function actionDelete($id)
 	{
 		$model = $this->loadModel($id);
+
 		switch ($model->status) {
 			case 'Active':
+			case 'Paused':
 				$model->status = 'Archived';
 				break;
 			case 'Archived':
@@ -309,7 +311,10 @@ class CampaignsController extends Controller
 				break;
 		}
 
-		$model->save();
+		if($model->save())
+			echo 'Campaign #'.$id.' archived';
+		else
+			echo 'ERROR: '.json_encode($model->getErrors());
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
