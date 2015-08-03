@@ -34,9 +34,9 @@ class InmobiExchange
         return $loginData;
     }
 
-    private function getCountryID($countryName){
+    private function getCountryID($countryCode){
 
-        $countryModel  = GeoLocation::model()->findByAttributes(array('name'=>$countryName));
+        $countryModel  = GeoLocation::model()->findByAttributes(array('ISO2'=>$countryCode));
         if(isset($countryModel))
             $countryID = $countryModel->id_location;
         else
@@ -76,6 +76,44 @@ class InmobiExchange
         $return = '';
         $loginData = $this->oAuthLogin();
         // return json_encode($login);
+
+        // get countries //
+        $ch = curl_init() or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi')); 
+        curl_setopt($ch, CURLOPT_URL, 'https://api.inmobi.com/v1.0/metadata/country.json');
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        //curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+            'accountId:'.$loginData['accountId'],
+            'secretKey:'.$loginData['apikey'],
+            'sessionId:'.$loginData['sessionId'],
+            'Content-Type:application/json'
+            ));
+        // curl_setopt($ch, CURLOPT_POST,true);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $getReportJson);
+        $response = curl_exec($ch) or die(Yii::log("Fallo cURL session init: ".curl_error(), 'error', 'system.model.api.inmobi'));
+        curl_close($ch);
+
+        $countryData = json_decode($response);
+        if (!$countryData) {
+            Yii::log("InMobi: ERROR - decoding json. ".curl_error(), 'error', 'system.model.api.inmobi');
+            return 1;
+        }
+
+        // $return.= var_export($countryData,true);
+        // $return.= '<hr/>';
+        $countryCodeList = array();
+        foreach ($countryData->data->country as $line) {
+            if($line->id != -1){
+                // $return.= var_export($line, true);
+                // $return.= '<hr/>';
+                $countryCodeList[$line->name] = strtoupper($line->isoCode);
+            }
+        }
+        // return json_encode($countryCodeList);
+
+
+        // stats //
 
         if ( isset( $_GET['date']) ) {
             $this->date = $_GET['date'];
@@ -150,7 +188,7 @@ class InmobiExchange
             $placementName = $line->siteName;
             $placementID   = substr($placementName, 0, strpos($placementName, '-'));
 
-            $countryID = $this->getCountryID($line->country);
+            $countryID = $this->getCountryID($countryCodeList[$line->country]);
 
             // verify placement
             $verified = $this->verifyPlacement($placementID, $countryID);

@@ -39,7 +39,6 @@ class AjillionExchange
 		}
 		// var_dump($placements_ids);
 		// $return.=  "<hr/>";
-		
 		// generic //
 
 		$params1 = array(
@@ -52,6 +51,8 @@ class AjillionExchange
 			);
 		
 		$data1 = $this->getResponse("report.publisher.get", $params1);
+		// $return.= json_encode($data1);
+		// return $return;
 		
 		foreach ($data1 as $line) {
 			$placementID = substr($line->placement, 0, strpos($line->placement, '-'));
