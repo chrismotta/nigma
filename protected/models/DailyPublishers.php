@@ -191,8 +191,8 @@ class DailyPublishers extends CActiveRecord
 		
 		$select = array(
 			't.date',
-			'placements_id',
-			'country_id',
+			't.placements_id',
+			't.country_id',
 			$sel_ad_request . ' AS ad_request', 
 			$sel_impressions . ' AS impressions', 
 			$sel_revenue . ' AS revenue',
@@ -214,7 +214,7 @@ class DailyPublishers extends CActiveRecord
 					$orderBy[] = 'placements.name ASC';
 				}
 				if($modelData['g_country']){
-					$groupBy[] = 'country_id';
+					$groupBy[] = 't.country_id';
 					$orderBy[] = 'country.name ASC';
 				}
 			}
