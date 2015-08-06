@@ -327,6 +327,17 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			// 'visible'           => $user_visibility->spend,
         ),
         array(
+			'name'              => 'profit',
+			'header'            => 'Profit',
+			'value'             => '"$ ".number_format($data->profit, 2)',
+			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
+			'footer'            => isset($totals) ? '$ '.number_format($totals->profit, 2) : '',
+			'filter'            => false,
+			// 'visible'           => $user_visibility->spend,
+        ),
+        array(
 			'name'              => 'eCPM',
 			'header'            => 'eCPM',
 			'value'             => '$data->impressions > 0 ? "$ ".number_format($data->revenue / $data->impressions * 1000, 2) : 0',

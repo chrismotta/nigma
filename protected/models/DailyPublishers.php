@@ -186,7 +186,8 @@ class DailyPublishers extends CActiveRecord
 
 		$sel_ad_request  = 'SUM( IF(exchanges_id='.$croupier.',ad_request,0) )';
 		$sel_impressions = 'SUM(imp_exchange) + SUM(imp_publishers)';
-		$sel_revenue     = 'SUM( IF(exchanges_id='.$ajillion_id.',revenue, revenue * '.$rs_perc.' /100) )';
+		$sel_revenue     = 'SUM( revenue )';
+		$sel_profit      = 'SUM( IF(exchanges_id='.$ajillion_id.',revenue, revenue * '.$rs_perc.' /100) )';
 		// $sel_revenue     = 'SUM( revenue * '.$rs_perc.' /100 )';
 		
 		$select = array(
@@ -196,6 +197,7 @@ class DailyPublishers extends CActiveRecord
 			$sel_ad_request . ' AS ad_request', 
 			$sel_impressions . ' AS impressions', 
 			$sel_revenue . ' AS revenue',
+			$sel_profit . ' AS profit',
 			// 'placements.sites.publishersProviders.name'
 			);
 
@@ -263,6 +265,10 @@ class DailyPublishers extends CActiveRecord
 						'revenue' => array(
 							'asc'  =>$sel_revenue. ' ASC',
 							'desc' =>$sel_revenue. ' DESC',
+						        ),
+						'profit' => array(
+							'asc'  =>$sel_profit. ' ASC',
+							'desc' =>$sel_profit. ' DESC',
 						        ),
 			            // Adding all the other default attributes
 			            'date',
