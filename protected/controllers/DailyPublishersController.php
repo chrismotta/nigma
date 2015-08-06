@@ -28,7 +28,7 @@ class DailyPublishersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'uploadCSV', 'update'),
+				'actions'=>array('index', 'uploadCSV', 'update', 'totals'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -42,6 +42,27 @@ class DailyPublishersController extends Controller
 		$model = new DailyPublishers('search');
 		$model->unsetAttributes();
 		$this->render('index', array('model'=>$model));
+	}
+
+	public function actionTotals($hash){
+		if($hash!='smaato')
+			die('Incorrect Exchange Name');
+		
+		$model=new DailyPublishers('search');
+		$model->unsetAttributes();  // clear any default values
+
+		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
+		// $publisher_id   = Publishers::model()->findByUser($userId);
+		// $user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
+
+		$this->render('totals',array(
+			'model'           => $model,
+			'publisher_id'    => 'all',
+			// 'user_visibility' => $user_visibility,
+			'preview'         => true,
+			'userId'          => 'all',
+			'hash' => $hash
+		));
 	}
 
 	public function actionUploadCSV() {

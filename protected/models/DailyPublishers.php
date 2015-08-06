@@ -163,11 +163,17 @@ class DailyPublishers extends CActiveRecord
 		$criteria->with = array( 
 			'placements',
 			'placements.sites',
+			'placements.sites.publishersProviders.providers',
 			'placements.sizes',
 			'country',
 			// 'placements.sites.publishersProviders',
 		);
-		$criteria->compare('sites.publishers_providers_id', $modelData['publisherID']);
+
+		if($modelData['publisherID']=='all'){
+			$criteria->compare('exchanges_id', 2);//smaato
+		}else{
+			$criteria->compare('sites.publishers_providers_id', $modelData['publisherID']);
+		}
 		
 		if ( $modelData['dateStart'] != NULL && $modelData['dateEnd'] != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($modelData['dateStart'])));
@@ -189,22 +195,28 @@ class DailyPublishers extends CActiveRecord
 			'country_id',
 			$sel_ad_request . ' AS ad_request', 
 			$sel_impressions . ' AS impressions', 
-			$sel_revenue . ' AS revenue'
+			$sel_revenue . ' AS revenue',
+			// 'placements.sites.publishersProviders.name'
 			);
 
 		if(!$totals){
-			// if(!$sum) $select[] = '';
-			if($modelData['g_date']){
-				$groupBy[] = 'date(t.date)';
-				$orderBy[] = 't.date DESC';
-			}
-			if($modelData['g_placement']){
-				$groupBy[] = 'placements_id';
-				$orderBy[] = 'placements.name ASC';
-			}
-			if($modelData['g_country']){
-				$groupBy[] = 'country_id';
-				$orderBy[] = 'country.name ASC';
+			if($modelData['publisherID']=='all'){
+				$groupBy[] = 'providers.id';
+				$orderBy[] = 'providers.name ASC';
+			}else{
+				// if(!$sum) $select[] = '';
+				if($modelData['g_date']){
+					$groupBy[] = 'date(t.date)';
+					$orderBy[] = 't.date DESC';
+				}
+				if($modelData['g_placement']){
+					$groupBy[] = 'placements_id';
+					$orderBy[] = 'placements.name ASC';
+				}
+				if($modelData['g_country']){
+					$groupBy[] = 'country_id';
+					$orderBy[] = 'country.name ASC';
+				}
 			}
 
 			if(isset($groupBy)) $criteria->group  = implode(',', $groupBy);
