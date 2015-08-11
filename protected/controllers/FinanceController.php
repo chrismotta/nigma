@@ -615,11 +615,15 @@ class FinanceController extends Controller
 		$period     = date('Y-m-d', mktime(0,0,0, $month, '01', $year));
 		$date       = date('Y-m-d H:i:s', strtotime('NOW'));
 
-		$advertiser = Advertisers::model()->findByPk($id);
+		if($id!=0)
+			$advertiser = Advertisers::model()->findByPk($id);
 		
 		$criteria        = new CDbCriteria();
 		$criteria->with  = array('regions.financeEntities');
-		$criteria->compare('financeEntities.advertisers_id', $id);
+
+		if($id!=0)
+			$criteria->compare('financeEntities.advertisers_id', $id);
+		
 		$opportunities   = Opportunities::model()->findAll($criteria);
 		foreach ($opportunities as $opportunity) {
 			echo "#".$opportunity->id.": ";
