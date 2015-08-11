@@ -396,3 +396,7 @@ tbody [class^="icon-"]{
     text-align: center;
     margin: 10px;
 }
+
+.table thead th {
+    line-height: 13px !important;
+}

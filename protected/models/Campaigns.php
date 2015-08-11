@@ -180,7 +180,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('t.wifi',$this->wifi);
 		$criteria->compare('formats_id',$this->formats_id);
 		$criteria->compare('cap',$this->cap,true);
-		$criteria->compare('model',$this->model,true);
+		$criteria->compare('t.model',$this->model,true);
 		$criteria->compare('ip',$this->ip);
 		$criteria->compare('devices_id',$this->devices_id);
 		$criteria->compare('url',$this->url,true);
@@ -206,6 +206,8 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('advertisers.name',$this->advertisers_name, true);
 		$criteria->compare('opportunities.rate',$this->opportunities_rate, true);
 		$criteria->compare('opportunities.carrier',$this->opportunities_carrier, true);
+		$criteria->compare('accountManager.name',$this->account_manager, true);
+		$criteria->compare('accountManager.lastname',$this->account_manager, true, 'OR');
 		
 		if ($accountManager != NULL)
 			$criteria->compare('accountManager.id',$accountManager);
@@ -232,7 +234,7 @@ class Campaigns extends CActiveRecord
 			FilterManager::model()->addUserFilter($criteria, 'daily');
 
 		$criteria->compare('financeEntities.name',$this->financeEntities_name, true);
-		$criteria->compare('providers.currency',$this->net_currency, true);
+		$criteria->compare('LOWER(providers.currency)', strtolower($this->net_currency), true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
 
 		return new CActiveDataProvider($this, array(
