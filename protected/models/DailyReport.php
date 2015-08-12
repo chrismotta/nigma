@@ -804,7 +804,7 @@ class DailyReport extends CActiveRecord
 		$select = array(
 			'SUM(IF(imp_adv IS NULL,imp,imp_adv)) AS imp',
 			'SUM(clics) AS clics',
-			'SUM(IF(conv_adv IS NULL,conv_api,conv_adv) AS conv_api',
+			'SUM(IF(conv_adv IS NULL,conv_api,conv_adv)) AS conv_api',
 			'SUM(revenue) AS revenue'
 			);
 		
