@@ -801,19 +801,24 @@ class DailyReport extends CActiveRecord
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
 		}
 
-		$criteria->select = '';
+		$select = array(
+			'SUM(IF(imp_adv IS NULL,imp,imp_adv)) AS imp',
+			'SUM(clics) AS clics',
+			'SUM(IF(conv_adv IS NULL,conv_api,conv_adv) AS conv_api',
+			'SUM(revenue) AS revenue'
+			);
 		
 		if(!$totals){
 
 			$criteria->group = '';
-			if(!$sum) $criteria->select .= 'date, ';
+			if(!$sum) $select[] = 'date';
 			if(!$sum) $criteria->group  .= 'date(t.date), ';
 			
 			$criteria->group .= 'opportunities.id';
 			
 		}
 				
-		$criteria->select .= 'SUM(imp) AS imp, SUM(clics) AS clics, SUM(conv_api) AS conv_api, SUM(revenue) AS revenue';
+		$criteria->select = $select;
 
 		if($totals){
 			return Self::model()->find($criteria);
