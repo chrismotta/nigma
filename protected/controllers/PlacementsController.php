@@ -304,7 +304,7 @@ class PlacementsController extends Controller
 		$query = Yii::app()->db->createCommand()
 		    ->select('count(*) AS total')
 		    ->from('placements_has_exchanges')
-		    ->where('placements_id = 1')
+		    ->where('placements_id = '.$pid)
 		    ->queryAll();
 
 	    $count = $query[0]['total'] +1;

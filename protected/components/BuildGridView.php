@@ -57,6 +57,7 @@ class BuildGridView
     	$return = array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(

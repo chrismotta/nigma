@@ -51,7 +51,11 @@ echo '</div><!-- search-form -->'
 	'dataProvider' => $model->search(),
 	'filter'       => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->id, 
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('placements/admin').'?site=\"+$data->id)",
+		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'    => array(
 		array(

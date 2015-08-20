@@ -299,6 +299,8 @@ class CampaignsController extends Controller
 		switch ($model->status) {
 			case 'Active':
 			case 'Paused':
+			case 'Inactive':
+			case 'Pending':
 				$model->status = 'Archived';
 				break;
 			case 'Archived':

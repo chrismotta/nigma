@@ -97,7 +97,11 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->id, 
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('regions/admin').'?financeEntity=\"+$data->id)",
+		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
 		array(
@@ -126,14 +130,15 @@ $('.search-form form').submit(function(){
 			'header'=>'Commercial Name',
 			'value'=> '$data->commercial ? $data->commercial->name . " " . $data->commercial->lastname : ""',
 		),
-		array(
-			'name'=>'entity',
-			'headerHtmlOptions' => array('style' => "width: 30px"),
-		),
+		// array(
+		// 	'name'=>'entity',
+		// 	'headerHtmlOptions' => array('style' => "width: 30px"),
+		// ),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
+			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',

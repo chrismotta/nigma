@@ -161,6 +161,9 @@ class Users extends CActiveRecord
 				case 'publisher':
 					$return = "partners/previewPublishers";
 					break;
+				case 'affiliate':
+					$return = "partners/previewAffiliates";
+					break;
 				default:
 					$return = "users/admin";
 					break;

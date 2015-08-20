@@ -147,6 +147,7 @@ class OpportunitiesController extends Controller
 		$model = $this->loadModel($id);
 		switch ($model->status) {
 			case 'Active':
+			case 'Inactive':
 				if ( Campaigns::model()->count("opportunities_id=:app_id AND status='Active'", array(":app_id" => $id)) > 0 ) {
 					echo "To remove this item must delete the campaigns associated with it.";
 					Yii::app()->end();
@@ -206,7 +207,7 @@ class OpportunitiesController extends Controller
 	{
 		$model=new Opportunities('search');
 		$model->unsetAttributes();  // clear any default values
-		$model->status = 'Active';
+		$model->status = array('Active', 'Inactive');
 		if(isset($_GET['Opportunities']))
 			$model->attributes=$_GET['Opportunities'];
 

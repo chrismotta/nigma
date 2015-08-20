@@ -400,3 +400,10 @@ tbody [class^="icon-"]{
 .table thead th {
     line-height: 13px !important;
 }
+
+.deepLink{
+}
+.deepLink:hover{
+	cursor: pointer;
+	color: #005580;
+}

@@ -103,7 +103,11 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search($accountManager,$advertiser,$country),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->id, 
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('campaigns/admin').'?opportunity=\"+$data->id)",
+		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
 		array(
@@ -187,6 +191,7 @@ $('.search-form form').submit(function(){
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 70px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
+			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
@@ -197,7 +202,7 @@ $('.search-form form').submit(function(){
 
 				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
 						$("#modalOpportunities").html(dataInicial);
-						$("#modalOpportunities").modal("toggle");
+						buenoa$("#modalOpportunities").modal("toggle");
 
 				    	$.post(
 						"view/"+id,

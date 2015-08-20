@@ -68,7 +68,7 @@ class FinanceEntities extends CActiveRecord
 			array('email_adm, email_com, email_validation', 'email'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, description, country_id', 'safe', 'on'=>'search'),
+			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, description, country_id, advertiser_name, country_name, com_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -140,20 +140,20 @@ class FinanceEntities extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		$criteria->compare('t.id',$this->id);
 		$criteria->compare('advertisers_id',$this->advertisers_id);
 		$criteria->compare('commercial_id',$this->commercial_id);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('commercial_name',$this->commercial_name,true);
 		$criteria->compare('prospect',$this->prospect);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('t.status',$this->status,true);
 		$criteria->compare('address',$this->address,true);
 		$criteria->compare('state',$this->state,true);
 		$criteria->compare('zip_code',$this->zip_code,true);
 		$criteria->compare('phone',$this->phone,true);
-		$criteria->compare('contact_com',$this->contact_com,true);
+		$criteria->compare('LOWER(contact_com)',strtolower($this->contact_com),true);
 		$criteria->compare('email_com',$this->email_com,true);
-		$criteria->compare('contact_adm',$this->contact_adm,true);
+		$criteria->compare('LOWER(contact_adm)',strtolower($this->contact_adm),true);
 		$criteria->compare('email_adm',$this->email_adm,true);
 		$criteria->compare('email_validation',$this->email_validation,true);
 		$criteria->compare('currency',$this->currency,true);
@@ -169,7 +169,7 @@ class FinanceEntities extends CActiveRecord
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
 		//$criteria->compare('advertisers.cat', $cat);
 		$criteria->compare('commercial.name', $this->com_name, true);
-		$criteria->compare('commercial.lastname', $this->com_lastname, true);
+		$criteria->compare('commercial.lastname', $this->com_name, true, 'OR');
 		$criteria->compare('country.name', $this->country_name, true);
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,

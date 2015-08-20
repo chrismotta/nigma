@@ -37,7 +37,19 @@ $(document).ready(function(){
 		chartsTheme();
 
 	$('tr:has(td#date)').addClass('merged-td');
+
+	//prevent overlapping clicks
+	prevent = 0;
+
 });
+
+function deepLink(url){
+	if(prevent){
+		prevent = 0;
+	}else{
+		window.location = url;
+	}
+}
 
 function imageEgg(word, image, height){
 	if(easterCode.indexOf(word) != -1) {

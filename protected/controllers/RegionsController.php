@@ -56,7 +56,7 @@ class RegionsController extends Controller
 	{
 		$model=new Regions('search');
 		$model->unsetAttributes();  // clear any default values
-		//$model->status = 'Active';
+		$model->status = array('Active', 'Inactive');
 		if(isset($_GET['FinanceEntities']))
 			$model->attributes=$_GET['FinanceEntities'];
 
@@ -130,10 +130,13 @@ class RegionsController extends Controller
 		$model = $this->loadModel($id);
 		switch ($model->status) {
 			case 'Active':
+			case 'Inactive':
 				if ( Opportunities::model()->count("regions_id=:regions_id AND status='Active'", array(":regions_id" => $id)) > 0 ) {
 					echo "To remove this item must delete the opportunities associated with it.";
 					Yii::app()->end();
 				} else {
+					// echo "removed";
+					// Yii::app()->end();
 					$model->status = 'Archived';
 				}
 				break;
@@ -171,7 +174,7 @@ class RegionsController extends Controller
 	 */
 	public function actionArchived()
 	{
-		$model=new FinanceEntities('search');
+		$model=new Regions('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Archived';
 		if(isset($_GET['Regions']))

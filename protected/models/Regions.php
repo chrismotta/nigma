@@ -92,6 +92,7 @@ class Regions extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('t.status',$this->status);
 		$criteria->compare('region',$this->region,true);
 		$criteria->with=array('financeEntities','country');
 		$criteria->compare('country_name',$this->country_name);

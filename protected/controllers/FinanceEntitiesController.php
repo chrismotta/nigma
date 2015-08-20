@@ -63,7 +63,7 @@ class FinanceEntitiesController extends Controller
 		$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
 		$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
 		$model->unsetAttributes();  // clear any default values
-		//$model->status = 'Active';
+		$model->status = array('Active','Inactive');
 		if(isset($_GET['FinanceEntities']))
 			$model->attributes=$_GET['FinanceEntities'];
 
@@ -144,6 +144,7 @@ class FinanceEntitiesController extends Controller
 		$model = $this->loadModel($id);
 		switch ($model->status) {
 			case 'Active':
+			case 'Inactive':
 				if ( Regions::model()->count("finance_entities_id=:finance_entities_id AND status='Active'", array(":finance_entities_id" => $id)) > 0 ) {
 					echo "To remove this item must delete the opportunities associated with it.";
 					Yii::app()->end();
@@ -186,6 +187,9 @@ class FinanceEntitiesController extends Controller
 	public function actionArchived()
 	{
 		$model=new FinanceEntities('search');
+		$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+		$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
+		$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Archived';
 		if(isset($_GET['FinanceEntities']))
@@ -193,8 +197,11 @@ class FinanceEntitiesController extends Controller
 
 		$this->render('admin',array(
 			'model'=>$model,
+			'accountManager'=>$accountManager,
+			'advertiser'=>$advertiser,
+			'country'=>$country,
 			'isArchived' => true,
-		));		
+		));
 	}
 
 	public function actionDuplicate($id) 

@@ -92,7 +92,11 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->id, 
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('opportunities/admin').'?region=\"+$data->id)",
+		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
 		array(
@@ -117,6 +121,7 @@ $('.search-form form').submit(function(){
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
+			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',

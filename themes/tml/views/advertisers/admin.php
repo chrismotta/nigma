@@ -74,14 +74,20 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->id, 
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('financeEntities/admin').'?advertiser=\"+$data->id)",
+		)',
 	'columns'=>array(
 		array(
 			'name'=>'id',
 			'htmlOptions'=>array('style' => 'width: 100px'),
 		),
-		'name',
+		array(
+			'name'=>'name',
+		),
 		'prefix',
 		'cat',
 		array(
@@ -91,13 +97,17 @@ $('.search-form form').submit(function(){
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 70px"),
+			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'afterDelete' => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
 					'label' =>'Detail',
 					'icon'  =>'eye-open',
 					'click' =>'
-				    function(){
+				    function(event){
+						// event.stopPropagation();
+						// return false;
+
 				    	var id = $(this).parents("tr").attr("data-row-id");
 
 						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
@@ -113,6 +123,7 @@ $('.search-form form').submit(function(){
 								$("#modalAdvertiser").html(data);
 							}
 						)
+						event.stopPropagation();
 						return false;
 				    }
 				    ',
@@ -139,7 +150,9 @@ $('.search-form form').submit(function(){
 								$("#modalAdvertiser").html(data);
 							}
 						)
-						return false;
+
+						// event.stopPropagation();
+						// return false;
 				    }
 				    ',
 				),

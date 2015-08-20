@@ -76,6 +76,8 @@
         array('label'=>'Archive', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
             array('label'=>'Advertisers', 'url'=>array('/advertisers/archived')),
+            array('label'=>'Finance Entities', 'url'=>array('/financeEntities/archived')),
+            array('label'=>'Regions', 'url'=>array('/regions/archived')),
             //array('label'=>'IOs', 'url'=>array('/ios/archived')),
             array('label'=>'Opportunities', 'url'=>array('/opportunities/archived')),
             array('label'=>'Campaigns', 'url'=>array('/campaigns/archived')),

@@ -72,7 +72,11 @@ $('.search-form form').submit(function(){
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->providers_id, 
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('sites/admin').'?publisher=\"+$data->providers_id)",
+		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  => array(
 		// 'state',
@@ -128,6 +132,7 @@ $('.search-form form').submit(function(){
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),
+			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(

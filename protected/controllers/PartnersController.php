@@ -36,7 +36,7 @@ class PartnersController extends Controller
 				'roles'=>array('admin','publisher'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('previewAdvertisers', 'previewExcelReportAdvertisers', 'previewPublishers', 'previewExcelReportPublishers'),
+				'actions'=>array('previewAdvertisers', 'previewAffiliates', 'previewExcelReportAdvertisers', 'previewPublishers', 'previewExcelReportPublishers'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -45,35 +45,39 @@ class PartnersController extends Controller
 		);
 	}
 
-	public function actionAffiliates()
-	{
-		// if(Yii::app()->user->id)
-		// {
-			$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
-			$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
-			$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
-			
-			$dateStart = date('Y-m-d', strtotime($dateStart));
-			$dateEnd   = date('Y-m-d', strtotime($dateEnd));
-			
-			$model     = new Affiliates;
-			$provider  = Affiliates::model()->findByUser(Yii::app()->user->id)->providers_id;
-			
-			$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
+	// PUBLISHERS //
 
-			$this->render('affiliates',array(
-				'model'     =>$model,
-				'provider'  =>$provider,
-				'dateStart' =>$dateStart,
-				'dateEnd'   =>$dateEnd,
-				'sum'       =>$sum,
-				'data'      =>$data
-			));
-		// }
-		// else
-		// {			
-		// 	$this->redirect(Yii::app()->baseUrl);
-		// }	
+	public function actionAffiliates(){
+		// $this->render('maintenance');
+		$this->renderAffiliates(Yii::app()->user->id, false);
+	}
+	public function actionPreviewAffiliates($id){
+		$this->renderAffiliates($id, true);
+	}
+
+	private function renderAffiliates($userId, $preview)
+	{
+		
+		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+		$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
+		$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
+		
+		$dateStart = date('Y-m-d', strtotime($dateStart));
+		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
+		
+		$model     = new Affiliates;
+		$provider  = Affiliates::model()->findByUser($userId)->providers_id;
+		
+		$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
+
+		$this->render('affiliates',array(
+			'model'     =>$model,
+			'provider'  =>$provider,
+			'dateStart' =>$dateStart,
+			'dateEnd'   =>$dateEnd,
+			'sum'       =>$sum,
+			'data'      =>$data
+		));
 	}
 
 	// ADVERTISERS //
