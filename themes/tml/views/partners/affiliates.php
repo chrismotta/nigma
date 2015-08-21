@@ -84,12 +84,19 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 </div>
 
 <br>
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+<?php 
+	if($preview)
+		$filterAction = Yii::app()->controller->createUrl(Yii::app()->controller->id . '/' .Yii::app()->controller->action->id . '/' . $userId);
+	else
+		$filterAction = Yii::app()->controller->createUrl(Yii::app()->controller->id . '/' .Yii::app()->controller->action->id);
+	
+	$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'date-filter-form',
 		'type'                 =>'search',
 		'htmlOptions'          =>array('class'=>'well'),
 		'enableAjaxValidation' =>true,
-		'action'               => Yii::app()->getBaseUrl() . '/partners/affiliates',
+		'action'               => $filterAction,
+		// 'action'               => Yii::app()->getBaseUrl() . '/partners/affiliates',
 		'method'               => 'GET',
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 

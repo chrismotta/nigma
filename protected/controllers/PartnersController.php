@@ -76,7 +76,9 @@ class PartnersController extends Controller
 			'dateStart' =>$dateStart,
 			'dateEnd'   =>$dateEnd,
 			'sum'       =>$sum,
-			'data'      =>$data
+			'data'      =>$data,
+			'preview'   => $preview,
+			'userId'    => $userId,
 		));
 	}
 
