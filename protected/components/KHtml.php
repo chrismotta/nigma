@@ -763,6 +763,33 @@ class KHtml extends CHtml
         $list   = CHtml::listData($financeentities, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
+
+    public static function filterRegions($value, $htmlOptions = array(),$format='check',$name='region')
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All regions',
+            // 'onChange' => '
+            //     // if ( ! this.value) {
+            //     //   return;
+            //     // }
+            //     $.post(
+            //         "' . Yii::app()->getBaseUrl() . '/financeEntities/getOpportunities/"+this.value+"?format=check",
+            //         "",
+            //         function(data)
+            //         {
+            //             // alert(data);
+            //             $("#opp_ids").html(data);
+            //         }
+            //     )'
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        $criteria    = new CDbCriteria;
+        $criteria->compare('t.status','Active');
+        $criteria->with = array('country');
+        $regions     = Regions::model()->findAll($criteria);
+        $list        = CHtml::listData($regions, 'id', 'country.name');
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
+    }
     
 }
 ?>

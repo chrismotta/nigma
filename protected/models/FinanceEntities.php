@@ -134,15 +134,23 @@ class FinanceEntities extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($advertisersId=null, $commercialId=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
+		if(isset($advertisersId))
+			$criteria->compare('advertisers_id',$advertisersId);
+		else
+			$criteria->compare('advertisers_id',$this->advertisers_id);
+		
+		if(isset($commercialId))
+			$criteria->compare('t.commercial_id',$commercialId);
+		else
+			$criteria->compare('t.commercial_id',$this->commercial_id);
+
 		$criteria->compare('t.id',$this->id);
-		$criteria->compare('advertisers_id',$this->advertisers_id);
-		$criteria->compare('commercial_id',$this->commercial_id);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('commercial_name',$this->commercial_name,true);
 		$criteria->compare('prospect',$this->prospect);

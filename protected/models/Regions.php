@@ -83,14 +83,18 @@ class Regions extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($financeEntity=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
+		if(isset($financeEntity))
+			$criteria->compare('finance_entities_id',$financeEntity);
+		else
+			$criteria->compare('finance_entities_id',$this->finance_entities_id);
+
 		$criteria->compare('t.id',$this->id);
-		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('region',$this->region,true);

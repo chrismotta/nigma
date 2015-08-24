@@ -60,8 +60,11 @@ class RegionsController extends Controller
 		if(isset($_GET['Regions']))
 			$model->attributes=$_GET['Regions'];
 
+		$financeEntities   = isset($_GET['financeEntities']) ? $_GET['financeEntities'] : NULL;
+
 		$this->render('admin',array(
 			'model'=>$model,
+			'financeEntities'=>$financeEntities,
 		));
 	}
 

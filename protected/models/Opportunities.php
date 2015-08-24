@@ -164,11 +164,16 @@ class Opportunities extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search($accountManager=NULL, $advertiser=NULL, $country=NULL, $io=NULL)
+	public function search($accountManager=NULL, $advertiser=NULL, $country=NULL, $io=NULL, $region=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
+
+		if(isset($region))
+			$criteria->compare('regions_id',$region);
+		else
+			$criteria->compare('regions_id',$this->regions_id);
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('carriers_id',$this->carriers_id);
@@ -184,7 +189,6 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('server_to_server',$this->server_to_server,true);
 		$criteria->compare('startDate',$this->startDate,true);
 		$criteria->compare('endDate',$this->endDate,true);
-		$criteria->compare('regions_id',$this->regions_id);
 		$criteria->compare('regions.region',$this->regions_name);
 		$criteria->compare('freq_cap',$this->freq_cap,true);
 		$criteria->compare('imp_per_day',$this->imp_per_day);
@@ -195,7 +199,7 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('channel_description',$this->channel_description,true);
 		$criteria->compare('t.status',$this->status,true);
 
-		$criteria->with = array( 'regions','regions.country', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'carriers', 'accountManager');
+		$criteria->with = array('regions', 'regions.country', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'carriers', 'accountManager');
 		$criteria->compare('country.name', $this->country_name, true);
 		$criteria->compare('carriers.mobile_brand', $this->carrier_mobile_brand, true);
 		$criteria->compare('accountManager.name', $this->account_manager_name, true);

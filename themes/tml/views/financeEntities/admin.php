@@ -92,15 +92,16 @@ $('.search-form form').submit(function(){
     </fieldset>
 
 <?php $this->endWidget(); ?>
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php 
+$this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'financeEntities-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($advertiser, $accountManager),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array(
 		"data-row-id" => $data->id, 
 		"class" => "deepLink",
-		"onclick" => "deepLink(\"'.Yii::app()->createUrl('regions/admin').'?financeEntity=\"+$data->id)",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('regions/admin').'?financeEntities=\"+$data->id)",
 		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(

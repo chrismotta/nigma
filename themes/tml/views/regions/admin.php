@@ -68,28 +68,29 @@ $('.search-form form').submit(function(){
 <br>
 
 <?php 
-//FIXME Agregar filtros regions
-/*$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+
+$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
         'id'=>'filters-form',
         'type'=>'search',
         'htmlOptions'=>array('class'=>'well'),
         // to enable ajax validation
         'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/financeEntities/admin',
+        'action' => Yii::app()->getBaseUrl() . '/regions/admin',
         'method' => 'GET',
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 
 	<fieldset>
+	<?php echo KHtml::filterFinanceEntities($financeEntities); ?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
     </fieldset>
 
-<?php $this->endWidget();*/ ?>
+<?php $this->endWidget(); ?>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'regions-grid',
-	'dataProvider'             => $model->search(),
+	'dataProvider'             => $model->search($financeEntities),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array(

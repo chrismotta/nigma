@@ -39,6 +39,7 @@ $('.search-form form').submit(function(){
 	$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;
 	$country   = isset($_GET['country']) ? $_GET['country'] : NULL;
+	$region   = isset($_GET['region']) ? $_GET['region'] : NULL;
 ?>
 <?php if( !isset($isArchived) )  : ?>
 	<div class="botonera">
@@ -89,7 +90,7 @@ $('.search-form form').submit(function(){
 		echo KHtml::filterAccountManagers($accountManager);
 
 	echo KHtml::filterAdvertisers($advertiser);
-	//FIXME Agregar agregar filtro Regions
+	echo KHtml::filterRegions($region);
 //	echo KHtml::filterCountries($country);	  
 	?>
 
@@ -100,7 +101,7 @@ $('.search-form form').submit(function(){
 <?php $this->endWidget(); ?>
 <?php $this->widget('bootstrap.widgets.TbGridView', array(
 	'id'                       => 'opportunities-grid',
-	'dataProvider'             => $model->search($accountManager,$advertiser,$country),
+	'dataProvider'             => $model->search($accountManager,$advertiser,$country,null,$region),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array(
