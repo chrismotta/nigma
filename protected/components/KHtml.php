@@ -75,15 +75,15 @@ class KHtml extends CHtml
         $criteria->compare('t.status', 'Active');
         $criteria->order = 't.id, advertisers.name, country.ISO2';
 
-        if (FilterManager::model()->isUserTotalAccess('media'))
-            $accountManagerId=Yii::app()->user->id;
+        // if (FilterManager::model()->isUserTotalAccess('media'))
+        //     $accountManagerId=Yii::app()->user->id;
 
-        if ( $accountManagerId != NULL )
-            $criteria->compare('t.account_manager_id', $accountManagerId);
+        // if ( $accountManagerId != NULL )
+        //     $criteria->compare('t.account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
         $list = CHtml::listData($opps, 'id', 'virtualName');
-        return CHtml::dropDownList('opportunitie', $value, $list, $htmlOptions);
+        return CHtml::dropDownList('opportunity', $value, $list, $htmlOptions);
     }
 
     public static function filterOpportunitiesDate($value, $accountManagerId=NULL, $htmlOptions = array(),$io_id,$startDate,$endDate)
@@ -209,7 +209,7 @@ class KHtml extends CHtml
     public static function filterAdvertisersCategory($value, $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
-            'empty' => 'All advertisers',
+            'empty' => 'All advertiser types',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 

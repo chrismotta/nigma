@@ -74,7 +74,7 @@ if(!$is_archived){
 <br>
 <?php
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
+	$opportunity   = isset($_GET['opportunity']) ? $_GET['opportunity'] : NULL;
 	$providers       = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	$advertiser     = isset($_GET['cat']) ? $_GET['cat'] : NULL;
 ?>
@@ -97,9 +97,9 @@ if(!$is_archived){
 		if (FilterManager::model()->isUserTotalAccess('campaign.account'))
 			echo KHtml::filterAccountManagers($accountManager);
 		
-		echo KHtml::filterOpportunities($opportunitie, $accountManager);
 		echo KHtml::filterProviders($providers);
 		echo KHtml::filterAdvertisersCategory($advertiser);
+		echo KHtml::filterOpportunities($opportunity, $accountManager);
 	?>
 	  
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
@@ -109,7 +109,7 @@ if(!$is_archived){
 
 <?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
-	'dataProvider'             => $model->search($accountManager, $opportunitie, $providers, $advertiser),
+	'dataProvider'             => $model->search($accountManager, $opportunity, $providers, $advertiser),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'fixedHeader'              => true,
