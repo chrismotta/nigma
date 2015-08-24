@@ -69,12 +69,12 @@ $this->breadcrumbs=array(
 		// 'phone',
 		// 'email',
 		array(
-			'header'            =>'Contact Com',
+			'name'            =>'contact_com',
 			'value'             => '$data->providers->contact_com',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
 		array(
-			'header'            =>'Contact Adm',
+			'name'            =>'contact_adm',
 			'value'             => '$data->providers->contact_adm',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
@@ -82,11 +82,11 @@ $this->breadcrumbs=array(
 		// 'ret',
 		// 'tax_id',
 		//'net_payment',
-		array(
-			'header'            =>'Entity',
-			'value'             => '$data->providers->entity',
-			'headerHtmlOptions' => array('style' => "width: 30px"),
-		),
+		// array(
+		// 	'header'            =>'Entity',
+		// 	'value'             => '$data->providers->entity',
+		// 	'headerHtmlOptions' => array('style' => "width: 30px"),
+		// ),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),

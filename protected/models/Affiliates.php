@@ -24,6 +24,8 @@ class Affiliates extends CActiveRecord
 	public $providers_name;
 	public $commercial_name;
 	public $name; // campaigns_name use for external screen with affiliates authentication
+	public $contact_com;
+	public $contact_adm;
 
 	/**
 	 * @return string the associated database table name
@@ -47,7 +49,7 @@ class Affiliates extends CActiveRecord
 			array('phone', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, users_id, phone', 'safe', 'on'=>'search'),
+			array('providers_id, providers_name, commercial_name, contact_com, contact_adm, country_name, users_id, phone', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -78,8 +80,10 @@ class Affiliates extends CActiveRecord
 			'rate'            => 'Rate',
 			'conv'            => 'Conv',
 			'spend'           => 'Revenue',
-			'country_name'    => 'Contry',
+			'country_name'    => 'Country',
 			'providers_name'  => 'Name',
+			'contact_com'  => 'Com. Contact',
+			'contact_adm'  => 'Adm. Contact',
 		);
 	}
 
@@ -110,8 +114,11 @@ class Affiliates extends CActiveRecord
 
 		//$criteria->addCondition('providers.prospect>1');//not working
 
-		$criteria->compare('providers.country.name',$this->country_name,true);
-		$criteria->compare('providers.name',$this->providers_name,true);
+		$criteria->compare('LOWER(providers.name)',strtolower($this->providers_name),true);
+		$criteria->compare('LOWER(providers.contact_com)',strtolower($this->contact_com),true);
+		$criteria->compare('LOWER(providers.contact_adm)',strtolower($this->contact_adm),true);
+		$criteria->compare('LOWER(providers.commercial_name)',strtolower($this->commercial_name),true);
+		$criteria->compare('LOWER(country.name)',strtolower($this->country_name),true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
@@ -125,6 +132,18 @@ class Affiliates extends CActiveRecord
 		            'providers_name'=>array(
 						'asc'  =>'providers.name',
 						'desc' =>'providers.name DESC',
+		            ),
+		            'commercial_name'=>array(
+						'asc'  =>'providers.commercial_name',
+						'desc' =>'providers.commercial_name DESC',
+		            ),
+		            'contact_com'=>array(
+						'asc'  =>'providers.contact_com',
+						'desc' =>'providers.contact_com DESC',
+		            ),
+		            'contact_adm'=>array(
+						'asc'  =>'providers.contact_adm',
+						'desc' =>'providers.contact_adm DESC',
 		            ),
 		            // Adding all the other default attributes
 		            '*',

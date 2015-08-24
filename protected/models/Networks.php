@@ -48,7 +48,7 @@ class Networks extends CActiveRecord
 			array('token1, token2, token3', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, percent_off, url, use_alternative_convention_name, has_api, use_vectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
+			array('providers_id, providers_name, percent_off, url, use_alternative_convention_name, has_api, providers_has_s2s, use_vectors, query_string, token1, token2, token3', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -119,6 +119,19 @@ class Networks extends CActiveRecord
 		$criteria->compare('token1',$this->token1,true);
 		$criteria->compare('token2',$this->token2,true);
 		$criteria->compare('token3',$this->token3,true);
+
+		$criteria->compare('LOWER(providers.name)',strtolower($this->providers_name),true);
+		switch($this->providers_has_s2s){
+			case strtolower('yes'):
+				$has_s2s = 1;
+				break;
+			case strtolower('no'):
+				$has_s2s = 0;
+				break;
+			default:
+				$has_s2s = '';
+		}
+		$criteria->compare('providers.has_s2s',$has_s2s,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
