@@ -31,6 +31,8 @@
  */
 class DailyPublishers extends CActiveRecord
 {
+	public $site;
+	public $publisher;
     public $csvFile;
     public $impressions;
     public $countryName;
@@ -59,7 +61,7 @@ class DailyPublishers extends CActiveRecord
             array('csvFile', 'file', 'wrongType'=>'ERROR: Wrong File Type', 'types'=>'csv', 'allowEmpty'=>false, 'on'=>'dump'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, date, placements_id, country_id, devices_id, ad_request, imp_exchange, imp_publishers, imp_passback, imp_count, impressions, clicks, revenue, spend, profit, profit_percent, eCPM, comment, exchanges_id', 'safe', 'on'=>'search'),
+			array('id, site, publisher, date, placements_id, country_id, devices_id, ad_request, imp_exchange, imp_publishers, imp_passback, imp_count, impressions, clicks, revenue, spend, profit, profit_percent, eCPM, comment, exchanges_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -104,6 +106,8 @@ class DailyPublishers extends CActiveRecord
 			'exchanges_id'   => 'Exchanges',
 			'csvFile'        => 'CSV File',
 			'impressions'    => 'Impressions',
+			'site'           => 'Site',
+			'publisher'      => 'Publisher',
 		);
 	}
 
@@ -142,8 +146,16 @@ class DailyPublishers extends CActiveRecord
 		$criteria->compare('profit_percent',$this->profit_percent,true);
 		$criteria->compare('eCPM',$this->eCPM,true);
 		$criteria->compare('comment',$this->comment,true);
-		$criteria->compare('exchanges_id',$this->exchanges_id);
 		$criteria->compare('impressions',$this->impressions);
+
+		$criteria->with = array(
+			'exchanges',
+			'placements.sites',
+			'placements.sites.publishersProviders.providers',
+			);
+		$criteria->compare('LOWER(exchanges.name)',strtolower($this->exchanges_id),true);
+		$criteria->compare('LOWER(sites.name)',strtolower($this->site),true);
+		$criteria->compare('LOWER(providers.name)',strtolower($this->publisher),true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -152,7 +164,20 @@ class DailyPublishers extends CActiveRecord
 		    ),
 			'sort'=>array(
 				'defaultOrder' => 't.date DESC, t.placements_id ASC, t.exchanges_id ASC',
-			)
+				'attributes'   =>array(
+		            // Adding all the other default attributes
+		            'site' => array(
+						'asc'  =>'sites.name',
+						'desc' =>'sites.name DESC',
+		            ),
+		            'publisher' => array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),
+		            '*',
+		        ),
+		    ),
+
 		));
 	}
 

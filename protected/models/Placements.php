@@ -54,7 +54,7 @@ class Placements extends CActiveRecord
 			array('product', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, sites_id, sizes_id, name, product, status, ext_id, model, publisher_percentage, rate, publishers_name, sites_name', 'safe', 'on'=>'search'),
+			array('id, sites_id, sizes_id, size, name, product, status, ext_id, model, publisher_percentage, rate, publishers_name, sites_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -123,7 +123,7 @@ class Placements extends CActiveRecord
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('t.product',$this->product,true);
 		$criteria->compare('t.ext_id',$this->ext_id);
-		$criteria->compare('t.model',$this->model,true);
+		$criteria->compare('LOWER(t.model)',strtolower($this->model),true);
 		$criteria->compare('t.publisher_percentage',$this->publisher_percentage);
 		$criteria->compare('t.rate',$this->rate,true);
 

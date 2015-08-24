@@ -80,7 +80,7 @@ class DailyReport extends CActiveRecord
 			array('date', 'date',  'format'=>'yyyy-M-d'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, rate, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country', 'safe', 'on'=>'search'),
 			// array('imp, clics, conv_api, revenue, rate', 'safe', 'on'=>'searchAdvertisers'),
 		);
 	}
@@ -1040,13 +1040,14 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		//if ( $providers == NULL) $criteria->compare('providers_id',$this->providers_id);
-		$criteria->compare('imp',$this->imp);
-		$criteria->compare('imp_adv',$this->imp_adv);
-		$criteria->compare('clics',$this->clics);
-		$criteria->compare('conv_api',$this->conv_api);
-		$criteria->compare('conv_adv',$this->conv_adv);
+		$criteria->compare('opportunities.rate',$this->rate,true);
+		$criteria->compare('imp',$this->imp,true);
+		$criteria->compare('imp_adv',$this->imp_adv,true);
+		$criteria->compare('clics',$this->clics,true);
+		$criteria->compare('conv_api',$this->conv_api,true);
+		$criteria->compare('conv_adv',$this->conv_adv,true);
 		$criteria->compare('spend',$this->spend,true);
-		$criteria->compare('revenue',$this->revenue);
+		$criteria->compare('revenue',$this->revenue,true);
 		$criteria->compare('is_from_api',$this->is_from_api);
 		//$criteria->compare('comment',$this->comment);
 

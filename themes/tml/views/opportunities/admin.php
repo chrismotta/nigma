@@ -114,22 +114,22 @@ $('.search-form form').submit(function(){
 			'name'              =>'id',
 			'headerHtmlOptions' => array('style'=>'width:10px'),
 		),
-		array( 
-			'name'              => 'regions_name',
-			'header'            => 'Finance Entity',
-			'value'             => '$data->regions->region',
-			'headerHtmlOptions' => array('style'=>'width: 90px'),
-		),
-		array( 
-			'name'              =>'finance_entities_name',
-			'value'             =>'$data->regions->financeEntities->name',
-			'headerHtmlOptions' => array('style'=>'width: 90px'),
-		),
+		// array( 
+		// 	'name'              => 'regions_name',
+		// 	// 'header'            => 'Region',
+		// 	'value'             => '$data->regions->country->name',
+		// 	'headerHtmlOptions' => array('style'=>'width: 90px'),
+		// ),
 		array(
 			'name'              =>'advertiser_name',
 			'value'             =>'$data->regions->financeEntities->advertisers->name',
 			'headerHtmlOptions' => array('style'=>'width: 90px'),
 		),
+		// array( 
+		// 	'name'              =>'finance_entities_name',
+		// 	'value'             =>'$data->regions->financeEntities->name',
+		// 	'headerHtmlOptions' => array('style'=>'width: 90px'),
+		// ),
 		array(
 			'name'              =>'country_name',
 			'value'             =>'$data->regions->country ? $data->regions->country->name : ""',
@@ -175,18 +175,18 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style'=>'width: 80px'),
 		),
 		// 'server_to_server',
-		array( 
-			'name'  =>'startDate',
-			'value' =>'$data->startDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->startDate)) : ""',
-			'headerHtmlOptions' => array('style'=>'width: 80px'),
-			'filter' => false,
-		),
-		array( 
-			'name'  =>'endDate',
-			'value' =>'$data->endDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->endDate)) : ""',
-			'headerHtmlOptions' => array('style'=>'width: 80px'),
-			'filter' => false,
-		),
+		// array( 
+		// 	'name'  =>'startDate',
+		// 	'value' =>'$data->startDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->startDate)) : ""',
+		// 	'headerHtmlOptions' => array('style'=>'width: 80px'),
+		// 	'filter' => false,
+		// ),
+		// array( 
+		// 	'name'  =>'endDate',
+		// 	'value' =>'$data->endDate !== "0000-00-00 00:00:00" ? date("d-m-Y", strtotime($data->endDate)) : ""',
+		// 	'headerHtmlOptions' => array('style'=>'width: 80px'),
+		// 	'filter' => false,
+		// ),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 70px"),

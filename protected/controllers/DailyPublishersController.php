@@ -41,6 +41,10 @@ class DailyPublishersController extends Controller
 	{
 		$model = new DailyPublishers('search');
 		$model->unsetAttributes();
+
+		if(isset($_GET['DailyPublishers']))
+			$model->attributes=$_GET['DailyPublishers'];
+
 		$this->render('index', array('model'=>$model));
 	}
 

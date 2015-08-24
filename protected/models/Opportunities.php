@@ -196,7 +196,7 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('t.status',$this->status,true);
 
 		$criteria->with = array( 'regions','regions.country', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'carriers', 'accountManager');
-		$criteria->compare('country.ISO2', $this->country_name, true);
+		$criteria->compare('country.name', $this->country_name, true);
 		$criteria->compare('carriers.mobile_brand', $this->carrier_mobile_brand, true);
 		$criteria->compare('accountManager.name', $this->account_manager_name, true);
 		$criteria->compare('accountManager.lastname', $this->account_manager_lastname, true);

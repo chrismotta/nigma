@@ -40,7 +40,7 @@ class Regions extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, finance_entities_id, country_id, region', 'safe', 'on'=>'search'),
+			array('id, finance_entities_id, country_id, region, finance_entities_name, country_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -89,14 +89,14 @@ class Regions extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		$criteria->compare('t.id',$this->id);
 		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('region',$this->region,true);
 		$criteria->with=array('financeEntities','country');
-		$criteria->compare('country_name',$this->country_name);
-		$criteria->compare('finance_entities_name',$this->finance_entities_name);
+		$criteria->compare('country.name',$this->country_name,true);
+		$criteria->compare('financeEntities.name',$this->finance_entities_name,true);
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			'pagination' => array(

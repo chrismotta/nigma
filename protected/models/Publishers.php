@@ -57,7 +57,7 @@ class Publishers extends CActiveRecord
 			array('publisher_percentage, rate', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('providers_id, account_manager_id, publisher_percentage, rate, users_id', 'safe', 'on'=>'search'),
+			array('providers_id, account_manager_id, publisher_percentage, rate, users_id, providers_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -110,6 +110,7 @@ class Publishers extends CActiveRecord
 		$criteria->with = array('providers');
 
 		$criteria->compare('t.providers_id',$this->providers_id);
+		$criteria->compare('LOWER(providers.name)',strtolower($this->providers_name),true);
 		$criteria->compare('providers.status','Active',true);
 		// $criteria->compare('t.name',$this->name,true);
 		$criteria->compare('account_manager_id',$this->account_manager_id);

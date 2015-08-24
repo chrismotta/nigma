@@ -36,13 +36,11 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 			'value' => '"#".$data->placements_id . ": " . $data->placements->name',
 			),
 		array(
-			'header'=> 'Sites',
-			'name'  => 'placements_id',
+			'name'  => 'site',
 			'value' => '$data->placements->sites->name',
 			),
 		array(
-			'header'=> 'Publishers',
-			'name'  => 'placements_id',
+			'name'  => 'publisher',
 			'value' => '$data->placements->sites->publishersProviders->providers->name',
 			),
 		// 'country_id',

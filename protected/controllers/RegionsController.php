@@ -57,8 +57,8 @@ class RegionsController extends Controller
 		$model=new Regions('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = array('Active', 'Inactive');
-		if(isset($_GET['FinanceEntities']))
-			$model->attributes=$_GET['FinanceEntities'];
+		if(isset($_GET['Regions']))
+			$model->attributes=$_GET['Regions'];
 
 		$this->render('admin',array(
 			'model'=>$model,
