@@ -191,7 +191,8 @@ class CampaignsController extends Controller
 			if($model->status == '')
 				$model->status = 'Pending';
 			if($model->save())
-				$this->redirect($backURL);
+				die();
+				// $this->redirect($backURL);
 		}
 
 		$this->renderFormAjax($model, 'Update');

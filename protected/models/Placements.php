@@ -109,15 +109,19 @@ class Placements extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($site=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
+		if(isset($site))
+			$criteria->compare('t.sites_id',$site);
+		else
+			$criteria->compare('t.sites_id',$this->sites_id);
+
 		$criteria->compare('t.id',$this->id);
 		// $criteria->compare('t.exchanges_id',$this->exchanges_id);
-		$criteria->compare('t.sites_id',$this->sites_id);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('t.sizes_id',$this->sizes_id);
 		$criteria->compare('t.name',$this->name,true);

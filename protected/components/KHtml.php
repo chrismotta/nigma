@@ -75,11 +75,11 @@ class KHtml extends CHtml
         $criteria->compare('t.status', 'Active');
         $criteria->order = 't.id, advertisers.name, country.ISO2';
 
-        // if (FilterManager::model()->isUserTotalAccess('media'))
-        //     $accountManagerId=Yii::app()->user->id;
+        if (FilterManager::model()->isUserTotalAccess('media'))
+            $accountManagerId=Yii::app()->user->id;
 
-        // if ( $accountManagerId != NULL )
-        //     $criteria->compare('t.account_manager_id', $accountManagerId);
+        if ( $accountManagerId != NULL )
+            $criteria->compare('t.account_manager_id', $accountManagerId);
 
         $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
         $list = CHtml::listData($opps, 'id', 'virtualName');
@@ -788,6 +788,32 @@ class KHtml extends CHtml
         $criteria->with = array('country');
         $regions     = Regions::model()->findAll($criteria);
         $list        = CHtml::listData($regions, 'id', 'country.name');
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
+    }
+
+    public static function filterPublishers($value, $htmlOptions = array(),$format='check',$name='publisher')
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All publishers',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        $criteria    = new CDbCriteria;
+        $criteria->compare('t.status','Active');
+        $criteria->join = 'INNER JOIN publishers on(t.id = publishers.providers_id)';
+        $publishers  = Providers::model()->findAll($criteria);
+        $list        = CHtml::listData($publishers, 'id', 'name');
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
+    }
+    public static function filterSites($value, $htmlOptions = array(),$format='check',$name='site')
+    {
+        $defaultHtmlOptions = array(
+            'empty' => 'All sites',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+        // $criteria    = new CDbCriteria;
+        // $criteria->compare('t.status','Active');
+        $sites = Sites::model()->findAll();
+        $list  = CHtml::listData($sites, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
     

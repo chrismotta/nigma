@@ -44,11 +44,34 @@ echo '</div><!-- search-form -->'
 */
 ?>
 
+<br>
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+        'id'=>'date-filter-form',
+        'type'=>'search',
+        'htmlOptions'=>array('class'=>'well'),
+        // to enable ajax validation
+        'enableAjaxValidation'=>true,
+        'action' => Yii::app()->getBaseUrl() . '/' . Yii::app()->controller->getId().'/'.Yii::app()->controller->getAction()->getId(),
+        'method' => 'GET',
+        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+
+<fieldset>
+
+	<?php echo KHtml::filterPublishers($publisher); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+
+</fieldset>
+<?php $this->endWidget(); ?>
+
+
+
 <?php BuildGridView::createButton($this, 'modalSites', 'Create Site'); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'sites-grid',
-	'dataProvider' => $model->search(),
+	'dataProvider' => $model->search($publisher),
 	'filter'       => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array(

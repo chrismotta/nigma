@@ -81,15 +81,19 @@ class Sites extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($publisher=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
 		$criteria=new CDbCriteria;
 
+		if(isset($publisher))
+			$criteria->compare('publishers_providers_id',$publisher);
+		else
+			$criteria->compare('publishers_providers_id',$this->publishers_providers_id);
+
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.name',$this->name,true);
-		$criteria->compare('publishers_providers_id',$this->publishers_providers_id);
 		$criteria->with = array('publishersProviders', 'publishersProviders.providers');
 		$criteria->compare('LOWER(providers.name)', strtolower($this->publishers_name), true);
 

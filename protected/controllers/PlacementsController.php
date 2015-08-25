@@ -140,11 +140,15 @@ class PlacementsController extends Controller
 		$model=new Placements('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Active';
+
+		$site = isset($_GET['site']) ? $_GET['site'] : null;
+
 		if(isset($_GET['Placements']))
 			$model->attributes=$_GET['Placements'];
 
 		$this->render('admin',array(
 			'model'=>$model,
+			'site' => $site,
 		));
 	}
 

@@ -129,11 +129,15 @@ class SitesController extends Controller
 	{
 		$model=new Sites('search');
 		$model->unsetAttributes();  // clear any default values
+
+		$publisher = isset($_GET['publisher']) ? $_GET['publisher'] : null;
+
 		if(isset($_GET['Sites']))
 			$model->attributes=$_GET['Sites'];
 
 		$this->render('admin',array(
 			'model'=>$model,
+			'publisher' => $publisher,
 		));
 	}
 
