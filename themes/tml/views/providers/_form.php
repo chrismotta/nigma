@@ -15,7 +15,8 @@ echo $form->textFieldRow($model, 'entity', KHtml::enumItem($model, 'entity'));
 echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
 
 // Provider info
-echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name'));
+    // $country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'type desc, name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
+echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name'));
 echo $form->dropDownListRow($model, 'model', KHtml::enumItem($model, 'model'));
 echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
 echo $form->dropDownListRow($model, 'deal', KHtml::enumItem($model, 'deal'), array(
