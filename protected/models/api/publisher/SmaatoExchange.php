@@ -200,7 +200,7 @@ class SmaatoExchange
                 $daily->country_id    = $countryID;
                 $daily->ad_request    = $adspace->kpi->incomingAdRequests;
                 $daily->imp_exchange  = $adspace->kpi->impressions;
-                $daily->revenue       = $adspace->kpi->grossRevenue;
+                $daily->revenue       = $adspace->kpi->grossRevenue * 0.8;
                 
                 if($daily->save()) {
                     $return.= '-->Saved<br>';
@@ -262,7 +262,7 @@ class SmaatoExchange
                     $unknown->country_id    = null;
                     $unknown->ad_request    = $adspace->kpi->incomingAdRequests;
                     $unknown->imp_exchange  = $adspace->kpi->impressions;
-                    $unknown->revenue       = $adspace->kpi->grossRevenue;
+                    $unknown->revenue       = $adspace->kpi->grossRevenue * 0.8;
         
                     // $return.='new - ';
                     // $return.=$lastPlacementID."-".$placementID."- imp:".$unknown->ad_request;
@@ -274,7 +274,7 @@ class SmaatoExchange
                     $return.= '<hr/>----------->>>>>> same (unknown)<hr/>';
                     $unknown->ad_request   += $adspace->kpi->incomingAdRequests;
                     $unknown->imp_exchange += $adspace->kpi->impressions;
-                    $unknown->revenue      += $adspace->kpi->grossRevenue;
+                    $unknown->revenue      += $adspace->kpi->grossRevenue * 0.8;
         
                     // $return.='same - ';
                     // $return.=$lastPlacementID."-".$placementID."- imp:".$unknown->ad_request;
