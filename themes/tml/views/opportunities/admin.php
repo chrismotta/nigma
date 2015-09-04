@@ -279,7 +279,13 @@ $('.search-form form').submit(function(){
 	),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalOpportunities')); ?>
+<?php 
+$this->beginWidget('bootstrap.widgets.TbModal', 
+	array(
+		'id'    => 'modalOpportunities',
+		'htmlOptions' => array('data-backdrop'=>'static')
+		)); 
+?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"><h1>Opportunities</h1></div>

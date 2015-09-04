@@ -250,7 +250,13 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalRegions')); ?>
+<?php 
+$this->beginWidget('bootstrap.widgets.TbModal', 
+	array(
+		'id'    => 'modalRegions',
+		'htmlOptions' => array('data-backdrop'=>'static')
+		)); 
+?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"><h1>Opportunities</h1></div>

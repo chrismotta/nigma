@@ -381,7 +381,13 @@ if(!$is_archived){
 )); */?>
 </div><!-- search-form -->
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalCampaigns')); ?>
+<?php 
+$this->beginWidget('bootstrap.widgets.TbModal', 
+	array(
+		'id'    => 'modalCampaigns',
+		'htmlOptions' => array('data-backdrop'=>'static')
+		)); 
+?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
