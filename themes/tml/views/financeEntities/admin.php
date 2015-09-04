@@ -267,16 +267,4 @@ $this->widget('bootstrap.widgets.TbGridView', array(
 	),
 )); ?>
 
-<?php 
-$this->beginWidget('bootstrap.widgets.TbModal', 
-	array(
-		'id'    => 'modalFinanceEntities',
-		'htmlOptions' => array('data-backdrop'=>'static')
-		)); 
-?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Opportunities</h1></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
+<?php BuildGridView::printModal($this, 'modalFinanceEntities', 'Finance Entity'); ?>

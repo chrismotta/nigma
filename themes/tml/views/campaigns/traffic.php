@@ -293,22 +293,9 @@ Yii::app()->clientScript->registerScript('search', "
 	),
 )); 
 ?>
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalTraffic','htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%'))); //,'htmlOptions'=>array('style'=>'width: 90%;margin-left:-45%')?>
 
-		<div class="modal-header"></div>
-        <div class="modal-body"></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
-
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalExcel')); ?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
-
+<?php BuildGridView::printModal($this, 'modalTraffic', 'Traffic Report', array('style'=>'width: 90%;margin-left:-45%')); ?>
+<?php BuildGridView::printModal($this, 'modalExcel', 'Traffic Report'); ?>
 
 <div class="row" id="blank-row">
 </div>

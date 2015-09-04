@@ -381,16 +381,4 @@ if(!$is_archived){
 )); */?>
 </div><!-- search-form -->
 
-<?php 
-$this->beginWidget('bootstrap.widgets.TbModal', 
-	array(
-		'id'    => 'modalCampaigns',
-		'htmlOptions' => array('data-backdrop'=>'static')
-		)); 
-?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
+<?php BuildGridView::printModal($this, 'modalCampaigns', 'Campaign'); ?>

@@ -100,13 +100,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	));
 ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalDailyReport')); ?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
+<?php BuildGridView::printModal($this, 'modalDailyReport', 'Daily Report'); ?>
 
 <div class="row" id="blank-row">
 </div>

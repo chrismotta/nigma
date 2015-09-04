@@ -2,9 +2,14 @@
 class BuildGridView
 {
 
-    public static function printModal($controller, $idModal, $tittle)
+    public static function printModal($controller, $idModal, $tittle='', $htmlOptions=array())
     {
-        $controller->beginWidget('bootstrap.widgets.TbModal', array('id'=>$idModal));
+    	$htmlOptions['data-backdrop'] = 'static';
+        $controller->beginWidget('bootstrap.widgets.TbModal', 
+        	array(
+        		'id'=>$idModal,
+        		'htmlOptions' => $htmlOptions,
+        		));
             echo '<div class="modal-header"></div>';
             echo '<div class="modal-body"><h1>'.$tittle.'</h1></div>';
             echo '<div class="modal-footer"></div>';

@@ -171,10 +171,4 @@ $this->breadcrumbs=array(
 	),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalNetworks')); ?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
+<?php BuildGridView::printModal($this, 'modalNetworks', 'Network'); ?>

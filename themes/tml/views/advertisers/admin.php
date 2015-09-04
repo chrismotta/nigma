@@ -191,16 +191,4 @@ $('.search-form form').submit(function(){
 	),
 )); ?>
 
-<?php 
-$this->beginWidget('bootstrap.widgets.TbModal', 
-	array(
-		'id'    => 'modalAdvertiser',
-		'htmlOptions' => array('data-backdrop'=>'static')
-		)); 
-?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"><h1>Advertiser</h1></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
+<?php BuildGridView::printModal($this, 'modalAdvertiser', 'Advertiser'); ?>

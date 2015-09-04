@@ -276,7 +276,9 @@ $('.search-form form').submit(function(){
 		</div>
         <div class="modal-body"></div>
 		<div class="modal-footer">
-		    Edit Placemente Waterfall. Fields with <span class="required">*</span> are required.
+		    Edit Placement Waterfall. Fields with <span class="required">*</span> are required.
 		</div>
 
 <?php $this->endWidget(); ?>
+
+<?php BuildGridView::printModal($this, 'modalPlacements', 'Placement'); ?>
