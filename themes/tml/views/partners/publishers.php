@@ -324,11 +324,11 @@ $this->widget('bootstrap.widgets.TbButton', array(
         array(
 			'name'              => 'eCPM',
 			'header'            => 'eCPM',
-			'value'             => '$data->impressions > 0 ? "$ ".number_format($data->revenue / $data->impressions * 1000, 2) : 0',
+			'value'             => '$data->impressions > 0 ? "$ ".number_format($data->profit / $data->impressions * 1000, 2) : 0',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;font-weight: bold;'),
-			'footer'            => isset($totals) && $totals->impressions > 0 ? '$ '.number_format($totals->revenue / $totals->impressions * 1000, 2) : '',
+			'footer'            => isset($totals) && $totals->impressions > 0 ? '$ '.number_format($totals->profit / $totals->impressions * 1000, 2) : '',
 			'filter'            => false,
 			// 'visible'           => $user_visibility->spend,
         ),
