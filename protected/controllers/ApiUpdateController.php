@@ -74,7 +74,7 @@ class ApiUpdateController extends Controller
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
 		
-		$this->actionReporo(); 
+		// $this->actionReporo(); //!!!!review!!!
 		// reporo disabled (works on localhost only)
 		// error:
 		/*
