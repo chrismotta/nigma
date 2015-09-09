@@ -268,17 +268,4 @@ $('.search-form form').submit(function(){
 	),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalPlacements')); ?>
-
-		<div class="modal-header">
-		    <a class="close" data-dismiss="modal">&times;</a>
-		    <h4>Waterfall for Placement <?php echo "#". $model->id; ?></h4>
-		</div>
-        <div class="modal-body"></div>
-		<div class="modal-footer">
-		    Edit Placement Waterfall. Fields with <span class="required">*</span> are required.
-		</div>
-
-<?php $this->endWidget(); ?>
-
 <?php BuildGridView::printModal($this, 'modalPlacements', 'Placement'); ?>

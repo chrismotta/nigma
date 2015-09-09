@@ -149,10 +149,11 @@ class Regions extends CActiveRecord
 	public function findByCommercialId($commercial_id)
 	{		
 		$criteria = new CDbCriteria;
+		$criteria->with = array('country');
 		$criteria->compare("financeEntities.commercial_id",$commercial_id);
 		$criteria->join='INNER JOIN finance_entities financeEntities ON( t.finance_entities_id=financeEntities.id )';
 		$criteria->group='t.id';
-		$criteria->order='t.region';
+		$criteria->order='country.name';
 		return $this->model()->findAll($criteria);
 	}
 

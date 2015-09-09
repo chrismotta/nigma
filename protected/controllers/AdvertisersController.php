@@ -267,7 +267,7 @@ class AdvertisersController extends Controller
 			$commercial = Users::model()->findByPk($model->commercial_id);
 		}
 
-		$users = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
+		$users = CHtml::listData( Users::model()->findAll( array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
 		$this->renderPartial('_form',array(
 			'model'      =>$model,

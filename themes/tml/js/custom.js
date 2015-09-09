@@ -40,6 +40,8 @@ $(document).ready(function(){
 
 	//prevent overlapping clicks
 	prevent = 0;
+	//prevent datepicker preset changes
+	presetChange = 0;
 
 });
 

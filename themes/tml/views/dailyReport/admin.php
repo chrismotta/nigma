@@ -27,6 +27,7 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php
+	$dpp            = isset($_GET['dpp']) ? $_GET['dpp'] : '2' ;
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
@@ -198,8 +199,9 @@ $('.search-form form').submit(function(){
 <fieldset class="formfilter">
 	<div class="formfilter-date">
 		<!-- <p>From:</p>  -->
+		<?php echo KHtml::datePickerPresets($dpp); ?>
+		<!-- <p>From:</p>  -->
 		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
-		
 		<!-- <p>To:</p>  -->
 		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
 	</div>

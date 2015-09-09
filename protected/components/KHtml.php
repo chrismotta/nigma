@@ -27,7 +27,8 @@ class KHtml extends CHtml
     {
         $defaultHtmlOptions = array(
             'style' => 'width: 73px',
-            'class'=>'span2'
+            'class'=>'span2',
+            'onchange' => 'if(presetChange==0)$("#dpp").val("4");',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
@@ -37,6 +38,7 @@ class KHtml extends CHtml
             'format'     => 'dd-mm-yyyy',
             'viewformat' => 'dd-mm-yyyy',
             'placement'  => 'right',
+            // 'beforeShowDay' => 'function (date){ return "ok" }',
         );
         $options = array_merge($defaultOptions, $options);
 
@@ -51,6 +53,61 @@ class KHtml extends CHtml
         $r .= '<span class="add-on"><i class="icon-calendar"></i></span>';
         $r .= '</div></label>';
         return $r;
+    }
+
+    /**
+     * Create dropdown of Advertisers
+     * @param  $value
+     * @param  $htmlOptions
+     * @return html for dropdown
+     */
+    public static function datePickerPresets($value, $htmlOptions = array())
+    {
+        
+        $defaultHtmlOptions = array(
+            // 'style'    => 'width: 73px',
+            'id'       => 'dpp',
+            'class'    => 'span2',
+            'onchange' => '
+                var today     = new Date();
+                var dateStart = new Date();
+                var dateEnd   = new Date();
+                presetChange = 1;
+                switch (this.value) {
+                    case "1":
+                        break;
+                    case "2":
+                        dateStart.setDate( today.getDate()-1 );
+                        dateEnd.setDate( today.getDate()-1 );
+                        break;
+                    case "3":
+                        dateStart.setDate( today.getDate()-8 );
+                        dateEnd.setDate( today.getDate()-1 );
+                        break;
+                    
+                    default:
+                        break;
+                };
+                $("#dateStart").datepicker( "setDate", dateStart );
+                $("#dateEnd").datepicker( "setDate", dateEnd );
+                presetChange = 0;
+                '
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);    
+       
+        $list = array(
+            1 =>'Today',
+            2 =>'Yesterday',
+            3 =>'Last 7 days',
+            4 =>'Custom',
+            );
+
+        $return = '';
+        $return.= '<label>';
+        $return.= CHtml::dropDownList('dpp', $value, $list, $htmlOptions);
+        $return.= '</label>';
+        
+        return $return;
     }
 
     /**
@@ -759,6 +816,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         $criteria=new CDbCriteria;
         $criteria->compare('status','Active');
+        $criteria->order = 'name';
         $financeentities = FinanceEntities::model()->findAll($criteria);
         $list   = CHtml::listData($financeentities, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
@@ -786,6 +844,7 @@ class KHtml extends CHtml
         $criteria    = new CDbCriteria;
         $criteria->compare('t.status','Active');
         $criteria->with = array('country');
+        $criteria->order = 'name';
         $regions     = Regions::model()->findAll($criteria);
         $list        = CHtml::listData($regions, 'id', 'country.name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
@@ -798,6 +857,7 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         $criteria    = new CDbCriteria;
+        $criteria->order = 'name';
         $criteria->compare('t.status','Active');
         $criteria->join = 'INNER JOIN publishers on(t.id = publishers.providers_id)';
         $publishers  = Providers::model()->findAll($criteria);
@@ -812,7 +872,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         // $criteria    = new CDbCriteria;
         // $criteria->compare('t.status','Active');
-        $sites = Sites::model()->findAll();
+        $sites = Sites::model()->findAll(array('order'=>'name'));
         $list  = CHtml::listData($sites, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }

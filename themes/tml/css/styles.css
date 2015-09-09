@@ -332,7 +332,7 @@ fieldset hr {
 
 /* Filter forms */
 .formfilter .select2-choices {
-	height: 64px!important;
+	height: 98px!important;
 	overflow-y: scroll;
 }
 .formfilter .select2-container {

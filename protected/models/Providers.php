@@ -263,14 +263,14 @@ class Providers extends CActiveRecord
 	{
 		switch ($type) {
 			case 1:
-				return Affiliates::model()->with('providers')->findAll();
+				return Affiliates::model()->with('providers')->findAll(array('order'=>'providers.name'));
 			case 2:
 				//return Networks::model()->with('providers')->findAll();
 				return Networks::model()->with(
 					array('providers'=>array('condition'=>'status = "Active"')))
-					->findAll();
+					->findAll(array('ordesr'=>'providers.name'));
 			case 3:
-				return Publishers::model()->with('providers')->findAll();
+				return Publishers::model()->with('providers')->findAll(array('order'=>'providers.name'));
 		}
 		return array();
 	}

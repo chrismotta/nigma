@@ -219,7 +219,7 @@ class RegionsController extends Controller
 
 	public function renderFormAjax($model) 
 	{
-		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'type desc, name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
 		$financeEntities = CHtml::listData(FinanceEntities::model()->findAll( array('order'=>'name', "condition"=>"status='Active'") ), 'id', 'name' );
 
 		$this->renderPartial('_form',array(
