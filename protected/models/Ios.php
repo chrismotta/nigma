@@ -15,6 +15,8 @@
  */
 class Ios extends CActiveRecord
 {
+	public $financeEntitiesName;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -33,10 +35,11 @@ class Ios extends CActiveRecord
 		return array(
 			array('finance_entities_id, date', 'required'),
 			array('id, finance_entities_id', 'numerical', 'integerOnly'=>true),
+			array('budget', 'numerical', 'integerOnly'=>false),
 			array('status', 'length', 'max'=>7),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, finance_entities_id, date, status', 'safe', 'on'=>'search'),
+			array('id, finance_entities_id, date, status, financeEntitiesName, budget', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -62,6 +65,7 @@ class Ios extends CActiveRecord
 			'id' => 'ID',
 			'finance_entities_id' => 'Finance Entities',
 			'date' => 'Date',
+			'budget' => 'Budget',
 			'status' => 'Status',
 		);
 	}
@@ -84,13 +88,29 @@ class Ios extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
+		$criteria->with = array('financeEntities');
 		$criteria->compare('id',$this->id);
 		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('date',$this->date,true);
+		$criteria->compare('budget',$this->budget,true);
 		$criteria->compare('status',$this->status,true);
+		$criteria->compare('financeEntities.name',$this->financeEntitiesName,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),'sort'     => array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'financeEntitiesName'=>array(
+						'asc'  =>'financeEntities.name',
+						'desc' =>'financeEntities.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),
 		));
 	}
 

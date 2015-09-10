@@ -33,6 +33,9 @@
         if ( ! $model->isNewRecord ) {
             echo $form->textFieldRow($model, 'id', array('type'=>'hidden', 'class'=>'span3', 'readonly'=>true));
         }
+
+            echo $form->hiddenField($model, 'date', array('type'=>"hidden",'value'=>date('Y-m-d')) );
+            /*
             echo $form->datepickerRow($model, 'date', array(
                     'options' => array(
                         'autoclose'      => true,
@@ -49,12 +52,20 @@
                         'append' => '<label for="Ios_date_form"><i class="icon-calendar"></i></label>',
                     )
             );
+            */
             echo'<div class="control-group">
                     <label class="control-label required" for="Ios_date">Fiance Enttity <span class="required">*</span></label>
                     <div class="controls">';
             echo KHtml::filterFinanceEntities(null,array('class'=>'span3'),'check','Ios[finance_entities_id]');
             //echo $form->textFieldRow($model, 'finance_entities_id', array('class'=>'span3'));
-            echo '</div></div><br><span id="opp_ids"></span>';
+            echo '</div><br><span id="opp_ids"></span>';
+            echo'<label class="control-label required" for="Ios_date">Fiance Enttity <span class="required">*</span></label>
+                    <div class="controls">';
+            echo KHtml::filterFinanceEntities(null,array('class'=>'span3'),'check','Ios[finance_entities_id]');
+            //echo $form->textFieldRow($model, 'finance_entities_id', array('class'=>'span3'));
+            echo '</div><br><span id="opp_ids"></span>';
+
+            echo $form->textFieldRow($model, 'budget', array('placeholder'=>'Open'));
         ?>
         
     <?php //echo CHtml::submitButton($model->isNewRecord ? 'Create' : 'Save'); ?>

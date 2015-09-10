@@ -6,7 +6,7 @@ class IosController extends Controller
 	 * @var string the default layout for the views. Defaults to '//layouts/column2', meaning
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
-	public $layout='//layouts/column2';
+	// public $layout='//layouts/column2';
 
 	/**
 	 * @return array action filters
@@ -28,7 +28,7 @@ class IosController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','generatePdf','uploadPdf','viewPdf'),
+				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','browsePdf', 'downloadPdf', 'uploadPdf','viewPdf'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -181,10 +181,17 @@ class IosController extends Controller
 	}
 
 
-	public function actionGeneratePdf($id) 
+	public function actionBrowsePdf($id) {
+		$this->generatePdf($id, 'I');
+	}
+	public function actionDownloadPdf($id) {
+		$this->generatePdf($id, 'D');
+	}
+	private function generatePdf($id, $output) 
 	{
+		// $this->layout='//layouts/column2';
 		$model = $this->loadModel($id);
-	//	if (isset($_POST['submit'])) {
+		// if (isset($_POST['submit'])) {
 
 			$opportunities=array();
 			foreach (IosHasOpportunities::model()->getOpportunities($id) as $value) {
@@ -196,9 +203,9 @@ class IosController extends Controller
 				'io'            => $model,
 				'opportunities' => $opportunities,
 	        ));
-	        $pdf->output();
+	        $pdf->output($output);
 	        Yii::app()->end();
-//	    }
+		// }
 
 	  /*  $this->renderPartial('_generatePDF', array(
 	    	'model' => $model,

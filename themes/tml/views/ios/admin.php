@@ -58,25 +58,37 @@ $('.search-form form').submit(function(){
 	'columns'=>array(
 		array(
 			'name'=>'id',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
 		array(
 			'name'=>'date',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+		),
+		array(
+			'name'=>'financeEntitiesName',
+			'value'=>'$data->financeEntities->name',
+			// 'headerHtmlOptions' => array('style' => "width: 200px"),
+		),
+		array(
+			'name'=>'budget',
+			'value'=>'$data->budget ? $data->budget : "Open"',
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
 		array(
 			'name'=>'status',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 80px"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 120px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
-				'viewAjax' => array(
-					'label' =>'Detail',
+				'browsePdf' => array(
+					'label' =>'View PDF',
 					'icon'  =>'eye-open',
-					'click' =>'
+					'url'   => 'Yii::app()->getBaseUrl(true) . "/ios/browsePdf/" . $data->id',
+					'options' => array('target' => '_blank'),
+					/*'click' =>'
 				    function(){
 				    	var id = $(this).parents("tr").attr("data-row-id");
 
@@ -95,13 +107,13 @@ $('.search-form form').submit(function(){
 						)
 						return false;
 				    }
-				    ',
+				    ',*/
 				),
-				'generatePdf' => array(
-					'label'   => 'Generate PDF',
+				'downloadPdf' => array(
+					'label'   => 'Download PDF',
 					'icon'    => 'download',
-					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/generatePdf/" . $data->id',
-					'options' => array('target' => '_blank'),
+					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/downloadPdf/" . $data->id',
+					// 'options' => array('target' => '_blank'),
 					//'visible' => '$data->status == 10 ? false : true',
 				),
 				'uploadPdf' => array(
@@ -138,7 +150,7 @@ $('.search-form form').submit(function(){
 					//'visible' => '$data->prospect == 10 ? true : false',
 				)
 			),
-			'template' => '{viewAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
+			'template' => '{browsePdf} {downloadPdf} {uploadPdf} {viewPdf} {delete}',
 		),
 	),
 )); ?>
