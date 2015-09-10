@@ -215,6 +215,11 @@ $('.search-form form').submit(function(){
 						var dataInicial = "<iframe src=\"'.$this->createUrl('placements/waterfall/').'/"+id+"\" width=\"100%\" height=\"300px\" frameborder=\"0\" ></iframe>";
 						$("#modalPlacements .modal-body").html(dataInicial);
 
+    					var dataHeader = "<a class=\"close\" data-dismiss=\"modal\">&times;</a><h4>Placement Waterfall</h4>";
+						$("#modalPlacements .modal-header").html(dataHeader);
+						var dataFooter = "Edit Placement Waterfall";
+						$("#modalPlacements .modal-footer").html(dataFooter);
+
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	/*
 				    	$.post(

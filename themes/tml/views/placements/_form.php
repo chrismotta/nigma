@@ -76,5 +76,5 @@
 </div>
 
 <div class="modal-footer">
-    Edit Publisher attributes. Fields with <span class="required">*</span> are required.
+    Edit Placements attributes. Fields with <span class="required">*</span> are required.
 </div>
