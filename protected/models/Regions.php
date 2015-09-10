@@ -145,6 +145,13 @@ class Regions extends CActiveRecord
 		$criteria->order='t.region';
 		return $this->model()->findAll($criteria);
 	}
+	public function findByFinanceEntity($fen)
+	{		
+		$criteria = new CDbCriteria;
+		$criteria->compare('t.finance_entities_id', $fen);
+		$criteria->order='t.region';
+		return $this->model()->findAll($criteria);
+	}
 
 	public function findByCommercialId($commercial_id)
 	{		

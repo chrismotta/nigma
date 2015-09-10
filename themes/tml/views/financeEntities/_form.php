@@ -50,10 +50,11 @@
         echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'currency', $currency, array('prompt' => 'Select a currency'));
-        echo $form->textFieldRow($model, 'ret', array('class'=>'span2'), array('prepend' => '%'));
+        echo $form->textFieldRow($model, 'ret', array('class'=>'span2'), array('append' => '%'));
         echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
         //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
         echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
+        echo $form->dropDownListRow($model, 'pre_post_payment', $pre_post_payment, array('prompt' => 'Select'));
         echo $form->textFieldRow($model, 'net_payment', array('class'=>'span2'), array('append' => 'days'));
         ?>
         

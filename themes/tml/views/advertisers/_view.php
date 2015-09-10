@@ -35,13 +35,13 @@
 	),
 )); ?>
 
-<h5>Ios</h5>
+<h5>Finance Entities</h5>
 <?php 
 
-	$ios=new Ios;
+	$fent = new FinanceEntities;
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
-	'id'                       => 'ios-grid',
-	'dataProvider'             => $ios->findByAdvertisers($model->id),
+	'id'                       => 'fent-grid',
+	'dataProvider'             => $fent->findByAdvertisers($model->id),
 	'type'                     => 'striped condensed',
 	//'fixedHeader'              => true,
 	//'headerOffset'             => 50,

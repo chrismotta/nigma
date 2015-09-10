@@ -27,8 +27,8 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php
-	$dpp            = isset($_GET['dpp']) ? $_GET['dpp'] : '2' ;
-	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday' ;
+	$dpp            = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
@@ -218,7 +218,7 @@ $('.search-form form').submit(function(){
 	?>
 	<hr>
 	<div class="formfilter-submit">
-		SUM
+		SUM (merge campaigns totals)
 		<div class="input-append">
 			<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
 		</div>
@@ -268,7 +268,11 @@ $('.search-form form').submit(function(){
 				'type'    => 'textarea',
 				'url'     => 'updateEditable/',
 				'display' => 'js:function(value, source){
-					$(this).html("<i class=\"icon-font\"></i>");
+					if(value){
+						$(this).html("<i class=\"icon-font icon-red\"></i>");
+					}else{
+						$(this).html("<i class=\"icon-font\"></i>");
+					}
 				}'
             ),
             'visible' => $sum ? false : true,
@@ -300,7 +304,7 @@ $('.search-form form').submit(function(){
 				'title'      => 'Impressions',
 				'type'       => 'text',
 				'url'        => 'updateEditable/',
-				'emptytext'  => 'Null',
+				'emptytext'  => 'Add',
 				'inputclass' => 'input-mini',
 				'success'    => 'js: function(response, newValue) {
 					  	if (!response.success) {
@@ -343,7 +347,7 @@ $('.search-form form').submit(function(){
 				'title'      => 'Conversions',
 				'type'       => 'text',
 				'url'        => 'updateEditable/',
-				'emptytext'  => 'Null',
+				'emptytext'  => 'Add',
 				'inputclass' => 'input-mini',
 				'success'    => 'js: function(response, newValue) {
 					  	if (!response.success) {

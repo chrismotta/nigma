@@ -407,3 +407,7 @@ tbody [class^="icon-"]{
 	cursor: pointer;
 	color: #005580;
 }
+
+.icon-red{
+	background-image: url("../img/glyphicons-halflings-red.png") !important;
+}

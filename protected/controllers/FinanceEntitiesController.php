@@ -398,6 +398,7 @@ class FinanceEntitiesController extends Controller
 
 	public function renderFormAjax($model) 
 	{
+		$pre_post_payment   = KHtml::enumItem($model, 'pre_post_payment');
 		$currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
 		$advertiser = CHtml::listData(Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name'); 
@@ -417,6 +418,7 @@ class FinanceEntitiesController extends Controller
 			'commercial' =>$commercial,
 			'advertiser' =>$advertiser,
 			'country'    =>$country,
+			'pre_post_payment'=>$pre_post_payment,
 		), false, true);
 	}
 

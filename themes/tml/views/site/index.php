@@ -200,22 +200,22 @@ function printTopChart($model, array $options){
 ?>
 
 <div class="row row-bottom">
-	<?php printTopChart($this, array(
+	<?php /* printTopChart($this, array(
 		'tittle'             => 'Top Conversions',
 		'data'               => $dataTopConversions,
 		'gridviewFieldName'  => 'Conv',
 		'gridviewFieldValue' => '$data->total',
 		'chartFieldName'     => 'Conversions',
 		'chartFieldValue'    => 'totals',
-		)); ?>
-	<?php printTopChart($this, array(
+		)); */ ?>
+	<?php /* printTopChart($this, array(
 		'tittle'             => 'Top Conversion Rate',
 		'data'               => $dataTopConversionsRate,
 		'gridviewFieldName'  => 'CR',
 		'gridviewFieldValue' => '$data->total."%"',
 		'chartFieldName'     => 'Conversions Rate',
 		'chartFieldValue'    => 'totals',
-		)); ?>
+		)); */ ?>
 	<?php printTopChart($this, array(
 		'tittle'             => 'Top Spend',
 		'data'               => $dataTops,

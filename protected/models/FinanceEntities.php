@@ -60,15 +60,15 @@ class FinanceEntities extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('advertisers_id, name, commercial_name, status, address, state, zip_code, currency, tax_id, entity, net_payment', 'required'),
-			array('advertisers_id, commercial_id, prospect, country_id', 'numerical', 'integerOnly'=>true),
-			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, ret, tax_id, net_payment, pdf_name', 'length', 'max'=>128),
+			array('advertisers_id, commercial_id, prospect, ret, country_id', 'numerical', 'integerOnly'=>true),
+			array('name, commercial_name, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, tax_id, pre_post_payment, net_payment, pdf_name', 'length', 'max'=>128),
 			array('status', 'length', 'max'=>8),
 			array('currency, entity', 'length', 'max'=>3),
 			array('description', 'length', 'max'=>255),
 			array('email_adm, email_com, email_validation', 'email'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, net_payment, pdf_name, description, country_id, advertiser_name, country_name, com_name', 'safe', 'on'=>'search'),
+			array('id, advertisers_id, commercial_id, name, commercial_name, prospect, status, address, state, zip_code, phone, contact_com, email_com, contact_adm, email_adm, email_validation, currency, ret, tax_id, entity, pre_post_payment, net_payment, pdf_name, description, country_id, advertiser_name, country_name, com_name', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -115,6 +115,7 @@ class FinanceEntities extends CActiveRecord
 			'ret' => 'WHT',
 			'tax_id' => 'Tax ID',
 			'entity' => 'Entity',
+			'pre_post_payment' => 'PRE/POST Payment',
 			'net_payment' => 'Net Payment',
 			'pdf_name' => 'Pdf Name',
 			'description' => 'Description',
@@ -168,6 +169,7 @@ class FinanceEntities extends CActiveRecord
 		$criteria->compare('ret',$this->ret,true);
 		$criteria->compare('tax_id',$this->tax_id,true);
 		$criteria->compare('entity',$this->entity,true);
+		$criteria->compare('pre_post_payment',$this->pre_post_payment,true);
 		$criteria->compare('net_payment',$this->net_payment,true);
 		$criteria->compare('pdf_name',$this->pdf_name,true);
 		$criteria->compare('description',$this->description,true);
