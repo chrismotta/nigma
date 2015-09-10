@@ -237,6 +237,7 @@ class DailyReportController extends Controller
 		$criteria->compare('networks.providers_id','<>NULL', false, 'OR');
 		$criteria->compare('affiliates.providers_id','<>NULL', false, 'OR');
 		$criteria->compare('t.status','Active', false, 'AND');
+		$criteria->order = 'name';
 		$providers = CHtml::listData( Providers::model()->findAll($criteria) , 'name', 'name');
 
 		$this->render('admin',array(

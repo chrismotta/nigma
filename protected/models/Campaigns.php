@@ -78,16 +78,14 @@ class Campaigns extends CActiveRecord
 			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			// array('comment', 'length', 'max'=>512),
-			array('comment', 'safe'),
-			array('environment', 'safe'),
+			array('comment, status, environment, flow, inventory_type', 'safe'),
 			array('cap, external_rate', 'length', 'max'=>11),
 			array('model', 'length', 'max'=>3),
 			array('url', 'length', 'max'=>512),
 			array('url', 'url'),
-			array('status', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment, environment, cp_status', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment, environment, flow, inventory_type, cp_status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -155,6 +153,8 @@ class Campaigns extends CActiveRecord
 			'clics_redirect'         => 'Clics Redirect',
 			'date'                   => 'Date',
 			'external_rate'          => 'External rate',
+			'flow'					 => 'Flow (only VAS)',
+			'inventory_type'		 => 'Inventory Type',
 		);
 	}
 
@@ -188,6 +188,8 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('post_data',$this->post_data);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 		$criteria->compare('t.status',$this->cp_status);
+		$criteria->compare('t.flow',$this->flow);
+		$criteria->compare('t.inventory_type',$this->inventory_type);
 
 		//We need to list all related tables in with property
 		$criteria->with = array(

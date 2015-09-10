@@ -109,8 +109,8 @@ class Opportunities extends CActiveRecord
 		return array(
 			'id'                       => 'ID',
 			'carriers_id'              => 'Carrier',
-			'rate'                     => 'Rate',
-			'model_adv'                => 'Model',
+			'rate'                     => 'Adv. Rate',
+			'model_adv'                => 'Adv. Model',
 			'product'                  => 'Product',
 			'account_manager_id'       => 'Account Manager',
 			'comment'                  => 'Comment',

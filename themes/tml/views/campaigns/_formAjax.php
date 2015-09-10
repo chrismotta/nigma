@@ -244,6 +244,16 @@ if($action == "Create"){ ?>
         echo $form->radioButtonListRow($model, 'environment', $environment);
         echo '</div>';
 
+        $cat = isset($model->opportunities->regions->financeEntities->advertisers->cat) ? $model->opportunities->regions->financeEntities->advertisers->cat : 'VAS';
+        $display = $cat == 'VAS' ? 'display:block;' : 'display:none;';
+        echo '<div style="' . $display . '" >';
+        echo $form->radioButtonListRow($model, 'flow', $flow);
+        echo '</div>';
+
+        echo '<div>';
+        echo $form->radioButtonListRow($model, 'inventory_type', $inventory_type);
+        echo '</div>';
+
         echo '<hr/>';
         
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));

@@ -179,7 +179,7 @@ class CampaignsController extends Controller
 	 */
 	public function actionUpdateAjax($id)
 	{
-		$backURL = $_SERVER['HTTP_REFERER'];
+		$backURL = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 		$model = $this->loadModel($id);
 
 		// Uncomment the following line if AJAX validation is needed
@@ -191,8 +191,8 @@ class CampaignsController extends Controller
 			if($model->status == '')
 				$model->status = 'Pending';
 			if($model->save())
-				die();
-				// $this->redirect($backURL);
+				// die();
+				$this->redirect($backURL);
 		}
 
 		$this->renderFormAjax($model, 'Update');
@@ -580,6 +580,8 @@ class CampaignsController extends Controller
 		$devices        = CHtml::listData(Devices::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$campModel      = KHtml::enumItem($model, 'model');
 		$environment    = KHtml::enumItem($model, 'environment');
+		$flow           = KHtml::enumItem($model, 'flow');
+		$inventory_type = KHtml::enumItem($model, 'inventory_type');
 		$campStatus     = array('Active'=>'Active', 'Paused'=>'Paused');
 		
 		
@@ -605,6 +607,8 @@ class CampaignsController extends Controller
 			'campStatus'       => $campStatus,
 			'environment'      => $environment,
 			'action'           => $action,
+			'flow'             => $flow,
+			'inventory_type'   => $inventory_type,
 		), false, true);
 	}
 

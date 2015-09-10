@@ -153,11 +153,15 @@ Yii::app()->clientScript->registerScript('search', "
 			'name'              => 'financeEntities_name',
 			'value'             => '$data->opportunities->regions->financeEntities->name',
 			'headerHtmlOptions' => array('style' => 'width: 60px'),
-        ),		
+        ),
 		array(
 			'name'              => 'name',
 			'value'             => 'Campaigns::model()->getExternalName($data->id)',
 			'headerHtmlOptions' => array('style' => 'width: 80px'),
+        ),
+		array(
+			'name'              => 'model',
+			'headerHtmlOptions' => array('style' => 'width: 30px'),
         ),
         array(
 			'name'              => 'clicks',
