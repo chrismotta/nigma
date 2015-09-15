@@ -1,4 +1,7 @@
 <?php
+
+$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+
 $dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
 $dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
 
@@ -113,14 +116,19 @@ Yii::app()->clientScript->registerScript('search', "
         'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 <fieldset>
-	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
-	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
+
+	<?php echo KHtml::datePickerPresets($dpp); ?>
+	<!-- <p>From:</p>  -->
+	<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
+	<!-- <p>To:</p>  -->
+	<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
+
 	<?php 
 		if (FilterManager::model()->isUserTotalAccess('daily'))
-			echo KHtml::filterAccountManagers($accountManager);
+			echo KHtml::filterAccountManagers($accountManager, array('class'=>'span2'));
 		
-		echo KHtml::filterOpportunities($opportunitie, $accountManager);
-		echo KHtml::filterProviders($providers);
+		echo KHtml::filterOpportunities($opportunitie, $accountManager, array('class'=>'span2'));
+		echo KHtml::filterProviders($providers, null, array('class'=>'span2'));
 	?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
