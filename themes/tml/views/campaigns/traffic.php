@@ -1,6 +1,6 @@
 <?php
 
-$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '1' ;
 
 $dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today' ;
 $dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
