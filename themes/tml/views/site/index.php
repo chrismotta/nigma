@@ -16,48 +16,18 @@ $this->pageTitle=Yii::app()->name;
 	        'method' => 'GET',
 	        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
 	    )); ?> 
-
+	    <?php
+		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+		$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
+		$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+		?>
 		<fieldset>
-			From: 
-			<label><div class="input-append">
-				<?php 
-				    $this->widget('bootstrap.widgets.TbDatePicker',array(
-					'name'  => 'dateStart',
-					'value' => isset($_GET['dateStart']) ? $_GET['dateStart'] : date('d-m-Y', strtotime('-1 week')),
-					'htmlOptions' => array(
-						'style' => 'width: 80px',
-					),
-				    'options' => array(
-						'autoclose'  => true,
-						'todayHighlight' => true,
-						'format'     => 'dd-mm-yyyy',
-						'viewformat' => 'dd-mm-yyyy',
-						'placement'  => 'right',
-				    ),
-				));
-				?>
-				<span class="add-on"><i class="icon-calendar"></i></span>
-			</div></label>
-			To:
-			<label><div class="input-append">
-				<?php 
-				    $this->widget('bootstrap.widgets.TbDatePicker',array(
-					'name'        => 'dateEnd',
-					'value'       => isset($_GET['dateEnd']) ? $_GET['dateEnd'] : date('d-m-Y', strtotime('yesterday')),
-					'htmlOptions' => array(
-						'style' => 'width: 80px',
-					),
-					'options'     => array(
-						'autoclose'      => true,
-						'todayHighlight' => true,
-						'format'         => 'dd-mm-yyyy',
-						'viewformat'     => 'dd-mm-yyyy',
-						'placement'      => 'right',
-				    ),
-				));
-				?>
-				<span class="add-on"><i class="icon-calendar"></i></span>
-			</div></label>
+			<?php echo KHtml::datePickerPresets($dpp); ?>
+			<!-- <p>From:</p>  -->
+			<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
+			<!-- <p>To:</p>  -->
+			<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
+	
 			<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
 	    </fieldset>
