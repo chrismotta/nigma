@@ -41,9 +41,9 @@
         echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country'));
-        echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'phone', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
@@ -53,7 +53,8 @@
         echo $form->textFieldRow($model, 'ret', array('class'=>'span2'), array('append' => '%'));
         echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
         //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );
-        echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
+        echo $form->hiddenField($model, 'entity', array('type'=>"hidden") );
+        // echo $form->dropDownListRow($model, 'entity', $entity, array('prompt' => 'Select an entity'));
         echo $form->dropDownListRow($model, 'pre_post_payment', $pre_post_payment, array('prompt' => 'Select'));
         echo $form->textFieldRow($model, 'net_payment', array('class'=>'span2'), array('append' => 'days'));
         ?>

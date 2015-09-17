@@ -5,6 +5,8 @@ class AffiliatesAPI
 
 	public function downloadInfo()
 	{
+		$return = '';
+
 		if ( isset( $_GET['date']) ) {
 			$date = $_GET['date'];
 		} else {
@@ -37,6 +39,8 @@ class AffiliatesAPI
 				if ($conv == 0 && $clicks == 0)
 					continue;
 
+				$return.= $campaign->id .' - '.$conv.'<br/>';
+
 				$dailyReport               = new DailyReport();
 				$dailyReport->campaigns_id = $campaign->id;
 				$dailyReport->date         = $date;
@@ -56,7 +60,7 @@ class AffiliatesAPI
 			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->name);
 		}
 		Yii::log("SUCCESS - Daily info downloaded for all affiliates", 'info', 'system.model.api.affiliate');
-		return 0;
+		return $return;
 	}
 
 }

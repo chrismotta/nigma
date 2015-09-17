@@ -279,11 +279,13 @@ class ApiUpdateController extends Controller
 		}
 	}
 
-	public function actionAffiliates()
+	public function actionAffiliates($hash=null)
 	{
 		try {
 			$affiliates = new AffiliatesAPI;
-			$affiliates->downloadInfo();
+			$return = $affiliates->downloadInfo();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.affiliates');			
 		}

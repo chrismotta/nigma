@@ -4,19 +4,21 @@
 echo $form->textFieldRow($model, 'prefix', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
+echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
+echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name'));
 echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
+echo $form->textFieldRow($model, 'phone', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'entity', KHtml::enumItem($model, 'entity'));
-echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
+echo $form->hiddenField($model, 'entity', array('type'=>"hidden") );
+echo $form->dropDownListRow($model, 'currency', KHtml::enumItem($model, 'currency'), array('prompt' => 'Select a currency'));
 
 // Provider info
     // $country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'type desc, name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
-echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name'));
 echo $form->dropDownListRow($model, 'model', KHtml::enumItem($model, 'model'));
 echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
 echo $form->dropDownListRow($model, 'deal', KHtml::enumItem($model, 'deal'), array(
@@ -66,7 +68,6 @@ echo $form->textFieldRow($model, 'daily_cap', array('class'=>'span3'));
 echo $form->textFieldRow($model, 'sizes', array('class'=>'span3'));
 
 // S2S info
-echo $form->dropDownListRow($model, 'currency', KHtml::enumItem($model, 'currency'), array('prompt' => 'Select a currency'));
 echo $form->checkboxRow($model, 'has_s2s', array(
         'onChange' => '
           if (this.checked == "1")
