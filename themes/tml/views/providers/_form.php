@@ -1,97 +1,138 @@
-<?php
+<div class="modal-header">
+    <a class="close" data-dismiss="modal">&times;</a>
+    <h4>Publisher <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
+</div>
 
-// Legal info
-echo $form->textFieldRow($model, 'prefix', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'commercial_name', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'tax_id', array('class'=>'span3'));
-echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name'));
-echo $form->textFieldRow($model, 'state', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'zip_code', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'address', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'phone', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'contact_com', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'email_com', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'contact_adm', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'email_adm', array('class'=>'span3'));
-echo $form->hiddenField($model, 'entity', array('type'=>"hidden") );
-echo $form->dropDownListRow($model, 'currency', KHtml::enumItem($model, 'currency'), array('prompt' => 'Select a currency'));
 
-// Provider info
-    // $country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'type desc, name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
-echo $form->dropDownListRow($model, 'model', KHtml::enumItem($model, 'model'));
-echo $form->textFieldRow($model, 'net_payment', array('class'=>'span3'));
-echo $form->dropDownListRow($model, 'deal', KHtml::enumItem($model, 'deal'), array(
-    'onChange' => ' 
-      if ($("#Providers_deal").val() == "PRE-PAYMENT")
-        $(".post_payment_amount").show();
-      else
-        $(".post_payment_amount").hide();
-    ',
-  ));
-echo '<div style="display: ' . ($model->deal == 'PRE-PAYMENT' ? 'block' : 'none') . '" class="post_payment_amount">';
-echo $form->textFieldRow($model, 'post_payment_amount', array('class'=>'span3'));
-echo '</div>';
-echo $form->datepickerRow($model, 'start_date', array(
-        'options' => array(
-            'autoclose'      => true,
-            'todayHighlight' => true,
-            'clearBtn'       => true,
-            'format'         => 'yyyy-mm-dd',
-            'viewformat'     => 'dd-mm-yyyy',
-            'placement'      => 'right',
-        ),
-        'htmlOptions' => array(
-            'class' => 'span3',
-        )),
-        array(
-            'append' => '<label for="Providers_start_date"><i class="icon-calendar"></i></label>',
-        )
-);
-echo $form->datepickerRow($model, 'end_date', array(
-        'options' => array(
-            'autoclose'      => true,
-            'todayHighlight' => true,
-            'clearBtn'       => true,
-            'format'         => 'yyyy-mm-dd',
-            'viewformat'     => 'dd-mm-yyyy',
-            'placement'      => 'right',
-        ),
-        'htmlOptions' => array(
-            'class' => 'span3',
-        )),
-        array(
-            'append' => '<label for="Providers_end_date"><i class="icon-calendar"></i></label>',
-        )
-);
-echo $form->textFieldRow($model, 'daily_cap', array('class'=>'span3'));
-echo $form->textFieldRow($model, 'sizes', array('class'=>'span3'));
+<div class="modal-body">
 
-// S2S info
-echo $form->checkboxRow($model, 'has_s2s', array(
-        'onChange' => '
-          if (this.checked == "1")
-            $(".has_s2s").show();
-          else
-            $(".has_s2s").hide();
+	<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
+		'id'=>'providers-form',
+		'type'                 =>'horizontal',
+		'htmlOptions'          =>array('class'=>'well'),
+		// to enable ajax validation
+		'enableAjaxValidation' =>true,
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+	)); ?>
 
-          return;
-          '
-    ));
-echo '<div style="display: ' . ($model->has_s2s ? 'block' : 'none') . ';" class="has_s2s">';
-echo $form->textFieldRow($model, 'callback', array('class'=>'span3'));
-echo $form->checkboxRow($model, 'has_token', array(
-        'onChange' => '
-          if (this.checked == "1")
-            $(".has_token").show();
-          else
-            $(".has_token").hide();
+	<?php echo $form->errorSummary($model); ?>
 
-          return;
-          '
-    ));
-echo '<div style="display: ' . ($model->has_token ? 'block' : 'none') . ';" class="has_token">';
-echo $form->textFieldRow($model, 'placeholder', array('class'=>'span3'));
-echo '</div>';
-echo '</div>';
-echo '<hr/>';
+	<?php echo $form->dropDownListRow($model,'type',array("Network"=>"Network","Affiliate"=>"Affiliate","Publisher"=>"Publisher",),array('class'=>'input-large')); ?>
+
+	<?php echo $form->textFieldRow($model,'prefix',array('class'=>'span5','maxlength'=>45)); ?>
+
+	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->dropDownListRow($model,'status',array("Active"=>"Active","Inactive"=>"Inactive","Archived"=>"Archived",),array('class'=>'input-large')); ?>
+
+	<?php echo $form->dropDownListRow($model,'currency',array("USD"=>"USD","ARS"=>"ARS","EUR"=>"EUR","GBP"=>"GBP","BRL"=>"BRL",),array('class'=>'input-large')); ?>
+
+	<?php echo $form->textFieldRow($model,'country_id',array('class'=>'span5')); ?>
+
+	<?php echo $form->dropDownListRow($model,'model',array("CPA"=>"CPA","CPC"=>"CPC","CPM"=>"CPM","CPI"=>"CPI","CPV"=>"CPV","CPL"=>"CPL","RS"=>"RS",),array('class'=>'input-large')); ?>
+
+	<?php echo $form->textFieldRow($model,'net_payment',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->dropDownListRow($model,'deal',array("PRE-PAYMENT"=>"PRE-PAYMENT","POST-PAYMENT"=>"POST-PAYMENT",),array('class'=>'input-large')); ?>
+
+	<?php echo $form->textFieldRow($model,'post_payment_amount',array('class'=>'span5','maxlength'=>11)); ?>
+
+	<?php echo $form->textFieldRow($model,'start_date',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'end_date',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'daily_cap',array('class'=>'span5','maxlength'=>11)); ?>
+
+	<?php echo $form->textFieldRow($model,'sizes',array('class'=>'span5','maxlength'=>45)); ?>
+
+	<?php echo $form->textFieldRow($model,'has_s2s',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'callback',array('class'=>'span5','maxlength'=>255)); ?>
+
+	<?php echo $form->textFieldRow($model,'placeholder',array('class'=>'span5','maxlength'=>45)); ?>
+
+	<?php echo $form->textFieldRow($model,'has_token',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'commercial_name',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'state',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'zip_code',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'address',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'contact_com',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'email_com',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'contact_adm',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'email_adm',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->dropDownListRow($model,'entity',array("LLC"=>"LLC",),array('class'=>'input-large')); ?>
+
+	<?php echo $form->textFieldRow($model,'tax_id',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'prospect',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'pdf_name',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'pdf_agreement',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'phone',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->datepickerRow($model,'foundation_date',array('options'=>array(),'htmlOptions'=>array('class'=>'span5')),array('prepend'=>'<i class="icon-calendar"></i>','append'=>'Click on Month/Year at top to select a different year or type in (mm/dd/yyyy).')); ?>
+
+	<?php echo $form->textFieldRow($model,'foundation_place',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'bank_account_name',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'bank_account_number',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'branch',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'bank_name',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'swift_code',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'percent_off',array('class'=>'span5','maxlength'=>5)); ?>
+
+	<?php echo $form->textFieldRow($model,'url',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'use_alternative_convention_name',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'has_api',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'use_vectors',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'query_string',array('class'=>'span5','maxlength'=>255)); ?>
+
+	<?php echo $form->textAreaRow($model,'token1',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+
+	<?php echo $form->textAreaRow($model,'token2',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+
+	<?php echo $form->textAreaRow($model,'token3',array('rows'=>6, 'cols'=>50, 'class'=>'span8')); ?>
+
+	<?php echo $form->textFieldRow($model,'publisher_percentage',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'rate',array('class'=>'span5','maxlength'=>11)); ?>
+
+	<?php echo $form->textFieldRow($model,'users_id',array('class'=>'span5')); ?>
+
+	<?php echo $form->textFieldRow($model,'account_manager_id',array('class'=>'span5')); ?>
+
+	<div class="form-actions">
+		<?php $this->widget('bootstrap.widgets.TbButton', array(
+				'buttonType'=>'submit',
+				'type'=>'primary',
+				'label'=>$model->isNewRecord ? 'Create' : 'Save',
+			)); ?>
+	</div>
+
+	<?php $this->endWidget(); ?>
+
+</div>
+
+<div class="modal-footer">
+    Edit Publisher attributes. Fields with <span class="required">*</span> are required.
+</div>

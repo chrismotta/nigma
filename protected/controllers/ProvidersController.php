@@ -29,7 +29,7 @@ class ProvidersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
+				'actions'=>array('admin', 'view', 'update','exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance','affiliates_manager'),
 			),
 			array('allow',
@@ -366,7 +366,7 @@ class ProvidersController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
+	public function _actionCreate()
 	{
 		$model=new Providers;
 		$modelAffi=new Affiliates;
@@ -458,4 +458,90 @@ class ProvidersController extends Controller
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 	}
+
+
+	/**
+	* Displays a particular model.
+	* @param integer $id the ID of the model to be displayed
+	*/
+	public function actionView($id)
+	{
+		$this->render('view',array(
+			'model'=>$this->loadModel($id),
+			));
+	}
+
+	/**
+	* Creates a new model.
+	* If creation is successful, the browser will be redirected to the 'view' page.
+	*/
+	public function actionCreate()
+	{
+		$model=new Providers;
+
+	// Uncomment the following line if AJAX validation is needed
+	// $this->performAjaxValidation($model);
+
+		if(isset($_POST['Providers']))
+		{
+			$model->attributes=$_POST['Providers'];
+			if($model->save())
+				$this->redirect(array('view','id'=>$model->id));
+		}
+
+		$this->renderPartial('_form',array(
+			'model'=>$model,
+			),false,true);
+	}
+
+	/**
+	* Updates a particular model.
+	* If update is successful, the browser will be redirected to the 'view' page.
+	* @param integer $id the ID of the model to be updated
+	*/
+	public function actionUpdate($id)
+	{
+		$model=$this->loadModel($id);
+
+	// Uncomment the following line if AJAX validation is needed
+	// $this->performAjaxValidation($model);
+
+		if(isset($_POST['Providers']))
+		{
+			$model->attributes=$_POST['Providers'];
+			if($model->save())
+				$this->redirect(array('view','id'=>$model->id));
+		}
+
+		$this->render('update',array(
+			'model'=>$model,
+			));
+	}
+
+	/**
+	* Lists all models.
+	*/
+	public function actionIndex()
+	{
+		$dataProvider=new CActiveDataProvider('Providers');
+		$this->render('index',array(
+			'dataProvider'=>$dataProvider,
+			));
+	}
+
+	/**
+	* Manages all models.
+	*/
+	public function actionAdmin()
+	{
+		$model=new Providers('search');
+		$model->unsetAttributes();  // clear any default values
+		if(isset($_GET['Providers']))
+			$model->attributes=$_GET['Providers'];
+
+		$this->render('admin',array(
+			'model'=>$model,
+			));
+	}
+
 }

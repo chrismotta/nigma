@@ -36,6 +36,29 @@
  * @property string $tax_id
  * @property integer $prospect
  * @property string $pdf_name
+ * @property string $type
+ * @property string $pdf_agreement
+ * @property string $phone
+ * @property string $foundation_date
+ * @property string $foundation_place
+ * @property string $bank_account_name
+ * @property string $bank_account_number
+ * @property string $branch
+ * @property string $bank_name
+ * @property string $swift_code
+ * @property string $percent_off
+ * @property string $url
+ * @property integer $use_alternative_convention_name
+ * @property integer $has_api
+ * @property integer $use_vectors
+ * @property string $query_string
+ * @property string $token1
+ * @property string $token2
+ * @property string $token3
+ * @property integer $publisher_percentage
+ * @property string $rate
+ * @property integer $users_id
+ * @property integer $account_manager_id
  *
  * The followings are the available model relations:
  * @property Affiliates $affiliates
@@ -47,6 +70,11 @@
  * @property GeoLocation $country
  * @property Publishers $publishers
  * @property Vectors[] $vectors
+ * @property ExternalProviderForm[] $externalProviderForms
+ * @property Users $users
+ * @property Users $accountManager
+ * @property TransactionProviders[] $transactionProviders
+ * 
  */
 class Providers extends CActiveRecord
 {
@@ -67,15 +95,15 @@ class Providers extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			// array('name, model, net_payment, start_date, commercial_name, state, zip_code, entity, tax_id', 'required'),
-			array('name, model, net_payment, currency, entity', 'required'),
-			array('country_id, has_s2s, has_token, prospect', 'numerical', 'integerOnly'=>true),
+			array('type, name, model, net_payment, currency, entity', 'required'),
+			array('country_id, has_s2s, has_token, prospect, use_alternative_convention_name, has_api, use_vectors, publisher_percentage, users_id, account_manager_id', 'numerical', 'integerOnly'=>true),
 			array('prefix, sizes, placeholder', 'length', 'max'=>45),
-			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'length', 'max'=>128),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, bank_account_name, bank_account_number, branch, bank_name, swift_code, url', 'length', 'max'=>128),
 			array('email_adm, email_com', 'email'),
 			array('currency, model, entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
 			array('deal', 'length', 'max'=>12),
-			array('post_payment_amount, daily_cap', 'length', 'max'=>11),
+			array('post_payment_amount, daily_cap, rate', 'length', 'max'=>11),
 			array('callback', 'length', 'max'=>255),
 			array('end_date,foundation_date', 'safe'),
 			array('callback', 'length', 'max'=>255),
@@ -83,7 +111,7 @@ class Providers extends CActiveRecord
 			array('name','unique', 'message'=>'This name already exists.'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code', 'safe', 'on'=>'search'),
+			array('id, type, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code, percent_off, url, use_alternative_convention_name, has_api, use_vectors, query_string, token1, token2, token3, publisher_percentage, rate, users_id, account_manager_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -95,16 +123,19 @@ class Providers extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'affiliates'   => array(self::HAS_ONE, 'Affiliates', 'providers_id'),
-			'apiCronLogs'  => array(self::HAS_MANY, 'ApiCronLog', 'providers_id'),
-			'campaigns'    => array(self::HAS_MANY, 'Campaigns', 'providers_id'),
-			'transactionProviders'    => array(self::HAS_MANY, 'TransactionProviders', 'providers_id'),
-			'clicksLogs'   => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
-			'dailyReports' => array(self::HAS_MANY, 'DailyReport', 'providers_id'),
-			'networks'     => array(self::HAS_ONE, 'Networks', 'providers_id'),
-			'country'      => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
-			'publishers'   => array(self::HAS_ONE, 'Publishers', 'providers_id'),
-			'vectors'      => array(self::HAS_MANY, 'Vectors', 'providers_id'),
+			'affiliates'            => array(self::HAS_ONE, 'Affiliates', 'providers_id'),
+			'apiCronLogs'           => array(self::HAS_MANY, 'ApiCronLog', 'providers_id'),
+			'campaigns'             => array(self::HAS_MANY, 'Campaigns', 'providers_id'),
+			'transactionProviders'  => array(self::HAS_MANY, 'TransactionProviders', 'providers_id'),
+			'clicksLogs'            => array(self::HAS_MANY, 'ClicksLog', 'providers_id'),
+			'dailyReports'          => array(self::HAS_MANY, 'DailyReport', 'providers_id'),
+			'networks'              => array(self::HAS_ONE, 'Networks', 'providers_id'),
+			'country'               => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
+			'publishers'            => array(self::HAS_ONE, 'Publishers', 'providers_id'),
+			'vectors'               => array(self::HAS_MANY, 'Vectors', 'providers_id'),
+			'externalProviderForms' => array(self::HAS_MANY, 'ExternalProviderForm', 'providers_id'),
+			'users'                 => array(self::BELONGS_TO, 'Users', 'users_id'),
+			'accountManager'        => array(self::BELONGS_TO, 'Users', 'account_manager_id'),
 		);
 	}
 
@@ -114,46 +145,60 @@ class Providers extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'                  => 'ID',
-			'prefix'              => 'Prefix',
-			'name'                => 'Fantasy Name',
-			'status'              => 'Status',
-			'currency'            => 'Currency',
-			'country_id'          => 'Country',
-			'model'               => 'Model',
-			'net_payment'         => 'Net Payment',
-			'deal'                => 'Deal',
-			'post_payment_amount' => 'Pre Payment Amount',
-			'start_date'          => 'Start Date',
-			'end_date'            => 'End Date',
-			'daily_cap'           => 'Daily Cap',
-			'sizes'               => 'Sizes',
-			'has_s2s'             => 'Has s2s',
-			'has_token'           => 'Has Placeholder',
-			'callback'            => 'Callback',
-			'placeholder'         => 'Placeholder',
-			'has_token'           => 'Has Placeholder',
-			'commercial_name'     => 'Legal Name',
-			'state'               => 'State',
-			'zip_code'            => 'Zip Code',
-			'address'             => 'Address',
-			'contact_com'         => 'Commercial Contact',
-			'email_com'           => 'Commercial Email',
-			'contact_adm'         => 'Finance Contact',
-			'email_adm'           => 'Finance Email',
-			'entity'              => 'Entity',
-			'tax_id'              => 'Tax ID',
-			'prospect'            => 'Prospect',
-			'pdf_name'            => 'Pdf Name',
-			'pdf_agreement'       => 'Pdf Agreement',
-			'phone'               => 'Phone',
-			'foundation_date'     =>'Date of Constitution',
-			'foundation_place'    =>'Place of foundation',
-			'bank_account_name'   =>'Bank Account Name',
-			'bank_account_number' =>'Bank Account Number',
-			'branch'              =>'Branch Identifier', 
-			'bank_name'           =>'Bank Name',
-			'swift_code'          =>'Swift Code',
+			'id'                              => 'ID',
+			'type'                            => 'Type',
+			'prefix'                          => 'Prefix',
+			'name'                            => 'Fantasy Name',
+			'status'                          => 'Status',
+			'currency'                        => 'Currency',
+			'country_id'                      => 'Country',
+			'model'                           => 'Model',
+			'net_payment'                     => 'Net Payment',
+			'deal'                            => 'Deal',
+			'post_payment_amount'             => 'Pre Payment Amount',
+			'start_date'                      => 'Start Date',
+			'end_date'                        => 'End Date',
+			'daily_cap'                       => 'Daily Cap',
+			'sizes'                           => 'Sizes',
+			'has_s2s'                         => 'Has s2s',
+			'has_token'                       => 'Has Placeholder',
+			'callback'                        => 'Callback',
+			'placeholder'                     => 'Placeholder',
+			'has_token'                       => 'Has Placeholder',
+			'commercial_name'                 => 'Legal Name',
+			'state'                           => 'State',
+			'zip_code'                        => 'Zip Code',
+			'address'                         => 'Address',
+			'contact_com'                     => 'Commercial Contact',
+			'email_com'                       => 'Commercial Email',
+			'contact_adm'                     => 'Finance Contact',
+			'email_adm'                       => 'Finance Email',
+			'entity'                          => 'Entity',
+			'tax_id'                          => 'Tax ID',
+			'prospect'                        => 'Prospect',
+			'pdf_name'                        => 'Pdf Name',
+			'pdf_agreement'                   => 'Pdf Agreement',
+			'phone'                           => 'Phone',
+			'foundation_date'                 =>'Date of Constitution',
+			'foundation_place'                =>'Place of foundation',
+			'bank_account_name'               =>'Bank Account Name',
+			'bank_account_number'             =>'Bank Account Number',
+			'branch'                          =>'Branch Identifier', 
+			'bank_name'                       =>'Bank Name',
+			'swift_code'                      =>'Swift Code',
+			'percent_off'                     => 'Percent Off',
+			'url'                             => 'Url',
+			'use_alternative_convention_name' => 'Use Alternative Convention Name',
+			'has_api'                         => 'Has Api',
+			'use_vectors'                     => 'Use Vectors',
+			'query_string'                    => 'Query String',
+			'token1'                          => 'Token1',
+			'token2'                          => 'Token2',
+			'token3'                          => 'Token3',
+			'publisher_percentage'            => 'Publisher Percentage',
+			'rate'                            => 'Rate',
+			'users_id'                        => 'Users',
+			'account_manager_id'              => 'Account Manager',
 		);
 	}
 
@@ -176,6 +221,7 @@ class Providers extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
+		$criteria->compare('type',$this->type);
 		$criteria->compare('prefix',$this->prefix,true);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('status','Active',true);
@@ -207,6 +253,26 @@ class Providers extends CActiveRecord
 		$criteria->compare('pdf_name',$this->pdf_name,true);
 		$criteria->compare('pdf_agreement',$this->pdf_agreement,true);
 		$criteria->compare('phone',$this->phone,true);
+		$criteria->compare('foundation_date',$this->foundation_date,true);
+		$criteria->compare('foundation_place',$this->foundation_place,true);
+		$criteria->compare('bank_account_name',$this->bank_account_name,true);
+		$criteria->compare('bank_account_number',$this->bank_account_number,true);
+		$criteria->compare('branch',$this->branch,true);
+		$criteria->compare('bank_name',$this->bank_name,true);
+		$criteria->compare('swift_code',$this->swift_code,true);
+		$criteria->compare('percent_off',$this->percent_off,true);
+		$criteria->compare('url',$this->url,true);
+		$criteria->compare('use_alternative_convention_name',$this->use_alternative_convention_name);
+		$criteria->compare('has_api',$this->has_api);
+		$criteria->compare('use_vectors',$this->use_vectors);
+		$criteria->compare('query_string',$this->query_string,true);
+		$criteria->compare('token1',$this->token1,true);
+		$criteria->compare('token2',$this->token2,true);
+		$criteria->compare('token3',$this->token3,true);
+		$criteria->compare('publisher_percentage',$this->publisher_percentage);
+		$criteria->compare('rate',$this->rate,true);
+		$criteria->compare('users_id',$this->users_id);
+		$criteria->compare('account_manager_id',$this->account_manager_id);
 		if($prospect)
 			$criteria->addCondition('t.prospect='.$prospect);
 		else
