@@ -25,10 +25,10 @@ class AffiliatesAPI
 				continue;
 			}
 
-			if ($provider->prospect != 10) {
-				Yii::log("Affiliate " . $provider->name . " hasn't prospect 10", 'warning', 'system.model.api.affiliate.' . $provider->name);
-				continue;	
-			}
+			// if ($provider->prospect != 10) {
+			// 	Yii::log("Affiliate " . $provider->name . " hasn't prospect 10", 'warning', 'system.model.api.affiliate.' . $provider->name);
+			// 	continue;	
+			// }
 
 			$campaigns = Campaigns::model()->findAll( 'providers_id=:pid', array(':pid' => $affiliate->providers_id) );
 
