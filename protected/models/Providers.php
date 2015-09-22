@@ -15,7 +15,6 @@
  * @property string $deal
  * @property string $post_payment_amount
  * @property string $start_date
- * @property string $end_date
  * @property string $daily_cap
  * @property string $sizes
  * @property integer $has_s2s
@@ -105,13 +104,13 @@ class Providers extends CActiveRecord
 			array('deal', 'length', 'max'=>12),
 			array('post_payment_amount, daily_cap, rate', 'length', 'max'=>11),
 			array('callback', 'length', 'max'=>255),
-			array('end_date,foundation_date', 'safe'),
+			array('foundation_date', 'safe'),
 			array('callback', 'length', 'max'=>255),
 			array('prefix','unique', 'message'=>'This prefix already exists.'),
 			array('name','unique', 'message'=>'This name already exists.'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, type, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, end_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code, percent_off, url, use_alternative_convention_name, has_api, use_vectors, query_string, token1, token2, token3, publisher_percentage, rate, users_id, account_manager_id', 'safe', 'on'=>'search'),
+			array('id, type, prefix, name, status, currency, country_id, model, net_payment, deal, post_payment_amount, start_date, daily_cap, sizes, has_s2s, callback, placeholder, has_token, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, entity, tax_id, prospect, pdf_name, pdf_agreement, phone, foundation_place, foundation_date, bank_account_name, bank_account_number, branch, bank_name, swift_code, percent_off, url, use_alternative_convention_name, has_api, use_vectors, query_string, token1, token2, token3, publisher_percentage, rate, users_id, account_manager_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -157,7 +156,6 @@ class Providers extends CActiveRecord
 			'deal'                            => 'Deal',
 			'post_payment_amount'             => 'Pre Payment Amount',
 			'start_date'                      => 'Start Date',
-			'end_date'                        => 'End Date',
 			'daily_cap'                       => 'Daily Cap',
 			'sizes'                           => 'Sizes',
 			'has_s2s'                         => 'Has s2s',
@@ -232,7 +230,6 @@ class Providers extends CActiveRecord
 		$criteria->compare('deal',$this->deal,true);
 		$criteria->compare('post_payment_amount',$this->post_payment_amount,true);
 		$criteria->compare('start_date',$this->start_date,true);
-		$criteria->compare('end_date',$this->end_date,true);
 		$criteria->compare('daily_cap',$this->daily_cap,true);
 		$criteria->compare('sizes',$this->sizes,true);
 		$criteria->compare('has_s2s',$this->has_s2s);
@@ -280,6 +277,9 @@ class Providers extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'pagination' => array(
+                'pageSize' => 30,
+            ),
 		));
 	}
 

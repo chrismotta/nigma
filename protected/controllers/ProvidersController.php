@@ -8,6 +8,11 @@ class ProvidersController extends Controller
 	 * using two-column layout. See 'protected/views/layouts/column2.php'.
 	 */
 	public $layout='//layouts/column1';
+	private $hashValues = array(
+			'publishers' =>'Publisher',
+			'affiliates' =>'Affiliate',
+			'networks'   =>'Network',
+			);
 
 	/**
 	 * @return array action filters
@@ -429,6 +434,7 @@ class ProvidersController extends Controller
 
 		$this->renderFormAjax($model);
 	}
+
 	/**
 	 * [renderFormAjax description]
 	 * @param  [type] $modelAffi [description]
@@ -475,12 +481,12 @@ class ProvidersController extends Controller
 	* Creates a new model.
 	* If creation is successful, the browser will be redirected to the 'view' page.
 	*/
-	public function actionCreate()
+	public function actionCreate($hash=null)
 	{
 		$model=new Providers;
 
-	// Uncomment the following line if AJAX validation is needed
-	// $this->performAjaxValidation($model);
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($model);
 
 		if(isset($_POST['Providers']))
 		{
@@ -488,6 +494,8 @@ class ProvidersController extends Controller
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
+
+		if($hash) $model->type = $hash;
 
 		$this->renderPartial('_form',array(
 			'model'=>$model,
@@ -513,9 +521,9 @@ class ProvidersController extends Controller
 				$this->redirect(array('view','id'=>$model->id));
 		}
 
-		$this->render('update',array(
+		$this->renderPartial('_form',array(
 			'model'=>$model,
-			));
+			),false,true);
 	}
 
 	/**
@@ -532,15 +540,17 @@ class ProvidersController extends Controller
 	/**
 	* Manages all models.
 	*/
-	public function actionAdmin()
+	public function actionAdmin($hash = null)
 	{
 		$model=new Providers('search');
 		$model->unsetAttributes();  // clear any default values
+		if($hash) $model->type = $this->hashValues[$hash];
 		if(isset($_GET['Providers']))
 			$model->attributes=$_GET['Providers'];
 
 		$this->render('admin',array(
 			'model'=>$model,
+			// 'types'=>KHtml::enumItem($model, 'type')
 			));
 	}
 

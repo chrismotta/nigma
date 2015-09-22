@@ -1,20 +1,37 @@
 <?php
-$this->breadcrumbs=array(
-	'Providers',
-);
-
+if (isset($model->type)) {
+	$this->breadcrumbs=array(
+		'Traffic Sources'=>array('admin'),
+		$model->type.'s',
+	);
+}else{
+	$this->breadcrumbs=array(
+		'Traffic Sources',
+	);
+}
 ?>
+
+<?php $urlCreate = isset($model->type) ? array('providers/create/'.$model->type) : array('providers/create') ?>
+<?php BuildGridView::createButton($this, $urlCreate, 'modalProviders', 'Create Traffic Source'); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'                       =>'providers-grid',
 	'dataProvider'             =>$model->search(),
 	'filter'                   =>$model,
 	'type'                     => 'striped condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
+	'rowHtmlOptionsExpression' => 'array(
+		"data-row-id" => $data->id, 
+		"class" => $data->type == "Publisher" ? "deepLink" : "",
+		"onclick" => "if(\"$data->type\" == \"Publisher\") deepLink(\"'.Yii::app()->createUrl('sites/admin').'?publisher=\"+$data->id)",
+		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
+		array(
+			'name' => 'type',
+			'filter' => false,
+			'visible' => isset($model->type) ? false : true,
+			),
 		'id',
-		'type',
 		'prefix',
 		'name',
 		'status',

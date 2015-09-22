@@ -250,7 +250,7 @@ class KHtml extends CHtml
 
         if ( !$providers ) {
             //FIXME verificar si es necesari prospect para tml
-            $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active' AND prospect=10") );
+            $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active'") );
             $providers = CHtml::listData($providers, 'id', 'name');
         }
             

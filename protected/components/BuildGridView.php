@@ -16,7 +16,7 @@ class BuildGridView
         $controller->endWidget();
     }
 
-    public static function createButton($controller, $modalId, $label, $isArchived=false)
+    public static function createButton($controller, $url, $modalId, $label, $isArchived=false)
     {
     	if( !$isArchived )  :
 			echo '<div class="botonera">';
@@ -25,7 +25,7 @@ class BuildGridView
 				'label'       => $label,//'Create Opportunity',
 				'block'       => false,
 				'buttonType'  => 'ajaxButton',
-				'url'         => 'create',
+				'url'         => $url,
 				'ajaxOptions' => array(
 					'type'    => 'POST',
 					'beforeSend' => 'function(data)

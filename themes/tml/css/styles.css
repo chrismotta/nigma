@@ -411,3 +411,12 @@ tbody [class^="icon-"]{
 .icon-red{
 	background-image: url("../img/glyphicons-halflings-red.png") !important;
 }
+
+.divisor {
+	color: #ccc;
+    font-size: 10px;
+    border-bottom: 1px solid #e5e5e5;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    line-height: 14px;
+}
