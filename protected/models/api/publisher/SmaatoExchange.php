@@ -180,13 +180,23 @@ class SmaatoExchange
 
             if(isset($metadata['AdspaceId']->meta->name)){
                 $placementName = $metadata['AdspaceId']->meta->name;
+                $placementID   = substr($placementName, 0, strpos($placementName, '-'));
             }else{
                 $return.=' -> {"error":"no meta data available"}'; 
+                // match by ext_id
+                $extID              = $metadata['AdspaceId']->value;
+                $notMachedPlacement = Placements::model()->findByAttributes(array('ext_id'=>$extID));
+                if(isset($notMachedPlacement)){
+                    $placementID        = $notMachedPlacement->id;
+                    $return.=' -> MATCHED WITH EXT_ID: '.$placementID; 
+                }else{
+                    $return.=' -> NOT MATCHED WITH EXT_ID'; 
+                    continue;
+                }
                 $return.='<br/>';
-                continue;
+
             }
                 
-            $placementID   = substr($placementName, 0, strpos($placementName, '-'));
             $countryCode   = $metadata['CountryCode']->value;
             $countryModel  = GeoLocation::model()->findByAttributes(array('ISO2'=>$countryCode));
             
