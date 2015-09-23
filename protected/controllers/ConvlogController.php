@@ -138,6 +138,7 @@ class ConvlogController extends Controller
 				)){
 
 				print "ConvLog: exists<hr/>";
+				// change for ok2
 			}else{
 
 
