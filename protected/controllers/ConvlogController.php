@@ -137,8 +137,8 @@ class ConvlogController extends Controller
 				array('tid'=>$tid)
 				)){
 
-				print "ConvLog: exists<hr/>";
-				// change for ok2
+				print "OK";
+				// print "ConvLog: exists<hr/>";
 			}else{
 
 
