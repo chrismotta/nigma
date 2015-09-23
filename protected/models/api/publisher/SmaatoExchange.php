@@ -171,11 +171,24 @@ class SmaatoExchange
             $return.= json_encode($adspace);
             $return.="<br/>";
 
-            $placementName = $adspace->criteria[1]->meta->name;
+            // parsing criterias
+            foreach ($adspace->criteria as $value) {
+                // $return.=" -> "; 
+                // $return.=$value->name; 
+                $metadata[$value->name] = $value;
+            }
+
+            $return.=" -> "; 
+            $return.=$metadata['AdspaceId']->meta->name;
+            $return.=" -> "; 
+            $return.=$metadata['CountryCode']->value;
+            $return.="<br/>";
+            $placementName = $metadata['AdspaceId']->meta->name;
             $placementID   = substr($placementName, 0, strpos($placementName, '-'));
-            $countryCode   = $adspace->criteria[0]->value;
+            $countryCode   = $metadata['CountryCode']->value;
             $countryModel  = GeoLocation::model()->findByAttributes(array('ISO2'=>$countryCode));
             
+            // continue;//del
             if(isset($countryModel)){
                 
                 // Country exists    
