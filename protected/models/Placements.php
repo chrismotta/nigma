@@ -46,6 +46,7 @@ class Placements extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('sites_id, sizes_id, name', 'required'),
+			array('ext_id', 'safe'),
 			array('sites_id, sizes_id', 'numerical', 'integerOnly'=>true),
 			array('status', 'length', 'max'=>8),
 			array('name', 'length', 'max'=>128),
@@ -90,7 +91,7 @@ class Placements extends CActiveRecord
 			'exchanges_name'       => 'Exchanges',
 			'size'                 => 'Size',
 			'status'               => 'Status',
-			'ext_id'               => 'Ext',
+			'ext_id'               => 'External ID',
 			'model'                => 'Model',
 			'publisher_percentage' => 'RS Perc.',
 			'rate'                 => 'Rate',

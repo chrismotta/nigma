@@ -59,6 +59,7 @@
         echo $form->dropDownListRow($model, 'sizes_id', $sizes, array('prompt' => 'Select size'));
         
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
+        echo $form->textFieldRow($model, 'ext_id', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'product', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'model', $model_pub, array('prompt' => 'Select a model'));
         echo $form->textFieldRow($model,'rate',array('class'=>'span2','maxlength'=>255), array('append' => '$'));
