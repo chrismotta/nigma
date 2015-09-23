@@ -120,7 +120,7 @@ $('.search-form form').submit(function(){
 		),
 		array( 
 			'name'  => 'publishers_name',
-			'value' => '$data->sites->publishersProviders->providers->name',
+			'value' => '$data->sites->providers->name',
 		),
 		// array( 
 		// 	'name'  => 'exchanges_name',

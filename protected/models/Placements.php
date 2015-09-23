@@ -132,7 +132,7 @@ class Placements extends CActiveRecord
 		$criteria->compare('t.publisher_percentage',$this->publisher_percentage);
 		$criteria->compare('t.rate',$this->rate,true);
 
-		$criteria->with = array('sites', 'sites.publishersProviders', 'sites.publishersProviders.providers','exchanges', 'sizes');
+		$criteria->with = array('sites', 'sites.publishersProviders', 'sites.providers','exchanges', 'sizes');
 		$criteria->compare('LOWER(providers.name)',strtolower($this->publishers_name),true);
 		$criteria->compare('LOWER(sites.name)',strtolower($this->sites_name),true);
 		// $criteria->compare('exchanges.name',$this->exchanges_name,true);
