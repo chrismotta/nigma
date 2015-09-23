@@ -178,12 +178,14 @@ class SmaatoExchange
                 $metadata[$value->name] = $value;
             }
 
-            $return.=" -> "; 
-            $return.=$metadata['AdspaceId']->meta->name;
-            $return.=" -> "; 
-            $return.=$metadata['CountryCode']->value;
-            $return.="<br/>";
-            $placementName = $metadata['AdspaceId']->meta->name;
+            if(isset($metadata['AdspaceId']->meta->name)){
+                $placementName = $metadata['AdspaceId']->meta->name;
+            }else{
+                $return.=' -> {"error":"no meta data available"}'; 
+                $return.='<br/>';
+                continue;
+            }
+                
             $placementID   = substr($placementName, 0, strpos($placementName, '-'));
             $countryCode   = $metadata['CountryCode']->value;
             $countryModel  = GeoLocation::model()->findByAttributes(array('ISO2'=>$countryCode));
