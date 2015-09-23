@@ -194,7 +194,7 @@ class Placements extends CActiveRecord
 	public function getExternalName()
 	{
 		$return = $this->id . '-';
-		$return.= $this->sites->publishersProviders->providers->prefix . '-';
+		$return.= $this->sites->providers->prefix . '-';
 		$return.= $this->sites->name . '-';
 		$return.= $this->name;
 		return $return;
