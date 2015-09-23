@@ -67,7 +67,7 @@ echo '</div><!-- search-form -->'
 
 
 
-<?php BuildGridView::createButton($this, array('sites/admin'), 'modalSites', 'Create Site'); ?>
+<?php BuildGridView::createButton($this, array('sites/create'), 'modalSites', 'Create Site'); ?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
 	'id'=>'sites-grid',
