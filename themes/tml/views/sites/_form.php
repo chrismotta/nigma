@@ -17,7 +17,7 @@
 		<?php 
 
 		if ( $model->isNewRecord )
-	  		echo $form->dropDownListRow($model, 'publishers_providers_id', $publishers, array('prompt' => 'Select a publisher'));
+	  		echo $form->dropDownListRow($model, 'providers_id', $publishers, array('prompt' => 'Select a publisher'));
 
 		echo $form->textFieldRow($model,'name',array('class'=>'span3','maxlength'=>255));
 		// echo $form->textFieldRow($model,'model',array('class'=>'span5','maxlength'=>255));

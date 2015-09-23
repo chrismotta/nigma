@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'sites':
  * @property integer $id
+ * @property integer $providers_id
  * @property string $name
  * @property integer $publishers_providers_id
  *
@@ -33,11 +34,11 @@ class Sites extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			// array('id', 'required'),
-			array('id, publishers_providers_id', 'numerical', 'integerOnly'=>true),
+			array('id, publishers_providers_id, providers_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, publishers_providers_id, publishers_name', 'safe', 'on'=>'search'),
+			array('id, name, publishers_providers_id, publishers_name, providers_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -51,6 +52,7 @@ class Sites extends CActiveRecord
 		return array(
 			'placements'          => array(self::HAS_MANY, 'Placements', 'sites_id'),
 			'publishersProviders' => array(self::BELONGS_TO, 'Publishers', 'publishers_providers_id'),
+			'providers'           => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 		);
 	}
 
@@ -61,6 +63,7 @@ class Sites extends CActiveRecord
 	{
 		return array(
 			'id'                      => 'ID',
+			'providers_id'            => 'Providers ID',
 			'name'                    => 'Name',
 			'publishers_providers_id' => 'Publishers Providers',
 			'publishers_name'         => 'Publishers',
@@ -88,13 +91,14 @@ class Sites extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		if(isset($publisher))
-			$criteria->compare('publishers_providers_id',$publisher);
+			$criteria->compare('providers_id',$publisher);
 		else
-			$criteria->compare('publishers_providers_id',$this->publishers_providers_id);
+			$criteria->compare('providers_id',$this->publishers_providers_id);
 
 		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.providers_id',$this->providers_id);
 		$criteria->compare('t.name',$this->name,true);
-		$criteria->with = array('publishersProviders', 'publishersProviders.providers');
+		$criteria->with = array('publishersProviders', 'providers');
 		$criteria->compare('LOWER(providers.name)', strtolower($this->publishers_name), true);
 
 		return new CActiveDataProvider($this, array(

@@ -88,7 +88,7 @@ echo '</div><!-- search-form -->'
 		'name',
 		array( 
 			'name'  => 'publishers_name',
-			'value' => '$data->publishersProviders->providers->name',
+			'value' => '$data->providers->name',
 		),
 		'model',
 		'publisher_percentage',
