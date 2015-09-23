@@ -202,7 +202,8 @@ class PlacementsController extends Controller
 		$sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		$exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$sites      = CHtml::listData( Sites::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$publishers = CHtml::listData( Publishers::model()->with('providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
+		$publishers = CHtml::listData( Providers::model()->findAll(array('order'=>'name', 'condition' => "type='Publisher' AND status='Active'")), 'id', 'name');
+		// $publishers = CHtml::listData( Publishers::model()->with('providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		// $publishers = CHtml::listData( Publishers::model()->with('sites.providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		$model_pub = KHtml::enumItem($model, 'model');
 

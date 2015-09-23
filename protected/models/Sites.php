@@ -134,7 +134,7 @@ class Sites extends CActiveRecord
 	public function findByPublishersId($id)
 	{
 		$criteria = new CDbCriteria;
-		$criteria->compare("publishers_providers_id", $id);
+		$criteria->compare("providers_id", $id);
 		
 		// return new CActiveDataProvider($this, array(
 		// 	'criteria'   =>$criteria,
