@@ -140,6 +140,7 @@ class Regions extends CActiveRecord
 	{		
 		$criteria = new CDbCriteria;
 		$criteria->compare("financeEntities.advertisers_id",$advertiser);
+		$criteria->compare("t.status","Active");
 		$criteria->join='INNER JOIN finance_entities financeEntities ON( t.finance_entities_id=financeEntities.id )';
 		$criteria->group='t.id';
 		$criteria->order='t.region';
