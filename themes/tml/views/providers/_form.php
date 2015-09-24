@@ -29,7 +29,9 @@
 	<div class="divisor">Commercial Settings</div>
 
 	<?php echo $form->textFieldRow($model,'commercial_name',array('class'=>'span3','maxlength'=>128)); ?>
-	<?php echo $form->textFieldRow($model,'country_id',array('class'=>'span3')); ?>
+	<?php // echo $form->textFieldRow($model,'country_id',array('class'=>'span3')); ?>
+	<?php echo $form->dropDownListRow($model, 'country_id', CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name')); ?>
+
 	<?php echo $form->textFieldRow($model,'state',array('class'=>'span3','maxlength'=>128)); ?>
 	<?php echo $form->textFieldRow($model,'zip_code',array('class'=>'span3','maxlength'=>128)); ?>
 	<?php echo $form->textFieldRow($model,'address',array('class'=>'span3','maxlength'=>128)); ?>
