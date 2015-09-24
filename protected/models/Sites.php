@@ -91,9 +91,9 @@ class Sites extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		if(isset($publisher))
-			$criteria->compare('providers_id',$publisher);
+			$criteria->compare('t.providers_id',$publisher);
 		else
-			$criteria->compare('providers_id',$this->publishers_providers_id);
+			$criteria->compare('t.providers_id',$this->providers_id);
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.providers_id',$this->providers_id);

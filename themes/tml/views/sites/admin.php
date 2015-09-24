@@ -1,6 +1,7 @@
 <?php
 $this->breadcrumbs=array(
-	'Publishers'=>array('publishers/admin'),
+	'Traffic Sources'=>array('providers/admin'),
+	'Publishers'=>array('providers/admin/publishers'),
 	'Sites',
 );
 ?>
