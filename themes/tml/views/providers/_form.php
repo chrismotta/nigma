@@ -80,7 +80,8 @@
 	<?php echo $form->textFieldRow($model,'sizes',array('class'=>'span3','maxlength'=>45)); ?>
 	<?php echo $form->textFieldRow($model,'rate',array('class'=>'span2','maxlength'=>11), array('prepend' => '$')); ?>
 	<?php echo $form->textFieldRow($model,'publisher_percentage',array('class'=>'span2','maxlength'=>11), array('append' => '%')); ?>
-	<?php echo $form->textFieldRow($model,'users_id',array('class'=>'span3')); ?>
+	<?php // echo $form->textFieldRow($model,'users_id',array('class'=>'span3')); ?>
+	<?php echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Select a user to associate')); ?>
 	<?php //echo $form->datepickerRow($model,'start_date',array('options'=>array(),'htmlOptions'=>array('class'=>'span3')),array('prepend'=>'<i class="icon-calendar"></i>')); ?>
 
 	<?php //echo $form->textFieldRow($model,'end_date',array('class'=>'span3')); ?>

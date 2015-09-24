@@ -497,8 +497,11 @@ class ProvidersController extends Controller
 
 		if($hash) $model->type = $hash;
 
+		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
+
 		$this->renderPartial('_form',array(
 			'model'=>$model,
+			'users'=>$users,
 			),false,true);
 	}
 
