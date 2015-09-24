@@ -492,7 +492,7 @@ class ProvidersController extends Controller
 		{
 			$model->attributes=$_POST['Providers'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		if($hash) $model->type = $hash;
@@ -518,7 +518,7 @@ class ProvidersController extends Controller
 		{
 			$model->attributes=$_POST['Providers'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('admin'));
 		}
 
 		$this->renderPartial('_form',array(
