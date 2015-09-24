@@ -88,7 +88,7 @@ if (isset($model->type)) {
 	// array(
 	// 	'class'=>'bootstrap.widgets.TbButtonColumn',
 	// ),
-	BuildGridView::buttonColumn('modalProviders'),
+	BuildGridView::buttonColumn('modalProviders',false),
 
 ),
 )); ?>

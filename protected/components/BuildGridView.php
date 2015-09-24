@@ -59,6 +59,11 @@ class BuildGridView
 			$delete['label']      = 'Archive';
 			$delete['confirm']    = 'Are you sure you want to archive this site?';
 		}
+
+		// $controller = Yii::app()->controller->id;
+		// $action = Yii::app()->controller->action->id;
+		$baseUrl = Yii::app()->createUrl( Yii::app()->controller->getId() );
+
     	$return = array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 70px"),
@@ -77,7 +82,7 @@ class BuildGridView
 						$("#'.$modalId.'").modal("toggle");
 
 				    	$.post(
-						"view/"+id,
+						"'.$baseUrl.'/view/"+id,
 						"",
 						function(data)
 							{
@@ -103,7 +108,7 @@ class BuildGridView
 
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
-						"update/"+id,
+						"'.$baseUrl.'/update/"+id,
 						"",
 						function(data)
 							{
@@ -129,7 +134,7 @@ class BuildGridView
 
 				    	// use jquery post method to get updateAjax view in a modal window
 				    	$.post(
-						"duplicate/"+id,
+						"'.$baseUrl.'duplicate/"+id,
 						"",
 						function(data)
 							{

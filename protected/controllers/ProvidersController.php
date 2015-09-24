@@ -496,11 +496,13 @@ class ProvidersController extends Controller
 		}
 
 		if($hash) $model->type = $hash;
-
+		
+		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');
 		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
 		$this->renderPartial('_form',array(
 			'model'=>$model,
+			'countries'=>$countries,
 			'users'=>$users,
 			),false,true);
 	}
@@ -524,8 +526,13 @@ class ProvidersController extends Controller
 				$this->redirect(array('admin'));
 		}
 
+		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');
+		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
+
 		$this->renderPartial('_form',array(
 			'model'=>$model,
+			'countries'=>$countries,
+			'users'=>$users,
 			),false,true);
 	}
 
