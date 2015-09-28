@@ -460,6 +460,7 @@ class Campaigns extends CActiveRecord
 			$dataTops[$date]['clics']           =0;
 			$dataTops[$date]['clics_redirect']  =0;
 			$dataTops[$date]['conversions_s2s'] =0;
+			$dataTops[$date]['revenue']         =0;
 		}
 
 		$criteria=new CDbCriteria;
@@ -480,11 +481,13 @@ class Campaigns extends CActiveRecord
 				// echo $campaign->id."<br>";
 				// echo $date."<br>";
 				//echo ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date))."<br>";
-				 $dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
-				 $dataTops[$date]['clics']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
-
-				 $dataTops[$date]['conversions_s2s']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
-				 $dataTops[$date]['clics_redirect']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				$dataTops[$date]['conversions']    +=intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				$dataTops[$date]['clics']          +=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				$dataTops[$date]['clics_redirect'] +=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				 
+				$conv                               = intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				$dataTops[$date]['conversions_s2s'] += $conv;
+				$dataTops[$date]['revenue']         += $conv * $campaign->opportunities->rate;
 			}
 		}
 
@@ -493,14 +496,17 @@ class Campaigns extends CActiveRecord
 			$clics[]           =$data['clics'];
 			$clics_redirect[]  =$data['clics_redirect'];
 			$conversions_s2s[] =$data['conversions_s2s'];
+			$revenue[]         =$data['revenue'];
 			$dates[]           =$date;
 		}
+
 		$result=array(
 			'conversions'     => $conversions, 
 			'clics'           => $clics, 
 			'dates'           => $dates, 
 			'clics_redirect'  => $clics_redirect, 
-			'conversions_s2s' => $conversions_s2s
+			'conversions_s2s' => $conversions_s2s,
+			'revenue'         => $revenue,
 			);
 		
 		return $result;
@@ -520,6 +526,7 @@ class Campaigns extends CActiveRecord
 			$dataTops[$date]['conversions']=0;
 			$dataTops[$date]['clics']=0;
 		}
+
 		$criteria=new CDbCriteria;
 		$criteria->select='count(*) as clics,DATE(date) as date';
 		$criteria->addCondition("DATE(date)>="."'".$startDate."'");
@@ -528,6 +535,7 @@ class Campaigns extends CActiveRecord
 		$criteria->group='DATE(date)';
 		$criteria->order='DATE(date) ASC';
 		$r         = ClicksLog::model()->findAll( $criteria );
+
 		foreach ($r as $value) {			
 			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']=intval($value->clics);
 			if($campaign==NULL)$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']=intval(ConvLog::model()->count("DATE(date)=:date", array(":date"=>date('Y-m-d', strtotime($value->date)))));
@@ -535,11 +543,17 @@ class Campaigns extends CActiveRecord
 		}
 		
 		foreach ($dataTops as $date => $data) {
-			$conversions[]=$data['conversions'];
-			$clics[]=$data['clics'];
-			$dates[]=$date;
+			$conversions[] = $data['conversions'];
+			$clics[]       = $data['clics'];
+			$dates[]       = $date;
 		}
-		$result=array('conversions' => $conversions, 'clics' => $clics, 'dates' => $dates);
+
+
+		$result = array(
+			'conversions' => $conversions, 
+			'clics'       => $clics, 
+			'dates'       => $dates, 
+			);
 		
 		return $result;
 	}

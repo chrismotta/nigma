@@ -17,7 +17,7 @@ $totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
 // if($accountManager==null && $opportunitie==null && $providers==null)
 // 	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
 // else 
-	$totals=Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$providers);
+	$totals = Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$providers);
 
 // print_r($totals);
 // return;
@@ -202,6 +202,8 @@ Yii::app()->clientScript->registerScript('search', "
 			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
 			'filter'            => '',
 			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'			=> array_sum($totals["revenue"]),
         ),
         array(
 			'name'              => 'spend',
