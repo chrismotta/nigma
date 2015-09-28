@@ -147,6 +147,7 @@ class ConvlogController extends Controller
 				$conv->campaigns_id = $click->campaigns_id;
 				$conv->clicks_log_id = $click->id;
 				$conv->rate = $conv->campaign->external_rate;
+				$conv->date       = new CDbExpression('NOW()');
 				// $conv->date       = date("Y-M-D G:i:s");
 
 				$conv->save();
