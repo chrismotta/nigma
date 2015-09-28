@@ -232,8 +232,8 @@ $this->widget('bootstrap.widgets.TbButton', array(
 		'g_country'    => $g_country,
 		);
 	
-	$dataProvider = $model->publisherSearch($modelData, false);	
-	$totals       = $model->publisherSearch($modelData, true);
+	$dataProvider = $model->publisherSearch($modelData, false, true);	
+	$totals       = $model->publisherSearch($modelData, true, true);
 	//var_dump($user_visibility->imp);
 
 	// $mergeColumns = $sum ? array('date') : array('date', 'placements.sites.name', 'placements.name');

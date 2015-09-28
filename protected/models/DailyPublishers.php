@@ -181,7 +181,7 @@ class DailyPublishers extends CActiveRecord
 		));
 	}
 
-	public function publisherSearch($modelData, $totals=false){
+	public function publisherSearch($modelData, $totals=false, $report=false){
 
 		$criteria = new CDbCriteria;
 		// Related search criteria items added (use only table.columnName)
@@ -209,7 +209,11 @@ class DailyPublishers extends CActiveRecord
 		$croupier = '(SELECT exchanges_id FROM placements_has_exchanges WHERE placements_id = t.placements_id AND step = 1)';
 		$ajillion_id = 1;//FIX THIS HARDCODE!!!!!
 
-		$sel_ad_request  = 'SUM( IF(exchanges_id='.$croupier.',ad_request,0) )';
+		if($report)
+			$sel_ad_request  = 'SUM( ad_request )';
+		else
+			$sel_ad_request  = 'SUM( IF(exchanges_id='.$croupier.',ad_request,0) )';
+	
 		$sel_impressions = 'SUM(imp_exchange) + SUM(imp_publishers)';
 		$sel_revenue     = 'SUM( revenue )';
 		$sel_profit      = 'SUM( IF(exchanges_id='.$ajillion_id.',revenue, revenue * '.$rs_perc.' /100) )';
