@@ -1811,7 +1811,7 @@ class DailyReport extends CActiveRecord
 	public function createByProvider()
 	{
 		$this->is_from_api = 0;
-		$this->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$this->campaigns_id, ":date"=>$this->date));
+		$this->conv_api    = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$this->campaigns_id, ":date"=>$this->date));
 		$this->updateRevenue();
 		$this->setNewFields();
 			

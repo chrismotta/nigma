@@ -144,9 +144,11 @@ class ConvlogController extends Controller
 
 				$conv = new ConvLog();
 				$conv->tid = $tid;
-				$conv->campaign_id = $click->campaigns_id;
+				$conv->campaigns_id = $click->campaigns_id;
 				$conv->clicks_log_id = $click->id;
 				$conv->rate = $conv->campaign->external_rate;
+				$conv->date       = new CDbExpression('NOW()');
+
 				$conv->save();
 
 				// s4s (server for server)

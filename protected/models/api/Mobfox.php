@@ -47,7 +47,7 @@ class Mobfox
 			}
 
 			// Get campaign info for date specified
-			$url = $apiurl . "/" . $apiuser . "/" . $apikey . "/generateAdvertiserReport&start_date=" . $date . "&end_date=" . $date . "&type=campaign&id=" . $campaign["campaign_id"]['value'];
+			$url = $apiurl . "/" . $apiuser . "/" . $apikey . "/generateAdvertiserReport&start_date=" . $date . "&end_date=" . $date . "&type=campaign&id=" . $campaign["campaigns_id"]['value'];
 			$curl = curl_init($url);
 			curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 			$campaignInfo = curl_exec($curl);
@@ -84,7 +84,7 @@ class Mobfox
 			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaignInfo['response']['report']['statistics']['impressions']['value'];
 			$dailyReport->clics = $campaignInfo['response']['report']['statistics']['clicks']['value'];
-			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			//$dailyReport->conv_adv = 0;
 			$dailyReport->spend = number_format($campaignInfo['response']['report']['statistics']['total_cost']['amount']['value'], 2);
 			$dailyReport->updateRevenue();

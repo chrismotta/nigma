@@ -64,7 +64,7 @@ class BuzzCity
 				$dailyReport->providers_id = $provider_id;
 				$dailyReport->imp = $campaign->exposures;
 				$dailyReport->clics = $campaign->clicks;
-				$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+				$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 				//$dailyReport->conv_adv = 0;
 				$dailyReport->spend = $campaign->spending;
 				$dailyReport->updateRevenue();

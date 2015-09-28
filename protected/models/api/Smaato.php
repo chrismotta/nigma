@@ -77,7 +77,7 @@ class Smaato
 		$dailyReport->providers_id = $this->provider_id;
 		$dailyReport->clics       = $data['clicks']['value'];
 		$dailyReport->imp         = $data['impressions']['value'];
-		$dailyReport->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+		$dailyReport->conv_api    = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 		//$dailyReport->conv_adv    = 0;
 		$dailyReport->spend       = number_format($data['spendings']['value'], 2);
 		$dailyReport->updateRevenue();

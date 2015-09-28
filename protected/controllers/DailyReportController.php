@@ -81,7 +81,7 @@ class DailyReportController extends Controller
 			
 			$modelCampaign      = Campaigns::model()->findByPk($model->campaigns_id);
 			$model->providers_id = $modelCampaign->providers_id;
-			$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
+			$model->conv_api    = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
@@ -185,7 +185,7 @@ class DailyReportController extends Controller
 		if(isset($_POST['DailyReport']))
 		{
 			$model->attributes=$_POST['DailyReport'];
-			$model->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
+			$model->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 			$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
@@ -559,7 +559,7 @@ class DailyReportController extends Controller
 			$list = DailyReport::model()->findAll(array('condition'=>'date(date)="'.$_GET['date'].'"'));
 			foreach ($list as $model) {
 				if ($model->conv_api == 0) {
-					$model->conv_api    = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
+					$model->conv_api    = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
 					$model->updateRevenue();
 					$model->setNewFields();
 					$model->save();

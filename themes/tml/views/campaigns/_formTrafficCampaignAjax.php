@@ -13,7 +13,7 @@
     <?php
 $criteria=new CDbCriteria;
 $criteria->with=array('clicksLog');
-$criteria->addCondition('t.campaign_id='.$model->id);
+$criteria->addCondition('t.campaigns_id='.$model->id);
 $criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($dateStart))."'");
 $criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($dateEnd))."'");
 //$criteria->addCondition('t.clicks_log_id=clicksLog.id');
@@ -38,7 +38,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
         ),
         array(
             'name'   => 'Campaign',
-            'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
+            'value'  => 'Campaigns::model()->getExternalName($data->campaigns_id)',           
         ),
         array(
             'name'   => 'IP',

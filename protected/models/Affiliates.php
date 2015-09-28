@@ -256,7 +256,7 @@ class Affiliates extends CActiveRecord
 					count(l.id) as conv, 
 					DATE(l.date) as date
 				from campaigns c
-				left join conv_log l on l.campaign_id=c.id
+				left join conv_log l on l.campaigns_id=c.id
 				WHERE DATE(l.date)=DATE(:date)
 				AND c.providers_id = :affiliate
 				group by c.id,DATE(l.date)";

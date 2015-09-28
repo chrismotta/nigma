@@ -10,7 +10,7 @@ class Ajillion
 		if ( isset( $_GET['cid']) ) {
 			$cid = $_GET['cid'];
 			if ( !Campaigns::model()->exists( "id=:id", array(":id" => $cid)) ) {
-				Yii::log("campaign_id: $cid doesn't exists.", 'warning', 'system.model.api.ajillion');
+				Yii::log("campaigns_id: $cid doesn't exists.", 'warning', 'system.model.api.ajillion');
 				return 2;
 			}
 		}
@@ -24,7 +24,7 @@ class Ajillion
 
 		// validate if info have't been dowloaded already.
 		if ( isset($cid) )
-			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND campaigns_id=:campaign_id AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date, ":campaign_id" => $cid));
+			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND campaigns_id=:campaigns_id AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date, ":campaigns_id" => $cid));
 		else 
 			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date));
 		if ( $alreadyExist ) {
@@ -92,7 +92,7 @@ class Ajillion
 			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->hits;
-			$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
+			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
 			//$dailyReport->conv_adv = 0;
 			$dailyReport->spend = number_format($campaign->cost, 2);
 			$dailyReport->updateRevenue();

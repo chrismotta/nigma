@@ -167,7 +167,7 @@ class ClicksLog extends CActiveRecord
 	}
 
 
-	public function searchSem($report_type, $dateStart, $dateEnd, $campaign_id=NULL)
+	public function searchSem($report_type, $dateStart, $dateEnd, $campaigns_id=NULL)
 	{
 		$criteria=new CDbCriteria;
 
@@ -176,7 +176,7 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('t.creative',$this->creative,true);
 
 		$criteria->compare('t.match_type',$this->match_type,true);
-		$criteria->compare('t.campaigns_id',$campaign_id);
+		$criteria->compare('t.campaigns_id',$campaigns_id);
 
 		$criteria->addCondition("DATE(t.date) BETWEEN '" . date('Y-m-d', strtotime($dateStart)) . "' AND '" . date('Y-m-d', strtotime($dateEnd)) . "'");
 
@@ -225,11 +225,11 @@ class ClicksLog extends CActiveRecord
 		));
 	}
 
-	public function searchQuery($dateStart, $dateEnd, $campaign_id=NULL, $query=NULL, $onlyConv)
+	public function searchQuery($dateStart, $dateEnd, $campaigns_id=NULL, $query=NULL, $onlyConv)
 	{
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('t.campaigns_id',$campaign_id);
+		$criteria->compare('t.campaigns_id',$campaigns_id);
 		$criteria->compare('t.query',$query,true);
 		$criteria->compare('t.query',$this->query,true);
 

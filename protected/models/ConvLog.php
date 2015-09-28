@@ -7,7 +7,7 @@
  * @property integer $id
  * @property string $tid
  * @property string $date
- * @property integer $campaign_id
+ * @property integer $campaigns_id
  * @property integer $clicks_log_id
  *
  * The followings are the available model relations:
@@ -43,12 +43,12 @@ class ConvLog extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('tid, campaign_id, clicks_log_id', 'required'),
-			array('campaign_id, clicks_log_id', 'numerical', 'integerOnly'=>true),
+			array('tid, campaigns_id, clicks_log_id', 'required'),
+			array('campaigns_id, clicks_log_id', 'numerical', 'integerOnly'=>true),
 			array('tid', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, tid, date, campaign_id, advertiser_id, clicks_log_id', 'safe', 'on'=>'search'),
+			array('id, tid, date, campaigns_id, advertiser_id, clicks_log_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -61,7 +61,7 @@ class ConvLog extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'clicksLog' => array(self::BELONGS_TO, 'ClicksLog', 'clicks_log_id'),
-			'campaign' => array(self::BELONGS_TO, 'Campaigns', 'campaign_id'),
+			'campaign' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
 		);
 	}
 
@@ -74,7 +74,7 @@ class ConvLog extends CActiveRecord
 			'id'          => 'ID',
 			'tid'         => 'Tid',
 			'date'        => 'Conv. Date',
-			'campaign_id' => 'Campaign',
+			'campaigns_id' => 'Campaign',
 			'clicks_log_id' => 'Clicks Log',
 			'advertiser_id' => 'Advertiser'
 			);
@@ -115,7 +115,7 @@ class ConvLog extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('tid',$this->tid,true);
 		$criteria->compare('date',$this->date,true);
-		$criteria->compare('campaign_id',$this->campaign_id);
+		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('clicks_log_id',$this->clicks_log_id);
 
 		return new CActiveDataProvider($this, array(

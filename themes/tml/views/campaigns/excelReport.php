@@ -22,7 +22,7 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'   => 'Campaign',
-            'value'  => 'Campaigns::model()->getExternalName($data->campaign_id)',           
+            'value'  => 'Campaigns::model()->getExternalName($data->campaigns_id)',           
         ),
         array(
             'name'   => 'Provider',

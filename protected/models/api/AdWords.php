@@ -93,7 +93,7 @@ class AdWords
 		$dailyReport->providers_id = $this->provider_id;
 		$dailyReport->imp = $campaign['impressions'];
 		$dailyReport->clics = $campaign['clicks'];
-		$dailyReport->conv_api = ConvLog::model()->count("campaign_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+		$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 		//$dailyReport->conv_adv = 0;
 		// cost is return in micropound, why? google, why? seguramente habia que comittear gil 
 		$dailyReport->spend = number_format($campaign['cost'] / 1000000, 2, '.', ''); // ignore thousands separetor to save properly in db.

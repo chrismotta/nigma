@@ -103,8 +103,8 @@ class Campaigns extends CActiveRecord
 			'campaignCategories' => array(self::BELONGS_TO, 'CampaignCategories', 'campaign_categories_id'),
 			'opportunities'      => array(self::BELONGS_TO, 'Opportunities', 'opportunities_id'),
 			'bannerSizes'        => array(self::BELONGS_TO, 'BannerSizes', 'banner_sizes_id'),
-			'convLogs'           => array(self::HAS_MANY, 'ConvLog', 'campaign_id'),
-			'clicksLogs'         => array(self::HAS_MANY, 'ClicksLog', 'campaign_id'),
+			'convLogs'           => array(self::HAS_MANY, 'ConvLog', 'campaigns_id'),
+			'clicksLogs'         => array(self::HAS_MANY, 'ClicksLog', 'campaigns_id'),
 			'dailyReports'       => array(self::HAS_MANY, 'DailyReport', 'campaigns_id'),
 			'dailyVectors'       => array(self::HAS_MANY, 'DailyVectors', 'campaigns_id'),
 			'vectors'            => array(self::MANY_MANY, 'Vectors', 'vectors_has_campaigns(campaigns_id, vectors_id)'),
@@ -411,7 +411,7 @@ class Campaigns extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->with=array('clicksLog', 'clicksLog.providers', 'campaign');
 		$criteria->compare('campaign.opportunities_id', $opp);
-		if($id) $criteria->addCondition('t.campaign_id='.$id);
+		if($id) $criteria->addCondition('t.campaigns_id='.$id);
 		$criteria->addCondition("DATE(t.date)>='".date('Y-m-d', strtotime($startDate))."'");
 		$criteria->addCondition("DATE(t.date)<='".date('Y-m-d', strtotime($endDate))."'");
 		//$criteria->addCondition('t.clicks_log_id=clicksLog.id');
@@ -479,11 +479,11 @@ class Campaigns extends CActiveRecord
 			{
 				// echo $campaign->id."<br>";
 				// echo $date."<br>";
-				//echo ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date))."<br>";
-				 $dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				//echo ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date))."<br>";
+				 $dataTops[$date]['conversions']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 				 $dataTops[$date]['clics']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 
-				 $dataTops[$date]['conversions_s2s']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
+				 $dataTops[$date]['conversions_s2s']+=intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 				 $dataTops[$date]['clics_redirect']+=intval(ClicksLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign->id,":date"=>$date)));
 			}
 		}
@@ -531,7 +531,7 @@ class Campaigns extends CActiveRecord
 		foreach ($r as $value) {			
 			$dataTops[date('Y-m-d', strtotime($value->date))]['clics']=intval($value->clics);
 			if($campaign==NULL)$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']=intval(ConvLog::model()->count("DATE(date)=:date", array(":date"=>date('Y-m-d', strtotime($value->date)))));
-			if($campaign!=NULL)$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']=intval(ConvLog::model()->count("DATE(date)=:date AND campaign_id=:campaign", array(":campaign"=>$campaign,":date"=>date('Y-m-d', strtotime($value->date)))));
+			if($campaign!=NULL)$dataTops[date('Y-m-d', strtotime($value->date))]['conversions']=intval(ConvLog::model()->count("DATE(date)=:date AND campaigns_id=:campaign", array(":campaign"=>$campaign,":date"=>date('Y-m-d', strtotime($value->date)))));
 		}
 		
 		foreach ($dataTops as $date => $data) {
@@ -580,7 +580,7 @@ class Campaigns extends CActiveRecord
 
 		// custom subselect columns
 		$countClicks = "(SELECT count(cl.id) FROM clicks_log cl WHERE cl.campaigns_id = t.id AND DATE(cl.date)>='" . $dateStart . "' AND DATE(cl.date)<='" . $dateEnd . "')";
-		$countConv = "(SELECT count(cv.id) FROM conv_log cv WHERE cv.campaign_id = t.id AND DATE(cv.date)>='" . $dateStart . "' AND DATE(cv.date)<='" . $dateEnd . "')";
+		$countConv = "(SELECT count(cv.id) FROM conv_log cv WHERE cv.campaigns_id = t.id AND DATE(cv.date)>='" . $dateStart . "' AND DATE(cv.date)<='" . $dateEnd . "')";
 
 		$criteria->select = array(
 			'*',

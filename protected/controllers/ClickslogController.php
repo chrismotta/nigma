@@ -132,7 +132,7 @@ class ClickslogController extends Controller
 		//$model->id         = 2;
 		$model->campaigns_id = $cid;
 		$model->providers_id = $nid;
-		//$model->date       = 0;
+		$model->date       = new CDbExpression('NOW()');
 
 		// Get custom parameters
 		
