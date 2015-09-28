@@ -46,6 +46,7 @@ class ConvLog extends CActiveRecord
 			array('tid, campaigns_id, clicks_log_id', 'required'),
 			array('campaigns_id, clicks_log_id', 'numerical', 'integerOnly'=>true),
 			array('tid', 'length', 'max'=>255),
+			array('date','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, tid, date, campaigns_id, advertiser_id, clicks_log_id', 'safe', 'on'=>'search'),
