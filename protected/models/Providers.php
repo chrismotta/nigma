@@ -221,7 +221,7 @@ class Providers extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('type',$this->type);
 		$criteria->compare('prefix',$this->prefix,true);
-		$criteria->compare('name',$this->name,true);
+		$criteria->compare('LOWER(name)', strtolower($this->name),true);
 		$criteria->compare('status','Active',true);
 		$criteria->compare('currency',$this->currency,true);
 		$criteria->compare('country_id',$this->country_id);
