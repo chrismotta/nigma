@@ -63,13 +63,24 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'=>array(
-		'id',
+		array(
+			'name' => 'id',
+			'headerHtmlOptions' => array('style' => 'width: 65px;'),
+			),
 		'username',
 		// 'password',
 		'email',
 		'name',
 		'lastname',
-		'status',
+		array(
+			'name' => 'status',
+			'headerHtmlOptions' => array('style' => 'width: 45px;'),
+			),
+		array(
+			'name'  => 'provider_external_access',
+			'value' => 'Providers::model()->getExternalUser($data->id)',
+			'filter' => false,
+			),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 100px"),

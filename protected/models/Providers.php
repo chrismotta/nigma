@@ -324,6 +324,19 @@ class Providers extends CActiveRecord
 		return NULL;
 	}
 
+	public function getExternalUser($user_id){
+		$model = self::model()->findByAttributes(array("users_id"=>$user_id));
+		$name = isset($model) ? $model->name .' ('.$model->id.')' : '-';
+		return $name;
+	}
+
+	public function findByUser($id)
+	{
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('users_id='.$id);
+		if($model = Self::model()->find($criteria))
+			return $model->id;
+	}
 
 	public function findAllByType($type)
 	{

@@ -129,29 +129,30 @@ class DailyPublishers extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('date',$this->date,true);
-		$criteria->compare('placements_id',$this->placements_id);
-		$criteria->compare('country_id',$this->country_id);
-		$criteria->compare('devices_id',$this->devices_id);
-		$criteria->compare('ad_request',$this->ad_request,true);
-		$criteria->compare('imp_exchange',$this->imp_exchange,true);
-		$criteria->compare('imp_publishers',$this->imp_publishers,true);
-		$criteria->compare('imp_passback',$this->imp_passback,true);
-		$criteria->compare('imp_count',$this->imp_count,true);
-		$criteria->compare('clicks',$this->clicks);
-		$criteria->compare('revenue',$this->revenue,true);
-		$criteria->compare('spend',$this->spend,true);
-		$criteria->compare('profit',$this->profit,true);
-		$criteria->compare('profit_percent',$this->profit_percent,true);
-		$criteria->compare('eCPM',$this->eCPM,true);
-		$criteria->compare('comment',$this->comment,true);
-		$criteria->compare('impressions',$this->impressions);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.date',$this->date,true);
+		$criteria->compare('t.placements_id',$this->placements_id);
+		$criteria->compare('t.country_id',$this->country_id);
+		$criteria->compare('t.devices_id',$this->devices_id);
+		$criteria->compare('t.ad_request',$this->ad_request,true);
+		$criteria->compare('t.imp_exchange',$this->imp_exchange,true);
+		$criteria->compare('t.imp_publishers',$this->imp_publishers,true);
+		$criteria->compare('t.imp_passback',$this->imp_passback,true);
+		$criteria->compare('t.imp_count',$this->imp_count,true);
+		$criteria->compare('t.clicks',$this->clicks);
+		$criteria->compare('t.revenue',$this->revenue,true);
+		$criteria->compare('t.spend',$this->spend,true);
+		$criteria->compare('t.profit',$this->profit,true);
+		$criteria->compare('t.profit_percent',$this->profit_percent,true);
+		$criteria->compare('t.eCPM',$this->eCPM,true);
+		$criteria->compare('t.comment',$this->comment,true);
+		$criteria->compare('t.impressions',$this->impressions);
 
 		$criteria->with = array(
 			'exchanges',
 			'placements.sites',
-			'placements.sites.publishersProviders.providers',
+			// 'placements.sites.publishersProviders.providers',
+			'placements.sites.providers',
 			);
 		$criteria->compare('LOWER(exchanges.name)',strtolower($this->exchanges_id),true);
 		$criteria->compare('LOWER(sites.name)',strtolower($this->site),true);
@@ -188,7 +189,7 @@ class DailyPublishers extends CActiveRecord
 		$criteria->with = array( 
 			'placements',
 			'placements.sites',
-			'placements.sites.publishersProviders.providers',
+			'placements.sites.providers',
 			'placements.sizes',
 			'country',
 			// 'placements.sites.publishersProviders',
@@ -197,7 +198,7 @@ class DailyPublishers extends CActiveRecord
 		if($modelData['publisherID']=='all'){
 			$criteria->compare('exchanges_id', 2);//smaato
 		}else{
-			$criteria->compare('sites.publishers_providers_id', $modelData['publisherID']);
+			$criteria->compare('sites.providers_id', $modelData['publisherID']);
 		}
 		
 		if ( $modelData['dateStart'] != NULL && $modelData['dateEnd'] != NULL ) {

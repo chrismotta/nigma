@@ -21,6 +21,7 @@ class Users extends CActiveRecord
 {
 	// holds the password confirmation word
     public $repeat_password;
+    public $provider_external_access;
  
 	/**
 	 * @return string the associated database table name
@@ -68,6 +69,8 @@ class Users extends CActiveRecord
 			'transactionCounts' => array(self::HAS_MANY, 'TransactionCount', 'users_id'),
 			'transactionProviders' => array(self::HAS_MANY, 'TransactionProviders', 'users_id'),
 			'visibilities' => array(self::HAS_MANY, 'Visibility', 'users_id'),
+			'providers' => array(self::HAS_MANY, 'Providers', 'users_id'),
+			'manager' => array(self::HAS_MANY, 'Providers', 'account_manager_id'),
 		);
 	}
 
@@ -85,6 +88,7 @@ class Users extends CActiveRecord
 			'name'            => 'Name',
 			'lastname'        => 'Lastname',
 			'status'          => 'Status',
+			'provider_external_access' => 'Provider'
 		);
 	}
 
@@ -113,6 +117,7 @@ class Users extends CActiveRecord
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('lastname',$this->lastname,true);
 		$criteria->compare('status',$this->status,true);
+		$criteria->with = array('providers');
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

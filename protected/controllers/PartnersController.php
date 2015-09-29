@@ -161,8 +161,11 @@ class PartnersController extends Controller
 		$model->unsetAttributes();  // clear any default values
 
 		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
-		$publisher_id   = Publishers::model()->findByUser($userId);
 		// $user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
+
+		// $publisher_id   = Publishers::model()->findByUser($userId);
+		$publisher_id   = Providers::model()->findByUser($userId);
+		if(!isset($publisher_id)) die('Publisher not allowed');
 
 		$this->render('publishers',array(
 			'model'           => $model,

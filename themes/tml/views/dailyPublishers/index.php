@@ -41,7 +41,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 			),
 		array(
 			'name'  => 'publisher',
-			'value' => '$data->placements->sites->publishersProviders->providers->name',
+			'value' => '$data->placements->sites->providers->name',
 			),
 		// 'country_id',
 		// 'devices_id',

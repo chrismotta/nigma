@@ -144,6 +144,8 @@ class Publishers extends CActiveRecord
 		$criteria->addCondition('users_id='.$id);
 		if($pub=Self::model()->find($criteria))
 			return $pub->providers_id;
+		else
+			return null;
 	}
 
 	/**
