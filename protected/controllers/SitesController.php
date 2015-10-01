@@ -171,7 +171,7 @@ class SitesController extends Controller
 	{
 		// $sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		// $exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
-		$publishers = CHtml::listData( Providers::model()->findAll(array('order'=>'name', 'condition' => "type='Publisher' AND status='Active'")), 'id', 'name');
+		$publishers = CHtml::listData( Providers::model()->findAll(array('order'=>'name', 'condition' => "status='Active'")), 'id', 'name');
 		$model_pub = KHtml::enumItem($model, 'model');
 
 		$this->renderPartial('_form', array(
