@@ -60,7 +60,7 @@ echo '</div><!-- search-form -->'
 
 <fieldset>
 
-	<?php echo KHtml::filterPublishers($publisher); ?>
+	<?php echo KHtml::filterProviders($publisher); ?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
 </fieldset>

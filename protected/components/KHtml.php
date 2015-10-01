@@ -244,7 +244,7 @@ class KHtml extends CHtml
     public static function filterProviders($value, $providers=NULL, $htmlOptions = array())
     {
         $defaultHtmlOptions = array(
-            'empty' => 'All providers',
+            'empty' => 'All traffic sources',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 

@@ -21,8 +21,8 @@ if (isset($model->type)) {
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array(
 		"data-row-id" => $data->id, 
-		"class" => $data->type == "Publisher" ? "deepLink" : "",
-		"onclick" => "if(\"$data->type\" == \"Publisher\") deepLink(\"'.Yii::app()->createUrl('sites/admin').'?publisher=\"+$data->id)",
+		"class" => "deepLink",
+		"onclick" => "deepLink(\"'.Yii::app()->createUrl('sites/admin').'?publisher=\"+$data->id)",
 		)',
 	'template'                 => '{items} {pager} {summary}',
 	'columns'                  =>array(
