@@ -33,13 +33,28 @@ class AffiliatesAPI
 			$campaigns = Campaigns::model()->findAll( 'providers_id=:pid', array(':pid' => $affiliate->providers_id) );
 
 			foreach ($campaigns as $campaign) {
-				$conv   = ConvLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
-				$clicks = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
+				// $conv   = ConvLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
+				// $clicks = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
+				
+				$testSource = 29;
+				
+				$clicksCriteria = new CDbCriteria;
+				$clicksCriteria->compare('DATE(date)',$date);
+				$clicksCriteria->compare('campaigns_id',$campaign->id);
+				$clicksCriteria->compare('providers_id','<>'.$testSource);
+				$clicks = ClicksLog::model()->count($clicksCriteria);
+				
+				$convCriteria = new CDbCriteria;		
+				$convCriteria->compare('DATE(t.date)',$date);
+				$convCriteria->compare('t.campaigns_id',$campaign->id);
+				$convCriteria->with = array('clicksLog');
+				$convCriteria->compare('clicksLog.providers_id','<>'.$testSource);
+				$conv = ConvLog::model()->count($convCriteria);
 
 				if ($conv == 0 && $clicks == 0)
 					continue;
 
-				$return.= $campaign->id .' - '.$conv.'<br/>';
+				$return.= $campaign->id .' - '.$clicks.' - '.$conv.'<br/>';
 
 				$dailyReport               = new DailyReport();
 				$dailyReport->campaigns_id = $campaign->id;

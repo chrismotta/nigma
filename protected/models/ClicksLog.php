@@ -37,6 +37,11 @@ class ClicksLog extends CActiveRecord
 
 	public $clics;
 
+	// traffic
+	public $clicks;
+	public $conversions;
+	public $provider;
+
 
 	public function macros()
 	{
@@ -160,6 +165,30 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('os',$this->os,true);
 		$criteria->compare('app',$this->app,true);
 		$criteria->compare('redirect_url',$this->redirect_url,true);
+
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
+	}
+
+	public function searchTraffic($dateStart='today',$dateEnd='today'){
+
+		$dateStart = date('Y-m-d', strtotime($dateStart)); 
+		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
+
+		$criteria=new CDbCriteria;
+		$criteria->with = array('providers');
+		$criteria->join = 'LEFT JOIN conv_log c ON c.clicks_log_id = t.id';
+		$criteria->select = array(
+			// 't.date',
+			'count(t.id) AS clicks',
+			'count(c.id) AS conversions',
+			't.providers_id',
+			'providers.name AS provider',
+			);
+		$criteria->compare('date(t.date)','2015-09-14');
+		$criteria->addCondition('date(t.date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"');
+		$criteria->group = 't.providers_id';
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

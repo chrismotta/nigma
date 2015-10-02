@@ -10,7 +10,7 @@ $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
 $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 $opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-$providers       = isset($_GET['providers']) ? $_GET['providers'] : NULL;
+$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 $totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
 
 // El caso esta comentado porque daba valores 0 - Revisar más adelante
@@ -307,6 +307,26 @@ Yii::app()->clientScript->registerScript('search', "
 	),
 )); 
 ?>
+
+<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
+	'id'                       => 'traffic-grid',
+	'dataProvider'             => $modelClicks->searchTraffic($dateStart, $dateEnd),
+	// 'filter'                   => $model,
+    // 'fixedHeader'			   => true,
+    // 'headerOffset'			   => 50,
+	'type'                     => 'condensed',
+	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
+	'template'                 =>'{items} {pager}',
+	'htmlOptions'=> array('style'=>'width:500px'),
+	'columns'                  => array(
+		// 'date',
+		// 'campaigns_id',
+		'provider',
+		'clicks',
+		'conversions',
+		),
+	)
+); ?>
 
 <?php BuildGridView::printModal($this, 'modalTraffic', 'Traffic Report', array('style'=>'width: 90%;margin-left:-45%')); ?>
 <?php BuildGridView::printModal($this, 'modalExcel', 'Traffic Report'); ?>

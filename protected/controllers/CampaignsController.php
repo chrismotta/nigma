@@ -459,12 +459,14 @@ class CampaignsController extends Controller
 	public function actionTraffic()
 	{
 		$model=new Campaigns('search');
+		$modelClicks=new ClicksLog('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Campaigns']))
 			$model->attributes=$_GET['Campaigns'];
 
 		$this->render('traffic',array(
 			'model'=>$model,
+			'modelClicks'=>$modelClicks,
 		));
 		
 	}
