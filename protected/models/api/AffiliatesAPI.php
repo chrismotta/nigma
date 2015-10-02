@@ -22,12 +22,6 @@ class AffiliatesAPI
 		foreach ($affiliates as $affiliate) {
 			$provider = Providers::model()->findByPk($affiliate->providers_id);
 
-			// validate if info have't been dowloaded already.
-			if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$affiliate->providers_id, ":date"=>$date)) ) {
-				Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->name);
-				continue;//comment for debug
-			}
-
 			// if ($provider->prospect != 10) {
 			// 	Yii::log("Affiliate " . $provider->name . " hasn't prospect 10", 'warning', 'system.model.api.affiliate.' . $provider->name);
 			// 	continue;	
@@ -39,6 +33,13 @@ class AffiliatesAPI
 			$campaigns = Campaigns::model()->findAll($cpCriteria);
 
 			foreach ($campaigns as $campaign) {
+
+				// validate if info have't been dowloaded already.
+				if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", array(":providers"=>$affiliate->providers_id, ":date"=>$date, ":cid"=>$campaign->id)) ) {
+					Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->name);
+					continue;//comment for debug
+				}
+		
 				// $conv   = ConvLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
 				// $clicks = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
 				
@@ -75,12 +76,14 @@ class AffiliatesAPI
 				// continue;// uncomment for debug
 
 				if ( !$dailyReport->save() ) {
+					$return.="Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors());
 					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->name);
 					continue;
 				}
 			}
 			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->name);
 		}
+		$return.="SUCCESS - Daily info downloaded for all affiliates<br/>";
 		Yii::log("SUCCESS - Daily info downloaded for all affiliates", 'info', 'system.model.api.affiliate');
 		return $return;
 	}
