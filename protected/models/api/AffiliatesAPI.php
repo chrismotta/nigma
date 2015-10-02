@@ -24,7 +24,7 @@ class AffiliatesAPI
 			// validate if info have't been dowloaded already.
 			if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$affiliate->providers_id, ":date"=>$date)) ) {
 				Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->name);
-				// continue;
+				continue;
 			}
 
 			// if ($provider->prospect != 10) {
@@ -69,7 +69,6 @@ class AffiliatesAPI
 				$dailyReport->updateSpendAffiliates($fixedRate);
 				$return.= ':'.$campaign->id .' - '.$clicks.' - '.$conv.' - '.$dailyReport->spend.'<br/>';
 
-continue;
 				if ( !$dailyReport->save() ) {
 					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->name);
 					continue;
