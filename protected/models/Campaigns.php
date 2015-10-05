@@ -158,6 +158,15 @@ class Campaigns extends CActiveRecord
 		);
 	}
 
+	public function behaviors()
+	{
+		return array(
+	    		'modelVersioning' => array(
+	          		'class' => 'SAModelVersioning',
+	       		)
+	    	);
+	}
+
 	/**
 	 * Retrieves a list of models based on the current search/filter conditions.
 	 *
