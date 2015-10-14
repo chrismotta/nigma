@@ -21,7 +21,15 @@ $this->widget('EExcelWriter', array(
             'value'  => '$data->id',            
         ),
         array(
-            'name'   => 'Campaign',
+            'name'   => 'Transaction ID',
+            'value'  => '$data->tid',
+        ),
+        array(
+            'name'   => 'Campaign ID',
+            'value'  => '$data->campaigns_id',            
+        ),
+        array(
+            'name'   => 'Campaign Name',
             'value'  => 'Campaigns::model()->getExternalName($data->campaigns_id)',           
         ),
         array(
@@ -45,20 +53,32 @@ $this->widget('EExcelWriter', array(
             'value'  => '!isset($data->clicksLog->carrier) ? "-" : $data->clicksLog->carrier',            
         ),
         array(
-            'name'   => 'Browser',
-            'value'  => '!isset($data->clicksLog->browser) ? "-" $data->clicksLog->browser: ',            
+            'name'   => 'Browser Type',
+            'value'  => '!isset($data->clicksLog->browser) ? "-" : $data->clicksLog->browser ',
         ),
         array(
-            'name'   => 'OS',
+            'name'   => 'Browser Version',
+            'value'  => '!isset($data->clicksLog->browser_version) ? "-" : $data->clicksLog->browser_version',            
+        ),
+        array(
+            'name'   => 'OS Type',
             'value'  => '!isset($data->clicksLog->os) ? "-" : $data->clicksLog->os',            
         ),
         array(
-            'name'   => 'Device',
+            'name'   => 'OS Version',
+            'value'  => '!isset($data->clicksLog->os_version) ? "-" : $data->clicksLog->os_version',            
+        ),
+        // array(
+        //     'name'   => 'Device Type',
+        //     'value'  => '!isset($data->clicksLog->device_type) ? "-" : $data->clicksLog->device_type',   
+        // ),
+        array(
+            'name'   => 'Device Brand',
             'value'  => '!isset($data->clicksLog->device) ? "-" : $data->clicksLog->device',            
         ),
         array(
-            'name'   => 'Device Type',
-            'value'  => '!isset($data->clicksLog->device_type) ? "-" : $data->clicksLog->device_type',   
+            'name'   => 'Device Model',
+            'value'  => '!isset($data->clicksLog->device_model) ? "-" : $data->clicksLog->device_model',            
         ),
         array(
             'name'   => 'Referer URL',
