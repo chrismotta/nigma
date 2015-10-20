@@ -621,20 +621,25 @@ class CampaignsController extends Controller
 		switch ($id) {
 			case 1: // affiliates
 				$criteria       = new CDbCriteria;
-				$criteria->join = 'INNER JOIN affiliates a ON a.providers_id = t.id';
+				// $criteria->join = 'INNER JOIN affiliates a ON a.providers_id = t.id';
+				$criteria->compare('type','Affiliate');
+				$criteria->compare('t.status', 'Active');
 				$criteria->order = 'name';
 				$model = Providers::model()->findAll( $criteria );
 				break;			
 			case 2: // networks
 				$criteria       = new CDbCriteria;
-				$criteria->join = 'INNER JOIN networks n ON n.providers_id = t.id';
+				// $criteria->join = 'INNER JOIN networks n ON n.providers_id = t.id';
+				$criteria->compare('type','Network');
 				$criteria->compare('t.status', 'Active');
 				$criteria->order = 'name';
 				$model = Providers::model()->findAll( $criteria );
 				break;			
 			case 3: // publishers
 				$criteria       = new CDbCriteria;
-				$criteria->join = 'INNER JOIN publishers p ON p.providers_id = t.id';
+				// $criteria->join = 'INNER JOIN publishers p ON p.providers_id = t.id';
+				$criteria->compare('type','Publisher');
+				$criteria->compare('t.status', 'Active');
 				$criteria->order = 'name';
 				$model = Providers::model()->findAll( $criteria );
 				break;			
