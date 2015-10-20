@@ -112,7 +112,7 @@
     
     if (FilterManager::model()->isUserTotalAccess('affiliate'))
         $items=array(  
-                array('label'=>'Dashboard', 'url'=>array('/')),
+                array('label'=>'Dashboard', 'url'=>array('/partners/affiliates')),
                 array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
                 'items'=>array(
                     array('label'=>'Profile', 'url'=>array('/users/profile')),
