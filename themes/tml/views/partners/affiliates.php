@@ -112,13 +112,13 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 
 <?php 
 	$this->widget('bootstrap.widgets.TbGroupGridView', array(
-	'id'                       => 'daily-report-grid',
-	'dataProvider'             => $data['dataProvider'],
-	'filter'                   => $model,
-	'type'                     => 'striped condensed',
-	'template'                 => '{items} {pager} {summary}',
-	'extraRowColumns'=> array('firstLetter'),
-	'extraRowExpression' => '"<b style=\"font-size: 2em; color: #333;\">".$data["date"]."</b>"',
+	'id'                  => 'daily-report-grid',
+	'dataProvider'        => $data['dataProvider'],
+	'filter'              => $model,
+	'type'                => 'striped condensed',
+	'template'            => '{items} {pager} {summary}',
+	'extraRowColumns'     => array('firstLetter'),
+	'extraRowExpression'  => '"<b style=\"font-size: 2em; color: #333;\">".$data["date"]."</b>"',
 	'extraRowHtmlOptions' => array('style'=>'padding:10px'),
 	'columns'      =>array(
                 array(

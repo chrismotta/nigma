@@ -64,19 +64,19 @@ class PartnersController extends Controller
 		
 		$dateStart = date('Y-m-d', strtotime($dateStart));
 		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
-		
+		// $provider  = Affiliates::model()->findByUser($userId)->providers_id;
+
+		$modelP = Providers::model()->findByAttributes(array('users_id'=>$userId));
 		$model     = new Affiliates;
-		$provider  = Affiliates::model()->findByUser($userId)->providers_id;
-		
-		$data = $model->getAffiliates($dateStart, $dateEnd, $provider);
+		$data = $model->getAffiliates($dateStart, $dateEnd, $modelP->id);
 
 		$this->render('affiliates',array(
-			'model'     =>$model,
-			'provider'  =>$provider,
-			'dateStart' =>$dateStart,
-			'dateEnd'   =>$dateEnd,
-			'sum'       =>$sum,
-			'data'      =>$data,
+			'model'     => $model,
+			'provider'  => $modelP->id,
+			'dateStart' => $dateStart,
+			'dateEnd'   => $dateEnd,
+			'sum'       => $sum,
+			'data'      => $data,
 			'preview'   => $preview,
 			'userId'    => $userId,
 		));
