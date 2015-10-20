@@ -186,7 +186,7 @@ class ClicksLog extends CActiveRecord
 			't.providers_id',
 			'providers.name AS provider',
 			);
-		$criteria->compare('date(t.date)','2015-09-14');
+		// $criteria->compare('date(t.date)','2015-09-14');
 		$criteria->addCondition('date(t.date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"');
 		$criteria->group = 't.providers_id';
 
