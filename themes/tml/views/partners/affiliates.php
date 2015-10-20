@@ -114,7 +114,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	$this->widget('bootstrap.widgets.TbGroupGridView', array(
 	'id'                  => 'daily-report-grid',
 	'dataProvider'        => $data['dataProvider'],
-	'filter'              => $model,
+	'filter'              => null,//$model,
 	'type'                => 'striped condensed',
 	'template'            => '{items} {pager} {summary}',
 	'extraRowColumns'     => array('firstLetter'),
@@ -124,12 +124,24 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
                 array(
 					'name'        =>'date', 
 					'header'      =>'Date',
-					'htmlOptions' => array('style' => 'width: 200px;') ,
+					'htmlOptions' => array('style' => 'width: 120px;') ,
                 ),
                 array(
 					'name'        =>'name', 
 					'header'      =>'Name', 
-					'htmlOptions' => array('style' => 'width: 600px;') ,
+					'htmlOptions' => array('style' => 'width: 300px;') ,
+                ),
+                array(
+                	'name'=>'country_name',
+					'value'       => '$data["country"]', 
+					'header'      => 'Country', 
+					'htmlOptions' => array('style' => 'width: 120px;') ,
+                ),
+                array(
+                	'name'=>'carrier_name',
+					'value'       => '$data["carrier"]', 
+					'header'      => 'Carrier', 
+					'htmlOptions' => array('style' => 'width: 120px;') ,
                 ),
                 array(
 					'name'        =>'rate', 

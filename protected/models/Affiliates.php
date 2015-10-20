@@ -21,6 +21,7 @@ class Affiliates extends CActiveRecord
 	public $convrate;
 	public $date;
 	public $country_name;
+	public $carrier_name;
 	public $providers_name;
 	public $commercial_name;
 	public $name; // campaigns_name use for external screen with affiliates authentication
@@ -216,6 +217,10 @@ class Affiliates extends CActiveRecord
 				$data[$i]['date']     =$affiliate['date'];
 				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id'], true);
 
+				$modelCampaigns = Campaigns::model()->with('opportunities.regions.country','opportunities.carriers')->findByPk($affiliate['id']);
+				$data[$i]['country'] = $modelCampaigns->opportunities->regions->country->name;
+				$data[$i]['carrier'] = isset($modelCampaigns->opportunities->carriers_id) ? $modelCampaigns->opportunities->carriers->mobile_brand : '-';
+
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
 				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;
 				isset($graphic[$affiliate['date']]['conv']) ? : $graphic[$affiliate['date']]['conv']=0;
@@ -279,7 +284,11 @@ class Affiliates extends CActiveRecord
 				$data[$i]['clics']    =$affiliate['clics'];
 				$data[$i]['convrate'] =$affiliate['convrate'];
 				$data[$i]['date']     =$affiliate['date'];
-				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id'], true);		
+				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id'], true);
+
+				$modelCampaigns = Campaigns::model()->with('opportunities.regions.country','opportunities.carriers')->findByPk($affiliate['id']);
+				$data[$i]['country'] = $modelCampaigns->opportunities->regions->country->name;
+				$data[$i]['carrier'] = isset($modelCampaigns->opportunities->carriers_id) ? $modelCampaigns->opportunities->carriers->mobile_brand : '-';
 				
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
 				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;
@@ -315,7 +324,7 @@ class Affiliates extends CActiveRecord
 		    'sort'=>array(
 				'defaultOrder' => 'date DESC',
 		        'attributes'=>array(
-		             'id', 'rate', 'conv', 'spend', 'clics', 'convrate', 'date', 'name'
+		             'id', 'country_name', 'carrier_name', 'rate', 'conv', 'spend', 'clics', 'convrate', 'date', 'name'
 		        ),
 		    ),
 		    'pagination'=>array(
