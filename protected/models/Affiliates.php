@@ -197,7 +197,6 @@ class Affiliates extends CActiveRecord
 				from daily_report d 
 				inner join campaigns c on d.campaigns_id=c.id
 				inner join providers p on c.providers_id=p.id 
-				inner join affiliates a on a.providers_id=p.id
 				WHERE d.date BETWEEN :dateStart AND :dateEnd
 				AND p.id = :affiliate
 				group by c.id,DATE(d.date),ROUND(d.spend/IF(ISNULL(d.conv_adv),d.conv_api,d.conv_adv),2)";
@@ -215,7 +214,7 @@ class Affiliates extends CActiveRecord
 				$data[$i]['clics']    =$affiliate['clics'];
 				$data[$i]['convrate'] =$affiliate['convrate'];
 				$data[$i]['date']     =$affiliate['date'];
-				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id']);
+				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id'], true);
 
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
 				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;
@@ -280,7 +279,7 @@ class Affiliates extends CActiveRecord
 				$data[$i]['clics']    =$affiliate['clics'];
 				$data[$i]['convrate'] =$affiliate['convrate'];
 				$data[$i]['date']     =$affiliate['date'];
-				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id']);		
+				$data[$i]['name']     =Campaigns::getExternalName($affiliate['id'], true);		
 				
 				isset($graphic[$affiliate['date']]['spend']) ? : $graphic[$affiliate['date']]['spend']=0;
 				isset($graphic[$affiliate['date']]['clics']) ? : $graphic[$affiliate['date']]['clics']=0;

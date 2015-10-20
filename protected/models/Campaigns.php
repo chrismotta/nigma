@@ -365,7 +365,7 @@ class Campaigns extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function getExternalName($id=NULL)
+	public function getExternalName($id=NULL, $isAffiliate=false)
 	{
 		$model = Campaigns::model()->with(
 				'opportunities', 
@@ -412,7 +412,10 @@ class Campaigns extends CActiveRecord
 			$alternativeConventionName = '-' . $model->id;
 
 		// *CID* ADV(5) COUNTRY(2) CARRIER(3) [WIFI-IP] DEVICE(1) NET(2) [PROD] FORM(3) NAME
-		return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $providers . $product . $format . '-' . $model->name . $alternativeConventionName;
+		if($isAffiliate)
+			return $model->id . '-' . $model->name . $alternativeConventionName;
+		else
+			return $model->id . '-' . $adv . $country . $carrier . $wifi_ip . $device . $providers . $product . $format . '-' . $model->name . $alternativeConventionName;
 	}
 	
 	public function excel($startDate=NULL, $endDate=NULL, $id=null, $opp=NULL)
