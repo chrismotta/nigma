@@ -592,7 +592,7 @@ class CampaignsController extends Controller
 		else
 			$modelProv = new Providers;
 
-		$providers      = CHtml::listData(Providers::model()->findAllByType($modelProv->getType()), 'providers.id', 'providers.name');
+		$providers      = CHtml::listData(Providers::model()->findAllByType($modelProv->getType()), 'id', 'name');
 		$providers_type = Providers::model()->getAllTypes();
 
 		$this->renderPartial('_formAjax',array(

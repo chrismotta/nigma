@@ -315,13 +315,29 @@ class Providers extends CActiveRecord
 
 	public function getType()
 	{
-		if ($this->isAffiliate())
-			return 1;
-		if ($this->isNetwork())
-			return 2;
-		if ($this->isPublisher())
-			return 3;
-		return NULL;
+		switch($this->type){
+			case 'Affiliate':
+			$return = 1;
+			break;
+			case 'Network':
+			$return = 2;
+			break;
+			case 'Publisher':
+			$return = 3;
+			break;
+			default:
+			$return = NULL;
+			break;
+
+		}
+		// if ($this->isAffiliate())
+		// 	return 1;
+		// if ($this->isNetwork())
+		// 	return 2;
+		// if ($this->isPublisher())
+		// 	return 3;
+
+		return $return;
 	}
 
 	public function getExternalUser($user_id){
@@ -342,16 +358,34 @@ class Providers extends CActiveRecord
 	{
 		switch ($type) {
 			case 1:
-				return Affiliates::model()->with('providers')->findAll(array('order'=>'providers.name'));
+			$type = 'Affiliate';
+				// return Affiliates::model()->with('providers')->findAll(array('order'=>'providers.name'));
+			break;
 			case 2:
+			$type = 'Network';
 				//return Networks::model()->with('providers')->findAll();
-				return Networks::model()->with(
-					array('providers'=>array('condition'=>'status = "Active"')))
-					->findAll(array('order'=>'providers.name'));
+				// return Networks::model()->with(
+				// 	array('providers'=>array('condition'=>'status = "Active"')))
+				// 	->findAll(array('order'=>'providers.name'));
+			break;
 			case 3:
-				return Publishers::model()->with('providers')->findAll(array('order'=>'providers.name'));
+			$type = 'Publisher';
+				// return Publishers::model()->with('providers')->findAll(array('order'=>'providers.name'));
+			break;
+			default:
+			$type = null;
+			break;
 		}
-		return array();
+		
+		if(isset($type)){
+			$criteria = new CDbCriteria;
+			$criteria->compare('type',$type);
+			$criteria->order = 'name';
+			return Providers::model()->findAll($criteria);
+		}else{
+			return array();
+		}
+			
 	}
 
 
