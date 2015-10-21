@@ -1,9 +1,4 @@
 <?php
-/*
-https://portal.startapp.com/adv/report/1.0?partner=SAP_77487&token=cc355fe8ddde23c6c01ecabb7334f01e&startDate=2015-1-1&endDate=2015-8-10
-
-{"logs":[],"data":[{"impressions":17722,"clicks":280,"installs":6,"spent":2.8,"cr":0.02143,"ctr":0.0158,"campaignId":"SAP_152903","campaignName":"630-CMO-GT-MOV-M-ST-DISP-FONIK-2538"}]}
-*/
 
 class StartApp
 { 
