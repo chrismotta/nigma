@@ -44,7 +44,8 @@ class ApiUpdateController extends Controller
 			'affiliates', 
 			'mobads', 
 			'plugRush', 
-			'jampp'
+			'jampp',
+			'startApp'
 			);
 		
 		return array(
@@ -126,6 +127,18 @@ class ApiUpdateController extends Controller
 		try {
 			$airpush = new Airpush;
 			$airpush->downloadInfo();
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
+		}
+	}
+
+	public function actionStartApp($hash=null)
+	{
+		try {
+			$startApp = new StartApp;
+			$return = $startApp->downloadInfo();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
