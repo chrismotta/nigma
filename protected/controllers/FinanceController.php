@@ -622,7 +622,7 @@ class FinanceController extends Controller
 		$criteria->with  = array('regions.financeEntities');
 
 		if($id!=0)
-			$criteria->compare('financeEntities.advertisers_id', $id);
+			$criteria->compare('financeEntities.id', $id);
 		
 		$opportunities   = Opportunities::model()->findAll($criteria);
 		foreach ($opportunities as $opportunity) {
