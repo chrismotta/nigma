@@ -16,11 +16,11 @@ class AffiliatesAPI
 		$fixedRate = isset($_GET['rate']) ? $_GET['rate'] : null;
 		$fixedCid  = isset($_GET['cid']) ? $_GET['cid'] : null;
 
-		$affiliates = Affiliates::model()->findAll();
+		// $affiliates = Affiliates::model()->findAll();
+		$providers = Providers::model()->findAllByAttributes(array('type'=>'Affiliate'));
 
 		// Download api for every affiliate
-		foreach ($affiliates as $affiliate) {
-			$provider = Providers::model()->findByPk($affiliate->providers_id);
+		foreach ($providers as $provider) {
 
 			// if ($provider->prospect != 10) {
 			// 	Yii::log("Affiliate " . $provider->name . " hasn't prospect 10", 'warning', 'system.model.api.affiliate.' . $provider->name);
@@ -28,14 +28,14 @@ class AffiliatesAPI
 			// }
 
 			$cpCriteria = new CDbCriteria;
-			$cpCriteria->compare('providers_id',$affiliate->providers_id);
+			$cpCriteria->compare('providers_id',$provider->id);
 			if(isset($fixedCid)) $cpCriteria->compare('id',$fixedCid);
 			$campaigns = Campaigns::model()->findAll($cpCriteria);
 
 			foreach ($campaigns as $campaign) {
 
 				// validate if info have't been dowloaded already.
-				if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", array(":providers"=>$affiliate->providers_id, ":date"=>$date, ":cid"=>$campaign->id)) ) {
+				if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", array(":providers"=>$provider->id, ":date"=>$date, ":cid"=>$campaign->id)) ) {
 					Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->name);
 					continue;//comment for debug
 				}
@@ -64,7 +64,7 @@ class AffiliatesAPI
 				$dailyReport               = new DailyReport();
 				$dailyReport->campaigns_id = $campaign->id;
 				$dailyReport->date         = $date;
-				$dailyReport->providers_id = $affiliate->providers_id;
+				$dailyReport->providers_id = $provider->id;
 				$dailyReport->imp          = 0;
 				$dailyReport->clics        = $clicks;
 				$dailyReport->conv_api     = $conv;
@@ -72,7 +72,7 @@ class AffiliatesAPI
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				$dailyReport->updateSpendAffiliates($fixedRate);
-				$return.= $affiliate->providers_id.'::'.$campaign->id .' - '.$clicks.' - '.$conv.' - '.$dailyReport->spend.'<br/>';
+				$return.= $provider->id.'::'.$campaign->id .' - '.$clicks.' - '.$conv.' - '.$dailyReport->spend.'<br/>';
 				// continue;// uncomment for debug
 
 				if ( !$dailyReport->save() ) {
