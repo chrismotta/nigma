@@ -8,16 +8,13 @@ $dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
 $dateStart      = date('Y-m-d', strtotime($dateStart));
 $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
-$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-$opportunitie   = isset($_GET['opportunitie']) ? $_GET['opportunitie'] : NULL;
-$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 $totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
 
 // El caso esta comentado porque daba valores 0 - Revisar más adelante
 // if($accountManager==null && $opportunitie==null && $providers==null)
 // 	$totals=DailyTotals::model()->getTotals($dateStart,$dateEnd);
 // else 
-	$totals = Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$providers);
+// $totals = Campaigns::getTotals($dateStart, $dateEnd,null,$accountManager,$opportunitie,$providers);
 
 // print_r($totals);
 // return;
@@ -104,229 +101,239 @@ Yii::app()->clientScript->registerScript('search', "
 	); ?>
 </div>
 <br>
-<!--### Date Picker ###-->
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-        'id'=>'date-filter-form',
-        'type'=>'search',
-        'htmlOptions'=>array('class'=>'well'),
-        // to enable ajax validation
-        'enableAjaxValidation'=>true,
-        'action' => Yii::app()->getBaseUrl() . '/campaigns/traffic',
-        'method' => 'GET',
-        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
-    )); ?> 
-<fieldset>
 
-	<?php echo KHtml::datePickerPresets($dpp); ?>
-	<!-- <p>From:</p>  -->
-	<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
-	<!-- <p>To:</p>  -->
-	<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
+<fieldset class="formfilter well">
+
+<?php 
+
+// get arrays
+$filters = array('manager'=>null, 'provider'=>null, 'advertiser'=>null);
+if(isset($_GET['f'])) $filters = array_merge($filters, $_GET['f']); 
+$group = array('date'=>1, 'prov'=>1, 'adv'=>1, 'camp'=>1);
+if(isset($_GET['g'])) $group = array_merge($group, $_GET['g']); 
+$sum = array('clicks'=>1, 'conv'=>1, 'rate'=>1, 'revenue'=>1);
+if(isset($_GET['s'])) $sum = array_merge($sum, $_GET['s']); 
+
+$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+	'id'                   => 'date-filter-form',
+	'type'                 => 'search',
+	'htmlOptions'          => array('style'=>'display:inline-block;margin:0px'),
+	'enableAjaxValidation' => false,
+	'action'               => Yii::app()->controller->createUrl(Yii::app()->controller->id . '/' .Yii::app()->controller->action->id),
+	'method'               => 'GET',
+	// 'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+)); ?> 
+<div class="formfilter-date-large">
 
 	<?php 
-		if (FilterManager::model()->isUserTotalAccess('daily'))
-			echo KHtml::filterAccountManagers($accountManager, array('class'=>'span2'));
-		
-		echo KHtml::filterOpportunities($opportunitie, $accountManager, array('class'=>'span2'));
-		echo KHtml::filterProviders($providers, null, array('class'=>'span2'));
-	?>
 
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+	echo '<div class="form-row">';
+
+	echo KHtml::datePickerPresets($dpp);
+	echo "<span class='formfilter-space'></span>";
+	echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From');
+	echo "<span class='formfilter-space'></span>";
+	echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To');
+
+	echo "<span class='formfilter-space'></span>";
+
+	if (FilterManager::model()->isUserTotalAccess('daily'))
+		echo KHtml::filterAccountManagers($filters['manager'], array('class'=>'span2'), 'f[manager]');	
+	echo "<span class='formfilter-space'></span>";
+	echo KHtml::filterAdvertisers($filters['advertiser'], array('class'=>'span2'), 'f[advertiser]');
+	echo "<span class='formfilter-space'></span>";
+	echo KHtml::filterProviders($filters['provider'], null, array('class'=>'span2'), 'f[provider]');
+
+	echo '</div>';
+	echo '<div>';
+
+	echo CHtml::hiddenField('g[date]', $group['date'], array('id'=>'g_date'));
+	echo CHtml::hiddenField('g[prov]', $group['prov'], array('id'=>'g_prov'));
+	echo CHtml::hiddenField('g[adv]', $group['adv'], array('id'=>'g_adv'));
+	echo CHtml::hiddenField('g[camp]', $group['camp'], array('id'=>'g_camp'));
+
+	$this->widget(
+	    'bootstrap.widgets.TbButtonGroup',
+	    array(
+	        'toggle' => 'checkbox',
+	        // 'type' => 'inverse',
+	        'buttons' => array(
+	        	array('label' => 'Group Columns', 'disabled' => 'disabled', 'type' => 'info'),
+	            array('label' => 'Date', 'active'=>$group['date'], 
+	            	'htmlOptions'=>array('onclick' => '$("#g_date").val( 1 - $("#g_date").val() );')
+	            	),
+	            array('label' => 'Provider', 'active'=>$group['prov'], 
+	            	'htmlOptions'=>array('onclick' => '$("#g_prov").val( 1 - $("#g_prov").val() );')
+	            	),
+	            array('label' => 'Advertiser', 'active'=>$group['adv'], 
+	            	'htmlOptions'=>array('onclick' => '$("#g_adv").val( 1 - $("#g_adv").val() );')
+	            	),
+	            array('label' => 'Campaign', 'active'=>$group['camp'], 
+	            	'htmlOptions'=>array('onclick' => '$("#g_camp").val( 1 - $("#g_camp").val() );')
+	            	),
+	        ),
+	    )
+	);
+
+	echo "<span class='formfilter-space'></span>";
+	
+	echo CHtml::hiddenField('s[clicks]', $sum['clicks'], array('id'=>'s_clicks'));
+	echo CHtml::hiddenField('s[conv]', $sum['conv'], array('id'=>'s_conv'));
+	echo CHtml::hiddenField('s[rate]', $sum['rate'], array('id'=>'s_rate'));
+	echo CHtml::hiddenField('s[revenue]', $sum['revenue'], array('id'=>'s_revenue'));
+
+	$this->widget(
+	    'bootstrap.widgets.TbButtonGroup',
+	    array(
+	        'toggle' => 'checkbox',
+	        // 'type' => 'inverse',
+	        'buttons' => array(
+	        	array('label' => 'Sum Columns', 'disabled' => 'disabled', 'type' => 'info'),
+	            array('label' => 'Clicks', 'active'=>$sum['clicks'], 
+	            	'htmlOptions'=>array('onclick' => '$("#s_clicks").val( 1 - $("#s_clicks").val() );')
+	            	),
+	            array('label' => 'Conversions', 'active'=>$sum['conv'], 
+	            	'htmlOptions'=>array('onclick' => '$("#s_conv").val( 1 - $("#s_conv").val() );')
+	            	),
+	            array('label' => 'Rate', 'active'=>$sum['rate'], 
+	            	'htmlOptions'=>array('onclick' => '$("#s_rate").val( 1 - $("#s_rate").val() );')
+	            	),
+	            array('label' => 'Revenue', 'active'=>$sum['revenue'], 
+	            	'htmlOptions'=>array('onclick' => '$("#s_revenue").val( 1 - $("#s_revenue").val() );')
+	            	),
+	        ),
+	    )
+	); 
+	
+	echo "<span class='formfilter-space'></span>";
+
+	$this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading')));
+
+	echo '</div>';
+	
+	?>
+</div>
+<?php 
+	//Load Filters
+	/*
+
+	if (FilterManager::model()->isUserTotalAccess('daily'))
+		KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
+	KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
+	KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
+	KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
+<hr>
+<div class="formfilter-submit">
+	SUM
+	<div class="input-append">
+		<?php echo CHtml::checkBox('sum', $sum, array('style'=>'vertical-align: baseline;')); ?>
+	</div>
+</div>
+	*/
+?>
+<?php $this->endWidget(); ?>
 </fieldset>
 
-<?php $this->endWidget(); ?>
-<!--### Traffic grid###-->
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
-	'id'                       => 'traffic-grid',
-	'dataProvider'             => $model->searchTraffic($accountManager,$opportunitie,$providers, $dateStart, $dateEnd),
-	'filter'                   => $model,
-    'fixedHeader'			   => true,
-    'headerOffset'			   => 50,
-	'type'                     => 'striped condensed',
-	'selectionChanged'         => 'js:selectionChangedTraffic',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-	'template'                 =>'{items} {pager} {summary}',
-	
-	'columns'                  =>array(
-		// para incluir columnas de tablas relacionadas con search y order
-		// se usa la propiedad publica custom en 'name'
-		// y la ruta relacional de la columna en 'value'
-		array(
-			'name'              => 'advertisers_name',
-			'value'             => '$data->opportunities->regions->financeEntities->advertisers->name',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-			'footer'			=> 'Totals:'
-        ),
-		array(
-			'name'              => 'financeEntities_name',
-			'value'             => '$data->opportunities->regions->financeEntities->name',
-			'headerHtmlOptions' => array('style' => 'width: 60px'),
-        ),
-		array(
-			'name'              => 'name',
-			'value'             => 'Campaigns::model()->getExternalName($data->id)',
-			'headerHtmlOptions' => array('style' => 'width: 80px'),
-        ),
-		array(
-			'name'              => 'model',
-			'headerHtmlOptions' => array('style' => 'width: 30px'),
-        ),
-        array(
-			'name'              => 'clicks',
-			'value'             => '$data->clicks',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'		=> array('style'=>'width: 45px; text-align:right;'),
-			'filter'			=> '',
-			'footerHtmlOptions'	=> array('style'=>'text-align:right;'),
-			'footer'			=> array_sum($totals["clics_redirect"]),
-        ),
-        array(
-			'name'              => 'conv',
-			'value'             => '$data->conv',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'filter'            => '',
-			'footer'			=> array_sum($totals["conversions_s2s"]),
-        ),
-        array(
-			'name'              => 'rate',
-			'value'             => '$data->getRateUSD("'.$dateEnd.'")',
-			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
-			'filter'            => '',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-        ),
-        array(
-			'name'              => 'revenue',
-			'value'             => '($data->conv * $data->getRateUSD("'.$dateEnd.'"))',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'filter'            => '',
-			'htmlOptions'       => array('style'=>'width: 45px; text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'			=> array_sum($totals["revenue"]),
-        ),
-        array(
-			'name'              => 'spend',
-			'type'				=>	'raw',
-			'filter'			=> '',
-			'value'             => 'CHtml::textField("row-spend" . $row, 0, array(
-			        				"style" => "width:30px; text-align:right; font-size: 11px;", 
-			        				"onChange" => "
-			        					var revenue= $( \"#row-spend$row\" ).parent().parent().children().eq(6);
-			        					var profit= $( \"#row-spend$row\" ).parent().parent().children().eq(8);
-			        					var profit_percent= $( \"#row-spend$row\" ).parent().parent().children().eq(9);
-			        					var spend=$( \"#row-spend$row\" ).val();
-										profit.html((revenue.html()-spend).toFixed(2));
-										if(revenue.html()!=0){
-											profit_percent.html((profit.html()/revenue.html()*100).toFixed(2)+\"%\");
-										}
-			        				" 
-			        				))',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
-        ),
-        array(
-			'name'              => 'profit',
-			'value'             => '0',
-			'filter'            => '',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
-        ),
-        array(
-			'name'              => 'profit_percent',
-			'value'             => '0',
-			'headerHtmlOptions' => array('style' => 'width: 45px; text-align:right;'),
-			'filter'            => '',
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
-        ),
-        array(
-			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 70px; text-align:right;"),
-			'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
-			'buttons'           => array(
-				'showCampaign' => array(
-					'label' => 'Show Campaign',
-					'icon'  => 'eye-open',
-					'click' => '
-				    function() {
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-						var dateStart = $("#dateStart").val();
-						var dateEnd = $("#dateEnd").val();						
-						window.location="graphicCampaign?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
-						return false;
-				    }
-				    ',
-				),
-				'showConversion' => array(
-					'label' => 'Show Conversions',
-					'icon'  => 'random',
-					'click' => '
-				    function() {
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-						var dateStart = $("#dateStart").val();
-						var dateEnd = $("#dateEnd").val();
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalTraffic").html(dataInicial);
-						$("#modalTraffic").modal("toggle");
-						
-						$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
-						 .done(function(data){
-						 	$("#modalTraffic").html(data);
-						});
-						return false;
-				    }
-				    ',
-				),
-				'excelConversion' => array(
-					'label' => 'Download Conversions',
-					'icon'  => 'download',
-					'click' => '
-				    function() {
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-						var dateStart = $("#dateStart").val();
-						var dateEnd = $("#dateEnd").val();
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalExcel").html(dataInicial);
-						$("#modalExcel").modal("toggle");
-						
-						$.post("excelReport?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
-						 .done(function(data){
-						 	$("#modalExcel").html(data);
-						});
-						return false;
-				    }
-				    ',
-				),
-			),
-			'template' => '{showCampaign} {showConversion} {excelConversion}',
-		),
-		
-	),
-)); 
-?>
 
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
-	'id'                       => 'traffic-grid',
-	'dataProvider'             => $modelClicks->searchTraffic($dateStart, $dateEnd),
-	// 'filter'                   => $model,
-    // 'fixedHeader'			   => true,
-    // 'headerOffset'			   => 50,
-	'type'                     => 'condensed',
-	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
-	'template'                 =>'{items} {pager}',
-	'htmlOptions'=> array('style'=>'width:500px'),
-	'columns'                  => array(
-		// 'date',
-		// 'campaigns_id',
-		'provider',
-		'clicks',
-		'conversions',
-		),
-	)
-); ?>
+<?php 
+function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array(), $sum=array(), $filters=array(), $isTest=false){
+
+	$totals = $model->searchTraffic($dateStart, $dateEnd, $group, $filters, $isTest, true);
+	$dataProvider = $model->searchTraffic($dateStart, $dateEnd, $group, $filters, $isTest);
+
+	$controller->widget('bootstrap.widgets.TbExtendedGridView', array(
+		'id'                       => 'traffic-grid',
+		'dataProvider'             => $dataProvider,
+		// 'filter'                    => $model,
+	    // 'fixedHeader'			   => true,
+	    // 'headerOffset'			   => 50,
+		'type'                     => 'condensed',
+		'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
+		'template'                 => '{items} {pager} {summary}',
+		// 'htmlOptions'              => array('style'=>'width:500px'),
+		'columns'                  => array(
+			array(
+				'name'    => 'date',
+				'visible' => $group['date'],
+	        	),
+			array(
+				'name'    => 'provider',
+				'visible' => $group['prov'],
+	        	),
+			array(
+				'name'    => 'advertiser',
+				'visible' => $group['adv'],
+	        	),
+			array(
+				'name'    => 'campaign',
+				'visible' => $group['camp'],
+	        	),
+			array(
+				'name'              => 'clicks',
+				'visible'           => $sum['clicks'],
+				//
+				'htmlOptions'       => array('class' => 'traffic-sum-column'),
+				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footer'            => $totals['clicks'],
+	        	),
+			array(
+				'name'              => 'conversions',
+				'htmlOptions'       => array('class' => 'traffic-sum-column'),
+				'footer'            => $totals['conversions'],
+				//
+				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'visible'           => $sum['conv'],
+	        	),
+			array(
+				'name'              => 'convRate',
+				'value'             => '$data->clicks > 0 ? number_format($data->conversions / $data->clicks * 100, 2)."%" : "-"',
+				'footer'            => $totals['clicks'] > 0 ? number_format($totals['conversions'] / $totals['clicks'] * 100, 2) . '%' : '-',
+				//
+				'htmlOptions'       => array('class' => 'traffic-sum-column'),
+				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'visible'           => $sum['conv'],
+	        	),
+			array(
+				'name'              => 'rate',
+				'value'             => '$data->campaigns->getRateUSD($data->date)',
+				//
+				'htmlOptions'       => array('class' => 'traffic-sum-column'),
+				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'visible'           => $sum['rate'],
+	        	),
+			array(
+				'name'              => 'revenue',
+				'value'             => '$data->conversions * $data->campaigns->getRateUSD($data->date)',
+				//
+				'htmlOptions'       => array('class' => 'traffic-sum-column'),
+				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'visible'           => $sum['revenue'],
+	        	),
+			),
+		)
+	); 
+
+}
+
+trafficGridView($this, $modelClicks, $dateStart, $dateEnd, $group, $sum, $filters, false);
+
+echo '<br/>';
+echo '<div class="well">';
+echo '<h4>TEST</h4>';
+
+// get arrays
+$testGroup = array('date'=>1, 'prov'=>0, 'adv'=>1, 'camp'=>1);
+$testSum = array('clicks'=>1, 'conv'=>1, 'rate'=>0, 'revenue'=>0);
+
+trafficGridView($this, $modelClicks, $dateStart, $dateEnd, $testGroup, $testSum, null, true);
+echo '</div>';
+
+?>
 
 <?php BuildGridView::printModal($this, 'modalTraffic', 'Traffic Report', array('style'=>'width: 90%;margin-left:-45%')); ?>
 <?php BuildGridView::printModal($this, 'modalExcel', 'Traffic Report'); ?>

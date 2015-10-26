@@ -209,8 +209,9 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAccountManagers($value, $htmlOptions = array())
+    public static function filterAccountManagers($value, $htmlOptions = array(), $name=null)
     {
+        $name = isset($name) ? $name : 'accountManager';
         $defaultHtmlOptions = array(
             'empty' => 'All account managers',
             'onChange' => '
@@ -232,7 +233,7 @@ class KHtml extends CHtml
 
         $medias = Users::model()->findUsersByRole('admin');//originaly media
         $list   = CHtml::listData($medias, 'id', 'FullName');
-        return CHtml::dropDownList('accountManager', $value, $list, $htmlOptions);
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 
     /**
@@ -241,8 +242,9 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterProviders($value, $providers=NULL, $htmlOptions = array())
+    public static function filterProviders($value, $providers=NULL, $htmlOptions = array(), $name=null)
     {
+        $name = isset($name) ? $name : 'providers';
         $defaultHtmlOptions = array(
             'empty' => 'All traffic sources',
         );
@@ -254,7 +256,7 @@ class KHtml extends CHtml
             $providers = CHtml::listData($providers, 'id', 'name');
         }
             
-        return CHtml::dropDownList('providers', $value, $providers, $htmlOptions);
+        return CHtml::dropDownList($name, $value, $providers, $htmlOptions);
     }
 
     /**
@@ -279,8 +281,9 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAdvertisers($value, $htmlOptions = array())
+    public static function filterAdvertisers($value, $htmlOptions = array(), $name=null)
     {
+        $name = isset($name) ? $name : 'advertiser';
         $defaultHtmlOptions = array(
             'empty' => 'All advertisers',
         );
@@ -288,7 +291,7 @@ class KHtml extends CHtml
         
         $advs        = Advertisers::model()->findAll( array('order' => 'name', "condition"=>"status='Active'") );
         $list        = CHtml::listData($advs, 'id', 'name');
-        return CHtml::dropDownList('advertiser', $value, $list, $htmlOptions);
+        return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 
     /**

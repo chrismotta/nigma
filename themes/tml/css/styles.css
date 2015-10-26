@@ -420,3 +420,12 @@ tbody [class^="icon-"]{
     text-transform: uppercase;
     line-height: 14px;
 }
+
+.form-row {
+	margin-bottom: 15px;
+}
+
+table .traffic-sum-column {
+	width: 100px;
+	text-align: right;
+}

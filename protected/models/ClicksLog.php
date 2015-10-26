@@ -41,6 +41,9 @@ class ClicksLog extends CActiveRecord
 	public $clicks;
 	public $conversions;
 	public $provider;
+	public $campaign;
+	public $advertiser;
+	public $convRate;
 
 
 	public function macros()
@@ -124,7 +127,9 @@ class ClicksLog extends CActiveRecord
 			'totalClicks'  => 'Clicks',
 			'totalConv'    => 'Conversions',
 			'CTR'          => 'CTR',
-
+			'conversions'  => 'Conv.',
+			'convRate'	   => 'Cong.Rate',
+			'provider'     => 'Traffic Source',
 		);
 	}
 
@@ -171,28 +176,73 @@ class ClicksLog extends CActiveRecord
 		));
 	}
 
-	public function searchTraffic($dateStart='today',$dateEnd='today'){
+	public function searchTraffic($dateStart='today',$dateEnd='today', $group=array(), $filters=array(), $isTest=false, $totals=false){
 
 		$dateStart = date('Y-m-d', strtotime($dateStart)); 
 		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
 
 		$criteria=new CDbCriteria;
-		$criteria->with = array('providers');
+		$criteria->with = array('providers','campaigns','campaigns.opportunities.regions.financeEntities.advertisers');
 		$criteria->join = 'LEFT JOIN conv_log c ON c.clicks_log_id = t.id';
 		$criteria->select = array(
-			// 't.date',
+			'DATE(t.date) AS date',
 			'count(t.id) AS clicks',
 			'count(c.id) AS conversions',
 			't.providers_id',
+			'campaigns.name AS campaign',
+			'advertisers.name AS advertiser',
 			'providers.name AS provider',
 			);
-		// $criteria->compare('date(t.date)','2015-09-14');
-		$criteria->addCondition('date(t.date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"');
-		$criteria->group = 't.providers_id';
+		$criteria->addCondition('DATE(t.date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"');
+		
+		if($isTest)
+			$criteria->compare('t.providers_id','29');
+		else
+			$criteria->compare('t.providers_id','<>29');
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-		));
+		//filters
+		if(isset($filters['manager'])) 
+			$criteria->compare('opportunities.account_manager_id',$filters['manager']);
+		if(isset($filters['provider'])) 
+			$criteria->compare('t.providers_id',$filters['provider']);
+		if(isset($filters['advertiser'])) 
+			$criteria->compare('advertisers.id',$filters['advertiser']);
+
+		if(!$totals){
+
+			$groupBy = array();
+			$orderBy = array();
+			
+			if($group['date'] == 1) {
+				$groupBy[] = 'DATE(t.date)';
+				$orderBy[] = 'DATE(t.date) DESC';
+			}
+			if($group['prov'] == 1) {
+				$groupBy[] = 't.providers_id';
+				$orderBy[] = 'providers.name ASC';
+			}
+			if($group['adv'] == 1) {
+				$groupBy[] = 'financeEntities.id';
+				$orderBy[] = 'financeEntities.name ASC';
+			}
+			if($group['camp'] == 1) {
+				$groupBy[] = 'campaigns.id';
+				$orderBy[] = 'campaigns.name ASC';
+			}
+
+			$criteria->group = join($groupBy,',');
+			$criteria->order = join($orderBy,',');
+
+			return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination' =>array(
+	                'pageSize'=>100,
+	            ),
+			));
+
+		}else{
+			return Self::model()->find($criteria);
+		}
 	}
 
 

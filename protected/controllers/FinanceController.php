@@ -615,9 +615,6 @@ class FinanceController extends Controller
 		$period     = date('Y-m-d', mktime(0,0,0, $month, '01', $year));
 		$date       = date('Y-m-d H:i:s', strtotime('NOW'));
 
-		if($id!=0)
-			$advertiser = Advertisers::model()->findByPk($id);
-		
 		$criteria        = new CDbCriteria();
 		$criteria->with  = array('regions.financeEntities');
 
