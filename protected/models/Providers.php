@@ -380,6 +380,7 @@ class Providers extends CActiveRecord
 		if(isset($type)){
 			$criteria = new CDbCriteria;
 			$criteria->compare('type',$type);
+			$criteria->compare('status','Active');
 			$criteria->order = 'name';
 			return Providers::model()->findAll($criteria);
 		}else{
