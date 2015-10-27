@@ -235,7 +235,11 @@ class ClicksLog extends CActiveRecord
 				$groupBy[] = 'advertisers.id';
 				$orderBy[] = 'advertisers.name ASC';
 			}
+
+			if($group['coun'] == 1) {
 				$groupBy[] = 'country.id_location';
+				$orderBy[] = 'country.name ASC';
+			}
 			if($group['camp'] == 1) {
 				$groupBy[] = 'campaigns.id';
 				$orderBy[] = 'campaigns.id ASC';
@@ -265,13 +269,13 @@ class ClicksLog extends CActiveRecord
 							'asc'  =>'advertiser ASC',
 							'desc' =>'advertiser DESC',
 			            ),
-			            'campaign'=>array(
-							'asc'  =>'campaigns_id ASC',
-							'desc' =>'campaigns_id DESC',
-			            ),
 			            'country_name'=>array(
 							'asc'  =>'country_name ASC',
 							'desc' =>'country_name DESC',
+			            ),
+			            'campaign'=>array(
+							'asc'  =>'campaigns_id ASC',
+							'desc' =>'campaigns_id DESC',
 			            ),
 			        ),
 			    ),

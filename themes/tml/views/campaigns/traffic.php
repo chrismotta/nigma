@@ -109,7 +109,7 @@ Yii::app()->clientScript->registerScript('search', "
 // get arrays
 $filters = array('manager'=>null, 'provider'=>null, 'advertiser'=>null);
 if(isset($_GET['f'])) $filters = array_merge($filters, $_GET['f']); 
-$group = array('date'=>1, 'prov'=>1, 'adv'=>1, 'camp'=>1);
+$group = array('date'=>1, 'prov'=>1, 'adv'=>1, 'coun'=>1, 'camp'=>1);
 if(isset($_GET['g'])) $group = array_merge($group, $_GET['g']); 
 $sum = array('clicks'=>1, 'conv'=>1, 'rate'=>1, 'revenue'=>1);
 if(isset($_GET['s'])) $sum = array_merge($sum, $_GET['s']); 
@@ -150,6 +150,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	echo CHtml::hiddenField('g[date]', $group['date'], array('id'=>'g_date'));
 	echo CHtml::hiddenField('g[prov]', $group['prov'], array('id'=>'g_prov'));
 	echo CHtml::hiddenField('g[adv]', $group['adv'], array('id'=>'g_adv'));
+	echo CHtml::hiddenField('g[coun]', $group['coun'], array('id'=>'g_coun'));
 	echo CHtml::hiddenField('g[camp]', $group['camp'], array('id'=>'g_camp'));
 
 	$this->widget(
@@ -167,6 +168,9 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	            	),
 	            array('label' => 'Advertiser', 'active'=>$group['adv'], 
 	            	'htmlOptions'=>array('onclick' => '$("#g_adv").val( 1 - $("#g_adv").val() );')
+	            	),
+	            array('label' => 'Country', 'active'=>$group['coun'], 
+	            	'htmlOptions'=>array('onclick' => '$("#g_coun").val( 1 - $("#g_coun").val() );')
 	            	),
 	            array('label' => 'Campaign', 'active'=>$group['camp'], 
 	            	'htmlOptions'=>array('onclick' => '$("#g_camp").val( 1 - $("#g_camp").val() );')
@@ -268,7 +272,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 			array(
 				'name'    => 'country_name',
 				'htmlOptions' => array('class' => 'traffic-group-column'),
-				// 'visible' => $group['camp'],
+				'visible' => $group['coun'],
 	        	),
 			array(
 				'name'    => 'campaign',
@@ -401,7 +405,7 @@ echo '<div class="well">';
 echo '<h4>TEST</h4>';
 
 // get arrays
-$testGroup = array('date'=>1, 'prov'=>0, 'adv'=>1, 'camp'=>1);
+$testGroup = array('date'=>1, 'prov'=>0, 'adv'=>1, 'coun'=>1, 'camp'=>1);
 $testSum = array('clicks'=>1, 'conv'=>1, 'rate'=>0, 'revenue'=>0);
 
 trafficGridView($this, $modelClicks, $dateStart, $dateEnd, $testGroup, $testSum, null, true);
