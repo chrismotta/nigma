@@ -128,7 +128,7 @@ class ClicksLog extends CActiveRecord
 			'totalConv'    => 'Conversions',
 			'CTR'          => 'CTR',
 			'conversions'  => 'Conv.',
-			'convRate'	   => 'Cong.Rate',
+			'convRate'	   => 'Conv.Rate',
 			'provider'     => 'Traffic Source',
 		);
 	}
