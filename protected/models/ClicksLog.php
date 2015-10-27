@@ -236,17 +236,43 @@ class ClicksLog extends CActiveRecord
 			}
 			if($group['camp'] == 1) {
 				$groupBy[] = 'campaigns.id';
-				$orderBy[] = 'campaigns.name ASC';
+				$orderBy[] = 'campaigns.id ASC';
 			}
 
 			$criteria->group = join($groupBy,',');
-			$criteria->order = join($orderBy,',');
+			// $criteria->order = join($orderBy,',');
 
 			return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
 				'pagination' =>array(
 	                'pageSize'=>100,
 	            ),
+	            'sort'       =>array(
+					'defaultOrder'=>join($orderBy,','),
+			        'attributes'=>array(
+						// Adding custom sort attributes
+			            'date'=>array(
+							'asc'  =>'date ASC',
+							'desc' =>'date DESC',
+			            ),
+			            'provider'=>array(
+							'asc'  =>'provider ASC',
+							'desc' =>'provider DESC',
+			            ),
+			            'advertiser'=>array(
+							'asc'  =>'advertiser ASC',
+							'desc' =>'advertiser DESC',
+			            ),
+			            'campaign'=>array(
+							'asc'  =>'campaigns_id ASC',
+							'desc' =>'campaigns_id DESC',
+			            ),
+			            'country_name'=>array(
+							'asc'  =>'country_name ASC',
+							'desc' =>'country_name DESC',
+			            ),
+			        ),
+			    ),
 			));
 
 		}else{
