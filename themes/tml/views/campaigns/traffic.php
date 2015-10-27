@@ -254,6 +254,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 		'columns'                  => array(
 			array(
 				'name'    => 'date',
+				'htmlOptions' => array('class' => 'date-column'),
 				'visible' => $group['date'],
 	        	),
 			array(
@@ -265,7 +266,14 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 				'visible' => $group['adv'],
 	        	),
 			array(
+				'name'    => 'country_name',
+				'htmlOptions' => array('class' => 'traffic-group-column'),
+				'visible' => $group['camp'],
+	        	),
+			array(
 				'name'    => 'campaign',
+				'value'   => '$data->campaigns->getExternalName($data->campaigns_id)',
+				'htmlOptions' => array('class' => 'traffic-group-column'),
 				'visible' => $group['camp'],
 	        	),
 			array(
@@ -310,9 +318,9 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 				'value'             => '$data->conversions * $data->campaigns->getRateUSD($data->date)',
 				'footer'			=> '',
 				//
-				'htmlOptions'       => array('class' => 'traffic-sum-column revColumn'),
+				'htmlOptions'       => array('class' => 'traffic-sum-column','id'=>'revColumn'),
 				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
-				'footerHtmlOptions' => array('class' => 'traffic-sum-column revColumnFooter'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column','id'=>'revColumnFooter'),
 				'visible'           => $sum['revenue'],
 	        	),
 			array(

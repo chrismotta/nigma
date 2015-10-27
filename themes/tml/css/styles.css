@@ -426,6 +426,12 @@ tbody [class^="icon-"]{
 }
 
 table .traffic-sum-column {
-	width: 100px;
+	max-width: 100px;
 	text-align: right;
+}
+table .traffic-group-column {
+	max-width: 300px;
+}
+table .date-column {
+	width: 60px;
 }

@@ -45,10 +45,10 @@ $(document).ready(function(){
 
 
 	//revenue sum
-	if( $('.revColumnFooter').length ){
+	if( $('#revColumnFooter').length ){
 		var sumRevenue = 0;
-		$('.revColumn').each(function(){ sumRevenue += Number($(this).html()); });
-		$('.revColumnFooter').html(sumRevenue);
+		$('td#revColumn').each(function(){ sumRevenue += Number($(this).html()); });
+		$('#revColumnFooter').html(sumRevenue.toFixed(2));
 		// console.log(sumRevenue);
 	} 
 

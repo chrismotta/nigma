@@ -45,6 +45,7 @@ class ClicksLog extends CActiveRecord
 	public $advertiser;
 	public $convRate;
 	public $revenue;
+	public $country_name;
 
 
 	public function macros()
@@ -183,7 +184,12 @@ class ClicksLog extends CActiveRecord
 		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
 
 		$criteria=new CDbCriteria;
-		$criteria->with = array('providers','campaigns','campaigns.opportunities.regions.financeEntities.advertisers');
+		$criteria->with = array(
+			'providers',
+			'campaigns',
+			'campaigns.opportunities.regions.financeEntities.advertisers', 
+			'campaigns.opportunities.regions.country',
+			);
 		$criteria->join = 'LEFT JOIN conv_log c ON c.clicks_log_id = t.id';
 		$criteria->select = array(
 			'DATE(t.date) AS date',
@@ -194,6 +200,7 @@ class ClicksLog extends CActiveRecord
 			't.campaigns_id AS campaigns_id',
 			'advertisers.name AS advertiser',
 			'providers.name AS provider',
+			'country.name as country_name',
 			);
 		$criteria->addCondition('DATE(t.date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"');
 		
