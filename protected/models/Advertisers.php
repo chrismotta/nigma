@@ -44,7 +44,7 @@ class Advertisers extends CActiveRecord
 			array('prefix, name, cat', 'required'),
 			array('commercial_id, users_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
-			array('prefix', 'length', 'min'=>4, 'max'=>4),
+			array('prefix', 'length', 'max'=>4),
 			array('status', 'length', 'max'=>8),
 			array('cat', 'length', 'max'=>16),
 			array('name, prefix', 'unique'),
