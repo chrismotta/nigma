@@ -72,6 +72,7 @@ class ApiUpdateController extends Controller
 		// $this->actionAirpush();
 		$this->actionEroAdvertising();
 		$this->actionAjillion();
+		$this->actionStartApp();
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
 		

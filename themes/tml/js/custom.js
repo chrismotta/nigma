@@ -43,6 +43,15 @@ $(document).ready(function(){
 	//prevent datepicker preset changes
 	presetChange = 0;
 
+
+	//revenue sum
+	if( $('.revColumnFooter').length ){
+		var sumRevenue = 0;
+		$('.revColumn').each(function(){ sumRevenue += Number($(this).html()); });
+		$('.revColumnFooter').html(sumRevenue);
+		// console.log(sumRevenue);
+	} 
+
 });
 
 function deepLink(url){

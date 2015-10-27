@@ -44,6 +44,7 @@ class ClicksLog extends CActiveRecord
 	public $campaign;
 	public $advertiser;
 	public $convRate;
+	public $revenue;
 
 
 	public function macros()
@@ -190,6 +191,7 @@ class ClicksLog extends CActiveRecord
 			'count(c.id) AS conversions',
 			't.providers_id',
 			'campaigns.name AS campaign',
+			't.campaigns_id AS campaigns_id',
 			'advertisers.name AS advertiser',
 			'providers.name AS provider',
 			);
@@ -241,10 +243,10 @@ class ClicksLog extends CActiveRecord
 			));
 
 		}else{
-			return Self::model()->find($criteria);
+			$totalsArray = Self::model()->find($criteria);
+			return $totalsArray;
 		}
 	}
-
 
 	public function searchSem($report_type, $dateStart, $dateEnd, $campaigns_id=NULL)
 	{

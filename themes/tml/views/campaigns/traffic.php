@@ -248,7 +248,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 	    // 'fixedHeader'			   => true,
 	    // 'headerOffset'			   => 50,
 		'type'                     => 'condensed',
-		'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->providers_id)',
+		'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->campaigns_id)',
 		'template'                 => '{items} {pager} {summary}',
 		// 'htmlOptions'              => array('style'=>'width:500px'),
 		'columns'                  => array(
@@ -308,12 +308,78 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 			array(
 				'name'              => 'revenue',
 				'value'             => '$data->conversions * $data->campaigns->getRateUSD($data->date)',
+				'footer'			=> '',
 				//
-				'htmlOptions'       => array('class' => 'traffic-sum-column'),
+				'htmlOptions'       => array('class' => 'traffic-sum-column revColumn'),
 				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
-				'footerHtmlOptions' => array('class' => 'traffic-sum-column'),
+				'footerHtmlOptions' => array('class' => 'traffic-sum-column revColumnFooter'),
 				'visible'           => $sum['revenue'],
 	        	),
+			array(
+				'class'             => 'bootstrap.widgets.TbButtonColumn',
+				'headerHtmlOptions' => array('style' => "width: 70px; text-align:right;"),
+				'htmlOptions'       =>array('style'=>'width: 45px; text-align:right;'),
+				'visible'           => $group['camp'],
+				'buttons'           => array(
+					'showCampaign' => array(
+						'label' => 'Show Campaign',
+						'icon'  => 'eye-open',
+						'click' => '
+					    function() {
+					    	// get row id from data-row-id attribute
+					    	var id = $(this).parents("tr").attr("data-row-id");
+							var dateStart = $("#dateStart").val();
+							var dateEnd = $("#dateEnd").val();						
+							window.location="graphicCampaign?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
+							return false;
+					    }
+					    ',
+						),
+					'showConversion' => array(
+						'label' => 'Show Conversions',
+						'icon'  => 'random',
+						'click' => '
+					    function() {
+					    	// get row id from data-row-id attribute
+					    	var id = $(this).parents("tr").attr("data-row-id");
+							var dateStart = $("#dateStart").val();
+							var dateEnd = $("#dateEnd").val();
+					    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+							$("#modalTraffic").html(dataInicial);
+							$("#modalTraffic").modal("toggle");
+							
+							$.post("trafficCampaignAjax?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
+							 .done(function(data){
+							 	$("#modalTraffic").html(data);
+							});
+							return false;
+					    }
+					    ',
+						),
+					'excelConversion' => array(
+						'label' => 'Download Conversions',
+						'icon'  => 'download',
+						'click' => '
+					    function() {
+					    	// get row id from data-row-id attribute
+					    	var id = $(this).parents("tr").attr("data-row-id");
+							var dateStart = $("#dateStart").val();
+							var dateEnd = $("#dateEnd").val();
+					    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+							$("#modalExcel").html(dataInicial);
+							$("#modalExcel").modal("toggle");
+							
+							$.post("excelReport?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd)
+							 .done(function(data){
+							 	$("#modalExcel").html(data);
+							});
+							return false;
+					    }
+					    ',
+						),
+					),
+					'template' => '{showCampaign} {showConversion} {excelConversion}',
+				),
 			),
 		)
 	); 
