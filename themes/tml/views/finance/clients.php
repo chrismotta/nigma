@@ -199,7 +199,7 @@ else
 	'dataProvider'    => $dataProvider,
 	'filter'          => $filtersForm,
 	'afterAjaxUpdate' =>'verifedIcon',
-	'type'            => 'condensed',	 
+	'type'            => 'condensed',
 	'template'        => '{items} {pager} {summary}',
 	'columns'         => array(		
 		array(
@@ -212,7 +212,7 @@ else
 			'name'              => 'opportunitie',
 			'value'             => '$data["opportunitie"]',	
 			'htmlOptions'       => array('id'=>'alignLeft'),
-			'header'            => 'Opportunitie',                           
+			'header'            => 'Opportunity',                           
 			),	
 		array(
 			'name'              =>'model',

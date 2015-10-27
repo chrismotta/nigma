@@ -162,7 +162,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	            array('label' => 'Date', 'active'=>$group['date'], 
 	            	'htmlOptions'=>array('onclick' => '$("#g_date").val( 1 - $("#g_date").val() );')
 	            	),
-	            array('label' => 'Provider', 'active'=>$group['prov'], 
+	            array('label' => 'Traffic Source', 'active'=>$group['prov'], 
 	            	'htmlOptions'=>array('onclick' => '$("#g_prov").val( 1 - $("#g_prov").val() );')
 	            	),
 	            array('label' => 'Advertiser', 'active'=>$group['adv'], 
@@ -268,7 +268,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 			array(
 				'name'    => 'country_name',
 				'htmlOptions' => array('class' => 'traffic-group-column'),
-				'visible' => $group['camp'],
+				// 'visible' => $group['camp'],
 	        	),
 			array(
 				'name'    => 'campaign',

@@ -132,6 +132,7 @@ class ClicksLog extends CActiveRecord
 			'conversions'  => 'Conv.',
 			'convRate'	   => 'Conv.Rate',
 			'provider'     => 'Traffic Source',
+			'country_name' => 'Country',
 		);
 	}
 
@@ -231,9 +232,10 @@ class ClicksLog extends CActiveRecord
 				$orderBy[] = 'providers.name ASC';
 			}
 			if($group['adv'] == 1) {
-				$groupBy[] = 'financeEntities.id';
-				$orderBy[] = 'financeEntities.name ASC';
+				$groupBy[] = 'advertisers.id';
+				$orderBy[] = 'advertisers.name ASC';
 			}
+				$groupBy[] = 'country.id_location';
 			if($group['camp'] == 1) {
 				$groupBy[] = 'campaigns.id';
 				$orderBy[] = 'campaigns.id ASC';

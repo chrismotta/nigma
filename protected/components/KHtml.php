@@ -76,13 +76,50 @@ class KHtml extends CHtml
                 switch (this.value) {
                     case "1":
                         break;
+                        //today
                     case "2":
+                        //yesterday
                         dateStart.setDate( today.getDate()-1 );
+                        //yesterday
                         dateEnd.setDate( today.getDate()-1 );
                         break;
                     case "3":
-                        dateStart.setDate( today.getDate()-8 );
+                        //last sunday
+                        dateStart.setDate( today.getDate()-today.getDay() );//last sunday
+                        //yesterday
                         dateEnd.setDate( today.getDate()-1 );
+                        break;
+                    case "4":
+                        //previous sunday
+                        dateStart.setDate( today.getDate()-today.getDay()-7 );
+                        //last saturday
+                        dateEnd.setDate( today.getDate()-today.getDay()-1 );
+                        break;
+                    case "5":
+                        //a week
+                        dateStart.setDate( today.getDate()-8 );
+                        //yesterday
+                        dateEnd.setDate( today.getDate()-1 );
+                        break;
+                    case "6":
+                        //a month
+                        dateStart.setDate( today.getDate()-30 );
+                        //yesterday
+                        dateEnd.setDate( today.getDate()-1 );
+                        break;
+                    case "7":
+                        //last 1st
+                        dateStart.setDate( 1 );
+                        //yesterday
+                        dateEnd.setDate( today.getDate()-1 );
+                        break;
+                    case "8":
+                        //previous 1st
+                        dateStart.setDate( 1 );
+                        dateStart.setMonth( today.getMonth()-1 );
+                        //last day of previout month
+                        dateEnd.setDate( 1 );
+                        dateEnd.setDate( dateEnd.getDate() -1 );
                         break;
                     
                     default:
@@ -98,8 +135,14 @@ class KHtml extends CHtml
         $list = array(
             1 =>'Today',
             2 =>'Yesterday',
-            3 =>'Last 7 days',
-            4 =>'Custom',
+            3 =>'This week', //(Lunes hasta el día anterior al actual)
+            4 =>'Last week', // (Lunes a Domingo de la semana anterior a la actual)
+            5 =>'Last 7 days',
+            6 =>'Last 30 days',
+            7 =>'This month',
+            8 =>'Last month',
+            9 =>'Custom',
+            
             );
 
         $return = '';
