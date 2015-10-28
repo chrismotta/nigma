@@ -24,7 +24,7 @@
 <?php 
     $items=array(
         array('label'=>'Dashboard', 'url'=>array('/site/index'), 'itemOptions' => array('class'=>'showLoadingMenuItem'), 'visible'=>!Yii::app()->user->isGuest),
-        array('label'=>'Sales', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        array('label'=>'Demand', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
             array('label'=>'Advertisers', 'url'=>array('/advertisers/admin')),
             //array('label'=>'IOs', 'url'=>array('/ios/admin')),
@@ -44,7 +44,7 @@
             array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
             array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),
         ), 'visible'=>!Yii::app()->user->isGuest),
-        array('label'=>'Providers', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        array('label'=>'Supply', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
             array('label'=>'Traffic Sources', 'url'=>array('/providers/admin')),
             array('label'=>'Publishers', 'url'=>array('/providers/admin/publishers')),
