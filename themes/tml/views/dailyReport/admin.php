@@ -251,7 +251,7 @@ $('.search-form form').submit(function(){
 	?>
 	<hr>
 
-	<?
+	<?php
 
 	// get filters //
 	
