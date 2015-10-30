@@ -36,6 +36,8 @@ class DailyReport extends CActiveRecord
 {
 
 	public $providers_name;
+	public $advertisers_name;
+	public $country_name;
 	// public $providers_hasApi;
 	public $account_manager;
 	public $campaign_name;
@@ -118,7 +120,7 @@ class DailyReport extends CActiveRecord
 			'revenue'            => 'Revenue',
 			'date'               => 'Date',
 			'is_from_api'        => 'Is From Api',
-			'providers_name'     => 'Providers Name',
+			'providers_name'     => 'Traffic Source',
 			'account_manager'    => 'Account Manager',
 			'campaign_name'      => 'Campaign Name',
 			'profit'             => 'Profit',
@@ -932,7 +934,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null, $group=array(), $sums=array())
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -958,83 +960,129 @@ class DailyReport extends CActiveRecord
 		            // Adding all the other default attributes
 		            '*',
 		        );
-		if($sum==1){
-			$criteria->group  = 'campaigns_id';
-			$criteria->select = array(
-				'*', 
-				'sum(imp) as imp',
-				'sum(imp_adv) as imp_adv',
-				'sum(clics) as clics',
-				'sum(conv_api) as conv_api',
-				'sum(conv_adv) as conv_adv',
-				'sum(revenue) as revenue',
-				'sum(spend) as spend',
-				'sum(profit) as profit',
-				// 'revenue as profit_percent',
-				'round( avg(click_through_rate), 2 ) as click_through_rate',
-				'round( avg(conversion_rate), 2 ) as conversion_rate',
-				'round( avg(eCPM), 2 ) as eCPM',
-				'round( avg(eCPC), 2 ) as eCPC',
-				'round( avg(eCPA), 2 ) as eCPA'
-				);
+	
+		$groupBy = array();
+		$orderBy = array();
 
-			$sumArray['profit'] = array(
-					'asc'  =>'sum(profit)',
-					'desc' =>'sum(profit) DESC',
-	            );
-			$sumArray['imp'] = array(
-					'asc'  =>'sum(imp)',
-					'desc' =>'sum(imp) DESC',
-	            );
-			$sumArray['imp_adv'] = array(
-					'asc'  =>'sum(imp_adv)',
-					'desc' =>'sum(imp_adv) DESC',
-	            );
-			$sumArray['clics'] = array(
-					'asc'  =>'sum(clics)',
-					'desc' =>'sum(clics) DESC',
-	            );
-			$sumArray['conv_api'] = array(
-					'asc'  =>'sum(conv_api)',
-					'desc' =>'sum(conv_api) DESC',
-	            );
-			$sumArray['conv_adv'] = array(
-					'asc'  =>'sum(conv_adv)',
-					'desc' =>'sum(conv_adv) DESC',
-	            );
-			$sumArray['revenue'] = array(
-					'asc'  =>'sum(revenue)',
-					'desc' =>'sum(revenue) DESC',
-	            );
-			$sumArray['spend'] = array(
-					'asc'  =>'sum(spend)',
-					'desc' =>'sum(spend) DESC',
-	            );
-			$sumArray['profit_percent'] = array(
-					'asc'  =>'round( avg(profit_percent), 2 )',
-					'desc' =>'round( avg(profit_percent), 2 ) DESC',
-	            );
-			$sumArray['click_through_rate'] = array(
-					'asc'  =>'round( avg(click_through_rate), 2 )',
-					'desc' =>'round( avg(click_through_rate), 2 ) DESC',
-	            );
-			$sumArray['conversion_rate'] = array(
-					'asc'  =>'round( avg(conversion_rate), 2 )',
-					'desc' =>'round( avg(conversion_rate), 2 ) DESC',
-	            );
-			$sumArray['eCPM'] = array(
-					'asc'  =>'round( avg(eCPM), 2 )',
-					'desc' =>'round( avg(eCPM), 2 ) DESC',
-	            );
-			$sumArray['eCPC'] = array(
-					'asc'  =>'round( avg(eCPC), 2 )',
-					'desc' =>'round( avg(eCPC), 2 ) DESC',
-	            );
-			$sumArray['eCPA'] = array(
-					'asc'  =>'round( avg(eCPA), 2 )',
-					'desc' =>'round( avg(eCPA), 2 ) DESC',
-	            );
+		if($group['Date'] == 1) {
+			$groupBy[] = 'DATE(t.date)';
+			$orderBy[] = 'DATE(t.date) DESC';
 		}
+		if($group['TrafficSource'] == 1) {
+			$groupBy[] = 't.providers_id';
+			$orderBy[] = 'providers.name ASC';
+		}
+		if($group['Advertiser'] == 1) {
+			$groupBy[] = 'advertisers.id';
+			$orderBy[] = 'advertisers.name ASC';
+		}
+		if($group['Country'] == 1) {
+			$groupBy[] = 'country.id_location';
+			$orderBy[] = 'country.name ASC';
+		}
+		if($group['Campaign'] == 1) {
+			$groupBy[] = 't.campaigns_id';
+			$orderBy[] = 't.campaigns_id ASC';
+		}
+
+		$criteria->group = join($groupBy,',');
+		$criteria->select = array(
+			'*', 
+			'advertisers.name AS advertisers_name',
+			'country.name AS country_name',
+			'sum(imp) as imp',
+			'sum(imp_adv) as imp_adv',
+			'sum(clics) as clics',
+			'sum(conv_api) as conv_api',
+			'sum(conv_adv) as conv_adv',
+			'sum(revenue) as revenue',
+			'sum(spend) as spend',
+			'sum(profit) as profit',
+			// 'revenue as profit_percent',
+			'round( avg(click_through_rate), 2 ) as click_through_rate',
+			'round( avg(conversion_rate), 2 ) as conversion_rate',
+			'round( avg(eCPM), 2 ) as eCPM',
+			'round( avg(eCPC), 2 ) as eCPC',
+			'round( avg(eCPA), 2 ) as eCPA'
+			);
+
+		// if($sum==1){
+		// 	$criteria->group  = 'campaigns_id';
+		// 	$criteria->select = array(
+		// 		'*', 
+		// 		'sum(imp) as imp',
+		// 		'sum(imp_adv) as imp_adv',
+		// 		'sum(clics) as clics',
+		// 		'sum(conv_api) as conv_api',
+		// 		'sum(conv_adv) as conv_adv',
+		// 		'sum(revenue) as revenue',
+		// 		'sum(spend) as spend',
+		// 		'sum(profit) as profit',
+		// 		// 'revenue as profit_percent',
+		// 		'round( avg(click_through_rate), 2 ) as click_through_rate',
+		// 		'round( avg(conversion_rate), 2 ) as conversion_rate',
+		// 		'round( avg(eCPM), 2 ) as eCPM',
+		// 		'round( avg(eCPC), 2 ) as eCPC',
+		// 		'round( avg(eCPA), 2 ) as eCPA'
+		// 		);
+
+		// 	$sumArray['profit'] = array(
+		// 			'asc'  =>'sum(profit)',
+		// 			'desc' =>'sum(profit) DESC',
+	 //            );
+		// 	$sumArray['imp'] = array(
+		// 			'asc'  =>'sum(imp)',
+		// 			'desc' =>'sum(imp) DESC',
+	 //            );
+		// 	$sumArray['imp_adv'] = array(
+		// 			'asc'  =>'sum(imp_adv)',
+		// 			'desc' =>'sum(imp_adv) DESC',
+	 //            );
+		// 	$sumArray['clics'] = array(
+		// 			'asc'  =>'sum(clics)',
+		// 			'desc' =>'sum(clics) DESC',
+	 //            );
+		// 	$sumArray['conv_api'] = array(
+		// 			'asc'  =>'sum(conv_api)',
+		// 			'desc' =>'sum(conv_api) DESC',
+	 //            );
+		// 	$sumArray['conv_adv'] = array(
+		// 			'asc'  =>'sum(conv_adv)',
+		// 			'desc' =>'sum(conv_adv) DESC',
+	 //            );
+		// 	$sumArray['revenue'] = array(
+		// 			'asc'  =>'sum(revenue)',
+		// 			'desc' =>'sum(revenue) DESC',
+	 //            );
+		// 	$sumArray['spend'] = array(
+		// 			'asc'  =>'sum(spend)',
+		// 			'desc' =>'sum(spend) DESC',
+	 //            );
+		// 	$sumArray['profit_percent'] = array(
+		// 			'asc'  =>'round( avg(profit_percent), 2 )',
+		// 			'desc' =>'round( avg(profit_percent), 2 ) DESC',
+	 //            );
+		// 	$sumArray['click_through_rate'] = array(
+		// 			'asc'  =>'round( avg(click_through_rate), 2 )',
+		// 			'desc' =>'round( avg(click_through_rate), 2 ) DESC',
+	 //            );
+		// 	$sumArray['conversion_rate'] = array(
+		// 			'asc'  =>'round( avg(conversion_rate), 2 )',
+		// 			'desc' =>'round( avg(conversion_rate), 2 ) DESC',
+	 //            );
+		// 	$sumArray['eCPM'] = array(
+		// 			'asc'  =>'round( avg(eCPM), 2 )',
+		// 			'desc' =>'round( avg(eCPM), 2 ) DESC',
+	 //            );
+		// 	$sumArray['eCPC'] = array(
+		// 			'asc'  =>'round( avg(eCPC), 2 )',
+		// 			'desc' =>'round( avg(eCPC), 2 ) DESC',
+	 //            );
+		// 	$sumArray['eCPA'] = array(
+		// 			'asc'  =>'round( avg(eCPA), 2 )',
+		// 			'desc' =>'round( avg(eCPA), 2 ) DESC',
+	 //            );
+		// }
 
 		//search
 		$criteria->compare('t.id',$this->id);

@@ -235,14 +235,13 @@ class ClicksLog extends CActiveRecord
 				$groupBy[] = 'advertisers.id';
 				$orderBy[] = 'advertisers.name ASC';
 			}
-
 			if($group['coun'] == 1) {
 				$groupBy[] = 'country.id_location';
 				$orderBy[] = 'country.name ASC';
 			}
 			if($group['camp'] == 1) {
-				$groupBy[] = 'campaigns.id';
-				$orderBy[] = 'campaigns.id ASC';
+				$groupBy[] = 't.campaigns_id';
+				$orderBy[] = 't.campaigns_id ASC';
 			}
 
 			$criteria->group = join($groupBy,',');

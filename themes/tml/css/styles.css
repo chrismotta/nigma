@@ -206,7 +206,7 @@ fieldset hr {
 }
 
 .editableField {
-	text-align: center !important;
+	text-align: right !important;
 }
 .editableField a {
 	text-decoration: none;

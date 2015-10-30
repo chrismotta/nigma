@@ -922,6 +922,41 @@ class KHtml extends CHtml
         $list  = CHtml::listData($sites, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
+
+    // custom filters
+    public static function groupFilter($controller, $items, $prefix, $title, $titleStyle=''){
+
+        $buttons = array(
+            array(
+                'label' => $title, 
+                'disabled' => 'disabled', 
+                'type' => 'info',
+                'htmlOptions' => array(
+                    'style' => $titleStyle,
+                    ),
+                ),
+            );
+
+        foreach ($items as $key => $value) {
+            echo CHtml::hiddenField($prefix.'['.$key.']', $value, array('id'=>''.$prefix.'-'.$key));
+            $buttons[] = array(
+                'label' => $key, 
+                'active'=> $value, 
+                'htmlOptions' => array(
+                    'onclick' => '$("#'.$prefix.'-'.$key.'").val( 1 - $("#'.$prefix.'-'.$key.'").val() );',
+                    ),
+                );
+        }
+
+        $controller->widget(
+            'bootstrap.widgets.TbButtonGroup',
+            array(
+                'toggle' => 'checkbox',
+                // 'type' => 'inverse',
+                'buttons' => $buttons,
+            )
+        );
+    }
     
 }
 ?>
