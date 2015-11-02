@@ -33,13 +33,17 @@ class AffiliatesAPI
 			$campaigns = Campaigns::model()->findAll($cpCriteria);
 
 			foreach ($campaigns as $campaign) {
-
+				
 				// validate if info have't been dowloaded already.
-				if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", array(":providers"=>$provider->id, ":date"=>$date, ":cid"=>$campaign->id)) ) {
+				/*
+				if ( DailyReport::model()->find("providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", array(":providers"=>$provider->id, ":date"=>$date, ":cid"=>$campaign->id)) ) {
 					Yii::log("Information already downloaded.", 'warning', 'system.model.api.affiliate.' . $provider->name);
+					$return.= 'Information already downloaded for date: '.$date.' - provider: '.$provider->id.' - campaign: '.$campaign->id;
+					$return.= '<br/>';
 					continue;//comment for debug
 				}
-		
+				*/
+
 				// $conv   = ConvLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
 				// $clicks = ClicksLog::model()->count("campaigns_id=:cid AND DATE(date)=:date", array(':date'=>$date, ":cid"=>$campaign->id));
 				
@@ -61,7 +65,18 @@ class AffiliatesAPI
 				if ($conv == 0 && $clicks == 0)
 					continue;
 
-				$dailyReport               = new DailyReport();
+				// if exists overwrite, else create a new
+				$dailyReport = DailyReport::model()->find(
+					"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+					array(
+						":providers"=>$provider->id, 
+						":date"=>$date, 
+						":cid"=>$campaign->id
+						)
+					);
+				if(!$dailyReport)
+					$dailyReport = new DailyReport();
+				
 				$dailyReport->campaigns_id = $campaign->id;
 				$dailyReport->date         = $date;
 				$dailyReport->providers_id = $provider->id;
