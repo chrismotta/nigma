@@ -38,11 +38,12 @@ $('.search-form form').submit(function(){
 	$editable = false;
 
 	$group = array(
-		'Date'          =>1, 
-		'TrafficSource' =>1, 
+		'Date'          =>0, 
+		'TrafficSource' =>0, 
 		'Advertiser'    =>1, 
-		'Country'       =>1, 
-		'Campaign'      =>1,
+		// businnes unit
+		'Country'       =>0, 
+		'Campaign'      =>0,
 		);
 	if(isset($_GET['g'])) 
 		$group = array_merge($group, $_GET['g']); 
@@ -52,13 +53,13 @@ $('.search-form form').submit(function(){
 	$sum = array(
 		'Imp'        =>1, 
 		'Clicks'     =>1, 
+		'CTR'        =>1,
 		'Conv'       =>1, 
+		'CR'         =>1,
 		'Rate'       =>1, 
 		'Revenue'    =>1,
 		'Spend'      =>1,
 		'Profit'     =>1,
-		'CTR'        =>1,
-		'CR'         =>1,
 		'eCPM'       =>0,
 		'eCPC'       =>0,
 		'eCPA'       =>0,
@@ -377,6 +378,14 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => number_format($totals['clics']),
         ),*/
+		array(
+			'name'              => 'click_through_rate',
+			'value'             => $grouped ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4)*100)."%" : 0,
+            'visible' => $sum['CTR'],
+		),
         array(
 			'name'              => 'conv_api',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
@@ -443,6 +452,14 @@ $('.search-form form').submit(function(){
             'visible' => $editable,
         ),
 		array(
+			'name'              => 'conversion_rate',
+			'value'             => $grouped ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
+			'htmlOptions'       => array('style'=>'text-align:right;'),
+			'footerHtmlOptions' => array('style'=>'text-align:right;'),
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv'] / $totals['clics'], 4 )*100)."%" : 0,
+            'visible' => $sum['CR'],
+		),
+		array(
 			'name'        => 'rate',
 			'value'       => '$data->getRateUSD() ? number_format($data->getRateUSD(),2) : "0.00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
@@ -479,22 +496,6 @@ $('.search-form form').submit(function(){
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? number_format(($totals['profit'] / $totals['revenue']) * 100)."%" : 0,
             'visible' => $sum['Profit'],
-		),
-		array(
-			'name'              => 'click_through_rate',
-			'value'             => $grouped ? 'number_format($data->getCtr()*100, 2)."%"' : 'number_format($data->click_through_rate*100, 2)."%"', // FIX for sum feature
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['imp']) && $totals['imp']!=0  ? (round($totals['clics'] / $totals['imp'], 4)*100)."%" : 0,
-            'visible' => $sum['CTR'],
-		),
-		array(
-			'name'              => 'conversion_rate',
-			'value'             => $grouped ? 'number_format($data->getConvRate()*100, 2)."%"' : 'number_format($data->conversion_rate*100, 2)."%"', // FIX for sum feature
-			'htmlOptions'       => array('style'=>'text-align:right;'),
-			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv'] / $totals['clics'], 4 )*100)."%" : 0,
-            'visible' => $sum['CR'],
 		),
 		array(
 			'name'              => 'eCPM',
