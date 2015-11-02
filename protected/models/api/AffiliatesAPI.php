@@ -5,16 +5,36 @@ class AffiliatesAPI
 
 	public function downloadInfo()
 	{
+		date_default_timezone_set('UTC');
 		$return = '';
-
-		if ( isset( $_GET['date']) ) {
-			$date = $_GET['date'];
-		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
-		}
-
 		$fixedRate = isset($_GET['rate']) ? $_GET['rate'] : null;
 		$fixedCid  = isset($_GET['cid']) ? $_GET['cid'] : null;
+
+		if ( isset( $_GET['date']) ) {
+		
+			$date = $_GET['date'];
+			$return.= $this->downloadDateInfo($date, $fixedRate, $fixedCid);
+		
+		} else {
+
+			if(date('G')<=1){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$return.= $this->downloadDateInfo($date);
+			}
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$return.= $this->downloadDateInfo($date);
+		
+		}
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date, $fixedRate=null, $fixedCid=null)
+	{
+		$return = '';
 
 		// $affiliates = Affiliates::model()->findAll();
 		$providers = Providers::model()->findAllByAttributes(array('type'=>'Affiliate'));
