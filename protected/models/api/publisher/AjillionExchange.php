@@ -85,13 +85,12 @@ class AjillionExchange
 				$placementsData[$placementID.'-'.$line->country][$line->status] = $line;
 				
 				// list of country names
-				if(!in_array($line->country, $unknownCountries))
+				if(!in_array($line->country, $unknownCountries) && $line->country != NULL)
 	            	$unknownCountries[] = $line->country;		
 			}
 		}
 
 		$countryCodeList = $this->getCountryCodes($unknownCountries);
-		// $return.= "<hr/>Countries:<br/>".json_encode($countryCodeList)."<hr/>";
 
 		// build data to dump //
 		foreach ($placementsData as $key=>$value) {
@@ -173,6 +172,7 @@ class AjillionExchange
 	}
 
 	private function getCountryCodes($countryNames){
+
 		$params = array(
 			"search"=>$countryNames
 			);
