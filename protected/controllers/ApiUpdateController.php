@@ -261,7 +261,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$ajillion = new AjillionExchange;
-			$return = $ajillion->downloadInfo();
+			$return = $ajillion->downloadInfo(1);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
@@ -297,7 +297,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$affiliates = new AffiliatesAPI;
-			$return = $affiliates->downloadInfo();
+			$return = $affiliates->downloadInfo(1);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {

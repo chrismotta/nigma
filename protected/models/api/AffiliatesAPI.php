@@ -3,7 +3,7 @@
 class AffiliatesAPI
 { 
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
 		date_default_timezone_set('UTC');
 		$return = '';
@@ -17,7 +17,7 @@ class AffiliatesAPI
 		
 		} else {
 
-			if(date('G')<=1){
+			if(date('G')<=$offset){
 				$return.= '<hr/>yesterday<hr/>';
 				$date = date('Y-m-d', strtotime('yesterday'));
 				$return.= $this->downloadDateInfo($date);

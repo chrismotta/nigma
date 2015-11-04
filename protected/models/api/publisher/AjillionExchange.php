@@ -6,15 +6,41 @@ class AjillionExchange
 	private $network_id = 3;
 	private $exchange_id = 1;
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
+
+		date_default_timezone_set('UTC');
 		$return = '';
 
+
+
 		if ( isset( $_GET['date']) ) {
+		
 			$date = $_GET['date'];
+			$return.= $this->downloadDateInfo($date);
+		
 		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
+
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$return.= $this->downloadDateInfo($date);
+			}
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$return.= $this->downloadDateInfo($date);
+		
 		}
+
+		
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date)
+	{
+		$return = '';
 
 		// validate if info have't been dowloaded already.
 		// if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
@@ -134,12 +160,15 @@ class AjillionExchange
 								'date'          => $date,
 								'country_id'    => $countryID,
 								));
-			if(isset($dailyPublishers)){
-				$return.=  "<br/>===>EXISTS!!<hr/>";
-				continue;
+			
+			if(!isset($dailyPublishers)){
+				$return.=  "<br/>===>NEW!!<hr/>";
+				// continue;
+				$dailyPublishers = new DailyPublishers;
+			}else{
+				$return.=  "<br/>===>OVERWRITE!!<hr/>";
 			}
 
-			$dailyPublishers = new DailyPublishers;
 
 			$dailyPublishers->placements_id  = $placementID;
 			$dailyPublishers->exchanges_id   = $this->exchange_id;
