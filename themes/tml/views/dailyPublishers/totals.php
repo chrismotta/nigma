@@ -253,7 +253,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	'columns'                  => array(
         array(
 			'header'  => 'Publisher',
-			'name'    => 'placements.sites.publishersProviders.providers.name',
+			'name'    => 'placements.sites.providers.name',
         ),
 		array(
 			'name'              => 'date',

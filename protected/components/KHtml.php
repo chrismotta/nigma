@@ -481,7 +481,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Opportunities',
+                    'placeholder' => 'All opportunities',
                     'width'       => '20%',
                 ),
             )
@@ -512,7 +512,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Categories',
+                    'placeholder' => 'All categories',
                     'width' => '20%',
                 ),
             )
@@ -546,7 +546,7 @@ class KHtml extends CHtml
                 'value'       => $value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Providers',
+                    'placeholder' => 'All traffic sources',
                     'width' => '20%',
                 ),
             )
@@ -609,7 +609,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Managers',
+                    'placeholder' => 'All account managers',
                     'width' => '20%',
                 ),
             )
@@ -672,7 +672,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Advertisers',
+                    'placeholder' => 'All advertisers',
                     'width'       => '20%',
                 ),
             )
@@ -711,7 +711,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Countries',
+                    'placeholder' => 'All countries',
                     'width'       => '20%',
                 ),
             )
@@ -748,7 +748,7 @@ class KHtml extends CHtml
                 'value'       =>$value,
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
-                    'placeholder' => 'All Models',
+                    'placeholder' => 'All models',
                     'width'       => '20%',
                 ),
             )

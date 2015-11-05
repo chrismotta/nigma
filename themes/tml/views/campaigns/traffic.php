@@ -402,7 +402,7 @@ trafficGridView($this, $modelClicks, $dateStart, $dateEnd, $group, $sum, $filter
 
 echo '<br/>';
 echo '<div class="well">';
-echo '<h4>TEST</h4>';
+echo '<h4>S2S Conversion Tests</h4>';
 
 // get arrays
 $testGroup = array('date'=>1, 'prov'=>0, 'adv'=>1, 'coun'=>1, 'camp'=>1);
