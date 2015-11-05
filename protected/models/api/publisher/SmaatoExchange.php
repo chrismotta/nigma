@@ -106,29 +106,27 @@ class SmaatoExchange
 
         if ( isset( $_GET['date']) ) {
         
-            $date = $_GET['date'];
-            $return.= $this->downloadDateInfo($date);
+            $this->date = $_GET['date'];
+            $return.= $this->downloadDateInfo();
         
         } else {
 
             if(date('G')<=$offset){
                 $return.= '<hr/>yesterday<hr/>';
-                $date = date('Y-m-d', strtotime('yesterday'));
-                $return.= $this->downloadDateInfo($date);
+                $this->date = date('Y-m-d', strtotime('yesterday'));
+                $return.= $this->downloadDateInfo();
             }
             //default
             $return.= '<hr/>today<hr/>';
-            $date = date('Y-m-d', strtotime('today'));
-            $return.= $this->downloadDateInfo($date);
+            $this->date = date('Y-m-d', strtotime('today'));
+            $return.= $this->downloadDateInfo();
         
         }
-
-        
 
         return $return;
     }
 
-    public function downloadDateInfo($date)
+    public function downloadDateInfo()
     {
         $return = '';
 
@@ -184,12 +182,12 @@ class SmaatoExchange
         
         $return.=$data_json;
         $return.="<hr/>";
-        $return.= $json_response;
-        $return.="<hr/>";
+        // $return.= $json_response;
+        // $return.="<hr/>";
 
         $response = json_decode($json_response);
         $lastPlacementID = null;
-// return $return;
+
         foreach ($response as $adspace) {
             $return.= json_encode($adspace);
             $return.="<br/>";
