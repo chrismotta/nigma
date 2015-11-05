@@ -82,10 +82,10 @@ class SmaatoExchange
                             'date'          => $this->date,
                             ));
         if(isset($dailyPublishers)){
-            return array('status'=>false,'msg'=>'<hr/>===>EXISTS!!<hr/>');
+            return array('status'=>true, 'msg'=>'<hr/>===>PLACEMENT EXISTS!!<hr/>', 'model'=>$dailyPublishers);
         }
 
-        return array('status'=>true);
+        return array('status'=>true, 'msg'=>'<hr/>===>PLACEMENT IS NEW!!<hr/>', );
     }
 
     private function setDaily($data){
@@ -99,15 +99,38 @@ class SmaatoExchange
         return $model;
     }
 
-    public function downloadInfo()
+    public function downloadInfo($offset)
     {
+        date_default_timezone_set('UTC');
         $return = '';
 
         if ( isset( $_GET['date']) ) {
-            $this->date = $_GET['date'];
+        
+            $date = $_GET['date'];
+            $return.= $this->downloadDateInfo($date);
+        
         } else {
-            $this->date = date('Y-m-d', strtotime('yesterday'));
+
+            if(date('G')<=$offset){
+                $return.= '<hr/>yesterday<hr/>';
+                $date = date('Y-m-d', strtotime('yesterday'));
+                $return.= $this->downloadDateInfo($date);
+            }
+            //default
+            $return.= '<hr/>today<hr/>';
+            $date = date('Y-m-d', strtotime('today'));
+            $return.= $this->downloadDateInfo($date);
+        
         }
+
+        
+
+        return $return;
+    }
+
+    public function downloadDateInfo($date)
+    {
+        $return = '';
 
         $access_token = $this->oAuthLogin();
         // $access_token = 'KNCDc32tEwo8DEKSQQNb3ks4kXNlOo';
@@ -161,12 +184,12 @@ class SmaatoExchange
         
         $return.=$data_json;
         $return.="<hr/>";
-        // $return.= $json_response;
-        // $return.="<hr/>";
+        $return.= $json_response;
+        $return.="<hr/>";
 
         $response = json_decode($json_response);
         $lastPlacementID = null;
-
+// return $return;
         foreach ($response as $adspace) {
             $return.= json_encode($adspace);
             $return.="<br/>";
@@ -211,14 +234,19 @@ class SmaatoExchange
                 
                 // verify placement
                 $verified = $this->verifyPlacement($placementID, $countryID);
-                $return.= json_encode($verified);
+                // $return.= json_encode($verified);
+                $return.= $verified['msg'];
                 
                 if(!$verified['status']){
-                    $return.= $verified['msg'];
                     continue;
+                }else{
+                    if(isset($verified['model'])){
+                        $daily = $verified['model'];
+                    }else{
+                        $daily = new DailyPublishers();
+                    }
                 }
 
-                $daily = new DailyPublishers();
                 $daily->date          = $this->date;
                 $daily->placements_id = $placementID;
                 $daily->exchanges_id  = $this->exchange_id;

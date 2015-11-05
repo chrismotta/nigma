@@ -273,7 +273,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$smaato = new SmaatoExchange;
-			$return = $smaato->downloadInfo();
+			$return = $smaato->downloadInfo(1);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
