@@ -84,20 +84,20 @@ class KHtml extends CHtml
                         dateEnd.setDate( today.getDate()-1 );
                         break;
                     case "3":
-                        //last sunday
-                        dateStart.setDate( today.getDate()-today.getDay() );//last sunday
+                        //last monday
+                        dateStart.setDate( today.getDate()-today.getDay()+1 );
                         //yesterday
                         dateEnd.setDate( today.getDate()-1 );
                         break;
                     case "4":
-                        //previous sunday
-                        dateStart.setDate( today.getDate()-today.getDay()-7 );
+                        //previous monday
+                        dateStart.setDate( today.getDate()-today.getDay()-6 );
                         //last saturday
-                        dateEnd.setDate( today.getDate()-today.getDay()-1 );
+                        dateEnd.setDate( today.getDate()-today.getDay() );
                         break;
                     case "5":
                         //a week
-                        dateStart.setDate( today.getDate()-8 );
+                        dateStart.setDate( today.getDate()-7 );
                         //yesterday
                         dateEnd.setDate( today.getDate()-1 );
                         break;
