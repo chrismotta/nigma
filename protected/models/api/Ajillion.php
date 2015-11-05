@@ -5,8 +5,37 @@ class Ajillion
 
 	private $provider_id = 3;
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
+		date_default_timezone_set('UTC');
+		$return = '';
+
+		if ( isset( $_GET['date']) ) {
+		
+			$date = $_GET['date'];
+			$return.= $this->downloadDateInfo($date);
+		
+		} else {
+
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$return.= $this->downloadDateInfo($date);
+			}
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$return.= $this->downloadDateInfo($date);
+		
+		}
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date)
+	{
+		$return = "";
+
 		if ( isset( $_GET['cid']) ) {
 			$cid = $_GET['cid'];
 			if ( !Campaigns::model()->exists( "id=:id", array(":id" => $cid)) ) {
@@ -15,14 +44,8 @@ class Ajillion
 			}
 		}
 
-		if ( isset( $_GET['date']) ) {
-			$date = $_GET['date'];
-		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
-		}
-
-
 		// validate if info have't been dowloaded already.
+		/*
 		if ( isset($cid) )
 			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND campaigns_id=:campaigns_id AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date, ":campaigns_id" => $cid));
 		else 
@@ -31,6 +54,7 @@ class Ajillion
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
 			return 2;
 		}
+		*/
 
 		$date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 		
@@ -69,17 +93,35 @@ class Ajillion
 				continue;
 			}
 
-			// Save campaign information
-			$dailyReport = new DailyReport();
-			
 			// get campaign ID used in Server, from the campaign name use in the external provider
-			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaign);
+			$campaigns_id = Utilities::parseCampaignID($campaign->campaign);
 
-			if ( !$dailyReport->campaigns_id ) {
+			if ( !$campaigns_id ) {
 				Yii::log("invalid external campaign name: '" . $campaign->campaign, 'warning', 'system.model.api.ajillion');
 				continue;
 			}
 
+			$formated_date = date_format( new DateTime($date), "Y-m-d" );
+
+			// if exists overwrite, else create a new
+			$dailyReport = DailyReport::model()->find(
+				"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+				array(
+					":providers"=>$this->provider_id, 
+					":date"=>$formated_date, 
+					":cid"=>$campaigns_id,
+					)
+				);
+			if(!$dailyReport){
+				$dailyReport = new DailyReport();
+				$return.= "<hr/>New record: ";
+			}else{
+				$return.= "<hr/>Update record: ".$dailyReport->id;
+			}
+			
+			$dailyReport->campaigns_id = $campaigns_id;
+
+			// only when $_GET['cid'] is setted // not verified
 			$returnAfterSave = false;
 			if ( isset($cid) ) {
 				if ( $cid == $dailyReport->campaigns_id )
@@ -88,7 +130,7 @@ class Ajillion
 					continue;
 			}
 
-			$dailyReport->date = date_format( new DateTime($date), "Y-m-d" );
+			$dailyReport->date = $formated_date;
 			$dailyReport->providers_id = $this->provider_id;
 			$dailyReport->imp = $campaign->impressions;
 			$dailyReport->clics = $campaign->hits;
@@ -97,15 +139,19 @@ class Ajillion
 			$dailyReport->spend = number_format($campaign->cost, 2);
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
+
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
+			}else{
+				$return.='<br/>===> saved';
 			}
 
 			if ( $returnAfterSave ) // return if only has to update one campaign
 				break;
 		}
+
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
-		return 0;
+		return $return;
 	}
 
 

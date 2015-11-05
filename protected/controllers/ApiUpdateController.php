@@ -70,7 +70,7 @@ class ApiUpdateController extends Controller
 	public function actionIndex()
 	{
 		// $this->actionAirpush();
-		$this->actionEroAdvertising();
+		// $this->actionEroAdvertising();
 		$this->actionAjillion();
 		$this->actionStartApp();
 		// $this->actionBuzzCity();
@@ -137,7 +137,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$startApp = new StartApp;
-			$return = $startApp->downloadInfo();
+			$return = $startApp->downloadInfo(1);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
@@ -145,11 +145,13 @@ class ApiUpdateController extends Controller
 		}
 	}
 
-	public function actionAjillion()
+	public function actionAjillion($hash=null)
 	{
 		try {
 			$ajillion = new Ajillion;
-			$ajillion->downloadInfo();
+			$return = $ajillion->downloadInfo(1);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
 		}
