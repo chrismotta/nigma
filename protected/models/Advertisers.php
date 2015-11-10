@@ -147,7 +147,7 @@ class Advertisers extends CActiveRecord
 		$criteria=new CDbCriteria;
 		$criteria->addCondition('users_id='.$id);
 		if($adv=Self::model()->find($criteria))
-			return $adv->id;
+			return $adv;
 	}
 
 	/**

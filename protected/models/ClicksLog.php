@@ -46,6 +46,7 @@ class ClicksLog extends CActiveRecord
 	public $convRate;
 	public $revenue;
 	public $country_name;
+	public $conv;
 
 
 	public function macros()

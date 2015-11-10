@@ -351,7 +351,7 @@ class Providers extends CActiveRecord
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('users_id='.$id);
 		if($model = Self::model()->find($criteria))
-			return $model->id;
+			return $model;
 	}
 
 	public function findAllByType($type)

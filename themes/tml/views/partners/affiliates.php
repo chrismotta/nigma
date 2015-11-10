@@ -3,6 +3,7 @@
 
 $this->breadcrumbs=array(
 	'Affiliates',
+	$preview ? 'Affiliates: '.$provider->name.' ('.$provider->id.')' : 'Affiliates',
 );
 
 Yii::app()->clientScript->registerScript('search', "
@@ -31,7 +32,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<div class="span6">
 		<div class="alert alert-info">
 			<small >TOTAL</small>
-			<h3 class="">Revenue: <?php echo Providers::model()->findByPk($provider)->currency . " " . number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
+			<h3 class="">Revenue: <?php echo $provider->currency . " " . number_format(array_sum($data['graphic']['spends']), 2); ?></h3>
 			<br>
 		</div>
 	</div>

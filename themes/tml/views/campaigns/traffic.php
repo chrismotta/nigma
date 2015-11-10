@@ -336,7 +336,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 					'showCampaign' => array(
 						'label' => 'Show Campaign',
 						'icon'  => 'eye-open',
-						'click' => '
+						/*'click' => '
 					    function() {
 					    	// get row id from data-row-id attribute
 					    	var id = $(this).parents("tr").attr("data-row-id");
@@ -345,7 +345,8 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 							window.location="graphicCampaign?id="+id+"&dateStart="+dateStart+"&dateEnd="+dateEnd;
 							return false;
 					    }
-					    ',
+					    ',*/
+					    'url'=>'"graphicCampaign/".$data->campaigns_id."?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'"',
 						),
 					'showConversion' => array(
 						'label' => 'Show Conversions',

@@ -220,9 +220,9 @@ class CampaignsController extends Controller
 		
 		$this->renderFormAjax($new, 'Duplicate');
 	}
-	public function actionGraphicCampaign()
+	public function actionGraphicCampaign($id)
 	{
-		$model = $this->loadModel($_GET['id']);
+		$model = $this->loadModel($id);
 		if(isset($_GET['dateStart']))$dateStart=$_GET['dateStart'];
 		else $dateStart=date_format('Y-m-d',strtotime('today'));
 		if(isset($_GET['dateEnd']))$dateEnd=$_GET['dateEnd'];

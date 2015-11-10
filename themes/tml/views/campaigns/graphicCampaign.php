@@ -104,6 +104,11 @@ $dateEnd=$_GET['dateEnd'];
                     'value'       => '$data->clics', 
                     'htmlOptions' => array('style' => 'width: 10px'),  
                 ),
+                array(
+                    'name'        => 'Convs',
+                    'value'       => '$data->conv', 
+                    'htmlOptions' => array('style' => 'width: 10px'),  
+                ),
             ),
         ));
         ?>
@@ -366,6 +371,11 @@ $dateEnd=$_GET['dateEnd'];
                 array(
                     'name'        => 'clics',
                     'value'       => '$data->clics', 
+                    'htmlOptions' => array('style' => 'width: 10px'),  
+                ),
+                array(
+                    'name'        => 'conv',
+                    'value'       => '$data->conv', 
                     'htmlOptions' => array('style' => 'width: 10px'),  
                 ),
             ),

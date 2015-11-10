@@ -72,7 +72,7 @@ class PartnersController extends Controller
 
 		$this->render('affiliates',array(
 			'model'     => $model,
-			'provider'  => $modelP->id,
+			'provider'  => $modelP,
 			'dateStart' => $dateStart,
 			'dateEnd'   => $dateEnd,
 			'sum'       => $sum,
@@ -133,12 +133,13 @@ class PartnersController extends Controller
 			$model->attributes=$_GET['DailyReport'];
 
 		// $providers = CHtml::listData(Providers::model()->findAll(), 'name', 'name');
-		$advertiser_id   = Advertisers::model()->findByUser($userId);
+		$advertiser   = Advertisers::model()->findByUser($userId);
 		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
 		$this->render('advertisers',array(
 			'model'           => $model,
-			'advertiser_id'   => $advertiser_id,
+			'advertiser'	  => $advertiser,
+			'advertiser_id'   => $advertiser->id,
 			'user_visibility' => $user_visibility,
 			'preview'         => $preview,
 			'userId'          => $userId,
@@ -164,12 +165,13 @@ class PartnersController extends Controller
 		// $user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
 		// $publisher_id   = Publishers::model()->findByUser($userId);
-		$publisher_id   = Providers::model()->findByUser($userId);
-		if(!isset($publisher_id)) die('Publisher not allowed');
+		$publisher   = Providers::model()->findByUser($userId);
+		if(!isset($publisher->id)) die('Publisher not allowed');
 
 		$this->render('publishers',array(
 			'model'           => $model,
-			'publisher_id'    => $publisher_id,
+			'publisher_id'    => $publisher->id,
+			'publisher_name'    => $publisher->name,
 			// 'user_visibility' => $user_visibility,
 			'preview'         => $preview,
 			'userId'          => $userId,

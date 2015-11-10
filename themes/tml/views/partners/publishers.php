@@ -3,7 +3,7 @@
 /* @var $model DailyReport */
 
 $this->breadcrumbs=array(
-	'Publishers',
+	$preview ? 'Publishers: '.$publisher_name.' ('.$publisher_id.')' : 'Publishers',
 );
 /*
 $this->menu=array(
