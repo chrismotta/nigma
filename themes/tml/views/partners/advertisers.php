@@ -126,6 +126,11 @@ $('.search-form form').submit(function(){
 		// 'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 	<div class="formfilter-date-large">
+		<?php
+		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '1' ;
+		echo KHtml::datePickerPresets($dpp);
+		?>
+		<span class='formfilter-space'></span>		
 		<!-- From:  -->
 		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array(), 'From'); ?>
 		<span class='formfilter-space'></span>		
