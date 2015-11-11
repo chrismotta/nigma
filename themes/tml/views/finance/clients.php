@@ -262,7 +262,7 @@ else
         ),
 		array(
 			'name'              =>'conv',
-			'header'            =>'Imps/Clicks/Convs',
+			'header'            =>'Quantity',
 			'value'             =>'number_format($data["conv"])',	
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	

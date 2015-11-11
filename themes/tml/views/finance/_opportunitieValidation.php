@@ -4,7 +4,7 @@
  ?>
 <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Validate Opportunitie #<?php echo $opportunitie->id; ?></h4>
+    <h4>Validate Opportunity #<?php echo $opportunitie->id; ?></h4>
 </div>
 
 <div class="modal-body">
@@ -44,7 +44,7 @@
                 ),  
                 array(
                     'name'              =>'conv',
-                    'header'            =>'Clics/Imp/Conv',
+                    'header'            =>'Quantity',
                     'value'             =>'$data["conv"]',  
                     'headerHtmlOptions' => array('width' => '80'),  
                     'htmlOptions'       => array('style'=>'text-align:right;'), 
