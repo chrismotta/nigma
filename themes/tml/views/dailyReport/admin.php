@@ -293,7 +293,7 @@ $('.search-form form').submit(function(){
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
 	'template'                 => '{items} {pager} {summary}',
-	'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
+	// 'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(
 			'name'               =>	'id',
@@ -461,32 +461,32 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'        => 'rate',
-			'value'       => '$data->getRateUSD() ? number_format($data->getRateUSD(),2) : "0.00"',
+			'value'       => '$data->getRateUSD() ? "$".number_format($data->getRateUSD(),2) : "$0.00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
             'visible' => $sum['Rate'],
 		),
         array(
 			'name'              => 'revenue',
-			'value'             => 'number_format($data->getRevenueUSD(), 2)',
+			'value'             => '"$".number_format($data->getRevenueUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => number_format($totals['revenue'],2),
+			'footer'            => '$'.number_format($totals['revenue'],2),
             'visible' => $sum['Revenue'],
         ),
 		array(
 			'name'              => 'spend',
-			'value'             => 'number_format($data->getSpendUSD(), 2)',
+			'value'             => '"$".number_format($data->getSpendUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => number_format($totals['spend'],2),
+			'footer'            => '$'.number_format($totals['spend'],2),
             'visible' => $sum['Spend'],
         ),
 		array(
 			'name'              => 'profit',
-			'value'             => 'number_format($data->profit, 2)',
+			'value'             => '"$".number_format($data->profit, 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => number_format($totals['profit'],2),
+			'footer'            => '$'.number_format($totals['profit'],2),
             'visible' => $sum['Profit'],
 		),
 		array(
@@ -499,26 +499,26 @@ $('.search-form form').submit(function(){
 		),
 		array(
 			'name'              => 'eCPM',
-			'value'             => $grouped ? 'number_format($data->getECPM(), 2)' : '$data->eCPM', // FIX for sum feature
+			'value'             => $grouped ? '"$".number_format($data->getECPM(), 2)' : '"$".$data->eCPM', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['imp']) && $totals['imp']!=0 ? round($totals['spend'] * 1000 / $totals['imp'], 2) : 0,
+			'footer'            => isset($totals['imp']) && $totals['imp']!=0 ? '$'.round($totals['spend'] * 1000 / $totals['imp'], 2) : '$0',
             'visible' => $sum['eCPM'],
 		),
 		array(
 			'name'              => 'eCPC',
-			'value'             => $grouped ? 'number_format($data->getECPC(), 2)' : '$data->eCPC', // FIX for sum feature
+			'value'             => $grouped ? '"$".number_format($data->getECPC(), 2)' : '"$".$data->eCPC', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? round($totals['spend'] / $totals['clics'], 2) : 0,
+			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? '$'.round($totals['spend'] / $totals['clics'], 2) : '$0',
             'visible' => $sum['eCPC'],
 		),
 		array(
 			'name'              => 'eCPA',
-			'value'             => $grouped ? 'number_format($data->getECPA(), 2)' : '$data->eCPA', // FIX for sum feature
+			'value'             => $grouped ? '"$".number_format($data->getECPA(), 2)' : '"$".$data->eCPA', // FIX for sum feature
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
-			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? round($totals['spend'] / $totals['conv'], 2) : 0,
+			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? '$'.round($totals['spend'] / $totals['conv'], 2) : '$0',
             'visible' => $sum['eCPA'],
 		),
         array(	

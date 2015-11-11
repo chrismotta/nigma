@@ -310,7 +310,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 	        	),
 			array(
 				'name'              => 'rate',
-				'value'             => '$data->campaigns->getRateUSD($data->date)',
+				'value'             => '"$".number_format($data->campaigns->getRateUSD($data->date),2)',
 				//
 				'htmlOptions'       => array('class' => 'traffic-sum-column'),
 				'headerHtmlOptions' => array('class' => 'traffic-sum-column'),
@@ -319,7 +319,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 	        	),
 			array(
 				'name'              => 'revenue',
-				'value'             => '$data->conversions * $data->campaigns->getRateUSD($data->date)',
+				'value'             => '"$".number_format($data->conversions * $data->campaigns->getRateUSD($data->date),2)',
 				'footer'			=> '',
 				//
 				'htmlOptions'       => array('class' => 'traffic-sum-column','id'=>'revColumn'),

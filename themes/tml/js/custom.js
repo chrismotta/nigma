@@ -47,8 +47,14 @@ $(document).ready(function(){
 	//revenue sum
 	if( $('#revColumnFooter').length ){
 		var sumRevenue = 0;
-		$('td#revColumn').each(function(){ sumRevenue += Number($(this).html()); });
-		$('#revColumnFooter').html(sumRevenue.toFixed(2));
+
+		$('td#revColumn').each(
+			function(){ 
+				var str = $(this).html();
+				var numb = str.substring(1);
+				sumRevenue += Number(numb); 
+			});
+		$('#revColumnFooter').html('$'+sumRevenue.toFixed(2));
 		// console.log(sumRevenue);
 	} 
 

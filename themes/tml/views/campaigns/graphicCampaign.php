@@ -374,7 +374,7 @@ $dateEnd=$_GET['dateEnd'];
                     'htmlOptions' => array('style' => 'width: 10px'),  
                 ),
                 array(
-                    'name'        => 'conv',
+                    'name'        => 'convs',
                     'value'       => '$data->conv', 
                     'htmlOptions' => array('style' => 'width: 10px'),  
                 ),
