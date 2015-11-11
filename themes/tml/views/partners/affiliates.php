@@ -103,10 +103,16 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
     )); ?> 
 
 <fieldset>
-	From: <?php echo KHtml::datePicker('dateStart', $dateStart); ?>
-	To: <?php echo KHtml::datePicker('dateEnd', $dateEnd); ?>
-		
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+	<?php
+	$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '1' ;
+	echo KHtml::datePickerPresets($dpp);
+	?>
+	<span class='formfilter-space'></span>
+	<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array(), 'From'); ?>
+	<span class='formfilter-space'></span>
+	<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array(), 'To'); ?>
+	<span class='formfilter-space'></span>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type' => 'success', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
 </fieldset>
 <?php $this->endWidget(); ?>

@@ -102,6 +102,7 @@ $('.search-form form').submit(function(){
 
 <?php
 
+	$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '1' ;
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-8 days';
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : '-1 days';
 	// $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
@@ -130,9 +131,11 @@ $('.search-form form').submit(function(){
 		// 'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
     )); ?> 
 	<div class="formfilter-date-large">
+
+		<?php echo KHtml::datePickerPresets($dpp); ?>
 		<!-- From:  -->
 		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array(), 'From'); ?>
-		<span class='formfilter-space'></span>		
+		<span class='formfilter-space'></span>
 		<!-- To:  -->
 		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array(), 'To'); ?>
 		<span class='formfilter-space'></span>
