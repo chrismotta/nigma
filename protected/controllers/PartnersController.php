@@ -95,12 +95,13 @@ class PartnersController extends Controller
 		// $userId = Yii::app()->user->id;
 
 		$model = new DailyReport;
-		$advertiser_id = Advertisers::model()->findByUser($userId);
+		$advertiser = Advertisers::model()->findByUser($userId);
+		$advertiser_id = $advertiser->id;
 		
 		$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : NULL;
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
 		$sum = isset($_POST['sum']) ? $_POST['sum'] : 0;
-
+		
 		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);
 		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
