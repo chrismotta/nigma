@@ -117,7 +117,7 @@ $('.search-form form').submit(function(){
 					//'visible' => '$data->status == 10 ? false : true',
 				),
 				'uploadPdf' => array(
-					'label' => 'Upload Signed IO',
+					'label' => 'Upload Inked IO',
 					'icon'  => 'upload',
 					'click' => '
 				    function(){
@@ -143,7 +143,7 @@ $('.search-form form').submit(function(){
 				    ',
 				),
 				'viewPdf' => array(
-					'label'   => 'View Signed IO',
+					'label'   => 'View Inked IO',
 					'icon'    => 'file',
 					'url'     => 'Yii::app()->getBaseUrl(true) . "/ios/viewPdf/" . $data->id',
 					'options' => array('target' => '_blank'),

@@ -59,11 +59,7 @@
             echo KHtml::filterFinanceEntities(null,array('class'=>'span3'),'check','Ios[finance_entities_id]');
             //echo $form->textFieldRow($model, 'finance_entities_id', array('class'=>'span3'));
             echo '</div><br><span id="opp_ids"></span>';
-            echo'<label class="control-label required" for="Ios_date">Fiance Enttity <span class="required">*</span></label>
-                    <div class="controls">';
-            echo KHtml::filterFinanceEntities(null,array('class'=>'span3'),'check','Ios[finance_entities_id]');
-            //echo $form->textFieldRow($model, 'finance_entities_id', array('class'=>'span3'));
-            echo '</div><br><span id="opp_ids"></span>';
+            
 
             echo $form->textFieldRow($model, 'budget', array('placeholder'=>'Open'));
         ?>

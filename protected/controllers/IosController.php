@@ -247,7 +247,7 @@ class IosController extends Controller
 				}
 
 				// Update prospect to complete
-				//$model->prospect = 10;
+				$model->status = 'Inked';
 				$model->pdf_name = $newName;
 				$model->save();
 			}
