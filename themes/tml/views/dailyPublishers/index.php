@@ -4,9 +4,50 @@ $this->breadcrumbs=array(
 	'Manage',
 );
 
-$dataProvider=$model->search();
 // $dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
 // $totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
+
+$dpp          = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+$dateStart    = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
+$dateEnd      = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
+
+$dataProvider = $model->search($dateStart, $dateEnd);
+?>
+<!-- FILTERS -->
+
+<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+		'id'                   =>'date-filter-form',
+		'type'                 =>'search',
+		'htmlOptions'          =>array('class'=>'well'),
+		'enableAjaxValidation' =>true,
+		'action'               => Yii::app()->getBaseUrl() . '/dailyPublishers/',
+		'method'               => 'GET',
+		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+    )); ?> 
+
+<fieldset class="formfilter">
+	<?php 
+	echo KHtml::datePickerPresets($dpp);
+	echo "<span class='formfilter-space'></span>";
+	echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From');
+	echo "<span class='formfilter-space'></span>";
+	echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To');
+	echo "<span class='formfilter-space'></span>";
+	$this->widget('bootstrap.widgets.TbButton', 
+		array(
+			'buttonType'=>'submit', 
+			'label'=>'Filter', 
+			'type' => 'success', 
+			'htmlOptions' => array('class' => 'showLoading')
+			)
+		); 
+	?>
+
+</fieldset>
+
+<?php $this->endWidget(); ?>
+
+<?php
 
 $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',

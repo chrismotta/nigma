@@ -123,7 +123,7 @@ class DailyPublishers extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($dateStart=null, $dateEnd=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -147,6 +147,11 @@ class DailyPublishers extends CActiveRecord
 		$criteria->compare('t.eCPM',$this->eCPM,true);
 		$criteria->compare('t.comment',$this->comment,true);
 		$criteria->compare('t.impressions',$this->impressions);
+
+		if ( $dateStart != NULL && $dateEnd != NULL ) {
+			$criteria->compare('date','>=' . date('Y-m-d', strtotime($dateStart)));
+			$criteria->compare('date','<=' . date('Y-m-d', strtotime($dateEnd)));
+		}
 
 		$criteria->with = array(
 			'exchanges',

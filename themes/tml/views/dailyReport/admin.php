@@ -31,6 +31,7 @@ $('.search-form form').submit(function(){
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+	$advertisers    = isset($_GET['advertisers']) ? $_GET['advertisers'] : NULL;
 	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
 	$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
 	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
@@ -48,7 +49,8 @@ $('.search-form form').submit(function(){
 	if(isset($_GET['g'])) 
 		$group = array_merge($group, $_GET['g']); 
 
-	$grouped = array_search(0, $group) ? 0 : 1;
+	$grouped = array_search(0, $group) ? 1 : 0;
+
 
 	$sum = array(
 		'Imp'        =>1, 
@@ -154,6 +156,19 @@ $('.search-form form').submit(function(){
 			$link.='&accountManager='.$accountManager;
 		}
 	}
+	if(isset($advertisers))
+	{
+		if(is_array($advertisers))
+		{
+			foreach ($advertisers as $id) {
+				$link.='&advertisers[]='.$id;
+			}			
+		}
+		else
+		{
+			$link.='&advertisers='.$advertisers;
+		}
+	}	
 	if(isset($opportunities))
 	{
 		if(is_array($opportunities))
@@ -231,23 +246,24 @@ $('.search-form form').submit(function(){
     )); ?> 
 
 <fieldset class="formfilter">
-	<div class="formfilter-date">
-		<!-- <p>From:</p>  -->
+	<div>
 		<?php echo KHtml::datePickerPresets($dpp); ?>
-		<!-- <p>From:</p>  -->
+		<span class='formfilter-space'></span>
 		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
-		<!-- <p>To:</p>  -->
+		<span class='formfilter-space'></span>
 		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
 	</div>
+	<hr>
 	<?php 
 		//Load Filters
 
 	
 		if (FilterManager::model()->isUserTotalAccess('daily'))
 			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
+		KHtml::filterAdvertisersMulti($advertisers, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'),'advertisers');
+		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
 		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
 		KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
-		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
 		
 	?>
 	<hr>
@@ -280,8 +296,8 @@ $('.search-form form').submit(function(){
 
 <?php 
 //yess
-	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $group, $sum);
-	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories);
+	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $group, $sum, $advertisers);
+	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $advertisers);
 
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',

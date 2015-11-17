@@ -338,6 +338,9 @@ fieldset hr {
 .formfilter .select2-container {
 	vertical-align: top!important;
 }
+.formfilter label {
+	margin: 0px;
+}
 
 .formfilter-date { display: inline-block; width: 200px; }
 .formfilter-space { display: inline-block; width: 10px; }

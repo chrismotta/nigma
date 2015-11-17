@@ -126,7 +126,7 @@ class DailyReport extends CActiveRecord
 			'account_manager'    => 'Account Manager',
 			'campaign_name'      => 'Campaign',
 			'profit'             => 'Profit',
-			'profit_percent'     => 'Profit %',
+			'profit_percent'     => 'Profit%',
 			'rate'               => 'Rate',
 			'click_through_rate' => 'CTR',
 			'conversion_rate'    => 'CR',
@@ -936,7 +936,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null, $group=array(), $sums=array())
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL, $opportunities=null, $providers=null, $sum=0, $adv_categories=null, $group=array(), $sums=array(), $advertisers=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -1143,6 +1143,27 @@ class DailyReport extends CActiveRecord
 			else
 			{
 				$criteria->compare('accountManager.id',$accountManager);
+			}
+		}
+
+		if ( $advertisers != NULL) {
+			if(is_array($advertisers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($advertisers as $adv) {	
+					if($i==0)			
+						$query.="advertisers.id=".$adv;
+					else
+						$query.=" OR advertisers.id=".$adv;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.id',$advertisers);
 			}
 		}
 
