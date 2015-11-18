@@ -3,6 +3,35 @@
 class KHtml extends CHtml
 {
 
+    private static function getLabel($item){
+        $attributeLabels = array(
+            'Date'          =>'Date', 
+            'TrafficSource' =>'Traffic Source', 
+            'Advertiser'    =>'Advertiser', 
+            'Country'       =>'Country', 
+            'Campaign'      =>'Campaign',
+            'Imp'           =>'Imps.', 
+            'Clicks'        =>'Clicks', 
+            'CTR'           =>'CTR',
+            'Conv'          =>'Convs.', 
+            'CR'            =>'CR',
+            'Rate'          =>'Rate', 
+            'Revenue'       =>'Revenue',
+            'Spend'         =>'Spend',
+            'Profit'        =>'Profit',
+            'eCPM'          =>'eCPM',
+            'eCPC'          =>'eCPC',
+            'eCPA'          =>'eCPA',
+            );
+
+        if(isset($attributeLabels[$item])){
+            return $attributeLabels[$item];
+        }else{
+            return $item;
+        }
+    }
+
+
     public static function enumItem($model,$attribute) {
         $attr=$attribute;
         self::resolveName($model,$attr);
@@ -940,7 +969,7 @@ class KHtml extends CHtml
         foreach ($items as $key => $value) {
             echo CHtml::hiddenField($prefix.'['.$key.']', $value, array('id'=>''.$prefix.'-'.$key));
             $buttons[] = array(
-                'label' => $key, 
+                'label' => self::getLabel($key), 
                 'active'=> $value, 
                 'htmlOptions' => array(
                     'onclick' => '$("#'.$prefix.'-'.$key.'").val( 1 - $("#'.$prefix.'-'.$key.'").val() );',

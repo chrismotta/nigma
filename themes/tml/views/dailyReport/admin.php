@@ -51,7 +51,6 @@ $('.search-form form').submit(function(){
 
 	$grouped = array_search(0, $group) ? 1 : 0;
 
-
 	$sum = array(
 		'Imp'        =>1, 
 		'Clicks'     =>1, 
@@ -140,74 +139,56 @@ $('.search-form form').submit(function(){
 		'htmlOptions' => array('id' => 'createAjax'),
 		)
 	); ?>
+	
 	<?php 
 	//Create link to load filters in modal
 	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&grouped='.$grouped;
-	if(isset($accountManager))
-	{
-		if(is_array($accountManager))
-		{
+	if(isset($accountManager)){
+		if(is_array($accountManager)){
 			foreach ($accountManager as $id) {
 				$link.='&accountManager[]='.$id;
 			}			
-		}
-		else
-		{
+		}else{
 			$link.='&accountManager='.$accountManager;
 		}
 	}
-	if(isset($advertisers))
-	{
-		if(is_array($advertisers))
-		{
+	if(isset($advertisers)){
+		if(is_array($advertisers)){
 			foreach ($advertisers as $id) {
 				$link.='&advertisers[]='.$id;
 			}			
-		}
-		else
-		{
+		}else{
 			$link.='&advertisers='.$advertisers;
 		}
 	}	
-	if(isset($opportunities))
-	{
-		if(is_array($opportunities))
-		{
+	if(isset($opportunities)){
+		if(is_array($opportunities)){
 			foreach ($opportunities as $id) {
 				$link.='&opportunities[]='.$id;
 			}			
-		}
-		else
-		{
+		}else{
 			$link.='&opportunities='.$opportunities;
 		}
 	}	
-	if(isset($providers))
-	{
-		if(is_array($providers))
-		{
+	if(isset($providers)){
+		if(is_array($providers)){
 			foreach ($providers as $id) {
 				$link.='&providers[]='.$id;
 			}			
-		}
-		else
-		{
+		}else{
 			$link.='&providers='.$providers;
 		}
 	}
-	if(isset($adv_categories))
-	{
-		if(is_array($adv_categories))
-		{
+	if(isset($adv_categories)){
+		if(is_array($adv_categories)){
 			foreach ($adv_categories as $id) {
 				$link.='&advertisers-cat[]='.$id;
 			}			
-		}
-		else
-		{
+		}else{
 			$link.='&advertisers-cat='.$adv_categories;
 		}
 	}
+
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
@@ -479,7 +460,7 @@ $('.search-form form').submit(function(){
 			'name'        => 'rate',
 			'value'       => '$data->getRateUSD() ? "$".number_format($data->getRateUSD(),2) : "$0.00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
-            'visible' => $sum['Rate'],
+            'visible' => $sum['Rate'] && !$grouped,
 		),
         array(
 			'name'              => 'revenue',
@@ -556,12 +537,12 @@ $('.search-form form').submit(function(){
 					}
 				}'
             ),
-            'visible' => $grouped,
+            'visible' => !$grouped,
         ),
         array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
 			'headerHtmlOptions' => array('style' => "width: 20px"),
-            'visible' => $grouped,
+            'visible' => $group['Campaign'],
 			'buttons'           => array(
 				'delete' => array(
 					'visible' => '!$data->is_from_api',
@@ -623,7 +604,7 @@ $('.search-form form').submit(function(){
 				),
 			),
 
-			'template' => $grouped ? '{updateCampaign}' : '{updateCampaign} {updateAjax} {delete}',
+			'template' => !$grouped ? '{updateCampaign}' : '{updateCampaign} {updateAjax} {delete}',
 		),
 	),
 )); ?>
