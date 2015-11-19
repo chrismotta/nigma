@@ -36,26 +36,28 @@
       echo "<hr>";
 
       if ( $model->isNewRecord ) {
-        if($action != 'Duplicate'){
+        // if($action != 'Duplicate'){
+          // $model->advertiser_name = 15;
           echo $form->dropDownListRow($model, 'advertiser_name', $advertiser, 
-              array(
-                'prompt'   => 'Select an advertiser', 
-                'onChange' => '
-                    if ( ! this.value) {
-                      return;
-                    }
-                    $.post(
-                        "getRegions/"+this.value,
-                        "",
-                        function(data)
-                        {
-                            // alert(data);
-                          $(".regions-dropdownlist").html(data);
-                        }
-                    )
-                    '
-              ));
-         }
+            array(
+              'prompt'   => 'Select an advertiser', 
+              'onChange' => '
+                  if ( ! this.value) {
+                    return;
+                  }
+                  $.post(
+                      "getRegions/"+this.value,
+                      "",
+                      function(data)
+                      {
+                          // alert(data);
+                        $(".regions-dropdownlist").html(data);
+                      }
+                  )
+                  ',
+              'disabled' => $action == 'Duplicate' ? true : false,
+            ));
+         // }
          echo $form->dropDownListRow($model, 'regions_id', $regions, 
             array(
               'prompt'   => 'Select a Region', 
@@ -144,7 +146,7 @@
                   return;
                   '
             ));
-      echo $form->dropDownListRow($model, 'model_adv', $model_adv);
+      echo $form->dropDownListRow($model, 'model_adv', $model_adv, array('prompt' => 'Select an Advertiser Model'));
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));
       echo $form->dropDownListRow($model, 'account_manager_id', $account , array('prompt' => 'Select an Account Manager'));
       echo $form->checkboxRow($model, 'wifi');

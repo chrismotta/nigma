@@ -249,9 +249,21 @@ class OpportunitiesController extends Controller
 		if ( $model->isNewRecord) {
 			// Get only Advertisers and IOs that were created by the current user logged.
 			// comentado provisoriamente, generar permiso de admin
-			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );			
-			$regions = CHtml::listData( Regions::model()->findByCommercialId(Yii::app()->user->id),'id','region');
+			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
+			
 			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name' );
+
+	        if($action == 'Duplicate'){
+	        	$regions = Regions::model()->findByPk($model->regions_id);
+				$adv = Advertisers::model()->findByPk($regions->financeEntities->advertisers_id);
+
+				$model->advertiser_name = $adv->id;
+				$regions = CHtml::listData( Regions::model()->findByAdvertisers($adv->id), 'id', 'country.name' );
+				
+	        }else{
+				$regions = array();
+	        }
+			
 			//$ios = CHtml::listData(Ios::model()->findAll( array('condition' => 'commercial_id=:c_id', 'params' => array( ':c_id'=>Yii::app()->user->id), 'order'=>'name') ), 'id', 'name');
 		} else {
 			// If update register, only show Opportunity's IO and Advertiser
@@ -266,7 +278,7 @@ class OpportunitiesController extends Controller
 		// Get countries and carriers with status "Active"
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 		
-		if ( $model->isNewRecord || !$model->regions_id || !isset($regions->country_id)) {
+		if ( ($model->isNewRecord&&$action!='Duplicate') || !isset($model->regions_id) || !isset($model->regions->country_id)) {
 			$carrier = array();
 		} else {
 			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->regions->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
