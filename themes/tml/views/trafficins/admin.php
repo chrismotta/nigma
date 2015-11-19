@@ -12,6 +12,7 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 	'columns'      => array(
 		'id',
 		'tag_id',
+		'pub_id',
 		array(
 			'name'=>'server_data',
 			'htmlOptions'=>array('style'=>'width:900px;word-wrap:break-word;word-break:break-all;'),

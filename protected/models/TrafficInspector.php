@@ -6,6 +6,7 @@
  * The followings are the available columns in table 'traffic_inspector':
  * @property integer $id
  * @property integer $tag_id
+ * @property string $pub_id
  * @property string $server_data
  */
 class TrafficInspector extends CActiveRecord
@@ -27,10 +28,11 @@ class TrafficInspector extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('tag_id', 'numerical', 'integerOnly'=>true),
+			array('pub_id', 'length', 'max'=>255),
 			array('server_data', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, tag_id, server_data', 'safe', 'on'=>'search'),
+			array('id, tag_id, pub_id, server_data', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -53,6 +55,7 @@ class TrafficInspector extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'tag_id' => 'Tag',
+			'pub_id' => 'Pub',
 			'server_data' => 'Server Data',
 		);
 	}
@@ -77,13 +80,14 @@ class TrafficInspector extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('tag_id',$this->tag_id);
+		$criteria->compare('pub_id',$this->pub_id,true);
 		$criteria->compare('server_data',$this->server_data,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'sort'=>array(
 			    'defaultOrder'=>'id DESC',
-			 )
+			)
 		));
 	}
 

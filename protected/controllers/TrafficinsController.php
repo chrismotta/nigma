@@ -44,6 +44,7 @@ public function actionLog($id){
 	$model = new TrafficInspector();
 	$model->unsetAttributes();
 	$model->tag_id = $id;
+	$model->pub_id = isset($_GET['pubid']) ? $_GET['pubid'] : NULL;
 	$model->server_data = json_encode($_SERVER);
 	$model->save();
 
