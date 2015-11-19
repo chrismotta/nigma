@@ -45,6 +45,7 @@ public function actionLog($id){
 	$model->unsetAttributes();
 	$model->tag_id = $id;
 	$model->pub_id = isset($_GET['pubid']) ? $_GET['pubid'] : NULL;
+	$model->href = isset($_GET['href']) ? $_GET['href'] : NULL;
 	$model->server_data = json_encode($_SERVER);
 	$model->save();
 

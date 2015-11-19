@@ -14,9 +14,13 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 		'tag_id',
 		'pub_id',
 		array(
-			'name'=>'server_data',
-			'htmlOptions'=>array('style'=>'width:900px;word-wrap:break-word;word-break:break-all;'),
+			'name'=>'href',
+			'htmlOptions'=>array('style'=>'width:800px;word-wrap:break-word;word-break:break-all;'),
 			),
+		// array(
+		// 	'name'=>'server_data',
+		// 	'htmlOptions'=>array('style'=>'width:900px;word-wrap:break-word;word-break:break-all;'),
+		// 	),
 		// array(
 		// 'class'=>'bootstrap.widgets.TbButtonColumn',
 		// ),
