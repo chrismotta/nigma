@@ -69,9 +69,11 @@ public function actionLog($id){
 			$size = 'width="100%" height="100%"';
 			break;
 	}
+	
+	$url = Yii::app()->request->hostInfo . Yii::app()->baseurl .'/trafficins/printad/'.$id;
 
 	echo '
-	document.write(\'<iframe src="'.Yii::app()->baseUrl.'/trafficins/printad/'.$id.'" '.$size.' frameBorder="0" scrolling="no">\');
+	document.write(\'<iframe src="'.$url.'" '.$size.' frameBorder="0" scrolling="no">\');
 	';
 }
 public function actionPrintad($id){
