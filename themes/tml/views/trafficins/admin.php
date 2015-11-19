@@ -8,7 +8,7 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 	'dataProvider' => $model->search(),
 	'filter'       => $model,
 	'type'         => 'striped condensed',
-	'template'     => '{items} {pager} {summary}',
+	'template'     => '{summary} {items} {pager}',
 	'columns'      => array(
 		'id',
 		'tag_id',
@@ -23,3 +23,4 @@ $this->widget('bootstrap.widgets.TbGridView',array(
 )); 
 
 ?>
+<br/>
