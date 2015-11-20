@@ -90,7 +90,10 @@ class TrafficInspector extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
 			    'defaultOrder'=>'id DESC',
-			)
+			),
+			'pagination'=>array(
+		        'pageSize'=>50,
+		    ),
 		));
 	}
 
