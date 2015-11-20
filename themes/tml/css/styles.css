@@ -438,3 +438,7 @@ table .traffic-group-column {
 table .date-column {
 	width: 60px;
 }
+
+.detail-data td {
+	word-break: break-word;
+}
