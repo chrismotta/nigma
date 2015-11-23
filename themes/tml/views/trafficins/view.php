@@ -10,6 +10,7 @@ $this->breadcrumbs=array(
 	'data'=>$model,
 	'attributes'=>array(
 		'id',
+		'date_time',
 		'tag_id',
 		'pub_id',
 		'href',

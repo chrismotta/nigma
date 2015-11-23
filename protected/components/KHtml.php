@@ -57,7 +57,7 @@ class KHtml extends CHtml
         $defaultHtmlOptions = array(
             'style' => 'width: 73px',
             'class'=>'span2',
-            'onchange' => 'if(presetChange==0)$("#dpp").val("4");',
+            'onchange' => 'if(presetChange==0)$("#dpp").val("9");',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 

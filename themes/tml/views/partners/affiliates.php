@@ -104,7 +104,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 
 <fieldset>
 	<?php
-	$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '1' ;
+	$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
 	echo KHtml::datePickerPresets($dpp);
 	?>
 	<span class='formfilter-space'></span>

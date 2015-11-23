@@ -102,7 +102,7 @@ $('.search-form form').submit(function(){
 
 <?php
 
-	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-8 days';
+	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-7 days';
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : '-1 days';
 	// $accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 	// $opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
@@ -127,7 +127,7 @@ $('.search-form form').submit(function(){
     )); ?> 
 	<div class="formfilter-date-large">
 		<?php
-		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '1' ;
+		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
 		echo KHtml::datePickerPresets($dpp);
 		?>
 		<span class='formfilter-space'></span>		

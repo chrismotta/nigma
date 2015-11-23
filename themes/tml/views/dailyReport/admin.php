@@ -27,7 +27,7 @@ $('.search-form form').submit(function(){
 ?>
 
 <?php
-	$dpp            = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+	$dpp            = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
 	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
 	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;

@@ -17,7 +17,7 @@ $this->pageTitle=Yii::app()->name;
 	        'clientOptions'=>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
 	    )); ?> 
 	    <?php
-		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '3' ;
+		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
 		$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
 		$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 		?>

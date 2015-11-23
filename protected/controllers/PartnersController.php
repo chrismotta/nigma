@@ -58,7 +58,7 @@ class PartnersController extends Controller
 	private function renderAffiliates($userId, $preview)
 	{
 		
-		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-1 week' ;
+		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : '-7 days' ;
 		$dateEnd   = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
 		$sum       = isset($_GET['sum']) ? $_GET['sum'] : 0;
 		
