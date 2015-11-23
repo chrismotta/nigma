@@ -8,7 +8,7 @@ $this->breadcrumbs=array(
 // $totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $sum, $adv_categories);
 
 $dpp          = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
-$dateStart    = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
+$dateStart    = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today -7 days' ;
 $dateEnd      = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 
 $dataProvider = $model->search($dateStart, $dateEnd);
