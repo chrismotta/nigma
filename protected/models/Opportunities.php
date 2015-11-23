@@ -139,7 +139,7 @@ class Opportunities extends CActiveRecord
 			'advertiser_name'          => 'Advertiser',
 			'currency'                 => 'Currency',
 			'status'                   => 'Status',
-			'name'                     => 'Opportunities',
+			'name'                     => 'Opportunity',
 		);
 	}
 

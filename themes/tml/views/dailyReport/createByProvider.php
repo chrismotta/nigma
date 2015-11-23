@@ -37,8 +37,8 @@ $('.search-form form').submit(function(){
     )); ?> 
 
 <fieldset>
-	Date: <?php echo KHtml::datePicker('date', $date); ?>
-	Provider: <?php echo KHtml::filterProviders($currentProvider, $providers, array('empty' => 'Select traffic source')); ?>
+	Date: <?php echo KHtml::datePicker('date', $date); ?> 
+	Traffic Source: <?php echo KHtml::filterProviders($currentProvider, $providers, array('empty' => 'Select traffic source')); ?>
 
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Load Campaigns', 'htmlOptions' => array('name' => 'providersSubmit', 'class' => 'showLoading'))); ?>
 </fieldset>
