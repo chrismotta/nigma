@@ -18,7 +18,7 @@ $this->pageTitle=Yii::app()->name;
 	    )); ?> 
 	    <?php
 		$dpp = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
-		$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'yesterday -7 days' ;
+		$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today -7 days' ;
 		$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
 		?>
 		<fieldset>
