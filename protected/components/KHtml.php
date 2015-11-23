@@ -116,7 +116,7 @@ class KHtml extends CHtml
                         //last monday
                         dateStart.setDate( today.getDate()-today.getDay()+1 );
                         //yesterday
-                        dateEnd.setDate( today.getDate()-1 );
+                        dateEnd.setDate( today.getDate() );
                         break;
                     case "4":
                         //previous monday
