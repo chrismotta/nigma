@@ -323,9 +323,34 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
         if ( !$providers ) {
-            //FIXME verificar si es necesari prospect para tml
-            $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active'") );
-            $providers = CHtml::listData($providers, 'id', 'name');
+
+            $providers = array(0 => '------- Networks -------');
+
+            $networks = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Network"'
+                    ));
+            $networks = CHtml::listData($networks, 'id', 'name');
+            $networks['0'] = '------- Affiliates -------';
+
+            $affiliates = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Affiliate"'
+                    ));
+            $affiliates = CHtml::listData($affiliates, 'id', 'name');
+            $affiliates['0'] = '------- Publishers -------';
+
+            $publishers = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Publisher"'
+                    ));
+            $publishers = CHtml::listData($publishers, 'id', 'name');
+
+            $providers = array_merge($providers, $networks, $affiliates, $publishers);
+
         }
             
         return CHtml::dropDownList($name, $value, $providers, $htmlOptions);
@@ -562,8 +587,33 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
         if ( !$providers ) {
-            $providers = Providers::model()->findAll( array('order' => 'name', 'condition' => "status='Active' AND prospect=10") );
-            $providers = CHtml::listData($providers, 'id', 'name');
+            
+            $providers = array(0 => '------- Networks -------');
+
+            $networks = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Network"'
+                    ));
+            $networks = CHtml::listData($networks, 'id', 'name');
+            $networks['0'] = '------- Affiliates -------';
+
+            $affiliates = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Affiliate"'
+                    ));
+            $affiliates = CHtml::listData($affiliates, 'id', 'name');
+            $affiliates['0'] = '------- Publishers -------';
+
+            $publishers = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Publisher"'
+                    ));
+            $publishers = CHtml::listData($publishers, 'id', 'name');
+
+            $providers = array_merge($providers, $networks, $affiliates, $publishers);
         }
 
         
