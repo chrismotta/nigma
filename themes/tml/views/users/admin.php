@@ -77,8 +77,13 @@ $this->widget('bootstrap.widgets.TbButton', array(
 			'headerHtmlOptions' => array('style' => 'width: 45px;'),
 			),
 		array(
-			'name'  => 'provider_external_access',
-			'value' => 'Providers::model()->getExternalUser($data->id)',
+			'name'  => 'partners_external_access_type',
+			'value' => 'Users::model()->getPartnerName($data->id, true)',
+			'filter' => false,
+			),
+		array(
+			'name'  => 'partners_external_access',
+			'value' => 'Users::model()->getPartnerName($data->id)',
 			'filter' => false,
 			),
 		array(

@@ -150,6 +150,12 @@ class Advertisers extends CActiveRecord
 			return $adv;
 	}
 
+	public function getExternalUser($user_id){
+		$model = self::model()->findByAttributes(array("users_id"=>$user_id));
+		$name = isset($model) ? $model->name .' ('.$model->id.')' : null;
+		return $name;
+	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!

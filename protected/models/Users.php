@@ -21,7 +21,8 @@ class Users extends CActiveRecord
 {
 	// holds the password confirmation word
     public $repeat_password;
-    public $provider_external_access;
+    public $partners_external_access;
+    public $partners_external_access_type;
  
 	/**
 	 * @return string the associated database table name
@@ -88,7 +89,8 @@ class Users extends CActiveRecord
 			'name'            => 'Name',
 			'lastname'        => 'Lastname',
 			'status'          => 'Status',
-			'provider_external_access' => 'Provider'
+			'partners_external_access' => 'Partner',
+			'partners_external_access_type' => 'Partner Type',
 		);
 	}
 
@@ -179,5 +181,28 @@ class Users extends CActiveRecord
 		}
 			
 		return $return;
+	}
+
+
+	public function getPartnerName($user_id, $type=false)
+	{
+		if($provider = Providers::model()->getExternalUser($user_id)){
+			if($type){
+				return $provider->type;
+			}else{
+				return $provider->name .' ('.$provider->id.')';
+			}
+		}
+
+		if($advertiser = Advertisers::model()->getExternalUser($user_id)){
+			if($type){
+				return "Advertiser";
+			}else{
+				return $advertiser;
+			}
+			
+		}
+
+		return '-';
 	}
 }

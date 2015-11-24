@@ -342,7 +342,7 @@ class Providers extends CActiveRecord
 
 	public function getExternalUser($user_id){
 		$model = self::model()->findByAttributes(array("users_id"=>$user_id));
-		$name = isset($model) ? $model->name .' ('.$model->id.')' : '-';
+		$name = isset($model) ? $model : null;
 		return $name;
 	}
 
