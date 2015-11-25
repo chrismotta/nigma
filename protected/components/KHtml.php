@@ -1040,7 +1040,7 @@ class KHtml extends CHtml
     public static function pageSizeSelector($gridID){
         $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']); 
         echo '<div style="border: 1px solid #ccc; display: inline-block; margin: 10px 0 0 0">';
-        echo '<span style="padding: 10px;">Grid Size</span>';
+        echo '<span style="padding: 10px;">Page Size</span>';
         echo CHtml::dropDownList(
             'pageSize',
             $pageSize,
