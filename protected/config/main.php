@@ -277,5 +277,6 @@ return array(
 	'params'=>array(
 		// this is used in contact page
 		'adminEmail'=>'info@themedialab.co',
+	    'defaultPageSize'=>50,
 	),
 );

@@ -47,6 +47,8 @@ $dataProvider = $model->search($dateStart, $dateEnd);
 
 <?php $this->endWidget(); ?>
 
+<?php KHtml::pageSizeSelector('daily-report-grid') ?>
+
 <?php
 
 $this->widget('bootstrap.widgets.TbExtendedGridView', array(

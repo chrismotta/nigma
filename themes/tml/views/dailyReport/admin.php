@@ -275,8 +275,10 @@ $('.search-form form').submit(function(){
 </fieldset>
 <?php $this->endWidget(); ?>
 
+<?php KHtml::pageSizeSelector('daily-report-grid') ?>
+
 <?php 
-//yess
+
 	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $group, $sum, $advertisers);
 	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $advertisers);
 

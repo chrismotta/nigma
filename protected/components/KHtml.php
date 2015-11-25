@@ -587,7 +587,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
         if ( !$providers ) {
-            
+
             $providers = array(0 => '------- Networks -------');
 
             $networks = Providers::model()->findAll( 
@@ -1036,6 +1036,37 @@ class KHtml extends CHtml
             )
         );
     }
-    
+
+    public static function pageSizeSelector($gridID){
+        $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']); 
+        echo '<div style="border: 1px solid #ccc; display: inline-block; margin: 10px 0 0 0">';
+        echo '<span style="padding: 10px;">Grid Size</span>';
+        echo CHtml::dropDownList(
+            'pageSize',
+            $pageSize,
+            array(30=>30,50=>50,100=>100,500=>500),
+            array(
+                'class'=>'span1',
+                'style'=>'margin: 5px;',
+                'onchange'=>'$.fn.yiiGridView.update("'.$gridID.'",{ data:{pageSize: $(this).val() }})',
+            ));
+        echo '</div>';
+
+    }
+    public static function pagination(){
+        return array(
+            'pageSize'=> Yii::app()->user->getState(
+                'pageSize',
+                Yii::app()->params['defaultPageSize']
+                ),
+            );
+    }
+    public static function paginationController(){
+        // page size drop down changed
+        if (isset($_GET['pageSize'])) {
+            Yii::app()->user->setState('pageSize',(int)$_GET['pageSize']);
+            unset($_GET['pageSize']);  // would interfere with pager and repetitive page size change
+        }
+    }
 }
 ?>

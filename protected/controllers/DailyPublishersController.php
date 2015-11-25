@@ -39,6 +39,8 @@ class DailyPublishersController extends Controller
 
 	public function actionIndex()
 	{
+		KHtml::paginationController();
+		
 		$model = new DailyPublishers('search');
 		$model->unsetAttributes();
 

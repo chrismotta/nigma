@@ -225,6 +225,8 @@ class DailyReportController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+		
 		$model=new DailyReport('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['DailyReport']))

@@ -238,6 +238,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 <?php $this->endWidget(); ?>
 </fieldset>
 
+<?php KHtml::pageSizeSelector('traffic-grid') ?>
 
 <?php 
 function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array(), $sum=array(), $filters=array(), $isTest=false){

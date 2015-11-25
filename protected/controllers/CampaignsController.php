@@ -458,6 +458,8 @@ class CampaignsController extends Controller
 
 	public function actionTraffic()
 	{
+		KHtml::paginationController();
+		
 		$model=new Campaigns('search');
 		$modelClicks=new ClicksLog('search');
 		$model->unsetAttributes();  // clear any default values
@@ -493,6 +495,7 @@ class CampaignsController extends Controller
 		$criteria = new CDbCriteria;
 		$criteria->with = array('regions.financeEntities');
 		$criteria->addCondition("financeEntities.advertisers_id=".$id."");
+		$criteria->addCondition("t.status='Active'");
 		$opportunities = Opportunities::model()->findAll($criteria);
 
 		$response='<option value="">Select an Opportunity</option>';
