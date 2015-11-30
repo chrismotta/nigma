@@ -275,14 +275,12 @@ $('.search-form form').submit(function(){
 </fieldset>
 <?php $this->endWidget(); ?>
 
-<?php KHtml::pageSizeSelector('daily-report-grid') ?>
-
 <?php 
 
 	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $group, $sum, $advertisers);
 	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $advertisers);
 
-	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+	$this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
@@ -291,7 +289,7 @@ $('.search-form form').submit(function(){
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	// 'rowCssClassExpression'    => '$data->getCapStatus() ? "errorCap" : null',
 	'columns'                  => array(
 		array(

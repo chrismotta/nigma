@@ -1039,18 +1039,18 @@ class KHtml extends CHtml
 
     public static function pageSizeSelector($gridID){
         $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']); 
-        echo '<div style="border: 1px solid #ccc; display: inline-block; margin: 10px 0 0 0">';
-        echo '<span style="padding: 10px;">Page Size</span>';
+        echo '<ul class="yiipager page-size">';
+        echo '<li><div>Page Size</div></li>';
+        echo '<li>';
         echo CHtml::dropDownList(
             'pageSize',
             $pageSize,
             array(30=>30,50=>50,100=>100,500=>500),
             array(
-                'class'=>'span1',
-                'style'=>'margin: 5px;',
                 'onchange'=>'$.fn.yiiGridView.update("'.$gridID.'",{ data:{pageSize: $(this).val() }})',
             ));
-        echo '</div>';
+        echo '</li>';
+        echo '</ul>';
 
     }
     public static function pagination(){
