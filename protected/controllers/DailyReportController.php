@@ -36,7 +36,7 @@ class DailyReportController extends Controller
 				'roles'=>array('commercial', 'finance', 'sem'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('setRevenue', 'setNewFields','setAllNewFields', 'updateSpendAffiliates'),
+				'actions'=>array('setRevenue', 'setNewFields','setAllNewFields', 'updateSpendAffiliates','opportunityMA'),
 				'roles'=>array('admin'),
 			),
 			// array('allow', // allow authenticated user to perform 'create' and 'update' actions
@@ -186,7 +186,8 @@ class DailyReportController extends Controller
 		{
 			$model->attributes=$_POST['DailyReport'];
 			$model->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
-			$model->updateRevenue();
+			if(!isset($_POST['DailyReport']['revenue']))
+				$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
 				$this->redirect(array('admin'));
@@ -462,6 +463,11 @@ class DailyReportController extends Controller
 			//'providers'  => $providers,
 			'campaigns' => $campaigns, 
 		), false, true);
+	}
+
+	public function actionOpportunityMA($id){
+        $model = Campaigns::model()->findByPk($id);
+        echo $model->opportunities->model_adv;
 	}
 
 	public function actionSetRevenue($id){

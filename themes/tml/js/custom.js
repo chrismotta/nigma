@@ -392,3 +392,19 @@ var selectionChangedTraffic = function(id) {
 		"json"
 		)
 }
+
+function showRevenue(val){
+	// alert(val);
+	$.post(
+		'opportunityMA/'+val,
+		'',
+		function(data){
+			// alert(data);
+			if(data=='RS')
+				$('#revenueSelect').show();
+			else
+				$('#revenueSelect').hide();
+
+		}
+		)
+}
