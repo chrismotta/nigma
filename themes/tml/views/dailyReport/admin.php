@@ -550,7 +550,7 @@ $('.search-form form').submit(function(){
 				'updateAjax' => array(
 					'label'   => 'Update',
 					'icon'    => 'pencil',
-					'visible' => '!$data->is_from_api',
+					'visible' => '!$data->is_from_api || $data->campaigns->editable == 1',
 					'click'   => '
 				    function(){
 				    	// get row id from data-row-id attribute
@@ -604,7 +604,7 @@ $('.search-form form').submit(function(){
 				),
 			),
 
-			'template' => !$grouped ? '{updateCampaign}' : '{updateCampaign} {updateAjax} {delete}',
+			'template' => $grouped ? '{updateCampaign}' : '{updateCampaign} {updateAjax} {delete}',
 		),
 	),
 )); ?>
