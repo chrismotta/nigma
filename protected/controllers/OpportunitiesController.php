@@ -128,9 +128,10 @@ class OpportunitiesController extends Controller
 
 		if(isset($_POST['Opportunities']))
 		{
-			$new->attributes       = $_POST['Opportunities'];
-			$new->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
-			if($new->save())
+			$model=new Opportunities;
+			$model->attributes       = $_POST['Opportunities'];
+			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
+			if($model->save())
 				$this->redirect(array('admin'));
 		} 
 		
