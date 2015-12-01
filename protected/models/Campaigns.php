@@ -75,7 +75,7 @@ class Campaigns extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('name, providers_id, campaign_categories_id, wifi, formats_id, cap, model, devices_id, url, opportunities_id', 'required'),
-			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
+			array('providers_id, campaign_categories_id, wifi, formats_id, ip, post_data, editable, devices_id, opportunities_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>128),
 			// array('comment', 'length', 'max'=>512),
 			array('comment, status, environment, flow, inventory_type', 'safe'),
@@ -85,7 +85,7 @@ class Campaigns extends CActiveRecord
 			array('url', 'url'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment, environment, flow, inventory_type, cp_status', 'safe', 'on'=>'search'),
+			array('id,account_manager, name, advertisers_name, financeEntities_name, opportunities_rate, opportunities_carrie, providers_id, campaign_categories_id, wifi, formats_id, cap, model, ip, devices_id, url, status, opportunities_id, net_currency, external_rate, comment, environment, flow, inventory_type, cp_status, editable', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -139,6 +139,7 @@ class Campaigns extends CActiveRecord
 			'opportunities_rate'     => 'Rate', 
 			'opportunities_carrier'  => 'Carrier',
 			'post_data'              => 'Post Data',
+			'editable'               => 'Editable Report',
 			'banner_sizes_id'        => 'Banner Sizes',
 			'net_currency'           => 'Prov Currency',
 			'clicks'                 => 'Clicks Log',
@@ -195,6 +196,7 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('url',$this->url,true);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('post_data',$this->post_data);
+		$criteria->compare('editable',$this->editable);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 		$criteria->compare('t.status',$this->cp_status);
 		$criteria->compare('t.flow',$this->flow);

@@ -153,6 +153,7 @@ if($action == "Create"){ ?>
         }
 
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
+        echo $form->checkboxRow($model, 'editable');
         echo '<hr/>';
 
         echo '<div class="control-group">';
