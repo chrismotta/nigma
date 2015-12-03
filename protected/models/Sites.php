@@ -68,7 +68,7 @@ class Sites extends CActiveRecord
 			'publishers_providers_id' => 'Publishers Providers',
 			'publishers_name'         => 'Publishers',
 			'model'                   => 'Model',
-			'publisher_percentage'    => 'RS Perc.',
+			'publisher_percentage'    => 'RS %',
 		);
 	}
 

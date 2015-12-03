@@ -93,7 +93,7 @@ class Placements extends CActiveRecord
 			'status'               => 'Status',
 			'ext_id'               => 'External ID',
 			'model'                => 'Model',
-			'publisher_percentage' => 'RS Perc.',
+			'publisher_percentage' => 'RS %',
 			'rate'                 => 'Rate',
 		);
 	}

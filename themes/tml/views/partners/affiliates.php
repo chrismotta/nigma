@@ -54,8 +54,8 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 				),
 			'series' => array(
 				array('name' => 'Clicks', 'data' => $data['graphic']['clics'],),
-				array('name' => 'Conversions', 'data' => $data['graphic']['convs'],),
-				array('name' => 'Revenues', 'data' => $data['graphic']['spends'],),
+				array('name' => 'Convs.', 'data' => $data['graphic']['convs'],),
+				array('name' => 'Revenue', 'data' => $data['graphic']['spends'],),
 				),
 	        'legend' => array(
 	            'layout' => 'vertical',
@@ -112,7 +112,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 	<span class='formfilter-space'></span>
 	<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array(), 'To'); ?>
 	<span class='formfilter-space'></span>
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type' => 'success', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type' => 'success', 'label'=>'Submit', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 
 </fieldset>
 <?php $this->endWidget(); ?>
@@ -163,7 +163,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
                 ),
                 array(
 					'name'        =>'conv', 
-					'header'      =>'Conv',
+					'header'      =>'Convs.',
 					'value'       =>'number_format($data["conv"])',
 					'htmlOptions' =>array('style'=>'text-align: right')
                 ),

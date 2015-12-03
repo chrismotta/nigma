@@ -36,7 +36,7 @@ $dataProvider = $model->search($dateStart, $dateEnd);
 	$this->widget('bootstrap.widgets.TbButton', 
 		array(
 			'buttonType'=>'submit', 
-			'label'=>'Filter', 
+			'label'=>'Submit', 
 			'type' => 'success', 
 			'htmlOptions' => array('class' => 'showLoading')
 			)
@@ -46,8 +46,6 @@ $dataProvider = $model->search($dateStart, $dateEnd);
 </fieldset>
 
 <?php $this->endWidget(); ?>
-
-<?php KHtml::pageSizeSelector('daily-report-grid') ?>
 
 <?php
 
@@ -59,7 +57,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns' => array(
 		array(
 			'name'        => 'id',

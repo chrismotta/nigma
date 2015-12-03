@@ -161,7 +161,7 @@ $('.search-form form').submit(function(){
 		    )
 		); ?>
 		<span class='formfilter-space'></span>
-    	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+    	<?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Submit', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 	</div>
 	<?php 
 		//Load Filters
@@ -293,7 +293,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
         ),
 		array(	
 			'name'              => 'ad_request',
-			'header'            => 'Ad Requests',
+			// 'header'            => 'Ad Requests',
 			'value'             => 'number_format($data->ad_request)',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
@@ -304,7 +304,7 @@ $this->widget('bootstrap.widgets.TbButton', array(
         ),
 		array(	
 			'name'              => 'impressions',
-			'header'            => 'Impressions',
+			// 'header'            => 'Impressions',
 			'value'             => 'number_format($data->impressions)',
 			'headerHtmlOptions' => array('style' => "width: 80px"),
 			'htmlOptions'       => array('style'=>'text-align:right;'),
