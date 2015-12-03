@@ -48,13 +48,13 @@ $('.search-form form').submit(function(){
 	);
 	?>
 </div>
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       =>'ios-grid',
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'=>array(
 		array(
 			'name'=>'id',

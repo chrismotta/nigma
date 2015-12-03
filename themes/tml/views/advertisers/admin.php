@@ -69,12 +69,12 @@ $('.search-form form').submit(function(){
 	</div>
 <?php endif; ?>
 
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'advertisers-grid',
 	'dataProvider'             => $model->search(),
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'rowHtmlOptionsExpression' => 'array(
 		"data-row-id" => $data->id, 
 		"class" => "deepLink",

@@ -88,7 +88,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
     </fieldset>
 
 <?php $this->endWidget(); ?>
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'regions-grid',
 	'dataProvider'             => $model->search($financeEntities),
 	'filter'                   => $model,
@@ -98,7 +98,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		"class" => "deepLink",
 		"onclick" => "deepLink(\"'.Yii::app()->createUrl('opportunities/admin').'?region=\"+$data->id)",
 		)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'                  =>array(
 		array(
 			'name'=>'id',

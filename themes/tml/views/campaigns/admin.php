@@ -107,7 +107,7 @@ if(!$is_archived){
 </fieldset>
 <?php $this->endWidget(); ?>
 
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'campaigns-grid',
 	'dataProvider'             => $model->search($accountManager, $opportunity, $providers, $advertiser),
 	'filter'                   => $model,
@@ -115,7 +115,7 @@ if(!$is_archived){
 	'fixedHeader'              => true,
 	'headerOffset'             => 20,
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-	'template'                 =>'{items} {pager} {summary}',
+	'template'                 =>'{items} {pagerExt} {summary}',
 	
 	'columns'                  =>array(
 		// para incluir columnas de tablas relacionadas con search y order

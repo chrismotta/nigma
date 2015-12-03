@@ -99,7 +99,7 @@ $('.search-form form').submit(function(){
     </fieldset>
 
 <?php $this->endWidget(); ?>
-<?php $this->widget('bootstrap.widgets.TbGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'opportunities-grid',
 	'dataProvider'             => $model->search($accountManager,$advertiser,$country,null,$region),
 	'filter'                   => $model,
@@ -109,7 +109,7 @@ $('.search-form form').submit(function(){
 		"class" => "deepLink",
 		"onclick" => "deepLink(\"'.Yii::app()->createUrl('campaigns/admin').'?opportunity=\"+$data->id)",
 		)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'                  =>array(
 		array(
 			'name'              =>'id',

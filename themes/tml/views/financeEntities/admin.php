@@ -93,7 +93,7 @@ $('.search-form form').submit(function(){
 
 <?php $this->endWidget(); ?>
 <?php 
-$this->widget('bootstrap.widgets.TbGridView', array(
+$this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'financeEntities-grid',
 	'dataProvider'             => $model->search($advertiser, $accountManager),
 	'filter'                   => $model,
@@ -103,7 +103,7 @@ $this->widget('bootstrap.widgets.TbGridView', array(
 		"class" => "deepLink",
 		"onclick" => "deepLink(\"'.Yii::app()->createUrl('regions/admin').'?financeEntities=\"+$data->id)",
 		)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'                  =>array(
 		array(
 			'name'=>'id',

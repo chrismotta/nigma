@@ -269,7 +269,7 @@ $('.search-form form').submit(function(){
 
 	<hr>
 	<div class="formfilter-submit">
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
+    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Submit', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
 	</div>
 
 </fieldset>

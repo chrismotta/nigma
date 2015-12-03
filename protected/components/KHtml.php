@@ -1040,7 +1040,7 @@ class KHtml extends CHtml
     public static function pageSizeSelector($gridID){
         $pageSize=Yii::app()->user->getState('pageSize',Yii::app()->params['defaultPageSize']); 
         echo '<ul class="yiipager page-size">';
-        echo '<li><div>Page Size</div></li>';
+        echo '<li><div>Results</div></li>';
         echo '<li>';
         echo CHtml::dropDownList(
             'pageSize',
