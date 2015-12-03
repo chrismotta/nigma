@@ -38,6 +38,8 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	// amazon prod
 	case '54.172.221.175':
 	case 'ec2-54-172-221-175.compute-1.amazonaws.com':
+	case '52.91.118.99':
+	case 'ec2-52-91-118-99.compute-1.amazonaws.com':
 	case 'tmlbox.co':
 	case 'console.themedialab.co':
 	case 'www.tmlbox.co':
