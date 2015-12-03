@@ -404,7 +404,5 @@ function showRevenue(val){
 				$('#revenueSelect').show();
 			else
 				$('#revenueSelect').hide();
-
-		}
-		)
+		});
 }

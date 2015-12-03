@@ -130,8 +130,8 @@ class ClicksLog extends CActiveRecord
 			'totalClicks'  => 'Clicks',
 			'totalConv'    => 'Conversions',
 			'CTR'          => 'CTR',
-			'conversions'  => 'Conv.',
-			'convRate'	   => 'Conv.Rate',
+			'conversions'  => 'Convs.',
+			'convRate'	   => 'Conv. Rate',
 			'provider'     => 'Traffic Source',
 			'country_name' => 'Country',
 		);

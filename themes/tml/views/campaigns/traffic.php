@@ -196,7 +196,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	            array('label' => 'Clicks', 'active'=>$sum['clicks'], 
 	            	'htmlOptions'=>array('onclick' => '$("#s_clicks").val( 1 - $("#s_clicks").val() );')
 	            	),
-	            array('label' => 'Conversions', 'active'=>$sum['conv'], 
+	            array('label' => 'Convs.', 'active'=>$sum['conv'], 
 	            	'htmlOptions'=>array('onclick' => '$("#s_conv").val( 1 - $("#s_conv").val() );')
 	            	),
 	            array('label' => 'Rate', 'active'=>$sum['rate'], 
@@ -211,7 +211,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	
 	echo "<span class='formfilter-space'></span>";
 
-	$this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading')));
+	$this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Submit', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading')));
 
 	echo '</div>';
 	
@@ -238,15 +238,13 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 <?php $this->endWidget(); ?>
 </fieldset>
 
-<?php KHtml::pageSizeSelector('traffic-grid') ?>
-
 <?php 
 function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array(), $sum=array(), $filters=array(), $isTest=false){
 
 	$totals = $model->searchTraffic($dateStart, $dateEnd, $group, $filters, $isTest, true);
 	$dataProvider = $model->searchTraffic($dateStart, $dateEnd, $group, $filters, $isTest);
 
-	$controller->widget('bootstrap.widgets.TbExtendedGridView', array(
+	$controller->widget('application.components.NiExtendedGridView', array(
 		'id'                       => 'traffic-grid',
 		'dataProvider'             => $dataProvider,
 		// 'filter'                    => $model,
@@ -254,7 +252,7 @@ function trafficGridView($controller, $model, $dateStart, $dateEnd, $group=array
 	    // 'headerOffset'			   => 50,
 		'type'                     => 'condensed',
 		'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->campaigns_id)',
-		'template'                 => '{items} {pager} {summary}',
+		'template'                 => '{items} {pagerExt} {summary}',
 		// 'htmlOptions'              => array('style'=>'width:500px'),
 		'columns'                  => array(
 			array(
