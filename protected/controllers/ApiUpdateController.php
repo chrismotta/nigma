@@ -3,22 +3,22 @@
 class ApiUpdateController extends Controller
 {
 
-	// /**
-	//  * @return array action filters
-	//  */
-	// public function filters()
-	// {
-	// 	return array(
-	// 		'accessControl', // perform access control for CRUD operations
-	// 		'postOnly + delete', // we only allow deletion via POST request
-	// 	);
-	// }
+	/**
+	 * @return array action filters
+	 */
+	public function filters()
+	{
+		return array(
+			'accessControl', // perform access control for CRUD operations
+			'postOnly + delete', // we only allow deletion via POST request
+		);
+	}
 
-	// /**
-	//  * Specifies the access control rules.
-	//  * This method is used by the 'accessControl' filter.
-	//  * @return array access control rules
-	//  */
+	/**
+	 * Specifies the access control rules.
+	 * This method is used by the 'accessControl' filter.
+	 * @return array access control rules
+	 */
 	public function accessRules()
 	{
 		$adminAllowedActions = array(
@@ -55,7 +55,7 @@ class ApiUpdateController extends Controller
 			),
 			array('allow',
 				'actions' => $adminAllowedActions,
-				'ips'     => array('54.172.221.175'),
+				'ips'     => array('52.91.118.99'),
 			),
 			array('allow',
 				'actions'=>array('oAuthRedirect'),

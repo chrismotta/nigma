@@ -32,7 +32,7 @@ class DailyTotalsController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('consolidated'),
-				'ips'=>array('54.172.221.175'),
+				'ips'=>array('52.91.118.99'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
