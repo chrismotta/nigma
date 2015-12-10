@@ -137,7 +137,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$startApp = new StartApp;
-			$return = $startApp->downloadInfo(1);
+			$return = $startApp->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
@@ -149,7 +149,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$ajillion = new Ajillion;
-			$return = $ajillion->downloadInfo(1);
+			$return = $ajillion->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
@@ -263,7 +263,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$ajillion = new AjillionExchange;
-			$return = $ajillion->downloadInfo(1);
+			$return = $ajillion->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
@@ -275,7 +275,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$smaato = new SmaatoExchange;
-			$return = $smaato->downloadInfo(1);
+			$return = $smaato->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
@@ -299,7 +299,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$affiliates = new AffiliatesAPI;
-			$return = $affiliates->downloadInfo(1);
+			$return = $affiliates->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
