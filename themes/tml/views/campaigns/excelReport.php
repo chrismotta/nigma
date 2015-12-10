@@ -29,12 +29,20 @@ $this->widget('EExcelWriter', array(
             'value'  => '$data->campaigns_id',            
         ),
         array(
+            'name'   => 'Advertiser',
+            'value'  => '$data->clicksLog->campaigns->opportunities->regions->financeEntities->advertisers->name',           
+        ),
+        array(
             'name'   => 'Campaign Name',
             'value'  => 'Campaigns::model()->getExternalName($data->campaigns_id)',           
         ),
         array(
             'name'   => 'Provider',
-            'value'  => '$data->clicksLog->providers->name',           
+            'value'  => '$data->clicksLog->campaigns->providers->name',           
+        ),
+        array(
+            'name'   => 'Status',
+            'value'  => '$data->clicksLog->providers->id == 29 ? "Test" : "Valid"',           
         ),
         array(
             'name'   => 'IP',
