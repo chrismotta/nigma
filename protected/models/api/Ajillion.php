@@ -137,8 +137,18 @@ class Ajillion
 			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
 			//$dailyReport->conv_adv = 0;
 			$dailyReport->spend = number_format($campaign->cost, 2);
-			$dailyReport->updateRevenue();
-			$dailyReport->setNewFields();
+
+			$campaignModel = Campaigns::model()->findByPk($campaigns_id);
+			$model_adv = $campaignModel->opportunities->model_adv;
+			$return.= ' - '.$model_adv;
+
+			if($model_adv != 'RS'){
+				$dailyReport->updateRevenue();
+				$dailyReport->setNewFields();
+				$return.= ' -Yes Revenue- ';
+			}else{
+				$return.= ' -Not Revenue- ';
+			}
 
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');

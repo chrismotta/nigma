@@ -104,8 +104,18 @@ class AffiliatesAPI
 				$dailyReport->clics        = $clicks;
 				$dailyReport->conv_api     = $conv;
 				
-				$dailyReport->updateRevenue();
-				$dailyReport->setNewFields();
+				$campaignModel = Campaigns::model()->findByPk($campaign->id);
+				$model_adv = $campaignModel->opportunities->model_adv;
+				$return.= ' - '.$model_adv;
+
+				if($model_adv != 'RS'){
+					$dailyReport->updateRevenue();
+					$dailyReport->setNewFields();
+					$return.= ' -Yes Revenue- ';
+				}else{
+					$return.= ' -Not Revenue- ';
+				}
+
 				$dailyReport->updateSpendAffiliates($fixedRate);
 				$return.= $provider->id.'::'.$campaign->id .' - '.$clicks.' - '.$conv.' - '.$dailyReport->spend.'<br/>';
 				// continue;// uncomment for debug
