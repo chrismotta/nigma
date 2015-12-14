@@ -57,7 +57,7 @@ Yii::app()->clientScript->registerScript('search', "
 				),
 			'series' => array(
 				array('name' => 'Clicks', 'data' => $totalsGrap['clics_redirect'],),
-				array('name' => 'Convs.', 'data' => $totalsGrap['conversions_s2s'],),
+				array('name' => 'Conv.', 'data' => $totalsGrap['conversions_s2s'],),
 				),
 	        'legend' => array(
 				'layout'          => 'vertical',

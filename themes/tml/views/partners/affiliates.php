@@ -54,7 +54,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
 				),
 			'series' => array(
 				array('name' => 'Clicks', 'data' => $data['graphic']['clics'],),
-				array('name' => 'Convs.', 'data' => $data['graphic']['convs'],),
+				array('name' => 'Conv.', 'data' => $data['graphic']['convs'],),
 				array('name' => 'Revenue', 'data' => $data['graphic']['spends'],),
 				),
 	        'legend' => array(
@@ -169,7 +169,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
                 ),
                 array(
 					'name'        =>'convrate', 
-					'header'      =>'Conv. Rate',
+					'header'      =>'CR&nbsp;%',
 					'value'       =>'number_format($data["convrate"] * 100, 2) . " %"',
 					'htmlOptions' =>array('style'=>'text-align: right')
                 ),

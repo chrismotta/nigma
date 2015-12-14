@@ -89,9 +89,9 @@ $('.search-form form').submit(function(){
 				'title' => array('text' => '')
 				),
 			'series' => array(
-				array('name' => 'Imps.', 'data' => $totalsGrap['impressions'],),
+				array('name' => 'Imp.', 'data' => $totalsGrap['impressions'],),
 				array('name' => 'Clicks', 'data' => $totalsGrap['clics'],),
-				array('name' => 'Convs.','data' => $totalsGrap['conversions'],),
+				array('name' => 'Conv.','data' => $totalsGrap['conversions'],),
 				array('name' => 'Revenue','data' => $totalsGrap['revenues'],),
 				array('name' => 'Spend','data' => $totalsGrap['spends'],),
 				array('name' => 'Profit','data' => $totalsGrap['profits'],),
