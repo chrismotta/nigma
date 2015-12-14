@@ -10,11 +10,11 @@ class KHtml extends CHtml
             'Advertiser'    =>'Advertiser', 
             'Country'       =>'Country', 
             'Campaign'      =>'Campaign',
-            'Imp'           =>'Imps.', 
+            'Imp'           =>'Imp.', 
             'Clicks'        =>'Clicks', 
-            'CTR'           =>'CTR',
-            'Conv'          =>'Convs.', 
-            'CR'            =>'CR',
+            'CTR'           =>'CTR %',
+            'Conv'          =>'Conv.', 
+            'CR'            =>'CR %',
             'Rate'          =>'Rate', 
             'Revenue'       =>'Revenue',
             'Spend'         =>'Spend',
@@ -324,32 +324,40 @@ class KHtml extends CHtml
 
         if ( !$providers ) {
 
-            $providers = array(0 => '------- Networks -------');
+            $networks_t = array('0' => '------- Networks -------');
 
             $networks = Providers::model()->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Network"'
                     ));
-            $networks = CHtml::listData($networks, 'id', 'name');
-            $networks['0'] = '------- Affiliates -------';
+            $networks = CHtml::listData($networks, 
+                function($data){return strval($data->id);}, 
+                'name');
+            
+            $affiliates_t = array('00'=>'------- Affiliates -------');
 
             $affiliates = Providers::model()->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Affiliate"'
                     ));
-            $affiliates = CHtml::listData($affiliates, 'id', 'name');
-            $affiliates['0'] = '------- Publishers -------';
+            $affiliates = CHtml::listData($affiliates, 
+                function($data){return strval($data->id);}, 
+                'name');
+            
+            $publishers_t = array('000'=>'------- Publishers -------');
 
             $publishers = Providers::model()->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Publisher"'
                     ));
-            $publishers = CHtml::listData($publishers, 'id', 'name');
+            $publishers = CHtml::listData($publishers, 
+                function($data){return strval($data->id);}, 
+                'name');
 
-            $providers = array_merge($providers, $networks, $affiliates, $publishers);
+            $providers = $networks_t + $networks + $affiliates_t + $affiliates + $publishers_t + $publishers;
 
         }
             
@@ -1045,7 +1053,7 @@ class KHtml extends CHtml
         echo CHtml::dropDownList(
             'pageSize',
             $pageSize,
-            array(30=>30,50=>50,100=>100,500=>500),
+            array(50=>50,100=>100,500=>500),
             array(
                 'onchange'=>'$.fn.yiiGridView.update("'.$gridID.'",{ data:{pageSize: $(this).val() }})',
             ));

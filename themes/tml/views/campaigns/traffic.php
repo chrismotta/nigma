@@ -196,7 +196,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	            array('label' => 'Clicks', 'active'=>$sum['clicks'], 
 	            	'htmlOptions'=>array('onclick' => '$("#s_clicks").val( 1 - $("#s_clicks").val() );')
 	            	),
-	            array('label' => 'Convs.', 'active'=>$sum['conv'], 
+	            array('label' => 'Conv.', 'active'=>$sum['conv'], 
 	            	'htmlOptions'=>array('onclick' => '$("#s_conv").val( 1 - $("#s_conv").val() );')
 	            	),
 	            array('label' => 'Rate', 'active'=>$sum['rate'], 

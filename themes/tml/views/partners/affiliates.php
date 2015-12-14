@@ -163,7 +163,7 @@ $alert = array('error', 'info', 'success', 'warning', 'muted');
                 ),
                 array(
 					'name'        =>'conv', 
-					'header'      =>'Convs.',
+					'header'      =>'Conv.',
 					'value'       =>'number_format($data["conv"])',
 					'htmlOptions' =>array('style'=>'text-align: right')
                 ),

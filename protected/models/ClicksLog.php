@@ -129,9 +129,9 @@ class ClicksLog extends CActiveRecord
 			'redirect_url' => 'Redirect Url',
 			'totalClicks'  => 'Clicks',
 			'totalConv'    => 'Conversions',
-			'CTR'          => 'CTR',
-			'conversions'  => 'Convs.',
-			'convRate'	   => 'Conv. Rate',
+			'CTR'          => 'CTR %',
+			'conversions'  => 'Conv.',
+			'convRate'	   => 'CR %',
 			'provider'     => 'Traffic Source',
 			'country_name' => 'Country',
 		);
