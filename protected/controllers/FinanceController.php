@@ -27,7 +27,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunitieValidation','validateOpportunitie','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
+				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunityValidation','validateOpportunity','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness', 'affiliates_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -121,9 +121,11 @@ class FinanceController extends Controller
 		$consolidated=array();
 		//Agrega totales adicionales para la tabla clients
 		foreach ($clients['data'] as $client) {
+			// var_dump($client[]);
 			$client['total_revenue']     =$clients['totals_io'][$client['id']];
 			$client['total_transaction'] =$transactions->getTotalTransactions($client['id'],$year.'-'.$month.'-01');
 			$client['total']             =$client['total_revenue']+$client['total_transaction'];
+			$client['status_adv'] = $this->checkOpportunitiesByAdvertiser($client['id'], $month, $year);
 			//Crea el array definitivo del grid con los totales incluidos
 			$consolidated[]              =$client;
 		}
@@ -518,7 +520,7 @@ class FinanceController extends Controller
 	 * [actionOpportunitieValidation description]
 	 * @return [type] [description]
 	 */
-	public function actionOpportunitieValidation()
+	public function actionOpportunityValidation()
 	{
 		$year    =isset($_GET['year']) ? $_GET['year'] : date('Y', strtotime('today'));
 		$month   =isset($_GET['month']) ? $_GET['month'] : date('m', strtotime('today'));
@@ -549,7 +551,7 @@ class FinanceController extends Controller
 		    ),
 		));
 
-		$this->renderPartial('_opportunitieValidation',
+		$this->renderPartial('_opportunityValidation',
 		 array(
 				'month'        =>$month,
 				'year'         =>$year,
@@ -562,10 +564,10 @@ class FinanceController extends Controller
 	}
 
 	/**
-	 * [actionValidateOpportunitie description]
+	 * [actionValidateOpportunity description]
 	 * @return [type] [description]
 	 */
-	public function actionValidateOpportunitie()
+	public function actionValidateOpportunity()
 	{		
 		$modelOp      =new Opportunities;
 		$opportunities_id = $_POST['opportunities_id'];
@@ -606,8 +608,28 @@ class FinanceController extends Controller
  		Yii::app()->end();
 	}
 
+	public function checkOpportunitiesByAdvertiser($id, $month, $year)
+	{
+		$period     = date('Y-m-d', mktime(0,0,0, $month, '01', $year));
+
+		$criteria        = new CDbCriteria();
+		$criteria->with  = array('regions.financeEntities');
+		$criteria->compare('financeEntities.id', $id);
+		$opportunities   = Opportunities::model()->findAll($criteria);
+		
+		foreach ($opportunities as $opportunity) {
+			$opportunitiesValidation = new OpportunitiesValidation;
+			if(!$opportunitiesValidation->checkValidation($opportunity->id, $period))
+				return 0;
+		}
+		return 1;
+	}
+
 	public function actionValidateOpportunitiesByAdvertiser($id)
 	{
+
+		$echo = isset($_GET['echo']) ? $_GET['echo'] : null;
+		
 		if (!isset($_GET['period'])) 
 			die('ERROR: $_GET["period"] required');
 		$year       = date('Y', strtotime($_GET['period']));
@@ -623,20 +645,27 @@ class FinanceController extends Controller
 		
 		$opportunities   = Opportunities::model()->findAll($criteria);
 		foreach ($opportunities as $opportunity) {
-			echo "#".$opportunity->id.": ";
+			if($echo)
+				echo "#".$opportunity->id.": ";
 			$opportunitiesValidation = new OpportunitiesValidation;
 			if(!$opportunitiesValidation->checkValidation($opportunity->id, $period))
 			{
 				$opportunitiesValidation->attributes=array('opportunities_id'=>$opportunity->id,'period'=>$period,'date'=>$date);
 				if($opportunitiesValidation->save())
 				{
-					echo "opportunity validated successfully";
+					if($echo)
+						echo "opportunity validated successfully";
 				}
 			}else{
-				echo "opportunity already validated";
+				if($echo)
+					echo "opportunity already validated";
 			}
-			echo '<br/>';
+			if($echo)
+				echo '<br/>';
 		}
+
+		if(!$echo)
+			$this->redirect(array('clients', 'month'=>$month, 'year'=>$year));
 	}
 
 	/**
@@ -680,10 +709,10 @@ class FinanceController extends Controller
 			$opportunitie=Opportunities::model()->findByPk($opportunitie_id);
 			if($opportunitiesValidation=OpportunitiesValidation::model()->checkValidation($opportunitie_id,$period))
 			{
-			 	echo 'Opportunitie already invoiced!';							
+			 	echo 'Opportunity already invoiced!';							
 			}
 			elseif (!$opportunitie->checkIsAbleInvoice()) {
-				echo 'Opportunitie available to invoiced since '.date('Y-m-d',strtotime($opportunitie->endDate));		
+				echo 'Opportunity available to invoiced since '.date('Y-m-d',strtotime($opportunitie->endDate));		
 			}
 			else
 			{
@@ -697,7 +726,7 @@ class FinanceController extends Controller
 				if($opportunitiesValidation->save())
 				{
 					//FIXME agregar log
-				    echo 'Opportunitie #'.$opportunitiesValidation->opportunities_id.' invoiced';
+				    echo 'Opportunity #'.$opportunitiesValidation->opportunities_id.' invoiced';
 					// $log->loadLog($opportunitiesValidation->id,$status);
 				}
 				else 

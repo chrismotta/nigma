@@ -90,7 +90,7 @@ class FilterManager
 			'roles'  => array( 
 				'publisher',
 			)),
-		'clients.validateOpportunitie' => array( 
+		'clients.validateOpportunity' => array( 
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',

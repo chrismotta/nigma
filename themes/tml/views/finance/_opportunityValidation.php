@@ -68,7 +68,7 @@
                          Yii::app()->clientScript->registerScript('register_script_name', "
                             $('#btnAp').click(function(e){
                                 e.preventDefault();
-                               $.post( 'validateOpportunitie', { 'opportunities_id': ".$op.",'period':'".$period."' })
+                               $.post( 'validateOpportunity', { 'opportunities_id': ".$op.",'period':'".$period."' })
                                     .success(function( data ) {
                                     alert(data );
                                     window.location = document.URL;

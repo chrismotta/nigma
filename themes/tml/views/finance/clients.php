@@ -80,11 +80,11 @@ else
 
 					);
 				';
-if (FilterManager::model()->isUserTotalAccess('clients.validateOpportunitie'))
+if (FilterManager::model()->isUserTotalAccess('clients.validateOpportunity'))
 	$buttonValidate='$data["status_opp"] == false ?
 				CHtml::link(
 					"<i class=\"not_verifed\" ></i>",
-					array("opportunitieValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
+					array("opportunityValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
     				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
 
 
@@ -208,6 +208,23 @@ else
 			'htmlOptions'       => array('id'=>'alignLeft'),		
 			'header'            => 'Commercial Name',
 			),
+		array(
+			'type'              =>'raw',
+			'header'            =>'',
+			// 'header'			=> false,
+			'filter'            => false,
+			'name'              => 'mr',
+			'headerHtmlOptions' => array('width' => '20'),
+			'name'              =>	'name',
+			'value'             =>'$data["status_adv"] == false ?
+				CHtml::link(
+					"<i class=\"not_verifed\"></i>",
+					array("finance/validateOpportunitiesByAdvertiser/?id=".$data["id"]."&period='.$year.'-'.$month.'-01")
+					)
+				:
+				"<i style=\"cursor:default\" id=\"icon-status\" class=\"verifed\" data_id=\"".$data["id"]."\"></i>"
+				',		
+		),
 		array(
 			'name'              => 'opportunitie',
 			'value'             => '$data["opportunitie"]',	
