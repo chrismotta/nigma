@@ -71,7 +71,7 @@ class ClicklogController extends Controller
 	
 	public function actionIndex($id=null)
 	{
-			
+
 		isset( $_GET['ts'] ) ? $test = true : $test = false;
 
 		$ts['request'] = $_SERVER['REQUEST_TIME'];
@@ -238,11 +238,11 @@ class ClicklogController extends Controller
 		
 		if($model->save()){
 
-			if($ntoken){
-				$tmltoken = $ntoken;
-			}else{
-				$tmltoken = md5($model->id);
-			}
+			// if($ntoken){
+			// 	$tmltoken = $ntoken;
+			// }else{
+			// 	$tmltoken = md5($model->id);
+			// }
 				
 
 			/*
@@ -269,7 +269,10 @@ class ClicklogController extends Controller
 
 			//print "guardado - tid: ".$tmltoken;
 			//print "<hr/>";
+			
+			$tmltoken = md5($model->id);
 			$model->tid = $tmltoken;
+			$model->ext_tid = $ntoken;
 			$model->save();
 
 			// Guardo los datos en cookies (Expira en 1 hora)

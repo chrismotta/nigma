@@ -8,6 +8,7 @@
  * @property integer $campaigns_id
  * @property integer $providers_id
  * @property string $tid
+ * @property string $ext_tid
  * @property string $date
  * @property string $server_ip
  * @property string $user_agent
@@ -83,7 +84,7 @@ class ClicksLog extends CActiveRecord
 			//array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, providers_id, tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, tid, ext_tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -111,6 +112,7 @@ class ClicksLog extends CActiveRecord
 			'campaigns_id' => 'Campaigns',
 			'providers_id' => 'Providers',
 			'tid'          => 'Tid',
+			'ext_tid'      => 'External Tid',
 			'date'         => 'Date',
 			'server_ip'    => 'Server Ip',
 			'user_agent'   => 'User Agent',
@@ -159,6 +161,7 @@ class ClicksLog extends CActiveRecord
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('tid',$this->tid,true);
+		$criteria->compare('ext_tid',$this->ext_tid,true);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('server_ip',$this->server_ip,true);
 		$criteria->compare('user_agent',$this->user_agent,true);

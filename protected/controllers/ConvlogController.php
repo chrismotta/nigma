@@ -137,7 +137,7 @@ class ConvlogController extends Controller
 				array('tid'=>$tid)
 				)){
 
-				print "OK";
+				print "OK";// not ok
 				// print "ConvLog: exists<hr/>";
 			}else{
 
@@ -162,10 +162,10 @@ class ConvlogController extends Controller
 					// if there is ntoken macro in the callback
 					if( strpos($haystack, $needle)!==false ){
 						// replace placeholder macro with value
-						$s4s_url = str_replace('{ntoken}', $tid, $conv->campaign->providers->callback);
+						$s4s_url = str_replace('{ntoken}', $click->ext_tid, $conv->campaign->providers->callback);
 					} else {
 						// add value at the end of callback
-						$s4s_url = $conv->campaign->providers->callback . $tid;
+						$s4s_url = $conv->campaign->providers->callback . $click->ext_tid;
 					}
 
 					if ( isset($click->custom_params) && $click->custom_params != NULL ) {
