@@ -596,32 +596,42 @@ class KHtml extends CHtml
         
         if ( !$providers ) {
 
-            $providers = array(0 => '------- Networks -------');
+
+            $networks_t = array('0' => '------- Networks -------');
 
             $networks = Providers::model()->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Network"'
                     ));
-            $networks = CHtml::listData($networks, 'id', 'name');
-            $networks['0'] = '------- Affiliates -------';
+            $networks = CHtml::listData($networks, 
+                function($data){return strval($data->id);}, 
+                'name');
+            
+            $affiliates_t = array('00'=>'------- Affiliates -------');
 
             $affiliates = Providers::model()->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Affiliate"'
                     ));
-            $affiliates = CHtml::listData($affiliates, 'id', 'name');
-            $affiliates['0'] = '------- Publishers -------';
+            $affiliates = CHtml::listData($affiliates, 
+                function($data){return strval($data->id);}, 
+                'name');
+            
+            $publishers_t = array('000'=>'------- Publishers -------');
 
             $publishers = Providers::model()->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Publisher"'
                     ));
-            $publishers = CHtml::listData($publishers, 'id', 'name');
+            $publishers = CHtml::listData($publishers, 
+                function($data){return strval($data->id);}, 
+                'name');
 
-            $providers = array_merge($providers, $networks, $affiliates, $publishers);
+            $providers = $networks_t + $networks + $affiliates_t + $affiliates + $publishers_t + $publishers;
+
         }
 
         
