@@ -1264,7 +1264,7 @@ class DailyReport extends CActiveRecord
 	}
 
 
-	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL,$opportunities=null,$providers=null,$sum=0,$adv_categories=null)
+	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL, $opportunities=null, $providers=null, $sum=0, $adv_categories=null, $advertisers=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -1488,10 +1488,28 @@ class DailyReport extends CActiveRecord
 			}
 		}
 
-		// if ( $advertiser != NULL ){
-		// 	$criteria->addCondition('advertisers.cat="'.$advertiser.'"');
-		// }
-		// external name
+
+		if ( $advertisers != NULL) {
+			if(is_array($advertisers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($advertisers as $adv) {	
+					if($i==0)			
+						$query.="advertisers.id=".$adv;
+					else
+						$query.=" OR advertisers.id=".$adv;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.id',$advertisers);
+			}
+		}
+		
 		$tmp = new CDbCriteria;
 		$tmp->compare('t.campaigns_id',$this->campaign_name,true);
 		$tmp->compare('carriers.mobile_brand',$this->campaign_name,true,'OR');

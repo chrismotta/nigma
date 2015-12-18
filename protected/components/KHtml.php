@@ -727,11 +727,13 @@ class KHtml extends CHtml
             'multiple' => 'multiple',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
-        
-        /*
+        $criteria = new CDbCriteria;
+        $criteria->with  = array('regions', 'regions.financeEntities.advertisers','accountManager');
+        $criteria->order = 'advertisers.name';
 
-        if (FilterManager::model()->isUserTotalAccess('media'))
-            $accountManager=Yii::app()->user->id;
+
+        // if (FilterManager::model()->isUserTotalAccess('media'))
+        //     $accountManager=Yii::app()->user->id;
 
         if ( $accountManager != NULL) {
             if(is_array($accountManager))
@@ -755,20 +757,10 @@ class KHtml extends CHtml
         }
 
         $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
-       
         $data=array();
         foreach ($opps as $opp) {
             $data[$opp->regions->financeEntities->advertisers->id]=$opp->regions->financeEntities->advertisers->name;
         }
-        */
-       
-        $criteria = new CDbCriteria;
-        // $criteria->with  = array('regions', 'regions.financeEntities.advertisers','accountManager');
-        $criteria->order = 't.name';
-
-        $list = Advertisers::model()->findAll($criteria);
-        $data   = CHtml::listData($list, 'id', 'name');
-       
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
