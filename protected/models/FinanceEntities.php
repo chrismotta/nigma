@@ -638,10 +638,21 @@ class FinanceEntities extends CActiveRecord
 			$product      = $daily['product'];
 			$rate         = $daily['rate'];
 			$multi        = $daily['multi'] == false ? $daily['rate'] : 'multi';
-			$revenue      = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
 			$opportunitie = $daily['opportunitie_id'];
 			$country 	  = $daily['country'];
 
+			switch ($daily['model']) {
+				case 'CPM':
+					$revenue = ($daily['conv']*$daily['rate'])/1000;
+					break;
+				case 'RS':
+					$revenue = $daily['revenue'];
+					break;
+				default:
+					$revenue = $daily['conv']*$daily['rate'];
+					break;
+			}
+			// $revenue      = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];//deprecated
 
 			$groupBy='';
 			foreach($group as $var)
@@ -698,7 +709,7 @@ class FinanceEntities extends CActiveRecord
 		$totals             =array();
 		$totalCountCurrency =array();
 		$totalCount         =array();
-		$totalCountInvoice         =array();
+		$totalCountInvoice  =array();
 		$closed_deal        = isset($filters['closed_deal']) ? $filters['closed_deal'] : false;
 		$month              = isset($filters['month']) ? $filters['month'] : NULL;
 		$year               = isset($filters['year']) ? $filters['year'] : NULL;
@@ -707,7 +718,19 @@ class FinanceEntities extends CActiveRecord
 		{
 
 			$opportunitie=Opportunities::model()->findByPk($daily['opportunitie_id']);
-			$revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];
+
+			switch ($daily['model']) {
+				case 'CPM':
+					$revenue = ($daily['conv']*$daily['rate'])/1000;
+					break;
+				case 'RS':
+					$revenue = $daily['revenue'];
+					break;
+				default:
+					$revenue = $daily['conv']*$daily['rate'];
+					break;
+			}
+			// $revenue = $daily['model']=='CPM' ? ($daily['conv']*$daily['rate'])/1000 : $daily['conv']*$daily['rate'];//deprecated
 				
 			isset($totalCount[$daily['id']]) ? : $totalCount[$daily['id']]=0;
 

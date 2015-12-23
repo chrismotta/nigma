@@ -149,6 +149,9 @@ class FinanceController extends Controller
 		        'pageSize'=>30,
 		    ),
 		));
+
+		//totals 
+		
 		$totalsInvoiceBranding=$model->getClients($month,$year,$entity,null,null,null,$cat,$status,null,true);
 
 		$i=0;
