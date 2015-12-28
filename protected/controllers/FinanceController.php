@@ -621,6 +621,12 @@ class FinanceController extends Controller
 		$opportunities   = Opportunities::model()->findAll($criteria);
 		
 		foreach ($opportunities as $opportunity) {
+
+			// in proccess
+			// $dCriteria = new CDbCriteria;
+			// $dCriteria->
+			// $daily = DailyReport::model()->find($dCriteria);
+
 			$opportunitiesValidation = new OpportunitiesValidation;
 			if(!$opportunitiesValidation->checkValidation($opportunity->id, $period))
 				return 0;
@@ -630,45 +636,55 @@ class FinanceController extends Controller
 
 	public function actionValidateOpportunitiesByAdvertiser($id)
 	{
-
-		$echo = isset($_GET['echo']) ? $_GET['echo'] : null;
+		$return['id'] = $id;
 		
-		if (!isset($_GET['period'])) 
-			die('ERROR: $_GET["period"] required');
-		$year       = date('Y', strtotime($_GET['period']));
-		$month      = date('m', strtotime($_GET['period']));
-		$period     = date('Y-m-d', mktime(0,0,0, $month, '01', $year));
-		$date       = date('Y-m-d H:i:s', strtotime('NOW'));
+		if (!isset($_GET['period'])) {
 
-		$criteria        = new CDbCriteria();
-		$criteria->with  = array('regions.financeEntities');
+			$return['status'] = $_GET["period"] . 'required';
 
-		if($id!=0)
-			$criteria->compare('financeEntities.id', $id);
-		
-		$opportunities   = Opportunities::model()->findAll($criteria);
-		foreach ($opportunities as $opportunity) {
-			if($echo)
-				echo "#".$opportunity->id.": ";
-			$opportunitiesValidation = new OpportunitiesValidation;
-			if(!$opportunitiesValidation->checkValidation($opportunity->id, $period))
-			{
-				$opportunitiesValidation->attributes=array('opportunities_id'=>$opportunity->id,'period'=>$period,'date'=>$date);
-				if($opportunitiesValidation->save())
-				{
-					if($echo)
-						echo "opportunity validated successfully";
+		} else {
+
+			$year       = date('Y', strtotime($_GET['period']));
+			$month      = date('m', strtotime($_GET['period']));
+			$period     = date('Y-m-d', mktime(0,0,0, $month, '01', $year));
+			$date       = date('Y-m-d H:i:s', strtotime('NOW'));
+
+			$criteria        = new CDbCriteria();
+			$criteria->with  = array('regions.financeEntities');
+
+			if($id!=0)
+				$criteria->compare('financeEntities.id', $id);
+			
+			$opportunities   = Opportunities::model()->findAll($criteria);
+
+			foreach ($opportunities as $opportunity) {
+
+				$opportunitiesValidation = new OpportunitiesValidation;
+
+				if(!$opportunitiesValidation->checkValidation($opportunity->id, $period)){
+					
+					$opportunitiesValidation->attributes=array(
+						'opportunities_id'=>$opportunity->id,
+						'period'=>$period,
+						'date'=>$date
+						);
+
+					if($opportunitiesValidation->save()){
+						$return['proccess'] = 'ok';
+					}else{
+						$return['proccess'] = 'unknown';
+					}
+
+				}else{
+					$return['proccess'] = "opportunity already validated";
 				}
-			}else{
-				if($echo)
-					echo "opportunity already validated";
 			}
-			if($echo)
-				echo '<br/>';
+
+			$return['status'] = 'ok';
+
 		}
 
-		if(!$echo)
-			$this->redirect(array('clients', 'month'=>$month, 'year'=>$year));
+		echo json_encode($return);
 	}
 
 	/**

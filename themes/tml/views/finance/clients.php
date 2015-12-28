@@ -85,34 +85,30 @@ if (FilterManager::model()->isUserTotalAccess('clients.validateOpportunity'))
 				CHtml::link(
 					"<i class=\"not_verifed\" ></i>",
 					array("opportunityValidation?op=".$data["opportunitie_id"]."&month='.$month.'&year='.$year.'"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
-
-
+    				array(
+    					"class"=>"link", 
+    					"data-toggle"=>"tooltip", 
+    					"data-original-title"=>"Not Verified",
+				    	"id" => "icon-status-opp-".$data["id"],
+    					)
 					)
 				: 
-				CHtml::ajaxLink(
-					"<i id=\"icon-status\" class=\"verifed\"></i>", 
-					"javascript:void(0)", 
-				    array (), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
-				)
+					"<i id=\"icon-status\" class=\"icon-status verifed\"></i>"
 				;';
 else 
 	$buttonValidate='$data["status_opp"] == false ?
 				CHtml::link(
 					"<i style=\"cursor:default\" class=\"not_verifed\" ></i>",
 					array(""),
-    				array("class"=>"no-link", "data-toggle"=>"tooltip", "data-original-title"=>"Not Verified")
-
-
+    				array(
+    					"class"=>"no-link", 
+    					"data-toggle"=>"tooltip", 
+    					"data-original-title"=>"Not Verified",
+				    	"id" => "icon-status-opp-".$data["id"],
+    					)
 					)
 				: 
-				CHtml::ajaxLink(
-					"<i style=\"cursor:default\" id=\"icon-status\" class=\"verifed\"></i>", 
-					"javascript:void(0)", 
-				    array (), 
-				    array ("data-toggle"=>"tooltip", "data-original-title"=>"Verifed")
-				)
+					"<i id=\"icon-status\" class=\"icon-status verifed\"></i>"
 				;';
 
 ?>
@@ -211,18 +207,38 @@ else
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
-			// 'header'			=> false,
+			'sortable'		    => false,
 			'filter'            => false,
 			'name'              => 'mr',
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'name',
 			'value'             =>'$data["status_adv"] == false ?
-				CHtml::link(
-					"<i class=\"not_verifed\"></i>",
-					array("finance/validateOpportunitiesByAdvertiser/?id=".$data["id"]."&period='.$year.'-'.$month.'-01")
+				CHtml::ajaxLink(
+					"<i id=\"icon-status-".$data["id"]."\" class=\"not_verifed\" data_id=\"".$data["id"]."\"></i>",
+					array("finance/validateOpportunitiesByAdvertiser/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
+				    array (
+				        // "type"=>"POST",
+				        "dataType"=>"json",
+				        "beforeSend" => "function() {           
+				          	if(!confirm(\"Verify all opportunities from ".$data["name"]."?\")) return false;
+				        }",
+				        "success"=>"function(data){ 
+				        	if(data.status==\"ok\"){
+					        	$(\"#icon-status-\"+data.id).parent().html(\'<i class=\"icon-status verifed\"></i>\');
+					        	$(\"a#icon-status-opp-\"+data.id).each(function( index ) {
+								 	$(this).parent().html(\'<i class=\"icon-status verifed\"></i>\');
+								});
+							} else {
+								alert(\"ERROR: \"+data.status);
+							} 
+				        }"
+				        ), 
+				    array (
+				    	"id" => "icon-status-".$data["id"]
+				    	)
 					)
 				:
-				"<i style=\"cursor:default\" id=\"icon-status\" class=\"verifed\" data_id=\"".$data["id"]."\"></i>"
+				"<i class=\"icon-status verifed\" data_id=\"".$data["id"]."\"></i>"
 				',		
 		),
 		array(
@@ -294,10 +310,11 @@ else
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
-			'filter'            =>false,
+			'sortable'		    => false,
+			'filter'            => false,
 			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>'opportunitie',
-			'value'             =>$buttonValidate,		
+			'name'              => 'opportunitie',
+			'value'             => $buttonValidate,		
 		),
 		array(
 			'name'              =>'name',
@@ -308,18 +325,17 @@ else
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
 		array(
-			'type'              =>'raw',
-			'header'            =>'',
-			'filter'            =>false,
+			'type'              => 'raw',
+			'header'            => '',
+			'sortable'		    => false,
+			'filter'            => false,
 			'headerHtmlOptions' => array('width' => '20'),
-			'name'              =>	'name',
+			'name'              => 'name',
 			'value'             =>'
 				CHtml::link(
 					"<i class=\"icon-pencil\"></i>",
 					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
     				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Count")
-
-
 					);
 				',		
 		),
