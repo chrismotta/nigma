@@ -68,8 +68,8 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->providers->name',
         ),
         array(
-            'header'  => 'rate',
             'value' => '$data->getRateUSD() ? $data->getRateUSD() : 0',
+            'header'  => 'Rate',
             'htmlOptions'=>array('style'=>'width: 45px'),
         ),
         'imp',
@@ -99,14 +99,17 @@ $this->widget('EExcelWriter', array(
         ),
         array(
             'name'  => 'profit_percent',
+            'header'  => 'Profit %',
             'value' => '$data->profit_percent * 100',
         ),
         array(
             'name'  => 'click_through_rate',
+            'header'  => 'CTR %',
             'value' => '$data->click_through_rate * 100',
         ),
         array(
             'name'  => 'conversion_rate',
+            'header'  => 'CR %',
             'value' => '$data->conversion_rate * 100',
         ),
         array(
