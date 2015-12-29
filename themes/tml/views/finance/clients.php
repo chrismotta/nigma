@@ -382,7 +382,8 @@ else
 	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalClients')); ?>
+<?php $this->beginWidget('bootstrap.widgets.TbModal', 
+	array('id'=>'modalClients')); ?>
 
 		<div class="modal-header"></div>
         <div class="modal-body"></div>
@@ -394,27 +395,31 @@ else
 </div>
 
 <?php Yii::app()->clientScript->registerScript('verifedIcon', "
-						$('.link').click(function(e){
-                            e.preventDefault();
-                            var that = $(this);
-							var link = that.attr('href');
-							
-							var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-							$('#modalClients').html(dataInicial);
-							$('#modalClients').modal('toggle');
-                           $.post( link, {})
-								.success(function( data ) {
-									$('#modalClients').html(data);
-                                }
+					$('.link').click(function(e){
+                        e.preventDefault();
+                        var that = $(this);
+						var link = that.attr('href');
+						
+						$('#modalClients').modal('toggle');
+						var dataInicial = '<iframe src=\"'+link+'\" width=\"100%\" height=\"530px\" frameborder=\"0\" ></iframe>';
+						$('#modalClients').html(dataInicial);
 
-					
-                                );
-                            
-                        });
+						/*
+						var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
+						
+						$('#modalClients').html(dataInicial);
+                       	
+                       	$.post( link, {})
+							.success(function( data ) {
+								//$('#modalClients').html(data);
+                            });
+                        */
+                    });
+
 					$('.linkinvoiced').click(function(e){
-                            e.preventDefault();
-                            
-                        });
+                        e.preventDefault();
+                    });
+                        
 					function verifedIcon(){
                         $('.link').click(function(e){
                             e.preventDefault();

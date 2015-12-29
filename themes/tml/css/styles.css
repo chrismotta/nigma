@@ -469,3 +469,8 @@ table .date-column {
     padding-bottom: 0px;
     padding-left: 2px;
 }
+
+#transaction-count-form .transaction-input{
+	width: 150px;
+	margin-right: 5px;
+}

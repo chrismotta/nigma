@@ -876,7 +876,8 @@ class FinanceController extends Controller
 		}
 		*/
 
-		$this->renderPartial('_form',array(
+		$this->layout='//layouts/modalIframe';
+		$this->render('_form',array(
 			'id'        => $id,
 			'period'    => $period,
 			'model'     => $model,
@@ -890,8 +891,9 @@ class FinanceController extends Controller
 	 */
 	public function actionAddTransaction()
 	{
-		// var_dump($_POST);
+		// var_dump($_POST['TransactionCount']);
 		// die();
+		
 		if(isset($_POST['TransactionCount'])){
 
 			// if($_POST['TransactionCount']['carrier']!=='' && $_POST['country']!=='')
