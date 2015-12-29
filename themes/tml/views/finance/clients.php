@@ -335,7 +335,12 @@ else
 				CHtml::link(
 					"<i class=\"icon-pencil\"></i>",
 					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
-    				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"Count")
+    				array(
+    					"class"=>"openModal", 
+    					"data-toggle"=>"tooltip", 
+    					"data-original-title"=>"Count",
+    					"onclick"=>"event.preventDefault(); openModal(this)",
+    					)
 					);
 				',		
 		),
@@ -394,28 +399,14 @@ else
 <div class="row" id="blank-row">
 </div>
 
-<?php Yii::app()->clientScript->registerScript('verifedIcon', "
-					$('.link').click(function(e){
-                        e.preventDefault();
-                        var that = $(this);
-						var link = that.attr('href');
-						
-						$('#modalClients').modal('toggle');
-						var dataInicial = '<iframe src=\"'+link+'\" width=\"100%\" height=\"530px\" frameborder=\"0\" ></iframe>';
-						$('#modalClients').html(dataInicial);
+<?php Yii::app()->clientScript->registerScriptFile(
+	Yii::app()->theme->baseUrl.'/js/modals.js', 
+	CClientScript::POS_HEAD
+	); ?>
 
-						/*
-						var dataInicial = '<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"".  Yii::app()->theme->baseUrl ."/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>';
-						
-						$('#modalClients').html(dataInicial);
-                       	
-                       	$.post( link, {})
-							.success(function( data ) {
-								//$('#modalClients').html(data);
-                            });
-                        */
-                    });
 
+<?php 
+Yii::app()->clientScript->registerScript('verifedIcon', "
 					$('.linkinvoiced').click(function(e){
                         e.preventDefault();
                     });
@@ -441,4 +432,5 @@ else
                             
                         });
 					}
-                    ", CClientScript::POS_READY); ?>
+                    ", CClientScript::POS_READY);  
+?>

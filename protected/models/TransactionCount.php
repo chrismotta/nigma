@@ -139,6 +139,9 @@ class TransactionCount extends CActiveRecord
 		$criteria->compare('period',$period);
 		return new CActiveDataProvider($this,array(
 				'criteria'=>$criteria,
+				'pagination'=>array(
+			        'pageSize'=>5,
+			    ),
 			));
 	}
 

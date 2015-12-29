@@ -75,30 +75,6 @@ if (FilterManager::model()->isUserTotalAccess('clients.validateIo')){
             array('name'              =>'rate'),
             array('name'              =>'users_id', 'value'=>'$data->getUserName()'),
             array('name'              =>'date'),
-            array('name'              =>'delete', 
-            	  'type'			  =>'raw', 
-				  'header'            =>false,
-			      'filter'            =>false,
-				  'headerHtmlOptions' => array('width' => '5'),
-				  'htmlOptions'		  =>array('style'=>'text-align:left !important'),
-            	  'value' 			  =>'CHtml::link(
-											"<i class=\"icon-remove\"></i>",
-											array(),
-						    				array("data-toggle"=>"tooltip", "data-original-title"=>"Delete", "class"=>"linkinvoiced",  
-						    					"onclick" => 
-						    					"js:bootbox.confirm(\"Are you sure?\", function(confirmed){
-						    						if(confirmed){
-								    					$.post(\"delete/".$data["id"]."\",{})
-								                            .success(function( data ) {
-								                				$.fn.yiiGridView.update(\"transaction-count-grid\");
-									                            // alert(data );
-									                            // window.location = document.URL;
-								                            });
-														}
-													 })
-												")
-											);',
-            ),
 			array(
 					'class'              => 'bootstrap.widgets.TbButtonColumn',
 					'deleteConfirmation' => 'Are you sure you want to archive this opportunity?',
