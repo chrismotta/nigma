@@ -253,9 +253,7 @@ class ClicksLog extends CActiveRecord
 
 			return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
-				'pagination' =>array(
-	                'pageSize'=>100,
-	            ),
+				'pagination'=> KHtml::pagination(),
 	            'sort'       =>array(
 					'defaultOrder'=>join($orderBy,','),
 			        'attributes'=>array(
