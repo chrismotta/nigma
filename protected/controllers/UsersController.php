@@ -154,6 +154,8 @@ class UsersController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+	
 		$model=new Users('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Users']))
