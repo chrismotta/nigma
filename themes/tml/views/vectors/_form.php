@@ -21,7 +21,7 @@
 	<fieldset>
 
 	<?php 
-		echo $form->dropDownListRow($model, 'providers_id', $providers, array('prompt' => 'Select a provider'));
+		echo $form->dropDownListRow($model, 'providers_id', $providers, array('prompt' => 'Select traffic source'));
 		echo $form->textFieldRow($model, 'name', array('class'=>'span3')); 
 	?>
 

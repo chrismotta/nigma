@@ -363,7 +363,8 @@ else
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
-			'filter'            =>false,
+			'sortable'		    => false,
+			'filter'            => false,
 			'headerHtmlOptions' => array('width' => '5'),
 			'name'              =>'name',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
@@ -372,7 +373,8 @@ else
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
-			'filter'            =>false,
+			'sortable'		    => false,
+			'filter'            => false,
 			'headerHtmlOptions' => array('width' => '5'),
 			'name'              =>'name',
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),

@@ -141,7 +141,7 @@ class Campaigns extends CActiveRecord
 			'post_data'              => 'Post Data',
 			'editable'               => 'Editable Report',
 			'banner_sizes_id'        => 'Banner Sizes',
-			'net_currency'           => 'Prov. Currency',
+			'net_currency'           => 'T. Source Currency',
 			'clicks'                 => 'Clicks Log',
 			'conv'                   => 'Conv. Log',
 			'account_manager'        => 'Account Manager',

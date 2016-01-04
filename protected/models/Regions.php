@@ -64,10 +64,11 @@ class Regions extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'finance_entities_id' => 'Finance Entities',
-			'country_id' => 'Region',
-			'region' => 'Comment',
+			'id'                    => 'ID',
+			'finance_entities_id'   => 'Finance Entities',
+			'country_id'            => 'Region',
+			'region'                => 'Comment',
+			'finance_entities_name' => 'Fantasy Name',
 		);
 	}
 

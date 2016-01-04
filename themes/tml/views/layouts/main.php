@@ -68,7 +68,7 @@
         array('label'=>'Finance', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
             array('label'=>'Clients', 'url'=>array('/finance/clients')),
-            array('label'=>'Providers', 'url'=>array('/finance/providers')),
+            array('label'=>'Vendors', 'url'=>array('/finance/providers')),
             //array('label'=>'Cierre Mes', 'url'=>'#'),
             //array('label'=>'Invoices', 'url'=>'#'),
             array('label'=>'Currency', 'url'=>array('/currency/admin')),

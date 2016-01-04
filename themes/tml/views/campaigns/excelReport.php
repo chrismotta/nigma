@@ -37,7 +37,7 @@ $this->widget('EExcelWriter', array(
             'value'  => 'Campaigns::model()->getExternalName($data->campaigns_id)',           
         ),
         array(
-            'name'   => 'Provider',
+            'name'   => 'Traffic Source',
             'value'  => '$data->clicksLog->campaigns->providers->name',           
         ),
         array(

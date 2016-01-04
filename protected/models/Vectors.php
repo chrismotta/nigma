@@ -65,7 +65,7 @@ class Vectors extends CActiveRecord
 	{
 		return array(
 			'id'                   => 'ID',
-			'providers_id'         => 'Provider',
+			'providers_id'         => 'Traffic Source',
 			'name'                 => 'Name',
 			'status'               => 'Status',
 			'campaigns_associated' => 'Campaigns',

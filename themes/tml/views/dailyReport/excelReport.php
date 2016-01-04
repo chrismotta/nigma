@@ -44,7 +44,7 @@ $this->widget('EExcelWriter', array(
             'value' => '$data->campaigns->formats->name',
         ),
         array(
-            'name'  => 'opportunitie_name',
+            'name'  => 'Opportunity',
             'value' => '$data->campaigns->opportunities->getVirtualName()',
         ),        
         array(
@@ -76,7 +76,7 @@ $this->widget('EExcelWriter', array(
         'imp_adv',
         'clics',        
         array(
-            'name'  => 'clics_redirect',
+            'name'  => 'Clicks Redirect',
             'value' => '$data->getClicksRedirect()',
         ),
         'conv_api',

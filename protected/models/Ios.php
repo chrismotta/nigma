@@ -62,11 +62,12 @@ class Ios extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
+			'id'                  => 'ID',
 			'finance_entities_id' => 'Finance Entities',
-			'date' => 'Date',
-			'budget' => 'Budget',
-			'status' => 'Status',
+			'date'                => 'Date',
+			'budget'              => 'Budget',
+			'status'              => 'Status',
+			'financeEntitiesName' => 'Fantasy Name',
 		);
 	}
 
