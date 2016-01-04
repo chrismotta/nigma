@@ -65,7 +65,7 @@ $('.search-form form').submit(function(){
 <?php endif; ?>
 <br>
 
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       =>'publishers-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
@@ -77,7 +77,7 @@ $('.search-form form').submit(function(){
 		"class" => "deepLink",
 		"onclick" => "deepLink(\"'.Yii::app()->createUrl('sites/admin').'?publisher=\"+$data->providers_id)",
 		)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'                  => array(
 		// 'state',
 		// 'zipcode',

@@ -127,6 +127,8 @@ class SitesController extends Controller
 	*/
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+		
 		$model=new Sites('search');
 		$model->unsetAttributes();  // clear any default values
 

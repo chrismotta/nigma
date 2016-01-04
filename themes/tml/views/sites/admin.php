@@ -70,7 +70,7 @@ echo '</div><!-- search-form -->'
 
 <?php BuildGridView::createButton($this, array('sites/create'), 'modalSites', 'Create Site'); ?>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('application.components.NiExtendedGridView',array(
 	'id'=>'sites-grid',
 	'dataProvider' => $model->search($publisher),
 	'filter'       => $model,
@@ -80,7 +80,7 @@ echo '</div><!-- search-form -->'
 		"class" => "deepLink",
 		"onclick" => "deepLink(\"'.Yii::app()->createUrl('placements/admin').'?site=\"+$data->id)",
 		)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'    => array(
 		array(
 			'name'              =>'id',

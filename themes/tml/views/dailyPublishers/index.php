@@ -49,7 +49,7 @@ $dataProvider = $model->search($dateStart, $dateEnd);
 
 <?php
 
-$this->widget('bootstrap.widgets.TbExtendedGridView', array(
+$this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	// 'fixedHeader'              => true,
 	'headerOffset'             => 50,

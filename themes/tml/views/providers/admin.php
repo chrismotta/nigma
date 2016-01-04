@@ -14,7 +14,7 @@ if (isset($model->type)) {
 <?php $urlCreate = isset($model->type) ? array('providers/create/'.$model->type) : array('providers/create') ?>
 <?php BuildGridView::createButton($this, $urlCreate, 'modalProviders', 'Create Traffic Source'); ?>
 
-<?php $this->widget('bootstrap.widgets.TbGridView',array(
+<?php $this->widget('application.components.NiExtendedGridView',array(
 	'id'                       =>'providers-grid',
 	'dataProvider'             =>$model->search(),
 	'filter'                   =>$model,
@@ -24,7 +24,7 @@ if (isset($model->type)) {
 		"class" => "deepLink",
 		"onclick" => "deepLink(\"'.Yii::app()->createUrl('sites/admin').'?publisher=\"+$data->id)",
 		)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'                  =>array(
 		array(
 			'name' => 'type',

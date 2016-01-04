@@ -87,7 +87,7 @@ $('.search-form form').submit(function(){
 </fieldset>
 <?php $this->endWidget(); ?>
 
-<?php $this->widget('bootstrap.widgets.TbExtendedGridView', array(
+<?php $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       =>'placements-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
@@ -95,7 +95,7 @@ $('.search-form form').submit(function(){
 	'filter'                   => $model,
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id)',
-	'template'                 => '{items} {pager} {summary}',
+	'template'                 => '{items} {pagerExt} {summary}',
 	'columns'                  => array(
 		// 'state',
 		// 'zipcode',

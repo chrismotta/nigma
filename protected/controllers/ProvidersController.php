@@ -552,6 +552,8 @@ class ProvidersController extends Controller
 	*/
 	public function actionAdmin($hash = null)
 	{
+		KHtml::paginationController();
+	
 		$model=new Providers('search');
 		$model->unsetAttributes();  // clear any default values
 		if($hash) $model->type = $this->hashValues[$hash];

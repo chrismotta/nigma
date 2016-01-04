@@ -135,6 +135,8 @@ class IosController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+		
 		$model=new Ios('search');
 		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['Ios']))
