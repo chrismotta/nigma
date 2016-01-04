@@ -254,9 +254,7 @@ class Campaigns extends CActiveRecord
 			'criteria' =>$criteria,
 			// Setting 'sort' property in order to add 
 			// a sort tool in the related collumns
-            'pagination'=>array(
-                'pageSize'=>50,
-            ),
+			'pagination'=> KHtml::pagination(),
 			'sort'     =>array(
 		        'attributes'=>array(
 					// Adding custom sort attributes

@@ -119,9 +119,7 @@ class Advertisers extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria' =>$criteria,
-			'pagination' => array(
-                'pageSize' => 30,
-            ),
+			'pagination'=> KHtml::pagination(),
 			// Setting 'sort' property in order to add 
 			// a sort tool in the related collumns
 			'sort'     =>array(

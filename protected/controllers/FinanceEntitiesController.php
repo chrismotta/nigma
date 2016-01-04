@@ -58,6 +58,8 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+	
 		$model=new FinanceEntities('search');
 		$accountManager   = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
 		$advertiser   = isset($_GET['advertiser']) ? $_GET['advertiser'] : NULL;

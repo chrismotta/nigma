@@ -340,6 +340,8 @@ class CampaignsController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+		
 		$model=new Campaigns('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = array('Pending','Active','Paused','Inactive');

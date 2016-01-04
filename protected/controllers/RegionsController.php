@@ -54,6 +54,8 @@ class RegionsController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+	
 		$model=new Regions('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = array('Active', 'Inactive');

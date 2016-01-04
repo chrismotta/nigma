@@ -200,6 +200,8 @@ class AdvertisersController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+		
 		$model=new Advertisers('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Active';

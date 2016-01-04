@@ -206,6 +206,8 @@ class OpportunitiesController extends Controller
 	 */
 	public function actionAdmin()
 	{
+		KHtml::paginationController();
+	
 		$model=new Opportunities('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = array('Active', 'Inactive');
