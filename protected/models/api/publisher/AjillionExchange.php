@@ -30,7 +30,7 @@ class AjillionExchange
 			//default
 			$return.= '<hr/>today<hr/>';
 			$date = date('Y-m-d', strtotime('today'));
-			$this->apiLog = ApiLog::initLog($date, $this->exchange_id, null);
+			$this->apiLog = ApiLog::initLog($date, null, $this->exchange_id);
 			$return.= $this->downloadDateInfo($date);
 		
 		}
