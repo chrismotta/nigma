@@ -4,6 +4,7 @@ class StartApp
 { 
 
 	private $provider_id = 24;
+	private $apiLog;
 
 	public function downloadInfo($offset)
 	{
@@ -13,6 +14,7 @@ class StartApp
 		if ( isset( $_GET['date']) ) {
 		
 			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 			$return.= $this->downloadDateInfo($date);
 		
 		} else {
@@ -20,11 +22,13 @@ class StartApp
 			if(date('G')<=$offset){
 				$return.= '<hr/>yesterday<hr/>';
 				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 				$return.= $this->downloadDateInfo($date);
 			}
 			//default
 			$return.= '<hr/>today<hr/>';
 			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 			$return.= $this->downloadDateInfo($date);
 		
 		}
@@ -45,7 +49,7 @@ class StartApp
 		/*
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date)) ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.airpush');
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.startapp');
 			return 2;
 		}
 		*/
@@ -57,16 +61,22 @@ class StartApp
 		$apiurl = $network->url;
 		$url = $apiurl . "?partner=" . $partner . "&token=" . $token . "&startDate=" . $date . "&endDate=" . $date;
 
+		$this->apiLog->updateLog('Processing', 'Getting traffic data');
+		
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($curl);
 		$result = json_decode($result);
 		if (!$result) {
-			Yii::log("ERROR - decoding json", 'error', 'system.model.api.airpush');
+			Yii::log("ERROR - decoding json", 'error', 'system.model.api.startapp');
 			return 1;
 		}
 		curl_close($curl);
 		
+		$this->apiLog->updateLog('Processing', 'Writing traffic data');
+
+		$updated = 0;
+
 		// Save campaigns information 
 		foreach ($result->data as $campaign) {
 
@@ -78,7 +88,7 @@ class StartApp
 			$campaigns_id = Utilities::parseCampaignID($campaign->campaignName);
 
 			if ( !$campaigns_id ) {
-				Yii::log("Invalid external campaign name: '" . $campaigns_id, 'warning', 'system.model.api.airpush');
+				Yii::log("Invalid external campaign name: '" . $campaigns_id, 'warning', 'system.model.api.startapp');
 				continue;
 			}
 			
@@ -120,15 +130,19 @@ class StartApp
 			}
 			
 			if ( !$dailyReport->save() ) {
-				Yii::log("Can't save campaign: '" . $campaign->campaignname . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.airpush');
+				Yii::log("Can't save campaign: '" . $campaign->campaignname . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.startapp');
 			}else{
+				$updated++;
 				$return.='<br/>===> saved';
 			}
 
 			// $return .= json_encode($campaign);
 			// $return .= '<br/>';
 		}
-		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.airpush');
+
+		$this->apiLog->updateLog('Completed', 'Procces completed: '.$updated.' campaigns updated');
+
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.startapp');
 		return $return;
 	}
 

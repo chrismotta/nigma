@@ -5,6 +5,7 @@ class AjillionExchange
 
 	private $network_id = 3;
 	private $exchange_id = 1;
+	private $apiLog;
 
 	public function downloadInfo($offset)
 	{
@@ -12,11 +13,10 @@ class AjillionExchange
 		date_default_timezone_set('UTC');
 		$return = '';
 
-
-
 		if ( isset( $_GET['date']) ) {
 		
 			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, null, $this->exchange_id);
 			$return.= $this->downloadDateInfo($date);
 		
 		} else {
@@ -24,11 +24,13 @@ class AjillionExchange
 			if(date('G')<=$offset){
 				$return.= '<hr/>yesterday<hr/>';
 				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, null, $this->exchange_id);
 				$return.= $this->downloadDateInfo($date);
 			}
 			//default
 			$return.= '<hr/>today<hr/>';
 			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->exchange_id, null);
 			$return.= $this->downloadDateInfo($date);
 		
 		}
@@ -44,16 +46,18 @@ class AjillionExchange
 
 		// validate if info have't been dowloaded already.
 		// if ( DailyReport::model()->exists("networks_id=:network AND DATE(date)=:date", array(":network"=>$this->network_id, ":date"=>$date)) ) {
-		// 	Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
+		// 	Yii::log("Information already downloaded.", 'warning', 'system.model.api.exchange.ajillion');
 		// 	return 2;
 		// }
 
 		$ajillionDate = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 		
+		$this->apiLog->updateLog('Processing', 'Getting publisher list');
+
 		// get all publishers
 		$placements = $this->getResponse("publisher.placement.get");
 		if ( !$placements ) {
-			Yii::log("Can't get placements", 'error', 'system.model.api.ajillion');
+			Yii::log("Can't get placements", 'error', 'system.model.api.exchange.ajillion');
 			return "Can't get placements";
 		}
 
@@ -76,10 +80,15 @@ class AjillionExchange
 				"end_date"      => $ajillionDate,
 			);
 		
+		$this->apiLog->updateLog('Processing', 'Getting traffic data');
+
 		$data1 = $this->getResponse("report.publisher.get", $params1);
 		// $return.= json_encode($data1);
 		// return $return;
 		
+		$this->apiLog->updateLog('Processing', 'Writing traffic data');
+
+		$updated = 0;
 		foreach ($data1 as $line) {
 			$placementID = substr($line->placement, 0, strpos($line->placement, '-'));
 			if(is_numeric($placementID)){
@@ -187,16 +196,20 @@ class AjillionExchange
 
 			// var_dump($dailyPublishers);
 			
-			if($dailyPublishers->save())
+			if($dailyPublishers->save()){
+				$updated++;
 				$return.=  "<br/>===>SAVED!!";
-			else
+			}else{
 				$return.=  "<br/>===>NOT SAVED: " . json_encode($dailyPublishers->getErrors());
+			}
 			$return.=  "<hr/>";
 
 		}
 		
+		$this->apiLog->updateLog('Completed', 'Procces completed: '.$updated.' campaigns updated');
+		
 		$return.= "<hr/>ajillion publishers";
-		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.exchange.ajillion');
 		return $return;
 	}
 
@@ -242,12 +255,12 @@ class AjillionExchange
 		$login = json_decode($json_response);
 
 		if ( !$login ) {
-			Yii::log("Login error", 'error', 'system.model.api.ajillion');
+			Yii::log("Login error", 'error', 'system.model.api.exchange.ajillion');
 			return NULL;
 		}
 
 		if ( isset($login->error) && $login->error !== NULL ) {
-			Yii::log($login->error->message, 'error', 'system.model.api.ajillion');
+			Yii::log($login->error->message, 'error', 'system.model.api.exchange.ajillion');
 			return NULL;	
 		}
 
@@ -268,17 +281,17 @@ class AjillionExchange
 		$response = json_decode($json_response);
 
 		if ( !$response ) {
-			Yii::log("Error decoding json", 'error', 'system.model.api.ajillion');
+			Yii::log("Error decoding json", 'error', 'system.model.api.exchange.ajillion');
 			return NULL;
 		}
 
 		if ( isset($response->error) && $response->error !== NULL ) {
-			Yii::log($response->error->message . " error", 'error', 'system.model.api.ajillion');
+			Yii::log($response->error->message . " error", 'error', 'system.model.api.exchange.ajillion');
 			return NULL;	
 		}
 
 		if ( empty($response->result) ) {
-			Yii::log("Json is empty", 'error', 'system.model.api.ajillion');
+			Yii::log("Json is empty", 'error', 'system.model.api.exchange.ajillion');
 			return NULL;
 		}
 

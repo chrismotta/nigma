@@ -2,6 +2,7 @@
 
 class AffiliatesAPI
 { 
+	private $apiLog;
 
 	public function downloadInfo($offset)
 	{
@@ -42,6 +43,8 @@ class AffiliatesAPI
 		// Download api for every affiliate
 		foreach ($providers as $provider) {
 
+			$this->apiLog = ApiLog::initLog($date, $provider->id, null);
+
 			// if ($provider->prospect != 10) {
 			// 	Yii::log("Affiliate " . $provider->name . " hasn't prospect 10", 'warning', 'system.model.api.affiliate.' . $provider->name);
 			// 	continue;	
@@ -52,6 +55,9 @@ class AffiliatesAPI
 			if(isset($fixedCid)) $cpCriteria->compare('id',$fixedCid);
 			$campaigns = Campaigns::model()->findAll($cpCriteria);
 
+			$this->apiLog->updateLog('Processing', 'Calculating traffic data');
+
+			$updated = 0;
 			foreach ($campaigns as $campaign) {
 				
 				// validate if info have't been dowloaded already.
@@ -125,8 +131,11 @@ class AffiliatesAPI
 					Yii::log("Can't save campaign: '" . $campaign->name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.affiliate.' . $provider->name);
 					continue;
 				}
+				$updated++;
 			}
 			Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $provider->name);
+			
+			$this->apiLog->updateLog('Completed', 'Procces completed: '.$updated.' campaigns updated');
 		}
 		$return.="SUCCESS - Daily info downloaded for all affiliates<br/>";
 		Yii::log("SUCCESS - Daily info downloaded for all affiliates", 'info', 'system.model.api.affiliate');

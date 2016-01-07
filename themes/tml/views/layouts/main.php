@@ -102,7 +102,7 @@
         'items'=>array(
             array('label'=>'Profile', 'url'=>array('/users/profile')),
             array('label'=>'Users', 'url'=>array('/users/admin')),
-            array('label'=>'API Log', 'url'=>array('/apiUpdate/log')),
+            array('label'=>'API Log', 'url'=>array('/apiLog/admin')),
             // array('label'=>'Configuration', 'url'=>'#'),
             // array('label'=>'Meetings', 'url'=>array('/meetingroom')),
         ), 'visible'=>!Yii::app()->user->isGuest),

@@ -4,6 +4,7 @@ class SmaatoExchange
 { 
     private $exchange_id = 2;//Smaato
     private $date;
+    private $apiLog;
 
     private function oAuthLogin(){
         
@@ -107,6 +108,7 @@ class SmaatoExchange
         if ( isset( $_GET['date']) ) {
         
             $this->date = $_GET['date'];
+            $this->apiLog = ApiLog::initLog($this->date, null, $this->exchange_id);
             $return.= $this->downloadDateInfo();
         
         } else {
@@ -114,11 +116,13 @@ class SmaatoExchange
             if(date('G')<=$offset){
                 $return.= '<hr/>yesterday<hr/>';
                 $this->date = date('Y-m-d', strtotime('yesterday'));
+                $this->apiLog = ApiLog::initLog($this->date, null, $this->exchange_id);
                 $return.= $this->downloadDateInfo();
             }
             //default
             $return.= '<hr/>today<hr/>';
             $this->date = date('Y-m-d', strtotime('today'));
+            $this->apiLog = ApiLog::initLog($this->date, null, $this->exchange_id);
             $return.= $this->downloadDateInfo();
         
         }
@@ -130,6 +134,7 @@ class SmaatoExchange
     {
         $return = '';
 
+        $this->apiLog->updateLog('Processing', 'Getting authorization');
         $access_token = $this->oAuthLogin();
         // $access_token = 'KNCDc32tEwo8DEKSQQNb3ks4kXNlOo';
         if(is_array($access_token)) 
@@ -172,6 +177,8 @@ class SmaatoExchange
         );
 
 
+        $this->apiLog->updateLog('Processing', 'Getting traffic data');
+
         $curl = curl_init($apiURL);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
@@ -188,6 +195,9 @@ class SmaatoExchange
         $response = json_decode($json_response);
         $lastPlacementID = null;
 
+        $this->apiLog->updateLog('Processing', 'Writing traffic data');
+
+        $updated = 0;
         foreach ($response as $adspace) {
             $return.= json_encode($adspace);
             $return.="<br/>";
@@ -254,6 +264,7 @@ class SmaatoExchange
                 $daily->revenue       = $adspace->kpi->grossRevenue * 0.8;
                 
                 if($daily->save()) {
+                    $updated++;
                     $return.= '-->Saved<br>';
                 } else {
                     $return.= '-->NOT Saved<br>';
@@ -286,6 +297,7 @@ class SmaatoExchange
                             $return.= '<hr/>----------->>>>>> '.$verified['msg'].'<hr/>';
                         }else{
                             if($unknown->save()) {
+                                $updated++;
                                 $return.= '<hr/>----------->>>>>> Saved (unknown): '.
                                 $unknown->placements_id.'-'.
                                 $unknown->exchanges_id.'-'.
@@ -362,6 +374,7 @@ class SmaatoExchange
             // $return.=  "<hr/>===>UNKNOWN!!<hr/>";
         }
         
+        $this->apiLog->updateLog('Completed', 'Procces completed: '.$updated.' campaigns updated');
         return $return;
     }
 }

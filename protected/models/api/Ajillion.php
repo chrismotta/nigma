@@ -4,15 +4,18 @@ class Ajillion
 { 
 
 	private $provider_id = 3;
+	private $apiLog;
 
 	public function downloadInfo($offset)
 	{
+
 		date_default_timezone_set('UTC');
 		$return = '';
 
 		if ( isset( $_GET['date']) ) {
 		
 			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 			$return.= $this->downloadDateInfo($date);
 		
 		} else {
@@ -20,14 +23,17 @@ class Ajillion
 			if(date('G')<=$offset){
 				$return.= '<hr/>yesterday<hr/>';
 				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 				$return.= $this->downloadDateInfo($date);
 			}
 			//default
 			$return.= '<hr/>today<hr/>';
 			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 			$return.= $this->downloadDateInfo($date);
 		
 		}
+		
 
 		return $return;
 	}
@@ -58,6 +64,8 @@ class Ajillion
 
 		$date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 		
+		$this->apiLog->updateLog('Processing', 'Getting advertisers list');
+
 		// get all advertisers
 		$advertisers = $this->getResponse("advertiser.get");
 		if ( !$advertisers ) {
@@ -80,6 +88,8 @@ class Ajillion
 				"end_date"=>$date,
 			);
 
+		$this->apiLog->updateLog('Processing', 'Getting traffic data');
+
 		$campaigns = $this->getResponse("report.advertiser.performance.get", $params);
 
 		if ( !$campaigns ) {
@@ -87,6 +97,9 @@ class Ajillion
 			return 1;
 		}
 
+		$this->apiLog->updateLog('Processing', 'Writing traffic data');
+
+		$updated = 0;
 		foreach ($campaigns as $campaign) {
 
 			if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
@@ -153,12 +166,15 @@ class Ajillion
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
 			}else{
+				$updated++;
 				$return.='<br/>===> saved';
 			}
 
 			if ( $returnAfterSave ) // return if only has to update one campaign
 				break;
 		}
+
+		$this->apiLog->updateLog('Completed', 'Procces completed: '.$updated.' campaigns updated');
 
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
 		return $return;
