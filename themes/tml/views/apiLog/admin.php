@@ -9,6 +9,7 @@ $this->breadcrumbs=array(
 	'id'           => 'api-log-grid',
 	'dataProvider' => $model->search(),
 	'filter'       => $model,
+	'type'         => 'condensed',
 	'template'     => '{items} {pagerExt} {summary}',
 	'columns'=>array(
 		'id',
