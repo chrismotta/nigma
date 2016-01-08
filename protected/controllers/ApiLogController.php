@@ -134,6 +134,8 @@ public function actionIndex()
 */
 public function actionAdmin()
 {
+	KHtml::paginationController();
+
 	$model=new ApiLog('search');
 	$model->unsetAttributes();  // clear any default values
 	if(isset($_GET['ApiLog']))
