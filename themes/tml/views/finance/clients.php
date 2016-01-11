@@ -213,29 +213,13 @@ else
 			'headerHtmlOptions' => array('width' => '20'),
 			'name'              =>	'name',
 			'value'             =>'$data["status_adv"] == false ?
-				CHtml::ajaxLink(
+				CHtml::link(
 					"<i id=\"icon-status-".$data["id"]."\" class=\"not_verifed\" data_id=\"".$data["id"]."\"></i>",
-					array("finance/validateOpportunitiesByAdvertiser/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
-				    array (
-				        // "type"=>"POST",
-				        "dataType"=>"json",
-				        "beforeSend" => "function() {           
-				          	if(!confirm(\"Verify all opportunities from ".$data["name"]."?\")) return false;
-				        }",
-				        "success"=>"function(data){ 
-				        	if(data.status==\"ok\"){
-					        	$(\"#icon-status-\"+data.id).parent().html(\'<i class=\"icon-status verifed\"></i>\');
-					        	$(\"a#icon-status-opp-\"+data.id).each(function( index ) {
-								 	$(this).parent().html(\'<i class=\"icon-status verifed\"></i>\');
-								});
-							} else {
-								alert(\"ERROR: \"+data.status);
-							} 
-				        }"
-				        ), 
-				    array (
-				    	"id" => "icon-status-".$data["id"]
-				    	)
+					array("finance/validateOpportunitiesByAdvertiser/".$data["id"]."?period='.$year.'-'.$month.'-01"),
+					array(
+						"data_name" => $data["name"],
+						"onclick" => "validateAdv(this);return false;"
+						)
 					)
 				:
 				"<i class=\"icon-status verifed\" data_id=\"".$data["id"]."\"></i>"

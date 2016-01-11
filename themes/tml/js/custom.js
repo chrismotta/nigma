@@ -406,3 +406,37 @@ function showRevenue(val){
 				$('#revenueSelect').hide();
 		});
 }
+
+function sendForm(){
+	console.log("sending form");
+	$.fn.yiiGridView.update("daily-report-grid");
+}
+
+function validateAdv(link){
+	// console.log('Validate: '+$(link).attr('data_id'));
+	// console.log('Validate: '+$(link).attr('data_period'));
+	// console.log('Validate: '+$(link).attr('data_name'));
+	// console.log('Validate: '+link.href);
+
+	$.ajax({
+		// type: "GET",
+		// data: "",
+		url: link.href,
+		dataType: "json",
+        beforeSend: function() {           
+          	if(!confirm("Verify all opportunities from "+$(link).attr('data_name')+"?"))
+          		return false;
+        },
+        success: function(data){ 
+        	// console.log("data: "+data);
+        	if(data.status=="ok"){
+	        	$("#icon-status-"+data.id).parent().html('<i class="icon-status verifed"></i>');
+	        	$("a#icon-status-opp-"+data.id).each(function( index ) {
+				 	$(this).parent().html('<i class="icon-status verifed"></i>');
+				});
+			} else {
+				alert("ERROR: "+data.status);
+			} 
+        },
+	});	
+}
