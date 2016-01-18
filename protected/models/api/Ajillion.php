@@ -184,10 +184,12 @@ class Ajillion
 	private function getResponse($method, $params = array() ) {
 
 		// Get json from Ajillion API.
-		$network = Networks::model()->findbyPk($this->provider_id);
+		$network = Providers::model()->findbyPk($this->provider_id);
 		$apiurl = $network->url;
 		$user = $network->token1;
 		$pass = $network->token2;
+
+		$this->apiLog->updateLog('Processing', 'Authenticating credentials');
 
 		$curl = curl_init($apiurl);
 		curl_setopt($curl, CURLOPT_HEADER, false);
@@ -202,7 +204,7 @@ class Ajillion
 			"method"=>"login",
 			"params"=>array(
 				"username"=>$user,
-				"password"=>$pass
+				"password"=>$pass,
 				)
 			);
 
