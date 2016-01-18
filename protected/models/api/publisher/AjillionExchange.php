@@ -233,6 +233,8 @@ class AjillionExchange
 		$user = $network->token1;
 		$pass = $network->token2;
 
+		$this->apiLog->updateLog('Processing', 'Authenticating credentials');
+
 		$curl = curl_init($apiurl);
 		curl_setopt($curl, CURLOPT_HEADER, false);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
