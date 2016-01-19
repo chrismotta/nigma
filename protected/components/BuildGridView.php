@@ -122,63 +122,74 @@ class BuildGridView
 						'onclick'           => 'event.preventDefault(); openModal(this)',
 						),
 					),
-				'updateAjax' => array(
-					'label' => 'Update',
-					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+				// 'updateAjax' => array(
+				// 	'label' => 'Update',
+				// 	'icon'  => 'pencil',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#'.$modalId.'").html(dataInicial);
-						$("#'.$modalId.'").modal("toggle");
+				//     	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#'.$modalId.'").html(dataInicial);
+				// 		$("#'.$modalId.'").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"'.$baseUrl.'/update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#'.$modalId.'").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-				'duplicateAjax' => array(
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"'.$baseUrl.'/update/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#'.$modalId.'").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
+				'duplicateIframe' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => $gridId, 
+						"data-modal-id"     => $modalId, 
+						"data-modal-title"  => $label,  
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'duplicateAjax' => array(
+				// 	'label' => 'Duplicate',
+				// 	'icon'  => 'plus-sign',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#'.$modalId.'").html(dataInicial);
-						$("#'.$modalId.'").modal("toggle");
+				// 		var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#'.$modalId.'").html(dataInicial);
+				// 		$("#'.$modalId.'").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"'.$baseUrl.'duplicate/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#'.$modalId.'").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"'.$baseUrl.'duplicate/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#'.$modalId.'").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
 			),
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {duplicateAjax} {updateIframe} {delete}',
+			'template' => '{viewAjax} {duplicateIframe} {updateIframe} {delete}',
 		);
 		
 		return $return;
