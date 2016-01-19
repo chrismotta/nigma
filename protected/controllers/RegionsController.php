@@ -28,7 +28,7 @@ class RegionsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect'),
+				'actions'=>array('index','view','create','update','admin', 'response','delete', 'archived','redirect'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -70,6 +70,14 @@ class RegionsController extends Controller
 		));
 	}
 
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Region succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
+	}
+
 	/**
 	 * Displays a particular model.
 	 * @param integer $id the ID of the model to be displayed
@@ -97,7 +105,7 @@ class RegionsController extends Controller
 		{
 			$model->attributes=$_POST['Regions'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);
@@ -119,7 +127,7 @@ class RegionsController extends Controller
 		{
 			$model->attributes=$_POST['Regions'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);

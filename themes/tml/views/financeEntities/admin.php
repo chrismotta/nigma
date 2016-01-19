@@ -37,31 +37,45 @@ $('.search-form form').submit(function(){
 <?php if( !isset($isArchived) )  : ?>
 	<div class="botonera">
 	<?php
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Create Finance Entities',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalFinanceEntities").html(dataInicial);
-					$("#modalFinanceEntities").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-	                    // console.log(this.url);
-		                //alert("create");
-						$("#modalFinanceEntities").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'create'),
-		)
-	);
+	// $this->widget('bootstrap.widgets.TbButton', array(
+	// 	'type'        => 'info',
+	// 	'label'       => 'Create Finance Entities',
+	// 	'block'       => false,
+	// 	'buttonType'  => 'ajaxButton',
+	// 	'url'         => 'create',
+	// 	'ajaxOptions' => array(
+	// 		'type'    => 'POST',
+	// 		'beforeSend' => 'function(data)
+	// 			{
+	// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+	// 				$("#modalFinanceEntities").html(dataInicial);
+	// 				$("#modalFinanceEntities").modal("toggle");
+	// 			}',
+	// 		'success' => 'function(data)
+	// 			{
+	//                     // console.log(this.url);
+	// 	                //alert("create");
+	// 					$("#modalFinanceEntities").html(data);
+	// 			}',
+	// 		),
+	// 	'htmlOptions' => array('id' => 'create'),
+	// 	)
+	// );
 	?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Create Finance Entity',
+		'block'       => false,
+		'buttonType'  => 'linkButton',
+		'url'         => 'create',
+		'htmlOptions' => array(
+			"data-grid-id"      => "financeEntities-grid", 
+			"data-modal-id"     => "modalFinanceEntities", 
+			"data-modal-title"  => "Create Finance Entity", 
+			'onclick'           => 'event.preventDefault(); openModal(this)',
+			),
+		)
+	); ?>
 	</div>
 <?php endif; ?>
 <br>
@@ -165,32 +179,43 @@ $this->widget('application.components.NiExtendedGridView', array(
 				    }
 				    ',
 				),
-				'updateAjax' => array(
+				// 'updateAjax' => array(
+				// 	'label' => 'Update',
+				// 	'icon'  => 'pencil',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
+				    	
+				// 		var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalFinanceEntities").html(dataInicial);
+				// 		$("#modalFinanceEntities").modal("toggle");
+
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"update/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalFinanceEntities").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
+				'updateIframe' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-				    	
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalFinanceEntities").html(dataInicial);
-						$("#modalFinanceEntities").modal("toggle");
-
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalFinanceEntities").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "financeEntities-grid", 
+						"data-modal-id"     => "modalFinanceEntities", 
+						"data-modal-title"  => "Update Finance Entity", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
 				'duplicateAjax' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
@@ -262,7 +287,7 @@ $this->widget('application.components.NiExtendedGridView', array(
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
 			//'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
-			'template' => '{viewAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {updateIframe} {delete}',
 		),
 	),
 )); ?>

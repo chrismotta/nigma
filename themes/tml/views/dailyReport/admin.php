@@ -117,26 +117,20 @@ $('.search-form form').submit(function(){
 <hr>
 
 <div class="botonera">
+
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Add Daily Report Manualy',
 		'block'       => false,
-		'buttonType'  => 'ajaxButton',
+		'buttonType'  => 'linkButton',
 		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalDailyReport").html(dataInicial);
-					$("#modalDailyReport").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalDailyReport").html(data);
-				}',
+		'htmlOptions' => array(
+			'id'                => 'createIframe',
+			"data-grid-id"      => "daily-report-grid", 
+			"data-modal-id"     => "modalDailyReport", 
+			"data-modal-title"  => "Add Daily Report", 
+			'onclick'           => 'event.preventDefault(); openModal(this)',
 			),
-		'htmlOptions' => array('id' => 'createAjax'),
 		)
 	); ?>
 	
@@ -547,34 +541,46 @@ $('.search-form form').submit(function(){
 				'delete' => array(
 					'visible' => '!$data->is_from_api',
 				),
-				'updateAjax' => array(
+				'updateIframe' => array(
 					'label'   => 'Update',
 					'icon'    => 'pencil',
 					'visible' => '!$data->is_from_api || $data->campaigns->editable == 1',
-					'click'   => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "daily-report-grid", 
+						"data-modal-id"     => "modalDailyReport", 
+						"data-modal-title"  => "Update Daily Report", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'updateAjax' => array(
+				// 	'label'   => 'Update',
+				// 	'icon'    => 'pencil',
+				// 	'visible' => '!$data->is_from_api || $data->campaigns->editable == 1',
+				// 	'click'   => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalDailyReport").html(dataInicial);
-						$("#modalDailyReport").modal("toggle");
+				//     	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalDailyReport").html(dataInicial);
+				// 		$("#modalDailyReport").modal("toggle");
 
 				    	
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalDailyReport").html(data);
-							}
-						)
-					return false;
-				    }
-				    ',
-				),
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"update/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalDailyReport").html(data);
+				// 			}
+				// 		)
+				// 	return false;
+				//     }
+				//     ',
+				// ),
 				'updateCampaign' => array(
 					'label'   => 'Update Campaign',
 					'icon'    => 'eye-open',
@@ -604,7 +610,7 @@ $('.search-form form').submit(function(){
 				),
 			),
 
-			'template' => $grouped ? '{updateCampaign}' : '{updateCampaign} {updateAjax} {delete}',
+			'template' => $grouped ? '{updateCampaign}' : '{updateCampaign} {updateIframe} {delete}',
 		),
 	),
 )); ?>

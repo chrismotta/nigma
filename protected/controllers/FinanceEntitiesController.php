@@ -32,7 +32,7 @@ class FinanceEntitiesController extends Controller
 				'users'=>array('*'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','getOpportunities'),
+				'actions'=>array('index','view','create','update', 'response','admin','delete', 'archived','redirect','getOpportunities'),
 				'roles'=>array('admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -104,7 +104,7 @@ class FinanceEntitiesController extends Controller
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 			else{
 				echo json_encode($model->getErrors());
 			return;
@@ -130,10 +130,18 @@ class FinanceEntitiesController extends Controller
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);
+	}
+
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Finance Entity succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
 	}
 
 	/**

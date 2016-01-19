@@ -270,8 +270,6 @@ else
 					"<i class=\"icon-plus\"></i>",
 					array("multiRate?id=" . $data["opportunitie_id"] ."&month='.$month.'&year='.$year.'"),
     				array("class"=>"link", "data-toggle"=>"tooltip", "data-original-title"=>"View Rate")
-
-
 					)
 				: null
 				'
@@ -318,9 +316,15 @@ else
 			'value'             =>'
 				CHtml::link(
 					"<i class=\"icon-pencil\"></i>",
-					array("finance/transaction/?id=".$data["id"]."&period='.$year.'-'.$month.'-01"),
+					array(
+						"finance/transaction", 
+						"id"     => $data["id"],
+						"period" => "'.$year.'-'.$month.'-01",
+						),
     				array(
-    					"class"=>"openModal", 
+    					"class"=>"openModal",
+    					"data-modal-id"=>"modalClients", 
+    					"data-modal-title"=>"Transaction Count", 
     					"data-toggle"=>"tooltip", 
     					"data-original-title"=>"Count",
     					"onclick"=>"event.preventDefault(); openModal(this)",
@@ -384,12 +388,6 @@ else
 
 <div class="row" id="blank-row">
 </div>
-
-<?php Yii::app()->clientScript->registerScriptFile(
-	Yii::app()->theme->baseUrl.'/js/modals.js', 
-	CClientScript::POS_HEAD
-	); ?>
-
 
 <?php 
 Yii::app()->clientScript->registerScript('verifedIcon', "

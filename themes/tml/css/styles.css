@@ -474,3 +474,8 @@ table .date-column {
 	width: 150px;
 	margin-right: 5px;
 }
+
+#response {
+    text-align: center;
+    margin-top: 150px;
+}

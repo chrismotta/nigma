@@ -42,29 +42,44 @@ $('.search-form form').submit(function(){
 <?php
 if(!$is_archived){
 	echo '<div class="botonera">';
+	// $this->widget('bootstrap.widgets.TbButton', array(
+	// 	'type'        => 'info',
+	// 	'label'       => 'Create Campaign',
+	// 	'block'       => false,
+	// 	'buttonType'  => 'ajaxButton',
+	// 	'url'         => 'createAjax',
+	// 	'ajaxOptions' => array(
+	// 		'type'    => 'POST',
+	// 		'beforeSend' => 'function(data)
+	// 			{
+	// 			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" /></div><div class=\"modal-footer\"></div>";
+	// 					$("#modalCampaigns").html(dataInicial);
+	// 					$("#modalCampaigns").modal("toggle");
+	// 			}',
+	// 		'success' => 'function(data)
+	// 			{
+	//                     //console.log(this.url);
+	// 	                //alert("create");
+	// 					$("#modalCampaigns").html(data);
+	// 					//$("#modalCampaigns").modal("toggle");
+	// 			}',
+	// 		),
+	// 	'htmlOptions' => array('id' => 'createAjax'),
+	// 	)
+	// );
+
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Create Campaign',
 		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'createAjax',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalCampaigns").html(dataInicial);
-						$("#modalCampaigns").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-	                    //console.log(this.url);
-		                //alert("create");
-						$("#modalCampaigns").html(data);
-						//$("#modalCampaigns").modal("toggle");
-				}',
+		'buttonType'  => 'linkButton',
+		'url'         => 'create',
+		'htmlOptions' => array(
+			"data-grid-id"      => "campaigns-grid", 
+			"data-modal-id"     => "modalCampaigns", 
+			"data-modal-title"  => "Create Campaign", 
+			'onclick'           => 'event.preventDefault(); openModal(this)',
 			),
-		'htmlOptions' => array('id' => 'createAjax'),
 		)
 	);
 	echo '</div>';
@@ -312,63 +327,85 @@ if(!$is_archived){
 				    }
 				    ',
 				),
-				'updateAjax' => array(
+				'updateIframe' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "campaigns-grid", 
+						"data-modal-id"     => "modalCampaigns", 
+						"data-modal-title"  => "Update Campaign", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'updateAjax' => array(
+				// 	'label' => 'Update',
+				// 	'icon'  => 'pencil',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalCampaigns").html(dataInicial);
-						$("#modalCampaigns").modal("toggle");
+				//     	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalCampaigns").html(dataInicial);
+				// 		$("#modalCampaigns").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"updateAjax/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalCampaigns").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-				'duplicateAjax' => array(
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"updateAjax/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalCampaigns").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
+				'duplicateIframe' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "campaigns-grid", 
+						"data-modal-id"     => "modalCampaigns", 
+						"data-modal-title"  => "Duplicate Campaign", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'duplicateAjax' => array(
+				// 	'label' => 'Duplicate',
+				// 	'icon'  => 'plus-sign',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalCampaigns").html(dataInicial);
-						$("#modalCampaigns").modal("toggle");
+				// 		var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalCampaigns").html(dataInicial);
+				// 		$("#modalCampaigns").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"duplicate/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalCampaigns").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"duplicate/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalCampaigns").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
 			),
 			'deleteButtonIcon' => $delete['icon'],
 			'deleteButtonLabel' => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {duplicateAjax} {redirects} {updateAjax} {delete}',
+			'template' => '{viewAjax} {duplicateIframe} {redirects} {updateIframe} {delete}',
 		),
 	),
 )); ?>

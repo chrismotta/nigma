@@ -28,7 +28,7 @@ class OpportunitiesController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','duplicate','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
+				'actions'=>array('index','view','create','update','duplicate', 'response','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -65,6 +65,14 @@ class OpportunitiesController extends Controller
 		), false, true);
 	}
 
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Opportunity succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
+	}
+
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -81,7 +89,7 @@ class OpportunitiesController extends Controller
 			$model->attributes=$_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 			else
 				echo json_encode($model->getErrors());
 		}
@@ -108,7 +116,7 @@ class OpportunitiesController extends Controller
 			$model->attributes       = $_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);

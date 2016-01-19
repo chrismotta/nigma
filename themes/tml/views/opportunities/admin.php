@@ -44,31 +44,45 @@ $('.search-form form').submit(function(){
 <?php if( !isset($isArchived) )  : ?>
 	<div class="botonera">
 	<?php
-	$this->widget('bootstrap.widgets.TbButton', array(
+	// $this->widget('bootstrap.widgets.TbButton', array(
+	// 	'type'        => 'info',
+	// 	'label'       => 'Create Opportunity',
+	// 	'block'       => false,
+	// 	'buttonType'  => 'ajaxButton',
+	// 	'url'         => 'create',
+	// 	'ajaxOptions' => array(
+	// 		'type'    => 'POST',
+	// 		'beforeSend' => 'function(data)
+	// 			{
+	// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+	// 				$("#modalOpportunities").html(dataInicial);
+	// 				$("#modalOpportunities").modal("toggle");
+	// 			}',
+	// 		'success' => 'function(data)
+	// 			{
+	//                     // console.log(this.url);
+	// 	                //alert("create");
+	// 					$("#modalOpportunities").html(data);
+	// 			}',
+	// 		),
+	// 	'htmlOptions' => array('id' => 'create'),
+	// 	)
+	// );
+	?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Create Opportunity',
 		'block'       => false,
-		'buttonType'  => 'ajaxButton',
+		'buttonType'  => 'linkButton',
 		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalOpportunities").html(dataInicial);
-					$("#modalOpportunities").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-	                    // console.log(this.url);
-		                //alert("create");
-						$("#modalOpportunities").html(data);
-				}',
+		'htmlOptions' => array(
+			"data-grid-id"      => "opportunities-grid", 
+			"data-modal-id"     => "modalOpportunities", 
+			"data-modal-title"  => "Create Opportunity", 
+			'onclick'           => 'event.preventDefault(); openModal(this)',
 			),
-		'htmlOptions' => array('id' => 'create'),
 		)
-	);
-	?>
+	); ?>
 	</div>
 <?php endif; ?>
 <br>
@@ -218,63 +232,85 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
-				'updateAjax' => array(
+				'updateIframe' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "opportunities-grid", 
+						"data-modal-id"     => "modalOpportunities", 
+						"data-modal-title"  => "Update Opportunity", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'updateAjax' => array(
+				// 	'label' => 'Update',
+				// 	'icon'  => 'pencil',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalOpportunities").html(dataInicial);
-						$("#modalOpportunities").modal("toggle");
+				//     	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalOpportunities").html(dataInicial);
+				// 		$("#modalOpportunities").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalOpportunities").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-				'duplicateAjax' => array(
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"update/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalOpportunities").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
+				'duplicateIframe' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "opportunities-grid", 
+						"data-modal-id"     => "modalOpportunities", 
+						"data-modal-title"  => "Duplicate Opportunity", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'duplicateAjax' => array(
+				// 	'label' => 'Duplicate',
+				// 	'icon'  => 'plus-sign',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalOpportunities").html(dataInicial);
-						$("#modalOpportunities").modal("toggle");
+				// 		var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalOpportunities").html(dataInicial);
+				// 		$("#modalOpportunities").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"duplicate/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalOpportunities").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"duplicate/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalOpportunities").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
 			),
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {duplicateAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {duplicateIframe} {updateIframe} {delete}',
 		),
 	),
 )); ?>

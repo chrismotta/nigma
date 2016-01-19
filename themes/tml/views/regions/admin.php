@@ -38,31 +38,45 @@ $('.search-form form').submit(function(){
 <?php if( !isset($isArchived) )  : ?>
 	<div class="botonera">
 	<?php
-	$this->widget('bootstrap.widgets.TbButton', array(
+	// $this->widget('bootstrap.widgets.TbButton', array(
+	// 	'type'        => 'info',
+	// 	'label'       => 'Create Region',
+	// 	'block'       => false,
+	// 	'buttonType'  => 'ajaxButton',
+	// 	'url'         => 'create',
+	// 	'ajaxOptions' => array(
+	// 		'type'    => 'POST',
+	// 		'beforeSend' => 'function(data)
+	// 			{
+	// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+	// 				$("#modalRegions").html(dataInicial);
+	// 				$("#modalRegions").modal("toggle");
+	// 			}',
+	// 		'success' => 'function(data)
+	// 			{
+	//                     // console.log(this.url);
+	// 	                //alert("create");
+	// 					$("#modalRegions").html(data);
+	// 			}',
+	// 		),
+	// 	'htmlOptions' => array('id' => 'create'),
+	// 	)
+	// );
+	?>
+	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Create Region',
 		'block'       => false,
-		'buttonType'  => 'ajaxButton',
+		'buttonType'  => 'linkButton',
 		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalRegions").html(dataInicial);
-					$("#modalRegions").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-	                    // console.log(this.url);
-		                //alert("create");
-						$("#modalRegions").html(data);
-				}',
+		'htmlOptions' => array(
+			"data-grid-id"      => "regions-grid", 
+			"data-modal-id"     => "modalRegions", 
+			"data-modal-title"  => "Create Finance Entity", 
+			'onclick'           => 'event.preventDefault(); openModal(this)',
 			),
-		'htmlOptions' => array('id' => 'create'),
 		)
-	);
-	?>
+	); ?>
 	</div>
 <?php endif; ?>
 <br>
@@ -102,25 +116,25 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'columns'                  =>array(
 		array(
 			'name'=>'id',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 		),
 		array(
 			'name'=>'finance_entities_name',
 			'value'=>'$data->financeEntities->name',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			// 'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
 			'name'=>'country_name',
 			'value'=>'isset($data->country->name) ? $data->country->name : "no country"',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			// 'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
 			'name'=>'region',
-			'headerHtmlOptions' => array('style' => "width: 60px"),
+			// 'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 120px"),
+			'headerHtmlOptions' => array('style' => "width: 60px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'htmlOptions' => array('onclick' => 'prevent=1;'),
 			'buttons'           => array(
@@ -148,32 +162,43 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 				    }
 				    ',
 				),
-				'updateAjax' => array(
+				'updateIframe' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "regions-grid", 
+						"data-modal-id"     => "modalRegions", 
+						"data-modal-title"  => "Update Region", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'updateAjax' => array(
+				// 	'label' => 'Update',
+				// 	'icon'  => 'pencil',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 				    	
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalRegions").html(dataInicial);
-						$("#modalRegions").modal("toggle");
+				// 		var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		$("#modalRegions").html(dataInicial);
+				// 		$("#modalRegions").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalRegions").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"update/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalRegions").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
 				'duplicateAjax' => array(
 					'label' => 'Duplicate',
 					'icon'  => 'plus-sign',
@@ -245,7 +270,7 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
 			//'template' => '{viewAjax} {updateAjax} {duplicateAjax} {generatePdf} {uploadPdf} {viewPdf} {delete}',
-			'template' => '{viewAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {updateIframe} {delete}',
 		),
 	),
 )); ?>

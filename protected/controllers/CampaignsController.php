@@ -28,7 +28,7 @@ class CampaignsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','getOppByAdv','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','createAjax','update','updateAjax','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
+				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','getOppByAdv','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','update', 'response','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
 				'roles'=>array('admin', 'media', 'media_manager','affiliates_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -74,24 +74,24 @@ class CampaignsController extends Controller
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreate()
-	{
-		$modelCamp=new Campaigns;
+	// public function actionCreate()
+	// {
+	// 	$modelCamp=new Campaigns;
 
-		// Uncomment the following line if AJAX validation is needed
-		$this->performAjaxValidation($model);
+	// 	// Uncomment the following line if AJAX validation is needed
+	// 	$this->performAjaxValidation($model);
 
-		if(isset($_POST['Campaigns']))
-		{
-			$model->attributes=$_POST['Campaigns'];
-			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
-		}
+	// 	if(isset($_POST['Campaigns']))
+	// 	{
+	// 		$model->attributes=$_POST['Campaigns'];
+	// 		if($model->save())
+	// 			$this->redirect(array('view','id'=>$model->id));
+	// 	}
 
-		$this->render('create',array(
-			'model'=>$modelCamp,
-		));
-	}
+	// 	$this->render('create',array(
+	// 		'model'=>$modelCamp,
+	// 	));
+	// }
 
 
 	/**
@@ -132,7 +132,7 @@ class CampaignsController extends Controller
 	 * Optionally add a new opportunitie
 	 * If creation is successful, the browser will be redirected to the 'view' page.
 	 */
-	public function actionCreateAjax()
+	public function actionCreate()
 	{
 
 		$model=new Campaigns;
@@ -146,7 +146,7 @@ class CampaignsController extends Controller
 			$model->attributes=$_POST['Campaigns'];
 
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 			
 		}
 
@@ -177,7 +177,7 @@ class CampaignsController extends Controller
 	 * If update is successful, the browser will be redirected to the 'view' page.
 	 * @param integer $id the ID of the model to be updated
 	 */
-	public function actionUpdateAjax($id)
+	public function actionUpdate($id)
 	{
 		$backURL = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 		$model = $this->loadModel($id);
@@ -220,6 +220,15 @@ class CampaignsController extends Controller
 		
 		$this->renderFormAjax($new, 'Duplicate');
 	}
+
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Campaign succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
+	}
+
 	public function actionGraphicCampaign($id)
 	{
 		$model = $this->loadModel($id);
@@ -264,29 +273,29 @@ class CampaignsController extends Controller
 	}
 
 
-	/**
-	 * Updates a particular model.
-	 * If update is successful, the browser will be redirected to the 'view' page.
-	 * @param integer $id the ID of the model to be updated
-	 */
-	public function actionUpdate($id)
-	{
-		$model=$this->loadModel($id);
+	// /**
+	//  * Updates a particular model.
+	//  * If update is successful, the browser will be redirected to the 'view' page.
+	//  * @param integer $id the ID of the model to be updated
+	//  */
+	// public function actionUpdate($id)
+	// {
+	// 	$model=$this->loadModel($id);
 
-		// Uncomment the following line if AJAX validation is needed
-		// $this->performAjaxValidation($model);
+	// 	// Uncomment the following line if AJAX validation is needed
+	// 	// $this->performAjaxValidation($model);
 
-		if(isset($_POST['Campaigns']))
-		{
-			$model->attributes=$_POST['Campaigns'];
-			if($model->save())
-				$this->redirect(array('dailyReport/admin'));
-		}
+	// 	if(isset($_POST['Campaigns']))
+	// 	{
+	// 		$model->attributes=$_POST['Campaigns'];
+	// 		if($model->save())
+	// 			$this->redirect(array('dailyReport/admin'));
+	// 	}
 
-		$this->render('update',array(
-			'model'=>$model,
-		));
-	}
+	// 	$this->render('update',array(
+	// 		'model'=>$model,
+	// 	));
+	// }
 
 	/**
 	 * Deletes a particular model.

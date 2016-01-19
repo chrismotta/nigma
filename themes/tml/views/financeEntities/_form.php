@@ -11,14 +11,6 @@
  */
 ?>
 
-<div class="modal-header">
-    <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Finance Entity <?php echo $model->isNewRecord ? "" : "#". $model->id; ?></h4>
-</div>
-
-
-<div class="modal-body">
-
     <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'financeEntities-form',
 		'type'                 =>'horizontal',
@@ -67,8 +59,3 @@
     </fieldset>
 
     <?php $this->endWidget(); ?>
-</div>
-
-<div class="modal-footer">
-    Edit Finance Entities attributes. Fields with <span class="required">*</span> are required.
-</div>

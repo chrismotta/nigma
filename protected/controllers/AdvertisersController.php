@@ -29,7 +29,7 @@ class AdvertisersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'externalForm', 'archived','viewAjax','getAdvertisers'),
+				'actions'=>array('index','view','create','update', 'response','admin','delete', 'externalForm', 'archived','viewAjax','getAdvertisers'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -87,7 +87,7 @@ class AdvertisersController extends Controller
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);
@@ -110,7 +110,7 @@ class AdvertisersController extends Controller
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);
@@ -277,6 +277,14 @@ class AdvertisersController extends Controller
 			'commercial' =>$commercial,
 			'users'      =>$users,
 		), false, true);
+	}
+
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Daily report succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
 	}
 
 	public function actionGetAdvertisers()

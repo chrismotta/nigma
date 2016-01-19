@@ -5,13 +5,6 @@
  */
 ?>
 
-<div class="modal-header">
-    <a class="close" data-dismiss="modal">&times;</a>
-    <h4><?php echo $action ?> campaign <?php echo $action=="Update" ? "#".$model->id : "" ?></h4>
-</div>
-
-
-<div class="modal-body">
 
 <?php 
 /*
@@ -293,9 +286,3 @@ if($action == "Create"){ ?>
 
     <?php $this->endWidget(); ?>
 
-
-</div>
-
-<div class="modal-footer">
-    Edit campaign attributes. Fields with <span class="required">*</span> are required.
-</div>

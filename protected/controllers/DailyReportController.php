@@ -28,7 +28,7 @@ class DailyReportController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByProvider', 'updateConvs2s', 'updateEditable'),
+				'actions'=>array('index','view','create','update', 'response', 'updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByProvider', 'updateConvs2s', 'updateEditable'),
 				'roles'=>array('admin', 'media', 'media_manager', 'business','affiliates_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -64,6 +64,14 @@ class DailyReportController extends Controller
 		));
 	}
 
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Daily report succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
+	}
+
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -85,7 +93,7 @@ class DailyReportController extends Controller
 			$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);
@@ -190,7 +198,7 @@ class DailyReportController extends Controller
 				$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);

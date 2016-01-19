@@ -13,8 +13,11 @@
     // datepicker
     //$cs->registerScriptFile($baseUrl.'/js/bootstrap-datepicker.js');
     //$cs->registerCssFile($baseUrl.'/css/datepicker3.css');
+
     // custom
     $cs->registerScriptFile($baseUrl.'/js/custom.js');
+    $cs->registerScriptFile($baseUrl.'/js/modals.js');
+
     $cs->registerCssFile($baseUrl.'/css/styles.css');
     ?>
 </head>
