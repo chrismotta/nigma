@@ -28,7 +28,7 @@ class PlacementsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','archived','getSites','labelAjax','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
+				'actions'=>array('index','view','create','update','response','admin','delete','archived','getSites','labelAjax','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -49,6 +49,14 @@ class PlacementsController extends Controller
 		), false, true);
 	}
 
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Placement succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
+	}
+
 	/**
 	 * Creates a new model.
 	 * If creation is successful, the browser will be redirected to the 'view' page.
@@ -64,7 +72,7 @@ class PlacementsController extends Controller
 		{
 			$model->attributes=$_POST['Placements'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);
@@ -86,7 +94,7 @@ class PlacementsController extends Controller
 		{
 			$model->attributes=$_POST['Placements'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model);

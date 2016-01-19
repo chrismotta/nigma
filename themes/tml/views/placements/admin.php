@@ -35,36 +35,8 @@ $('.search-form form').submit(function(){
 ");
 ?>
 
-<?php if( !isset($isArchived) )  : ?>
-	<div class="botonera">
-	<?php
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Create Placement',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalPlacements").html(dataInicial);
-					$("#modalPlacements").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-	                    // console.log(this.url);
-		                //alert("create");
-						$("#modalPlacements").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'create'),
-		)
-	);
-	?>
-	</div>
-<?php endif; ?>
+<?php BuildGridView::createButton($this, array('placements/create'), 'modalPlacements', 'placements-grid', 'Create Placement'); ?>
+
 <br>
 
 
@@ -172,33 +144,44 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
-				'updateAjax' => array(
+				'updateIframe' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "placements-grid", 
+						"data-modal-id"     => "modalPlacements", 
+						"data-modal-title"  => "Update Placement", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
+				// 'updateAjax' => array(
+				// 	'label' => 'Update',
+				// 	'icon'  => 'pencil',
+				// 	'click' => '
+				//     function(){
+				//     	// get row id from data-row-id attribute
+				//     	var id = $(this).parents("tr").attr("data-row-id");
 				    	
-						var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+				// 		var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
 						
-						$("#modalPlacements").html(dataInicial);
-						$("#modalPlacements").modal("toggle");
+				// 		$("#modalPlacements").html(dataInicial);
+				// 		$("#modalPlacements").modal("toggle");
 
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalPlacements").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
+				//     	// use jquery post method to get updateAjax view in a modal window
+				//     	$.post(
+				// 		"update/"+id,
+				// 		"",
+				// 		function(data)
+				// 			{
+				// 				//alert(data);
+				// 				$("#modalPlacements").html(data);
+				// 			}
+				// 		)
+				// 		return false;
+				//     }
+				//     ',
+				// ),
 				'waterfall' => array(
 					'label' => 'Waterfall',
 					'icon'  => 'tint',
@@ -268,7 +251,7 @@ $('.search-form form').submit(function(){
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {updateAjax} {labelAjax} {waterfall} {delete}',
+			'template' => '{viewAjax} {updateIframe} {labelAjax} {waterfall} {delete}',
 		),
 	),
 )); ?>

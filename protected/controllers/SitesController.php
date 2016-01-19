@@ -28,7 +28,7 @@ class SitesController extends Controller
 	{
 		return array(
 			array('allow', // allow actions
-				'actions'=>array('admin','delete','create','update','view'),
+				'actions'=>array('admin','delete','create','response','update','view'),
 				'roles'=>array('admin'),
 			),
 			array('deny',  // deny all users
@@ -48,6 +48,14 @@ class SitesController extends Controller
 		), false, true);
 	}
 
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Site succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
+	}
+
 	/**
 	* Creates a new model.
 	* If creation is successful, the browser will be redirected to the 'view' page.
@@ -63,7 +71,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model, 'Create');
@@ -85,7 +93,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$this->renderFormAjax($model, 'Update');

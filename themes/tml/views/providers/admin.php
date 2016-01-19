@@ -12,7 +12,7 @@ if (isset($model->type)) {
 ?>
 
 <?php $urlCreate = isset($model->type) ? array('providers/create/'.$model->type) : array('providers/create') ?>
-<?php BuildGridView::createButton($this, $urlCreate, 'modalProviders', 'Create Traffic Source'); ?>
+<?php BuildGridView::createButton($this, $urlCreate, 'modalProviders', 'providers-grid', 'Create Traffic Source'); ?>
 
 <?php $this->widget('application.components.NiExtendedGridView',array(
 	'id'                       =>'providers-grid',
@@ -88,7 +88,7 @@ if (isset($model->type)) {
 	// array(
 	// 	'class'=>'bootstrap.widgets.TbButtonColumn',
 	// ),
-	BuildGridView::buttonColumn('modalProviders',false),
+	BuildGridView::buttonColumn('modalProviders', 'providers-grid', 'Update Traffic Source', false),
 
 ),
 )); ?>

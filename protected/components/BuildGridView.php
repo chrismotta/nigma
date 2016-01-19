@@ -16,39 +16,56 @@ class BuildGridView
         $controller->endWidget();
     }
 
-    public static function createButton($controller, $url, $modalId, $label, $isArchived=false)
+    public static function createButton($controller, $url, $modalId, $gridId, $label, $isArchived=false)
     {
     	if( !$isArchived )  :
 			echo '<div class="botonera">';
+			
+			// $controller->widget('bootstrap.widgets.TbButton', array(
+			// 	'type'        => 'info',
+			// 	'label'       => $label,//'Create Opportunity',
+			// 	'block'       => false,
+			// 	'buttonType'  => 'ajaxButton',
+			// 	'url'         => $url,
+			// 	'ajaxOptions' => array(
+			// 		'type'    => 'POST',
+			// 		'beforeSend' => 'function(data)
+			// 			{
+			// 		    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+			// 				$("#'.$modalId.'").html(dataInicial);
+			// 				$("#'.$modalId.'").modal("toggle");
+			// 			}',
+			// 		'success' => 'function(data)
+			// 			{
+			//                     // console.log(this.url);
+			// 	                //alert("create");
+			// 					$("#'.$modalId.'").html(data);
+			// 			}',
+			// 		),
+			// 	'htmlOptions' => array('id' => 'create'),
+			// 	)
+			// );
+
 			$controller->widget('bootstrap.widgets.TbButton', array(
 				'type'        => 'info',
-				'label'       => $label,//'Create Opportunity',
+				'label'       => $label,
 				'block'       => false,
-				'buttonType'  => 'ajaxButton',
+				'buttonType'  => 'linkButton',
 				'url'         => $url,
-				'ajaxOptions' => array(
-					'type'    => 'POST',
-					'beforeSend' => 'function(data)
-						{
-					    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-							$("#'.$modalId.'").html(dataInicial);
-							$("#'.$modalId.'").modal("toggle");
-						}',
-					'success' => 'function(data)
-						{
-			                    // console.log(this.url);
-				                //alert("create");
-								$("#'.$modalId.'").html(data);
-						}',
+				'htmlOptions' => array(
+					"data-grid-id"      => $gridId, 
+					"data-modal-id"     => $modalId, 
+					"data-modal-title"  => $label, 
+					'onclick'           => 'event.preventDefault(); openModal(this)',
 					),
-				'htmlOptions' => array('id' => 'create'),
 				)
 			);
+
 			echo '</div>';
 		endif;
     }
 
-    public static function buttonColumn($modalId, $isArchived=false)
+    public static function buttonColumn($modalId, $gridId, $label, $isArchived=false)
     {
     	if($isArchived) {
 			$delete['icon']       = 'refresh';
@@ -94,6 +111,17 @@ class BuildGridView
 				    }
 				    ',
 				),
+				'updateIframe' => array(
+					'label' => 'Update',
+					'icon'  => 'pencil',
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => $gridId, 
+						"data-modal-id"     => $modalId, 
+						"data-modal-title"  => $label, 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
 				'updateAjax' => array(
 					'label' => 'Update',
 					'icon'  => 'pencil',
@@ -150,7 +178,7 @@ class BuildGridView
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {duplicateAjax} {updateAjax} {delete}',
+			'template' => '{viewAjax} {duplicateAjax} {updateIframe} {delete}',
 		);
 		
 		return $return;

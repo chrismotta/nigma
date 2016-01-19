@@ -45,6 +45,8 @@ echo '</div><!-- search-form -->'
 */
 ?>
 
+<?php BuildGridView::createButton($this, array('sites/create'), 'modalSites', 'sites-grid', 'Create Site'); ?>
+
 <br>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -68,7 +70,6 @@ echo '</div><!-- search-form -->'
 
 
 
-<?php BuildGridView::createButton($this, array('sites/create'), 'modalSites', 'Create Site'); ?>
 
 <?php $this->widget('application.components.NiExtendedGridView',array(
 	'id'=>'sites-grid',
@@ -94,7 +95,7 @@ echo '</div><!-- search-form -->'
 		'model',
 		'publisher_percentage',
 		'rate',
-		BuildGridView::buttonColumn('modalSites'),
+		BuildGridView::buttonColumn('modalSites', 'sites-grid', 'Update Site'),
 	),
 )); ?>
 

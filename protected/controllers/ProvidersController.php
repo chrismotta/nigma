@@ -34,7 +34,7 @@ class ProvidersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('admin', 'view', 'update','exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
+				'actions'=>array('admin', 'view', 'update','response','exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
 				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance','affiliates_manager'),
 			),
 			array('allow',
@@ -68,6 +68,14 @@ class ProvidersController extends Controller
 		if($model===null)
 			throw new CHttpException(404,'The requested page does not exist.');
 		return $model;
+	}
+
+	public function actionResponse(){
+		$this->layout='//layouts/iframe';
+		$this->render('_response',array(
+			'message'=>'Traffic Source succesfully added',
+			'link'=>'<a href="create">Click to add another</a>',
+		));
 	}
 
 	/**
@@ -492,7 +500,7 @@ class ProvidersController extends Controller
 		{
 			$model->attributes=$_POST['Providers'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		if($hash) $model->type = $hash;
@@ -523,7 +531,7 @@ class ProvidersController extends Controller
 		{
 			$model->attributes=$_POST['Providers'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response'));
 		}
 
 		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');

@@ -1,10 +1,3 @@
-<div class="modal-header">
-    <a class="close" data-dismiss="modal">&times;</a>
-    <h4><?php echo $model->isNewRecord ? "New Traffic Source" : "Traffic Source ID #". $model->id; ?></h4>
-</div>
-
-
-<div class="modal-body">
 
 	<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
 		'id'=>'providers-form',
@@ -159,9 +152,3 @@
 	</div>
 
 	<?php $this->endWidget(); ?>
-
-</div>
-
-<div class="modal-footer">
-    Edit Traffic Source attributes. Fields with <span class="required">*</span> are required.
-</div>
