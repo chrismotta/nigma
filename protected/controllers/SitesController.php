@@ -48,11 +48,25 @@ class SitesController extends Controller
 		), false, true);
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Site';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Site succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -71,7 +85,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 		}
 
 		$this->renderFormAjax($model, 'Create');
@@ -93,7 +107,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model, 'Update');
@@ -179,18 +193,20 @@ class SitesController extends Controller
 
 	private function renderFormAjax($model, $action=null) 
 	{
+		$this->layout='//layouts/modalIframe';
+
 		// $sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		// $exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$publishers = CHtml::listData( Providers::model()->findAll(array('order'=>'name', 'condition' => "status='Active'")), 'id', 'name');
 		$model_pub = KHtml::enumItem($model, 'model');
 
-		$this->renderPartial('_form', array(
+		$this->render('_form', array(
 			'model'      => $model,
 			// 'sizes'      => $sizes,
 			// 'exchanges'  => $exchanges,
 			'publishers' => $publishers,
 			'action'	 => $action,
 			'model_pub'      => $model_pub,
-		), false, true);
+		));
 	}
 }

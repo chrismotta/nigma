@@ -479,3 +479,9 @@ table .date-column {
     text-align: center;
     margin-top: 150px;
 }
+
+.modal-iframe {
+	padding: 0px !important;
+	height: 400px !important;
+    overflow: hidden;
+}

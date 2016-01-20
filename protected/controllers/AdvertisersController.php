@@ -87,7 +87,7 @@ class AdvertisersController extends Controller
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 		}
 
 		$this->renderFormAjax($model);
@@ -110,7 +110,7 @@ class AdvertisersController extends Controller
 		{
 			$model->attributes=$_POST['Advertisers'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model);
@@ -260,6 +260,7 @@ class AdvertisersController extends Controller
 
 	public function renderFormAjax($model) 
 	{
+		$this->layout='//layouts/modalIframe';
 		$cat = KHtml::enumItem($model, 'cat');
 
 		if ( $model->isNewRecord ) {
@@ -271,19 +272,33 @@ class AdvertisersController extends Controller
 
 		$users = CHtml::listData( Users::model()->findAll( array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
-		$this->renderPartial('_form',array(
+		$this->render('_form',array(
 			'model'      =>$model,
 			'categories' =>$cat,
 			'commercial' =>$commercial,
 			'users'      =>$users,
-		), false, true);
+		));
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Advertiser';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Daily report succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 

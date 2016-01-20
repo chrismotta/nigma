@@ -146,7 +146,7 @@ class CampaignsController extends Controller
 			$model->attributes=$_POST['Campaigns'];
 
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 			
 		}
 
@@ -191,8 +191,7 @@ class CampaignsController extends Controller
 			if($model->status == '')
 				$model->status = 'Pending';
 			if($model->save())
-				// die();
-				$this->redirect($backURL);
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model, 'Update');
@@ -215,17 +214,35 @@ class CampaignsController extends Controller
 		{
 			$new->attributes=$_POST['Campaigns'];
 			if($new->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response','id'=>3));
 		} 
 		
 		$this->renderFormAjax($new, 'Duplicate');
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Campaign';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+			case 3:
+				$message = $entity.' succesfully duplicated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Campaign succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -563,6 +580,8 @@ class CampaignsController extends Controller
 
 	private function renderFormAjax($model, $action)
 	{
+		$this->layout='//layouts/modalIframe';
+	
 		$isAdmin = FilterManager::model()->isUserTotalAccess('campaign.account');
 
 		if ( $isAdmin ) {
@@ -609,7 +628,7 @@ class CampaignsController extends Controller
 		$providers      = CHtml::listData(Providers::model()->findAllByType($modelProv->getType()), 'id', 'name');
 		$providers_type = Providers::model()->getAllTypes();
 
-		$this->renderPartial('_formAjax',array(
+		$this->render('_formAjax',array(
 			'model'            => $model,
 			'modelProv'        => $modelProv,
 			'advertisers'      => $advertisers,
@@ -625,7 +644,7 @@ class CampaignsController extends Controller
 			'action'           => $action,
 			'flow'             => $flow,
 			'inventory_type'   => $inventory_type,
-		), false, true);
+		));
 	}
 
 

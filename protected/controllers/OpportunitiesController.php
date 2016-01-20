@@ -65,11 +65,29 @@ class OpportunitiesController extends Controller
 		), false, true);
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Opportunity';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+			case 3:
+				$message = $entity.' succesfully duplicated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Opportunity succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -89,7 +107,7 @@ class OpportunitiesController extends Controller
 			$model->attributes=$_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 			else
 				echo json_encode($model->getErrors());
 		}
@@ -116,7 +134,7 @@ class OpportunitiesController extends Controller
 			$model->attributes       = $_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model);
@@ -140,7 +158,7 @@ class OpportunitiesController extends Controller
 			$model->attributes       = $_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response','id'=>3));
 		} 
 		
 		$this->renderFormAjax($new, 'Duplicate');
@@ -257,6 +275,8 @@ class OpportunitiesController extends Controller
 
 	public function renderFormAjax($model, $action=null)
 	{
+		$this->layout='//layouts/modalIframe';
+	
 		if ( $model->isNewRecord) {
 			// Get only Advertisers and IOs that were created by the current user logged.
 			// comentado provisoriamente, generar permiso de admin
@@ -298,7 +318,7 @@ class OpportunitiesController extends Controller
 		$model_adv = KHtml::enumItem($model, 'model_adv');
 		$channels = KHtml::enumItem($model, 'channel');
 
-		$this->renderPartial('_form',array(
+		$this->render('_form',array(
 			'model'      =>$model,
 			'advertiser' =>$advertiser,
 			//'ios'        =>$ios,
@@ -309,7 +329,7 @@ class OpportunitiesController extends Controller
 			'model_adv'  =>$model_adv,
 			'channels'   =>$channels,
 			'action'     =>$action,
-		), false, true);
+		));
 	}
 
 	public function actionGetIos($id)

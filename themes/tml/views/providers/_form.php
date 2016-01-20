@@ -8,6 +8,7 @@
 		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
 	)); ?>
 
+    <fieldset>
 
 	<?php echo $form->errorSummary($model); ?>
 
@@ -143,12 +144,9 @@
 	echo '</div>';
 	?>
 
-	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-				'buttonType'=>'submit',
-				'type'=>'primary',
-				'label'=>$model->isNewRecord ? 'Create' : 'Save',
-			)); ?>
-	</div>
-
+    <div class="form-actions">
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
+    </div>
+	</fieldset>
 	<?php $this->endWidget(); ?>

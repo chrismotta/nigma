@@ -16,7 +16,7 @@
     ?>
 </head>
 
-<body style="padding:0px">
+<body style="padding:20px">
 
 <!-- <div class="modal-header">
     <a class="close" data-dismiss="modal">&times;</a>

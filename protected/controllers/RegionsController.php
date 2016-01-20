@@ -70,11 +70,25 @@ class RegionsController extends Controller
 		));
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Region';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Region succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -105,7 +119,7 @@ class RegionsController extends Controller
 		{
 			$model->attributes=$_POST['Regions'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 		}
 
 		$this->renderFormAjax($model);
@@ -127,7 +141,7 @@ class RegionsController extends Controller
 		{
 			$model->attributes=$_POST['Regions'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model);
@@ -229,14 +243,16 @@ class RegionsController extends Controller
 
 	public function renderFormAjax($model) 
 	{
+		$this->layout='//layouts/modalIframe';
+	
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
 		$financeEntities = CHtml::listData(FinanceEntities::model()->findAll( array('order'=>'name', "condition"=>"status='Active'") ), 'id', 'name' );
 
-		$this->renderPartial('_form',array(
+		$this->render('_form',array(
 			'model'      =>$model,
 			'financeEntities'   =>$financeEntities,
 			'country'    =>$country,
-		), false, true);
+		));
 	}
 
 }

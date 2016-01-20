@@ -3,6 +3,7 @@
 		'id'=>'sites-form',
 		'enableAjaxValidation'=>false,
 		'type'                 =>'horizontal',
+		'htmlOptions'          =>array('class'=>'well'),
 	)); ?>
 
 	<?php echo $form->errorSummary($model); ?>
@@ -20,12 +21,8 @@
 		
 		?>
 
-	<div class="form-actions">
-		<?php $this->widget('bootstrap.widgets.TbButton', array(
-				'buttonType'=>'submit',
-				'type'=>'primary',
-				'label'=>$model->isNewRecord ? 'Create' : 'Save',
-			)); ?>
-	</div>
-
+    <div class="form-actions">
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
+        <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'reset', 'type'=>'reset', 'label'=>'Reset')); ?>
+    </div>
 	<?php $this->endWidget(); ?>

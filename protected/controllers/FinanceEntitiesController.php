@@ -104,7 +104,7 @@ class FinanceEntitiesController extends Controller
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 			else{
 				echo json_encode($model->getErrors());
 			return;
@@ -130,17 +130,31 @@ class FinanceEntitiesController extends Controller
 		{
 			$model->attributes=$_POST['FinanceEntities'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model);
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Finance Entity';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Finance Entity succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -408,6 +422,8 @@ class FinanceEntitiesController extends Controller
 
 	public function renderFormAjax($model) 
 	{
+		$this->layout='//layouts/modalIframe';
+	
 		$pre_post_payment   = KHtml::enumItem($model, 'pre_post_payment');
 		$currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
@@ -421,7 +437,7 @@ class FinanceEntitiesController extends Controller
 			$commercial = Users::model()->findByPk($model->commercial_id);
 		}
 
-		$this->renderPartial('_form',array(
+		$this->render('_form',array(
 			'model'      =>$model,
 			'currency'   =>$currency,
 			'entity'     =>$entity,
@@ -429,7 +445,7 @@ class FinanceEntitiesController extends Controller
 			'advertiser' =>$advertiser,
 			'country'    =>$country,
 			'pre_post_payment'=>$pre_post_payment,
-		), false, true);
+		));
 	}
 
 	public function actionGetOpportunities($id)

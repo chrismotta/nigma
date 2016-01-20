@@ -49,11 +49,25 @@ class PlacementsController extends Controller
 		), false, true);
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Placement';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Placement succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -72,7 +86,7 @@ class PlacementsController extends Controller
 		{
 			$model->attributes=$_POST['Placements'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 		}
 
 		$this->renderFormAjax($model);
@@ -94,7 +108,7 @@ class PlacementsController extends Controller
 		{
 			$model->attributes=$_POST['Placements'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model);
@@ -209,6 +223,8 @@ class PlacementsController extends Controller
 
 	private function renderFormAjax($model) 
 	{
+		$this->layout='//layouts/modalIframe';
+
 		$sizes      = CHtml::listData( BannerSizes::model()->findAll(array('order'=>'width, height')), 'id', 'size' );
 		$exchanges  = CHtml::listData( Exchanges::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$sites      = CHtml::listData( Sites::model()->findAll(array('order'=>'name')), 'id', 'name');
@@ -217,7 +233,7 @@ class PlacementsController extends Controller
 		// $publishers = CHtml::listData( Publishers::model()->with('sites.providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		$model_pub = KHtml::enumItem($model, 'model');
 
-		$this->renderPartial('_form', array(
+		$this->render('_form', array(
 			'model'      => $model,
 			'sizes'      => $sizes,
 			'exchanges'  => $exchanges,

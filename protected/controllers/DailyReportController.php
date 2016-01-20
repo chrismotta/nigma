@@ -64,11 +64,25 @@ class DailyReportController extends Controller
 		));
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Daily Report';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Daily report succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -93,7 +107,7 @@ class DailyReportController extends Controller
 			$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 		}
 
 		$this->renderFormAjax($model);
@@ -198,7 +212,7 @@ class DailyReportController extends Controller
 				$model->updateRevenue();
 			$model->setNewFields();
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$this->renderFormAjax($model);
@@ -452,6 +466,8 @@ class DailyReportController extends Controller
 
 	public function renderFormAjax($model)
 	{
+		$this->layout='//layouts/modalIframe';
+	
 		//$providers = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$criteria       = new CDbCriteria;
 		$criteria->with = array('providers', 'opportunities.regions','opportunities.regions.financeEntities');
@@ -466,11 +482,11 @@ class DailyReportController extends Controller
 		if ( $model->isNewRecord )
 			$model->is_from_api = 0;
 
-		$this->renderPartial('_form', array(
+		$this->render('_form', array(
 			'model'     => $model,
 			//'providers'  => $providers,
 			'campaigns' => $campaigns, 
-		), false, true);
+		));
 	}
 
 	public function actionOpportunityMA($id){

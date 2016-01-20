@@ -70,11 +70,25 @@ class ProvidersController extends Controller
 		return $model;
 	}
 
-	public function actionResponse(){
+	public function actionResponse($id){
+		
+		$entity = 'Traffic Source';
+
+		switch ($id) {
+			case 1:
+				$message = $entity.' succesfully added.';
+				$link = '<a href="create">Click to add another</a>';
+				break;
+			case 2:
+				$message = $entity.' succesfully updated.';
+				$link = null;
+				break;
+		}
+
 		$this->layout='//layouts/iframe';
 		$this->render('_response',array(
-			'message'=>'Traffic Source succesfully added',
-			'link'=>'<a href="create">Click to add another</a>',
+			'message' => $message,
+			'link'    => $link,
 		));
 	}
 
@@ -492,6 +506,8 @@ class ProvidersController extends Controller
 	public function actionCreate($hash=null)
 	{
 		$model=new Providers;
+		
+		$this->layout='//layouts/modalIframe';
 
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
@@ -500,7 +516,7 @@ class ProvidersController extends Controller
 		{
 			$model->attributes=$_POST['Providers'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>1));
 		}
 
 		if($hash) $model->type = $hash;
@@ -508,11 +524,11 @@ class ProvidersController extends Controller
 		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');
 		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
-		$this->renderPartial('_form',array(
+		$this->render('_form',array(
 			'model'=>$model,
 			'countries'=>$countries,
 			'users'=>$users,
-			),false,true);
+			));
 	}
 
 	/**
@@ -524,6 +540,8 @@ class ProvidersController extends Controller
 	{
 		$model=$this->loadModel($id);
 
+		$this->layout='//layouts/modalIframe';
+
 		// Uncomment the following line if AJAX validation is needed
 		$this->performAjaxValidation($model);
 
@@ -531,17 +549,17 @@ class ProvidersController extends Controller
 		{
 			$model->attributes=$_POST['Providers'];
 			if($model->save())
-				$this->redirect(array('response'));
+				$this->redirect(array('response','id'=>2));
 		}
 
 		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');
 		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
-		$this->renderPartial('_form',array(
+		$this->render('_form',array(
 			'model'=>$model,
 			'countries'=>$countries,
 			'users'=>$users,
-			),false,true);
+			));
 	}
 
 	/**
