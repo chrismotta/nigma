@@ -42,7 +42,7 @@ function openModal(that){
 	$('#'+modalId).html( getIframe(src, tittle, gridId) );
 
 	$('.modal-body iframe').load(function (){
-		var height = $('.modal-body iframe').contents().find('fieldset').height();
+		var height = $('.modal-body iframe').contents().find('form').height();
 		console.log(height);
 		$('.modal-body iframe').height(height);
 		console.log(height);
