@@ -72,7 +72,7 @@ class OpportunitiesController extends Controller
 		switch ($id) {
 			case 1:
 				$message = $entity.' succesfully added.';
-				$link = '<a href="create">Click to add another</a>';
+				$link = CHtml::link('Click to add another',array('create')); 
 				break;
 			case 2:
 				$message = $entity.' succesfully updated.';
