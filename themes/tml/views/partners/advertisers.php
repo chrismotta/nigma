@@ -211,7 +211,6 @@ $this->widget('bootstrap.widgets.TbButton', array(
 	
 	$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);	
 	$totals       = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, true);
-	//var_dump($user_visibility->imp);
 
 	$this->widget('bootstrap.widgets.TbExtendedGridView', array(
 	'id'                       => 'daily-report-grid',

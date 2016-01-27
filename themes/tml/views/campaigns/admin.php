@@ -215,13 +215,13 @@ if(!$is_archived){
 		// 	'name'              => 'date_start',
 		// 	'value'             => 'date("d-m-Y", strtotime($data->date_start))',
 		// 	'headerHtmlOptions' => array('style' => 'width: 70px'),
-  //       ),
+		//       ),
 		// array(
 
 		// 	'name'              => 'date_end',
 		// 	'value'             => 'date("d-m-Y", strtotime($data->date_end))',
 		// 	'headerHtmlOptions' => array('style' => 'width: 70px'),
-  //       ),
+		//       ),
 		/*
 		//ajax using CHtml::ajaxLink
 		array(
