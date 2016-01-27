@@ -30,16 +30,17 @@ class NiExtendedGridView extends TbExtendedGridView
 		}
 		$pager['pages']=$this->dataProvider->getPagination();
 
+			echo '<div class="'.$this->pagerCssClass.' custom-pag">';
 		if($pager['pages']->getPageCount()>1)
 		{
-			echo '<div class="'.$this->pagerCssClass.' custom-pag">';
 			$this->widget($class,$pager);
-			KHtml::pageSizeSelector($this->id);
-			echo '</div>';
+			echo '<span class="separator10"></span>';
 		}
 		else
 			$this->widget($class,$pager);
 
+			KHtml::pageSizeSelector($this->id);
+			echo '</div>';
 	}
 
 }

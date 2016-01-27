@@ -450,7 +450,9 @@ table .date-column {
 .custom-pag .page-size {
 	border: 1px solid #ddd; 
 	display: inline-block; 
-	margin: 0 0 0 10px;
+}
+.separator10{
+	padding: 0 5px;
 }
 .custom-pag .page-size li div {
     display: inline-block;
