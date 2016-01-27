@@ -137,6 +137,9 @@ class PartnersController extends Controller
 		$advertiser   = Advertisers::model()->findByUser($userId);
 		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
+		if(!isset($user_visibility))
+			die('User has no visibility set');
+			
 		$this->render('advertisers',array(
 			'model'           => $model,
 			'advertiser'	  => $advertiser,
