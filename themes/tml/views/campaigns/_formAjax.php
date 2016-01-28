@@ -118,6 +118,10 @@ if($action == "Create"){ ?>
 
         <?php 
 
+        $getProviders = $this->createUrl('campaigns/getProviders');
+        $getProviderCurrency = $this->createUrl('campaigns/getProviderCurrency');
+        $getDefaultExternalRate = $this->createUrl('campaigns/getDefaultExternalRate');
+
         if($action == 'Create' || $action == 'Duplicate'){
             echo $form->dropDownListRow($model, 'advertisers_name', $advertisers, 
               array(
@@ -165,7 +169,7 @@ if($action == "Create"){ ?>
                     $(".external-rate").hide();
 
                 $.post(
-                    "getProviders/"+this.value,
+                    "'.$getProviders.'/"+this.value,
                     "",
                     function(data)
                     {
@@ -184,7 +188,7 @@ if($action == "Create"){ ?>
                     return;
                 
                 $.post(
-                    "getProviderCurrency/"+this.value,
+                    "'.$getProviderCurrency.'/"+this.value,
                     "",
                     function(data)
                     {
@@ -197,7 +201,7 @@ if($action == "Create"){ ?>
                     return;
 
                 $.post(
-                    "getDefaultExternalRate/"+$(".opportunities-dropdownlist").val()+"?p_id="+this.value,
+                    "'.$getDefaultExternalRate.'/"+$(".opportunities-dropdownlist").val()+"?p_id="+this.value,
                     "",
                     function(data)
                     {
