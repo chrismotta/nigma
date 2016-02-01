@@ -35,7 +35,7 @@ class ProvidersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('admin', 'view', 'update','response','exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance','affiliates_manager'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance','affiliates_manager', 'media_buyer_admin'),
 			),
 			array('allow',
 				'actions'=>array('financeDataEntry','generalDataEntry'),

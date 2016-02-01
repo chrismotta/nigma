@@ -29,7 +29,7 @@ class SitesController extends Controller
 		return array(
 			array('allow', // allow actions
 				'actions'=>array('admin','delete','create','response','update','view'),
-				'roles'=>array('admin'),
+				'roles'=>array('admin','media_buyer_admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
