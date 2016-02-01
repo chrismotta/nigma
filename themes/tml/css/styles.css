@@ -487,3 +487,7 @@ table .date-column {
 	height: 400px !important;
     overflow: hidden;
 }
+
+.response {
+	margin-bottom: 10px;
+}

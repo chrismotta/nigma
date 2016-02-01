@@ -146,7 +146,7 @@ class CampaignsController extends Controller
 			$model->attributes=$_POST['Campaigns'];
 
 			if($model->save())
-				$this->redirect(array('response','id'=>1));
+				$this->redirect(array('response','id'=>$model->id));
 			
 		}
 
@@ -191,7 +191,7 @@ class CampaignsController extends Controller
 			if($model->status == '')
 				$model->status = 'Pending';
 			if($model->save())
-				$this->redirect(array('response','id'=>2));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 		}
 
 		$this->renderFormAjax($model, 'Update');
@@ -214,7 +214,7 @@ class CampaignsController extends Controller
 		{
 			$new->attributes=$_POST['Campaigns'];
 			if($new->save())
-				$this->redirect(array('response','id'=>3));
+				$this->redirect(array('response', 'id'=>$new->id, 'action'=>'duplicated'));
 		} 
 		
 		$this->renderFormAjax($new, 'Duplicate');
@@ -222,27 +222,12 @@ class CampaignsController extends Controller
 
 	public function actionResponse($id){
 		
-		$entity = 'Campaign';
-
-		switch ($id) {
-			case 1:
-				$message = $entity.' succesfully added.';
-				$link = CHtml::link('Click to add another',array('create')); 
-				break;
-			case 2:
-				$message = $entity.' succesfully updated.';
-				$link = null;
-				break;
-			case 3:
-				$message = $entity.' succesfully duplicated.';
-				$link = null;
-				break;
-		}
-
-		$this->layout='//layouts/iframe';
-		$this->render('_response',array(
-			'message' => $message,
-			'link'    => $link,
+		$action = isset($_GET['action']) ? $_GET['action'] : 'created';
+		$this->layout='//layouts/modalIframe';
+		$this->render('//layouts/mainResponse',array(
+			'entity' => 'Campaign',
+			'action' => $action,
+			'id'    => $id,
 		));
 	}
 

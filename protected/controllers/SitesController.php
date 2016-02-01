@@ -50,23 +50,12 @@ class SitesController extends Controller
 
 	public function actionResponse($id){
 		
-		$entity = 'Site';
-
-		switch ($id) {
-			case 1:
-				$message = $entity.' succesfully added.';
-				$link = CHtml::link('Click to add another',array('create')); 
-				break;
-			case 2:
-				$message = $entity.' succesfully updated.';
-				$link = null;
-				break;
-		}
-
-		$this->layout='//layouts/iframe';
-		$this->render('_response',array(
-			'message' => $message,
-			'link'    => $link,
+		$action = isset($_GET['action']) ? $_GET['action'] : 'created';
+		$this->layout='//layouts/modalIframe';
+		$this->render('//layouts/mainResponse',array(
+			'entity' => 'Site',
+			'action' => $action,
+			'id'    => $id,
 		));
 	}
 
@@ -85,7 +74,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('response','id'=>1));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'created'));
 		}
 
 		$this->renderFormAjax($model, 'Create');
@@ -107,7 +96,7 @@ class SitesController extends Controller
 		{
 			$model->attributes=$_POST['Sites'];
 			if($model->save())
-				$this->redirect(array('response','id'=>2));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 		}
 
 		$this->renderFormAjax($model, 'Update');

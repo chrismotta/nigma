@@ -67,27 +67,12 @@ class OpportunitiesController extends Controller
 
 	public function actionResponse($id){
 		
-		$entity = 'Opportunity';
-
-		switch ($id) {
-			case 1:
-				$message = $entity.' succesfully added.';
-				$link = CHtml::link('Click to add another',array('create')); 
-				break;
-			case 2:
-				$message = $entity.' succesfully updated.';
-				$link = null;
-				break;
-			case 3:
-				$message = $entity.' succesfully duplicated.';
-				$link = null;
-				break;
-		}
-
-		$this->layout='//layouts/iframe';
-		$this->render('_response',array(
-			'message' => $message,
-			'link'    => $link,
+		$action = isset($_GET['action']) ? $_GET['action'] : 'created';
+		$this->layout='//layouts/modalIframe';
+		$this->render('//layouts/mainResponse',array(
+			'entity' => 'Opportunity',
+			'action' => $action,
+			'id'    => $id,
 		));
 	}
 
@@ -107,7 +92,7 @@ class OpportunitiesController extends Controller
 			$model->attributes=$_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('response','id'=>1));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'created'));
 			else
 				echo json_encode($model->getErrors());
 		}
@@ -134,7 +119,7 @@ class OpportunitiesController extends Controller
 			$model->attributes       = $_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('response','id'=>2));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 		}
 
 		$this->renderFormAjax($model);
@@ -158,7 +143,7 @@ class OpportunitiesController extends Controller
 			$model->attributes       = $_POST['Opportunities'];
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
-				$this->redirect(array('response','id'=>3));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'duplicate'));
 		} 
 		
 		$this->renderFormAjax($new, 'Duplicate');
