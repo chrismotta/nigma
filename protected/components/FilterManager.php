@@ -75,6 +75,13 @@ class FilterManager
 			'roles'  => array( 
 				'media',
 			)),
+		//******//
+		'account_manager' => array( 
+			'column' => 'opportunities.account_manager_id', 
+			'roles'  => array( 
+				'media',
+			)),
+		//******//
 		'affiliate' => array( 
 			'column' => 'affiliates.id', 
 			'roles'  => array( 
