@@ -1,5 +1,5 @@
 ## Nigma Appserver
-### Install Environment
+### Setup Local Environment
 
 #### Programs
 - Sublime
