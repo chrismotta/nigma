@@ -26,7 +26,17 @@
         )); ?>
         
         <h5>Select roles</h5>
-        <?php foreach($roles as $data) {
+        <?php 
+
+        $userRol = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+        if ( in_array('media_buyer_admin', $userRol, true) )
+            $userRestriction = 'publisher';
+
+        foreach($roles as $data) {
+            
+            if(isset($userRestriction))
+                if($data->name != $userRestriction) continue;
+
             $dataRow['name']  = $data->name;
             $dataRow['type']  = 'raw';
             $dataRow['label'] = '';

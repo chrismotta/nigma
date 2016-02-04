@@ -28,8 +28,8 @@ class UsersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete','response', 'adminRoles','profile','visibility','notAssigned'),
-				'roles'=>array('admin'),
+				'actions'=>array('index','view','create','update','admin','delete','response', 'adminRoles','visibility','notAssigned'),
+				'roles'=>array('admin','media_buyer_admin'),
 			),
 			array('allow', 
 				'actions'=>array('profile'),
@@ -169,6 +169,7 @@ class UsersController extends Controller
 	
 		$model=new Users('search');
 		$model->unsetAttributes();  // clear any default values
+
 		if(isset($_GET['Users']))
 			$model->attributes=$_GET['Users'];
 
@@ -180,6 +181,7 @@ class UsersController extends Controller
 	public function actionAdminRoles($id) 
 	{
 		$this->layout = '//layouts/modalIframe';
+		// $roles = Yii::app()->authManager->getAuthItem('publisher'); // Get only "roles"
 		$roles = Yii::app()->authManager->getAuthItems(2); // Get only "roles"
 		$user = Users::model()->findByPk($id);
 

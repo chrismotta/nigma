@@ -112,14 +112,21 @@ class Users extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('username',$this->username,true);
-		$criteria->compare('password',$this->password,true);
-		$criteria->compare('email',$this->email,true);
-		$criteria->compare('name',$this->name,true);
-		$criteria->compare('lastname',$this->lastname,true);
-		$criteria->compare('status',$this->status,true);
+		$criteria->compare('t.id',$this->id);
+		$criteria->compare('t.username',$this->username,true);
+		$criteria->compare('t.password',$this->password,true);
+		$criteria->compare('t.email',$this->email,true);
+		$criteria->compare('t.name',$this->name,true);
+		$criteria->compare('t.lastname',$this->lastname,true);
+		$criteria->compare('t.status',$this->status,true);
 		$criteria->with = array('providers');
+
+		// rol management
+		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
+		if ( in_array('media_buyer_admin', $roles, true) ){
+			$criteria->join = 'left join AuthAssignment aa on aa.userid = t.id';
+			$criteria->addCondition('aa.itemname = "publisher"');
+		}
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

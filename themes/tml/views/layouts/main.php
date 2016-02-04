@@ -172,7 +172,7 @@
             'items'=>array(
                 array('label'=>'Profile', 'url'=>array('/users/profile')),
                 array('label'=>'Users', 'url'=>array('/users/admin'),
-                    'visible' => rol('admin'),
+                    'visible' => rol('admin') || rol('media_buyer_admin'),
                     ),
                 array('label'=>'API Log', 'url'=>array('/apiLog/admin')),
                 // array('label'=>'Configuration', 'url'=>'#'),
