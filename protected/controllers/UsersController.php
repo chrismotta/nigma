@@ -28,7 +28,7 @@ class UsersController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete', 'adminRoles','profile','visibility','notAssigned'),
+				'actions'=>array('index','view','create','update','admin','delete','response', 'adminRoles','profile','visibility','notAssigned'),
 				'roles'=>array('admin'),
 			),
 			array('allow', 
@@ -85,10 +85,21 @@ class UsersController extends Controller
            	}
 
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('adminRoles', 'id'=>$model->id, 'action'=>'created'));
 		}
 
 		$this->renderFormAjax($model);
+	}
+
+	public function actionResponse($id){
+		
+		$action = isset($_GET['action']) ? $_GET['action'] : 'created';
+		$this->layout='//layouts/modalIframe';
+		$this->render('//layouts/mainResponse',array(
+			'entity' => 'User',
+			'action' => $action,
+			'id'    => $id,
+		));
 	}
 
 	/**
@@ -114,7 +125,7 @@ class UsersController extends Controller
            	}
 
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'update'));
 		}
 
 		$this->renderFormAjax($model);
@@ -168,6 +179,7 @@ class UsersController extends Controller
 
 	public function actionAdminRoles($id) 
 	{
+		$this->layout = '//layouts/modalIframe';
 		$roles = Yii::app()->authManager->getAuthItems(2); // Get only "roles"
 
 		// Validate if the callback is from form's submit
@@ -196,14 +208,15 @@ class UsersController extends Controller
 		
 		$user = Users::model()->findByPk($id);
 
-		$this->renderPartial('_roles',array(
+		$this->render('_roles',array(
 			'model'=>$user,
 			'roles'=>$roles,
-		), false, true);
+		));
 	}
 
 	public function actionVisibility($id) 
 	{
+		$this->layout = '//layouts/modalIframe';
 		$model = Visibility::model()->findByAttributes( array('users_id'=>$id) );
 		if($model===null){
 			$model = new Visibility();
@@ -219,11 +232,11 @@ class UsersController extends Controller
 		$user       = Users::model()->findByPk($id);
 		$advertiser = Advertisers::model()->findByAttributes( array('users_id' => $id) );
 
-		$this->renderPartial('_visibility',array(
+		$this->render('_visibility',array(
 			'model'      => $model,
 			'user'       => $user,
 			'advertiser' => $advertiser,
-		), false, true);
+		));
 	}
 
 	/**

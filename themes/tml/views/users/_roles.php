@@ -4,14 +4,6 @@
 /* @var $form CActiveForm */
 ?>
 
-<div class="modal-header">
-    <a class="close" data-dismiss="modal">&times;</a>
-    <h4>Permissions User <?php echo "#". $model->id; ?></h4>
-</div>
-
-
-<div class="modal-body">
-
     <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'users-form',
 		'type'                 =>'horizontal',
@@ -41,7 +33,7 @@
             
             // Create array config for attribute property for DetailView            
             $isAssigned       = Yii::app()->authManager->checkAccess($data->name, $model->id);
-            $dataRow['value'] = CHtml::checkbox($data->name, $isAssigned, array('class'=>'span1') ) . " " . CHtml::label($data->name, $data->name, array('class'=>'label'));
+            $dataRow['value'] = CHtml::checkbox($data->name, $isAssigned, array('style'=>'margin:0 5px') ) . " " . CHtml::label($data->name, $data->name, array('class'=>'label'));
             $attributesGrid[] =  $dataRow;
 
             // Create array for data property for DetailView
@@ -67,8 +59,3 @@
     </fieldset>
 
     <?php $this->endWidget(); ?>
-</div>
-
-<div class="modal-footer">
-    Edit User attributes. Fields with <span class="required">*</span> are required.
-</div>
