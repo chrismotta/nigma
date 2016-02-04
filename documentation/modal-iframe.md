@@ -63,7 +63,7 @@ $this->layout = '//layouts/modalIframe';
 - Switch renderPartial() by render() 
 - Set submit redirect (standard cases)
 ```
-$this->redirect(array('response', 'id'=>$model->id, 'action'=>'[created|update|duplicate]'));
+$this->redirect(array('response', 'id'=>$model->id, 'action'=>'[created|updated|duplicated]'));
 ```
 - Set response action
 ```

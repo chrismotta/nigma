@@ -125,7 +125,7 @@ class UsersController extends Controller
            	}
 
 			if($model->save())
-				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'update'));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 		}
 
 		$this->renderFormAjax($model);
@@ -181,6 +181,7 @@ class UsersController extends Controller
 	{
 		$this->layout = '//layouts/modalIframe';
 		$roles = Yii::app()->authManager->getAuthItems(2); // Get only "roles"
+		$user = Users::model()->findByPk($id);
 
 		// Validate if the callback is from form's submit
 		if ( isset($_POST['submit']) ) {
@@ -203,11 +204,9 @@ class UsersController extends Controller
 					}
 				}
 			}
-			$this->redirect(array('admin'));
+			$this->redirect(array('response', 'id'=>$user->id, 'action'=>'updated'));
 		}
 		
-		$user = Users::model()->findByPk($id);
-
 		$this->render('_roles',array(
 			'model'=>$user,
 			'roles'=>$roles,
@@ -218,6 +217,8 @@ class UsersController extends Controller
 	{
 		$this->layout = '//layouts/modalIframe';
 		$model = Visibility::model()->findByAttributes( array('users_id'=>$id) );
+		$user  = Users::model()->findByPk($id);
+		
 		if($model===null){
 			$model = new Visibility();
 			$model->users_id = $id;
@@ -226,10 +227,9 @@ class UsersController extends Controller
 		if ( isset($_POST['Visibility']) ) {
 			$model->attributes = $_POST['Visibility'];
 			if($model->save())
-				$this->redirect(array('admin'));
+				$this->redirect(array('response', 'id'=>$user->id, 'action'=>'updated'));
 		}
 
-		$user       = Users::model()->findByPk($id);
 		$advertiser = Advertisers::model()->findByAttributes( array('users_id' => $id) );
 
 		$this->render('_visibility',array(
