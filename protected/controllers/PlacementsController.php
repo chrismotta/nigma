@@ -28,7 +28,7 @@ class PlacementsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','response','admin','delete','archived','getSites','labelAjax','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
+				'actions'=>array('index','view','create','update','duplicate','response','admin','delete','archived','getSites','labelAjax','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
 				'roles'=>array('admin','media_buyer_admin'),
 			),
 			array('deny',  // deny all users
@@ -101,6 +101,28 @@ class PlacementsController extends Controller
 		}
 
 		$this->renderFormAjax($model);
+	}
+	public function actionDuplicate($id) 
+	{
+		$old = $this->loadModel($id);
+
+		$new = clone $old;
+		unset($new->id);
+		$new->unsetAttributes(array('id'));
+		$new->isNewRecord = true;
+		
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($new);
+		if(isset($_POST['Placements']))
+		{
+			var_dump($_POST['Placements']);
+			$model=new Placements;
+			$model->attributes       = $_POST['Placements'];
+			if($model->save())
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'duplicate'));
+		} 
+		
+		$this->renderFormAjax($new, 'Duplicate');
 	}
 
 	/**
@@ -210,7 +232,7 @@ class PlacementsController extends Controller
 		}
 	}
 
-	private function renderFormAjax($model) 
+	private function renderFormAjax($model, $action=null) 
 	{
 		$this->layout='//layouts/modalIframe';
 
@@ -222,6 +244,10 @@ class PlacementsController extends Controller
 		// $publishers = CHtml::listData( Publishers::model()->with('sites.providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		$model_pub = KHtml::enumItem($model, 'model');
 
+	    if($action == 'Duplicate'){
+	    	$selSite = 1;
+	    }
+
 		$this->render('_form', array(
 			'model'      => $model,
 			'sizes'      => $sizes,
@@ -229,6 +255,7 @@ class PlacementsController extends Controller
 			'sites'      => $sites,
 			'publishers' => $publishers,
 			'model_pub'  => $model_pub,
+			'action'     => $action,
 		), false, true);
 	}
 

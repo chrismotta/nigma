@@ -155,6 +155,17 @@ $('.search-form form').submit(function(){
 						'onclick'           => 'event.preventDefault(); openModal(this)',
 						),
 					),
+				'duplicateIframe' => array(
+					'label' => 'Duplicate',
+					'icon'  => 'plus-sign',
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "placements-grid", 
+						"data-modal-id"     => "modalPlacements", 
+						"data-modal-title"  => "Duplicate Placement", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
 				// 'updateAjax' => array(
 				// 	'label' => 'Update',
 				// 	'icon'  => 'pencil',
@@ -251,7 +262,7 @@ $('.search-form form').submit(function(){
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {updateIframe} {labelAjax} {waterfall} {delete}',
+			'template' => '{viewAjax} {updateIframe} {duplicateIframe} {labelAjax} {waterfall} {delete}',
 		),
 	),
 )); ?>

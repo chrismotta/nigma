@@ -18,7 +18,7 @@
     <fieldset>
 	<?php 
 
-    	if ( $model->isNewRecord ) {
+    	if ( $model->isNewRecord && $action != 'Duplicate') {
             echo $form->dropDownListRow($model, 'publishers_name', $publishers, 
                 array(
                     'prompt'   => 'Select a publisher',
@@ -45,7 +45,9 @@
                     'class'    => 'sites-dropdownlist',
                     'disabled' => true,
                     ));
-      	}
+      	}else if($action == 'Duplicate'){
+            echo $form->hiddenField($model, 'sites_id');
+        }
       
         // echo $form->dropDownListRow($model, 'exchanges_id', $exchanges, array('prompt' => 'Select exchange'));
         echo $form->dropDownListRow($model, 'sizes_id', $sizes, array('prompt' => 'Select size'));
