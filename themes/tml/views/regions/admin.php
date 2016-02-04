@@ -72,7 +72,7 @@ $('.search-form form').submit(function(){
 		'htmlOptions' => array(
 			"data-grid-id"      => "regions-grid", 
 			"data-modal-id"     => "modalRegions", 
-			"data-modal-title"  => "Create Finance Entity", 
+			"data-modal-title"  => "Create Region", 
 			'onclick'           => 'event.preventDefault(); openModal(this)',
 			),
 		)
