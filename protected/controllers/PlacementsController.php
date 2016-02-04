@@ -102,6 +102,7 @@ class PlacementsController extends Controller
 
 		$this->renderFormAjax($model);
 	}
+
 	public function actionDuplicate($id) 
 	{
 		$old = $this->loadModel($id);
@@ -115,14 +116,13 @@ class PlacementsController extends Controller
 		$this->performAjaxValidation($new);
 		if(isset($_POST['Placements']))
 		{
-			var_dump($_POST['Placements']);
 			$model=new Placements;
 			$model->attributes       = $_POST['Placements'];
 			if($model->save())
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'duplicate'));
 		} 
 		
-		$this->renderFormAjax($new, 'Duplicate');
+		$this->renderFormAjax($new, 'duplicate');
 	}
 
 	/**
@@ -243,10 +243,6 @@ class PlacementsController extends Controller
 		// $publishers = CHtml::listData( Publishers::model()->with('providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		// $publishers = CHtml::listData( Publishers::model()->with('sites.providers')->findAll(array('order'=>'providers.name', 'condition' => "providers.status='Active'")), 'providers_id', 'providers.name');
 		$model_pub = KHtml::enumItem($model, 'model');
-
-	    if($action == 'Duplicate'){
-	    	$selSite = 1;
-	    }
 
 		$this->render('_form', array(
 			'model'      => $model,
