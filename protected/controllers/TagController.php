@@ -69,9 +69,6 @@ class TagController extends Controller
 		// enviar macros
 
 		$newCode = $imp->replaceMacro($tag->code);
-		
-		// echo '<textarea rows="6" cols="100">'.$newCode.'</textarea>';
-		// die();
 
 		//print tag
 

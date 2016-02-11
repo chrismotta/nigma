@@ -41,8 +41,10 @@ switch ( $_SERVER['HTTP_HOST'] ) {
 	case '52.91.118.99':
 	case 'ec2-52-91-118-99.compute-1.amazonaws.com':
 	case 'tmlbox.co':
-	case 'console.themedialab.co':
 	case 'www.tmlbox.co':
+	case 'bidbox.co':
+	case 'www.bidbox.co':
+	case 'console.themedialab.co':
 				$mysqlConnect = array(
 					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 					'emulatePrepare'   => true,
