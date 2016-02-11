@@ -4,16 +4,7 @@ class ImpLogController extends Controller
 {
 	public function actionIndex()
 	{
-		$cid = Yii::app()->request->getQuery('cid');
-		//$this->render('index');
-		print "cid: ".$cid."<br/>";
-
-		$model = Campaigns::model()->findByPk($cid);
-		$redirectURL = $model->url;
-		//print_r($model);
-		print "url: ".$redirectURL."<br/>";
-
-		$this->redirect($redirectURL);
+		$this->render('index');
 	}
 
 	// Uncomment the following methods and override them if needed
