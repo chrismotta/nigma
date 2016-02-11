@@ -24,6 +24,7 @@ array('label'=>'Manage Tags','url'=>array('admin')),
 		'type',
 		'code',
 		'comment',
+		'analyze',
 ),
 )); ?>
 
@@ -35,6 +36,6 @@ $id = $model->id;
 <div class="alert alert-info">
 	<div class="form-group">
 		<label for="comment"><strong>Get Tag</strong></label>
-		<textarea class="form-control" rows="2" id="comment" style="width:100%"><iframe src="http://tmlbox.co/tag/<?php echo $id ?>?pid=<placementID>&pid=<pubID>" width="<?php echo $width ?>" height="<?php echo $height ?>" frameborder="0" scrolling="no" ></iframe></textarea>
+		<textarea class="form-control" rows="2" id="comment" style="width:100%"><iframe src="http://tmlbox.co/tag/<?php echo $id ?>?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="<?php echo $width ?>" height="<?php echo $height ?>" frameborder="0" scrolling="no" ></iframe></textarea>
 	</div>
 </div>

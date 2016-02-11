@@ -9,6 +9,7 @@ class TagController extends Controller
 		if(!isset($_GET['pid']))
 			die("Placement ID does't exists");
 
+		
 		// log impression
 		
 		$imp = new ImpLog();
@@ -16,9 +17,12 @@ class TagController extends Controller
 		$imp->placements_id = $_GET['pid'];
 		$imp->date = new CDbExpression('NOW()');
 
+
 		// pubid
+		
 		$imp->pubid = isset($_GET['pubid']) ? $_GET['pubid'] : null;
 
+		
 		// Get visitor parameters
 		
 		$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
@@ -44,6 +48,7 @@ class TagController extends Controller
 
 		}
 
+
 		// Get ip data
 
 		$ip = isset($imp->ip_forwarded) ? $imp->ip_forwarded : $imp->server_ip;
@@ -57,16 +62,26 @@ class TagController extends Controller
 		}
 
 
-
+		// log impression
 
 		$imp->save();
 
+		// enviar macros
+
+		$newCode = $imp->replaceMacro($tag->code);
+		
+		// echo '<textarea rows="6" cols="100">'.$newCode.'</textarea>';
+		// die();
+
 		//print tag
+
 		$this->renderPartial('view',array(
-			'model'=>$tag,
-			'pid'=>$imp->placements_id,
-			'pubid'=>$imp->pubid,
+			'code'=>$newCode,
+			'tag'=>$tag,
+			'imp'=>$imp,
 			));
 
 	}
+
+
 }

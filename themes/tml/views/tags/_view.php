@@ -23,6 +23,9 @@
 	<b><?php echo CHtml::encode($data->getAttributeLabel('comment')); ?>:</b>
 	<?php echo CHtml::encode($data->comment); ?>
 	<br />
-
+   	
+   	<b><?php echo CHtml::encode($data->getAttributeLabel('analyze')); ?>:</b>
+    <?php echo CHtml::encode($data->analyze); ?>
+    <br />
 
 </div>

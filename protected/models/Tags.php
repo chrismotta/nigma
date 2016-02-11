@@ -10,6 +10,7 @@
  * @property string $type
  * @property string $code
  * @property string $comment
+ * @property integer $analyze
  *
  * The followings are the available model relations:
  * @property ImpLog[] $impLogs
@@ -35,13 +36,13 @@ class Tags extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('type', 'required'),
-			array('campaigns_id, banner_sizes_id', 'numerical', 'integerOnly'=>true),
+			array('campaigns_id, banner_sizes_id, analyze', 'numerical', 'integerOnly'=>true),
 			array('type', 'length', 'max'=>10),
 			array('code', 'length', 'max'=>255),
 			array('comment', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, banner_sizes_id, type, code, comment', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, banner_sizes_id, type, code, comment, analyze', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -71,6 +72,7 @@ class Tags extends CActiveRecord
 			'type' => 'Type',
 			'code' => 'Code',
 			'comment' => 'Comment',
+			'analyze' => 'Analyze',
 		);
 	}
 
@@ -98,6 +100,7 @@ class Tags extends CActiveRecord
 		$criteria->compare('type',$this->type,true);
 		$criteria->compare('code',$this->code,true);
 		$criteria->compare('comment',$this->comment,true);
+		$criteria->compare('analyze',$this->analyze);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -162,4 +162,24 @@ class ImpLog extends CActiveRecord
 	{
 		return parent::model($className);
 	}
+
+	// macros
+
+	public function macros()
+	{
+		return array(
+			'{pubid}' => isset($this->pubid) ? urlencode($this->pubid) : '',
+			);
+	}
+
+	public function hasMacro($url)
+	{
+		preg_match('%\{[a-z \_]+\}%', $url, $match);
+		return isset($match[0]) ? true : false;
+	}
+	
+	public function replaceMacro($url)
+	{	
+		return str_replace(array_keys(self::macros()),array_values(self::macros()),$url);
+	}
 }

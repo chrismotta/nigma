@@ -49,6 +49,7 @@ return false;
 		'type',
 		'code',
 		'comment',
+		'analyze',
 array(
 'class'=>'bootstrap.widgets.TbButtonColumn',
 ),
