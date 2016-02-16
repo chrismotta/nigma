@@ -45,6 +45,13 @@ class TagController extends Controller
 			$imp->os_version      = $device->getCapability('device_os_version');
 			$imp->browser         = $device->getVirtualCapability('advertised_browser');
 			$imp->browser_version = $device->getVirtualCapability('advertised_browser_version');
+			
+			if ($device->getCapability('is_tablet') == 'true')
+				$imp->device_type = 'Tablet';
+			else if ($device->getCapability('is_wireless_device') == 'true')
+				$imp->device_type = 'Mobile';
+			else
+				$imp->device_type = 'Desktop';
 
 		}
 
