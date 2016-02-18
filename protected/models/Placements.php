@@ -171,10 +171,11 @@ class Placements extends CActiveRecord
 		$criteria = new CDbCriteria;
 		$criteria->compare("t.sites_id", $id);
 		
-		return new CActiveDataProvider($this, array(
-			'criteria'   =>$criteria,
-			'pagination' =>false,
-		));
+		// return new CActiveDataProvider($this, array(
+		// 	'criteria'   =>$criteria,
+		// 	'pagination' =>false,
+		// ));
+		return self::model()->findAll($criteria);
 	
 	}
 

@@ -276,7 +276,7 @@ if(!$is_archived){
         */
 		array(
 			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'headerHtmlOptions' => array('style' => "width: 100px"),
 			'afterDelete'       => 'function(link, success, data) { if(data) alert(data); }',
 			'buttons'           => array(
 				'viewAjax' => array(
@@ -401,11 +401,22 @@ if(!$is_archived){
 				//     }
 				//     ',
 				// ),
+				'tagsIframe' => array(
+					'label' => 'Tags',
+					'icon'  => 'icon-tags',
+					'url'     => 'array("tags/adminByCampaign", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "campaigns-grid", 
+						"data-modal-id"     => "modalCampaigns", 
+						"data-modal-title"  => "Campaign Tags", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
 			),
 			'deleteButtonIcon' => $delete['icon'],
 			'deleteButtonLabel' => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{viewAjax} {duplicateIframe} {redirects} {updateIframe} {delete}',
+			'template' => '{viewAjax} {updateIframe}  {duplicateIframe} {redirects} {tagsIframe} {delete}',
 		),
 	),
 )); ?>

@@ -19,6 +19,8 @@
  */
 class Tags extends CActiveRecord
 {
+	public $size;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -42,7 +44,7 @@ class Tags extends CActiveRecord
 			array('comment', 'length', 'max'=>128),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, banner_sizes_id, type, code, comment, analyze', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, banner_sizes_id, type, code, comment, analyze, size', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -102,8 +104,27 @@ class Tags extends CActiveRecord
 		$criteria->compare('comment',$this->comment,true);
 		$criteria->compare('analyze',$this->analyze);
 
+		$criteria->with = array('bannerSizes');
+		$criteria->select = array(
+			't.*',
+			'bannerSizes.size as size'
+			);
+		$criteria->compare('bannerSizes.size',$this->size);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+            'pagination'=>array(
+                'pageSize'=>100,
+            ),
+			'sort'     =>array(
+		        'attributes'=>array(
+		            'size'=>array(
+						'asc'  =>'bannerSizes.size',
+						'desc' =>'bannerSizes.size DESC',
+		            ),
+		            '*',
+	            ),
+            ),
 		));
 	}
 

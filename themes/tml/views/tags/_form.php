@@ -3,13 +3,20 @@
 	'enableAjaxValidation'=>false,
 )); ?>
 
-<p class="help-block">Fields with <span class="required">*</span> are required.</p>
-
 <?php echo $form->errorSummary($model); ?>
 
-	<?php echo $form->textFieldRow($model,'campaigns_id',array('class'=>'span5')); ?>
+	<?php 
+    if(isset($model->campaigns_id)){
+        echo $form->hiddenField($model,'campaigns_id'); 
+    }else{
+        echo $form->textFieldRow($model,'campaigns_id',array('class'=>'span5')); 
+    }
+    ?>
 
-	<?php echo $form->textFieldRow($model,'banner_sizes_id',array('class'=>'span5')); ?>
+	<?php 
+	// echo $form->textFieldRow($model,'banner_sizes_id',array('class'=>'span5')); 
+
+        echo $form->dropDownListRow($model, 'banner_sizes_id', $bannerSizes, array('prompt' => 'Select a size')); ?>
 
 	<?php echo $form->dropDownListRow($model,'type',array("iframe"=>"iframe","javascript"=>"javascript",),array('class'=>'input-large')); ?>
 
@@ -40,12 +47,17 @@
 
     <?php echo $form->checkBoxRow($model, 'analyze'); ?>
 
-<div class="form-actions">
+<div class="form-actions alert-info top20">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 			'buttonType'=>'submit',
-			'type'=>'primary',
+			'type'=>'success',
 			'label'=>$model->isNewRecord ? 'Create' : 'Save',
-		)); ?>
+		)); ?> 
+    <?php $this->widget('bootstrap.widgets.TbButton', array(
+            'buttonType'=>'reset', 
+            'type'=>'reset', 
+            'label'=>'Reset'
+        )); ?>
 </div>
 
 <?php $this->endWidget(); ?>

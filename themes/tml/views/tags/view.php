@@ -13,7 +13,7 @@ array('label'=>'Manage Tags','url'=>array('admin')),
 );
 ?>
 
-<h1>View Tags #<?php echo $model->id; ?></h1>
+	<label for="comment"><strong>Tag detail</strong></label>
 
 <?php $this->widget('bootstrap.widgets.TbDetailView',array(
 'data'=>$model,
@@ -28,14 +28,4 @@ array('label'=>'Manage Tags','url'=>array('admin')),
 ),
 )); ?>
 
-<?php 
-$width = $model->bannerSizes->width;
-$height = $model->bannerSizes->height;
-$id = $model->id;
-?>
-<div class="alert alert-info">
-	<div class="form-group">
-		<label for="comment"><strong>Get Tag</strong></label>
-		<textarea class="form-control" rows="2" id="comment" style="width:100%"><iframe src="http://tmlbox.co/tag/<?php echo $id ?>?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="<?php echo $width ?>" height="<?php echo $height ?>" frameborder="0" scrolling="no" ></iframe></textarea>
-	</div>
-</div>
+<?php echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>

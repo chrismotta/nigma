@@ -13,6 +13,13 @@ $this->breadcrumbs=array(
 	);
 	?>
 
-	<h1>Update Tags <?php echo $model->id; ?></h1>
+<div class="alert alert-info">
+	<h4 class="line-bottom">Create Tag</h4>
 
-<?php echo $this->renderPartial('_form',array('model'=>$model)); ?>
+<?php echo $this->renderPartial('_form',array(
+	'model'=>$model,
+	'bannerSizes'=>$bannerSizes,
+	)); ?>
+
+</div>
+<?php echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>

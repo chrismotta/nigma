@@ -27,7 +27,7 @@ class TagsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','delete'),
+				'actions'=>array('index','view','create','update','admin','adminByCampaign','getTag','getTxt','getSites','getPlacements','toggle','delete'),
 				'roles'=>array('admin', 'media_manager', 'external'),
 				),
 			array('deny',  // deny all users
@@ -42,9 +42,58 @@ class TagsController extends Controller
 	*/
 	public function actionView($id)
 	{
+		$this->layout='//layouts/modalIframe';
 		$this->render('view',array(
 			'model'=>$this->loadModel($id),
 			));
+	}
+
+	public function actionGetTag($id)
+	{
+		$this->layout='//layouts/modalIframe';
+
+		$publishers = CHtml::listData( Providers::model()->findAll(array('order'=>'name', 'condition' => "type='Publisher' AND status='Active'")), 'id', 'name');
+
+		$this->render('get_tag',array(
+			'model'=>$this->loadModel($id),
+			'publishers' => $publishers,
+			));
+	}
+	public function actionGetTxt($id)
+	{
+		$model=$this->loadModel($id);
+		$pid = isset($_GET['pid']) ? $_GET['pid'] : '<placementID>';
+
+		header('Content-Disposition: attachment; filename="TML_tag#'.$model->id.'.txt"');
+		echo '<iframe src="http://bidbox.co/tag/'. $model->id . '?pid='.$pid.'&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $model->bannerSizes->width .'" height="'. $model->bannerSizes->height .'" frameborder="0" scrolling="no" ></iframe>';
+	}
+
+	private function getBannerSizes()
+	{
+		return CHtml::listData(BannerSizes::model()->findAll(array('order'=>'size')), 'id', 'size');
+	}
+
+	public function actionGetSites($id)
+	{
+		$sites = Sites::model()->findByPublishersId($id);
+		
+		$response = '<option value="">Select a site</option>';
+		foreach ($sites as $site) {
+			$response .= '<option value="' . $site->id . '">' . $site->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
+	}
+	public function actionGetPlacements($id)
+	{
+		$placements = Placements::model()->findBySitesId($id);
+
+		$response = '<option value="">Select a placement</option>';
+		foreach ($placements as $placement) {
+			$response .= '<option value="' . $placement->id . '">' . $placement->name . '</option>';
+		}
+		echo $response;
+		Yii::app()->end();
 	}
 
 	/**
@@ -53,6 +102,7 @@ class TagsController extends Controller
 	*/
 	public function actionCreate()
 	{
+		$this->layout='//layouts/modalIframe';
 		$model=new Tags;
 
 	// Uncomment the following line if AJAX validation is needed
@@ -64,9 +114,11 @@ class TagsController extends Controller
 			if($model->save())
 				$this->redirect(array('view','id'=>$model->id));
 		}
-
+		
+		$model->campaigns_id = isset($_GET['cid']) ? $_GET['cid'] : null;
 		$this->render('create',array(
 			'model'=>$model,
+			'bannerSizes'=>$this->getBannerSizes(),
 			));
 	}
 
@@ -77,6 +129,7 @@ class TagsController extends Controller
 	*/
 	public function actionUpdate($id)
 	{
+		$this->layout='//layouts/modalIframe';
 		$model=$this->loadModel($id);
 
 	// Uncomment the following line if AJAX validation is needed
@@ -91,6 +144,7 @@ class TagsController extends Controller
 
 		$this->render('update',array(
 			'model'=>$model,
+			'bannerSizes'=>$this->getBannerSizes(),
 			));
 	}
 
@@ -139,6 +193,29 @@ class TagsController extends Controller
 			'model'=>$model,
 			));
 	}
+	public function actionAdminByCampaign($id)
+	{
+		$this->layout='//layouts/modalIframe';
+
+		$model=new Tags('search');
+		$model->unsetAttributes();
+		$model->campaigns_id = $id;
+		if(isset($_GET['Tags']))
+			$model->attributes=$_GET['Tags'];
+
+		$this->render('admin_short',array(
+			'model'=>$model,
+			));
+	}
+	public function actions()
+    {
+        return array(
+            'toggle' => array(
+                'class'=>'bootstrap.actions.TbToggleAction',
+                'modelName' => 'Tags',
+                )
+            );
+    }
 
 	/**
 	* Returns the data model based on the primary key given in the GET variable.
