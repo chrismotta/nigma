@@ -14,7 +14,7 @@ $this->breadcrumbs=array(
 	?>
 
 <div class="alert alert-info">
-	<h4 class="line-bottom">Create Tag</h4>
+	<h4 class="line-bottom">Update Tag</h4>
 
 <?php echo $this->renderPartial('_form',array(
 	'model'=>$model,
