@@ -42,7 +42,7 @@
 	<?php echo $form->textAreaRow(
         $model,
         'comment',
-        array('class' => 'span5', 'rows' => 5)
+        array('class' => 'span5', 'rows' => 3)
         ); ?>
 
     <?php echo $form->checkBoxRow($model, 'analyze'); ?>
