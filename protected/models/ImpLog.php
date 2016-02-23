@@ -52,7 +52,7 @@ class ImpLog extends CActiveRecord
 		return array(
 			array('date', 'required'),
 			array('tags_id, placements_id', 'numerical', 'integerOnly'=>true),
-			array('pubid, tid, ext_tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, browser_version, device, device_model, os, os_version, app', 'length', 'max'=>255),
+			array('pubid, tid, ext_tid, server_ip, user_agent, languaje, ip_forwarded, country, city, carrier, browser, browser_version, device, device_model, os, os_version, app', 'length', 'max'=>255),
 			array('device_type', 'length', 'max'=>7),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.

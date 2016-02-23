@@ -72,8 +72,8 @@ class TagController extends Controller
 
 		// log impression
 
-		$imp->save();
-		Yii::log("errors saving: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
+		if(!$imp->save())
+			Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
 		// enviar macros
 
 		$newCode = $imp->replaceMacro($tag->code);
