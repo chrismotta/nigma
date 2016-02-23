@@ -3,6 +3,7 @@
 class TagController extends Controller
 {
 	public function actionView($id){
+		// Yii::log("impresion: " . var_export($imp->getErrors(), true));
 
 		if(!$tag = Tags::model()->findByPk($id))
 			die("Tag ID does't exists");
@@ -72,8 +73,7 @@ class TagController extends Controller
 		// log impression
 
 		$imp->save();
-		Yii::log("errors saving SomeModel: " . var_export($imp->getErrors(), true), CLogger::LEVEL_WARNING, __METHOD__);
-		
+		Yii::log("errors saving: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
 		// enviar macros
 
 		$newCode = $imp->replaceMacro($tag->code);
