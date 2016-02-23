@@ -72,7 +72,8 @@ class TagController extends Controller
 		// log impression
 
 		$imp->save();
-
+		Yii::log("errors saving SomeModel: " . var_export($imp->getErrors(), true), CLogger::LEVEL_WARNING, __METHOD__);
+		
 		// enviar macros
 
 		$newCode = $imp->replaceMacro($tag->code);
