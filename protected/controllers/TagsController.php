@@ -27,7 +27,7 @@ class TagsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','create','update','admin','adminByCampaign','getTag','getTxt','getSites','getPlacements','toggle','delete'),
+				'actions'=>array('index','view','create','update','admin','response','adminByCampaign','getTag','getTxt','getSites','getPlacements','toggle','delete'),
 				'roles'=>array('admin', 'media_manager', 'external'),
 				),
 			array('deny',  // deny all users
@@ -48,15 +48,22 @@ class TagsController extends Controller
 			));
 	}
 
-	public function actionGetTag($id)
+	public function actionGetTag($id, $parent='c')
 	{
 		$this->layout='//layouts/modalIframe';
 
-		$publishers = CHtml::listData( Providers::model()->findAll(array('order'=>'name', 'condition' => "type='Publisher' AND status='Active'")), 'id', 'name');
+		$publishers = CHtml::listData( 
+			Providers::model()->findAll(
+				array(
+					'order'=>'name', 
+					'condition' => "type='Publisher' AND status='Active'",
+					'select'=>array('id','name','CONCAT_WS(" - ",id,name) AS idname'),
+					)), 'id', 'name');
 
 		$this->render('get_tag',array(
 			'model'=>$this->loadModel($id),
 			'publishers' => $publishers,
+			'parent'=>$parent,
 			));
 	}
 	public function actionGetTxt($id)
@@ -90,7 +97,7 @@ class TagsController extends Controller
 
 		$response = '<option value="">Select a placement</option>';
 		foreach ($placements as $placement) {
-			$response .= '<option value="' . $placement->id . '">' . $placement->name . '</option>';
+			$response .= '<option value="' . $placement->id . '">' . $placement->idname . '</option>';
 		}
 		echo $response;
 		Yii::app()->end();
@@ -127,7 +134,7 @@ class TagsController extends Controller
 	* If update is successful, the browser will be redirected to the 'view' page.
 	* @param integer $id the ID of the model to be updated
 	*/
-	public function actionUpdate($id)
+	public function actionUpdate($id, $parent='c')
 	{
 		$this->layout='//layouts/modalIframe';
 		$model=$this->loadModel($id);
@@ -139,13 +146,25 @@ class TagsController extends Controller
 		{
 			$model->attributes=$_POST['Tags'];
 			if($model->save())
-				$this->redirect(array('view','id'=>$model->id));
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 		}
 
 		$this->render('update',array(
 			'model'=>$model,
 			'bannerSizes'=>$this->getBannerSizes(),
+			'parent'=>$parent,
 			));
+	}
+
+	public function actionResponse($id){
+		
+		$action = isset($_GET['action']) ? $_GET['action'] : 'created';
+		$this->layout='//layouts/modalIframe';
+		$this->render('//layouts/mainResponse',array(
+			'entity' => 'Tag',
+			'action' => $action,
+			'id'    => $id,
+		));
 	}
 
 	/**

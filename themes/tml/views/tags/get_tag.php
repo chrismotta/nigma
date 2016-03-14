@@ -9,7 +9,7 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'
 
 <div class="alert alert-info">
 	<div class="form-group form-horizontal">
-		<strong>Get Tag #<?php echo $model->id; ?></strong>
+		<?php if($parent=='c') echo '<strong>Get Tag #'.$model->id.'</strong>'; ?>
 
 		<div class="control-group">
 			<div class="control-label">Publishers</div>
@@ -106,4 +106,4 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'
 	</div>
 </div>
 
-<?php echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>
+<?php if($parent=='c') echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>

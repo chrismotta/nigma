@@ -28,6 +28,7 @@ class Placements extends CActiveRecord
 	public $sites_name;
 	public $exchanges_name;
 	public $size;
+	public $idname;
 
 	/**
 	 * @return string the associated database table name
@@ -170,6 +171,7 @@ class Placements extends CActiveRecord
 	{
 		$criteria = new CDbCriteria;
 		$criteria->compare("t.sites_id", $id);
+		$criteria->select = array('id','name','CONCAT_WS(" - ",id,name) AS idname');
 		
 		// return new CActiveDataProvider($this, array(
 		// 	'criteria'   =>$criteria,

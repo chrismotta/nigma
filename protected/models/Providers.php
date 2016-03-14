@@ -77,6 +77,8 @@
  */
 class Providers extends CActiveRecord
 {
+	public $idname;
+	
 	/**
 	 * @return string the associated database table name
 	 */

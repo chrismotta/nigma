@@ -14,7 +14,7 @@ $this->breadcrumbs=array(
 	?>
 
 <div class="alert alert-info">
-	<h4 class="line-bottom">Update Tag</h4>
+	<?php if($parent=='c') echo '<h4 class="line-bottom">Update Tag</h4>'; ?>
 
 <?php echo $this->renderPartial('_form',array(
 	'model'=>$model,
@@ -22,4 +22,5 @@ $this->breadcrumbs=array(
 	)); ?>
 
 </div>
-<?php echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>
+
+<?php if($parent=='c') echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>

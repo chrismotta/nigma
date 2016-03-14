@@ -59,6 +59,7 @@
                 array('label'=>'Create Daily Report', 'url'=>array('/dailyReport/createByProvider')),
                 array('label'=>'Reporting', 'url'=>array('/dailyReport/admin')),
                 array('label'=>'Campaigns', 'url'=>array('/campaigns/admin')),
+                array('label'=>'Tags', 'url'=>array('/tags/admin')),
                 array('label'=>'Traffic Log', 'url'=>array('/campaigns/traffic')),
                 array('label'=>'Vectors', 'url'=>array('/vectors/admin')),
                 array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution')),

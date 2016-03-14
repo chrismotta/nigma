@@ -16,6 +16,7 @@
 class Sites extends CActiveRecord
 {
 	public $publishers_name;
+	public $idname;
 
 	/**
 	 * @return string the associated database table name
