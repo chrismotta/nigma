@@ -26,6 +26,7 @@ class FilterManager
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
+				'media_buyer_admin',
 				'media_manager',
 				'bussiness',
 				'finance',
@@ -36,6 +37,7 @@ class FilterManager
 			'column' => 'ios.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'media_buyer_admin',
 				'media_manager',
 				'bussiness',
 				'finance',
@@ -45,6 +47,7 @@ class FilterManager
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
+				'media_buyer_admin',
 				'media_manager',
 				'sem',
 				'finance',
@@ -53,6 +56,7 @@ class FilterManager
 			'column' => 'ios.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'media_buyer_admin',
 				'media_manager',
 				'sem',
 				'finance',
@@ -61,6 +65,7 @@ class FilterManager
 			'column' => '',
 			'roles' => array(
 				'admin',
+				'media_buyer_admin',
 				'media_manager',
 			)),
 		'finance.clients' => array( 
