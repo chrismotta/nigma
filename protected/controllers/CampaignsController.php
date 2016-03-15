@@ -33,7 +33,7 @@ class CampaignsController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('admin'),
-				'roles'=>array('media_manager','media_manager_admin'),
+				'roles'=>array('media_buyer','media_buyer_admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','viewAjax','redirectAjax','admin', 'traffic','excelReport','graphicCampaign','trafficCampaignAjax','graphic','getProviders'),
