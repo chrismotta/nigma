@@ -28,7 +28,7 @@ class TagsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','response','adminByCampaign','getTag','getTxt','getSites','getPlacements','toggle','delete'),
-				'roles'=>array('admin', 'media_manager', 'external'),
+				'roles'=>array('admin', 'media_manager', 'external', 'media_buyer', 'media_buyer_admin'),
 				),
 			array('deny',  // deny all users
 				'users'=>array('*'),
