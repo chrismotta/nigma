@@ -50,7 +50,7 @@
 
     <?php echo $form->dropDownListRow($model,'connection_type',array("WIFI"=>"WIFI","3G"=>"3G",),array('class'=>'input-large','prompt'=>'Select Connection')); ?>
 
-    <?php echo $form->dropDownListRow($model,'device_type',array("Desktop"=>"Desktop","Mobile"=>"Mobile","Tablet"=>"Tablet",),array('class'=>'input-large','prompt'=>'Select Device Type')); ?>
+    <?php echo $form->dropDownListRow($model,'device_type',array("Desktop"=>"Desktop","Mobile"=>"Mobile","Tablet"=>"Tablet","Mobile+Tablet"=>"Mobile+Tablet",),array('class'=>'input-large','prompt'=>'Select Device Type')); ?>
 
     <?php echo $form->dropDownListRow($model,'os',array("Android"=>"Android","iOS"=>"iOS","Windows"=>"Windows","BlackBerry"=>"BlackBerry",),array('class'=>'input-large','prompt'=>'Select OS')); ?>
 
