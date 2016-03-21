@@ -19,7 +19,7 @@
         echo $form->dropDownListRow($model, 'banner_sizes_id', $bannerSizes, array('prompt' => 'Select a size')); ?>
 
 
-	<?php echo $form->textAreaRow(
+    <?php echo $form->textAreaRow(
         $model,
         'code',
         array('class' => 'span5', 'rows' => 5)
@@ -38,7 +38,7 @@
     }?>
     </div>
         
-	<?php echo $form->textAreaRow(
+    <?php echo $form->textAreaRow(
         $model,
         'comment',
         array('class' => 'span5', 'rows' => 3)
@@ -46,7 +46,9 @@
 
     <?php echo $form->textFieldRow($model, 'freq_cap',array('style'=>'width:50px')).' /24'; ?>
 
-    <?php echo $form->textFieldRow($model,'country',array('class'=>'span5','maxlength'=>2)); ?>
+    <?php 
+    $countries = GeoLocation::getCountryNames();
+    echo $form->dropDownListRow($model, 'country', $countries, array('prompt' => 'Select Country')); ?>
 
     <?php echo $form->dropDownListRow($model,'connection_type',array("WIFI"=>"WIFI","3G"=>"3G",),array('class'=>'input-large','prompt'=>'Select Connection')); ?>
 
