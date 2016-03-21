@@ -261,22 +261,22 @@ class ImpLog extends CActiveRecord
 			$orderBy[] = 'COUNT(distinct concat_ws(" ",server_ip,user_agent))';
 		}
 		if($sum['Revenue']){
-			$select[] = 'SUM(revenue) as revenue';
+			$select[] = 'FORMAT(SUM(revenue),2) as revenue';
 		}
 		if($sum['Spend']){
-			$select[] = 'SUM(cost) as spend';
+			$select[] = 'FORMAT(SUM(cost),2) as spend';
 			$orderBy[] = 'SUM(cost)';
 		}
 		if($sum['Profit']){
-			$select[] = 'SUM(revenue)-SUM(cost) as profit';
+			$select[] = 'FORMAT(SUM(revenue)-SUM(cost),2) as profit';
 			$orderBy[] = 'SUM(revenue)-SUM(cost)';
 		}
 		if($sum['Revenue_eCPM']){
-			$select[] = 'FORMAT(SUM(revenue) * 1000 / COUNT(t.id),3) as reCPM';
+			$select[] = 'FORMAT(SUM(revenue) * 1000 / COUNT(t.id),2) as reCPM';
 			$orderBy[] = 'SUM(revenue) * 1000 / COUNT(t.id)';
 		}
 		if($sum['Cost_eCPM']){
-			$select[] = 'FORMAT(SUM(cost) * 1000 / COUNT(t.id),3) as ceCPM';
+			$select[] = 'FORMAT(SUM(cost) * 1000 / COUNT(t.id),2) as ceCPM';
 			$orderBy[] = 'SUM(cost) * 1000 / COUNT(t.id)';
 		}
 
