@@ -5,23 +5,35 @@ class KHtml extends CHtml
 
     private static function getLabel($item){
         $attributeLabels = array(
-            'Date'          =>'Date', 
-            'TrafficSource' =>'Traffic Source', 
-            'Advertiser'    =>'Advertiser', 
-            'Country'       =>'Country', 
-            'Campaign'      =>'Campaign',
-            'Imp'           =>'Imp.', 
-            'Clicks'        =>'Clicks', 
-            'CTR'           =>'CTR %',
-            'Conv'          =>'Conv.', 
-            'CR'            =>'CR %',
-            'Rate'          =>'Rate', 
-            'Revenue'       =>'Revenue',
-            'Spend'         =>'Spend',
-            'Profit'        =>'Profit',
-            'eCPM'          =>'eCPM',
-            'eCPC'          =>'eCPC',
-            'eCPA'          =>'eCPA',
+            'Date'           =>'Date', 
+            'TrafficSource'  =>'Traffic Source', 
+            'Advertiser'     =>'Advertiser', 
+            'Country'        =>'Country', 
+            'Campaign'       =>'Campaign',
+            'Imp'            =>'Imp.', 
+            'Clicks'         =>'Clicks', 
+            'CTR'            =>'CTR %',
+            'Conv'           =>'Conv.', 
+            'CR'             =>'CR %',
+            'Rate'           =>'Rate', 
+            'Revenue'        =>'Revenue',
+            'Spend'          =>'Spend',
+            'Profit'         =>'Profit',
+            'eCPM'           =>'eCPM',
+            'eCPC'           =>'eCPC',
+            'eCPA'           =>'eCPA',
+            'DeviceType'     =>'Dev. Type',
+            'DeviceBrand'    =>'Dev. Brand',
+            'DeviceModel'    =>'Dev. Model',
+            'OS'             =>'OS',
+            'OSVersion'      =>'OS Ver.',
+            'Browser'        =>'Browser',
+            'BrowserVersion' =>'Browser Ver.',
+            'Imp'            =>'Impressions', 
+            'UniqueUsr'      =>'Unique Users', 
+            'UniqueRevenue'  =>'U. Revenue', 
+            'Revenue_eCPM'   =>'Revenue eCPM', 
+            'Cost_eCPM'      =>'Cost eCPM', 
             );
 
         if(isset($attributeLabels[$item])){
@@ -82,6 +94,37 @@ class KHtml extends CHtml
         $r .= '<span class="add-on"><i class="icon-calendar"></i></span>';
         $r .= '</div></label>';
         return $r;
+    }
+
+     public static function timePicker($name, $initialValue, $options = array(), $htmlOptions = array(), $append=null)
+    {
+        $defaultHtmlOptions = array(
+            // 'style' => 'width: 83px',
+            // 'class'=>'span2',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
+
+        $defaultOptions = array(
+            'autoclose'  => true,
+        );
+        $options = array_merge($defaultOptions, $options);
+
+        echo '<label><div class="input-append input-prepend">';
+        if(isset($append)) echo '<span class=" btn btn-info disabled" style="width:35px">'.$append.'</span>';
+
+        Yii::app()->controller->widget(
+            'bootstrap.widgets.TbTimePicker',
+            array(
+                'name' => $name,
+                'value' => $initialValue,
+                'htmlOptions' => $htmlOptions,
+                'options'     => $options,
+            )
+        );
+        
+        echo '</div></label>';
+        // return $r;
+
     }
 
     /**
@@ -587,7 +630,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterProvidersMulti($value, $providers=NULL, $htmlOptions = array(),$name)
+    public static function filterProvidersMulti($value, $providers=NULL, $htmlOptions = array(), $name)
     {
         $defaultHtmlOptions = array(
             'multiple' => 'multiple',
@@ -644,7 +687,7 @@ class KHtml extends CHtml
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
                     'placeholder' => 'All traffic sources',
-                    'width' => '20%',
+                    'width' => '40%',
                 ),
             )
         );
@@ -720,7 +763,7 @@ class KHtml extends CHtml
      * @param  $htmlOptions
      * @return html for dropdown
      */
-    public static function filterAdvertisersMulti($value, $accountManager=NULL, $htmlOptions = array(),$name)
+    public static function filterAdvertisersMulti($value, $accountManager=NULL, $htmlOptions = array(), $name)
     {
 
         $defaultHtmlOptions = array(
@@ -1021,18 +1064,20 @@ class KHtml extends CHtml
     }
 
     // custom filters
-    public static function groupFilter($controller, $items, $prefix, $title, $titleStyle=''){
+    public static function groupFilter($controller, $items, $prefix, $title, $titleStyle='', $size=null, $color=null, $stacked=false){
 
-        $buttons = array(
-            array(
-                'label' => $title, 
-                'disabled' => 'disabled', 
-                'type' => 'info',
-                'htmlOptions' => array(
-                    'style' => $titleStyle,
+        if(isset($title)){
+            $buttons = array(
+                array(
+                    'label' => $title, 
+                    'disabled' => 'disabled', 
+                    'type' => 'info',
+                    'htmlOptions' => array(
+                        'style' => $titleStyle,
+                        ),
                     ),
-                ),
-            );
+                );
+        }
 
         foreach ($items as $key => $value) {
             echo CHtml::hiddenField($prefix.'['.$key.']', $value, array('id'=>''.$prefix.'-'.$key));
@@ -1048,8 +1093,10 @@ class KHtml extends CHtml
         $controller->widget(
             'bootstrap.widgets.TbButtonGroup',
             array(
+                'stacked' => $stacked,
                 'toggle' => 'checkbox',
-                // 'type' => 'inverse',
+                'type' => $color,
+                'size' => $size,
                 'buttons' => $buttons,
             )
         );
@@ -1071,12 +1118,13 @@ class KHtml extends CHtml
         echo '</ul>';
 
     }
-    public static function pagination(){
+    public static function pagination($params=null){
         return array(
             'pageSize'=> Yii::app()->user->getState(
                 'pageSize',
                 Yii::app()->params['defaultPageSize']
                 ),
+            'params'=> $params,
             );
     }
     public static function paginationController(){

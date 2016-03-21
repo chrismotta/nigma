@@ -500,3 +500,21 @@ table .date-column {
 .response {
 	margin-bottom: 10px;
 }
+
+.form-sep {
+    margin: 15px 0;
+    border-bottom: 1px #CCC solid;
+    color: #AAA;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    min-height: 0px !important;
+}
+
+.multi-select {
+	width: 175px;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+	
