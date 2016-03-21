@@ -18,7 +18,6 @@
 
         echo $form->dropDownListRow($model, 'banner_sizes_id', $bannerSizes, array('prompt' => 'Select a size')); ?>
 
-	<?php echo $form->dropDownListRow($model,'type',array("iframe"=>"iframe","javascript"=>"javascript",),array('class'=>'input-large')); ?>
 
 	<?php echo $form->textAreaRow(
         $model,
@@ -44,6 +43,18 @@
         'comment',
         array('class' => 'span5', 'rows' => 3)
         ); ?>
+
+    <?php echo $form->textFieldRow($model, 'freq_cap',array('style'=>'width:50px')).' /24'; ?>
+
+    <?php echo $form->textFieldRow($model,'country',array('class'=>'span5','maxlength'=>2)); ?>
+
+    <?php echo $form->dropDownListRow($model,'connection_type',array("WIFI"=>"WIFI","3G"=>"3G",),array('class'=>'input-large','prompt'=>'Select Connection')); ?>
+
+    <?php echo $form->dropDownListRow($model,'device_type',array("Desktop"=>"Desktop","Mobile"=>"Mobile","Tablet"=>"Tablet",),array('class'=>'input-large','prompt'=>'Select Device Type')); ?>
+
+    <?php echo $form->dropDownListRow($model,'os',array("Android"=>"Android","iOS"=>"iOS","Windows"=>"Windows","BlackBerry"=>"BlackBerry",),array('class'=>'input-large','prompt'=>'Select OS')); ?>
+
+    <?php echo $form->textFieldRow($model,'os_version',array('class'=>'span5','maxlength'=>45)); ?>
 
     <?php echo $form->checkBoxRow($model, 'analyze'); ?>
 

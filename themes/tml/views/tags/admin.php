@@ -14,10 +14,17 @@ $this->breadcrumbs=array(
 			'id',
 			'campaigns_id',
 			'banner_sizes_id',
-			'type',
 			// 'code',
 			'comment',
-			// 'analyze',
+			array(
+				'name'=>'freq_cap',
+				'value'=>'isset($data->freq_cap) ? $data->freq_cap . " /24" : ""',
+				),
+			'country',
+			'connection_type',
+			'device_type',
+			'os',
+			'os_version',
 			array(
 	            'class' => 'bootstrap.widgets.TbToggleColumn',
 	            'toggleAction' => 'tags/toggle',
@@ -32,7 +39,7 @@ $this->breadcrumbs=array(
 				'icon'  => 'pencil',
 				'url'     => 'array("update", "id" => $data->id, "parent"=>"p")',
 				'options' => array(
-					"data-grid-id"      => "regitags-grid", 
+					"data-grid-id"      => "tags-grid", 
 					"data-modal-id"     => "modalTags", 
 					"data-modal-title"  => "Update Tag", 
 					'onclick'           => 'event.preventDefault(); openModal(this)',
@@ -43,7 +50,7 @@ $this->breadcrumbs=array(
 				'icon'  => 'eye-open',
 				'url'     => 'array("view", "id" => $data->id)',
 				'options' => array(
-					"data-grid-id"      => "regitags-grid", 
+					"data-grid-id"      => "tags-grid", 
 					"data-modal-id"     => "modalTags", 
 					"data-modal-title"  => "View Tag", 
 					'onclick'           => 'event.preventDefault(); openModal(this)',

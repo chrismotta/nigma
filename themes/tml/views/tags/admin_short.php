@@ -7,10 +7,12 @@
 		// 'campaigns_id',
 		// 'banner_sizes_id',
 		'size',
-		'type',
 		// 'code',
 		'comment',
-		// 'analyze',
+		array(
+			'name'=>'freq_cap',
+			'value'=>'isset($data->freq_cap) ? $data->freq_cap . " /24" : ""',
+		),
 		array(
             'class' => 'bootstrap.widgets.TbToggleColumn',
             'toggleAction' => 'tags/toggle',

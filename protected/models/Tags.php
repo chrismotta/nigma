@@ -7,10 +7,15 @@
  * @property integer $id
  * @property integer $campaigns_id
  * @property integer $banner_sizes_id
- * @property string $type
  * @property string $code
  * @property string $comment
  * @property integer $analyze
+ * @property integer $freq_cap
+ * @property string $country
+ * @property string $connection_type
+ * @property string $device_type
+ * @property string $os
+ * @property string $os_version
  *
  * The followings are the available model relations:
  * @property ImpLog[] $impLogs
@@ -37,14 +42,18 @@ class Tags extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('type', 'required'),
-			array('campaigns_id, banner_sizes_id, analyze', 'numerical', 'integerOnly'=>true),
-			array('type', 'length', 'max'=>10),
+			array('campaigns_id, banner_sizes_id, analyze, freq_cap', 'numerical', 'integerOnly'=>true),
 			array('code', 'length', 'max'=>255),
 			array('comment', 'length', 'max'=>128),
+			array('country', 'length', 'max'=>2),
+			array('connection_type', 'length', 'max'=>4),
+			array('device_type', 'length', 'max'=>7),
+			array('os', 'length', 'max'=>10),
+			array('os_version', 'length', 'max'=>45),
+			array('country, connection_type, device_type, os, os_version', 'default', 'setOnEmpty' => true, 'value' => null),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, banner_sizes_id, type, code, comment, analyze, size', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, banner_sizes_id, code, comment, analyze, freq_cap, size, country, connection_type, device_type, os, os_version', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -68,13 +77,18 @@ class Tags extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'campaigns_id' => 'Campaigns',
+			'id'              => 'ID',
+			'campaigns_id'    => 'Campaigns',
 			'banner_sizes_id' => 'Banner Sizes',
-			'type' => 'Type',
-			'code' => 'Code',
-			'comment' => 'Comment',
-			'analyze' => 'Analyze',
+			'code'            => 'Code',
+			'comment'         => 'Comment',
+			'analyze'         => 'Analyze',
+			'freq_cap'        => 'Frequency Cap',
+			'country'         => 'Country (ISO2)',
+			'connection_type'  => 'Connection Type',
+			'device_type'     => 'Device Type',
+			'os'              => 'OS',
+			'os_version'      => 'Min. OS Version',
 		);
 	}
 
@@ -99,10 +113,15 @@ class Tags extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
-		$criteria->compare('type',$this->type,true);
 		$criteria->compare('code',$this->code,true);
 		$criteria->compare('comment',$this->comment,true);
 		$criteria->compare('analyze',$this->analyze);
+		$criteria->compare('freq_cap',$this->freq_cap);
+		$criteria->compare('country',$this->country,true);
+		$criteria->compare('connection_type',$this->connection_type,true);
+		$criteria->compare('device_type',$this->device_type,true);
+		$criteria->compare('os',$this->os,true);
+		$criteria->compare('os_version',$this->os_version,true);
 
 		$criteria->with = array('bannerSizes');
 		$criteria->select = array(
