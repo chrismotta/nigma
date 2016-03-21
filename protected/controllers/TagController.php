@@ -79,7 +79,6 @@ class TagController extends Controller
 		$match_device = isset($imp->tags->device_type) ? $imp->device_type == $imp->tags->device_type || ($imp->device_type != 'Desktop' && $imp->tags->device_type == 'Mobile+Tablet') : true;
 		$match_os = isset($imp->tags->os) ? $imp->os == $imp->tags->os : true;
 		$match_version = isset($imp->tags->os_version) ? $imp->os_version >= $imp->tags->os_version : true;
-var_dump($match_device);
 
 		if( $match_country && $match_connection && $match_device && $match_os && $match_version ){
 			
