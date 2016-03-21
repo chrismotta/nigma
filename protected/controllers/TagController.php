@@ -61,14 +61,38 @@ class TagController extends Controller
 
 		$ip = isset($imp->ip_forwarded) ? $imp->ip_forwarded : $imp->server_ip;
 		if(isset($ip)){
-			$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
-			$location       = new IP2Location($binPath, IP2Location::FILE_IO);
-			$ipData         = $location->lookup($ip, IP2Location::ALL);
+			$binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+			$location     = new IP2Location($binPath, IP2Location::FILE_IO);
+			$ipData       = $location->lookup($ip, IP2Location::ALL);
 			$imp->country = $ipData->countryCode;
 			$imp->city    = $ipData->cityName;
 			$imp->carrier = $ipData->mobileCarrierName;
 		}
 
+
+		// revenue and cost
+		
+		// targeting
+		$match_country = isset($imp->tags->country) ? $imp->country == $imp->tags->country : true;
+		$conn_type = $imp->carrier=='-' || $imp->carrier=='' || $imp->carrier=='Invalid IPv4 address.' || $imp->carrier=='Invalid IPv6 address.' ? 'WIFI' : '3G';
+		$match_connection = isset($imp->tags->connection_type) ? $conn_type == $imp->tags->connection_type : true;
+		$match_device = isset($imp->tags->device_type) ? $imp->device_type == $imp->tags->device_type || ($imp->device_type != 'Desktop' && $imp->tags->device_type == 'Mobile+Tablet') : true;
+		$match_os = isset($imp->tags->os) ? $imp->os == $imp->tags->os : true;
+		$match_version = isset($imp->tags->os_version) ? $imp->os_version >= $imp->tags->os_version : true;
+var_dump($match_device);
+
+		if( $match_country && $match_connection && $match_device && $match_os && $match_version ){
+			
+			// frequency
+			$frequency = $imp->getFrequency();
+				
+			if($frequency < $imp->tags->freq_cap || $imp->tags->freq_cap == null){
+				$imp->revenue = $imp->tags->campaigns->opportunities->rate > 0 ? $imp->tags->campaigns->opportunities->rate /1000 : 0;
+				$imp->cost    = $imp->placements->rate > 0 ? $imp->placements->rate /1000 : 0;
+			}
+
+		}
+		
 
 		// log impression
 
