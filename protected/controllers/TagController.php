@@ -69,7 +69,7 @@ class TagController extends Controller
 			$imp->carrier = $ipData->mobileCarrierName;
 		}
 
-
+		/*
 		// revenue and cost
 		
 		// targeting
@@ -91,7 +91,7 @@ class TagController extends Controller
 			}
 
 		}
-		
+		*/
 
 		// log impression
 
