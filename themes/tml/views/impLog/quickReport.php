@@ -69,10 +69,13 @@ function build_table($array){
 }
 
 if(isset($data)) 
-	if($data)
-		echo build_table($data);
-	else
-		echo 'No data found';
+	if(is_array($data))
+		if($data)
+			echo build_table($data);
+		else 
+			echo 'No data found';
+	else if(is_string($data))
+		echo $data;
 ?>
 
 <br/>

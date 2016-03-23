@@ -56,52 +56,58 @@ class ImpLogController extends Controller
 
 		if($_POST){
 
-			$date = date("Y-m-d", strtotime($_POST['date']));
-			$tagid = $_POST['tagid'];
-			$cpm = $_POST['cpm'];
+			if($_POST['date'] && $_POST['tagid'] && $_POST['cpm']){
 
-			$tag = Tags::model()->findByPk($tagid);
-			
-			$select = array(
-				// 'DATE(date) AS date', 
-				'country', 
-				'device_type', 
-				'os', 
-				'os_version', 
-				'COUNT(id) AS imp',  
-				'IF(
-					country="'.$tag->country.'" AND 
-					device_type="'.$tag->device_type.'" AND 
-					os = "'.$tag->os.'" AND 
-					os_version >= "'.$tag->os_version.'" , 
-					COUNT(id)*'.$cpm.'/1000, 0 
-				) AS revenue',   
-				'COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
-				) AS unique_users',    
-				'IF( 
-					country="'.$tag->country.'" AND 
-					device_type="'.$tag->device_type.'" AND 
-					os = "'.$tag->os.'" AND 
-					os_version >= "'.$tag->os_version.'" ,  
-					COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*'.$cpm.'/1000, 0
-				) AS 1_24_revenue',
-				);   
-			$where = array(
-				'and',
-				'tags_id = '.$tagid,
-				'DATE(date) = "'.$date.'"',
-				); 
-			$group = array(
-				'country', 
-				'device_type', 
-				'os', 
-				'os_version',
-				);
+				$date = date("Y-m-d", strtotime($_POST['date']));
+				$tagid = $_POST['tagid'];
+				$cpm = $_POST['cpm'];
 
-			$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
+				$tag = Tags::model()->findByPk($tagid);
+				
+				$select = array(
+					// 'DATE(date) AS date', 
+					'country', 
+					'device_type', 
+					'os', 
+					'os_version', 
+					'COUNT(id) AS imp',  
+					'IF(
+						country="'.$tag->country.'" AND 
+						device_type="'.$tag->device_type.'" AND 
+						os = "'.$tag->os.'" AND 
+						os_version >= "'.$tag->os_version.'" , 
+						COUNT(id)*'.$cpm.'/1000, 0 
+					) AS revenue',   
+					'COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
+					) AS unique_users',    
+					'IF( 
+						country="'.$tag->country.'" AND 
+						device_type="'.$tag->device_type.'" AND 
+						os = "'.$tag->os.'" AND 
+						os_version >= "'.$tag->os_version.'" ,  
+						COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*'.$cpm.'/1000, 0
+					) AS 1_24_revenue',
+					);   
+				$where = array(
+					'and',
+					'tags_id = '.$tagid,
+					'DATE(date) = "'.$date.'"',
+					); 
+				$group = array(
+					'country', 
+					'device_type', 
+					'os', 
+					'os_version',
+					);
+
+				$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
+
+			}else{
+				$data = 'Empty fields.';
+			}				
 
 		}else{
-			$data=null;
+			$data = null;
 		}
 		
 		$this->render('quickReport', 
