@@ -56,8 +56,9 @@ class ImpLogController extends Controller
 
 		if($_POST){
 
-			$tagid = $_POST['tagid'];
 			$date = date("Y-m-d", strtotime($_POST['date']));
+			$tagid = $_POST['tagid'];
+			$cpm = $_POST['cpm'];
 
 			$tag = Tags::model()->findByPk($tagid);
 			
@@ -73,7 +74,7 @@ class ImpLogController extends Controller
 					device_type="'.$tag->device_type.'" AND 
 					os = "'.$tag->os.'" AND 
 					os_version >= "'.$tag->os_version.'" , 
-					COUNT(id)*0.5/1000, 0 
+					COUNT(id)*'.$cpm.'/1000, 0 
 				) AS revenue',   
 				'COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
 				) AS unique_users',    
@@ -82,7 +83,7 @@ class ImpLogController extends Controller
 					device_type="'.$tag->device_type.'" AND 
 					os = "'.$tag->os.'" AND 
 					os_version >= "'.$tag->os_version.'" ,  
-					COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*0.5/1000, 0
+					COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*'.$cpm.'/1000, 0
 				) AS 1_24_revenue',
 				);   
 			$where = array(

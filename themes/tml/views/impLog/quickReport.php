@@ -6,6 +6,8 @@ echo CHtml::beginForm('', 'POST', array(
 
 $date = isset($_REQUEST['date']) ? $_REQUEST['date'] : 'yesterday' ;
 $tagid = isset($_REQUEST['tagid']) ? $_REQUEST['tagid'] : '' ;
+$cpm = isset($_REQUEST['cpm']) ? $_REQUEST['cpm'] : '' ;
+
 echo KHtml::datePicker('date', $date, array(), array('style'=>'width:100px'), 'Date');
 
 echo "<span class='formfilter-space'></span>";
@@ -13,6 +15,13 @@ echo "<span class='formfilter-space'></span>";
 echo '<label><div class="input-append input-prepend">';
 echo '<span class=" btn btn-info disabled" style="width:35px">Tag ID</span>';
 echo CHtml::textField('tagid', $tagid, array('style'=>'width:100px'));
+echo '</div></label>';
+
+echo "<span class='formfilter-space'></span>";
+
+echo '<label><div class="input-append input-prepend">';
+echo '<span class=" btn btn-info disabled" style="width:35px">CPM $</span>';
+echo CHtml::textField('cpm', $cpm, array('style'=>'width:100px'));
 echo '</div></label>';
 
 echo "<span class='formfilter-space'></span>";
