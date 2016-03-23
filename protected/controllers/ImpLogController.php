@@ -27,8 +27,8 @@ class ImpLogController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index'),
-				'roles'=>array('admin', 'media_manager', 'external'),
+				'actions'=>array('index','quickReport'),
+				'roles'=>array('admin', 'media_buyer_manager', 'external'),
 				),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -50,6 +50,46 @@ class ImpLogController extends Controller
 			array(
 				'model'=>$model
 				));
+	}
+
+	public function actionQuickReport(){
+		
+		$select = array(
+			'DATE(date) AS date', 
+			'country', 
+			'device_type', 
+			'os', 
+			'os_version', 
+			'COUNT(id) AS imp',  
+			'IF(
+				country="CN" AND device_type="Mobile" AND os = "iOS" AND os_version >= 7 , 
+				COUNT(id)*0.5/1000,0) AS revenue,   
+				COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
+			) AS unique_users',    
+			'IF(
+				country="CN" AND device_type="Mobile" AND os = "iOS" AND os_version >= 7 , 
+				COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*0.5/1000,0
+			) AS unique_revenue ',
+			);   
+		$where = array(
+			'and',
+			'tags_id = 6',
+			'DATE(date) = SUBDATE(CURDATE(),1)',
+			); 
+		$group = array(
+			'country', 
+			'device_type', 
+			'os', 
+			'os_version',
+			);
+
+		$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
+
+		$this->render('quickReport', 
+			array(
+				'data'=>$data
+				));
+	
 	}
 
 	// Uncomment the following methods and override them if needed
