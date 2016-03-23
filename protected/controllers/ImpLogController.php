@@ -61,6 +61,7 @@ class ImpLogController extends Controller
 				$date = date("Y-m-d", strtotime($_POST['date']));
 				$tagid = $_POST['tagid'];
 				$cpm = $_POST['cpm'];
+				$pubid = isset($_POST['pubid']) ? $_POST['pubid'] : false;
 
 				$tag = Tags::model()->findByPk($tagid);
 				
@@ -87,7 +88,8 @@ class ImpLogController extends Controller
 						os_version >= "'.$tag->os_version.'" ,  
 						COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*'.$cpm.'/1000, 0
 					) AS 1_24_revenue',
-					);   
+					); 
+				if($pubid) $select[] = 'pubid';
 				$where = array(
 					'and',
 					'tags_id = '.$tagid,
@@ -99,6 +101,7 @@ class ImpLogController extends Controller
 					'os', 
 					'os_version',
 					);
+				if($pubid) $group[] = 'pubid';
 
 				$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
 

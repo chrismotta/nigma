@@ -13,7 +13,7 @@ echo KHtml::datePicker('date', $date, array(), array('style'=>'width:100px'), 'D
 echo "<span class='formfilter-space'></span>";
 
 echo '<label><div class="input-append input-prepend">';
-echo '<span class=" btn btn-info disabled" style="width:35px">Tag ID</span>';
+echo '<span class=" btn btn-info disabled" style="width:35px">TagID</span>';
 echo CHtml::textField('tagid', $tagid, array('style'=>'width:100px'));
 echo '</div></label>';
 
@@ -22,6 +22,15 @@ echo "<span class='formfilter-space'></span>";
 echo '<label><div class="input-append input-prepend">';
 echo '<span class=" btn btn-info disabled" style="width:35px">CPM $</span>';
 echo CHtml::textField('cpm', $cpm, array('style'=>'width:100px'));
+echo '</div></label>';
+
+echo "<span class='formfilter-space'></span>";
+
+echo '<label><div class="input-append input-prepend">';
+echo '<span class=" btn btn-info disabled" style="width:35px">PubID</span>';
+echo '<span class=" btn disabled" style="width:35px">';
+echo CHtml::checkBox('pubid', false);
+echo '</span>';
 echo '</div></label>';
 
 echo "<span class='formfilter-space'></span>";
