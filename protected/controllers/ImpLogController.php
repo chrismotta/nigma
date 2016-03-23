@@ -61,7 +61,7 @@ class ImpLogController extends Controller
 				$date = date("Y-m-d", strtotime($_POST['date']));
 				$tagid = $_POST['tagid'];
 				$cpm = $_POST['cpm'];
-				$pubid = isset($_POST['pubid']) ? $_POST['pubid'] : false;
+				$pubid = isset($_POST['pubid']) ? true : false;
 
 				$tag = Tags::model()->findByPk($tagid);
 				
@@ -90,11 +90,13 @@ class ImpLogController extends Controller
 					) AS 1_24_revenue',
 					); 
 				if($pubid) $select[] = 'pubid';
+
 				$where = array(
 					'and',
 					'tags_id = '.$tagid,
 					'DATE(date) = "'.$date.'"',
 					); 
+
 				$group = array(
 					'country', 
 					'device_type', 

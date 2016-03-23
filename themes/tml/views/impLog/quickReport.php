@@ -7,6 +7,7 @@ echo CHtml::beginForm('', 'POST', array(
 $date = isset($_REQUEST['date']) ? $_REQUEST['date'] : 'yesterday' ;
 $tagid = isset($_REQUEST['tagid']) ? $_REQUEST['tagid'] : '' ;
 $cpm = isset($_REQUEST['cpm']) ? $_REQUEST['cpm'] : '' ;
+$pubid = isset($_REQUEST['pubid']) ? $_REQUEST['pubid'] : '' ;
 
 echo KHtml::datePicker('date', $date, array(), array('style'=>'width:100px'), 'Date');
 
@@ -29,7 +30,7 @@ echo "<span class='formfilter-space'></span>";
 echo '<label><div class="input-append input-prepend">';
 echo '<span class=" btn btn-info disabled" style="width:35px">PubID</span>';
 echo '<span class=" btn disabled" style="width:35px">';
-echo CHtml::checkBox('pubid', false);
+echo CHtml::checkBox('pubid', $pubid);
 echo '</span>';
 echo '</div></label>';
 
