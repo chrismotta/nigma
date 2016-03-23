@@ -53,38 +53,56 @@ class ImpLogController extends Controller
 	}
 
 	public function actionQuickReport(){
+
+		if($_POST){
+
+			$tagid = $_POST['tagid'];
+			$date = date("Y-m-d", strtotime($_POST['date']));
+
+			$tag = Tags::model()->findByPk($tagid);
+			
+			$select = array(
+				// 'DATE(date) AS date', 
+				'country', 
+				'device_type', 
+				'os', 
+				'os_version', 
+				'COUNT(id) AS imp',  
+				'IF(
+					country="'.$tag->country.'" AND 
+					device_type="'.$tag->device_type.'" AND 
+					os = "'.$tag->os.'" AND 
+					os_version >= "'.$tag->os_version.'" , 
+					COUNT(id)*0.5/1000, 0 
+				) AS revenue',   
+				'COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
+				) AS unique_users',    
+				'IF( 
+					country="'.$tag->country.'" AND 
+					device_type="'.$tag->device_type.'" AND 
+					os = "'.$tag->os.'" AND 
+					os_version >= "'.$tag->os_version.'" ,  
+					COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*0.5/1000, 0
+				) AS 1_24_revenue',
+				);   
+			$where = array(
+				'and',
+				'tags_id = '.$tagid,
+				'DATE(date) = "'.$date.'"',
+				); 
+			$group = array(
+				'country', 
+				'device_type', 
+				'os', 
+				'os_version',
+				);
+
+			$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
+
+		}else{
+			$data=null;
+		}
 		
-		$select = array(
-			'DATE(date) AS date', 
-			'country', 
-			'device_type', 
-			'os', 
-			'os_version', 
-			'COUNT(id) AS imp',  
-			'IF(
-				country="CN" AND device_type="Mobile" AND os = "iOS" AND os_version >= 7 , 
-				COUNT(id)*0.5/1000,0) AS revenue,   
-				COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
-			) AS unique_users',    
-			'IF(
-				country="CN" AND device_type="Mobile" AND os = "iOS" AND os_version >= 7 , 
-				COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*0.5/1000,0
-			) AS unique_revenue ',
-			);   
-		$where = array(
-			'and',
-			'tags_id = 6',
-			'DATE(date) = SUBDATE(CURDATE(),1)',
-			); 
-		$group = array(
-			'country', 
-			'device_type', 
-			'os', 
-			'os_version',
-			);
-
-		$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
-
 		$this->render('quickReport', 
 			array(
 				'data'=>$data
