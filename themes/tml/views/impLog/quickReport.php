@@ -29,7 +29,7 @@ echo "<span class='formfilter-space'></span>";
 
 echo '<label><div class="input-append input-prepend">';
 echo '<span class=" btn btn-info disabled" style="width:35px">PubID</span>';
-echo '<span class=" btn disabled" style="width:35px">';
+echo '<span class=" add-on" style="width:35px">';
 echo CHtml::checkBox('pubid', $pubid, array('style'=>'vertical-align: top;'));
 echo '</span>';
 echo '</div></label>';
