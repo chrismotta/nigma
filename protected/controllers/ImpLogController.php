@@ -71,22 +71,22 @@ class ImpLogController extends Controller
 					'device_type', 
 					'os', 
 					'os_version', 
-					'COUNT(id) AS imp',  
+					'FORMAT( COUNT(id) ,0) AS imp',  
 					'IF(
 						country="'.$tag->country.'" AND 
 						device_type="'.$tag->device_type.'" AND 
 						os = "'.$tag->os.'" AND 
 						os_version >= "'.$tag->os_version.'" , 
-						COUNT(id)*'.$cpm.'/1000, 0 
+						FORMAT( COUNT(id)*'.$cpm.'/1000 ,2), 0 
 					) AS revenue',   
-					'COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)
-					) AS unique_users',    
+					'FORMAT( COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent)) ,0)
+					AS unique_users',    
 					'IF( 
 						country="'.$tag->country.'" AND 
 						device_type="'.$tag->device_type.'" AND 
 						os = "'.$tag->os.'" AND 
 						os_version >= "'.$tag->os_version.'" ,  
-						COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*'.$cpm.'/1000, 0
+						FORMAT( COUNT(DISTINCT CONCAT_WS(" ",server_ip,user_agent) )*'.$cpm.'/1000 ,2) , 0
 					) AS 1_24_revenue',
 					); 
 				if($pubid) $select[] = 'pubid';
@@ -106,6 +106,45 @@ class ImpLogController extends Controller
 				if($pubid) $group[] = 'pubid';
 
 				$data = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->group($group)->queryAll();
+				
+				$select = array(
+					'FORMAT( COUNT(id) ,0) AS imp',  
+					'FORMAT( COUNT( DISTINCT CONCAT_WS(" ",server_ip,user_agent) ) ,0)
+					AS unique_users', 
+					);
+				$where = array(
+					'and',
+					'tags_id = '.$tagid,
+					'DATE(date) = "'.$date.'"',
+					);
+				$totalImps = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->queryRow();
+
+				$select = array(
+					'FORMAT( COUNT(id) * '.$cpm.'/1000 ,2) AS revenue',   
+					'FORMAT( COUNT( DISTINCT CONCAT_WS(" ",server_ip,user_agent) ) * '.$cpm.'/1000 ,2)
+					AS 1_24_revenue',
+					); 
+				$where = array(
+					'and',
+					'tags_id = '.$tagid,
+					'DATE(date) = "'.$date.'"',
+					'country = "'.$tag->country.'"', 
+					'device_type = "'.$tag->device_type.'"', 
+					'os = "'.$tag->os.'"', 
+					'os_version >= "'.$tag->os_version.'"',  
+					);
+				$totalRev = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->queryRow();
+
+				$totals = array(
+					'',
+					'',
+					'',
+					'',
+					$totalImps['imp'],
+					$totalRev['revenue'],
+					$totalImps['unique_users'],
+					$totalRev['1_24_revenue'],
+					);
 
 			}else{
 				$data = 'Empty fields.';
@@ -117,7 +156,8 @@ class ImpLogController extends Controller
 		
 		$this->render('quickReport', 
 			array(
-				'data'=>$data
+				'data'=>$data,
+				'totals'=>$totals,
 				));
 	
 	}

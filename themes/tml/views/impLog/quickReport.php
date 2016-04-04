@@ -52,7 +52,7 @@ echo CHtml::endForm(); ?>
 
 <?php
 
-function build_table($array){
+function buildTable($array, $totals=null){
 
     // start table
     $html = '<table border="1" style="border: 1px solid black">';
@@ -72,6 +72,17 @@ function build_table($array){
         $html .= '</tr>';
     }
 
+    if(isset($totals)){
+        // totals row
+        // foreach( $array as $key=>$value){
+            $html .= '<tr>';
+            foreach($totals as $key=>$value){
+                $html .= '<th>' . $value . '</th>';
+            }
+            $html .= '</tr>';
+        // }
+    }
+
     // finish table and return it
 
     $html .= '</table>';
@@ -81,7 +92,7 @@ function build_table($array){
 if(isset($data)) 
 	if(is_array($data))
 		if($data)
-			echo build_table($data);
+			echo buildTable($data, $totals);
 		else 
 			echo 'No data found';
 	else if(is_string($data))
