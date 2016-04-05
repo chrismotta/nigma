@@ -4,12 +4,14 @@ echo CHtml::beginForm('', 'POST', array(
 	'class' =>'well form-search',
 	));
 
-$date = isset($_REQUEST['date']) ? $_REQUEST['date'] : 'yesterday' ;
+$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'yesterday' ;
+$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'yesterday' ;
 $tagid = isset($_REQUEST['tagid']) ? $_REQUEST['tagid'] : '' ;
 $cpm = isset($_REQUEST['cpm']) ? $_REQUEST['cpm'] : '' ;
 $pubid = isset($_REQUEST['pubid']) ? $_REQUEST['pubid'] : '' ;
 
-echo KHtml::datePicker('date', $date, array(), array('style'=>'width:100px'), 'Date');
+echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:100px'), 'From');
+echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:100px'), 'To');
 
 echo "<span class='formfilter-space'></span>";
 

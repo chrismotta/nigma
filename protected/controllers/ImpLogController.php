@@ -56,9 +56,10 @@ class ImpLogController extends Controller
 
 		if($_POST){
 
-			if($_POST['date'] && $_POST['tagid'] && $_POST['cpm']){
+			if($_POST['dateStart'] && $_POST['dateEnd'] && $_POST['tagid'] && $_POST['cpm']){
 
-				$date = date("Y-m-d", strtotime($_POST['date']));
+				$dateStart = date("Y-m-d", strtotime($_POST['dateStart']));
+				$dateEnd = date("Y-m-d", strtotime($_POST['dateEnd']));
 				$tagid = $_POST['tagid'];
 				$cpm = $_POST['cpm'];
 				$pubid = isset($_POST['pubid']) ? true : false;
@@ -94,7 +95,7 @@ class ImpLogController extends Controller
 				$where = array(
 					'and',
 					'tags_id = '.$tagid,
-					'DATE(date) = "'.$date.'"',
+					'DATE(date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"',
 					); 
 
 				$group = array(
@@ -115,7 +116,7 @@ class ImpLogController extends Controller
 				$where = array(
 					'and',
 					'tags_id = '.$tagid,
-					'DATE(date) = "'.$date.'"',
+					'DATE(date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"',
 					);
 				$totalImps = Yii::app()->db->createCommand()->select($select)->from('imp_log')->where($where)->queryRow();
 
@@ -127,7 +128,7 @@ class ImpLogController extends Controller
 				$where = array(
 					'and',
 					'tags_id = '.$tagid,
-					'DATE(date) = "'.$date.'"',
+					'DATE(date) BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"',
 					'country = "'.$tag->country.'"', 
 					'device_type = "'.$tag->device_type.'"', 
 					'os = "'.$tag->os.'"', 
