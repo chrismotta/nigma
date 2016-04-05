@@ -148,10 +148,12 @@ class ImpLogController extends Controller
 
 			}else{
 				$data = 'Empty fields.';
+				$totals = null;
 			}				
 
 		}else{
 			$data = null;
+			$totals = null;
 		}
 		
 		$this->render('quickReport', 
