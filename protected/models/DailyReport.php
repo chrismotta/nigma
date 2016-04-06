@@ -947,6 +947,10 @@ class DailyReport extends CActiveRecord
 						'asc'  =>'providers.name',
 						'desc' =>'providers.name DESC',
 		            ),
+		            'advertisers_name'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),
 		            'account_manager'=>array(
 						'asc'  =>'accountManager.name',
 						'desc' =>'accountManager.name DESC',
