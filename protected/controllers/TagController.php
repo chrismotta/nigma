@@ -2,17 +2,16 @@
 
 class TagController extends Controller
 {
-	public function actionTestIP(){
+	public function actionTestIP($hash=null){
+		echo 'IP: '.$hash;
 		echo '<hr/>';
 
-		$ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		$ip    = isset($hash) ? $hash : $_SERVER["REMOTE_ADDR"];
 		$binPath      = Yii::app()->params['ipDbFile'];
 		$location     = new IP2Location($binPath, IP2Location::FILE_IO);
 		$ipData       = $location->lookup($ip, IP2Location::ALL);
-		var_dump($ipData);
-
+		echo json_encode($ipData, JSON_PRETTY_PRINT);
 		echo '<hr/>';
-		echo $ipData->countryCode;
 	}
 
 	public function actionView($id){

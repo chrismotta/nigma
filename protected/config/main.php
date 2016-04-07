@@ -206,7 +206,7 @@ return array(
 				'<controller:dailyPublishers>/<action:totals>/<hash:\w+>' =>'<controller>/<action>',
 				'<controller:providers>/<action:admin>/<hash:\w+>'        =>'<controller>/<action>',
 				'<controller:providers>/<action:create>/<hash:\w+>'       =>'<controller>/<action>',
-				// '<controller:tag>/<action:js>/<hash:\w+>'                 =>'<controller>/<action>',
+				'<controller:tag>/<action:testIP>/<hash:\S+>'             =>'<controller>/<action>',
 				//'<controller:\w+>/<action:\w+>/<hash:\w+>/<id:\d+>'     =>'<controller>/<action>',
 			),
 		),
