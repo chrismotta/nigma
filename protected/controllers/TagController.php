@@ -3,10 +3,10 @@
 class TagController extends Controller
 {
 	public function actionTestIP($hash=null){
-		echo 'IP: '.$hash;
+		$ip    = isset($hash) ? $hash : $_SERVER["REMOTE_ADDR"];
+		echo 'IP: '.$ip;
 		echo '<hr/>';
 
-		$ip    = isset($hash) ? $hash : $_SERVER["REMOTE_ADDR"];
 		$binPath      = Yii::app()->params['ipDbFile'];
 		$location     = new IP2Location($binPath, IP2Location::FILE_IO);
 		$ipData       = $location->lookup($ip, IP2Location::ALL);
