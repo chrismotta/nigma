@@ -283,5 +283,6 @@ return array(
 		// this is used in contact page
 		'adminEmail'=>'info@themedialab.co',
 	    'defaultPageSize'=>50,
+		'ipDbFile'       => dirname(__FILE__).'/../data/ip2location/IP-COUNTRY-REGION-CITY-LATITUDE-LONGITUDE-ISP-DOMAIN-MOBILE.BIN',
 	),
 );
