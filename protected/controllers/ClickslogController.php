@@ -181,7 +181,8 @@ class ClickslogController extends Controller
 
 			$ip = isset($model->ip_forwarded) ? $model->ip_forwarded : $model->server_ip;
 			if(isset($ip)){
-				$binPath        = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+				// $binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+				$binPath        = Yii::app()->params['ipDbFile'];
 				$location       = new IP2Location($binPath, IP2Location::FILE_IO);
 				$ipData         = $location->lookup($ip, IP2Location::ALL);
 				//$model->country = $ipData->countryName;
@@ -378,7 +379,8 @@ class ClickslogController extends Controller
 
 		// initializing tools 
 		$wurfl    = WurflManager::loadWurfl();
-		$binPath  = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+		// $binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+		$binPath  = Yii::app()->params['ipDbFile'];
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		
 		echo 'total: '.count($iterator).'<hr/>';

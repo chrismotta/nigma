@@ -73,7 +73,8 @@ class TagController extends Controller
 
 		$ip = isset($imp->ip_forwarded) ? $imp->ip_forwarded : $imp->server_ip;
 		if(isset($ip)){
-			$binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+			// $binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
+			$binPath      = Yii::app()->params['ipDbFile'];
 			$location     = new IP2Location($binPath, IP2Location::FILE_IO);
 			$ipData       = $location->lookup($ip, IP2Location::ALL);
 			$imp->country = $ipData->countryCode;
