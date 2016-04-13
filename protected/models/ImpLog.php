@@ -61,7 +61,7 @@ class ImpLog extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('date', 'required'),
+			// array('date', 'required'),
 			array('tags_id, placements_id', 'numerical', 'integerOnly'=>true),
 			array('pubid, tid, ext_tid, server_ip, user_agent, languaje, ip_forwarded, country, city, carrier, browser, browser_version, device, device_model, os, os_version, app', 'length', 'max'=>255),
 			array('device_type', 'length', 'max'=>7),

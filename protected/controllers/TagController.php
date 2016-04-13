@@ -28,7 +28,7 @@ class TagController extends Controller
 		$imp = new ImpLog();
 		$imp->tags_id = $tag->id;
 		$imp->placements_id = $_GET['pid'];
-		$imp->date = new CDbExpression('NOW()');
+		$imp->date = null;//new CDbExpression('NOW()');
 
 
 		// pubid
@@ -41,13 +41,14 @@ class TagController extends Controller
 		$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
 		$imp->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
 		$imp->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-		$imp->languaje     = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
-		$imp->referer      = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
+		// $imp->languaje     = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : null;
+		// $imp->referer      = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
 		$imp->app          = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
 
 
 		// Get userAgent data
-
+		
+		/* performance upgrade
 		if(isset($imp->user_agent)){
 
 			$wurfl = WurflManager::loadWurfl();
@@ -67,10 +68,11 @@ class TagController extends Controller
 				$imp->device_type = 'Desktop';
 
 		}
-
+		*/
 
 		// Get ip data
 
+		/* performance upgrade
 		$ip = isset($imp->ip_forwarded) ? $imp->ip_forwarded : $imp->server_ip;
 		if(isset($ip)){
 			// $binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
@@ -81,6 +83,7 @@ class TagController extends Controller
 			$imp->city    = $ipData->cityName;
 			$imp->carrier = $ipData->mobileCarrierName;
 		}
+		*/
 
 		/*
 		// revenue and cost
