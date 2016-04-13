@@ -28,7 +28,7 @@ class TagController extends Controller
 		$imp = new ImpLog();
 		$imp->tags_id = $tag->id;
 		$imp->placements_id = $_GET['pid'];
-		$imp->date = null;//new CDbExpression('NOW()');
+		$imp->date = new CDbExpression('NOW()');
 
 
 		// pubid
