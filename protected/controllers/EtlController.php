@@ -33,7 +33,7 @@ class EtlController extends Controller
 		return array(
 			array('allow',
 				'actions'=>$actions,
-				'ips'=>array('54.88.85.63'),
+				'ips'=>array('52.91.118.99'),
 			),
 			array('allow', 
 				'actions'=>$actions,
