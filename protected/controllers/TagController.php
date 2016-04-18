@@ -127,6 +127,27 @@ class TagController extends Controller
 
 	}
 
+	public function actionJs($id){
+		
+		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
+		$width  = isset($_GET['width']) ? $_GET['width'] : null;
+		$height = isset($_GET['height']) ? $_GET['height'] : null;
+		$pubid  = isset($_GET['pubid']) ? $_GET['pubid'] : '';
+
+		if(isset($pid) && isset($width) && isset($height)){
+
+			echo 'document.write(\'<iframe src="http://bidbox.co/tag/'.$id.'?pid=&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
+
+		}else{
+
+			echo 'document.write(\'ERROR: Ad not setted properly\');';
+
+		}
+
+	}
+
+	/* DEPRECATED
+
 	public static function getUnfilledImp(){
 
 		return ImpLog::model()->findByAttributes(array(
@@ -184,24 +205,5 @@ class TagController extends Controller
 
 		}
 	}
-
-	public function actionJs($id){
-		
-		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
-		$width  = isset($_GET['width']) ? $_GET['width'] : null;
-		$height = isset($_GET['height']) ? $_GET['height'] : null;
-		$pubid  = isset($_GET['pubid']) ? $_GET['pubid'] : '';
-
-		if(isset($pid) && isset($width) && isset($height)){
-
-			echo 'document.write(\'<iframe src="http://bidbox.co/tag/'.$id.'?pid=&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
-
-		}else{
-
-			echo 'document.write(\'ERROR: Ad not setted properly\');';
-
-		}
-
-	}
-
+	*/
 }
