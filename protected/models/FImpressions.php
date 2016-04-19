@@ -17,7 +17,7 @@
  * @property string $referer_app
  *
  * The followings are the available model relations:
- * @property DBid[] $dBs
+ * @property DBid[] $dBid
  * @property DDemand $dDemand
  * @property DGeoLocation $dGeoLocation
  * @property DSupply $dSupply
@@ -25,6 +25,15 @@
  */
 class FImpressions extends CActiveRecord
 {
+	public $advertiser;
+	public $trafficSource;
+	public $connectionType;
+	public $country;
+	public $osType;
+	public $osVersion;
+	public $revenue;
+	public $cost;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -47,7 +56,7 @@ class FImpressions extends CActiveRecord
 			array('pubid, ip_forwarded, referer_url, referer_app', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, D_Demand_id, D_Supply_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id, pubid, ip_forwarded, referer_url, referer_app', 'safe', 'on'=>'search'),
+			array('id, D_Demand_id, D_Supply_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id, pubid, ip_forwarded, referer_url, referer_app, advertiser, trafficSource', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,11 +68,11 @@ class FImpressions extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'dBs' => array(self::HAS_MANY, 'DBid', 'F_Impressions_id'),
-			'dDemand' => array(self::BELONGS_TO, 'DDemand', 'D_Demand_id'),
+			'dBid'         => array(self::HAS_ONE, 'DBid', 'F_Impressions_id'),
+			'dDemand'      => array(self::BELONGS_TO, 'DDemand', 'D_Demand_id'),
 			'dGeoLocation' => array(self::BELONGS_TO, 'DGeoLocation', 'D_GeoLocation_id'),
-			'dSupply' => array(self::BELONGS_TO, 'DSupply', 'D_Supply_id'),
-			'dUserAgent' => array(self::BELONGS_TO, 'DUserAgent', 'D_UserAgent_id'),
+			'dSupply'      => array(self::BELONGS_TO, 'DSupply', 'D_Supply_id'),
+			'dUserAgent'   => array(self::BELONGS_TO, 'DUserAgent', 'D_UserAgent_id'),
 		);
 	}
 
@@ -73,17 +82,17 @@ class FImpressions extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'D_Demand_id' => 'D Demand',
-			'D_Supply_id' => 'D Supply',
+			'id'               => 'ID',
+			'D_Demand_id'      => 'D Demand',
+			'D_Supply_id'      => 'D Supply',
 			'D_GeoLocation_id' => 'D Geo Location',
-			'D_UserAgent_id' => 'D User Agent',
-			'date_time' => 'Date Time',
-			'unique_id' => 'Unique',
-			'pubid' => 'Pubid',
-			'ip_forwarded' => 'Ip Forwarded',
-			'referer_url' => 'Referer Url',
-			'referer_app' => 'Referer App',
+			'D_UserAgent_id'   => 'D User Agent',
+			'date_time'        => 'Date Time',
+			'unique_id'        => 'Unique',
+			'pubid'            => 'Pubid',
+			'ip_forwarded'     => 'Ip Forwarded',
+			'referer_url'      => 'Referer Url',
+			'referer_app'      => 'Referer App',
 		);
 	}
 
@@ -116,6 +125,26 @@ class FImpressions extends CActiveRecord
 		$criteria->compare('ip_forwarded',$this->ip_forwarded,true);
 		$criteria->compare('referer_url',$this->referer_url,true);
 		$criteria->compare('referer_app',$this->referer_app,true);
+
+		$criteria->with = array(
+			'dBid',
+			'dDemand',
+			'dGeoLocation',
+			'dSupply',
+			'dUserAgent',
+			);
+
+		$criteria->select = array(
+			'id',
+			'dDemand.advertiser as advertiser',
+			'dSupply.provider as trafficSource',
+			'dGeoLocation.connection_type as connectionType',
+			'dGeoLocation.country as country',
+			'dUserAgent.os_version as osVersion',
+			'dUserAgent.os_type as osType',
+			'FORMAT(dBid.revenue,4) as revenue',
+			'FORMAT(dBid.cost,4) as cost',
+			);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

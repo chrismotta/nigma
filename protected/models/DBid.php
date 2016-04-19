@@ -50,6 +50,7 @@ class DBid extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'fImpressions' => array(self::BELONGS_TO, 'FImpressions', 'F_Impressions_id'),
+			
 		);
 	}
 
