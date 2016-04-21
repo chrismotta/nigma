@@ -144,8 +144,8 @@ class FImpressions extends CActiveRecord
 			'dGeoLocation.country as country',
 			'dUserAgent.os_version as osVersion',
 			'dUserAgent.os_type as osType',
-			'FORMAT(dBid.revenue,4) as revenue',
-			'FORMAT(dBid.cost,4) as cost',
+			'FORMAT(SUM(dBid.revenue),4) as revenue',
+			'FORMAT(SUM(dBid.cost),4) as cost',
 			);
 
 		$criteria->group = implode(',',array(
