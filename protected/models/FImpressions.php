@@ -151,6 +151,8 @@ class FImpressions extends CActiveRecord
 		$criteria->group = implode(',',array(
 			'DATE(date_time)',
 			'dDemand.advertiser',
+			'dGeoLocation.connection_type',
+			'dGeoLocation.country',
 			));
 
 		return new CActiveDataProvider($this, array(
