@@ -7,6 +7,7 @@ $this->widget('application.components.NiExtendedGridView', array(
 	'type'            => 'condensed',
 	'template'        => '{items} {pagerExt} {summary}',
 	'columns'         => array(
+		'date',
 		'advertiser',
 		'trafficSource',
 		'connectionType',

@@ -25,6 +25,7 @@
  */
 class FImpressions extends CActiveRecord
 {
+	public $date;
 	public $advertiser;
 	public $trafficSource;
 	public $connectionType;
@@ -136,6 +137,7 @@ class FImpressions extends CActiveRecord
 
 		$criteria->select = array(
 			'id',
+			'DATE(date_time) as date',
 			'dDemand.advertiser as advertiser',
 			'dSupply.provider as trafficSource',
 			'dGeoLocation.connection_type as connectionType',
@@ -145,6 +147,11 @@ class FImpressions extends CActiveRecord
 			'FORMAT(dBid.revenue,4) as revenue',
 			'FORMAT(dBid.cost,4) as cost',
 			);
+
+		$criteria->group = implode(',',array(
+			'DATE(date_time)',
+			'dDemand.advertiser',
+			));
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
