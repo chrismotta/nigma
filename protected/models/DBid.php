@@ -8,8 +8,6 @@
  * @property string $revenue
  * @property string $cost
  * @property string $profit
- * @property string $r_eCPM
- * @property string $c_eCPM
  *
  * The followings are the available model relations:
  * @property FImpressions $fImpressions
@@ -34,10 +32,10 @@ class DBid extends CActiveRecord
 		return array(
 			array('F_Impressions_id', 'required'),
 			array('F_Impressions_id', 'numerical', 'integerOnly'=>true),
-			array('revenue, cost, profit, r_eCPM, c_eCPM', 'length', 'max'=>11),
+			array('revenue, cost, profit', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('F_Impressions_id, revenue, cost, profit, r_eCPM, c_eCPM', 'safe', 'on'=>'search'),
+			array('F_Impressions_id, revenue, cost, profit', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -50,7 +48,6 @@ class DBid extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'fImpressions' => array(self::BELONGS_TO, 'FImpressions', 'F_Impressions_id'),
-			
 		);
 	}
 
@@ -64,8 +61,6 @@ class DBid extends CActiveRecord
 			'revenue' => 'Revenue',
 			'cost' => 'Cost',
 			'profit' => 'Profit',
-			'r_eCPM' => 'R E Cpm',
-			'c_eCPM' => 'C E Cpm',
 		);
 	}
 
@@ -91,8 +86,6 @@ class DBid extends CActiveRecord
 		$criteria->compare('revenue',$this->revenue,true);
 		$criteria->compare('cost',$this->cost,true);
 		$criteria->compare('profit',$this->profit,true);
-		$criteria->compare('r_eCPM',$this->r_eCPM,true);
-		$criteria->compare('c_eCPM',$this->c_eCPM,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

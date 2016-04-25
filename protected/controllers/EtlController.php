@@ -233,8 +233,8 @@ class EtlController extends Controller
 		
 		$start = time();
 
-		$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost) 
-		SELECT i.id, d.rate/1000, s.rate/1000 
+		$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost, profit) 
+		SELECT i.id, d.rate/1000, s.rate/1000, d.rate/1000 - s.rate/1000 
 		FROM F_Impressions i  
 		LEFT JOIN D_Bid b         ON(i.id               = b.F_Impressions_id) 
 		LEFT JOIN D_Demand d      ON(i.D_Demand_id      = d.tag_id) 
@@ -266,8 +266,8 @@ class EtlController extends Controller
 	
 			$start = time();
 
-			$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost) 
-			SELECT i.id, d.rate/1000, s.rate/1000 
+			$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost, profit) 
+			SELECT i.id, d.rate/1000, s.rate/1000, d.rate/1000 - s.rate/1000  
 			FROM F_Impressions i  
 			LEFT JOIN D_Bid b    ON(i.id          = b.F_Impressions_id) 
 			LEFT JOIN D_Demand d ON(i.D_Demand_id = d.tag_id) 
@@ -322,5 +322,10 @@ class EtlController extends Controller
 
 
 	}
+
+	// public function actionBid(){
+
+	// 	$inicialStart = time();
+	// 	$total = 0;
 
 }
