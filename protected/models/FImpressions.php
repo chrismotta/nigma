@@ -25,15 +25,32 @@
  */
 class FImpressions extends CActiveRecord
 {
+	// group
 	public $date;
+	public $time;
 	public $advertiser;
+	public $tag;
 	public $trafficSource;
+	public $placement;
+	public $pubid;
 	public $connectionType;
 	public $country;
+	public $carrier;
+	public $deviceType;
+	public $deviceBrand;
+	public $deviceModel;
 	public $osType;
 	public $osVersion;
+	public $browserType;
+	public $browserVersion;
+	// sum
+	public $impressions;
+	public $uniqueUsr;
 	public $revenue;
 	public $cost;
+	public $profit;
+	public $revenue_eCPM;
+	public $cost_eCPM;
 
 	/**
 	 * @return string the associated database table name
@@ -113,19 +130,159 @@ class FImpressions extends CActiveRecord
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
+		$request = $_REQUEST;
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
-		$criteria->compare('D_Demand_id',$this->D_Demand_id);
-		$criteria->compare('D_Supply_id',$this->D_Supply_id);
-		$criteria->compare('D_GeoLocation_id',$this->D_GeoLocation_id);
-		$criteria->compare('D_UserAgent_id',$this->D_UserAgent_id);
-		$criteria->compare('date_time',$this->date_time,true);
-		$criteria->compare('unique_id',$this->unique_id,true);
-		$criteria->compare('pubid',$this->pubid,true);
-		$criteria->compare('ip_forwarded',$this->ip_forwarded,true);
-		$criteria->compare('referer_url',$this->referer_url,true);
-		$criteria->compare('referer_app',$this->referer_app,true);
+		// date  
+		
+		$dateStart = date('Y-m-d', strtotime($request['dateStart']));
+		$dateEnd = date('Y-m-d', strtotime($request['dateEnd']));
+		$criteria->addBetweenCondition('DATE(date_time)', $dateStart, $dateEnd, 'AND');
+
+		// time
+		
+		$timeStart = date('H:i:00', strtotime($request['timeStart']));
+		$timeEnd = date('H:i:59', strtotime($request['timeEnd']));
+		$criteria->addBetweenCondition('TIME(date_time)', $timeStart, $timeEnd, 'AND');
+
+		// 
+
+		$group  = $request['group'];
+		$sum    = $request['sum'];
+		// $filter = isset($request['filter']) ? $request['filter'] : null;
+
+		// $criteria->compare('id',$this->id);
+		// $criteria->compare('D_Demand_id',$this->D_Demand_id);
+		// $criteria->compare('D_Supply_id',$this->D_Supply_id);
+		// $criteria->compare('D_GeoLocation_id',$this->D_GeoLocation_id);
+		// $criteria->compare('D_UserAgent_id',$this->D_UserAgent_id);
+		// $criteria->compare('date_time',$this->date_time,true);
+		// $criteria->compare('unique_id',$this->unique_id,true);
+		// $criteria->compare('pubid',$this->pubid,true);
+		// $criteria->compare('ip_forwarded',$this->ip_forwarded,true);
+		// $criteria->compare('referer_url',$this->referer_url,true);
+		// $criteria->compare('referer_app',$this->referer_app,true);
+
+
+		// GROUP COLUMNS
+
+		if(isset($group['date']) && $group['date']){
+			$select[] = 'DATE(t.date_time) AS date';
+			$groupBy[] = 'DATE(t.date_time)';
+			$orderBy[] = 'DATE(t.date_time) DESC';
+		}
+		if(isset($group['time']) && $group['time']){
+			$select[] = 'TIME(t.date_time) AS time';
+			$groupBy[] = 'TIME(t.date_time)';
+			$orderBy[] = 'TIME(t.date_time)';
+		}
+		if(isset($group['advertiser']) && $group['advertiser']){
+			$select[] = 'dDemand.advertiser AS advertiser';
+			$groupBy[] = 'dDemand.advertiser';
+			$orderBy[] = 'dDemand.advertiser';
+		}
+		if(isset($group['tag']) && $group['tag']){
+			$select[] = 't.D_Demand_id AS tag';
+			$groupBy[] = 't.D_Demand_id';
+			$orderBy[] = 't.D_Demand_id';
+		}
+		if(isset($group['trafficSource']) && $group['trafficSource']){
+			$select[] = 'dSupply.provider AS trafficSource';
+			$groupBy[] = 'dSupply.provider';
+			$orderBy[] = 'dSupply.provider';
+		}
+		if(isset($group['placement']) && $group['placement']){
+			$select[] = 't.D_Supply_id AS placement';
+			$groupBy[] = 't.D_Supply_id';
+			$orderBy[] = 't.D_Supply_id';
+		}
+		if(isset($group['pubid']) && $group['pubid']){
+			$select[] = 't.pubid AS pubid';
+			$groupBy[] = 't.pubid';
+			$orderBy[] = 't.pubid';
+		}
+		if(isset($group['country']) && $group['country']){
+			$select[] = 'dGeoLocation.country AS country';
+			$groupBy[] = 'dGeoLocation.country';
+			$orderBy[] = 'dGeoLocation.country';
+		}
+		if(isset($group['connectionType']) && $group['connectionType']){
+			$select[] = 'dGeoLocation.connection_type AS connectionType';
+			$groupBy[] = 'dGeoLocation.connection_type';
+			$orderBy[] = 'dGeoLocation.connection_type';
+		}
+		if(isset($group['carrier']) && $group['carrier']){
+			$select[] = 'dGeoLocation.carrier AS carrier';
+			$groupBy[] = 't.carrier';
+			$orderBy[] = 't.carrier';
+		}
+		if(isset($group['deviceType']) && $group['deviceType']){
+			$select[] = 'dUserAgent.device_type AS deviceType';
+			$groupBy[] = 'dUserAgent.device_type';
+			$orderBy[] = 'dUserAgent.device_type';
+		}
+		if(isset($group['deviceBrand']) && $group['deviceBrand']){
+			$select[] = 'dUserAgent.device AS deviceBrand';
+			$groupBy[] = 'dUserAgent.device_brand';
+			$orderBy[] = 'dUserAgent.device_brand';
+		}
+		if(isset($group['deviceModel']) && $group['deviceModel']){
+			$select[] = 'dUserAgent.device_model AS deviceModel';
+			$groupBy[] = 'dUserAgent.device_model';
+			$orderBy[] = 'dUserAgent.device_model';
+		}
+		if(isset($group['osType']) && $group['osType']){
+			$select[] = 'dUserAgent.os_type AS osType';
+			$groupBy[] = 'dUserAgent.os_type';
+			$orderBy[] = 'dUserAgent.os_type';
+		}
+		if(isset($group['osVersion']) && $group['osVersion']){
+			$select[] = 'dUserAgent.os_version as osVersion';
+			$groupBy[] = 'dUserAgent.os_version';
+			$orderBy[] = 'dUserAgent.os_version';
+		}
+		if(isset($group['browserType']) && $group['browserType']){
+			$select[] = 'dUserAgent.browser_type AS browserType';
+			$groupBy[] = 'dUserAgent.browser_type';
+			$orderBy[] = 'dUserAgent.browser_type';
+		}
+		if(isset($group['browserVersion']) && $group['browserVersion']){
+			$select[] = 'dUserAgent.browser_version AS browserVersion';
+			$groupBy[] = 'dUserAgent.browser_version';
+			$orderBy[] = 'dUserAgent.browser_version';
+		}
+
+
+		// SUM COLUMN
+
+		if(isset($sum['impressions']) && $sum['impressions']){
+			$select[] = 'COUNT(t.id) AS impressions';
+			$orderBy[] = 'COUNT(t.id)';
+		}
+		if(isset($sum['uniqueUsr']) && $sum['uniqueUsr']){
+			$select[] = 'COUNT(distinct unique_id) as uniqueUsr';
+			$orderBy[] = 'COUNT(distinct unique_id))';
+		}
+		if(isset($sum['revenue']) && $sum['revenue']){
+			$select[] = 'FORMAT(SUM(revenue),2) as revenue';
+			$orderBy[] = 'SUM(revenue)';
+		}
+		if(isset($sum['cost']) && $sum['cost']){
+			$select[] = 'FORMAT(SUM(cost),2) as cost';
+			$orderBy[] = 'SUM(cost)';
+		}
+		if(isset($sum['profit']) && $sum['profit']){
+			$select[] = 'FORMAT(SUM(revenue)-SUM(cost),2) as profit';
+			$orderBy[] = 'SUM(revenue)-SUM(cost)';
+		}
+		if(isset($sum['revenue_eCPM']) && $sum['revenue_eCPM']){
+			$select[] = 'FORMAT(SUM(revenue) * 1000 / COUNT(t.id),2) as revenue_eCPM';
+			$orderBy[] = 'SUM(revenue) * 1000 / COUNT(t.id)';
+		}
+		if(isset($sum['cost_eCPM']) && $sum['cost_eCPM']){
+			$select[] = 'FORMAT(SUM(cost) * 1000 / COUNT(t.id),2) as cost_eCPM';
+			$orderBy[] = 'SUM(cost) * 1000 / COUNT(t.id)';
+		}
 
 		$criteria->with = array(
 			'dBid',
@@ -135,30 +292,22 @@ class FImpressions extends CActiveRecord
 			'dUserAgent',
 			);
 
-		$criteria->select = array(
-			'id',
-			'DATE(date_time) as date',
-			'dDemand.advertiser as advertiser',
-			'dSupply.provider as trafficSource',
-			'dGeoLocation.connection_type as connectionType',
-			'dGeoLocation.country as country',
-			'dUserAgent.os_version as osVersion',
-			'dUserAgent.os_type as osType',
-			'FORMAT(SUM(dBid.revenue),4) as revenue',
-			'FORMAT(SUM(dBid.cost),4) as cost',
-			);
-
-		$criteria->group = implode(',',array(
-			'DATE(date_time)',
-			'dDemand.advertiser',
-			'dGeoLocation.connection_type',
-			'dGeoLocation.country',
-			));
+		
+		if(isset($select)) $criteria->select = $select;
+		if(isset($groupBy)) $criteria->group  = implode(',', $groupBy);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=> KHtml::pagination(),
 		));
+	}
+
+	public function selectDistinct($column){
+		$criteria = new CDbCriteria;
+		$criteria->select = 'distinct '.$column;
+		$criteria->order = $column;
+		return CHtml::listData(
+	        self::model()->findAll($criteria), $column, $column);
 	}
 
 	/**
