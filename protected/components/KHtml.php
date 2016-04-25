@@ -687,7 +687,7 @@ class KHtml extends CHtml
                 'htmlOptions' => $htmlOptions,
                 'options'     => array(
                     'placeholder' => 'All traffic sources',
-                    'width' => '40%',
+                    'width' => '20%',
                 ),
             )
         );
