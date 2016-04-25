@@ -2,9 +2,9 @@
 
 // post data
 
-$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '5' ;
-$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'today -7 days' ;
-$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'yesterday';
+$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
+$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'today' ;
+$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'today';
 
 $space = "<span class='formfilter-space'></span>";
 
@@ -72,7 +72,7 @@ echo '</div>';
 
 // ----- Columns
 
-$groupColumns = array(
+$groupColumns1 = array(
 		'date'           =>1, 
 		'time'           =>0, 
 		'advertiser'     =>1, 
@@ -81,8 +81,11 @@ $groupColumns = array(
 		'placement'      =>0, 
 		'pubid'          =>0, 
 		// geo
+		'connectionType' =>0,
 		'country'        =>1, 
 		'carrier'        =>0,
+		);
+$groupColumns2 = array(
 		// user_agent
 		'deviceType'     =>1,
 		'deviceBrand'    =>0,
@@ -93,8 +96,10 @@ $groupColumns = array(
 		'browserVersion' =>0,
 		);
 
-if(isset($_REQUEST['group']))
-	$groupColumns = $_REQUEST['group'];
+if(isset($_REQUEST['group1']))
+	$groupColumns1 = $_REQUEST['group1'];
+if(isset($_REQUEST['group2']))
+	$groupColumns2 = $_REQUEST['group2'];
 
 $sumColumns = array(
 		'impressions'  =>1, 
@@ -118,11 +123,16 @@ echo '</div>';
 
 echo '<div class="row-fluid">';
 echo '<div class="span12">';
-
 echo '<div>';
-KHtml::groupFilter($this, $groupColumns, 'group', null, '', 'small', 'info', false);
+KHtml::groupFilter($this, $groupColumns1, 'group1', null, '', 'small', 'info', false);
 echo '</div>';
-
+echo '</div>';
+echo '</div>';
+echo '<div class="row-fluid">';
+echo '<div class="span12">';
+echo '<div>';
+KHtml::groupFilter($this, $groupColumns2, 'group2', null, '', 'small', 'info', false);
+echo '</div>';
 echo '</div>';
 echo '</div>';
 
@@ -325,12 +335,13 @@ echo '</div>';
 
 if(count($_REQUEST)>0){
 
+	/* JSON
 	echo '<div class="row-fluid" style="word-wrap: break-word;">';
 	echo '<hr>';
 	echo json_encode($_REQUEST);
 	echo '<hr>';
 	echo '</div>';
-
+	*/
 
 	$this->widget('application.components.NiExtendedGridView', array(
 		'id'              => 'imp-log-grid',
@@ -341,67 +352,71 @@ if(count($_REQUEST)>0){
 		'columns'         => array(
 			array(
 				'name' => 'date',
-				'visible' => $groupColumns['date'],
+				'visible' => $groupColumns1['date'],
 				),
 			array(
 				'name' => 'time',
-				'visible' => $groupColumns['time'],
+				'visible' => $groupColumns1['time'],
 				),
 			array(
 				'name' => 'advertiser',
-				'visible' => $groupColumns['advertiser'],
+				'visible' => $groupColumns1['advertiser'],
 				),
 			array(
 				'name' => 'tag',
-				'visible' => $groupColumns['tag'],
+				'visible' => $groupColumns1['tag'],
 				),
 			array(
 				'name' => 'trafficSource',
-				'visible' => $groupColumns['trafficSource'],
+				'visible' => $groupColumns1['trafficSource'],
 				),
 			array(
-				'name' => 'placements',
-				'visible' => $groupColumns['placement'],
+				'name' => 'placement',
+				'visible' => $groupColumns1['placement'],
 				),
 			array(
 				'name' => 'pubid',
-				'visible' => $groupColumns['pubid'],
+				'visible' => $groupColumns1['pubid'],
+				),
+			array(
+				'name' => 'connectionType',
+				'visible' => $groupColumns1['connectionType'],
 				),
 			array(
 				'name' => 'country',
-				'visible' => $groupColumns['country'],
+				'visible' => $groupColumns1['country'],
 				),
 			array(
 				'name' => 'carrier',
-				'visible' => $groupColumns['carrier'],
+				'visible' => $groupColumns1['carrier'],
 				),
 			array(
 				'name' => 'deviceType',
-				'visible' => $groupColumns['deviceType'],
+				'visible' => $groupColumns2['deviceType'],
 				),
 			array(
 				'name' => 'deviceBrand',
-				'visible' => $groupColumns['deviceBrand'],
+				'visible' => $groupColumns2['deviceBrand'],
 				),
 			array(
 				'name' => 'deviceModel',
-				'visible' => $groupColumns['deviceModel'],
+				'visible' => $groupColumns2['deviceModel'],
 				),
 			array(
 				'name' => 'osType',
-				'visible' => $groupColumns['osType'],
+				'visible' => $groupColumns2['osType'],
 				),
 			array(
 				'name' => 'osVersion',
-				'visible' => $groupColumns['osVersion'],
+				'visible' => $groupColumns2['osVersion'],
 				),
 			array(
 				'name' => 'browserType',
-				'visible' => $groupColumns['browserType'],
+				'visible' => $groupColumns2['browserType'],
 				),
 			array(
 				'name' => 'browserVersion',
-				'visible' => $groupColumns['browserVersion'],
+				'visible' => $groupColumns2['browserVersion'],
 				),
 			array(
 				'name' => 'impressions',

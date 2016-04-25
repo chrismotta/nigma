@@ -147,7 +147,7 @@ class FImpressions extends CActiveRecord
 
 		// 
 
-		$group  = $request['group'];
+		$group  = array_merge($request['group1'],$request['group2']);
 		$sum    = $request['sum'];
 		// $filter = isset($request['filter']) ? $request['filter'] : null;
 
@@ -172,9 +172,9 @@ class FImpressions extends CActiveRecord
 			$orderBy[] = 'DATE(t.date_time) DESC';
 		}
 		if(isset($group['time']) && $group['time']){
-			$select[] = 'TIME(t.date_time) AS time';
-			$groupBy[] = 'TIME(t.date_time)';
-			$orderBy[] = 'TIME(t.date_time)';
+			$select[] = 'HOUR(t.date_time) AS time';
+			$groupBy[] = 'HOUR(t.date_time)';
+			$orderBy[] = 'HOUR(t.date_time)';
 		}
 		if(isset($group['advertiser']) && $group['advertiser']){
 			$select[] = 'dDemand.advertiser AS advertiser';
