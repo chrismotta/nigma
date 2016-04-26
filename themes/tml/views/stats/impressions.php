@@ -77,21 +77,21 @@ $groupColumns1 = array(
 		'time'           =>0, 
 		'advertiser'     =>1, 
 		'tag'            =>0,
-		'trafficSource'  =>0,
+		'trafficSource'  =>1,
 		'placement'      =>0, 
 		'pubid'          =>0, 
 		// geo
 		'connectionType' =>0,
-		'country'        =>1, 
+		'country'        =>0, 
 		'carrier'        =>0,
 		);
 $groupColumns2 = array(
 		// user_agent
-		'deviceType'     =>1,
+		'deviceType'     =>0,
 		'deviceBrand'    =>0,
 		'deviceModel'    =>0,
-		'osType'         =>1,
-		'osVersion'      =>1,
+		'osType'         =>0,
+		'osVersion'      =>0,
 		'browserType'    =>0,
 		'browserVersion' =>0,
 		);
