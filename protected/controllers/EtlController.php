@@ -91,7 +91,7 @@ class EtlController extends Controller
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO D_Supply (placement_id, provider, site, rate) 
-		SELECT p.id, s.name, o.name, p.rate 
+		SELECT p.id, o.name, s.name, p.rate 
 		FROM placements p 
 		LEFT JOIN sites s     ON(p.sites_id     = s.id) 
 		LEFT JOIN providers o ON(s.providers_id = o.id)
