@@ -51,6 +51,7 @@ class FImpressions extends CActiveRecord
 	public $profit;
 	public $revenue_eCPM;
 	public $cost_eCPM;
+	public $profit_eCPM;
 
 	/**
 	 * @return string the associated database table name
@@ -260,28 +261,32 @@ class FImpressions extends CActiveRecord
 			$orderBy[] = 'COUNT(t.id)';
 		}
 		if(isset($sum['uniqueUsr']) && $sum['uniqueUsr']){
-			$select[] = 'COUNT(distinct unique_id) as uniqueUsr';
-			$orderBy[] = 'COUNT(distinct unique_id))';
+			$select[] = 'COUNT(distinct t.unique_id) as uniqueUsr';
+			$orderBy[] = 'COUNT(distinct t.unique_id))';
 		}
 		if(isset($sum['revenue']) && $sum['revenue']){
-			$select[] = 'FORMAT(SUM(revenue),2) as revenue';
-			$orderBy[] = 'SUM(revenue)';
+			$select[] = 'FORMAT(SUM(dBid.revenue),2) as revenue';
+			$orderBy[] = 'SUM(dBid.revenue)';
 		}
 		if(isset($sum['cost']) && $sum['cost']){
-			$select[] = 'FORMAT(SUM(cost),2) as cost';
-			$orderBy[] = 'SUM(cost)';
+			$select[] = 'FORMAT(SUM(dBid.cost),2) as cost';
+			$orderBy[] = 'SUM(dBid.cost)';
 		}
 		if(isset($sum['profit']) && $sum['profit']){
-			$select[] = 'FORMAT(SUM(revenue)-SUM(cost),2) as profit';
-			$orderBy[] = 'SUM(revenue)-SUM(cost)';
+			$select[] = 'FORMAT(SUM(dBid.revenue)-SUM(dBid.cost),2) as profit';
+			$orderBy[] = 'SUM(dBid.revenue)-SUM(dBid.cost)';
 		}
 		if(isset($sum['revenue_eCPM']) && $sum['revenue_eCPM']){
-			$select[] = 'FORMAT(SUM(revenue) * 1000 / COUNT(t.id),2) as revenue_eCPM';
-			$orderBy[] = 'SUM(revenue) * 1000 / COUNT(t.id)';
+			$select[] = 'FORMAT(SUM(dBid.revenue) * 1000 / COUNT(t.id),2) as revenue_eCPM';
+			$orderBy[] = 'SUM(dBid.revenue) * 1000 / COUNT(t.id)';
 		}
 		if(isset($sum['cost_eCPM']) && $sum['cost_eCPM']){
-			$select[] = 'FORMAT(SUM(cost) * 1000 / COUNT(t.id),2) as cost_eCPM';
-			$orderBy[] = 'SUM(cost) * 1000 / COUNT(t.id)';
+			$select[] = 'FORMAT(SUM(dBid.cost) * 1000 / COUNT(t.id),2) as cost_eCPM';
+			$orderBy[] = 'SUM(dBid.cost) * 1000 / COUNT(t.id)';
+		}
+		if(isset($sum['profit_eCPM']) && $sum['profit_eCPM']){
+			$select[] = 'FORMAT((SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id),2) as profit_eCPM';
+			$orderBy[] = '(SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id)';
 		}
 
 		$criteria->with = array(

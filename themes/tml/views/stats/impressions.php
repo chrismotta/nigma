@@ -109,6 +109,7 @@ $sumColumns = array(
 		'profit'       =>1, 
 		'revenue_eCPM' =>0, 
 		'cost_eCPM'    =>0, 
+		'profit_eCPM'  =>0, 
 		);
 
 if(isset($_REQUEST['sum']))
@@ -445,6 +446,10 @@ if(count($_REQUEST)>0){
 			array(
 				'name' => 'cost_eCPM',
 				'visible' => $sumColumns['cost_eCPM'],
+				),
+			array(
+				'name' => 'profit_eCPM',
+				'visible' => $sumColumns['profit_eCPM'],
 				),
 			)
 	));
