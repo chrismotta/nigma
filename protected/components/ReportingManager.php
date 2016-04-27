@@ -4,19 +4,20 @@ class ReportingManager
 {
 	private static function getLabel($item){
         $attributeLabels = array(
-            'advertiser'     => 'Advertiser', 
-            'trafficSource'  => 'Traffic Source', 
+            'advertiser'      => 'Advertiser', 
+            'provider'        => 'Traffic Source', 
             // geo
-            'country'        => 'Country', 
-            'carrier'        => 'Carrier',
+            'connection_type' => 'Con. Type', 
+            'country'         => 'Country', 
+            'carrier'         => 'Carrier',
             // user_agent
-            'deviceType'     => 'Dev. Type',
-            'deviceBrand'    => 'Dev. Brand',
-            'deviceModel'    => 'Dev. Model',
-            'os'             => 'OS',
-            'osVersion'      => 'OS Ver.',
-            'browser'        => 'Browser',
-            'browserVersion' => 'Browser Ver.',
+            'device_type'     => 'Dev. Type',
+            'device_brand'    => 'Dev. Brand',
+            'device_model'    => 'Dev. Model',
+            'os_type'         => 'OS Type',
+            'os_version'      => 'OS Version',
+            'browser_type'    => 'Browser Type',
+            'browser_version' => 'Browser Version',
             );
 
         if(isset($attributeLabels[$item])){
@@ -106,6 +107,24 @@ class ReportingManager
                     'htmlOptions' => $htmlOptions,
                 )
         	);
-    }    
+    } 
+
+    public static function dataMultiSelect($model, $column, $value=array()){
+
+        $criteria = new CDbCriteria;
+        $criteria->distinct = true;
+        $criteria->select = $column;
+        $criteria->order = $column;
+
+        $data = CHtml::listData(
+            $model::model()->findAll($criteria), $column, $column);
+
+        self::multiSelect(
+            array(
+                'name'        => $column,
+                'data'        => $data,
+                'value'       => $value,
+                ), array(), true);
+    }
 
 }

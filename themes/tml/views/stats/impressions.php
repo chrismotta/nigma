@@ -158,19 +158,20 @@ echo '</div>';
 // ----- Filters
 
 $filterColumns = array(
-		'advertiser'     =>0, 
-		'trafficSource'  =>0, 
+		'advertiser'      =>0, 
+		'provider'        =>0, 
 		// geo
-		'country'        =>0, 
-		'carrier'        =>0,
+		'connection_type' =>0, 
+		'country'         =>0, 
+		'carrier'         =>0,
 		// user_agent
-		'deviceType'     =>0,
-		'deviceBrand'    =>0,
-		'deviceModel'    =>0,
-		'osType'         =>0,
-		'osVersion'      =>0,
-		'browserType'    =>0,
-		'browserVersion' =>0,
+		'device_type'     =>0,
+		'device_brand'    =>0,
+		'device_model'    =>0,
+		'os_type'         =>0,
+		'os_version'      =>0,
+		'browser_type'    =>0,
+		'browser_version' =>0,
 		);
 
 echo '<div class="row-fluid">';
@@ -178,28 +179,45 @@ echo '<div class="form-sep span12">FILTERS</div>';
 echo '</div>';
 
 echo '<div class="row-fluid">';
-
-	echo '<div>';
-	ReportingManager::addFilter($this, $filterColumns, 'g', null, '', 'small', '', false);
-	echo '</div>';
-
+echo '<div>';
+ReportingManager::addFilter($this, $filterColumns, 'g', null, '', 'small', '', false);
+echo '</div>';
 echo '</div>';
 echo '<div class="row-fluid" id="filters-row">';
+
+
+$value = array();
+
+ReportingManager::dataMultiSelect(new DDemand(), 'advertiser');
+ReportingManager::dataMultiSelect(new DSupply(), 'provider');
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type');
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'country');
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'device_type');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'device_brand');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'device_model');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type');
+ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version');
+
+
+/*
+$criteria = new CDbCriteria;
+$criteria->distinct = true;
+$criteria->select = 'advertiser';
+$criteria->order = 'advertiser';
+
+$data = CHtml::listData(
+	DDemand::model()->findAll($criteria), 'advertiser', 'advertiser');
+ReportingManager::multiSelect(
+	array(
+        'name'        => 'advertiser',
+        'data'        => $data,
+        'value'       => $value,
+		), array(), true);
+
 /*	
-	$value = array();
-
-	$criteria = new CDbCriteria;
-	$criteria->order = 'name';
-	$criteria->compare('status', 'Active');
-	$data = CHtml::listData(
-        Advertisers::model()->findAll($criteria), 'id', 'name');
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'advertiser',
-            'data'        => $data,
-            'value'       => $value,
-			), array(), true);
-
 
 	$criteria = new CDbCriteria;
 	$criteria->order = 'name';
@@ -285,10 +303,10 @@ echo '<div class="row-fluid" id="filters-row">';
             'data'        => $model->selectDistinct('browser_version'),
             'value'       => $value,
 			), array(), true);
+*/
 
 	// hide all .multi-select-hide
 	Yii::app()->clientScript->registerScript('hide', '$(".multi-select-hide").hide();', 4);
-*/
 echo '</div>';
 
 
