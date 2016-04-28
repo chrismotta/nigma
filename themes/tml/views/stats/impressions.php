@@ -1,5 +1,4 @@
 <?php 
-
 // post data
 
 $dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
@@ -74,26 +73,27 @@ echo '</div>';
 
 $groupColumns1 = array(
 		'date'           =>1, 
-		'time'           =>0, 
+		'hour'           =>0, 
 		'advertiser'     =>1, 
+		'campaign'       =>0, 
 		'tag'            =>0,
-		'trafficSource'  =>1,
+		'provider'       =>1,
 		'placement'      =>0, 
 		'pubid'          =>0, 
 		// geo
-		'connectionType' =>0,
+		'connection_type' =>0,
 		'country'        =>0, 
 		'carrier'        =>0,
 		);
 $groupColumns2 = array(
 		// user_agent
-		'deviceType'     =>0,
-		'deviceBrand'    =>0,
-		'deviceModel'    =>0,
-		'osType'         =>0,
-		'osVersion'      =>0,
-		'browserType'    =>0,
-		'browserVersion' =>0,
+		'device_type'     =>0,
+		'device_brand'    =>0,
+		'device_model'    =>0,
+		'os_type'         =>0,
+		'os_version'      =>0,
+		'browser_type'    =>0,
+		'browser_version' =>0,
 		);
 
 if(isset($_REQUEST['group1']))
@@ -103,7 +103,7 @@ if(isset($_REQUEST['group2']))
 
 $sumColumns = array(
 		'impressions'  =>1, 
-		'uniqueUsr'    =>1, 
+		'unique_user'  =>1, 
 		'revenue'      =>1, 
 		'cost'         =>1, 
 		'profit'       =>1, 
@@ -125,14 +125,14 @@ echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="span12">';
 echo '<div>';
-KHtml::groupFilter($this, $groupColumns1, 'group1', null, '', 'small', 'info', false);
+ReportingManager::groupFilter($this, $groupColumns1, 'group1', null, '', 'small', 'info', false);
 echo '</div>';
 echo '</div>';
 echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="span12">';
 echo '<div>';
-KHtml::groupFilter($this, $groupColumns2, 'group2', null, '', 'small', 'info', false);
+ReportingManager::groupFilter($this, $groupColumns2, 'group2', null, '', 'small', 'info', false);
 echo '</div>';
 echo '</div>';
 echo '</div>';
@@ -148,7 +148,7 @@ echo '<div class="row-fluid">';
 echo '<div class="span12">';
 
 echo '<div>';
-KHtml::groupFilter($this, $sumColumns, 'sum', null, '', 'small', 'inverse', false);
+ReportingManager::groupFilter($this, $sumColumns, 'sum', null, '', 'small', 'inverse', false);
 echo '</div>';
 
 echo '</div>';
@@ -159,7 +159,10 @@ echo '</div>';
 
 $filterColumns = array(
 		'advertiser'      =>0, 
+		'campaign'        =>0, 
+		'tag'             =>0, 
 		'provider'        =>0, 
+		'placement'       =>0, 
 		// geo
 		'connection_type' =>0, 
 		'country'         =>0, 
@@ -201,112 +204,9 @@ ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version');
 ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type');
 ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version');
 
+// hide all .multi-select-hide
+Yii::app()->clientScript->registerScript('hide', '$(".multi-select-hide").hide();', 4);
 
-/*
-$criteria = new CDbCriteria;
-$criteria->distinct = true;
-$criteria->select = 'advertiser';
-$criteria->order = 'advertiser';
-
-$data = CHtml::listData(
-	DDemand::model()->findAll($criteria), 'advertiser', 'advertiser');
-ReportingManager::multiSelect(
-	array(
-        'name'        => 'advertiser',
-        'data'        => $data,
-        'value'       => $value,
-		), array(), true);
-
-/*	
-
-	$criteria = new CDbCriteria;
-	$criteria->order = 'name';
-	$criteria->compare('status', 'Active');
-	$data = CHtml::listData(
-        Providers::model()->findAll($criteria), 'id', 'name');
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'trafficSource',
-            'data'        => $data,
-            'value'       => $value,
-			), array(), true);
-
-
-	$criteria = new CDbCriteria;
-	$criteria->order = 'name';
-	$criteria->compare('type', 'Country');
-	$data = CHtml::listData(
-        GeoLocation::model()->findAll($criteria), 'ISO2', 'name');
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'country',
-            'data'        => $data,
-            'value'       => $value,
-			), array(), true);
-
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'carrier',
-            'data'        => $model->selectDistinct('carrier'),
-            'value'       => $value,
-			), array(), true);
-
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'deviceType',
-            'data'        => $model->selectDistinct('device_type'),
-            'value'       => $value,
-			), array(), true);
-
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'deviceBrand',
-            'data'        => $model->selectDistinct('device'),
-            'value'       => $value,
-			), array(), true);
-
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'deviceModel',
-            'data'        => $model->selectDistinct('device_model'),
-            'value'       => $value,
-			), array(), true);
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'os',
-            'data'        => $model->selectDistinct('os'),
-            'value'       => $value,
-			), array(), true);
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'osVersion',
-            'data'        => $model->selectDistinct('os_version'),
-            'value'       => $value,
-			), array(), true);
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'browser',
-            'data'        => $model->selectDistinct('browser'),
-            'value'       => $value,
-			), array(), true);
-
-	ReportingManager::multiSelect(
-		array(
-            'name'        => 'browserVersion',
-            'data'        => $model->selectDistinct('browser_version'),
-            'value'       => $value,
-			), array(), true);
-*/
-
-	// hide all .multi-select-hide
-	Yii::app()->clientScript->registerScript('hide', '$(".multi-select-hide").hide();', 4);
 echo '</div>';
 
 
@@ -350,6 +250,9 @@ echo '</div>';
 echo CHtml::endForm();
 // $this->endWidget(); 
 
+// echo Yii::app()->localtime->localNow;
+
+
 echo '</div>';
 
 if(count($_REQUEST)>0){
@@ -374,20 +277,24 @@ if(count($_REQUEST)>0){
 				'visible' => $groupColumns1['date'],
 				),
 			array(
-				'name' => 'time',
-				'visible' => $groupColumns1['time'],
+				'name' => 'hour',
+				'visible' => $groupColumns1['hour'],
 				),
 			array(
 				'name' => 'advertiser',
 				'visible' => $groupColumns1['advertiser'],
 				),
 			array(
+				'name' => 'campaign',
+				'visible' => $groupColumns1['campaign'],
+				),
+			array(
 				'name' => 'tag',
 				'visible' => $groupColumns1['tag'],
 				),
 			array(
-				'name' => 'trafficSource',
-				'visible' => $groupColumns1['trafficSource'],
+				'name' => 'provider',
+				'visible' => $groupColumns1['provider'],
 				),
 			array(
 				'name' => 'placement',
@@ -398,8 +305,8 @@ if(count($_REQUEST)>0){
 				'visible' => $groupColumns1['pubid'],
 				),
 			array(
-				'name' => 'connectionType',
-				'visible' => $groupColumns1['connectionType'],
+				'name' => 'connection_type',
+				'visible' => $groupColumns1['connection_type'],
 				),
 			array(
 				'name' => 'country',
@@ -410,40 +317,40 @@ if(count($_REQUEST)>0){
 				'visible' => $groupColumns1['carrier'],
 				),
 			array(
-				'name' => 'deviceType',
-				'visible' => $groupColumns2['deviceType'],
+				'name' => 'device_type',
+				'visible' => $groupColumns2['device_type'],
 				),
 			array(
-				'name' => 'deviceBrand',
-				'visible' => $groupColumns2['deviceBrand'],
+				'name' => 'device_brand',
+				'visible' => $groupColumns2['device_brand'],
 				),
 			array(
-				'name' => 'deviceModel',
-				'visible' => $groupColumns2['deviceModel'],
+				'name' => 'device_model',
+				'visible' => $groupColumns2['device_model'],
 				),
 			array(
-				'name' => 'osType',
-				'visible' => $groupColumns2['osType'],
+				'name' => 'os_type',
+				'visible' => $groupColumns2['os_type'],
 				),
 			array(
-				'name' => 'osVersion',
-				'visible' => $groupColumns2['osVersion'],
+				'name' => 'os_version',
+				'visible' => $groupColumns2['os_version'],
 				),
 			array(
-				'name' => 'browserType',
-				'visible' => $groupColumns2['browserType'],
+				'name' => 'browser_type',
+				'visible' => $groupColumns2['browser_type'],
 				),
 			array(
-				'name' => 'browserVersion',
-				'visible' => $groupColumns2['browserVersion'],
+				'name' => 'browser_version',
+				'visible' => $groupColumns2['browser_version'],
 				),
 			array(
 				'name' => 'impressions',
 				'visible' => $sumColumns['impressions'],
 				),
 			array(
-				'name' => 'uniqueUsr',
-				'visible' => $sumColumns['uniqueUsr'],
+				'name' => 'unique_user',
+				'visible' => $sumColumns['unique_user'],
 				),
 			array(
 				'name' => 'revenue',

@@ -11,8 +11,8 @@ class StatsController extends Controller
 		KHtml::paginationController();
 		
 		$model = new FImpressions('search');
+		$model->unsetAttributes();
 		
-		// $model->unsetAttributes();
 		// if(isset($_POST['ImpLog']))
 		// 	$model->attributes=$_POST['ImpLog'];
 

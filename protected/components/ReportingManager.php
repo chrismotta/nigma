@@ -4,20 +4,36 @@ class ReportingManager
 {
 	private static function getLabel($item){
         $attributeLabels = array(
+            'date'            => 'Date',
+            'hour'            => 'Hour',
+            'pubid'           => 'Pub ID',
+            // suplly demand
             'advertiser'      => 'Advertiser', 
-            'provider'        => 'Traffic Source', 
+            'provider'        => 'Publisher', 
+            'campaign'        => 'Campaign', 
+            'tag'             => 'Tag', 
+            'placement'       => 'Placement', 
             // geo
-            'connection_type' => 'Con. Type', 
+            'connection_type' => 'Connection Type', 
             'country'         => 'Country', 
             'carrier'         => 'Carrier',
             // user_agent
-            'device_type'     => 'Dev. Type',
-            'device_brand'    => 'Dev. Brand',
-            'device_model'    => 'Dev. Model',
-            'os_type'         => 'OS Type',
+            'device_type'     => 'Device Type',
+            'device_brand'    => 'Device Brand',
+            'device_model'    => 'Device Model',
+            'os_type'         => 'OS',
             'os_version'      => 'OS Version',
-            'browser_type'    => 'Browser Type',
+            'browser_type'    => 'Browser',
             'browser_version' => 'Browser Version',
+            // sums
+            'impressions'     => 'Impressions',
+            'unique_user'     => 'Unique Users', 
+            'revenue'         => 'Revenue', 
+            'cost'            => 'Cost', 
+            'profit'          => 'Profit', 
+            'revenue_eCPM'    => 'ReCPM', 
+            'cost_eCPM'       => 'CeCPM', 
+            'profit_eCPM'     => 'PeCPM', 
             );
 
         if(isset($attributeLabels[$item])){
@@ -125,6 +141,44 @@ class ReportingManager
                 'data'        => $data,
                 'value'       => $value,
                 ), array(), true);
+    }
+
+    public static function groupFilter($controller, $items, $prefix, $title, $titleStyle='', $size=null, $color=null, $stacked=false){
+
+        if(isset($title)){
+            $buttons = array(
+                array(
+                    'label' => $title, 
+                    'disabled' => 'disabled', 
+                    'type' => 'info',
+                    'htmlOptions' => array(
+                        'style' => $titleStyle,
+                        ),
+                    ),
+                );
+        }
+
+        foreach ($items as $key => $value) {
+            echo CHtml::hiddenField($prefix.'['.$key.']', $value, array('id'=>''.$prefix.'-'.$key));
+            $buttons[] = array(
+                'label' => self::getLabel($key), 
+                'active'=> $value, 
+                'htmlOptions' => array(
+                    'onclick' => '$("#'.$prefix.'-'.$key.'").val( 1 - $("#'.$prefix.'-'.$key.'").val() );',
+                    ),
+                );
+        }
+
+        $controller->widget(
+            'bootstrap.widgets.TbButtonGroup',
+            array(
+                'stacked' => $stacked,
+                'toggle' => 'checkbox',
+                'type' => $color,
+                'size' => $size,
+                'buttons' => $buttons,
+            )
+        );
     }
 
 }
