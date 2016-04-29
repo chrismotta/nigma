@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '-1');
 
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/../../yii/framework/yii.php';
