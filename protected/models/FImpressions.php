@@ -198,8 +198,9 @@ class FImpressions extends CActiveRecord
 		// $criteria->compare('referer_app',$this->referer_app,true);
 
 
-		// GROUP COLUMNS
+		// querys
 		$selectQuerys = array(
+			// group
 			'date'            => 'DATE(t.date_time)',
 			'hour'            => 'HOUR(t.date_time)',
 			'advertiser'      => 'dDemand.advertiser',
@@ -218,6 +219,7 @@ class FImpressions extends CActiveRecord
 			'os_version'      => 'dUserAgent.os_version',
 			'browser_type'    => 'dUserAgent.browser_type',
 			'browser_version' => 'dUserAgent.browser_version',
+			// sum
 			'impressions'     => 'COUNT(t.id)',
 			'unique_user'     => 'COUNT(distinct t.unique_id)',
 			'revenue'         => 'SUM(dBid.revenue)',
@@ -229,7 +231,7 @@ class FImpressions extends CActiveRecord
 			);
 		$decimalColumns = array(
 			'impressions'     => '0',
-			'unique_user'     => '0)',
+			'unique_user'     => '0',
 			'revenue'         => '2',
 			'cost'            => '2',
 			'profit'          => '2',
