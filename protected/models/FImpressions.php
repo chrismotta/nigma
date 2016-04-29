@@ -218,14 +218,24 @@ class FImpressions extends CActiveRecord
 			'os_version'      => 'dUserAgent.os_version',
 			'browser_type'    => 'dUserAgent.browser_type',
 			'browser_version' => 'dUserAgent.browser_version',
-			'impressions'     => 'FORMAT(COUNT(t.id),0)',
-			'unique_user'     => 'FORMAT(COUNT(distinct t.unique_id),0)',
-			'revenue'         => 'FORMAT(SUM(dBid.revenue),2)',
-			'cost'            => 'FORMAT(SUM(dBid.cost),2)',
-			'profit'          => 'FORMAT(SUM(dBid.revenue)-SUM(dBid.cost),2)',
-			'revenue_eCPM'    => 'FORMAT(SUM(dBid.revenue) * 1000 / COUNT(t.id),2)',
-			'cost_eCPM'       => 'FORMAT(SUM(dBid.cost) * 1000 / COUNT(t.id),2)',
-			'profit_eCPM'     => 'FORMAT((SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id),2)',
+			'impressions'     => 'COUNT(t.id)',
+			'unique_user'     => 'COUNT(distinct t.unique_id)',
+			'revenue'         => 'SUM(dBid.revenue)',
+			'cost'            => 'SUM(dBid.cost)',
+			'profit'          => 'SUM(dBid.revenue)-SUM(dBid.cost)',
+			'revenue_eCPM'    => 'SUM(dBid.revenue) * 1000 / COUNT(t.id)',
+			'cost_eCPM'       => 'SUM(dBid.cost) * 1000 / COUNT(t.id)',
+			'profit_eCPM'     => '(SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id)',
+			);
+		$decimalColumns = array(
+			'impressions'     => '0',
+			'unique_user'     => '0)',
+			'revenue'         => '2',
+			'cost'            => '2',
+			'profit'          => '2',
+			'revenue_eCPM'    => '2',
+			'cost_eCPM'       => '2',
+			'profit_eCPM'	  => '2',
 			);
 
 		$select  = array();
@@ -258,8 +268,8 @@ class FImpressions extends CActiveRecord
 		foreach ($sum as $col => $val) {
 			if($val){
 				$sel       = $selectQuerys[$col];
-				
-				$select[]  = $sel.' AS '.$col;
+				$dec       = $decimalColumns[$col];
+				$select[]  = 'FORMAT('.$sel.','.$dec.') AS '.$col;
 				$orderBy[] = $sel;
 
 				$sort[$col] = array(
