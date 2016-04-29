@@ -8,6 +8,7 @@ class StatsController extends Controller
 
 	public function actionImpressions()
 	{
+
 		KHtml::paginationController();
 		
 		$model = new FImpressions('search');

@@ -1,4 +1,5 @@
 <?php 
+
 // post data
 
 $dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
@@ -12,8 +13,6 @@ $space = "<span class='formfilter-space'></span>";
 $this->breadcrumbs=array(
 	'Impressions Report',
 );
-
-
 
 
 echo CHtml::beginForm('', 'POST', array(
@@ -249,8 +248,6 @@ echo '</div>';
 	
 echo CHtml::endForm();
 // $this->endWidget(); 
-
-// echo Yii::app()->localtime->localNow;
 
 
 echo '</div>';

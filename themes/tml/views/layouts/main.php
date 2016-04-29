@@ -190,6 +190,7 @@
                     'visible' => rol('admin') || rol('media_buyer_admin'),
                     ),
                 array('label'=>'API Log', 'url'=>array('/apiLog/admin')),
+                array('label'=>'TimeZone ('.Yii::app()->params->dbTimeZone.')', 'url'=>array('/site/setTimeZone')),
                 // array('label'=>'Configuration', 'url'=>'#'),
                 // array('label'=>'Meetings', 'url'=>array('/meetingroom')),
             ), 

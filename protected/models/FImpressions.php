@@ -182,7 +182,6 @@ class FImpressions extends CActiveRecord
 
 		$group  = array_merge($request['group1'],$request['group2']);
 		$sum    = $request['sum'];
-		$sort   = array();
 
 		// $filter = isset($request['filter']) ? $request['filter'] : null;
 
@@ -200,132 +199,74 @@ class FImpressions extends CActiveRecord
 
 
 		// GROUP COLUMNS
+		$selectQuerys = array(
+			'date'            => 'DATE(t.date_time)',
+			'hour'            => 'HOUR(t.date_time)',
+			'advertiser'      => 'dDemand.advertiser',
+			'campaign'        => 'dDemand.campaign',
+			'tag'             => 'dDemand.tag',
+			'provider'        => 'dSupply.provider',
+			'placement'       => 'dSupply.placement',
+			'pubid'           => 't.pubid',
+			'connection_type' => 'dGeoLocation.connection_type',
+			'country'         => 'dGeoLocation.country',
+			'carrier'         => 'dGeoLocation.carrier',
+			'device_type'     => 'dUserAgent.device_type',
+			'device_brand'    => 'dUserAgent.device_brand',
+			'device_model'    => 'dUserAgent.device_model',
+			'os_type'         => 'dUserAgent.os_type',
+			'os_version'      => 'dUserAgent.os_version',
+			'browser_type'    => 'dUserAgent.browser_type',
+			'browser_version' => 'dUserAgent.browser_version',
+			'impressions'     => 'FORMAT(COUNT(t.id),0)',
+			'unique_user'     => 'FORMAT(COUNT(distinct t.unique_id),0)',
+			'revenue'         => 'FORMAT(SUM(dBid.revenue),2)',
+			'cost'            => 'FORMAT(SUM(dBid.cost),2)',
+			'profit'          => 'FORMAT(SUM(dBid.revenue)-SUM(dBid.cost),2)',
+			'revenue_eCPM'    => 'FORMAT(SUM(dBid.revenue) * 1000 / COUNT(t.id),2)',
+			'cost_eCPM'       => 'FORMAT(SUM(dBid.cost) * 1000 / COUNT(t.id),2)',
+			'profit_eCPM'     => 'FORMAT((SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id),2)',
+			);
 
-		if(isset($group['date']) && $group['date']){
-			$select[] = 'DATE(t.date_time) AS date';
-			$groupBy[] = 'DATE(t.date_time)';
-			$orderBy[] = 'DATE(t.date_time) DESC';
-		}
-		if(isset($group['hour']) && $group['hour']){
-			$select[] = 'HOUR(t.date_time) AS hour';
-			$groupBy[] = 'HOUR(t.date_time)';
-			$orderBy[] = 'HOUR(t.date_time)';
-		}
-		if(isset($group['advertiser']) && $group['advertiser']){
-			$select[] = 'dDemand.advertiser AS advertiser';
-			$groupBy[] = 'dDemand.advertiser';
-			$orderBy[] = 'dDemand.advertiser';
-		}
-		if(isset($group['campaign']) && $group['campaign']){
-			$select[] = 'dDemand.campaign AS campaign';
-			$groupBy[] = 'dDemand.campaign';
-			$orderBy[] = 'dDemand.campaign';
-		}
-		if(isset($group['tag']) && $group['tag']){
-			$select[] = 't.D_Demand_id AS tag';
-			$groupBy[] = 't.D_Demand_id';
-			$orderBy[] = 't.D_Demand_id';
-		}
-		if(isset($group['provider']) && $group['provider']){
-			$select[] = 'dSupply.provider AS provider';
-			$groupBy[] = 'dSupply.provider';
-			$orderBy[] = 'dSupply.provider';
-		}
-		if(isset($group['placement']) && $group['placement']){
-			$select[] = 't.D_Supply_id AS placement';
-			$groupBy[] = 't.D_Supply_id';
-			$orderBy[] = 't.D_Supply_id';
-		}
-		if(isset($group['pubid']) && $group['pubid']){
-			$select[] = 't.pubid AS pubid';
-			$groupBy[] = 't.pubid';
-			$orderBy[] = 't.pubid';
-		}
-		if(isset($group['country']) && $group['country']){
-			$select[] = 'dGeoLocation.country AS country';
-			$groupBy[] = 'dGeoLocation.country';
-			$orderBy[] = 'dGeoLocation.country';
-		}
-		if(isset($group['connection_type']) && $group['connection_type']){
-			$select[] = 'dGeoLocation.connection_type AS connection_type';
-			$groupBy[] = 'dGeoLocation.connection_type';
-			$orderBy[] = 'dGeoLocation.connection_type';
-		}
-		if(isset($group['carrier']) && $group['carrier']){
-			$select[] = 'dGeoLocation.carrier AS carrier';
-			$groupBy[] = 'dGeoLocation.carrier';
-			$orderBy[] = 'dGeoLocation.carrier';
-		}
-		if(isset($group['device_type']) && $group['device_type']){
-			$select[] = 'dUserAgent.device_type AS device_type';
-			$groupBy[] = 'dUserAgent.device_type';
-			$orderBy[] = 'dUserAgent.device_type';
-		}
-		if(isset($group['device_brand']) && $group['device_brand']){
-			$select[] = 'dUserAgent.device_brand AS device_brand';
-			$groupBy[] = 'dUserAgent.device_brand';
-			$orderBy[] = 'dUserAgent.device_brand';
-		}
-		if(isset($group['device_model']) && $group['device_model']){
-			$select[] = 'dUserAgent.device_model AS device_model';
-			$groupBy[] = 'dUserAgent.device_model';
-			$orderBy[] = 'dUserAgent.device_model';
-		}
-		if(isset($group['os_type']) && $group['os_type']){
-			$select[] = 'dUserAgent.os_type AS os_type';
-			$groupBy[] = 'dUserAgent.os_type';
-			$orderBy[] = 'dUserAgent.os_type';
-		}
-		if(isset($group['os_version']) && $group['os_version']){
-			$select[] = 'dUserAgent.os_version as os_version';
-			$groupBy[] = 'dUserAgent.os_version';
-			$orderBy[] = 'dUserAgent.os_version';
-		}
-		if(isset($group['browser_type']) && $group['browser_type']){
-			$select[] = 'dUserAgent.browser_type AS browser_type';
-			$groupBy[] = 'dUserAgent.browser_type';
-			$orderBy[] = 'dUserAgent.browser_type';
-		}
-		if(isset($group['browser_version']) && $group['browser_version']){
-			$select[] = 'dUserAgent.browser_version AS browser_version';
-			$groupBy[] = 'dUserAgent.browser_version';
-			$orderBy[] = 'dUserAgent.browser_version';
+		$select  = array();
+		$groupBy = array();
+		$orderBy = array();
+		$sort    = array();
+
+		/*
+		var_dump($group);die('<hr>');
+		array(18) { ["date"]=> string(1) "1" ["hour"]=> string(1) "0" ["advertiser"]=> string(1) "1" ["campaign"]=> string(1) "0" ["tag"]=> string(1) "0" ["provider"]=> string(1) "1" ["placement"]=> string(1) "0" ["pubid"]=> string(1) "0" ["connection_type"]=> string(1) "0" ["country"]=> string(1) "0" ["carrier"]=> string(1) "0" ["device_type"]=> string(1) "0" ["device_brand"]=> string(1) "0" ["device_model"]=> string(1) "0" ["os_type"]=> string(1) "0" ["os_version"]=> string(1) "0" ["browser_type"]=> string(1) "0" ["browser_version"]=> string(1) "0" }
+		*/
+	
+		// group columns
+		foreach ($group as $col => $val) {				
+			if($val){
+				$sel       = $selectQuerys[$col];
+				
+				$select[]  = $sel.' AS '.$col;
+				$groupBy[] = $sel;
+				$orderBy[] = $sel;
+
+				$sort[$col] = array(
+					'asc'  => $sel.' ASC',
+					'desc' => $sel.' DESC',
+			    );
+			}			
 		}
 
+		// sum columns
+		foreach ($sum as $col => $val) {
+			if($val){
+				$sel       = $selectQuerys[$col];
+				
+				$select[]  = $sel.' AS '.$col;
+				$orderBy[] = $sel;
 
-		// SUM COLUMN
-
-		if(isset($sum['impressions']) && $sum['impressions']){
-			$select[] = 'FORMAT(COUNT(t.id),0) AS impressions';
-			$orderBy[] = 'COUNT(t.id)';
-		}
-		if(isset($sum['unique_user']) && $sum['unique_user']){
-			$select[] = 'FORMAT(COUNT(distinct t.unique_id),0) as unique_user';
-			$orderBy[] = 'COUNT(distinct t.unique_id)';
-		}
-		if(isset($sum['revenue']) && $sum['revenue']){
-			$select[] = 'FORMAT(SUM(dBid.revenue),2) as revenue';
-			$orderBy[] = 'SUM(dBid.revenue)';
-		}
-		if(isset($sum['cost']) && $sum['cost']){
-			$select[] = 'FORMAT(SUM(dBid.cost),2) as cost';
-			$orderBy[] = 'SUM(dBid.cost)';
-		}
-		if(isset($sum['profit']) && $sum['profit']){
-			$select[] = 'FORMAT(SUM(dBid.revenue)-SUM(dBid.cost),2) as profit';
-			$orderBy[] = 'SUM(dBid.revenue)-SUM(dBid.cost)';
-		}
-		if(isset($sum['revenue_eCPM']) && $sum['revenue_eCPM']){
-			$select[] = 'FORMAT(SUM(dBid.revenue) * 1000 / COUNT(t.id),2) as revenue_eCPM';
-			$orderBy[] = 'SUM(dBid.revenue) * 1000 / COUNT(t.id)';
-		}
-		if(isset($sum['cost_eCPM']) && $sum['cost_eCPM']){
-			$select[] = 'FORMAT(SUM(dBid.cost) * 1000 / COUNT(t.id),2) as cost_eCPM';
-			$orderBy[] = 'SUM(dBid.cost) * 1000 / COUNT(t.id)';
-		}
-		if(isset($sum['profit_eCPM']) && $sum['profit_eCPM']){
-			$select[] = 'FORMAT((SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id),2) as profit_eCPM';
-			$orderBy[] = '(SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id)';
+				$sort[$col] = array(
+					'asc'  => $sel.' ASC',
+					'desc' => $sel.' DESC',
+			    );
+			}
 		}
 
 		$criteria->with = array(
@@ -347,8 +288,8 @@ class FImpressions extends CActiveRecord
 				'route' => 'stats/impressions',
 				'params' => $request,
 				'defaultOrder' => isset($orderBy) ? implode(',', $orderBy) : '',
-				// 'attributes'   => $sort,
-				),
+				'attributes'   => $sort,
+			),
 		));
 	}
 

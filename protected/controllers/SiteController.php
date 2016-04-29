@@ -22,7 +22,7 @@ class SiteController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index', 'page', 'logout'),
+				'actions'=>array('index', 'page', 'logout', 'setTimeZone'),
 				//'roles'=>array('admin'),
 				'users'=>array('@'),
 			),
@@ -162,5 +162,21 @@ class SiteController extends Controller
 	{
 		Yii::app()->user->logout();
 		$this->redirect(Yii::app()->homeUrl);
+	}
+
+
+
+	public function actionSetTimeZone(){
+
+		if(isset($_POST['dbTimeZone'])){
+
+			Yii::app()->request->cookies['dbTimeZone'] = new CHttpCookie('dbTimeZone', $_POST['dbTimeZone']);
+
+			$this->refresh();
+
+		}
+
+		$this->render('timeZone');
+
 	}
 }

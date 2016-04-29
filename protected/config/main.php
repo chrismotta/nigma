@@ -5,129 +5,135 @@
 
 // yiibooster
 Yii::setPathOfAlias('yiibooster', dirname(__FILE__).'/../extensions/yiibooster');
+$dbTimeZone = isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00';
 
 // MySql Policy
-switch ( $_SERVER['HTTP_HOST'] ) {
-	
-	// local
-	case '127.0.0.1':
-	case 'localhost':
-				$mysqlConnect = array(
-					'connectionString'   => 'mysql:host=localhost;dbname=nigma',
-					'emulatePrepare'     => true,
-					'username'           => 'root',
-					'password'           => 'mil998',
-					'charset'            => 'utf8',
-					// Uncomment to show db log
-					// 'enableParamLogging' =>true,
-					// 'enableProfiling'    =>true,
-					'initSQLs'           => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
+function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 
-				);
-				
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
-		break;
-	
-	// amazon prod
-	case '54.172.221.175':
-	case 'ec2-54-172-221-175.compute-1.amazonaws.com':
-	case '52.91.118.99':
-	case 'ec2-52-91-118-99.compute-1.amazonaws.com':
-	case 'tmlbox.co':
-	case 'www.tmlbox.co':
-	case 'bidbox.co':
-	case 'www.bidbox.co':
-	case 'console.themedialab.co':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
-					'emulatePrepare'   => true,
-					'username'         => 'www-data',
-					'password'         => 'th3m3d14l4b',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
-				);
+	switch ( $httpHost ) {
+		
+		// local
+		case '127.0.0.1':
+		case 'localhost':
+					$mysqlConnect = array(
+						'connectionString'   => 'mysql:host=localhost;dbname=nigma',
+						'emulatePrepare'     => true,
+						'username'           => 'root',
+						'password'           => 'mil998',
+						'charset'            => 'utf8',
+						// Uncomment to show db log
+						// 'enableParamLogging' =>true,
+						// 'enableProfiling'    =>true,
+						'initSQLs'           => array(
+				           "SET SESSION time_zone = '".$dbTimeZone."'",
+						),
 
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
-				/*$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'error, mail',
-					'subject' =>'Automatic Mail Log',
-					'emails'  =>array(
-						'chris@themedialab.co',
-					),
-					'config'  =>array(
-						'From'       => 'no-reply@themedialab.co',
-						'FromName'   => 'no-reply themedialab.co',
-						// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
-						// 'SMTPAuth'   => true,
-						// 'SMTPSecure' => "tls",
-						// 'Port'       => 25,
-						// 'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
-						// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
-						'CharSet'    => "UTF-8",
-                    ),
-                );*/
-		break;
+					);
+					
+					$mailLog = array(
+						'class'   =>'CPhpMailerLogRoute',
+						'levels'  =>'',
+						'subject' =>'',
+						'emails'  =>array(),
+					);
+			break;
+		
+		// amazon prod
+		case '54.172.221.175':
+		case 'ec2-54-172-221-175.compute-1.amazonaws.com':
+		case '52.91.118.99':
+		case 'ec2-52-91-118-99.compute-1.amazonaws.com':
+		case 'tmlbox.co':
+		case 'www.tmlbox.co':
+		case 'bidbox.co':
+		case 'www.bidbox.co':
+		case 'console.themedialab.co':
+					$mysqlConnect = array(
+						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
+						'emulatePrepare'   => true,
+						'username'         => 'www-data',
+						'password'         => 'th3m3d14l4b',
+						'charset'          => 'utf8',
+						'initSQLs'         => array(
+				           "SET SESSION time_zone = '-3:00'",
+						),
+					);
 
-	// amazon test
-	case 'dev.tmlbox.co':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma_dev',
-					'emulatePrepare'   => true,
-					'username'         => 'www-data',
-					'password'         => 'th3m3d14l4b',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
-				);
+					$mailLog = array(
+						'class'   =>'CPhpMailerLogRoute',
+						'levels'  =>'',
+						'subject' =>'',
+						'emails'  =>array(),
+					);
+					/*$mailLog = array(
+						'class'   =>'CPhpMailerLogRoute',
+						'levels'  =>'error, mail',
+						'subject' =>'Automatic Mail Log',
+						'emails'  =>array(
+							'chris@themedialab.co',
+						),
+						'config'  =>array(
+							'From'       => 'no-reply@themedialab.co',
+							'FromName'   => 'no-reply themedialab.co',
+							// 'Host'       => "email-smtp.us-east-1.amazonaws.com",
+							// 'SMTPAuth'   => true,
+							// 'SMTPSecure' => "tls",
+							// 'Port'       => 25,
+							// 'Username'   => 'AKIAIQTRLJHEZETZDRSQ',
+							// 'Password'   => 'Ag/ctgxpxYGrnQPxiahJiLNKldgoBJBr2M9mtf/Hz//F',
+							'CharSet'    => "UTF-8",
+	                    ),
+	                );*/
+			break;
 
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
-		break;
+		// amazon test
+		case 'dev.tmlbox.co':
+					$mysqlConnect = array(
+						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma_dev',
+						'emulatePrepare'   => true,
+						'username'         => 'www-data',
+						'password'         => 'th3m3d14l4b',
+						'charset'          => 'utf8',
+						'initSQLs'         => array(
+				           "SET SESSION time_zone = '00:00'",
+						),
+					);
 
-	// amazon sourcecode
-	case 'kick.tmlbox.co':
-				$mysqlConnect = array(
-					'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
-					'emulatePrepare'   => true,
-					'username'         => 'www-data',
-					'password'         => 'th3m3d14l4b',
-					'charset'          => 'utf8',
-					'initSQLs'         => array(
-			           "SET SESSION time_zone = '-3:00'",
-					),
-				);
+					$mailLog = array(
+						'class'   =>'CPhpMailerLogRoute',
+						'levels'  =>'',
+						'subject' =>'',
+						'emails'  =>array(),
+					);
+			break;
 
-				$mailLog = array(
-					'class'   =>'CPhpMailerLogRoute',
-					'levels'  =>'',
-					'subject' =>'',
-					'emails'  =>array(),
-				);
-		break;
-	
-	default:
-		# code...
-		break;
+		// amazon sourcecode
+		case 'kick.tmlbox.co':
+					$mysqlConnect = array(
+						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=kickads_appserver',
+						'emulatePrepare'   => true,
+						'username'         => 'www-data',
+						'password'         => 'th3m3d14l4b',
+						'charset'          => 'utf8',
+						// 'initSQLs'         => array(
+				  //          "SET SESSION time_zone = '-3:00'",
+						// ),
+					);
+
+					$mailLog = array(
+						'class'   =>'CPhpMailerLogRoute',
+						'levels'  =>'',
+						'subject' =>'',
+						'emails'  =>array(),
+					);
+			break;
+		
+		default:
+			# code...
+			break;
+	}
+
+	return $mysqlConnect;
 }
 
 // This is the main Web application configuration. Any writable
@@ -136,7 +142,7 @@ return array(
 	'basePath'       => dirname(__FILE__).DIRECTORY_SEPARATOR.'..',
 	'name'           => '',
 	'theme'          => 'tml',
-	'timeZone'       =>  'America/Argentina/Buenos_Aires',
+	'timeZone'       => 'GMT',
 	'language'       => 'en',
 	'sourceLanguage' => 'en',
 	'charset'        => 'UTF-8',
@@ -177,6 +183,7 @@ return array(
 
 	// application components
 	'components'=>array(
+    
         'bootstrap'=>array(
             'class'=>'yiibooster.components.Bootstrap',
         ),
@@ -251,7 +258,7 @@ return array(
 		*/
 		
 		// uncomment the following to use a MySQL database
-		'db'=> $mysqlConnect,
+		'db'=> mysqlPolicy($_SERVER['HTTP_HOST'], $dbTimeZone),
 		
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
@@ -272,7 +279,7 @@ return array(
 			 	    'class'	=>'CProfileLogRoute', 
 			 	    'report'=>'callstack',  /* summary or callstack */ 
 			 	), 
-                $mailLog,
+                // $mailLog,
         	),
         ),
 	),
@@ -281,6 +288,7 @@ return array(
 	// using Yii::app()->params['paramName']
 	'params'=>array(
 		// this is used in contact page
+		'dbTimeZone' => isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00',
 		'adminEmail'=>'info@themedialab.co',
 	    'defaultPageSize'=>50,
 		'ipDbFile'       => dirname(__FILE__).'/../data/ip2location/IP-COUNTRY-REGION-CITY-LATITUDE-LONGITUDE-ISP-DOMAIN-MOBILE.BIN',
