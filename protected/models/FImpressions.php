@@ -205,9 +205,9 @@ class FImpressions extends CActiveRecord
 			'hour'            => 'HOUR(t.date_time)',
 			'advertiser'      => 'dDemand.advertiser',
 			'campaign'        => 'dDemand.campaign',
-			'tag'             => 'dDemand.tag',
+			'tag'             => 'CONCAT(dDemand.tag, " (", t.D_Demand_id, ")")',
 			'provider'        => 'dSupply.provider',
-			'placement'       => 'dSupply.placement',
+			'placement'       => 'CONCAT(dSupply.placement, " (", t.D_Supply_id, ")")',
 			'pubid'           => 't.pubid',
 			'connection_type' => 'dGeoLocation.connection_type',
 			'country'         => 'dGeoLocation.country',
@@ -287,6 +287,8 @@ class FImpressions extends CActiveRecord
 			    );
 			}
 		}
+
+		//filters
 
 		$criteria->with = array(
 			'dBid',
