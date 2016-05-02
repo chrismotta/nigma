@@ -188,26 +188,27 @@ echo '</div>';
 echo '<div class="row-fluid" id="filters-row">';
 
 
-$value = array();
+isset($_REQUEST['filter']) ? $filter = $_REQUEST['filter'] : $filter = null;
 
-ReportingManager::dataMultiSelect(new DDemand(), 'advertiser');
-ReportingManager::dataMultiSelect(new DDemand(), 'campaign');
-ReportingManager::dataMultiSelect(new DDemand(), 'tag');
-ReportingManager::dataMultiSelect(new DSupply(), 'provider');
-ReportingManager::dataMultiSelect(new DSupply(), 'placement');
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type');
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'country');
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'device_type');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'device_brand');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'device_model');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type');
-ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version');
+ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filter);
+ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filter);
+ReportingManager::dataMultiSelect(new DDemand(), 'tag', $filter);
+ReportingManager::dataMultiSelect(new DSupply(), 'provider', $filter);
+ReportingManager::dataMultiSelect(new DSupply(), 'placement', $filter);
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type', $filter);
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'country', $filter);
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'device_type', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'device_brand', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'device_model', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version', $filter);
 
 // hide all .multi-select-hide
-Yii::app()->clientScript->registerScript('hide', '$(".multi-select-hide").hide();', 4);
+$jQuery = '$("div.multi-select-hide:not(:has(ul li.select2-search-choice))").hide()';
+Yii::app()->clientScript->registerScript('hide', $jQuery, 4);
 
 echo '</div>';
 
@@ -247,11 +248,11 @@ echo '</div>';
 if(count($_REQUEST)>0){
 
 	// JSON
-	// echo '<div class="row-fluid" style="word-wrap: break-word;">';
-	// echo '<hr>';
-	// echo json_encode($_REQUEST);
-	// echo '<hr>';
-	// echo '</div>';
+	echo '<div class="row-fluid" style="word-wrap: break-word;">';
+	echo '<hr>';
+	echo json_encode($_REQUEST);
+	echo '<hr>';
+	echo '</div>';
 	
 	
 	$totals = $model->search(true);

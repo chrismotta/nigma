@@ -139,7 +139,7 @@ class ReportingManager
             array(
                 'name'        => $column,
                 'data'        => $data,
-                'value'       => $value,
+                'value'       => isset($value[$column]) ? $value[$column] : array(),
                 ), array(), true);
     }
 
