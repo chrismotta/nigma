@@ -261,7 +261,9 @@ if(count($_REQUEST)>0){
 	echo '<hr>';
 	echo '</div>';
 	*/
-
+	
+	$totals = $model->search(true);
+	
 	$this->widget('application.components.NiExtendedGridView', array(
 		'id'              => 'imp-log-grid',
 		'dataProvider'    => $model->search(),
@@ -344,34 +346,42 @@ if(count($_REQUEST)>0){
 			array(
 				'name' => 'impressions',
 				'visible' => $sumColumns['impressions'],
+				'footer' => $totals['impressions'],
 				),
 			array(
 				'name' => 'unique_user',
 				'visible' => $sumColumns['unique_user'],
+				'footer' => $totals['unique_user'],
 				),
 			array(
 				'name' => 'revenue',
 				'visible' => $sumColumns['revenue'],
+				'footer' => $totals['revenue'],
 				),
 			array(
 				'name' => 'cost',
 				'visible' => $sumColumns['cost'],
+				'footer' => $totals['cost'],
 				),
 			array(
 				'name' => 'profit',
 				'visible' => $sumColumns['profit'],
+				'footer' => $totals['profit'],
 				),
 			array(
 				'name' => 'revenue_eCPM',
 				'visible' => $sumColumns['revenue_eCPM'],
+				'footer' => $totals['revenue_eCPM'],
 				),
 			array(
 				'name' => 'cost_eCPM',
 				'visible' => $sumColumns['cost_eCPM'],
+				'footer' => $totals['cost_eCPM'],
 				),
 			array(
 				'name' => 'profit_eCPM',
 				'visible' => $sumColumns['profit_eCPM'],
+				'footer' => $totals['profit_eCPM'],
 				),
 			)
 	));

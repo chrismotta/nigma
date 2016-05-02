@@ -159,7 +159,7 @@ class FImpressions extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search()
+	public function search($totals=false)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -199,7 +199,7 @@ class FImpressions extends CActiveRecord
 
 
 		// querys
-		$selectQuerys = array(
+		$groupQuerys = array(
 			// group
 			'date'            => 'DATE(t.date_time)',
 			'hour'            => 'HOUR(t.date_time)',
@@ -219,6 +219,8 @@ class FImpressions extends CActiveRecord
 			'os_version'      => 'dUserAgent.os_version',
 			'browser_type'    => 'dUserAgent.browser_type',
 			'browser_version' => 'dUserAgent.browser_version',
+			);
+		$sumQuerys = array(
 			// sum
 			'impressions'     => 'COUNT(t.id)',
 			'unique_user'     => 'COUNT(distinct t.unique_id)',
@@ -229,6 +231,8 @@ class FImpressions extends CActiveRecord
 			'cost_eCPM'       => 'SUM(dBid.cost) * 1000 / COUNT(t.id)',
 			'profit_eCPM'     => '(SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id)',
 			);
+		$selectQuerys = array_merge($groupQuerys, $sumQuerys);
+
 		$decimalColumns = array(
 			'impressions'     => '0',
 			'unique_user'     => '0',
@@ -241,29 +245,32 @@ class FImpressions extends CActiveRecord
 			);
 
 		$select  = array();
-		$groupBy = array();
 		$orderBy = array();
 		$sort    = array();
-
-		/*
-		var_dump($group);die('<hr>');
-		array(18) { ["date"]=> string(1) "1" ["hour"]=> string(1) "0" ["advertiser"]=> string(1) "1" ["campaign"]=> string(1) "0" ["tag"]=> string(1) "0" ["provider"]=> string(1) "1" ["placement"]=> string(1) "0" ["pubid"]=> string(1) "0" ["connection_type"]=> string(1) "0" ["country"]=> string(1) "0" ["carrier"]=> string(1) "0" ["device_type"]=> string(1) "0" ["device_brand"]=> string(1) "0" ["device_model"]=> string(1) "0" ["os_type"]=> string(1) "0" ["os_version"]=> string(1) "0" ["browser_type"]=> string(1) "0" ["browser_version"]=> string(1) "0" }
-		*/
 	
-		// group columns
-		foreach ($group as $col => $val) {				
-			if($val){
-				$sel       = $selectQuerys[$col];
-				
-				$select[]  = $sel.' AS '.$col;
-				$groupBy[] = $sel;
-				$orderBy[] = $sel;
 
-				$sort[$col] = array(
-					'asc'  => $sel.' ASC',
-					'desc' => $sel.' DESC',
-			    );
-			}			
+		// group columns
+		if(!$totals){
+
+			$groupBy = array();
+
+			foreach ($group as $col => $val) {				
+				if($val){
+					$sel       = $selectQuerys[$col];
+					
+					$select[]  = $sel.' AS '.$col;
+					$groupBy[] = $sel;
+					$orderBy[] = $sel;
+
+					$sort[$col] = array(
+						'asc'  => $sel.' ASC',
+						'desc' => $sel.' DESC',
+				    );
+				}			
+			}
+
+			if(isset($groupBy)) $criteria->group  = implode(',', $groupBy);
+
 		}
 
 		// sum columns
@@ -289,20 +296,24 @@ class FImpressions extends CActiveRecord
 			'dUserAgent',
 			);
 
-		
 		if(isset($select)) $criteria->select = $select;
-		if(isset($groupBy)) $criteria->group  = implode(',', $groupBy);
+		
 
-		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'pagination'=> KHtml::pagination($request),
-			'sort'=>array(
-				'route' => 'stats/impressions',
-				'params' => $request,
-				'defaultOrder' => isset($orderBy) ? implode(',', $orderBy) : '',
-				'attributes'   => $sort,
-			),
-		));
+		// return array if is totals, dataProviders if not
+		if($totals){
+			return $this->find($criteria); 
+		}else{
+			return new CActiveDataProvider($this, array(
+				'criteria'=>$criteria,
+				'pagination'=> KHtml::pagination($request),
+				'sort'=>array(
+					'route' => 'stats/impressions',
+					'params' => $request,
+					'defaultOrder' => isset($orderBy) ? implode(',', $orderBy) : '',
+					'attributes'   => $sort,
+				),
+			));
+		}
 	}
 
 	public function selectDistinct($column){
