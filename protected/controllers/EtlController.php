@@ -140,11 +140,11 @@ class EtlController extends Controller
 			$ua->browser_version = $device->getVirtualCapability('advertised_browser_version');
 			
 			if ($device->getCapability('is_tablet') == 'true')
-				$ua->device_type = 'T';
+				$ua->device_type = 'Tablet';
 			else if ($device->getCapability('is_wireless_device') == 'true')
-				$ua->device_type = 'M';
+				$ua->device_type = 'Mobile';
 			else
-				$ua->device_type = 'D';
+				$ua->device_type = 'Desktop';
 
 			$ua->save();
 		}
