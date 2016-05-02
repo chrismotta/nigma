@@ -1,5 +1,10 @@
 <?php
 
+/* cambios
+- M T D por mobile tablet desktop
+- invertir sort en numericos
+*/
+
 /**
  * This is the model class for table "F_Impressions".
  *
@@ -182,6 +187,7 @@ class FImpressions extends CActiveRecord
 
 		$group  = array_merge($request['group1'],$request['group2']);
 		$sum    = $request['sum'];
+		$filter = isset($request['filter']) ? $request['filter'] : null;
 
 		// $filter = isset($request['filter']) ? $request['filter'] : null;
 
@@ -282,13 +288,19 @@ class FImpressions extends CActiveRecord
 				$orderBy[] = $sel;
 
 				$sort[$col] = array(
-					'asc'  => $sel.' ASC',
-					'desc' => $sel.' DESC',
+					'asc'  => $sel.' DESC',
+					'desc' => $sel.' ASC',
 			    );
 			}
 		}
 
-		//filters
+		// filters
+		if(isset($filter)){	
+			foreach ($filter as $col => $values) {
+				$criteria->addInCondition($selectQuerys[$col], $values);
+			}
+		}
+
 
 		$criteria->with = array(
 			'dBid',

@@ -71,18 +71,18 @@ echo '</div>';
 // ----- Columns
 
 $groupColumns1 = array(
-		'date'           =>1, 
-		'hour'           =>0, 
-		'advertiser'     =>1, 
-		'campaign'       =>0, 
-		'tag'            =>0,
-		'provider'       =>1,
-		'placement'      =>0, 
-		'pubid'          =>0, 
+		'date'            =>1, 
+		'hour'            =>0, 
+		'advertiser'      =>1, 
+		'campaign'        =>0, 
+		'tag'             =>0,
+		'provider'        =>1,
+		'placement'       =>0, 
+		'pubid'           =>0, 
 		// geo
 		'connection_type' =>0,
-		'country'        =>0, 
-		'carrier'        =>0,
+		'country'         =>0, 
+		'carrier'         =>0,
 		);
 $groupColumns2 = array(
 		// user_agent
@@ -106,9 +106,9 @@ $sumColumns = array(
 		'revenue'      =>1, 
 		'cost'         =>1, 
 		'profit'       =>1, 
-		'revenue_eCPM' =>0, 
-		'cost_eCPM'    =>0, 
-		'profit_eCPM'  =>0, 
+		'revenue_eCPM' =>1, 
+		'cost_eCPM'    =>1, 
+		'profit_eCPM'  =>1, 
 		);
 
 if(isset($_REQUEST['sum']))
@@ -191,7 +191,10 @@ echo '<div class="row-fluid" id="filters-row">';
 $value = array();
 
 ReportingManager::dataMultiSelect(new DDemand(), 'advertiser');
+ReportingManager::dataMultiSelect(new DDemand(), 'campaign');
+ReportingManager::dataMultiSelect(new DDemand(), 'tag');
 ReportingManager::dataMultiSelect(new DSupply(), 'provider');
+ReportingManager::dataMultiSelect(new DSupply(), 'placement');
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type');
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'country');
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier');
@@ -235,37 +238,26 @@ echo '</div>';
 			'htmlOptions' => array('class' => 'showLoading')
 			)
 		); 
-
-	// echo $space;
-
-	// $this->widget('bootstrap.widgets.TbButton', 
-	// 	array(
-	// 		'buttonType'=>'reset', 
-	// 		'label'=>'Reset', 
-	// 		'htmlOptions' => array('class' => 'showLoading')
-	// 		)
-	// 	); 
 	
 echo CHtml::endForm();
-// $this->endWidget(); 
 
 
 echo '</div>';
 
 if(count($_REQUEST)>0){
 
-	/* JSON
-	echo '<div class="row-fluid" style="word-wrap: break-word;">';
-	echo '<hr>';
-	echo json_encode($_REQUEST);
-	echo '<hr>';
-	echo '</div>';
-	*/
+	// JSON
+	// echo '<div class="row-fluid" style="word-wrap: break-word;">';
+	// echo '<hr>';
+	// echo json_encode($_REQUEST);
+	// echo '<hr>';
+	// echo '</div>';
+	
 	
 	$totals = $model->search(true);
 	
 	$this->widget('application.components.NiExtendedGridView', array(
-		'id'              => 'imp-log-grid',
+		'id'              => 'impressions-grid',
 		'dataProvider'    => $model->search(),
 		'filter'          => null,
 		'type'            => 'condensed',
@@ -289,6 +281,7 @@ if(count($_REQUEST)>0){
 				),
 			array(
 				'name' => 'tag',
+				// 'value' => '$data->tag ." (". $data->DDemand_id.")"',
 				'visible' => $groupColumns1['tag'],
 				),
 			array(

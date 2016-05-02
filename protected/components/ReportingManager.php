@@ -117,7 +117,7 @@ class ReportingManager
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
-                    'name'        => $options['name'],
+                    'name'        => 'filter['.$options['name'].']',
                     'data'        => $options['data'],
                     'value'       => $options['value'],
                     'htmlOptions' => $htmlOptions,
