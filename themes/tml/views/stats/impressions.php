@@ -248,11 +248,11 @@ echo '</div>';
 if(count($_REQUEST)>0){
 
 	// JSON
-	echo '<div class="row-fluid" style="word-wrap: break-word;">';
-	echo '<hr>';
-	echo json_encode($_REQUEST);
-	echo '<hr>';
-	echo '</div>';
+	// echo '<div class="row-fluid" style="word-wrap: break-word;">';
+	// echo '<hr>';
+	// echo json_encode($_REQUEST);
+	// echo '<hr>';
+	// echo '</div>';
 	
 	
 	$totals = $model->search(true);
