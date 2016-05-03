@@ -213,7 +213,7 @@ class FImpressions extends CActiveRecord
 			'campaign'        => 'dDemand.campaign',
 			'tag'             => 'CONCAT(IF(dDemand.tag,dDemand.tag,""), " (", t.D_Demand_id, ")")',
 			'provider'        => 'dSupply.provider',
-			'placement'       => 'CONCAT(IF(dSupply.placement,dSupply.placement,""), " (", t.D_Supply_id, ")")',
+			'placement'       => 'CONCAT(dSupply.placement, " (", t.D_Supply_id, ")")',
 			'pubid'           => 't.pubid',
 			'connection_type' => 'dGeoLocation.connection_type',
 			'country'         => 'dGeoLocation.country',
