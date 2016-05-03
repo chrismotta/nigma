@@ -384,10 +384,10 @@ class FinanceEntities extends CActiveRecord
 		// Obtiene un array asociativo (con id incremental) que corresponde a un CModel 
 		// custom proveniente de la query de makeClientsQuery y modificado dentro de la
 		// logica de getClientsMulti
-		$dailysNoMulti   =FinanceEntities::model()->getClientsMulti($filters);
+		// $dailysNoMulti   =FinanceEntities::model()->getClientsMulti($filters);
 		$filters['multi']=false;
-		$dailysMulti     =FinanceEntities::model()->getClientsMulti($filters);
-		$dailys          =array_merge($dailysNoMulti,$dailysMulti);
+		$dailys     =FinanceEntities::model()->getClientsMulti($filters);
+		// $dailys          =array_merge($dailysNoMulti,$dailysMulti);
 
 		if($group=='profile')
 		{
@@ -518,7 +518,7 @@ class FinanceEntities extends CActiveRecord
 				'SUM(
 					CASE opportunities.model_adv
 						WHEN \'CPA\' THEN IF(ISNULL(t.conv_adv),t.conv_api,t.conv_adv)
-						WHEN \'CPM\' THEN IF(ISNULL(t.imp_adv),t.imp,t.imp_adv)
+						WHEN \'CPM\' THEN t.imp
 						WHEN \'CPC\' THEN t.clics
 					END 
 				) AS conversions',

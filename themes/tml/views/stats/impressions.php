@@ -68,31 +68,28 @@ echo '<div class="row-fluid">';
 echo '</div>';
 
 
-// ----- Columns
 
 $groupColumns1 = array(
-		'date'            =>1, 
+		'date'            =>0, 
 		'hour'            =>0, 
-		'advertiser'      =>1, 
-		'campaign'        =>0, 
-		'tag'             =>0,
 		'provider'        =>1,
 		'placement'       =>0, 
+		'tag'             =>1,
+		'advertiser'      =>0, 
+		'campaign'        =>0, 
 		'pubid'           =>0, 
-		// geo
-		'connection_type' =>0,
 		'country'         =>0, 
-		'carrier'         =>0,
+		'os_type'         =>0,
+		'os_version'      =>0,
 		);
 $groupColumns2 = array(
-		// user_agent
 		'device_type'     =>0,
 		'device_brand'    =>0,
 		'device_model'    =>0,
-		'os_type'         =>0,
-		'os_version'      =>0,
 		'browser_type'    =>0,
 		'browser_version' =>0,
+		'connection_type' =>0,
+		'carrier'         =>0,
 		);
 
 if(isset($_REQUEST['group1']))
@@ -147,7 +144,7 @@ echo '<div class="row-fluid">';
 echo '<div class="span12">';
 
 echo '<div>';
-ReportingManager::groupFilter($this, $sumColumns, 'sum', null, '', 'small', 'inverse', false);
+ReportingManager::groupFilter($this, $sumColumns, 'sum', null, '', 'small', 'info', false);
 echo '</div>';
 
 echo '</div>';
@@ -273,19 +270,6 @@ if(count($_REQUEST)>0){
 				'visible' => $groupColumns1['hour'],
 				),
 			array(
-				'name' => 'advertiser',
-				'visible' => $groupColumns1['advertiser'],
-				),
-			array(
-				'name' => 'campaign',
-				'visible' => $groupColumns1['campaign'],
-				),
-			array(
-				'name' => 'tag',
-				// 'value' => '$data->tag ." (". $data->DDemand_id.")"',
-				'visible' => $groupColumns1['tag'],
-				),
-			array(
 				'name' => 'provider',
 				'visible' => $groupColumns1['provider'],
 				),
@@ -294,20 +278,33 @@ if(count($_REQUEST)>0){
 				'visible' => $groupColumns1['placement'],
 				),
 			array(
-				'name' => 'pubid',
-				'visible' => $groupColumns1['pubid'],
+				'name' => 'tag',
+				// 'value' => '$data->tag ." (". $data->DDemand_id.")"',
+				'visible' => $groupColumns1['tag'],
 				),
 			array(
-				'name' => 'connection_type',
-				'visible' => $groupColumns1['connection_type'],
+				'name' => 'advertiser',
+				'visible' => $groupColumns1['advertiser'],
+				),
+			array(
+				'name' => 'campaign',
+				'visible' => $groupColumns1['campaign'],
+				),
+			array(
+				'name' => 'pubid',
+				'visible' => $groupColumns1['pubid'],
 				),
 			array(
 				'name' => 'country',
 				'visible' => $groupColumns1['country'],
 				),
 			array(
-				'name' => 'carrier',
-				'visible' => $groupColumns1['carrier'],
+				'name' => 'os_type',
+				'visible' => $groupColumns1['os_type'],
+				),
+			array(
+				'name' => 'os_version',
+				'visible' => $groupColumns1['os_version'],
 				),
 			array(
 				'name' => 'device_type',
@@ -322,20 +319,20 @@ if(count($_REQUEST)>0){
 				'visible' => $groupColumns2['device_model'],
 				),
 			array(
-				'name' => 'os_type',
-				'visible' => $groupColumns2['os_type'],
-				),
-			array(
-				'name' => 'os_version',
-				'visible' => $groupColumns2['os_version'],
-				),
-			array(
 				'name' => 'browser_type',
 				'visible' => $groupColumns2['browser_type'],
 				),
 			array(
 				'name' => 'browser_version',
 				'visible' => $groupColumns2['browser_version'],
+				),
+			array(
+				'name' => 'connection_type',
+				'visible' => $groupColumns2['connection_type'],
+				),
+			array(
+				'name' => 'carrier',
+				'visible' => $groupColumns2['carrier'],
 				),
 			array(
 				'name' => 'impressions',

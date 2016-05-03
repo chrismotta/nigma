@@ -69,7 +69,7 @@ class EtlController extends Controller
 		$start = time();
 
 		$query ='INSERT IGNORE INTO D_Demand (tag_id, advertiser, finance_entity, region, opportunity, campaign, rate, freq_cap, country, connection_type, device_type, os_type, os_version) 
-		SELECT t.id, a.name, f.name, g.name, o.product, c.name, o.rate, t.freq_cap, t.country, t.connection_type, t.device_type, t.os, t.os_version 
+		SELECT t.id, a.name, f.name, g.name, o.product, CONCAT(o.product," - ",c.name," (",c.id,")"), o.rate, t.freq_cap, t.country, t.connection_type, t.device_type, t.os, t.os_version 
 		FROM tags t 
 		LEFT JOIN campaigns c        ON(t.campaigns_id        = c.id) 
 		LEFT JOIN opportunities o    ON(c.opportunities_id    = o.id) 
