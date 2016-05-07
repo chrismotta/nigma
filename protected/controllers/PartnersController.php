@@ -36,11 +36,19 @@ class PartnersController extends Controller
 				'roles'=>array('admin','publisher'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('publishersCPM'),
+				'roles'=>array('admin','publisherCPM'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('previewAdvertisers', 'previewAffiliates', 'previewExcelReportAdvertisers'),
 				'roles'=>array('admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('previewPublishers', 'previewExcelReportPublishers'),
+				'roles'=>array('admin','media_buyer_admin'),
+			),
+			array('allow',  // allow all users to perform 'index' and 'view' actions
+				'actions'=>array('previewPublishersCPM'),
 				'roles'=>array('admin','media_buyer_admin'),
 			),
 			array('deny',  // deny all users
@@ -184,6 +192,34 @@ class PartnersController extends Controller
 			'preview'         => $preview,
 			'userId'          => $userId,
 		));
+	}
+
+	// PUBLOSHERS CPM //
+	
+	
+	public function actionPublishersCPM(){
+		// $this->render('maintenance');
+		$this->renderPublishersCPM(Yii::app()->user->id, false);
+	}
+	public function actionPreviewPublishersCPM($id){
+		$this->renderPublishersCPM($id, true);
+	}
+	public function renderPublishersCPM($userId, $preview){
+
+		KHtml::paginationController();
+		
+		$model = new FImpressions('search');
+		$model->unsetAttributes();
+		
+		// $publisher   = Providers::model()->findByUser($userId);
+		// if(!isset($publisher->id)) die('Publisher not allowed');
+
+		$this->render('//stats/impressions', 
+			array(
+				'model'          => $model,
+				'publisher_id'   => 192,//$publisher->id,
+				'publisher_name' => 'Targetoo',//$publisher->name,
+				));
 	}
 
 

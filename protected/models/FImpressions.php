@@ -164,11 +164,11 @@ class FImpressions extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search($totals=false)
+	public function search($totals=false, $partner=null)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
-		$request = $_REQUEST;
+		$request = $_POST;
 		$criteria=new CDbCriteria;
 
 		// date  
@@ -190,6 +190,9 @@ class FImpressions extends CActiveRecord
 		$filter = isset($request['filter']) ? $request['filter'] : null;
 
 		// $filter = isset($request['filter']) ? $request['filter'] : null;
+
+		if($partner)
+			$criteria->compare('dSupply.provider',$partner);
 
 		// $criteria->compare('id',$this->id);
 		// $criteria->compare('D_Demand_id',$this->D_Demand_id);
@@ -230,10 +233,10 @@ class FImpressions extends CActiveRecord
 			// sum
 			'impressions'     => 'COUNT(t.id)',
 			'unique_user'     => 'COUNT(distinct t.unique_id)',
-			'revenue'         => 'SUM(dBid.revenue)',
+			'revenue'         => !$partner ? 'SUM(dBid.revenue)' : 'SUM(dBid.cost)',
 			'cost'            => 'SUM(dBid.cost)',
 			'profit'          => 'SUM(dBid.revenue)-SUM(dBid.cost)',
-			'revenue_eCPM'    => 'SUM(dBid.revenue) * 1000 / COUNT(t.id)',
+			'revenue_eCPM'    => !$partner ? 'SUM(dBid.revenue) * 1000 / COUNT(t.id)' : 'SUM(dBid.cost) * 1000 / COUNT(t.id)',
 			'cost_eCPM'       => 'SUM(dBid.cost) * 1000 / COUNT(t.id)',
 			'profit_eCPM'     => '(SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id)',
 			);

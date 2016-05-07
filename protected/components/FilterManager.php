@@ -95,6 +95,11 @@ class FilterManager
 			'roles'  => array( 
 				'publisher',
 			)),
+		'publisherCPM' => array( 
+			'column' => 'publishers.providers_id', 
+			'roles'  => array( 
+				'publisherCPM',
+			)),
 		'clients.validateOpportunity' => array( 
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 

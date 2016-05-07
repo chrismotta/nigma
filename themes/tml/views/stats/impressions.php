@@ -2,9 +2,11 @@
 
 // post data
 
-$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
-$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'today' ;
-$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'today';
+$dpp       = isset($space['dpp']) ? $_POST['dpp'] : '1' ;
+$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'today' ;
+$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'today';
+
+$partner = isset($publisher_name) ? $publisher_name : null;
 
 $space = "<span class='formfilter-space'></span>";
 
@@ -69,47 +71,46 @@ echo '</div>';
 
 
 
-$groupColumns1 = array(
-		'date'            =>0, 
-		'hour'            =>0, 
-		'provider'        =>1,
-		'placement'       =>0, 
-		'tag'             =>1,
-		'advertiser'      =>0, 
-		'campaign'        =>0, 
-		'pubid'           =>0, 
-		'country'         =>0, 
-		'os_type'         =>0,
-		'os_version'      =>0,
-		);
-$groupColumns2 = array(
-		'device_type'     =>0,
-		'device_brand'    =>0,
-		'device_model'    =>0,
-		'browser_type'    =>0,
-		'browser_version' =>0,
-		'connection_type' =>0,
-		'carrier'         =>0,
-		);
+$groupColumns1 = array();
+$groupColumns1['date']                     = 0;
+$groupColumns1['hour']                     = 0;
+$groupColumns1['provider']                 = 1;
+$groupColumns1['placement']                = 0;
+$groupColumns1['tag']                      = 1;
+if(!$partner) $groupColumns1['advertiser'] = 0;
+if(!$partner) $groupColumns1['campaign']   = 0;
+$groupColumns1['pubid']                    = 0;
+$groupColumns1['country']                  = 0;
+$groupColumns1['os_type']                  = 0;
+$groupColumns1['os_version']               = 0;
 
-if(isset($_REQUEST['group1']))
-	$groupColumns1 = $_REQUEST['group1'];
-if(isset($_REQUEST['group2']))
-	$groupColumns2 = $_REQUEST['group2'];
+$groupColumns2 = array();
+$groupColumns2['device_type']              = 0;
+$groupColumns2['device_brand']             = 0;
+$groupColumns2['device_model']             = 0;
+$groupColumns2['browser_type']             = 0;
+$groupColumns2['browser_version']          = 0;
+$groupColumns2['connection_type']          = 0;
+$groupColumns2['carrier']                  = 0;
 
-$sumColumns = array(
-		'impressions'  =>1, 
-		'unique_user'  =>1, 
-		'revenue'      =>1, 
-		'cost'         =>1, 
-		'profit'       =>1, 
-		'revenue_eCPM' =>1, 
-		'cost_eCPM'    =>1, 
-		'profit_eCPM'  =>1, 
-		);
+if(isset($_POST['group1']))
+	$groupColumns1 = $_POST['group1'];
+if(isset($_POST['group2']))
+	$groupColumns2 = $_POST['group2'];
 
-if(isset($_REQUEST['sum']))
-	$sumColumns = $_REQUEST['sum'];
+$sumColumns = array();
+$sumColumns['impressions']               = 1;
+$sumColumns['unique_user']               = 1;
+$sumColumns['revenue']                   = 1;
+if(!$partner) $sumColumns['cost']        = 1;
+if(!$partner) $sumColumns['profit']      = 1;
+$sumColumns['revenue_eCPM']              = 1;
+if(!$partner) $sumColumns['cost_eCPM']   = 1;
+if(!$partner) $sumColumns['profit_eCPM'] = 1;
+
+
+if(isset($_POST['sum']))
+	$sumColumns = $_POST['sum'];
 
 
 // ----- Groups
@@ -153,25 +154,23 @@ echo '</div>';
 
 // ----- Filters
 
-$filterColumns = array(
-		'advertiser'      =>0, 
-		'campaign'        =>0, 
-		'tag'             =>0, 
-		'provider'        =>0, 
-		'placement'       =>0, 
-		// geo
-		'connection_type' =>0, 
-		'country'         =>0, 
-		'carrier'         =>0,
-		// user_agent
-		'device_type'     =>0,
-		'device_brand'    =>0,
-		'device_model'    =>0,
-		'os_type'         =>0,
-		'os_version'      =>0,
-		'browser_type'    =>0,
-		'browser_version' =>0,
-		);
+$filterColumns = array();
+$filterColumns['provider']                 = 0; 
+$filterColumns['tag']                      = 0;
+$filterColumns['placement']                = 0;
+if(!$partner) $filterColumns['advertiser'] = 0;
+if(!$partner) $filterColumns['campaign']   = 0;
+$filterColumns['country']                  = 0;
+$filterColumns['os_type']                  = 0;
+$filterColumns['os_version']               = 0;
+$filterColumns['device_type']              = 0;
+$filterColumns['device_brand']             = 0;
+$filterColumns['device_model']             = 0;
+$filterColumns['browser_type']             = 0;
+$filterColumns['browser_version']          = 0;
+$filterColumns['connection_type']          = 0; 
+$filterColumns['carrier']                  = 0;
+
 
 echo '<div class="row-fluid">';
 echo '<div class="form-sep span12">FILTERS</div>';
@@ -185,7 +184,7 @@ echo '</div>';
 echo '<div class="row-fluid" id="filters-row">';
 
 
-isset($_REQUEST['filter']) ? $filter = $_REQUEST['filter'] : $filter = null;
+isset($_POST['filter']) ? $filter = $_POST['filter'] : $filter = null;
 
 ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filter);
 ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filter);
@@ -242,21 +241,20 @@ echo CHtml::endForm();
 
 echo '</div>';
 
-if(count($_REQUEST)>0){
+if(count($_POST)>0){
 
 	// JSON
 	// echo '<div class="row-fluid" style="word-wrap: break-word;">';
 	// echo '<hr>';
-	// echo json_encode($_REQUEST);
+	// echo json_encode($_POST);
 	// echo '<hr>';
 	// echo '</div>';
-	
-	
-	$totals = $model->search(true);
+		
+	$totals = $model->search(true, $partner);
 	
 	$this->widget('application.components.NiExtendedGridView', array(
 		'id'              => 'impressions-grid',
-		'dataProvider'    => $model->search(),
+		'dataProvider'    => $model->search(false, $partner),
 		'filter'          => null,
 		'type'            => 'condensed',
 		'template'        => '{items} {pagerExt} {summary}',
@@ -284,11 +282,11 @@ if(count($_REQUEST)>0){
 				),
 			array(
 				'name' => 'advertiser',
-				'visible' => $groupColumns1['advertiser'],
+				'visible' => !$partner ? $groupColumns1['advertiser'] : false,
 				),
 			array(
 				'name' => 'campaign',
-				'visible' => $groupColumns1['campaign'],
+				'visible' => !$partner ? $groupColumns1['campaign'] : false,
 				),
 			array(
 				'name' => 'pubid',
@@ -360,7 +358,7 @@ if(count($_REQUEST)>0){
 				),
 			array(
 				'name' => 'cost',
-				'visible' => $sumColumns['cost'],
+				'visible' => !$partner ? $sumColumns['cost'] : false,
 				'footer' => $totals['cost'],
 				'headerHtmlOptions' => array('style'=>'text-align:right'),
 				'htmlOptions' => array('style'=>'text-align:right'),
@@ -368,7 +366,7 @@ if(count($_REQUEST)>0){
 				),
 			array(
 				'name' => 'profit',
-				'visible' => $sumColumns['profit'],
+				'visible' => !$partner ? $sumColumns['profit'] : false,
 				'footer' => $totals['profit'],
 				'headerHtmlOptions' => array('style'=>'text-align:right'),
 				'htmlOptions' => array('style'=>'text-align:right'),
@@ -384,7 +382,7 @@ if(count($_REQUEST)>0){
 				),
 			array(
 				'name' => 'cost_eCPM',
-				'visible' => $sumColumns['cost_eCPM'],
+				'visible' => !$partner ? $sumColumns['cost_eCPM'] : false,
 				'footer' => $totals['cost_eCPM'],
 				'headerHtmlOptions' => array('style'=>'text-align:right'),
 				'htmlOptions' => array('style'=>'text-align:right'),
@@ -392,7 +390,7 @@ if(count($_REQUEST)>0){
 				),
 			array(
 				'name' => 'profit_eCPM',
-				'visible' => $sumColumns['profit_eCPM'],
+				'visible' => !$partner ? $sumColumns['profit_eCPM'] : false,
 				'footer' => $totals['profit_eCPM'],
 				'headerHtmlOptions' => array('style'=>'text-align:right'),
 				'htmlOptions' => array('style'=>'text-align:right'),

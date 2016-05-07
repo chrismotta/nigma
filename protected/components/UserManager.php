@@ -59,7 +59,10 @@ class UserManager
             Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/advertisers');
 		
         if ($this->isUserAssignToRole('publisher'))
-			Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/publishers');
+            Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/publishers');
+
+        if ($this->isUserAssignToRole('publisherCPM'))
+            Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/publishersCPM');
     }
 
 }

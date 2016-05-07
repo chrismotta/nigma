@@ -234,6 +234,20 @@
                 array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
             );
 
+    if (FilterManager::model()->isUserTotalAccess('publisherCPM'))
+        $items=array(  
+                array('label'=>'Publisher', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Dashboard', 'url'=>array('/partners/publishersCPM')),
+                ), 'visible'=>!Yii::app()->user->isGuest),             
+                array('label'=>'Admin', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+                'items'=>array(
+                    array('label'=>'Profile', 'url'=>array('/users/profile')),
+                ), 'visible'=>!Yii::app()->user->isGuest),
+                array('label'=>'Login', 'url'=>array('/site/login'), 'visible'=>Yii::app()->controller->id.'/'.Yii::app()->controller->action->id=='externalForms/revenueValidation' ? false : Yii::app()->user->isGuest),
+                array('label'=>'Logout ('.Yii::app()->user->name.')', 'url'=>array('/site/logout'), 'visible'=>!Yii::app()->user->isGuest)
+            );
+
     if (FilterManager::model()->isUserTotalAccess('advertiser'))
         $items=array(  
                 array('label'=>'Advertiser', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 

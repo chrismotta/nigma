@@ -174,6 +174,9 @@ class Users extends CActiveRecord
 				case 'publisher':
 					$return = "partners/previewPublishers";
 					break;
+				case 'publisherCPM':
+					$return = "partners/previewPublishersCPM";
+					break;
 				case 'affiliate':
 					$return = "partners/previewAffiliates";
 					break;
