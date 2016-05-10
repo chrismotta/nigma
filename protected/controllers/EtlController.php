@@ -77,6 +77,8 @@ class EtlController extends Controller
 		LEFT JOIN geo_location g     ON(r.country_id          = g.id_location) 
 		LEFT JOIN finance_entities f ON(r.finance_entities_id = f.id) 
 		LEFT JOIN advertisers a      ON(f.advertisers_id      = a.id)
+		ON DUPLICATE KEY UPDATE
+		advertiser=a.name, finance_entity=f.name, region=g.name, opportunity=o.product, campaign=CONCAT(o.product," - ",c.name," (",c.id,")"), rate=o.rate, freq_cap=t.freq_cap, country=t.country, connection_type=t.connection_type, device_type=t.device_type, os_type=t.os, os_version=t.os_version
 		';
 		
 		$return = Yii::app()->db->createCommand($query)->execute();
@@ -95,6 +97,8 @@ class EtlController extends Controller
 		FROM placements p 
 		LEFT JOIN sites s     ON(p.sites_id     = s.id) 
 		LEFT JOIN providers o ON(s.providers_id = o.id)
+		ON DUPLICATE KEY UPDATE
+		provider=o.name, site=s.name, placement=p.name, rate=p.rate
 		';
 	
 		$return = Yii::app()->db->createCommand($query)->execute();
