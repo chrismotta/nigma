@@ -2,9 +2,9 @@
 
 // post data
 
-$dpp       = isset($space['dpp']) ? $_POST['dpp'] : '1' ;
-$dateStart = isset($_POST['dateStart']) ? $_POST['dateStart'] : 'today' ;
-$dateEnd   = isset($_POST['dateEnd']) ? $_POST['dateEnd'] : 'today';
+$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
+$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'today' ;
+$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'today';
 
 $partner = isset($publisher_name) ? $publisher_name : null;
 
@@ -74,9 +74,9 @@ echo '</div>';
 $groupColumns1 = array();
 $groupColumns1['date']                     = 0;
 $groupColumns1['hour']                     = 0;
-$groupColumns1['provider']                 = 1;
-$groupColumns1['placement']                = 0;
-$groupColumns1['tag']                      = 1;
+if(!$partner) $groupColumns1['provider']   = 1;
+$groupColumns1['placement']                = !$partner ? 0 : 1;
+if(!$partner) $groupColumns1['tag']        = 1;
 if(!$partner) $groupColumns1['advertiser'] = 0;
 if(!$partner) $groupColumns1['campaign']   = 0;
 $groupColumns1['pubid']                    = 0;
@@ -93,10 +93,10 @@ $groupColumns2['browser_version']          = 0;
 $groupColumns2['connection_type']          = 0;
 $groupColumns2['carrier']                  = 0;
 
-if(isset($_POST['group1']))
-	$groupColumns1 = $_POST['group1'];
-if(isset($_POST['group2']))
-	$groupColumns2 = $_POST['group2'];
+if(isset($_REQUEST['group1']))
+	$groupColumns1 = $_REQUEST['group1'];
+if(isset($_REQUEST['group2']))
+	$groupColumns2 = $_REQUEST['group2'];
 
 $sumColumns = array();
 $sumColumns['impressions']               = 1;
@@ -109,8 +109,8 @@ if(!$partner) $sumColumns['cost_eCPM']   = 1;
 if(!$partner) $sumColumns['profit_eCPM'] = 1;
 
 
-if(isset($_POST['sum']))
-	$sumColumns = $_POST['sum'];
+if(isset($_REQUEST['sum']))
+	$sumColumns = $_REQUEST['sum'];
 
 
 // ----- Groups
@@ -122,14 +122,14 @@ echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="span12">';
 echo '<div>';
-ReportingManager::groupFilter($this, $groupColumns1, 'group1', null, '', 'small', 'info', false);
+ReportingManager::groupFilter($this, $groupColumns1, 'group1', null, '', 'small', 'info', false, $partner);
 echo '</div>';
 echo '</div>';
 echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="span12">';
 echo '<div>';
-ReportingManager::groupFilter($this, $groupColumns2, 'group2', null, '', 'small', 'info', false);
+ReportingManager::groupFilter($this, $groupColumns2, 'group2', null, '', 'small', 'info', false, $partner);
 echo '</div>';
 echo '</div>';
 echo '</div>';
@@ -145,7 +145,7 @@ echo '<div class="row-fluid">';
 echo '<div class="span12">';
 
 echo '<div>';
-ReportingManager::groupFilter($this, $sumColumns, 'sum', null, '', 'small', 'info', false);
+ReportingManager::groupFilter($this, $sumColumns, 'sum', null, '', 'small', 'info', false, $partner);
 echo '</div>';
 
 echo '</div>';
@@ -155,8 +155,8 @@ echo '</div>';
 // ----- Filters
 
 $filterColumns = array();
-$filterColumns['provider']                 = 0; 
-$filterColumns['tag']                      = 0;
+if(!$partner) $filterColumns['provider']   = 0; 
+if(!$partner) $filterColumns['tag']        = 0;
 $filterColumns['placement']                = 0;
 if(!$partner) $filterColumns['advertiser'] = 0;
 if(!$partner) $filterColumns['campaign']   = 0;
@@ -184,13 +184,14 @@ echo '</div>';
 echo '<div class="row-fluid" id="filters-row">';
 
 
-isset($_POST['filter']) ? $filter = $_POST['filter'] : $filter = null;
+isset($_REQUEST['filter']) ? $filter = $_REQUEST['filter'] : $filter = null;
 
 ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filter);
 ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filter);
 ReportingManager::dataMultiSelect(new DDemand(), 'tag', $filter);
 ReportingManager::dataMultiSelect(new DSupply(), 'provider', $filter);
-ReportingManager::dataMultiSelect(new DSupply(), 'placement', $filter);
+$comparePlacement = $partner ? array('provider'=>$partner) : array();
+ReportingManager::dataMultiSelect(new DSupply(), 'placement', $filter, $comparePlacement);
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type', $filter);
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'country', $filter);
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier', $filter);
@@ -241,12 +242,12 @@ echo CHtml::endForm();
 
 echo '</div>';
 
-if(count($_POST)>0){
+if(count($_REQUEST)>1){
 
 	// JSON
 	// echo '<div class="row-fluid" style="word-wrap: break-word;">';
 	// echo '<hr>';
-	// echo json_encode($_POST);
+	// echo json_encode($_REQUEST);
 	// echo '<hr>';
 	// echo '</div>';
 		
@@ -269,7 +270,7 @@ if(count($_POST)>0){
 				),
 			array(
 				'name' => 'provider',
-				'visible' => $groupColumns1['provider'],
+				'visible' => !$partner ? $groupColumns1['provider'] : false,
 				),
 			array(
 				'name' => 'placement',
@@ -277,8 +278,7 @@ if(count($_POST)>0){
 				),
 			array(
 				'name' => 'tag',
-				// 'value' => '$data->tag ." (". $data->DDemand_id.")"',
-				'visible' => $groupColumns1['tag'],
+				'visible' => !$partner ? $groupColumns1['tag'] : false,
 				),
 			array(
 				'name' => 'advertiser',
@@ -374,6 +374,7 @@ if(count($_POST)>0){
 				),
 			array(
 				'name' => 'revenue_eCPM',
+				'header' => !$partner ? 'ReCPM' : 'eCPM',
 				'visible' => $sumColumns['revenue_eCPM'],
 				'footer' => $totals['revenue_eCPM'],
 				'headerHtmlOptions' => array('style'=>'text-align:right'),

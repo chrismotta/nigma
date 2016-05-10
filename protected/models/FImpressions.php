@@ -168,7 +168,7 @@ class FImpressions extends CActiveRecord
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
-		$request = $_POST;
+		$request = $_REQUEST;
 		$criteria=new CDbCriteria;
 
 		// date  
@@ -324,7 +324,7 @@ class FImpressions extends CActiveRecord
 				'criteria'=>$criteria,
 				'pagination'=> KHtml::pagination($request),
 				'sort'=>array(
-					'route' => 'stats/impressions',
+					'route' => !$partner ? 'stats/impressions' : 'partners/previewPublishersCPM',
 					'params' => $request,
 					'defaultOrder' => isset($orderBy) ? implode(',', $orderBy) : '',
 					'attributes'   => $sort,

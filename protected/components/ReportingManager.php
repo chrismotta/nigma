@@ -2,7 +2,7 @@
 
 class ReportingManager
 {
-	private static function getLabel($item){
+	private static function getLabel($item, $partner=false){
         $attributeLabels = array(
             'date'            => 'Date',
             'hour'            => 'Hour',
@@ -35,8 +35,13 @@ class ReportingManager
             'cost_eCPM'       => 'CeCPM', 
             'profit_eCPM'     => 'PeCPM', 
             );
+        $attributePartnersLabels = array(
+            'revenue_eCPM'    => 'eCPM', 
+            );
 
-        if(isset($attributeLabels[$item])){
+        if($partner && isset($attributePartnersLabels[$item])){
+            return $attributePartnersLabels[$item];
+        }else if(isset($attributeLabels[$item])){
             return $attributeLabels[$item];
         }else{
             return $item;
@@ -125,12 +130,19 @@ class ReportingManager
         	);
     } 
 
-    public static function dataMultiSelect($model, $column, $value=array()){
+    public static function dataMultiSelect($model, $column, $value=array(), $compare=array()){
 
         $criteria = new CDbCriteria;
         $criteria->distinct = true;
         $criteria->select = $column;
         $criteria->order = $column;
+
+        if(count($compare)>0){
+            foreach ($compare as $col => $val) {
+                $criteria->compare($col, $val);
+            }
+        }
+
 
         $data = CHtml::listData(
             $model::model()->findAll($criteria), $column, $column);
@@ -143,7 +155,7 @@ class ReportingManager
                 ), array(), true);
     }
 
-    public static function groupFilter($controller, $items, $prefix, $title, $titleStyle='', $size=null, $color=null, $stacked=false){
+    public static function groupFilter($controller, $items, $prefix, $title, $titleStyle='', $size=null, $color=null, $stacked=false, $partner=false){
 
         if(isset($title)){
             $buttons = array(
@@ -161,7 +173,7 @@ class ReportingManager
         foreach ($items as $key => $value) {
             echo CHtml::hiddenField($prefix.'['.$key.']', $value, array('id'=>''.$prefix.'-'.$key));
             $buttons[] = array(
-                'label' => self::getLabel($key), 
+                'label' => self::getLabel($key, $partner), 
                 'active'=> $value, 
                 'htmlOptions' => array(
                     'onclick' => '$("#'.$prefix.'-'.$key.'").val( 1 - $("#'.$prefix.'-'.$key.'").val() );',
