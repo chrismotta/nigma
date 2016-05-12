@@ -113,7 +113,7 @@ $('.search-form form').submit(function(){
     </fieldset>
 
 <?php $this->endWidget(); ?>
-<?php $this->widget('application.components.NiExtendedGridView', array(
+<?php  $this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'opportunities-grid',
 	'dataProvider'             => $model->search($accountManager,$advertiser,$country,null,$region),
 	'filter'                   => $model,

@@ -29,7 +29,7 @@ class IosController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete', 'archived','redirect','browsePdf', 'downloadPdf', 'uploadPdf','viewPdf'),
-				'roles'=>array('admin'),
+				'roles'=>array('admin','account_manager_admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -124,10 +124,12 @@ class IosController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Ios');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		$this->redirect(array('admin'));
+		
+		// $dataProvider=new CActiveDataProvider('Ios');
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// ));
 	}
 
 	/**

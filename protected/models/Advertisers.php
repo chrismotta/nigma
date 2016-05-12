@@ -109,8 +109,13 @@ class Advertisers extends CActiveRecord
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('prefix',$this->prefix,true);
-		$criteria->compare('cat',$this->cat,true);
 		$criteria->compare('commercial_id',$this->commercial_id);
+
+		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
+			$criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+		}else{
+			$criteria->compare('cat',$this->cat,true);
+		}
 
 		$criteria->with = array('commercial');
 		$criteria->compare('commercial.name', $this->commercial_lastname, true);

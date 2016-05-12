@@ -66,7 +66,7 @@
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('media_buyer_admin'),
                     ),
                 array('label'=>'Tags', 'url'=>array('/tags/admin'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('media_buyer_admin'),
+                    'visible' => rol('admin') || rol('media_buyer_admin'),
                     ),
                 array('label'=>'Traffic Log', 'url'=>array('/campaigns/traffic'),
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
@@ -74,7 +74,7 @@
                 array('label'=>'Vectors', 'url'=>array('/vectors/admin'),
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
                     ),
-                array('label'=>'Managers Distribution', 'url'=>array('/opportunities/managersDistribution'),
+                array('label'=>'AM Distribution', 'url'=>array('/opportunities/managersDistribution'),
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
                     ),
             ), 
@@ -102,13 +102,13 @@
             ), 
             'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin'),
             ),
-        /*array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
+        array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
             array('label'=>'Creatives', 'url'=>array('/sem/creative')),
             array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
             array('label'=>'Placements', 'url'=>array('/sem/placement')),
             array('label'=>'Search Query', 'url'=>array('/sem/searchCriteria')),
-        ), 'visible'=>!Yii::app()->user->isGuest),*/
+        ), 'visible'=>!Yii::app()->user->isGuest),
         array(
             'label'=>'Finance', 
             'url'=>'#',

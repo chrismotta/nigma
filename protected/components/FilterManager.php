@@ -27,6 +27,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'account_manager_admin',
 				'media_manager',
 				'bussiness',
 				'finance',
@@ -34,10 +35,11 @@ class FilterManager
 				'advertisers',
 			)),
 		'daily.commercial' => array( 
-			'column' => 'ios.commercial_id', 
+			'column' => 'financeEntities.commercial_id', 
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'account_manager_admin',
 				'media_manager',
 				'bussiness',
 				'finance',
@@ -48,15 +50,17 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'account_manager_admin',
 				'media_manager',
 				'sem',
 				'finance',
 			)),
 		'campaign.commercial' => array( 
-			'column' => 'ios.commercial_id', 
+			'column' => 'financeEntities.commercial_id', 
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'account_manager_admin',
 				'media_manager',
 				'sem',
 				'finance',
@@ -66,12 +70,14 @@ class FilterManager
 			'roles' => array(
 				'admin',
 				'media_buyer_admin',
+				'account_manager_admin',
 				'media_manager',
 			)),
 		'finance.clients' => array( 
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
+				'account_manager_admin',
 				'media_manager',
 				'finance',
 			)),
@@ -117,6 +123,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'business',
+				'account_manager_admin',
 				'media_manager',
 				'finance',
 			)),
@@ -125,6 +132,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'business',
+				'account_manager_admin',
 				'media_manager',
 			)),
 		'alert.business' => array( 
@@ -141,24 +149,27 @@ class FilterManager
 			'column' => 't.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'account_manager_admin',
 				'media_manager',
 				'commercial_manager',
 				'finance',
 				'business',
 			)),
 		'opportunities' => array( 
-			'column' => 'ios.commercial_id', 
+			'column' => 'financeEntities.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'account_manager_admin',
 				'media_manager',
 				'commercial_manager',
 				'finance',
 				'business',
 			)),
 		'advertisers' => array( 
-			'column' => 'ios.commercial_id', 
+			'column' => 'financeEntities.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'account_manager_admin',
 				'media_manager',
 				'commercial_manager',
 				'finance',

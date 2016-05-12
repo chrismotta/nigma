@@ -33,7 +33,7 @@ class FinanceEntitiesController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update', 'response','admin','delete', 'archived','redirect','getOpportunities'),
-				'roles'=>array('admin'),
+				'roles'=>array('admin', 'account_manager','account_manager_admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -188,10 +188,12 @@ class FinanceEntitiesController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('FinanceEntities');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		$this->redirect(array('admin'));
+		
+		// $dataProvider=new CActiveDataProvider('FinanceEntities');
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// ));
 	}
 
 	/**

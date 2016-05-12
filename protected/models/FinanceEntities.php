@@ -175,6 +175,10 @@ class FinanceEntities extends CActiveRecord
 		$criteria->compare('description',$this->description,true);
 		$criteria->compare('country_id',$this->country_id);
 
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+
 		$criteria->with=array('advertisers','country','commercial');
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
 		//$criteria->compare('advertisers.cat', $cat);

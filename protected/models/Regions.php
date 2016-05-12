@@ -99,9 +99,13 @@ class Regions extends CActiveRecord
 		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('region',$this->region,true);
-		$criteria->with=array('financeEntities','country');
 		$criteria->compare('country.name',$this->country_name,true);
 		$criteria->compare('financeEntities.name',$this->finance_entities_name,true);
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+		$criteria->with=array('financeEntities','country','financeEntities.advertisers');
+
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
 			'pagination'=> KHtml::pagination(),

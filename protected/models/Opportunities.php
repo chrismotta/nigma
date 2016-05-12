@@ -207,9 +207,16 @@ class Opportunities extends CActiveRecord
 		$criteria->compare('financeEntities.name', $this->finance_entities_name, true);
 		$criteria->compare('advertisers.name', $this->advertiser_name, true);
 		$criteria->compare('financeEntities.currency', $this->currency, true);
-		if($accountManager != NULL)$criteria->compare('accountManager.id',$accountManager);
-		if($advertiser != NULL)$criteria->compare('advertisers.id',$advertiser);
-		if($io != NULL)$criteria->addCondition('t.ios_id='.$io);
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+		if($accountManager != NULL)
+			$criteria->compare('accountManager.id',$accountManager);
+		if($advertiser != NULL)
+			$criteria->compare('advertisers.id',$advertiser);
+		if($io != NULL)
+			$criteria->addCondition('t.ios_id='.$io);
 
 		FilterManager::model()->addUserFilter($criteria, 'opportunities');
 
@@ -357,7 +364,7 @@ class Opportunities extends CActiveRecord
 			}
 			else
 			{
-				$criteria->compare('ios.advertisers_id',$advertisers);
+				$criteria->compare('financeEntities.advertisers_id',$advertisers);
 			}
 		}
 

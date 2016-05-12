@@ -29,7 +29,7 @@ class RegionsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin', 'response','delete', 'archived','redirect'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -179,10 +179,12 @@ class RegionsController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Regions');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		$this->redirect(array('admin'));
+		
+		// $dataProvider=new CActiveDataProvider('Regions');
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// ));
 	}
 
 	/**

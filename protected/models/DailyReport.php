@@ -1012,6 +1012,9 @@ class DailyReport extends CActiveRecord
 			'round( avg(eCPA), 2 ) as eCPA'
 			);
 
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
 		// if($sum==1){
 		// 	$criteria->group  = 'campaigns_id';
 		// 	$criteria->select = array(

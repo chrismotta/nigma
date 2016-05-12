@@ -89,13 +89,16 @@ class Ios extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->with = array('financeEntities');
+		$criteria->with = array('financeEntities','financeEntities.advertisers');
 		$criteria->compare('id',$this->id);
 		$criteria->compare('finance_entities_id',$this->finance_entities_id);
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('budget',$this->budget,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('financeEntities.name',$this->financeEntitiesName,true);
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

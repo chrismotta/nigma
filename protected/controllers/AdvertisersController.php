@@ -30,7 +30,7 @@ class AdvertisersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update', 'response','admin','delete', 'externalForm', 'archived','viewAjax','getAdvertisers'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -189,10 +189,12 @@ class AdvertisersController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Advertisers');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		$this->redirect(array('admin'));
+
+		// $dataProvider=new CActiveDataProvider('Advertisers');
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// ));
 	}
 
 	/**

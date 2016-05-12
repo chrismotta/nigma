@@ -29,7 +29,7 @@ class OpportunitiesController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','duplicate', 'response','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -206,10 +206,12 @@ class OpportunitiesController extends Controller
 	 */
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Opportunities');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-		));
+		$this->redirect(array('admin'));
+		
+		// $dataProvider=new CActiveDataProvider('Opportunities');
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// ));
 	}
 
 	/**

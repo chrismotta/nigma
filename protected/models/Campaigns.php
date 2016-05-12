@@ -246,6 +246,9 @@ class Campaigns extends CActiveRecord
 		else
 			FilterManager::model()->addUserFilter($criteria, 'daily');
 
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
 		$criteria->compare('financeEntities.name',$this->financeEntities_name, true);
 		$criteria->compare('LOWER(providers.currency)', strtolower($this->net_currency), true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
