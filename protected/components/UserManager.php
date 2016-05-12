@@ -63,6 +63,9 @@ class UserManager
 
         if ($this->isUserAssignToRole('publisherCPM'))
             Yii::app()->controller->redirect(Yii::app()->baseUrl.'/partners/publishersCPM');
+
+        if ($this->isUserAssignToRole('account_manager_admin'))
+            Yii::app()->controller->redirect(Yii::app()->baseUrl.'/dailyReport/admin');
     }
 
 }

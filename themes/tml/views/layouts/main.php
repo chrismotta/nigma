@@ -32,7 +32,7 @@
             'label'=>'Dashboard', 
             'url'=>array('/site/index'), 
             'itemOptions' => array('class'=>'showLoadingMenuItem'), 
-            'visible'=>!Yii::app()->user->isGuest
+            'visible' => rol('admin') || rol('media_buyer_admin'),
             ),
         array(
             'label'=>'Demand', 
