@@ -115,8 +115,7 @@ class EtlController extends Controller
 		$query = 'INSERT IGNORE INTO D_UserAgent (user_agent) 
 		SELECT DISTINCT user_agent 
 		FROM imp_log 
-		WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
-		AND HOUR(date)   = HOUR(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
+		WHERE DATE > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
 		';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
@@ -165,8 +164,7 @@ class EtlController extends Controller
 		$query = 'INSERT IGNORE INTO D_GeoLocation (server_ip) 
 		SELECT DISTINCT server_ip 
 		FROM imp_log 
-		WHERE DATE(date) = DATE(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
-		AND HOUR(date)   = HOUR(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
+		WHERE DATE > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
 		';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
@@ -211,8 +209,7 @@ class EtlController extends Controller
 		FROM imp_log i 
 		LEFT JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
 		LEFT JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) 
-		WHERE DATE(i.date) = DATE(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
-		AND HOUR(i.date)   = HOUR(DATE_SUB(NOW(), INTERVAL :h HOUR))
+		WHERE DATE > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))
 		';
 
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
