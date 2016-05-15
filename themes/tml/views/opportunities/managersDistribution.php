@@ -4,7 +4,7 @@
 /* @var $model DailyReport */
 $this->breadcrumbs=array(
 	'Campaigns'=>array('index'),
-	'Mannagers Distribution',
+	'AM Distribution',
 );
 ?>
 <br>
