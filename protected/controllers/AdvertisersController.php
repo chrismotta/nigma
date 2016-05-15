@@ -263,7 +263,11 @@ class AdvertisersController extends Controller
 	public function renderFormAjax($model) 
 	{
 		$this->layout='//layouts/modalIframe';
-		$cat = KHtml::enumItem($model, 'cat');
+
+		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$cat = array('VAS'=>'VAS','Affiliates'=>'Affiliates','App Owners'=>'App Owners');
+		else
+			$cat = KHtml::enumItem($model, 'cat');
 
 		if ( $model->isNewRecord ) {
 			$model->commercial_id = Yii::app()->user->id;

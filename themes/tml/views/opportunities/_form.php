@@ -11,7 +11,6 @@
  * @var wifi true-false
  */
 ?>
-
     <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 		'id'                   =>'opportunities-form',
 		'type'                 =>'horizontal',

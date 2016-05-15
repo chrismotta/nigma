@@ -269,7 +269,13 @@ class OpportunitiesController extends Controller
 			// comentado provisoriamente, generar permiso de admin
 			// $advertiser = CHtml::listData( Advertisers::model()->findAll( 'commercial_id=:c_id', array( ':c_id'=>Yii::app()->user->id) ), 'id', 'name' );
 			
-			$advertiser = CHtml::listData( Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name' );
+	        $criteria=new CDbCriteria;
+	        $criteria->compare('status','Active');
+	        $criteria->order = 'name';
+	        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+	            $criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+
+			$advertiser = CHtml::listData( Advertisers::model()->findAll($criteria), 'id', 'name' );
 
 	        if($action == 'Duplicate'){
 	        	$regions = Regions::model()->findByPk($model->regions_id);
@@ -291,7 +297,7 @@ class OpportunitiesController extends Controller
 		}
 		
 		// Get users with authorization "media"
-		$account = CHtml::listData(Users::model()->findUsersByRole('admin'), 'id', 'username' );
+		$account = CHtml::listData(Users::model()->findUsersByRole(array('admin','account_manager_admin')), 'id', 'username' );
 
 		// Get countries and carriers with status "Active"
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );

@@ -214,6 +214,10 @@ class ClicksLog extends CActiveRecord
 		else
 			$criteria->compare('t.providers_id','<>29');
 
+		
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
 		//filters
 		if(isset($filters['manager'])) 
 			$criteria->compare('opportunities.account_manager_id',$filters['manager']);

@@ -28,7 +28,7 @@ class VectorsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirectAjax','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived'),
-				'roles'=>array('admin', 'media_manager', 'business', 'affiliates_manager'),
+				'roles'=>array('admin', 'media_manager', 'business', 'affiliates_manager', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

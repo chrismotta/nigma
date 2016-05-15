@@ -459,7 +459,11 @@ class DailyReportController extends Controller
 	
 		//$providers = CHtml::listData(Providers::model()->findAll(array('order'=>'name')), 'id', 'name');
 		$criteria       = new CDbCriteria;
-		$criteria->with = array('providers', 'opportunities.regions','opportunities.regions.financeEntities');
+		$criteria->with = array('providers', 'opportunities.regions','opportunities.regions.financeEntities','opportunities.regions.financeEntities.advertisers');
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+		
 		$criteria->join = 'LEFT JOIN networks ON t.providers_id=networks.providers_id';
 		$criteria->compare('networks.has_api', 0);
 		$criteria->compare('t.editable', 1, false, 'OR');

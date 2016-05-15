@@ -237,7 +237,16 @@ class RegionsController extends Controller
 		$this->layout='//layouts/modalIframe';
 	
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name asc', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name' );
-		$financeEntities = CHtml::listData(FinanceEntities::model()->findAll( array('order'=>'name', "condition"=>"status='Active'") ), 'id', 'name' );
+		
+
+        $criteria=new CDbCriteria;
+        $criteria->compare('t.status','Active');
+        $criteria->order = 't.name';
+        $criteria->with = array('advertisers');
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+		$financeEntities = CHtml::listData(FinanceEntities::model()->findAll( $criteria ), 'id', 'name' );
 
 		$this->render('_form',array(
 			'model'      =>$model,

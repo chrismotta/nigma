@@ -418,7 +418,13 @@ class FinanceEntitiesController extends Controller
 		$pre_post_payment   = KHtml::enumItem($model, 'pre_post_payment');
 		$currency   = KHtml::enumItem($model, 'currency');
 		$entity     = KHtml::enumItem($model, 'entity');
-		$advertiser = CHtml::listData(Advertisers::model()->findAll(array('order'=>'name', "condition"=>"status='Active'")), 'id', 'name'); 
+
+		$criteria=new CDbCriteria;
+		$criteria->order = 'name';
+		$criteria->compare('status', 'Active');
+		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+		$advertiser = CHtml::listData(Advertisers::model()->findAll($criteria), 'id', 'name'); 
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 
 		if ( $model->isNewRecord ) {

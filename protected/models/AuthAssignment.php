@@ -103,12 +103,15 @@ class AuthAssignment extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function getUsersIdsByRole($role) 
+	public function getUsersIdsByRole($roles) 
 	{
+		if(!is_array($roles))
+			$roles = array($roles);
+
 		$q = Yii::app()->db->createCommand()
                     ->select('userid')
                     ->from($this->tableName())
-                    ->where("itemname=:role", array(':role' => $role))
+                    ->where(array('in', 'itemname', $roles))
                     ->queryAll(false);
         foreach ($q as $id) {
         	$result[] = $id[0];

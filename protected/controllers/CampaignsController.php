@@ -582,14 +582,22 @@ class CampaignsController extends Controller
 					'advertisers.id', 
 					'advertisers.name'
 			);*/
+			
+			$criteria=new CDbCriteria;
+	        $criteria->compare('t.status','Active');
+	        $criteria->order = 'name';
+	        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+	            $criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+
 			$advertisers = CHtml::listData(
-				Advertisers::model()->findAll(
-					array('order'=>'name')), 
+				Advertisers::model()->findAll($criteria), 
 				'id', 
 				'name'
 			);
-			$opportunities = CHtml::listData(Opportunities::model()->with('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'country')->findAll(
-				array('order'=>'advertisers.name, country.ISO2', 'condition'=>'t.status="Active"')), 
+
+			$criteria->with = array('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers', 'country');
+	        $criteria->order = 'advertisers.name, country.ISO2';
+			$opportunities = CHtml::listData(Opportunities::model()->findAll($criteria), 
 				'id', 
 				function($opp) { return $opp->getVirtualName(); }
 			);

@@ -145,9 +145,13 @@ class Users extends CActiveRecord
 		return parent::model($className);
 	}
 
-	public function findUsersByRole($role) 
+	public function findUsersByRole($roles) 
 	{
-		$users_ids = AuthAssignment::model()->getUsersIdsByRole($role);
+		if(!is_array($roles))
+			$roles = array($roles);
+
+		$users_ids = AuthAssignment::model()->getUsersIdsByRole($roles);
+
 		$criteria = new CDbCriteria;
         $criteria->addInCondition('id', $users_ids);
         $criteria->order = 'lastname';
