@@ -27,7 +27,9 @@
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'prefix', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'cat', $categories, array('prompt' => 'Select a category'));
-        echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Select a user to associate'));
+        
+        if( UserManager::model()->isUserAssignToRole('admin') )
+            echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Select a user to associate'));
 
         echo $form->hiddenField($model, 'commercial_id', array('type'=>"hidden") );
         //echo $form->textFieldRow($commercial, 'username', array('class'=>'span3', 'readonly'=>true, 'labelOptions'=>array('label'=>$model->getAttributeLabel('commercial_id'))) );

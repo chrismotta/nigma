@@ -392,16 +392,22 @@ class KHtml extends CHtml
                 function($data){return strval($data->id);}, 
                 'name');
             
-            $publishers_t = array('000'=>'------- Publishers -------');
+            if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
+                $publishers_t = array();
+                $publishers = array();
+            }else{
 
-            $publishers = Providers::model()->findAll( 
-                array(
-                    'order' => 'name', 
-                    'condition' => 'status="Active" && type="Publisher"'
-                    ));
-            $publishers = CHtml::listData($publishers, 
-                function($data){return strval($data->id);}, 
-                'name');
+                $publishers_t = array('000'=>'------- Publishers -------');
+
+                $publishers = Providers::model()->findAll( 
+                    array(
+                        'order' => 'name', 
+                        'condition' => 'status="Active" && type="Publisher"'
+                        ));
+                $publishers = CHtml::listData($publishers, 
+                    function($data){return strval($data->id);}, 
+                    'name');
+            }
 
             $providers = $networks_t + $networks + $affiliates_t + $affiliates + $publishers_t + $publishers;
 
@@ -683,16 +689,22 @@ class KHtml extends CHtml
                 function($data){return strval($data->id);}, 
                 'name');
             
-            $publishers_t = array('000'=>'------- Publishers -------');
+             if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
+                $publishers_t = array();
+                $publishers = array();
+            }else{
 
-            $publishers = Providers::model()->findAll( 
-                array(
-                    'order' => 'name', 
-                    'condition' => 'status="Active" && type="Publisher"'
-                    ));
-            $publishers = CHtml::listData($publishers, 
-                function($data){return strval($data->id);}, 
-                'name');
+                $publishers_t = array('000'=>'------- Publishers -------');
+
+                $publishers = Providers::model()->findAll( 
+                    array(
+                        'order' => 'name', 
+                        'condition' => 'status="Active" && type="Publisher"'
+                        ));
+                $publishers = CHtml::listData($publishers, 
+                    function($data){return strval($data->id);}, 
+                    'name');
+            }
 
             $providers = $networks_t + $networks + $affiliates_t + $affiliates + $publishers_t + $publishers;
 

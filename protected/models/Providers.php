@@ -392,11 +392,20 @@ class Providers extends CActiveRecord
 
 	public function getAllTypes()
 	{
-		return array(
-			1 => 'Affiliates', 
-			2 => 'Networks', 
-			3 => 'Publishers',
-		);
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
+			return array(
+				1 => 'Affiliates', 
+				2 => 'Networks', 
+				// 3 => 'Publishers',
+			);
+		}else{
+			return array(
+				1 => 'Affiliates', 
+				2 => 'Networks', 
+				3 => 'Publishers',
+			);
+		}
 	}
 
 	public function printType()
