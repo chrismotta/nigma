@@ -313,7 +313,7 @@ class Campaigns extends CActiveRecord
 			$criteria->compare('providers_id', -1); // Select none
 		}
 
-		$criteria->with = array('opportunities', 'opportunities.country');
+		$criteria->with = array('opportunities', 'opportunities.country', 'opportunities.regions.financeEntities.advertisers');
 		
 		// external name
 		$criteria->compare('t.id', $this->name, true);
@@ -322,6 +322,9 @@ class Campaigns extends CActiveRecord
 		$criteria->compare('t.name', $this->name, true, 'OR');
 
 		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
