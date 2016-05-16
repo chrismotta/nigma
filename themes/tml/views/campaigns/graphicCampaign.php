@@ -373,11 +373,11 @@ $dateEnd=$_GET['dateEnd'];
                     'value'       => '$data->clics', 
                     'htmlOptions' => array('style' => 'width: 10px'),  
                 ),
-                array(
-                    'name'        => 'convs',
-                    'value'       => '$data->conv', 
-                    'htmlOptions' => array('style' => 'width: 10px'),  
-                ),
+                // array(
+                //     'name'        => 'convs',
+                //     'value'       => '$data->conv', 
+                //     'htmlOptions' => array('style' => 'width: 10px'),  
+                // ),
             ),
         ));
         ?>
