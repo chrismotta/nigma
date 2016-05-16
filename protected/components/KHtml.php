@@ -869,15 +869,19 @@ class KHtml extends CHtml
             'multiple' => 'multiple',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
         $criteria = new CDbCriteria;
         $criteria->with  = array('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers','country');
-        $criteria->order = 'country.name';
+        // $criteria->order = 'country.name';
 
-        $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
+        $opps = Opportunities::model()->findAll($criteria);
         $data=array();
+
         foreach ($opps as $opp) {
             $data[$opp->regions->country->id_location]=$opp->regions->country->name;
         }
+        asort($data);
+
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
                 array(
@@ -1066,11 +1070,12 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
         $criteria    = new CDbCriteria;
+        $select = 'DISTINCT country.name';
         $criteria->compare('t.status','Active');
         $criteria->with = array('country');
         $criteria->order = 'name';
         $regions     = Regions::model()->findAll($criteria);
-        $list        = CHtml::listData($regions, 'id', 'country.name');
+        $list        = CHtml::listData($regions, 'country.id_location', 'country.name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 

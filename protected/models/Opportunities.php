@@ -171,7 +171,7 @@ class Opportunities extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		if(isset($region))
-			$criteria->compare('regions_id',$region);
+			$criteria->compare('country.id_location',$region);
 		else
 			$criteria->compare('regions_id',$this->regions_id);
 
