@@ -129,6 +129,11 @@ $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 			// 'headerHtmlOptions' => array('style' => "width: 60px"),
 		),
 		array(
+			'name'=>'iso2',
+			'value'=>'isset($data->country->ISO2) ? $data->country->ISO2 : "-"',
+			// 'headerHtmlOptions' => array('style' => "width: 60px"),
+		),
+		array(
 			'name'=>'region',
 			// 'headerHtmlOptions' => array('style' => "width: 60px"),
 		),

@@ -18,6 +18,7 @@ class Regions extends CActiveRecord
 {
 	public $finance_entities_name;
 	public $country_name;
+	public $iso2;
 	/**
 	 * @return string the associated database table name
 	 */
@@ -40,7 +41,7 @@ class Regions extends CActiveRecord
 			array('status', 'length', 'max'=>8),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, finance_entities_id, country_id, region, finance_entities_name, country_name', 'safe', 'on'=>'search'),
+			array('id, finance_entities_id, country_id, region, finance_entities_name, country_name, iso2', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -69,6 +70,7 @@ class Regions extends CActiveRecord
 			'country_id'            => 'Region',
 			'region'                => 'Comment',
 			'finance_entities_name' => 'Fantasy Name',
+			'iso2'                  => 'ISO2'
 		);
 	}
 
@@ -97,6 +99,7 @@ class Regions extends CActiveRecord
 
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('iso2',$this->iso2);
 		$criteria->compare('t.status',$this->status);
 		$criteria->compare('region',$this->region,true);
 		$criteria->compare('country.name',$this->country_name,true);
@@ -115,6 +118,10 @@ class Regions extends CActiveRecord
 		            'country_name'=>array(
 						'asc'  =>'country.name',
 						'desc' =>'country.name DESC',
+		            ),
+		            'iso2'=>array(
+						'asc'  =>'country.ISO2',
+						'desc' =>'country.ISO2 DESC',
 		            ),
 		            'finance_entities_name'=>array(
 						'asc'  =>'financeEntities.name',
