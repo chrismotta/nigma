@@ -257,8 +257,7 @@ class VectorsController extends Controller
 	private function renderFormAjax($model)
 	{	// excepción comentada provisoriamente
 		$criteria        = new CDbCriteria;
-		$criteria->join  = 'LEFT JOIN networks ON networks.providers_id=t.id';
-		$criteria->compare('networks.use_vectors',1);
+		$criteria->compare('use_vectors',1);
 		$criteria->order = 'name';
 		$providers = CHtml::listData(Providers::model()->findAll($criteria), 'id', 'name');
 
