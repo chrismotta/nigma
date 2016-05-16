@@ -14,7 +14,14 @@
 
 	<div class="divisor">Internal Settings</div>
 
-	<?php echo $form->dropDownListRow($model,'type',array("Network"=>"Network","Affiliate"=>"Affiliate","Publisher"=>"Publisher",),array('class'=>'input-large')); ?>
+	<?php 
+	if( UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		$types = array("Network"=>"Network","Affiliate"=>"Affiliate");
+	else
+		$types = array("Network"=>"Network","Affiliate"=>"Affiliate","Publisher"=>"Publisher");
+
+	echo $form->dropDownListRow($model,'type',$types,array('class'=>'input-large')); 
+	?>
 	<?php echo $form->textFieldRow($model,'name',array('class'=>'span3','maxlength'=>128)); ?>
 	<?php echo $form->textFieldRow($model,'prefix',array('class'=>'span3','maxlength'=>45)); ?>
 	<?php echo $form->dropDownListRow($model,'status',array("Active"=>"Active","Inactive"=>"Inactive","Archived"=>"Archived",),array('class'=>'input-large')); ?>
@@ -75,7 +82,10 @@
 	<?php echo $form->textFieldRow($model,'rate',array('class'=>'span2','maxlength'=>11), array('prepend' => '$')); ?>
 	<?php echo $form->textFieldRow($model,'publisher_percentage',array('class'=>'span2','maxlength'=>11), array('append' => '%')); ?>
 	<?php // echo $form->textFieldRow($model,'users_id',array('class'=>'span3')); ?>
-	<?php echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Select a user to associate')); ?>
+	<?php 
+	if( !UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Select a user to associate')); 
+	?>
 	<?php //echo $form->datepickerRow($model,'start_date',array('options'=>array(),'htmlOptions'=>array('class'=>'span3')),array('prepend'=>'<i class="icon-calendar"></i>')); ?>
 
 	<?php //echo $form->textFieldRow($model,'end_date',array('class'=>'span3')); ?>

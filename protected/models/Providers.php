@@ -277,6 +277,10 @@ class Providers extends CActiveRecord
 		else
 			$criteria->compare('prospect',$this->prospect);
 
+
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('type', array('Affiliate','Network'));
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=> KHtml::pagination(),

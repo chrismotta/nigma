@@ -86,12 +86,16 @@
             'itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),
             'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
             'items'=>array(
-                array('label'=>'Traffic Sources', 'url'=>array('/providers/admin')),
-                array('label'=>'Publishers', 'url'=>array('/providers/admin/publishers')),
+                array('label'=>'Traffic Sources', 'url'=>array('/providers/admin'),
+                    // 'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin')
+                    ),
+                array('label'=>'Publishers', 'url'=>array('/providers/admin/publishers'),
+                'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin')
+                    ),
                 array('label'=>'Affiliates', 'url'=>array('/providers/admin/affiliates')),
                 array('label'=>'Networks', 'url'=>array('/providers/admin/networks')),
             ), 
-            'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin'),
+            'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin') || rol('account_manager_admin'),
             ),
         array('label'=>'Exchange', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
             'items'=>array(

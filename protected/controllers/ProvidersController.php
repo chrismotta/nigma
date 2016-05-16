@@ -35,7 +35,7 @@ class ProvidersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('admin', 'view', 'update','response','exportPdf','viewPdf','uploadPdf','agreementPdf','viewAgreement','generalDataEntry','financeDataEntry','externalForm','prospect','create','delete'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance','affiliates_manager', 'media_buyer_admin'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager','finance','affiliates_manager', 'media_buyer_admin','account_manager_admin'),
 			),
 			array('allow',
 				'actions'=>array('financeDataEntry','generalDataEntry'),
@@ -446,20 +446,20 @@ class ProvidersController extends Controller
 		$this->renderFormAjax($model);
 	}
 
-	/**
-	 * [renderFormAjax description]
-	 * @param  [type] $modelAffi [description]
-	 * @param  [type] $modelProv [description]
-	 * @return [type]        	 [description]
-	 */
-	private function renderFormAjax($model)
-	{
-		// $users    = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
+	// /**
+	//  * [renderFormAjax description]
+	//  * @param  [type] $modelAffi [description]
+	//  * @param  [type] $modelProv [description]
+	//  * @return [type]        	 [description]
+	//  */
+	// private function renderFormAjax($model)
+	// {
+	// 	// $users    = CHtml::listData(Users::model()->findAll("status='Active'"), 'id', 'username');
 
-		$this->renderPartial('_formProspect',array(
-			'model' =>$model,
-		), false, true);
-	}
+	// 	$this->renderPartial('_formProspect',array(
+	// 		'model' =>$model,
+	// 	), false, true);
+	// }
 
 	/**
 	 * Deletes a particular model.
@@ -509,15 +509,9 @@ class ProvidersController extends Controller
 		}
 
 		if($hash) $model->type = $hash;
-		
-		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');
-		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
-		$this->render('_form',array(
-			'model'=>$model,
-			'countries'=>$countries,
-			'users'=>$users,
-			));
+		$this->renderFormAjax($model);
+
 	}
 
 	/**
@@ -541,6 +535,14 @@ class ProvidersController extends Controller
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 		}
 
+		$this->renderFormAjax($model);
+
+		
+	}
+
+	public function renderFormAjax($model, $action=null)
+	{
+
 		$countries = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type IN ('Country','Generic','Region')") ), 'id_location', 'name');
 		$users = CHtml::listData(Users::model()->findAll(array('condition'=>'status="Active"','order'=>'username')), 'id', 'username');
 
@@ -549,6 +551,7 @@ class ProvidersController extends Controller
 			'countries'=>$countries,
 			'users'=>$users,
 			));
+
 	}
 
 	/**
