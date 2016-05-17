@@ -405,6 +405,7 @@ if(!$is_archived){
 					'label' => 'Tags',
 					'icon'  => 'icon-tags',
 					'url'     => 'array("tags/adminByCampaign", "id" => $data->id)',
+					'visible' => "!(UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin'))",
 					'options' => array(
 						"data-grid-id"      => "campaigns-grid", 
 						"data-modal-id"     => "modalCampaigns", 
