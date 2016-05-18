@@ -158,25 +158,29 @@ class FinanceEntitiesController extends Controller
 		switch ($model->status) {
 			case 'Active':
 			case 'Inactive':
-				if ( Regions::model()->count("finance_entities_id=:finance_entities_id AND status='Active'", array(":finance_entities_id" => $id)) > 0 ) {
-					echo "To remove this item must delete the opportunities associated with it.";
-					Yii::app()->end();
-				} else {
-					$model->status = 'Archived';
-				}
+				$query ='UPDATE tags t
+					RIGHT JOIN campaigns c ON(t.campaigns_id = c.id) 
+					RIGHT JOIN opportunities o ON(c.opportunities_id = o.id) 
+					RIGHT JOIN regions r ON(o.regions_id = r.id) 
+					SET t.status = "Archived", c.status = "Archived", o.status = "Archived", r.status = "Archived" 
+					WHERE r.finance_entities_id = :pk
+					';
+				$return = Yii::app()->db->createCommand($query)->bindParam('pk',$id)->execute();
+
+				$model->status = 'Archived';
+				$model->save();
 				break;
 				
 			case 'Archived':
 				if ($model->advertisers->status == 'Active') {
 					$model->status = 'Active';
+					$model->save();
 				} else {
 					echo "To restore this item must restore the advertiser associated with it.";
 					Yii::app()->end();
 				}
 				break;
 		}
-
-		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

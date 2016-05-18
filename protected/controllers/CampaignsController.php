@@ -317,6 +317,7 @@ class CampaignsController extends Controller
 			case 'Paused':
 			case 'Inactive':
 			case 'Pending':
+				$tags = Tags::model()->updateAll(array('status'=>'Archived'),'campaigns_id=:pk',array('pk'=>$model->id));
 				$model->status = 'Archived';
 				break;
 			case 'Archived':

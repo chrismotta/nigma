@@ -13,7 +13,7 @@ if($is_archived){
 }else{
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this campaign?';
+	$delete['confirm']    = 'Are you sure you want to archive this campaign and all associated tags?';
 	$breadcrumbs['title'] = 'Campaigns';
 }
 

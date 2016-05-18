@@ -5,12 +5,12 @@
 if( isset($isArchived) ) {
 	$delete['icon']       = 'refresh';
 	$delete['label']      = 'Restore';
-	$delete['confirm']    = 'Are you sure you want to restore this finance entitie?';
+	$delete['confirm']    = 'Are you sure you want to restore this finance entity?';
 	$breadcrumbs['title'] = 'Archived Finance Entities';
 } else {
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this finance entitie?';
+	$delete['confirm']    = 'Are you sure you want to archive this finance entity and all associated regions?';
 	$breadcrumbs['title'] = 'Finance Entities';
 }
 

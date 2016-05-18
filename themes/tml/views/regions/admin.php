@@ -10,7 +10,7 @@ if( isset($isArchived) ) {
 } else {
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this finance entitie?';
+	$delete['confirm']    = 'Are you sure you want to archive this region and all associated opportunities?';
 	$breadcrumbs['title'] = 'Regions';
 }
 

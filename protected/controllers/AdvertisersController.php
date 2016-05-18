@@ -126,20 +126,25 @@ class AdvertisersController extends Controller
 		$model = $this->loadModel($id);		
 		switch ($model->status) {
 			case 'Active':
-				if ( Ios::model()->count("advertisers_id=:adv_id AND status='Active'", array(":adv_id" => $id)) > 0 ) {
-					echo "To remove this item must delete the ios associated with it.";
-					Yii::app()->end();
-				} else {
-					$model->status = 'Archived';
-				}
+				$query ='UPDATE tags t
+					RIGHT JOIN campaigns c ON(t.campaigns_id = c.id) 
+					RIGHT JOIN opportunities o ON(c.opportunities_id = o.id) 
+					RIGHT JOIN regions r ON(o.regions_id = r.id) 
+					RIGHT JOIN finance_entities f ON(r.finance_entities_id = f.id) 
+					SET t.status = "Archived", c.status = "Archived", o.status = "Archived", r.status = "Archived", f.status = "Archived"
+					WHERE f.advertisers_id = :pk
+					';
+				$return = Yii::app()->db->createCommand($query)->bindParam('pk',$id)->execute();
+
+				$model->status = 'Archived';
+				$model->save();
 				break;
 				
 			case 'Archived':
 				$model->status = 'Active';
+				$model->save();
 				break;
 		}
-
-		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))

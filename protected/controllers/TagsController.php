@@ -192,10 +192,11 @@ class TagsController extends Controller
 	*/
 	public function actionIndex()
 	{
-		$dataProvider=new CActiveDataProvider('Tags');
-		$this->render('index',array(
-			'dataProvider'=>$dataProvider,
-			));
+		$this->redirect(array('admin'));
+		// $dataProvider=new CActiveDataProvider('Tags');
+		// $this->render('index',array(
+		// 	'dataProvider'=>$dataProvider,
+		// 	));
 	}
 
 	/**
@@ -205,6 +206,7 @@ class TagsController extends Controller
 	{
 		$model=new Tags('search');
 		$model->unsetAttributes();  // clear any default values
+		$model->status = 'Active';
 		if(isset($_GET['Tags']))
 			$model->attributes=$_GET['Tags'];
 

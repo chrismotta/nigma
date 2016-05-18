@@ -147,27 +147,28 @@ class RegionsController extends Controller
 		switch ($model->status) {
 			case 'Active':
 			case 'Inactive':
-				if ( Opportunities::model()->count("regions_id=:regions_id AND status='Active'", array(":regions_id" => $id)) > 0 ) {
-					echo "To remove this item must delete the opportunities associated with it.";
-					Yii::app()->end();
-				} else {
-					// echo "removed";
-					// Yii::app()->end();
-					$model->status = 'Archived';
-				}
+				$query ='UPDATE tags t
+					RIGHT JOIN campaigns c ON(t.campaigns_id = c.id) 
+					RIGHT JOIN opportunities o ON(c.opportunities_id = o.id) 
+					SET t.status = "Archived", c.status = "Archived", o.status = "Archived" 
+					WHERE o.regions_id = :pk
+					';
+				$return = Yii::app()->db->createCommand($query)->bindParam('pk',$id)->execute();
+
+				$model->status = 'Archived';
+				$model->save();
 				break;
 				
 			case 'Archived':
 				if ($model->financeEntities->status == 'Active') {
 					$model->status = 'Active';
+					$model->save();
 				} else {
 					echo "To restore this item must restore the finace entities associated with it.";
 					Yii::app()->end();
 				}
 				break;
 		}
-
-		$model->save();
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
@@ -200,6 +201,7 @@ class RegionsController extends Controller
 
 		$this->render('admin',array(
 			'model'=>$model,
+			'financeEntities'=>null,
 			'isArchived' => true,
 		));		
 	}

@@ -11,7 +11,7 @@ if( isset($isArchived) ) {
 } else {
 	$delete['icon']       = 'trash';
 	$delete['label']      = 'Archive';
-	$delete['confirm']    = 'Are you sure you want to archive this advertiser?';
+	$delete['confirm']    = 'Are you sure you want to archive this advertiser and all associated finance entities?';
 	$breadcrumbs['title'] = 'Advertisers';
 }
 

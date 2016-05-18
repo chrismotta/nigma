@@ -53,7 +53,7 @@ class Tags extends CActiveRecord
 			array('country, connection_type, device_type, os, os_version', 'default', 'setOnEmpty' => true, 'value' => null),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, banner_sizes_id, code, comment, analyze, freq_cap, size, country, connection_type, device_type, os, os_version', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, banner_sizes_id, code, comment, analyze, freq_cap, size, country, connection_type, device_type, os, os_version, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -122,6 +122,7 @@ class Tags extends CActiveRecord
 		$criteria->compare('device_type',$this->device_type,true);
 		$criteria->compare('os',$this->os,true);
 		$criteria->compare('os_version',$this->os_version,true);
+		$criteria->compare('status',$this->status,true);
 
 		$criteria->with = array('bannerSizes');
 		$criteria->select = array(
