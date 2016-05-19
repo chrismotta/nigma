@@ -211,14 +211,14 @@ class PartnersController extends Controller
 		$model = new FImpressions('search');
 		$model->unsetAttributes();
 		
-		// $publisher   = Providers::model()->findByUser($userId);
-		// if(!isset($publisher->id)) die('Publisher not allowed');
+		$publisher   = Providers::model()->findByUser($userId);
+		if(!isset($publisher->id)) die('Publisher not allowed');
 
 		$this->render('//stats/impressions', 
 			array(
 				'model'          => $model,
-				'publisher_id'   => 192,//$publisher->id,
-				'publisher_name' => 'Targetoo',//$publisher->name,
+				'publisher_id'   => $publisher->id,
+				'publisher_name' => $publisher->name,
 				));
 	}
 
