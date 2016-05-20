@@ -72,7 +72,7 @@ class TagsController extends Controller
 		$pid = isset($_GET['pid']) ? $_GET['pid'] : '<placementID>';
 
 		header('Content-Disposition: attachment; filename="TML_tag#'.$model->id.'.txt"');
-		echo '<iframe src="http://bidbox.co/tag/'. $model->id . '?pid='.$pid.'&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $model->bannerSizes->width .'" height="'. $model->bannerSizes->height .'" frameborder="0" scrolling="no" ></iframe>';
+		echo '-- TAG IFRAmE --'."\n\n".'<iframe src="http://bidbox.co/tag/'. $model->id . '?pid='.$pid.'&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $model->bannerSizes->width .'" height="'. $model->bannerSizes->height .'" frameborder="0" scrolling="no" ></iframe>'."\n\n".'-- TAG JAVASCRIPT --'."\n\n".'<script type="text/javascript" src="http://bidbox.co/tag/js/'. $model->id . '?pid='.$pid.'&&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $model->bannerSizes->width .'&height='. $model->bannerSizes->height .'"></script>';
 	}
 
 	private function getBannerSizes()

@@ -2,9 +2,15 @@
 $width = $model->bannerSizes->width;
 $height = $model->bannerSizes->height;
 $id = $model->id;
-$phpText = '<iframe src="http://bidbox.co/tag/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
-$jsText1 = '<iframe src=\"http://bidbox.co/tag/'. $id . '?pid=';
-$jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'. $height .'\" frameborder=\"0\" scrolling=\"no\" ></iframe>';
+
+$phpTextIframe = '<iframe src="http://bidbox.co/tag/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
+$phpTextJs = '<script type="text/javascript" src="http://bidbox.co/tag/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
+
+$iframeText1 = '<iframe src=\"http://bidbox.co/tag/'. $id . '?pid=';
+$iframeText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'. $height .'\" frameborder=\"0\" scrolling=\"no\" ></iframe>';
+
+$jsText1 = '<script type=\"text/javascript\" src=\"http://bidbox.co/tag/js/'. $id . '?pid=';
+$jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'\"></script>';
 ?>
 
 <div class="alert alert-info">
@@ -77,7 +83,8 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'
 			    'class'    => 'placements-dropdownlist',
 			    'disabled' => true,
 			    'onChange' => '
-		            $("#tag_content").html("'.$jsText1.'"+this.value+"'.$jsText2.'");
+		            $("#tag_content_iframe").val("'.$iframeText1.'"+this.value+"'.$iframeText2.'");
+		            $("#tag_content_js").val("'.$jsText1.'"+this.value+"'.$jsText2.'");
 		            var downloadHref = $("#download-txt").attr("href");
 		            var downloadHrefSpl = downloadHref.split("?"); 
 		            downloadHref = downloadHrefSpl[0] + "?pid="+this.value;
@@ -91,11 +98,22 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'
 		?>
 			</div>
 		</div>
-
-		<?php echo CHtml::textArea('tag_content', $phpText,
-			array('id'=>'tag_content', 
+		
+		<div class="text-left code-area">
+		Iframe
+		<?php echo CHtml::textArea('tag_content_iframe', $phpTextIframe,
+			array('id'=>'tag_content_iframe', 
 			'readonly' => true,
-			'style'=>'width:100%;height:100px;cursor:text')); ?>
+			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
+
+		<div class="text-left code-area">
+		Javascript
+		<?php echo CHtml::textArea('tag_content_js', $phpTextJs,
+			array('id'=>'tag_content_js', 
+			'readonly' => true,
+			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
 
 		<div class="text-right">
 		<?php echo CHtml::link('Download .txt',
