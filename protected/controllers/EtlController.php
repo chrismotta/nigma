@@ -49,11 +49,13 @@ class EtlController extends Controller
 		
 		$start = time();
 
+		$date = isset($_GET['date']) ? $_GET['date'] : null;
+
 		self::actionDemand();
 		self::actionSupply();
-		self::actionUseragent($id);
-		self::actionGeolocation($id);
-		self::actionImpressions($id);
+		self::actionUseragent($id, $date);
+		self::actionGeolocation($id, $date);
+		self::actionImpressions($id, $date);
 		self::actionBid();
 	
 		$elapsed = time() - $start;
@@ -108,15 +110,18 @@ class EtlController extends Controller
 		echo 'ETL Supply: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionUseragent($id=1){
+	public function actionUseragent($id=1, $date=null){
 		
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO D_UserAgent (user_agent) 
 		SELECT DISTINCT user_agent 
-		FROM imp_log 
-		WHERE DATE > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
-		';
+		FROM imp_log ';
+		
+		if(isset($date))
+			$query .= 'WHERE DATE(date) = "'.$date.'"';
+		else
+			$query .= 'WHERE date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
@@ -157,15 +162,18 @@ class EtlController extends Controller
 		echo 'ETL UserAgent: '.count($ua_list).' rows filled - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionGeolocation($id=1){
+	public function actionGeolocation($id=1, $date=null){
 		
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO D_GeoLocation (server_ip) 
 		SELECT DISTINCT server_ip 
-		FROM imp_log 
-		WHERE DATE > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR)) 
-		';
+		FROM imp_log ';
+
+		if(isset($date))
+			$query .= 'WHERE DATE(date) = "'.$date.'"';
+		else
+			$query .= 'WHERE date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
@@ -200,7 +208,7 @@ class EtlController extends Controller
 		echo 'ETL GeoLocation: '.count($ip_list).' rows filled - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionImpressions($id=1){
+	public function actionImpressions($id=1, $date=null){
 
 		$start = time();
 
@@ -208,9 +216,12 @@ class EtlController extends Controller
 		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, SHA(CONCAT(i.server_ip,i.user_agent)), i.pubid, i.ip_forwarded, i.referer, i.app 
 		FROM imp_log i 
 		LEFT JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
-		LEFT JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) 
-		WHERE DATE > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))
-		';
+		LEFT JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
+
+		if(isset($date))
+			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
+		else
+			$query .= 'WHERE i.date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))';
 
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
