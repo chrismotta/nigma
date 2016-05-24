@@ -219,9 +219,9 @@ class EtlController extends Controller
 		LEFT JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.$date.'" AND i.placements_id NOT NULL AND i.tags_id NOT NULL';
 		else
-			$query .= 'WHERE i.date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))';
+			$query .= 'WHERE i.date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR)) AND i.placements_id NOT NULL AND i.tags_id NOT NULL';
 
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
