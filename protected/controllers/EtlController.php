@@ -116,12 +116,12 @@ class EtlController extends Controller
 
 		$query = 'INSERT IGNORE INTO D_UserAgent (user_agent) 
 		SELECT DISTINCT user_agent 
-		FROM imp_log ';
+		FROM imp_log i ';
 		
 		if(isset($date))
 			$query .= 'WHERE DATE(date) = "'.$date.'"';
 		else
-			$query .= 'WHERE date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))';
+			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
@@ -168,12 +168,12 @@ class EtlController extends Controller
 
 		$query = 'INSERT IGNORE INTO D_GeoLocation (server_ip) 
 		SELECT DISTINCT server_ip 
-		FROM imp_log ';
+		FROM imp_log i ';
 
 		if(isset($date))
 			$query .= 'WHERE DATE(date) = "'.$date.'"';
 		else
-			$query .= 'WHERE date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR))';
+			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
@@ -221,7 +221,7 @@ class EtlController extends Controller
 		if(isset($date))
 			$query .= 'WHERE DATE(i.date) = "'.$date.'" ';
 		else
-			$query .= 'WHERE i.date > TIMESTAMP(DATE_SUB(NOW(), INTERVAL :h HOUR)) ';
+			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 
 		$query .= 'AND i.placements_id IS NOT NULL AND i.tags_id IS NOT NULL AND i.user_agent IS NOT NULL AND i.server_ip IS NOT NULL';
 
