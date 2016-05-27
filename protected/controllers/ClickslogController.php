@@ -342,7 +342,7 @@ class ClickslogController extends Controller
 				$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
 		}
 
-		echo json_encode($campaigns);
+		// echo json_encode($campaigns);
 
 		$ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
 		$binPath  = Yii::app()->params['ipDbFile'];
@@ -356,9 +356,13 @@ class ClickslogController extends Controller
 		else
 			$connection_type = '3G';
 
-		echo '<hr>';
-		echo json_encode($ipData);
+		// echo '<hr>';
+		// echo json_encode($ipData);
 
+		$campaign = $carrier != '-' ? $carrier : 'WIFI';
+		echo '<hr>';
+		echo "Te muestro una campa&ntilde;a para: ".$campaign;
+		echo '<hr>';
 		die();
 
 		$count  = count($vhc);
