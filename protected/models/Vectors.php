@@ -153,7 +153,7 @@ class Vectors extends CActiveRecord
 	public function getExternalName($id)
 	{
 		$model = Vectors::model()->findByPk($id);
-		return $model->id . "-" . $model->name . "-VEC";
+		return "v" . $model->id . "-" . $model->name . "-VEC";
 	}
 
 	/**

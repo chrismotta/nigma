@@ -77,50 +77,63 @@
       }
 
       
+      echo $form->dropDownListRow($model, 'wifi', $connection_type, array(
+        'prompt' => 'Select connection type',
 
-      $model->carriers_id == NULL ? $multicarrier = true : $multicarrier = false;
+              'onChange' => '
+                  // console.log("val: "+$(this).val());
+                  if($(this).val() == "Specific Carrier"){
+                    $("#opportunities-form #Opportunities_carriers_id").prop("disabled", false);
+                  }else{
+                    $("#opportunities-form #Opportunities_carriers_id option:eq(0)").prop("selected", true);
+                    $("#opportunities-form #Opportunities_carriers_id").prop("disabled", true);
+                  }
+                  return;
+                  '));
+
+      $model->wifi != "Specific Carrier" ? $multicarrier = true : $multicarrier = false;
       echo $form->dropDownListRow($model, 'carriers_id', $carrier, 
             array(
               'class'    => 'carriers-dropdownlist', 
               'prompt'   => 'Select a carrier', 
               'encode'   => false,
-              'disabled' => $multicarrier
+              'disabled' => $multicarrier,
             ));
-      echo $form->checkboxRow($model, 'multi_carrier', 
-            array(
-              'checked'  => $multicarrier,
-              'onChange' => '
-                  if (this.checked == "1") {
-                    $("#opportunities-form #Opportunities_carriers_id option:eq(0)").prop("selected", true);
-                    $("#opportunities-form #Opportunities_carriers_id").prop("disabled", true);
-                  }else{
-                    $("#opportunities-form #Opportunities_carriers_id").prop("disabled", false);
-                  }
-                  return;
-                  '
-            ));
+      // echo $form->checkboxRow($model, 'multi_carrier', 
+      //       array(
+      //         'checked'  => $multicarrier,
+      //         'onChange' => '
+      //             if (this.checked == "1") {
+      //               $("#opportunities-form #Opportunities_carriers_id option:eq(0)").prop("selected", true);
+      //               $("#opportunities-form #Opportunities_carriers_id").prop("disabled", true);
+      //             }else{
+      //               $("#opportunities-form #Opportunities_carriers_id").prop("disabled", false);
+      //             }
+      //             return;
+      //             '
+      //       ));
 
-      $model->rate == NULL ? $multirate = true : $multirate = false;
+      // $model->rate == NULL ? $multirate = true : $multirate = false;
       echo $form->textFieldRow($model, 'rate', 
             array(
               'class'    => 'span3',
-              'disabled' => $multirate
+              // 'disabled' => $multirate
             ));
-      echo $form->checkboxRow($model, 'multi_rate', 
-            array(
-              'checked'  => $multirate,
-              'onChange' => '
-                  if (this.checked == "1") {
-                    //alert("ok");
-                    $("#opportunities-form #Opportunities_rate").val("");
-                    $("#opportunities-form #Opportunities_rate").prop("disabled", true);
-                  }else{
-                    //alert("no");
-                    $("#opportunities-form #Opportunities_rate").prop("disabled", false);
-                  }
-                  return;
-                  '
-            ));
+      // echo $form->checkboxRow($model, 'multi_rate', 
+      //       array(
+      //         'checked'  => $multirate,
+      //         'onChange' => '
+      //             if (this.checked == "1") {
+      //               //alert("ok");
+      //               $("#opportunities-form #Opportunities_rate").val("");
+      //               $("#opportunities-form #Opportunities_rate").prop("disabled", true);
+      //             }else{
+      //               //alert("no");
+      //               $("#opportunities-form #Opportunities_rate").prop("disabled", false);
+      //             }
+      //             return;
+      //             '
+      //       ));
 
       echo $form->textFieldRow($model, 'budget', array('class'=>'span3'));
       echo $form->checkboxRow($model, 'open_budget', 
@@ -140,7 +153,6 @@
       echo $form->dropDownListRow($model, 'model_adv', $model_adv, array('prompt' => 'Select an Advertiser Model'));
       echo $form->textFieldRow($model, 'product', array('class'=>'span3'));
       echo $form->dropDownListRow($model, 'account_manager_id', $account , array('prompt' => 'Select an Account Manager'));
-      echo $form->checkboxRow($model, 'wifi');
       echo $form->textFieldRow($model, 'server_to_server', array('class'=>'span3'));
       echo $form->datepickerRow($model, 'startDate', array(
                 'options' => array(

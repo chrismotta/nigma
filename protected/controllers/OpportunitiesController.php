@@ -310,6 +310,7 @@ class OpportunitiesController extends Controller
 			$carrier = CHtml::listData(Carriers::model()->findAll( array('order'=>'mobile_brand', "condition"=>"id_country=" . $model->regions->country_id . " AND status='Active'") ), 'id_carrier', 'mobile_brand' );
 		}
 		
+		$connection_type = KHtml::enumItem($model, 'wifi');
 		$model_adv = KHtml::enumItem($model, 'model_adv');
 		$channels = KHtml::enumItem($model, 'channel');
 
@@ -324,6 +325,7 @@ class OpportunitiesController extends Controller
 			'model_adv'  =>$model_adv,
 			'channels'   =>$channels,
 			'action'     =>$action,
+			'connection_type'   =>$connection_type,
 		));
 	}
 

@@ -68,7 +68,7 @@ class Opportunities extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('model_adv, wifi, regions_id, account_manager_id', 'required'),
-			array('carriers_id, account_manager_id, country_id, wifi, regions_id, imp_per_day, imp_total, closed_deal', 'numerical', 'integerOnly'=>true),
+			array('carriers_id, account_manager_id, country_id, regions_id, imp_per_day, imp_total, closed_deal', 'numerical', 'integerOnly'=>true),
 			array('close_amount, agency_commission', 'numerical', 'integerOnly'=>false),
 			array('rate, budget', 'length', 'max'=>11),
 			//array('comment', 'length', 'max'=>500),
@@ -76,7 +76,7 @@ class Opportunities extends CActiveRecord
 			array('product, targeting, sizes, channel_description', 'length', 'max'=>255),
 			array('server_to_server, freq_cap', 'length', 'max'=>45),
 			array('status', 'length', 'max'=>8),
-			array('startDate, endDate, comment', 'safe'),
+			array('startDate, endDate, comment, wifi', 'safe'),
 			array('channel', 'length', 'max'=>15),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
@@ -115,7 +115,7 @@ class Opportunities extends CActiveRecord
 			'account_manager_id'       => 'Account Manager',
 			'comment'                  => 'Comment',
 			'country_id'               => 'Country',
-			'wifi'                     => 'Wifi',
+			'wifi'                     => 'Connection Type',
 			'budget'                   => 'Budget',
 			'server_to_server'         => 'Server To Server',
 			'startDate'                => 'Start Date',

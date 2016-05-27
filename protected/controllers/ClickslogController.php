@@ -331,9 +331,53 @@ class ClickslogController extends Controller
 	public function actionVector($id=null)
 	{
 		$vhc    = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid'=>$id));
+
+		foreach ($vhc as $cmp) {
+			$cid = $cmp->campaigns_id;
+			$type = $cmp->campaigns->opportunities->wifi;
+			
+			if($type != 'Specific Carrier')
+				$campaigns[$type][] = $cid;
+			else
+				$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
+		}
+
+		echo json_encode($campaigns);
+
+		$ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		$binPath  = Yii::app()->params['ipDbFile'];
+		$location = new IP2Location($binPath, IP2Location::FILE_IO);
+		$ipData   = $location->lookup($ip, IP2Location::ALL);
+		$country  = $ipData->countryCode;
+		$carrier  = $ipData->mobileCarrierName;
+
+		if($carrier == '-')
+			$connection_type = 'WIFI';
+		else
+			$connection_type = '3G';
+
+		echo '<hr>';
+		echo json_encode($ipData);
+
+		die();
+
 		$count  = count($vhc);
 		$random = mt_rand(0, $count - 1);
-		$this->actionIndex($vhc[$random]->campaigns_id);
+
+		$cid = $vhc[$random]->campaigns_id;
+		$type = $vhc[$random]->campaigns->opportunities->wifi;
+		
+		echo $cid.'<br>'.$type.'<br>';
+
+		if($type == 'Specific Carrier'){
+			$carrier = $vhc[$random]->campaigns->opportunities->carriers->mobile_brand;
+			echo $carrier;
+		}
+
+
+
+		die();
+		// $this->actionIndex($vhc[$random]->campaigns_id);
 	}
 
 
