@@ -78,6 +78,7 @@ class PDFInsertionOrder extends PDF
 		$values[$io->financeEntities->getAttributeLabel('email_adm')]       = $io->financeEntities->email_adm;
 		$values[$io->financeEntities->getAttributeLabel('currency')]        = $io->financeEntities->currency;
 		$values[$io->financeEntities->getAttributeLabel('ret')]             = $io->financeEntities->ret;
+		if ($io->budget != 0) $values[$io->getAttributeLabel('budget')]     = $io->budget;
 		$this->printTitle($pdf, 'Insertion Order');
 		$this->printTable($pdf, $values);
 		$pdf->Ln();
