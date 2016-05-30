@@ -90,7 +90,7 @@ class PDFInsertionOrder extends PDF
 		foreach ($opp_ids as $opp_id) {
 			unset($values);
 			$opp = Opportunities::model()->findByPk($opp_id);
-			$this->printTitle($pdf, 'Campaign #' . $i);
+			$this->printTitle($pdf, 'Opportunity #' . $i);
 			if ($opp->regions->country_id) $values[$opp->getAttributeLabel('country_id')]  = $opp->regions->country->name;
 			if ($opp->carriers)            $values[$opp->getAttributeLabel('carriers_id')] = $opp->carriers->mobile_brand;
 			if ($opp->rate)                $values[$opp->getAttributeLabel('rate')]        = $opp->rate;
