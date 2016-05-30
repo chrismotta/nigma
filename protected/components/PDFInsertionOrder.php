@@ -96,7 +96,7 @@ class PDFInsertionOrder extends PDF
 			if ($opp->model_adv)           $values[$opp->getAttributeLabel('model_adv')]   = $opp->model_adv;
 			if ($opp->product)             $values[$opp->getAttributeLabel('product')]     = $opp->product;
 			if ($opp->comment)             $values[$opp->getAttributeLabel('comment')]     = $opp->comment;
-			$values[$opp->getAttributeLabel('wifi')]                                       = $opp->wifi ? 'Enabled' : 'Disabled';
+			$values[$opp->getAttributeLabel('wifi')]                                       = $opp->wifi;
 			if ($opp->budget != 0)         $values[$opp->getAttributeLabel('budget')]      = $opp->budget;
 			if ($opp->startDate != 0)      $values[$opp->getAttributeLabel('startDate')]   = $opp->startDate == 0 ? '' : date('d-m-Y', strtotime($opp->startDate));
 			if ($opp->endDate != 0)        $values[$opp->getAttributeLabel('endDate')]     = $opp->endDate == 0 ? '' : date('d-m-Y', strtotime($opp->endDate));
