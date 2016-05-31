@@ -78,7 +78,7 @@ class ClicksLog extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('campaigns_id, providers_id, date', 'required'),
+			array('campaigns_id, providers_id', 'required'),
 			array('campaigns_id, providers_id', 'numerical', 'integerOnly'=>true),
 			//array('tid, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, device, os, app, redirect_url', 'length', 'max'=>255),
 			//array('device_type', 'length', 'max'=>45),

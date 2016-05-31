@@ -317,12 +317,15 @@ class ClickslogController extends Controller
 					header("Location: ".$redirectURL);
 				}
 			}else{
-				logError("no redirect");
-			}
-				
+				$msg = "no redirect";
+				echo $msg . "<br> ERROR: " . json_encode($model->getErrors());
+				Yii::log( $msg . "\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
+			}	
 				
 		}else{
-			logError("no guardado");
+			$msg = "no guardado";
+			echo $msg . "<br> ERROR: " . json_encode($model->getErrors());
+			Yii::log( $msg . "\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
 		}
 
 	}
@@ -330,6 +333,7 @@ class ClickslogController extends Controller
 
 	public function actionVector($id=null)
 	{
+		$v = isset($_GET['v']);
 		$vhc    = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid'=>$id));
 
 		foreach ($vhc as $cmp) {
@@ -342,8 +346,10 @@ class ClickslogController extends Controller
 				$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
 		}
 
-		echo json_encode($campaigns);
-		echo '<hr>';
+		if($v){
+			echo json_encode($campaigns);
+			echo '<hr>';
+		}
 
 		// REQUEST 
 		
@@ -370,16 +376,22 @@ class ClickslogController extends Controller
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
 			$target = $campaigns['Specific Carrier'][$carrier];
-			echo 'Showing campaign for ($i=0; $i < ; $i++) { 
-				# code...
-			}: '.$campaign;
-			echo '<hr>';
+			
+			if($v){
+				echo 'Showing campaign for ($i=0; $i < ; $i++) { 
+					# code...
+				}: '.$campaign;
+				echo '<hr>';
+			}
 
 		}else{
 
 			$target = $campaigns['Open'];
-			echo 'Showing generic campaign';
-			echo '<hr>';
+			
+			if($v){
+				echo 'Showing generic campaign';
+				echo '<hr>';
+			}
 
 		}
 
@@ -390,11 +402,11 @@ class ClickslogController extends Controller
 		$random = mt_rand(0, $count - 1);
 		$cid = $target[$random];
 
-		echo 'Showing campaign: '.$cid;
-
-		die();
-
-		$this->actionIndex($cid);
+		if($v){
+			echo 'Showing campaign: '.$cid;
+		}else{
+			$this->actionTracking($cid);
+		}
 		
 	}
 
@@ -599,7 +611,7 @@ class ClickslogController extends Controller
 
 	public function logError($msg){
 		
-		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
+		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($this->getErrors()), 'error', 'system.model.clicksLog');
 
 	}
 
