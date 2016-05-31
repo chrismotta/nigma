@@ -122,6 +122,17 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'addCampaignIframe' => array(
+					'label' => 'Manage Campaigns',
+					'icon'  => 'plus',
+					'url'     => 'array("updateRelation", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "regions-grid", 
+						"data-modal-id"     => "modalVectors", 
+						"data-modal-title"  => "Manage Campaigns", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),
 				'updateAjax' => array(
 					'label' =>'Update',
 					'icon'  =>'pencil',
@@ -172,16 +183,10 @@ $('.search-form form').submit(function(){
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{addCampaign} {updateAjax} {redirects} {delete}',
+			'template' => '{addCampaignIframe} {updateAjax} {redirects} {delete}',
 		),
 	),
 
 )); ?>
 
-<?php $this->beginWidget('bootstrap.widgets.TbModal', array('id'=>'modalVectors')); ?>
-
-		<div class="modal-header"></div>
-        <div class="modal-body"></div>
-        <div class="modal-footer"></div>
-
-<?php $this->endWidget(); ?>
+<?php BuildGridView::printModal($this, 'modalVectors', 'Vector'); ?>

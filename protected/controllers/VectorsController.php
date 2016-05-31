@@ -27,7 +27,7 @@ class VectorsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','redirectAjax','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived'),
+				'actions'=>array('index','view','redirectAjax','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived', 'updateEditable'),
 				'roles'=>array('admin', 'media_manager', 'business', 'affiliates_manager', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
@@ -133,7 +133,7 @@ class VectorsController extends Controller
 	 * Add campaign to vector.
 	 */
 	public function actionCreateRelation($id)
-	{
+	{		
 		$vhc               = new VectorsHasCampaigns;
 		$vhc->vectors_id   = $id;
 		$vhc->campaigns_id = $_POST['Campaigns']['name'];
@@ -162,14 +162,20 @@ class VectorsController extends Controller
 			function($c) { return $c->getExternalName($c->id); } );
 
 		$campaignsModel = new Campaigns;
-		$campaignsModel->unsetAttributes();  // clear any default values
+		$campaignsModel->unsetAttributes(); 
 
+		$vhc = new VectorsHasCampaigns;
+		$vhc->unsetAttributes();
+		$vhc->vectors_id = $id;
 
-		$this->renderPartial('_updateRelation',array(
+		$this->layout='//layouts/modalIframe';
+
+		$this->render('_updateRelation',array(
 			'campaigns'      => $campaigns,
 			'campaignsModel' => $campaignsModel,
 			'vectorsModel'   => $vectorsModel,
-		), false, true);
+			'vhc' 			 => $vhc,
+		));
 	
 	}
 
@@ -279,6 +285,22 @@ class VectorsController extends Controller
 		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 
 		return Campaigns::model()->findAll( $criteria );
+	}
+
+
+	public function actionUpdateEditable(){
+		$req = Yii::app()->getRequest();
+		$pk = $req->getParam('pk');
+		$model = VectorsHasCampaigns::model()->findByAttributes(array(
+			'campaigns_id' => $pk['campaigns_id'],
+			'vectors_id'   => $pk['vectors_id'],
+			));
+
+		$model[$req->getParam('name')] = $req->getParam('value');
+		$model->save();
+
+		// Yii::log($pk['campaigns_id'], 'warning', 'system.model.VectorsHasCampaigns');
+		Yii::app()->end();
 	}
 
 	/**
