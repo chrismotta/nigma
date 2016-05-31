@@ -342,46 +342,60 @@ class ClickslogController extends Controller
 				$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
 		}
 
-		// echo json_encode($campaigns);
+		echo json_encode($campaigns);
+		echo '<hr>';
 
+		// REQUEST 
+		
 		$ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
 		$binPath  = Yii::app()->params['ipDbFile'];
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		$ipData   = $location->lookup($ip, IP2Location::ALL);
 		$country  = $ipData->countryCode;
-		$carrier  = $ipData->mobileCarrierName;
+		$carrier  = strtoupper($ipData->mobileCarrierName);
 
 		if($carrier == '-')
 			$connection_type = 'WIFI';
 		else
 			$connection_type = '3G';
 
-		// echo '<hr>';
 		// echo json_encode($ipData);
+		// echo '<hr>';
+		
+		// HARCODE
+		// $carrier = 'CLARO';	
 
 		$campaign = $carrier != '-' ? $carrier : 'WIFI';
-		echo '<hr>';
-		echo "Te muestro una campa&ntilde;a para: ".$campaign;
-		echo '<hr>';
-		die();
 
-		$count  = count($vhc);
-		$random = mt_rand(0, $count - 1);
+		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
-		$cid = $vhc[$random]->campaigns_id;
-		$type = $vhc[$random]->campaigns->opportunities->wifi;
-		
-		echo $cid.'<br>'.$type.'<br>';
+			$target = $campaigns['Specific Carrier'][$carrier];
+			echo 'Showing campaign for ($i=0; $i < ; $i++) { 
+				# code...
+			}: '.$campaign;
+			echo '<hr>';
 
-		if($type == 'Specific Carrier'){
-			$carrier = $vhc[$random]->campaigns->opportunities->carriers->mobile_brand;
-			echo $carrier;
+		}else{
+
+			$target = $campaigns['Open'];
+			echo 'Showing generic campaign';
+			echo '<hr>';
+
 		}
 
+		// echo json_encode($target);
+		// echo '<hr>';
 
+		$count  = count($target);
+		$random = mt_rand(0, $count - 1);
+		$cid = $target[$random];
+
+		echo 'Showing campaign: '.$cid;
 
 		die();
-		// $this->actionIndex($vhc[$random]->campaigns_id);
+
+		$this->actionIndex($cid);
+		
 	}
 
 
