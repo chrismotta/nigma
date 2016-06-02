@@ -281,7 +281,7 @@ class VectorsController extends Controller
 		$criteria->with = array('vectors');
 		$criteria->addCondition("t.id NOT IN (SELECT vhc.campaigns_id FROM vectors_has_campaigns vhc WHERE vhc.vectors_id=". $id . ")");
 		$criteria->compare('t.providers_id', $vectorsModel->providers_id);
-		$criteria->compare('t.status', 'Active');
+		$criteria->compare('t.status', array('Active','Pending'));
 		FilterManager::model()->addUserFilter($criteria, 'campaign.account');
 
 		return Campaigns::model()->findAll( $criteria );
