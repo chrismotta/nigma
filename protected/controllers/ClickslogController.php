@@ -347,7 +347,7 @@ class ClickslogController extends Controller
 		}
 
 		if($v){
-			echo json_encode($campaigns);
+			echo json_encode($campaigns, JSON_PRETTY_PRINT);
 			echo '<hr>';
 		}
 
@@ -365,7 +365,7 @@ class ClickslogController extends Controller
 		else
 			$connection_type = '3G';
 
-		echo json_encode($ipData);
+		echo json_encode($ipData, JSON_PRETTY_PRINT);
 		echo '<hr>';
 		
 		// HARCODE
