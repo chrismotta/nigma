@@ -55,7 +55,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 						'password'         => 'th3m3d14l4b',
 						'charset'          => 'utf8',
 						'initSQLs'         => array(
-				           "SET SESSION time_zone = '-3:00'",
+				           "SET SESSION time_zone = '".$dbTimeZone."'",
 						),
 					);
 
