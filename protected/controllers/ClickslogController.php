@@ -365,8 +365,8 @@ class ClickslogController extends Controller
 		else
 			$connection_type = '3G';
 
-		// echo json_encode($ipData);
-		// echo '<hr>';
+		echo json_encode($ipData);
+		echo '<hr>';
 		
 		// HARCODE
 		// $carrier = 'CLARO';	
@@ -378,9 +378,7 @@ class ClickslogController extends Controller
 			$target = $campaigns['Specific Carrier'][$carrier];
 			
 			if($v){
-				echo 'Showing campaign for ($i=0; $i < ; $i++) { 
-					# code...
-				}: '.$campaign;
+				echo 'Showing campaign for: '.$carrier;
 				echo '<hr>';
 			}
 
