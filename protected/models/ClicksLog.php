@@ -61,7 +61,7 @@ class ClicksLog extends CActiveRecord
 			'{referer}'        => $this->referer ? urlencode($this->referer) : '',
 			'{app}'            => $this->app ? urlencode($this->app) : '',
 			'{keyword}'        => $this->keyword ? urlencode($this->keyword) : '',
-			'{tmltoken}'         => $this->tid ? urlencode($this->tid) : '',
+			'{tmltoken}'       => $this->tid ? urlencode($this->tid) : '',
 			);
 	}
 

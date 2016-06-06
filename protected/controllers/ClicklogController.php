@@ -68,6 +68,20 @@ class ClicklogController extends Controller
 		echo "advertised_browser = " . $device->getVirtualCapability('advertised_browser') . "<br/>";
 		echo "advertised_browser_version =" . $device->getVirtualCapability('advertised_browser_version') . "<br/>";
 	}
+
+	private static function qsReplace($url, $qs_array){
+		
+		foreach ($qs_array as $key => $value) {
+			if(preg_match('/QS_/', $key)){
+				// $macro = substr($key, 3);
+				$qs_macros[] = '{'.$key.'}';
+				$qs_values[] = $value;
+			}
+		}
+
+		return str_replace($qs_macros, $qs_values, $url);
+
+	}
 	
 	public function actionIndex($id=null)
 	{
@@ -290,7 +304,10 @@ class ClicklogController extends Controller
 				}
 			}
 
-			//enviar macros
+			// replace qs macros
+			$redirectURL = self::qsReplace($redirectURL, $_GET);
+
+			// send outgoing macros
 			if($model->haveMacro($redirectURL))
 				$redirectURL = $model->replaceMacro($redirectURL);
 			
@@ -342,11 +359,81 @@ class ClicklogController extends Controller
 
 	public function actionVector($id=null)
 	{
+		$v = isset($_GET['v']);
 		$vhc    = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid'=>$id));
-		$count  = count($vhc);
+
+		foreach ($vhc as $cmp) {
+			$cid = $cmp->campaigns_id;
+			$type = $cmp->campaigns->opportunities->wifi;
+			
+			if($type != 'Specific Carrier')
+				$campaigns[$type][] = $cid;
+			else
+				$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
+		}
+
+		if($v){
+			echo json_encode($campaigns, JSON_PRETTY_PRINT);
+			echo '<hr>';
+		}
+
+		// REQUEST 
+		
+		$ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		$binPath  = Yii::app()->params['ipDbFile'];
+		$location = new IP2Location($binPath, IP2Location::FILE_IO);
+		$ipData   = $location->lookup($ip, IP2Location::ALL);
+		$country  = $ipData->countryCode;
+		$carrier  = strtoupper($ipData->mobileCarrierName);
+
+		if($carrier == '-')
+			$connection_type = 'WIFI';
+		else
+			$connection_type = '3G';
+
+		echo json_encode($ipData, JSON_PRETTY_PRINT);
+		echo '<hr>';
+		
+		// HARCODE
+		// $carrier = 'CLARO';	
+
+		$campaign = $carrier != '-' ? $carrier : 'WIFI';
+
+		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
+
+			$target = $campaigns['Specific Carrier'][$carrier];
+			
+			if($v){
+				echo 'Showing campaign for: '.$carrier;
+				echo '<hr>';
+			}
+
+		}else{
+
+			$target = $campaigns['Open'];
+			
+			if($v){
+				echo 'Showing generic campaign';
+				echo '<hr>';
+			}
+
+		}
+
+		// echo json_encode($target);
+		// echo '<hr>';
+
+		$count  = count($target);
 		$random = mt_rand(0, $count - 1);
-		$this->actionIndex($vhc[$random]->campaigns_id);
+		$cid = $target[$random];
+
+		if($v){
+			echo 'Showing campaign: '.$cid;
+		}else{
+			$this->actionTracking($cid);
+		}
+		
 	}
+
 
 
 	/**

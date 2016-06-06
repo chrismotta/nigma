@@ -257,6 +257,8 @@ if($action == "Create"){ ?>
         echo $form->textFieldRow($model, 'url', array('class'=>'span3'));
         ?>
         <div id='macros'>
+            Outgoing Macros:
+            <br>
         <?php
         foreach (ClicksLog::model()->macros() as $key => $value) {
             echo CHtml::label($key, $key, array('class'=>'label')).' ';
@@ -266,6 +268,14 @@ if($action == "Create"){ ?>
                 });
             ", CClientScript::POS_READY);
         }?>
+        </div>
+        <div id='macros'>
+            Query String Macros:
+            <div style="font-size:13px">
+            Add QS_paramname=&lt;publisher_macro&gt; in the redirect URL and 
+        <?php echo CHtml::label('{QS_paramname}', '{QS_paramname}', array('class'=>'label')).' '; ?> 
+            in some part of campaign's URL
+            </div>
         </div>
         <?php
         echo "<hr>";

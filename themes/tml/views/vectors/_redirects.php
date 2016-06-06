@@ -18,7 +18,7 @@
     <hr/>
     ';
     echo '
-    <p><strong>Redirect: </strong>http://tmlbox.co/clickslog/vector/'.$model->id.'/</p>
+    <p><strong>Redirect: </strong>http://tmlbox.co/clicklog/vector/'.$model->id.'/</p>
     ';
     //<button type="button" class="btn btn-default btn-sm">copy</button> 
     ?>
