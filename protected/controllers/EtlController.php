@@ -138,23 +138,28 @@ class EtlController extends Controller
 
 		foreach ($ua_list as $ua) {
 
-			$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
+			if(isset($ua->user_agent) && $ua->user_agent != ''){
+				$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
 
-			$ua->device_brand    = $device->getCapability('brand_name');
-			$ua->device_model    = $device->getCapability('marketing_name');
-			$ua->os_type         = $device->getCapability('device_os');
-			$ua->os_version      = $device->getCapability('device_os_version');
-			$ua->browser_type    = $device->getVirtualCapability('advertised_browser');
-			$ua->browser_version = $device->getVirtualCapability('advertised_browser_version');
-			
-			if ($device->getCapability('is_tablet') == 'true')
-				$ua->device_type = 'Tablet';
-			else if ($device->getCapability('is_wireless_device') == 'true')
-				$ua->device_type = 'Mobile';
-			else
-				$ua->device_type = 'Desktop';
+				$ua->device_brand    = $device->getCapability('brand_name');
+				$ua->device_model    = $device->getCapability('marketing_name');
+				$ua->os_type         = $device->getCapability('device_os');
+				$ua->os_version      = $device->getCapability('device_os_version');
+				$ua->browser_type    = $device->getVirtualCapability('advertised_browser');
+				$ua->browser_version = $device->getVirtualCapability('advertised_browser_version');
+				
+				if ($device->getCapability('is_tablet') == 'true')
+					$ua->device_type = 'Tablet';
+				else if ($device->getCapability('is_wireless_device') == 'true')
+					$ua->device_type = 'Mobile';
+				else
+					$ua->device_type = 'Desktop';
 
-			$ua->save();
+				$ua->save();
+
+			}else{
+				echo 'UA Error: '.$ua->id.'<br/>';
+			}
 		}
 
 		$elapsed = time() - $start;
