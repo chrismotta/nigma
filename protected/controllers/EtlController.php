@@ -133,33 +133,28 @@ class EtlController extends Controller
 		
 		$start = time();
 
-		$ua_list = DUserAgent::model()->findAllByAttributes(array('device_type'=>null));
+		$ua_list = DUserAgent::model()->findAllByAttributes(array('device_type'=>null), 'user_agent != ""');
 		$wurfl   = WurflManager::loadWurfl();
 
 		foreach ($ua_list as $ua) {
 
-			if(isset($ua->user_agent) && $ua->user_agent != ''){
-				$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
+			$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
 
-				$ua->device_brand    = $device->getCapability('brand_name');
-				$ua->device_model    = $device->getCapability('marketing_name');
-				$ua->os_type         = $device->getCapability('device_os');
-				$ua->os_version      = $device->getCapability('device_os_version');
-				$ua->browser_type    = $device->getVirtualCapability('advertised_browser');
-				$ua->browser_version = $device->getVirtualCapability('advertised_browser_version');
-				
-				if ($device->getCapability('is_tablet') == 'true')
-					$ua->device_type = 'Tablet';
-				else if ($device->getCapability('is_wireless_device') == 'true')
-					$ua->device_type = 'Mobile';
-				else
-					$ua->device_type = 'Desktop';
+			$ua->device_brand    = $device->getCapability('brand_name');
+			$ua->device_model    = $device->getCapability('marketing_name');
+			$ua->os_type         = $device->getCapability('device_os');
+			$ua->os_version      = $device->getCapability('device_os_version');
+			$ua->browser_type    = $device->getVirtualCapability('advertised_browser');
+			$ua->browser_version = $device->getVirtualCapability('advertised_browser_version');
+			
+			if ($device->getCapability('is_tablet') == 'true')
+				$ua->device_type = 'Tablet';
+			else if ($device->getCapability('is_wireless_device') == 'true')
+				$ua->device_type = 'Mobile';
+			else
+				$ua->device_type = 'Desktop';
 
-				$ua->save();
-
-			}else{
-				echo 'UA Error: '.$ua->id.'<br/>';
-			}
+			$ua->save();
 		}
 
 		$elapsed = time() - $start;
