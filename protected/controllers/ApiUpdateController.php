@@ -45,7 +45,8 @@ class ApiUpdateController extends Controller
 			'mobads', 
 			'plugRush', 
 			'jampp',
-			'startApp'
+			'startApp',
+			'cpmCampaigns',
 			);
 		
 		return array(
@@ -104,7 +105,8 @@ class ApiUpdateController extends Controller
 		// $this->actionPlugRush();
 		// $this->actionJampp();
 		$this->actionAffiliates();
-		
+		$this->actionCpmCampaigns();
+
 		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
 	}
@@ -300,6 +302,18 @@ class ApiUpdateController extends Controller
 		try {
 			$affiliates = new AffiliatesAPI;
 			$return = $affiliates->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.affiliates');			
+		}
+	}
+
+	public function actionCpmCampaigns($hash=null)
+	{
+		try {
+			$cpm = new CPMCampaignsAPI;
+			$return = $cpm->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
