@@ -79,7 +79,10 @@ class ClicklogController extends Controller
 			}
 		}
 
-		return str_replace($qs_macros, $qs_values, $url);
+		if(isset($qs_macros))
+			return str_replace($qs_macros, $qs_values, $url);
+		else
+			return $url;
 
 	}
 	
