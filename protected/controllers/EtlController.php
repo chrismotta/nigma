@@ -133,7 +133,7 @@ class EtlController extends Controller
 		
 		$start = time();
 
-		$ua_list = DUserAgent::model()->findAllByAttributes(array('device_type'=>null), 'user_agent != ""');
+		$ua_list = DUserAgent::model()->findAllByAttributes(array('device_type'=>null), 'user_agent != "" AND user_agent NOT LIKE "(null) %"');
 		$wurfl   = WurflManager::loadWurfl();
 
 		foreach ($ua_list as $ua) {
