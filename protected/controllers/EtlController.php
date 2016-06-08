@@ -133,13 +133,15 @@ class EtlController extends Controller
 		
 		$start = time();
 
-		$ua_list = DUserAgent::model()->findAllByAttributes(array('device_type'=>null), 'user_agent != "" AND user_agent NOT LIKE "(null) %"');
-		$wurfl   = WurflManager::loadWurfl();
+		$criteria = new CDbCriteria;
+		$criteria->addCondition('device_type IS NULL');
+		$ua_list = DUserAgent::model()->findAll($criteria);
+
+		$wurfl = WurflManager::loadWurfl();
 
 		foreach ($ua_list as $ua) {
-
+			
 			$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
-
 			$ua->device_brand    = $device->getCapability('brand_name');
 			$ua->device_model    = $device->getCapability('marketing_name');
 			$ua->os_type         = $device->getCapability('device_os');
