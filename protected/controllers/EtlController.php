@@ -138,10 +138,15 @@ class EtlController extends Controller
 		$ua_list = DUserAgent::model()->findAll($criteria);
 
 		$wurfl = WurflManager::loadWurfl();
+		$filled = 0;
 
 		foreach ($ua_list as $ua) {
-			
 			$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
+			// if($device = $wurfl->getDeviceForUserAgent($ua->user_agent))
+			// 	echo $device->getCapability('brand_name').' - ';
+			// else
+			// 	echo '- ';
+
 			$ua->device_brand    = $device->getCapability('brand_name');
 			$ua->device_model    = $device->getCapability('marketing_name');
 			$ua->os_type         = $device->getCapability('device_os');
@@ -156,12 +161,16 @@ class EtlController extends Controller
 			else
 				$ua->device_type = 'Desktop';
 
-			$ua->save();
+			if($ua->save())
+				$filled++;
+			else
+				echo 'ERROR: '.json_encode($ua->getErrors()) .'<br>';
+
 		}
 
 		$elapsed = time() - $start;
 
-		echo 'ETL UserAgent: '.count($ua_list).' rows filled - Elapsed time: '.$elapsed.' seg.<hr/>';
+		echo 'ETL UserAgent: '.$filled.'/'.count($ua_list).' rows filled - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
 	public function actionGeolocation($id=1, $date=null){
