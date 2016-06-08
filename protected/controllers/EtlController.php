@@ -138,8 +138,8 @@ class EtlController extends Controller
 		$ua_list = DUserAgent::model()->findAll($criteria);
 
 		$wurfl = WurflManager::loadWurfl();
-		$filled = 0;
 
+		$filled = 0;
 		foreach ($ua_list as $ua) {
 			$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
 			// if($device = $wurfl->getDeviceForUserAgent($ua->user_agent))
@@ -177,6 +177,7 @@ class EtlController extends Controller
 		
 		$start = time();
 
+		$filled = 0;
 		$query = 'INSERT IGNORE INTO D_GeoLocation (server_ip) 
 		SELECT DISTINCT server_ip 
 		FROM imp_log i ';
@@ -211,12 +212,15 @@ class EtlController extends Controller
 			else
 				$ip->connection_type = '3G';
 
-			$ip->save();
+			if($ip->save())
+				$filled++;
+			else
+				echo 'ERROR: '.json_encode($ip->getErrors()) .'<br>';
 		}
 
 		$elapsed = time() - $start;
 
-		echo 'ETL GeoLocation: '.count($ip_list).' rows filled - Elapsed time: '.$elapsed.' seg.<hr/>';
+		echo 'ETL GeoLocation: '.$filled.'/'.count($ip_list).' rows filled - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
 	public function actionImpressions($id=1, $date=null){
