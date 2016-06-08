@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,12 +19,14 @@
 /**
  * User Agent Normalizer - removes BabelFish garbage from user agent
  * @package	WURFL_Request_UserAgentNormalizer_Generic
+ * @deprecated
  */
-class WURFL_Request_UserAgentNormalizer_Generic_BabelFish implements WURFL_Request_UserAgentNormalizer_Interface  {
-
-	const BABEL_FISH_REGEX = "/\\s*\\(via babelfish.yahoo.com\\)\\s*/";
-	
-	public function normalize($userAgent) {		
-		return  preg_replace(self::BABEL_FISH_REGEX, "", $userAgent);
-	}
+class WURFL_Request_UserAgentNormalizer_Generic_BabelFish implements WURFL_Request_UserAgentNormalizer_Interface
+{
+    const BABEL_FISH_REGEX = "/\\s*\\(via babelfish.yahoo.com\\)\\s*/";
+    
+    public function normalize($userAgent)
+    {
+        return  preg_replace(self::BABEL_FISH_REGEX, "", $userAgent);
+    }
 }

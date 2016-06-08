@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,15 +19,17 @@
 /**
  * User Agent Normalizer - returns the substring starting from "BlackBerry"
  * @package	WURFL_Request_UserAgentNormalizer_Generic
+ * @deprecated
  */
-class WURFL_Request_UserAgentNormalizer_Generic_BlackBerry implements WURFL_Request_UserAgentNormalizer_Interface  {
-
-	public function normalize($userAgent) {
-		$userAgent = str_ireplace('blackberry', 'BlackBerry', $userAgent);
-		$pos = strpos($userAgent, 'BlackBerry');
-		if ($pos !== false && $pos > 0) {
-			$userAgent = substr($userAgent, $pos);
-		}
-		return $userAgent;
-	}
+class WURFL_Request_UserAgentNormalizer_Generic_BlackBerry implements WURFL_Request_UserAgentNormalizer_Interface
+{
+    public function normalize($userAgent)
+    {
+        $userAgent = str_ireplace('blackberry', 'BlackBerry', $userAgent);
+        $pos = strpos($userAgent, 'BlackBerry');
+        if ($pos !== false && $pos > 0) {
+            $userAgent = substr($userAgent, $pos);
+        }
+        return $userAgent;
+    }
 }

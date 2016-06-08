@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,11 +21,12 @@
  * @package	WURFL_VirtualCapability
  */
  
-class WURFL_VirtualCapability_IsFullDesktop extends WURFL_VirtualCapability {
+class WURFL_VirtualCapability_IsFullDesktop extends WURFL_VirtualCapability
+{
+    protected $required_capabilities = array('ux_full_desktop');
 
-	protected $required_capabilities = array('ux_full_desktop');
-
-	protected function compute() {
-		return ($this->device->ux_full_desktop == 'true');
-	}
+    protected function compute()
+    {
+        return ($this->device->ux_full_desktop == 'true');
+    }
 }

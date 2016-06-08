@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,15 +18,16 @@
 /**
  * User Agent Normalizer - Returns the Thunderbird/{Version} sub-string
  * @package	WURFL_Request_UserAgentNormalizer_Specific
+ * @deprecated
  */
-class WURFL_Request_UserAgentNormalizer_Specific_DesktopApplication implements WURFL_Request_UserAgentNormalizer_Interface {
-	
-	public function normalize($userAgent) {
-		$idx = strpos($userAgent, "Thunderbird");
-		if ($idx !== false) {
-			return substr($userAgent, $idx);
-		}
-		return $userAgent;
-	}
-	
-}	
+class WURFL_Request_UserAgentNormalizer_Specific_DesktopApplication implements WURFL_Request_UserAgentNormalizer_Interface
+{
+    public function normalize($userAgent)
+    {
+        $idx = strpos($userAgent, "Thunderbird");
+        if ($idx !== false) {
+            return substr($userAgent, $idx);
+        }
+        return $userAgent;
+    }
+}

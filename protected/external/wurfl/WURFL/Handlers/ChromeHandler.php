@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -26,25 +26,30 @@
  * @license	GNU Affero General Public License
  * @version	$id$
  */
-class WURFL_Handlers_ChromeHandler extends WURFL_Handlers_Handler {
-	
-	protected $prefix = "CHROME";
-	
-	public static $constantIDs = array(
-		'google_chrome'
-	);
-	
-	public function canHandle($userAgent) {
-		if (WURFL_Handlers_Utils::isMobileBrowser($userAgent)) return false;
-		return WURFL_Handlers_Utils::checkIfContains($userAgent, 'Chrome');
-	}
-	
-	public function applyConclusiveMatch($userAgent) {
-		$tolerance = WURFL_Handlers_Utils::indexOfOrLength('.', $userAgent, strpos($userAgent, 'Chrome'));
-		return $this->getDeviceIDFromRIS($userAgent, $tolerance);
-	}
-	
-	public function applyRecoveryMatch($userAgent) {
-		return 'google_chrome';
-	}
+class WURFL_Handlers_ChromeHandler extends WURFL_Handlers_Handler
+{
+    protected $prefix = "CHROME";
+    
+    public static $constantIDs = array(
+        'google_chrome'
+    );
+    
+    public function canHandle($userAgent)
+    {
+        if (WURFL_Handlers_Utils::isMobileBrowser($userAgent)) {
+            return false;
+        }
+        return WURFL_Handlers_Utils::checkIfContains($userAgent, 'Chrome');
+    }
+    
+    public function applyConclusiveMatch($userAgent)
+    {
+        $tolerance = WURFL_Handlers_Utils::indexOfOrLength($userAgent, '.');
+        return $this->getDeviceIDFromRIS($userAgent, $tolerance);
+    }
+    
+    public function applyRecoveryMatch($userAgent)
+    {
+        return 'google_chrome';
+    }
 }

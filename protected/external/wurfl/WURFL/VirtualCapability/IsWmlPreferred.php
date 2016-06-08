@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,11 +21,12 @@
  * @package	WURFL_VirtualCapability
  */
  
-class WURFL_VirtualCapability_IsWmlPreferred extends WURFL_VirtualCapability {
+class WURFL_VirtualCapability_IsWmlPreferred extends WURFL_VirtualCapability
+{
+    protected $required_capabilities = array('xhtml_support_level');
 
-	protected $required_capabilities = array('xhtml_support_level');
-
-	protected function compute() {
-		return ($this->device->xhtml_support_level <= 0);
-	}
+    protected function compute()
+    {
+        return ($this->device->xhtml_support_level <= 0);
+    }
 }

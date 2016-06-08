@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -27,12 +27,15 @@
  * @license	GNU Affero General Public License
  * @version	$id$
  */
-class WURFL_Handlers_SagemHandler extends WURFL_Handlers_Handler {
-	
-	protected $prefix = "SAGEM";
-	
-	public function canHandle($userAgent) {
-		if (WURFL_Handlers_Utils::isDesktopBrowser($userAgent)) return false;
-		return WURFL_Handlers_Utils::checkIfStartsWithAnyOf($userAgent, array('Sagem', 'SAGEM'));
-	}
+class WURFL_Handlers_SagemHandler extends WURFL_Handlers_Handler
+{
+    protected $prefix = "SAGEM";
+    
+    public function canHandle($userAgent)
+    {
+        if (WURFL_Handlers_Utils::isDesktopBrowser($userAgent)) {
+            return false;
+        }
+        return WURFL_Handlers_Utils::checkIfStartsWithAnyOf($userAgent, array('Sagem', 'SAGEM'));
+    }
 }

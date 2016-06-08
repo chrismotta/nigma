@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -21,11 +21,12 @@
  * @package	WURFL_VirtualCapability
  */
  
-class WURFL_VirtualCapability_IsAndroid extends WURFL_VirtualCapability {
+class WURFL_VirtualCapability_IsAndroid extends WURFL_VirtualCapability
+{
+    protected $required_capabilities = array('device_os');
 
-	protected $required_capabilities = array('device_os');
-
-	protected function compute() {
-		return ($this->device->device_os == 'Android');
-	}
+    protected function compute()
+    {
+        return ($this->device->device_os == 'Android');
+    }
 }

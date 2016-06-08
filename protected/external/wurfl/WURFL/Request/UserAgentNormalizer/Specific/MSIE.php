@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,18 +19,21 @@
 /**
  * User Agent Normalizer - MSIE String with the Major and Minor Version Only.
  * @package	WURFL_Request_UserAgentNormalizer_Specific
+ * @deprecated
  */
-class WURFL_Request_UserAgentNormalizer_Specific_MSIE implements WURFL_Request_UserAgentNormalizer_Interface  {
-	
-	public function normalize($userAgent) {
-		return $this->msieWithVersion($userAgent);
-	}
-	/**
-	 * Returns version info
-	 * @param string $userAgent
-	 * @return string Version info
-	 */
-	private function msieWithVersion($userAgent) {
-		return preg_replace('/( \.NET CLR [\d\.]+;?| Media Center PC [\d\.]+;?| OfficeLive[a-zA-Z0-9\.\d]+;?| InfoPath[\.\d]+;?)/', '', $userAgent);
-	}
+class WURFL_Request_UserAgentNormalizer_Specific_MSIE implements WURFL_Request_UserAgentNormalizer_Interface
+{
+    public function normalize($userAgent)
+    {
+        return $this->msieWithVersion($userAgent);
+    }
+    /**
+     * Returns version info
+     * @param string $userAgent
+     * @return string Version info
+     */
+    private function msieWithVersion($userAgent)
+    {
+        return preg_replace('/( \.NET CLR [\d\.]+;?| Media Center PC [\d\.]+;?| OfficeLive[a-zA-Z0-9\.\d]+;?| InfoPath[\.\d]+;?)/', '', $userAgent);
+    }
 }

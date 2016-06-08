@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -25,15 +25,17 @@
  * 		becomes
  * 		Mozilla/5.0 (Macintosh Safari/525
  * @package	WURFL_Request_UserAgentNormalizer_Specific
+ * @deprecated
  */
-class WURFL_Request_UserAgentNormalizer_Specific_Safari implements WURFL_Request_UserAgentNormalizer_Interface {
-
-	public function normalize($userAgent) {
-		$safari_version = WURFL_Handlers_SafariHandler::getSafariVersion($userAgent);
-		if (!$safari_version) {
-			return $userAgent;
-		}
-		$prefix = 'Safari '.$safari_version.WURFL_Constants::RIS_DELIMITER;
-		return $prefix.$userAgent;
-	}
+class WURFL_Request_UserAgentNormalizer_Specific_Safari implements WURFL_Request_UserAgentNormalizer_Interface
+{
+    public function normalize($userAgent)
+    {
+        $safari_version = WURFL_Handlers_SafariHandler::getSafariVersion($userAgent);
+        if (!$safari_version) {
+            return $userAgent;
+        }
+        $prefix = 'Safari '.$safari_version.WURFL_Constants::RIS_DELIMITER;
+        return $prefix.$userAgent;
+    }
 }

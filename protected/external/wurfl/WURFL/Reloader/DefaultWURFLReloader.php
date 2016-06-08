@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,24 +22,26 @@
  * @package	WURFL_Reloader
  * @deprecated
  */
-class WURFL_Reloader_DefaultWURFLReloader implements WURFL_Reloader_Interface {
-	
-	public function reload($wurflConfigurationPath) {
-		$wurflConfig = $this->fromFile ( $wurflConfigurationPath );
-		touch($wurflConfig->wurflFile);
-		$wurflManagerFactory = new WURFL_WURFLManagerFactory($wurflConfig);
-		$wurflManagerFactory->create();	
-		
-	}
-	
-	private function fromFile($wurflConfigurationPath) {
-		if ($this->endsWith ( $wurflConfigurationPath, ".xml" )) {
-			return new WURFL_Configuration_XmlConfig ( $wurflConfigurationPath );
-		}
-		return new WURFL_Configuration_ArrayConfig($wurflConfigurationPath);
-	}
-	
-	private function endsWith($haystack, $needle) {
-		return strrpos($haystack, $needle) === strlen($haystack)-strlen($needle);
-	}
+class WURFL_Reloader_DefaultWURFLReloader implements WURFL_Reloader_Interface
+{
+    public function reload($wurflConfigurationPath)
+    {
+        $wurflConfig = $this->fromFile($wurflConfigurationPath);
+        touch($wurflConfig->wurflFile);
+        $wurflManagerFactory = new WURFL_WURFLManagerFactory($wurflConfig);
+        $wurflManagerFactory->create();
+    }
+    
+    private function fromFile($wurflConfigurationPath)
+    {
+        if ($this->endsWith($wurflConfigurationPath, ".xml")) {
+            return new WURFL_Configuration_XmlConfig($wurflConfigurationPath);
+        }
+        return new WURFL_Configuration_ArrayConfig($wurflConfigurationPath);
+    }
+    
+    private function endsWith($haystack, $needle)
+    {
+        return strrpos($haystack, $needle) === strlen($haystack)-strlen($needle);
+    }
 }

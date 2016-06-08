@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,15 +19,18 @@
 /**
  * @package WURFL_VirtualCapability_UserAgentTool
  */
-class WURFL_VirtualCapability_UserAgentTool_PropertyList {
-	/**
-	 * @var WURFL_VirtualCapability_UserAgentTool_Device
-	 */
-	protected $device;
-	public function __construct($device) {
-		$this->device = $device;
-	}
-	public function set() {
-		return true;
-	}
+class WURFL_VirtualCapability_UserAgentTool_PropertyList
+{
+    /**
+     * @var WURFL_VirtualCapability_UserAgentTool_Device
+     */
+    protected $device;
+    public function __construct($device)
+    {
+        $this->device = $device;
+    }
+    public function set()
+    {
+        return true;
+    }
 }

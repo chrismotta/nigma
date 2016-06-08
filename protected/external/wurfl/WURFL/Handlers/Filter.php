@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -28,25 +28,22 @@
  * @version	$id$
  */
 
-interface WURFL_Handlers_Filter {
+interface WURFL_Handlers_Filter
+{
+    /**
+     * The filter() method is used to classify devices based on patterns
+     * in their user agents.
+     *  
+     * @param string $userAgent User Agent of the device
+     * @param string $deviceID  id of the the device
+     * 
+     */
+    public function filter($userAgent, $deviceID);
 
-	/**
-	 * The filter() method is used to classify devices based on patterns
-	 * in their user agents.
-	 *  
-	 * @param string $userAgent User Agent of the device
-	 * @param string $deviceID  id of the the device
-	 * 
-	 */
-	public function filter($userAgent, $deviceID);
-
-	/**
-	 * The persistData() method is resposible to 
-	 * saving the classification output(associative arrays that holds <userAgent, deviceID> pair))  
-	 *
-	 */
-	public function persistData();
-
-
+    /**
+     * The persistData() method is resposible to 
+     * saving the classification output(associative arrays that holds <userAgent, deviceID> pair))  
+     *
+     */
+    public function persistData();
 }
-

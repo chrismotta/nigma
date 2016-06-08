@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,15 +19,14 @@
  * WURFL user agent matcher interface
  * @package	WURFL_Handlers_Matcher
  */
-interface WURFL_Handlers_Matcher_Interface {
-	
-	/**
-	 * Attempts to find a matching $needle in given $collection within the specified $tolerance
-	 * @param array $collection Collection of user agents
-	 * @param string $needle User agent to search for
-	 * @param int $tolerance Minimum accuracy to be considered a match
-	 * @return string matched user agent
-	 */
-	public function match(&$collection, $needle, $tolerance);
+interface WURFL_Handlers_Matcher_Interface
+{
+    /**
+     * Attempts to find a matching $needle in given $collection within the specified $tolerance
+     * @param array $collection Collection of user agents
+     * @param string $needle User agent to search for
+     * @param int $tolerance Minimum accuracy to be considered a match
+     * @return string matched user agent
+     */
+    public function match(&$collection, $needle, $tolerance);
 }
-

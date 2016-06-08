@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -18,14 +18,14 @@
 /**
  * WURFL User Agent Normalizer Interface
  * @package	WURFL_Request_UserAgentNormalizer
+ * @deprecated
  */
-interface WURFL_Request_UserAgentNormalizer_Interface {
-	
-	/**
-	 * Return the normalized user agent
-	 * @param string $userAgent
-	 * @return string Normalized user agent
-	 */
-	public function normalize($userAgent);
+interface WURFL_Request_UserAgentNormalizer_Interface
+{
+    /**
+     * Return the normalized user agent
+     * @param string $userAgent
+     * @return string Normalized user agent
+     */
+    public function normalize($userAgent);
 }
-

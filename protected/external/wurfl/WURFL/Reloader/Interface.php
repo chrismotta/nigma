@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -22,8 +22,7 @@
  * @package	WURFL_Reloader
  * @deprecated
  */
-interface WURFL_Reloader_Interface {
-	public function reload($wurflConfigurationPath);
+interface WURFL_Reloader_Interface
+{
+    public function reload($wurflConfigurationPath);
 }
-
-

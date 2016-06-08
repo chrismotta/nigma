@@ -4,6 +4,13 @@ class WurflManager {
 
 	public static function loadWurfl() {
 
+		// Enable all error logging while in development
+		// ini_set('display_errors', 'on');
+		// error_reporting(E_ALL);
+
+		// $wurflDir = dirname(__FILE__) . '/../../../WURFL';
+		// $resourcesDir = dirname(__FILE__) . '/../../resources';
+
 		$wurflDir = dirname(__FILE__) . '/WURFL';
 		$resourcesDir = dirname(__FILE__) . '/../../data/wurfl';
 
@@ -14,6 +21,10 @@ class WurflManager {
 
 		// Create WURFL Configuration
 		$wurflConfig = new WURFL_Configuration_InMemoryConfig();
+		/*
+		(CH) FOR FUTURE RELEASES: change ClassLoader.php
+		spl_autoload_register(array('WURFL_ClassLoader', 'loadClass'), $throw=false, $prepend=true);
+		 */
 
 		// Set location of the WURFL File
 		$wurflConfig->wurflFile($resourcesDir.'/wurfl.zip');
@@ -26,21 +37,25 @@ class WurflManager {
 
 		/*
 		// Optionally specify which capabilities should be loaded
-		// This is disabled by default as it would cause the demo/index.php
-		// page to fail due to missing capabilities
+		//  This is disabled by default as it would cause the demo/index.php
+		//  page to fail due to missing capabilities
 		$wurflConfig->capabilityFilter(array(
-	        "device_os",
-	        "device_os_version",
-	        "is_tablet",
-	        "is_wireless_device",
-	        "mobile_browser",
-	        "mobile_browser_version",
-	        "pointing_method",
-	        "preferred_markup",
-	        "resolution_height",
-	        "resolution_width",
-	        "ux_full_desktop",
-	        "xhtml_support_level",
+		    'device_os',
+		    'device_os_version',
+		    'is_tablet',
+		    'is_wireless_device',
+		    'pointing_method',
+		    'preferred_markup',
+		    'resolution_height',
+		    'resolution_width',
+		    'ux_full_desktop',
+		    'xhtml_support_level',
+		    'is_smarttv',
+		    'can_assign_phone_number',
+		    'brand_name',
+		    'model_name',
+		    'marketing_name',
+		    'mobile_browser_version',
 		));
 		*/
 

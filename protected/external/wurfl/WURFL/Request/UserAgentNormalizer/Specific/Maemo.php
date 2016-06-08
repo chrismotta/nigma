@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright (c) 2014 ScientiaMobile, Inc.
+ * Copyright (c) 2015 ScientiaMobile, Inc.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -19,14 +19,17 @@
 /**
  * User Agent Normalizer
  * @package	WURFL_Request_UserAgentNormalizer_Specific
+ * @deprecated
  */
-class WURFL_Request_UserAgentNormalizer_Specific_Maemo implements WURFL_Request_UserAgentNormalizer_Interface {
-	public function normalize($userAgent) {
-		$model = WURFL_Handlers_MaemoHandler::getMaemoModel($userAgent);
-		if ($model !== null) {
-			$prefix = 'Maemo '.$model.WURFL_Constants::RIS_DELIMITER;
-			return $prefix.$userAgent;
-		}
-		return $userAgent;
-	}
+class WURFL_Request_UserAgentNormalizer_Specific_Maemo implements WURFL_Request_UserAgentNormalizer_Interface
+{
+    public function normalize($userAgent)
+    {
+        $model = WURFL_Handlers_MaemoHandler::getMaemoModel($userAgent);
+        if ($model !== null) {
+            $prefix = 'Maemo '.$model.WURFL_Constants::RIS_DELIMITER;
+            return $prefix.$userAgent;
+        }
+        return $userAgent;
+    }
 }
