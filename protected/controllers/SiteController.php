@@ -136,7 +136,7 @@ class SiteController extends Controller
 	{	
 		// if domain is defined as landing domain redirect do lp controller
 		if(in_array($_SERVER['HTTP_HOST'], Yii::app()->params['landingDomains']))
-			$this->redirect(array('lp/'));
+			$this->redirect(array('lp/1'));
 
 		$model=new LoginForm;
 
