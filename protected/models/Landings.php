@@ -5,8 +5,11 @@
  *
  * The followings are the available columns in table 'landings':
  * @property integer $id
+ * @property string $name
+ * @property integer $country_id
  * @property string $default_color
  * @property string $highlight_color
+ * @property integer $byline_images_id
  * @property string $background_color
  * @property integer $background_images_id
  * @property string $headline
@@ -20,9 +23,13 @@
  * @property string $tyc_body
  * @property string $checkbox_label
  * @property string $button_label
+ * @property string $thankyou_msg
+ * @property string $validate_msg
  *
  * The followings are the available model relations:
+ * @property GeoLocation $country
  * @property LandingImages $backgroundImages
+ * @property LandingImages $bylineImages
  */
 class Landings extends CActiveRecord
 {
@@ -42,13 +49,14 @@ class Landings extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('background_images_id', 'numerical', 'integerOnly'=>true),
+			array('country_id, byline_images_id, background_images_id', 'numerical', 'integerOnly'=>true),
+			array('name, headline, byline, input_legend, tyc_headline, checkbox_label, thankyou_msg, validate_msg', 'length', 'max'=>128),
 			array('default_color, highlight_color, background_color, input_label, input_eg, select_label, button_label', 'length', 'max'=>45),
-			array('headline, byline, input_legend, tyc_headline, checkbox_label', 'length', 'max'=>128),
-			array('select_options, tyc_body', 'length', 'max'=>256),
+			array('select_options', 'length', 'max'=>256),
+			array('tyc_body', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, default_color, highlight_color, background_color, background_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label', 'safe', 'on'=>'search'),
+			array('id, name, country_id, default_color, highlight_color, byline_images_id, background_color, background_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label, thankyou_msg, validate_msg', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -60,7 +68,9 @@ class Landings extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
+			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'backgroundImages' => array(self::BELONGS_TO, 'LandingImages', 'background_images_id'),
+			'bylineImages' => array(self::BELONGS_TO, 'LandingImages', 'byline_images_id'),
 		);
 	}
 
@@ -71,8 +81,11 @@ class Landings extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
+			'name' => 'Name',
+			'country_id' => 'Country',
 			'default_color' => 'Default Color',
 			'highlight_color' => 'Highlight Color',
+			'byline_images_id' => 'Byline Images',
 			'background_color' => 'Background Color',
 			'background_images_id' => 'Background Images',
 			'headline' => 'Headline',
@@ -86,6 +99,8 @@ class Landings extends CActiveRecord
 			'tyc_body' => 'Tyc Body',
 			'checkbox_label' => 'Checkbox Label',
 			'button_label' => 'Button Label',
+			'thankyou_msg' => 'Thankyou Msg',
+			'validate_msg' => 'Validate Msg',
 		);
 	}
 
@@ -108,8 +123,11 @@ class Landings extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
+		$criteria->compare('name',$this->name,true);
+		$criteria->compare('country_id',$this->country_id);
 		$criteria->compare('default_color',$this->default_color,true);
 		$criteria->compare('highlight_color',$this->highlight_color,true);
+		$criteria->compare('byline_images_id',$this->byline_images_id);
 		$criteria->compare('background_color',$this->background_color,true);
 		$criteria->compare('background_images_id',$this->background_images_id);
 		$criteria->compare('headline',$this->headline,true);
@@ -123,6 +141,8 @@ class Landings extends CActiveRecord
 		$criteria->compare('tyc_body',$this->tyc_body,true);
 		$criteria->compare('checkbox_label',$this->checkbox_label,true);
 		$criteria->compare('button_label',$this->button_label,true);
+		$criteria->compare('thankyou_msg',$this->thankyou_msg,true);
+		$criteria->compare('validate_msg',$this->validate_msg,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

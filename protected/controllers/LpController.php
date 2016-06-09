@@ -20,9 +20,22 @@ class LpController extends Controller
 	 */
 	public function actionView($id)
 	{
+		if(isset($_POST['Lp'])){
+			$lp = $_POST['Lp'];
+			if(isset($lp['prefix']) && isset($lp['number']) && isset($lp['tc'])){
+				$status = 'thankyou';
+			}else{
+				$status = 'validate';
+			}
+		}else{
+			$status = 'form';
+		}
+
+
 		$model = $this->loadModel($id);
 		$this->render('view', array( 
-			'model'=>$model 
+			'model'=>$model,
+			'status'=>$status, 
 		));
 	}
 
