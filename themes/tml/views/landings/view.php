@@ -1,7 +1,7 @@
 <?php
 $this->breadcrumbs=array(
 	'Landings'=>array('index'),
-	$model->id,
+	$model->name,
 );
 
 $this->menu=array(
@@ -19,8 +19,11 @@ array('label'=>'Manage Landings','url'=>array('admin')),
 'data'=>$model,
 'attributes'=>array(
 		'id',
+		'name',
+		'country_id',
 		'default_color',
 		'highlight_color',
+		'byline_images_id',
 		'background_color',
 		'background_images_id',
 		'headline',
@@ -34,5 +37,7 @@ array('label'=>'Manage Landings','url'=>array('admin')),
 		'tyc_body',
 		'checkbox_label',
 		'button_label',
+		'thankyou_msg',
+		'validate_msg',
 ),
 )); ?>

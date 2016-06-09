@@ -7,9 +7,15 @@
 
 <?php echo $form->errorSummary($model); ?>
 
+	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'country_id',array('class'=>'span5')); ?>
+
 	<?php echo $form->textFieldRow($model,'default_color',array('class'=>'span5','maxlength'=>45)); ?>
 
 	<?php echo $form->textFieldRow($model,'highlight_color',array('class'=>'span5','maxlength'=>45)); ?>
+
+	<?php echo $form->textFieldRow($model,'byline_images_id',array('class'=>'span5')); ?>
 
 	<?php echo $form->textFieldRow($model,'background_color',array('class'=>'span5','maxlength'=>45)); ?>
 
@@ -36,6 +42,10 @@
 	<?php echo $form->textFieldRow($model,'checkbox_label',array('class'=>'span5','maxlength'=>128)); ?>
 
 	<?php echo $form->textFieldRow($model,'button_label',array('class'=>'span5','maxlength'=>45)); ?>
+
+	<?php echo $form->textFieldRow($model,'thankyou_msg',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->textFieldRow($model,'validate_msg',array('class'=>'span5','maxlength'=>128)); ?>
 
 <div class="form-actions">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(

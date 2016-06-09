@@ -44,12 +44,15 @@ return false;
 'filter'=>$model,
 'columns'=>array(
 		'id',
+		'name',
+		'country_id',
 		'default_color',
 		'highlight_color',
+		'byline_images_id',
+		/*
 		'background_color',
 		'background_images_id',
 		'headline',
-		/*
 		'byline',
 		'input_legend',
 		'input_label',
@@ -60,6 +63,8 @@ return false;
 		'tyc_body',
 		'checkbox_label',
 		'button_label',
+		'thankyou_msg',
+		'validate_msg',
 		*/
 array(
 'class'=>'bootstrap.widgets.TbButtonColumn',

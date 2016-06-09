@@ -4,6 +4,14 @@
 	<?php echo CHtml::link(CHtml::encode($data->id),array('view','id'=>$data->id)); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('name')); ?>:</b>
+	<?php echo CHtml::encode($data->name); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('country_id')); ?>:</b>
+	<?php echo CHtml::encode($data->country_id); ?>
+	<br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('default_color')); ?>:</b>
 	<?php echo CHtml::encode($data->default_color); ?>
 	<br />
@@ -12,10 +20,15 @@
 	<?php echo CHtml::encode($data->highlight_color); ?>
 	<br />
 
+	<b><?php echo CHtml::encode($data->getAttributeLabel('byline_images_id')); ?>:</b>
+	<?php echo CHtml::encode($data->byline_images_id); ?>
+	<br />
+
 	<b><?php echo CHtml::encode($data->getAttributeLabel('background_color')); ?>:</b>
 	<?php echo CHtml::encode($data->background_color); ?>
 	<br />
 
+	<?php /*
 	<b><?php echo CHtml::encode($data->getAttributeLabel('background_images_id')); ?>:</b>
 	<?php echo CHtml::encode($data->background_images_id); ?>
 	<br />
@@ -28,7 +41,6 @@
 	<?php echo CHtml::encode($data->byline); ?>
 	<br />
 
-	<?php /*
 	<b><?php echo CHtml::encode($data->getAttributeLabel('input_legend')); ?>:</b>
 	<?php echo CHtml::encode($data->input_legend); ?>
 	<br />
@@ -63,6 +75,14 @@
 
 	<b><?php echo CHtml::encode($data->getAttributeLabel('button_label')); ?>:</b>
 	<?php echo CHtml::encode($data->button_label); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('thankyou_msg')); ?>:</b>
+	<?php echo CHtml::encode($data->thankyou_msg); ?>
+	<br />
+
+	<b><?php echo CHtml::encode($data->getAttributeLabel('validate_msg')); ?>:</b>
+	<?php echo CHtml::encode($data->validate_msg); ?>
 	<br />
 
 	*/ ?>
