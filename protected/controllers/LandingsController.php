@@ -119,10 +119,12 @@ throw new CHttpException(400,'Invalid request. Please do not repeat this request
 */
 public function actionIndex()
 {
-$dataProvider=new CActiveDataProvider('Landings');
-$this->render('index',array(
-'dataProvider'=>$dataProvider,
-));
+	$this->redirect(array('admin'));
+
+	// $dataProvider=new CActiveDataProvider('Landings');
+	// $this->render('index',array(
+	// 'dataProvider'=>$dataProvider,
+	// ));
 }
 
 /**

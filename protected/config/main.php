@@ -48,6 +48,8 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		case 'bidbox.co':
 		case 'www.bidbox.co':
 		case 'console.themedialab.co':
+		case 'www.games4mobi.com':
+		case 'games4mobi.com':
 					$mysqlConnect = array(
 						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 						'emulatePrepare'   => true,
