@@ -133,7 +133,11 @@ class SiteController extends Controller
 	 * Displays the login page
 	 */
 	public function actionLogin()
-	{
+	{	
+		// if domain is defined as landing domain redirect do lp controller
+		if(in_array($_SERVER['HTTP_HOST'], Yii::app()->params['landingDomains']))
+			$this->redirect(array('lp'));
+
 		$model=new LoginForm;
 
 		// if it is ajax validation request
