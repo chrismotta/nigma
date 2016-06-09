@@ -22,7 +22,7 @@ class ClicklogController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'tracking', 'vector'),
+				'actions'=>array('index', 'tracking', 'v'),
 				'users'=>array('*'),
 			),
 			array('allow',
@@ -360,7 +360,7 @@ class ClicklogController extends Controller
 	}
 
 
-	public function actionVector($id=null)
+	public function actionV($id=null)
 	{
 		$v = isset($_GET['v']);
 		$vhc    = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid'=>$id));
