@@ -94,6 +94,7 @@
                     ),
                 array('label'=>'Affiliates', 'url'=>array('/providers/admin/affiliates')),
                 array('label'=>'Networks', 'url'=>array('/providers/admin/networks')),
+                array('label'=>'Google MCC', 'url'=>array('/providers/admin/mcc')),
             ), 
             'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin') || rol('account_manager_admin'),
             ),
@@ -108,6 +109,7 @@
             ),
         array('label'=>'SEM', 'url'=>'#','itemOptions'=>array('class'=>'dropdown showLoadingMenu','tabindex'=>"-1"),'linkOptions'=>array('class'=>'dropdown-toggle','data-toggle'=>"dropdown"), 
         'items'=>array(
+            array('label'=>'Landing Generator', 'url'=>array('/landings/admin')),
             array('label'=>'Creatives', 'url'=>array('/sem/creative')),
             array('label'=>'Keywords', 'url'=>array('/sem/keyword')),
             array('label'=>'Placements', 'url'=>array('/sem/placement')),

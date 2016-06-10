@@ -16,9 +16,9 @@
 
 	<?php 
 	if( UserManager::model()->isUserAssignToRole('account_manager_admin') )
-		$types = array("Network"=>"Network","Affiliate"=>"Affiliate");
+		$types = array("Network"=>"Network","Affiliate"=>"Affiliate","Google MCC"=>"Google MCC");
 	else
-		$types = array("Network"=>"Network","Affiliate"=>"Affiliate","Publisher"=>"Publisher");
+		$types = array("Network"=>"Network","Affiliate"=>"Affiliate","Publisher"=>"Publisher","Google MCC"=>"Google MCC");
 
 	echo $form->dropDownListRow($model,'type',$types,array('class'=>'input-large')); 
 	?>

@@ -12,6 +12,7 @@ class ProvidersController extends Controller
 			'publishers' =>'Publisher',
 			'affiliates' =>'Affiliate',
 			'networks'   =>'Network',
+			'mcc'   =>'Google MCC',
 			);
 
 	/**
