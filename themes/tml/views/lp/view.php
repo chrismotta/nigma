@@ -28,7 +28,7 @@
 					?>
 				</select>
 				<h5 style="color:<?php echo $model->highlight_color; ?>;"><?php echo $model->tyc_headline; ?></h5>
-				<h6 style="color:<?php echo $model->highlight_color; ?>;"><?php echo $model->tyc_body; ?></h6>
+				<h6 style="color:black"><?php echo $model->tyc_body; ?></h6>
 				<h5 style="color:<?php echo $model->highlight_color; ?>;" class="checkbox">
 					<input type="checkbox" name="Lp[tc]" /> <?php echo $model->checkbox_label; ?>
 				</h5>
