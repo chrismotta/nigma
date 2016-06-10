@@ -94,7 +94,7 @@
                     ),
                 array('label'=>'Affiliates', 'url'=>array('/providers/admin/affiliates')),
                 array('label'=>'Networks', 'url'=>array('/providers/admin/networks')),
-                array('label'=>'Google MCC', 'url'=>array('/providers/admin/mcc')),
+                array('label'=>'Google AdWords', 'url'=>array('/providers/admin/adwords')),
             ), 
             'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin') || rol('account_manager_admin'),
             ),
