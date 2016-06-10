@@ -49,11 +49,11 @@ class Landings extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
+			array('tyc_body', 'required'),
 			array('country_id, byline_images_id, background_images_id', 'numerical', 'integerOnly'=>true),
 			array('name, headline, byline, input_legend, tyc_headline, checkbox_label, thankyou_msg, validate_msg', 'length', 'max'=>128),
 			array('default_color, highlight_color, background_color, input_label, input_eg, select_label, button_label', 'length', 'max'=>45),
 			array('select_options', 'length', 'max'=>256),
-			array('tyc_body', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, name, country_id, default_color, highlight_color, byline_images_id, background_color, background_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label, thankyou_msg, validate_msg', 'safe', 'on'=>'search'),
