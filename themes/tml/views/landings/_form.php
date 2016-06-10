@@ -37,7 +37,7 @@
 
 	<?php echo $form->textFieldRow($model,'tyc_headline',array('class'=>'span5','maxlength'=>128)); ?>
 
-	<?php echo $form->textFieldRow($model,'tyc_body',array('class'=>'span5','maxlength'=>256)); ?>
+	<?php echo $form->textAreaRow($model,'tyc_body',array('class'=>'span5','maxlength'=>256)); ?>
 
 	<?php echo $form->textFieldRow($model,'checkbox_label',array('class'=>'span5','maxlength'=>128)); ?>
 
