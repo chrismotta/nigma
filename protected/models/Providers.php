@@ -279,7 +279,7 @@ class Providers extends CActiveRecord
 
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') )
-			$criteria->compare('type', array('Affiliate','Network'));
+			$criteria->compare('type', array('Affiliate','Network','Google Adwords'));
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
@@ -329,6 +329,9 @@ class Providers extends CActiveRecord
 			case 'Publisher':
 			$return = 3;
 			break;
+			case 'Google Adwords':
+			$return = 4;
+			break;
 			default:
 			$return = NULL;
 			break;
@@ -376,6 +379,10 @@ class Providers extends CActiveRecord
 			$type = 'Publisher';
 				// return Publishers::model()->with('providers')->findAll(array('order'=>'providers.name'));
 			break;
+			case 4:
+			$type = 'Google Adwords';
+				// return Publishers::model()->with('providers')->findAll(array('order'=>'providers.name'));
+			break;
 			default:
 			$type = null;
 			break;
@@ -402,12 +409,14 @@ class Providers extends CActiveRecord
 				1 => 'Affiliates', 
 				2 => 'Networks', 
 				// 3 => 'Publishers',
+				4 => 'Google Adwords',
 			);
 		}else{
 			return array(
 				1 => 'Affiliates', 
 				2 => 'Networks', 
 				3 => 'Publishers',
+				4 => 'Google Adwords',
 			);
 		}
 	}

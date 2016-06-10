@@ -676,6 +676,14 @@ class CampaignsController extends Controller
 				$criteria->order = 'name';
 				$model = Providers::model()->findAll( $criteria );
 				break;			
+			case 4: // adwords
+				$criteria       = new CDbCriteria;
+				// $criteria->join = 'INNER JOIN publishers p ON p.providers_id = t.id';
+				$criteria->compare('type','Google AdWords');
+				$criteria->compare('t.status', 'Active');
+				$criteria->order = 'name';
+				$model = Providers::model()->findAll( $criteria );
+				break;			
 		}
 
 		$response='<option value="">Select a provider</option>';
