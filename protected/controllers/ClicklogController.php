@@ -122,6 +122,9 @@ class ClicklogController extends Controller
 		} else if (isset($_GET['kp'] )) {
 			// get kimia token if exists
 			$ntoken = $_GET['kp'];
+		} else if (isset($_GET['gclid'] )) {
+			// get google token if exists
+			$ntoken = $_GET['gclid'];
 		} else {
 			// unset ktoken
 			$ntoken = null;
