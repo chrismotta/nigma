@@ -172,6 +172,7 @@ class ConvLog extends CActiveRecord
 
 		// return self::model()->findAll($criteria);
 		return new CActiveDataProvider($this, array(
+			'pagination'=>false,
 			'criteria'=>$criteria,
 		));
 	}
