@@ -441,7 +441,7 @@ class ClicksLog extends CActiveRecord
 			't.*',
 			'DATE_FORMAT(DATE(t.date), "%d-%m-%Y") as click_date',
 			'TIME(t.date) as click_time',
-			'DATE_FORMAT(DATE(t.date), "%d-%m-%Y") as conv_date',
+			'DATE_FORMAT(DATE(convLogs.date), "%d-%m-%Y") as conv_date',
 			'TIME(convLogs.date) as conv_time',
 			'advertisers.name as advertiser',
 			'providers.name as traffic_source',
