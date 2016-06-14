@@ -19,6 +19,12 @@ class ConvLog extends CActiveRecord
 	public $advertiser_id;
 	public $conv;
 	public $rate;
+	public $dateStart;
+	public $dateEnd;
+	public $google_click_id;
+	public $conversion_name;
+	public $conversion_value;
+	public $conversion_time;
 
 	public function macros()
 	{
@@ -50,6 +56,7 @@ class ConvLog extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, tid, date, campaigns_id, advertiser_id, clicks_log_id', 'safe', 'on'=>'search'),
+			array('google_click_id, conversion_time', 'safe', 'on'=>'csv'),
 		);
 	}
 
@@ -77,7 +84,9 @@ class ConvLog extends CActiveRecord
 			'date'        => 'Conv. Date',
 			'campaigns_id' => 'Campaign',
 			'clicks_log_id' => 'Clicks Log',
-			'advertiser_id' => 'Advertiser'
+			'advertiser_id' => 'Advertiser',
+			'google_click_id' => 'Google Click Id',
+			'conversion_time' => 'Conversion Time',
 			);
 	}
 
@@ -144,5 +153,26 @@ class ConvLog extends CActiveRecord
 	public function replaceMacro($url)
 	{	
 		return str_replace(array_keys(self::macros()),array_values(self::macros()),$url);
+	}
+
+	public function adwordsCSV(){
+
+		$criteria = new CDbCriteria;
+		$criteria->with = array('clicksLog','campaign.providers','campaign.opportunities');
+		
+		$criteria->compare('providers.type', 'Google AdWords');
+		$criteria->addBetweenCondition('DATE(t.date)', $this->dateStart, $this->dateEnd);
+
+		$criteria->select = array(
+			'clicksLog.ext_tid as google_click_id',
+			'providers.conversion_profile as conversion_name',
+			'opportunities.rate as conversion_value',
+			'CONCAT(t.date,"+0000") as conversion_time',
+			);
+
+		// return self::model()->findAll($criteria);
+		return new CActiveDataProvider($this, array(
+			'criteria'=>$criteria,
+		));
 	}
 }

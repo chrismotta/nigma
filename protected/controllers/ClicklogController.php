@@ -31,7 +31,7 @@ class ClicklogController extends Controller
 			),
 			array('allow', 
 				'actions'=>array('updateClicksData', 'updateQuery', 'storage', 'test'),
-				'roles'=>array('admin'),
+				'roles'=>array('admin', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -362,7 +362,7 @@ class ClicklogController extends Controller
 
 	}
 
-
+	// V of Vector
 	public function actionV($id=null)
 	{
 		$v = isset($_GET['v']);

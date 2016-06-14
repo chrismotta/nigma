@@ -22,7 +22,7 @@ class ConvlogController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'excelReport'),
+				'actions'=>array('index'),
 				'users'=>array('*'),
 			),
 			array('allow',
@@ -30,8 +30,8 @@ class ConvlogController extends Controller
 				'ips'=>array('54.88.85.63'),
 			),
 			array('allow', 
-				'actions'=>array('storage'),
-				'roles'=>array('admin'),
+				'actions'=>array('storage', 'excelReport', 'adwordsCSV'),
+				'roles'=>array('admin', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -277,6 +277,34 @@ class ConvlogController extends Controller
 		$command = Yii::app()->db->createCommand($deleteRows);
 		$result['deleted']  = $command->execute();
 		echo json_encode($result);
+	}
+
+
+	public function actionAdwordsCSV(){
+
+		$model = new ConvLog('csv');
+		$model->dateStart = isset($_GET['date_start']) ? $_GET['date_start'] : date("Y-m-d", strtotime("yesterday"));
+		$model->dateEnd = isset($_GET['date_end']) ? $_GET['date_end'] : date("Y-m-d", strtotime("today"));
+		
+		$dp = $model->adwordsCSV();
+		$data = $dp->getData();
+		foreach ($dp->getData() as $data) {
+			$csvData[] = array(
+				'Google Click Id' => $data->google_click_id,
+				'Conversion Name' => $data->conversion_name,
+				'Conversion Value' => $data->conversion_value,
+				'Conversion Time' => $data->conversion_time,
+				);
+		}
+
+		$csv = new ECSVExport( $csvData );
+		$content = $csv->toCSV();    
+		
+		if(isset($_GET['v']))               
+			echo $content;
+		else
+			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
+		
 	}
 
 }

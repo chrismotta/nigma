@@ -166,6 +166,7 @@ return array(
 		'ext.eexcelwriter.components.EExcelWriter',
 		'ext.pdffactory.EPdfFactoryDoc',
 		'ext.samodelversioning.SAModelVersioning',
+		'ext.ecsvexport.ECSVExport',
 	),
 
 	'modules'=>array(
