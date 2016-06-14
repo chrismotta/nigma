@@ -385,7 +385,11 @@ class ClicklogController extends Controller
 
 		// REQUEST 
 		
-		$ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		if(isset($_GET['ip']))
+			$ip = $_GET['ip'];
+		else
+			$ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		
 		$binPath  = Yii::app()->params['ipDbFile'];
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		$ipData   = $location->lookup($ip, IP2Location::ALL);
