@@ -298,6 +298,7 @@ class ConvlogController extends Controller
 		}
 
 		$csv = new ECSVExport( $csvData );
+		$csv->setEnclosure(' ');
 		$content = $csv->toCSV();    
 		
 		if(isset($_GET['v']))               
