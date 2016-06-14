@@ -30,7 +30,7 @@ class ClicklogController extends Controller
 				'ips'=>array('54.88.85.63'),
 			),
 			array('allow', 
-				'actions'=>array('updateClicksData', 'updateQuery', 'storage', 'test'),
+				'actions'=>array('updateClicksData', 'updateQuery', 'storage', 'test', 'csv'),
 				'roles'=>array('admin', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
@@ -644,6 +644,76 @@ class ClicklogController extends Controller
 		
 		Yii::log( $msg . "<hr/>\n ERROR: " . json_encode($model->getErrors()), 'error', 'system.model.clicksLog');
 
+	}
+
+	public function actionCsv(){
+	
+		/*
+		$dateStart = isset($_GET['date_start']) ? $_GET['date_start'] : date("Y-m-d", strtotime("yesterday"));
+		$dateEnd = isset($_GET['date_end']) ? $_GET['date_end'] : date("Y-m-d", strtotime("today"));
+	
+		$criteria = new CDbCriteria;
+		$criteria->with = array('campaigns.opportunities.regions.financeEntities.advertisers','providers');
+		
+		// $criteria->compare('providers.type', 'Google AdWords');
+		$criteria->compare('t.campaigns_id','1419');
+		$criteria->addBetweenCondition('DATE(t.date)', $dateStart, $dateEnd);
+
+		$criteria->select = array(
+			't.id as id',
+			't.date as date',
+			'advertisers.name as advertiser',
+			'providers.name as traffic_source'
+			);
+
+		$data = ClicksLog::model()->findAll($criteria);
+		*/
+		
+		$model = new ClicksLog();
+		$model->dateStart = isset($_REQUEST['date_start']) ? $_REQUEST['date_start'] : date("Y-m-d", strtotime("yesterday"));
+		$model->dateEnd = isset($_REQUEST['date_end']) ? $_REQUEST['date_end'] : date("Y-m-d", strtotime("today"));
+		$model->only_conversions = isset($_REQUEST['c']) ? true : false;
+
+		$dp = $model->csvReport();
+		foreach ($dp->getData() as $data) {
+			$csvData[] = array(
+				'Click ID'        => $data->tid,
+				'Click Date'      => $data->click_date,
+				'Click Time'      => $data->click_time,
+				'IP'              => $data->server_ip,
+				'Campaign ID'     => $data->campaigns_id,
+				'Campaign Name'     => $data->campaigns_name,
+				'Product' => $data->product,
+				'Advertiser'      => $data->advertiser,
+				'Traffic Source'  => $data->traffic_source,
+				'Traffic Source Type'  => $data->traffic_source_type,
+				'Country'         => $data->country,
+				'Carrier'         => $data->carrier,
+				'OS'              => $data->os,
+				'OS Version'      => $data->os_version,
+				'Device Type'     => $data->device_type,
+				'Device Brand'    => $data->device,
+				'Device Model'    => $data->device_model,
+				'Browser'         => $data->browser,
+				'Browser Version' => $data->browser_version,
+				'Conv Date'       => $data->conv_date,
+				'Conv Time'       => $data->conv_time,
+				);
+		}
+
+		/*
+		ID	Transaction  Id	Campaign  Id	Advertiser	Campaign  Name	Traffic  Source	Status	Ip	Country	City	Carrier	Browser  Type	Browser  Version	Os  Type	Os  Version	Device  Brand	Device  Model	Referer  Url	App	Date
+		*/
+
+		$csv = new ECSVExport( $csvData );
+		$csv->setEnclosure(chr(0));//replace enclosure with caracter
+		$content = $csv->toCSV();    
+		
+		if(isset($_REQUEST['v']))
+			echo $content;
+		else
+			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
+		
 	}
 
 	// Uncomment the following methods and override them if needed

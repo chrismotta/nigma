@@ -44,11 +44,23 @@ class ClicksLog extends CActiveRecord
 	public $provider;
 	public $campaign;
 	public $advertiser;
+	public $traffic_source;
 	public $convRate;
 	public $revenue;
 	public $country_name;
 	public $conv;
 
+	//csv
+	public $dateStart;
+	public $dateEnd;
+	public $click_date;
+	public $click_time;
+	public $conv_date;
+	public $conv_time;
+	public $campaigns_name;
+	public $traffic_source_type;
+	public $product;
+	public $only_conversions = false;
 
 	public function macros()
 	{
@@ -98,7 +110,7 @@ class ClicksLog extends CActiveRecord
 		return array(
 			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
-			'convLogs' => array(self::HAS_MANY, 'ConvLog', 'clicks_log_id'),
+			'convLogs' => array(self::HAS_ONE, 'ConvLog', 'clicks_log_id'),
 		);
 	}
 
@@ -405,6 +417,48 @@ class ClicksLog extends CActiveRecord
 		        ),
 		    ),
 		));
+	}
+
+
+	public function csvReport()
+	{
+
+		$criteria = new CDbCriteria;
+		$criteria->with = array(
+			'campaigns',
+			'campaigns.opportunities',
+			'campaigns.opportunities.regions.financeEntities.advertisers',
+			'providers',
+			'convLogs',
+			);
+		
+		$criteria->compare('providers.type', array('Google AdWords','Network','Affiliate'));
+		$criteria->addBetweenCondition('DATE(t.date)', $this->dateStart, $this->dateEnd);
+		if($this->only_conversions)
+			$criteria->addCondition('convLogs.id IS NOT NULL');
+
+		$criteria->select = array(
+			't.*',
+			'DATE_FORMAT(DATE(t.date), "%d-%m-%Y") as click_date',
+			'TIME(t.date) as click_time',
+			'DATE_FORMAT(DATE(t.date), "%d-%m-%Y") as conv_date',
+			'TIME(convLogs.date) as conv_time',
+			'advertisers.name as advertiser',
+			'providers.name as traffic_source',
+			'providers.type as traffic_source_type',
+			'campaigns.name as campaigns_name',
+			'opportunities.product as product',
+			);
+
+		// return self::model()->findAll($criteria);
+		
+		$pagination = isset($_REQUEST['v']) ? null : false;
+
+		return new CActiveDataProvider($this, array(
+			'pagination'=>$pagination,
+			'criteria'=>$criteria,
+		));
+
 	}
 
 
