@@ -300,6 +300,6 @@ return array(
 		'adminEmail'=>'info@themedialab.co',
 	    'defaultPageSize'=>50,
 	    'landingDomains' => array('www.games4mobi.com','games4mobi.com'),
-		'ipDbFile'       => dirname(__FILE__).'/../data/ip2location/IP-COUNTRY-REGION-CITY-LATITUDE-LONGITUDE-ISP-DOMAIN-MOBILE.BIN',
+		'ipDbFile'       => dirname(__FILE__).'/../data/ip2location/ipdb.bin',
 	),
 );
