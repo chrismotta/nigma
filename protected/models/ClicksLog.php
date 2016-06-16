@@ -442,7 +442,7 @@ class ClicksLog extends CActiveRecord
 
 		$criteria->select = array(
 			't.*',
-			'CONCAT("\"", t.server_ip, "\"") as server_ip',
+			'CONCAT("\'", t.server_ip) as server_ip',
 			'DATE_FORMAT(DATE(t.date), "%d-%m-%Y") as click_date',
 			'TIME(t.date) as click_time',
 			'DATE_FORMAT(DATE(convLogs.date), "%d-%m-%Y") as conv_date',
