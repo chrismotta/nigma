@@ -44,9 +44,9 @@ class ClicklogController extends Controller
 	 * to the appropriate landing
 	 * @return [type] [description]
 	 */
-	public function actionTracking($id=null)
+	public function actionTracking($id=null, $vid=null)
 	{
-		$this->actionIndex($id);
+		$this->actionIndex($id, $vid);
 	}
 
 	public function actionTest()
@@ -86,7 +86,7 @@ class ClicklogController extends Controller
 
 	}
 	
-	public function actionIndex($id=null)
+	public function actionIndex($id=null, $vid=null)
 	{
 
 		isset( $_GET['ts'] ) ? $test = true : $test = false;
@@ -258,6 +258,14 @@ class ClicklogController extends Controller
 		// Save active record and redirect
 		
 		if($model->save()){
+
+			// if clicks is from a vector, log it
+			if(isset($vid)){
+				$modelVL = new VectorsLog();
+				$modelVL->clicks_log_id = $model->id;
+				$modelVL->vectors_id = $vid;
+				$modelVL->save();
+			}
 
 			// if($ntoken){
 			// 	$tmltoken = $ntoken;
@@ -439,7 +447,8 @@ class ClicklogController extends Controller
 		if($v){
 			echo 'Showing campaign: '.$cid;
 		}else{
-			$this->actionTracking($cid);
+			// send vector id
+			$this->actionTracking($cid, $id);
 		}
 		
 	}
@@ -714,7 +723,7 @@ class ClicklogController extends Controller
 		$content = $csv->toCSV();    
 		
 		if(isset($_REQUEST['v']))
-			echo $content;
+			echo str_replace("\n", '<br/>', $content);
 		else
 			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
 		
