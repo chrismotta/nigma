@@ -60,6 +60,7 @@ class ClicksLog extends CActiveRecord
 	public $campaigns_name;
 	public $traffic_source_type;
 	public $product;
+	public $vectors_id;
 	public $only_conversions = false;
 
 	public function macros()
@@ -108,9 +109,10 @@ class ClicksLog extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'providers' => array(self::BELONGS_TO, 'Providers', 'providers_id'),
-			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
-			'convLogs' => array(self::HAS_ONE, 'ConvLog', 'clicks_log_id'),
+			'providers'  => array(self::BELONGS_TO, 'Providers', 'providers_id'),
+			'campaigns'  => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
+			'convLogs'   => array(self::HAS_ONE, 'ConvLog', 'clicks_log_id'),
+			'vectorsLog' => array(self::HAS_ONE, 'VectorsLog', 'clicks_log_id'),
 		);
 	}
 
@@ -430,6 +432,7 @@ class ClicksLog extends CActiveRecord
 			'campaigns.opportunities.regions.financeEntities.advertisers',
 			'providers',
 			'convLogs',
+			'vectorsLog',
 			);
 		
 		$criteria->compare('providers.type', array('Google AdWords','Network','Affiliate'));
@@ -448,6 +451,7 @@ class ClicksLog extends CActiveRecord
 			'providers.type as traffic_source_type',
 			'campaigns.name as campaigns_name',
 			'opportunities.product as product',
+			'vectorsLog.vectors_id as vectors_id'
 			);
 
 		// return self::model()->findAll($criteria);

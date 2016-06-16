@@ -709,6 +709,7 @@ class ClicklogController extends Controller
 				'Device Model'    => $data->device_model,
 				'Browser'         => $data->browser,
 				'Browser Version' => $data->browser_version,
+				'Vector ID'       => $data->vectors_id,
 				'Conv Date'       => $data->conv_date,
 				'Conv Time'       => $data->conv_time,
 				);
