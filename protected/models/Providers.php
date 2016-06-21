@@ -99,7 +99,7 @@ class Providers extends CActiveRecord
 			array('type, name, model, net_payment, currency, entity', 'required'),
 			array('country_id, has_s2s, has_token, prospect, use_alternative_convention_name, has_api, use_vectors, publisher_percentage, users_id, account_manager_id', 'numerical', 'integerOnly'=>true),
 			array('prefix, sizes, placeholder', 'length', 'max'=>45),
-			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, bank_account_name, bank_account_number, branch, bank_name, swift_code, url, conversion_profile', 'length', 'max'=>128),
+			array('name, net_payment, commercial_name, state, zip_code, address, contact_com, email_com, contact_adm, email_adm, tax_id, pdf_name, pdf_agreement, phone, foundation_place, bank_account_name, bank_account_number, branch, bank_name, swift_code, url, conversion_profile, mcc_external_id', 'length', 'max'=>128),
 			array('email_adm, email_com', 'email'),
 			array('currency, model, entity', 'length', 'max'=>3),
 			array('status', 'length', 'max'=>8),
@@ -200,6 +200,7 @@ class Providers extends CActiveRecord
 			'users_id'                        => 'Users',
 			'account_manager_id'              => 'Account Manager',
 			'conversion_profile'              => 'Conversion Profile',
+			'mcc_external_ide'                => 'MCC External ID',
 		);
 	}
 
@@ -274,6 +275,7 @@ class Providers extends CActiveRecord
 		$criteria->compare('users_id',$this->users_id);
 		$criteria->compare('account_manager_id',$this->account_manager_id);
 		$criteria->compare('conversion_profile',$this->conversion_profile);
+		$criteria->compare('mcc_external_id',$this->mcc_external_id);
 		if($prospect)
 			$criteria->addCondition('t.prospect='.$prospect);
 		else

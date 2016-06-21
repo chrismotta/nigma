@@ -156,6 +156,7 @@
 
 	<div class="divisor">Google AdWords Settings</div>
 	<?php echo $form->textFieldRow($model,'conversion_profile',array('class'=>'span3')); ?>
+	<?php echo $form->textFieldRow($model,'mcc_external_id',array('class'=>'span3')); ?>
 
     <div class="form-actions">
         <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'type'=>'success', 'label'=>'Submit')); ?>
