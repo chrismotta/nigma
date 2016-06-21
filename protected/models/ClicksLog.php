@@ -435,6 +435,7 @@ class ClicksLog extends CActiveRecord
 			'vectorsLog',
 			);
 		
+		$criteria->compare('t.providers_id',$this->providers_id);
 		$criteria->compare('providers.type', array('Google AdWords','Network','Affiliate'));
 		$criteria->addBetweenCondition('DATE(t.date)', $this->dateStart, $this->dateEnd);
 		if($this->only_conversions)

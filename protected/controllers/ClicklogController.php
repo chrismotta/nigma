@@ -685,6 +685,7 @@ class ClicklogController extends Controller
 		$model = new ClicksLog();
 		$model->dateStart = isset($_REQUEST['date_start']) ? $_REQUEST['date_start'] : date("Y-m-d", strtotime("yesterday"));
 		$model->dateEnd = isset($_REQUEST['date_end']) ? $_REQUEST['date_end'] : date("Y-m-d", strtotime("today"));
+		$model->providers_id = isset($_REQUEST['ts']) ? $_REQUEST['ts'] : null;
 		$model->only_conversions = isset($_REQUEST['c']) ? true : false;
 
 		$dp = $model->csvReport();
