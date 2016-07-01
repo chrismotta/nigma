@@ -13,7 +13,7 @@ class AdWords
 		$return = '';
 
 		if ( isset( $_GET['date']) ) {
-			$return.= '<hr/>'.$_GET['date'].'<hr/>';
+			$return.= '<hr/>date '.$_GET['date'].'<hr/>';
 			$date =  date('Ymd', strtotime($_GET['date']));
 			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 			$return.= $this->downloadInfoByAccount('auth.ini', $date);
@@ -322,12 +322,13 @@ class AdWords
 	private function createDaily($camp, $date)
 	{
 		$return = '';
+		$campModel = Campaigns::model()->findByPk($camp['id']);
 		
 		// if exists overwrite, else create a new
 		$dailyReport = DailyReport::model()->find(
 			"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
 			array(
-				":providers"=>$this->provider_id, 
+				":providers"=>$campModel->providers_id, 
 				":cid"=>$camp['id'],
 				":date"=>$date, 
 				)
@@ -337,7 +338,7 @@ class AdWords
 			$dailyReport = new DailyReport();
 			$dailyReport->date = $date;
 			$dailyReport->campaigns_id = $camp['id'];
-			$dailyReport->providers_id = $this->provider_id;
+			$dailyReport->providers_id = $campModel->providers_id;
 			$return.= "<hr/>New record: ";
 		}else{
 			$return.= "<hr/>Update record: ".$dailyReport->id;
