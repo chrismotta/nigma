@@ -18,6 +18,31 @@ class Utilities {
 	    return $range;
 	}
 
+	public static function parseVectorUrlID($campaignURL){
+		$id_begin = strpos($campaignURL, '/v/')+3;
+		$id_end   = strpos($campaignURL, '/', $id_begin);
+		$return   = substr($campaignURL, $id_begin,  $id_end-$id_begin);
+
+		if ( is_numeric($return) ) {
+			if ( !Vectors::model()->isValidId($return) )
+				return NULL;
+			return $return;
+		}
+		return NULL;
+	}
+
+	public static function parseVectorID($campaignname){
+		$id_begin = 1;
+		$id_end = strpos($campaignname, "-");
+		$return = substr($campaignname, $id_begin,  $id_end-$id_begin);
+
+		if ( is_numeric($return) ) {
+			if ( !Vectors::model()->isValidId($return) )
+				return NULL;
+			return $return;
+		}
+		return NULL;
+	}
 	public static function parseCampaignID($campaignname, $useAlternativeName = false)
 	{
 		$campaignname = strip_tags($campaignname);

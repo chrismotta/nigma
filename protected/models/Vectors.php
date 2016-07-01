@@ -104,6 +104,12 @@ class Vectors extends CActiveRecord
 		));
 	}
 
+	public function isValidId($id)
+	{
+		$isValid = $this->find('id=:id', array(':id' => $id));
+		return $isValid ? true : false;
+	}
+
 	/**
 	 * Retrieves a list of models for specified provider and date. Ignore the vectors that had already info entry.
 	 *

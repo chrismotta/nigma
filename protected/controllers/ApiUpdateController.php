@@ -115,11 +115,13 @@ class ApiUpdateController extends Controller
 		echo $_REQUEST['code'];
 	}
 
-	public function actionAdWords()
+	public function actionAdWords($hash=null)
 	{
 		try {
 			$adWords = new AdWords;
-			$adWords->downloadInfo();
+			$return = $adWords->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}

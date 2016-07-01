@@ -14,6 +14,9 @@
  */
 class VectorsLog extends CActiveRecord
 {
+	public $clicks;
+	public $conv;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -32,6 +35,7 @@ class VectorsLog extends CActiveRecord
 		return array(
 			array('clicks_log_id, vectors_id', 'required'),
 			array('clicks_log_id, vectors_id', 'numerical', 'integerOnly'=>true),
+			array('clicks, conv', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, clicks_log_id, vectors_id', 'safe', 'on'=>'search'),
