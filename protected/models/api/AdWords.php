@@ -13,7 +13,7 @@ class AdWords
 		$return = '';
 
 		if ( isset( $_GET['date']) ) {
-		
+			$return.= '<hr/>'.$_GET['date'].'<hr/>';
 			$date =  date('Ymd', strtotime($_GET['date']));
 			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 			$return.= $this->downloadInfoByAccount('auth.ini', $date);
