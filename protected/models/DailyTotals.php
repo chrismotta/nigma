@@ -140,11 +140,12 @@ class DailyTotals extends CActiveRecord
 
 		$dateStart = date('Y-m-d', strtotime($dateStart));
 		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
-		$cats =! $cats ? array('Incent', 'Branding') : $cats;
+		// $cats =! $cats ? array('Incent', 'Branding') : $cats;
 
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('date BETWEEN "'.$dateStart.'" AND "'.$dateEnd.'"');
-		$criteria->compare('cat', $cats);
+		if(isset($cats))
+			$criteria->compare('cat', $cats);
 
 		$criteria->select = array(
 			'date',
