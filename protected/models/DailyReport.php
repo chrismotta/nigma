@@ -58,6 +58,7 @@ class DailyReport extends CActiveRecord
 	public $commercial_name;
 	public $product;
 	public $country;
+	public $advertiser_cat;
 
 	/**
 	 * @return string the associated database table name
@@ -80,6 +81,7 @@ class DailyReport extends CActiveRecord
 			array('spend, revenue, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA', 'length', 'max'=>11),
 			array('comment', 'length', 'max'=>255),
 			array('date', 'date',  'format'=>'yyyy-M-d'),
+			array('advertiser_cat','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, rate, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country', 'safe', 'on'=>'search'),
