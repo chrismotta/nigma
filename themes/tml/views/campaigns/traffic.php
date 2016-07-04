@@ -8,7 +8,7 @@ $dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'today';
 $dateStart      = date('Y-m-d', strtotime($dateStart));
 $dateEnd        = date('Y-m-d', strtotime($dateEnd));
 
-$totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
+// $totalsGrap     = DailyTotals::model()->getTotals($dateStart,$dateEnd);
 
 // El caso esta comentado porque daba valores 0 - Revisar más adelante
 // if($accountManager==null && $opportunitie==null && $providers==null)
@@ -40,6 +40,8 @@ Yii::app()->clientScript->registerScript('search', "
 	});
 	");
 ?>
+
+<?php /*
 <div class="row">
 	<div id="container-highchart" class="span12">
 	<?php
@@ -76,6 +78,8 @@ Yii::app()->clientScript->registerScript('search', "
 			
 	</div>
 </div>
+*/
+?>
 <div class="botonera">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
