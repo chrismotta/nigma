@@ -1,6 +1,5 @@
-<h3>Currently undergoing maintenance</h3>
 <?php
-die();
+// die('<h3>Currently undergoing maintenance</h3>');
 
 ini_set('memory_limit', '-1');
 set_time_limit(0);
