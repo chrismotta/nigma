@@ -112,47 +112,7 @@ class AdWords
 				}
 			}
 			
-			$this->apiLog->updateLog('Processing', 'Merginh data');
 			
-			// vector or campaign //
-			
-			if(isset($awCampaigns)){
-
-				foreach ($awCampaigns as $campaignAttr) {
-				
-					if( $this->isVectorURL($campaignAttr['trackingTemplate']) ){
-
-						$vid = Utilities::parseVectorUrlID($campaignAttr['trackingTemplate']);
-						$cost = number_format($campaignAttr['cost'] / 1000000, 2, '.', '');
-
-						if(isset($vcTable[$vid])){
-
-							$vcTable[$vid]['impressions'] += $campaignAttr['impressions'];
-							$vcTable[$vid]['clicks']      += $campaignAttr['clicks'];
-							$vcTable[$vid]['cost']        += $campaignAttr['cost'];
-							$vcTable[$vid]['count']       ++;
-
-						}else{
-
-							$vcTable[$vid]['id']          = $vid;
-							$vcTable[$vid]['impressions'] = $campaignAttr['impressions'];
-							$vcTable[$vid]['clicks']      = $campaignAttr['clicks'];
-							$vcTable[$vid]['cost']        = $campaignAttr['cost'];
-							$vcTable[$vid]['count']       = 1;
-
-						}
-						
-						// $vcTable[$campaignAttr['campaignID']]['campaign'] = $campaignAttr['campaign'];
-						// $vcTable[$campaignAttr['campaignID']]['impressions'] = $campaignAttr['impressions'];
-						// $vcTable[$campaignAttr['campaignID']]['clicks']      = $campaignAttr['clicks'];
-						// $vcTable[$campaignAttr['campaignID']]['cost']        = $cost;
-
-					}else{
-						$campaignsTable[] = $campaignAttr;
-					}
-
-				}
-			}
 			
 			/*
 			if ( !isset($result['report']['table']['row']) ) {
@@ -174,6 +134,55 @@ class AdWords
 			echo '<hr>';
 			*/
 		
+		}
+
+
+		// echo '<hr>';
+		// echo json_encode($awCampaigns);
+		// echo '<hr>';
+
+		$this->apiLog->updateLog('Processing', 'Merginh data');
+		
+		// vector or campaign //
+		
+		if(isset($awCampaigns)){
+
+			foreach ($awCampaigns as $campaignAttr) {
+			
+				if( $this->isVectorURL($campaignAttr['trackingTemplate']) ){
+
+					$vid = Utilities::parseVectorUrlID($campaignAttr['trackingTemplate']);
+					$costUS = number_format($campaignAttr['cost'] / 1000000, 2, '.', '');
+
+					if(isset($vcTable[$vid])){
+
+						$vcTable[$vid]['impressions'] += $campaignAttr['impressions'];
+						$vcTable[$vid]['clicks']      += $campaignAttr['clicks'];
+						$vcTable[$vid]['cost']        += $campaignAttr['cost'];
+						$vcTable[$vid]['us']          += $costUS;
+						$vcTable[$vid]['count']       ++;
+
+					}else{
+
+						$vcTable[$vid]['id']          = $vid;
+						$vcTable[$vid]['impressions'] = $campaignAttr['impressions'];
+						$vcTable[$vid]['clicks']      = $campaignAttr['clicks'];
+						$vcTable[$vid]['cost']        = $campaignAttr['cost'];
+						$vcTable[$vid]['us']          = $costUS;
+						$vcTable[$vid]['count']       = 1;
+
+					}
+					
+					// $vcTable[$campaignAttr['campaignID']]['campaign'] = $campaignAttr['campaign'];
+					// $vcTable[$campaignAttr['campaignID']]['impressions'] = $campaignAttr['impressions'];
+					// $vcTable[$campaignAttr['campaignID']]['clicks']      = $campaignAttr['clicks'];
+					// $vcTable[$campaignAttr['campaignID']]['cost']        = $cost;
+
+				}else{
+					$campaignsTable[] = $campaignAttr;
+				}
+
+			}
 		}
 
 		// if(isset($campaignTable))
@@ -321,6 +330,7 @@ class AdWords
 
 	private function createDaily($camp, $date)
 	{
+		// echo 'Creating daily - date: '.$date.' cid: '.$camp.'<br>';
 		$return = '';
 		$campModel = Campaigns::model()->findByPk($camp['id']);
 		
