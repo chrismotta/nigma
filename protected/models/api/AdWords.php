@@ -241,12 +241,12 @@ class AdWords
 		// if(isset($campaignTable))
 		// 	echo 'Campaigns Table<hr>'.json_encode($campaignsTable, JSON_PRETTY_PRINT);
 			
-		if(isset($vcTable)){
-			// echo 'Vectors Table<hr>';
-			$return .= '<hr>';
-			$return .= json_encode($vcTable, JSON_PRETTY_PRINT);
-			$return .= '<hr>';
-		}
+		// if(isset($vcTable)){
+		// 	$return .= '<hr>';
+		// 	$return .= 'Vectors Table<br>';
+		// 	$return .= json_encode($vcTable, JSON_PRETTY_PRINT);
+		// 	$return .= '<hr>';
+		// }
 
 		$this->apiLog->updateLog('Processing', 'Assigning costs');
 		
@@ -328,7 +328,7 @@ class AdWords
 			$criteria->compare('t.vectors_id', $vector['id']);
 			$criteria->compare('clicksLog.campaigns_id', $cid);
 			$criteria->compare('opportunities.wifi', 'Specific Carrier');
-			$criteria->addCondition('DATE(clicksLog.date) = ' . $date);
+			$criteria->addCondition('DATE(clicksLog.date) = "' . $date . '"');//check
 			$criteria->select = array(
 				'COUNT(t.id) AS clicks',
 				'COUNT(convLogs.id) AS conv',
@@ -337,7 +337,7 @@ class AdWords
 
 			// var_dump($model);
 			// echo '<br>';
-
+			
 			if($model){
 
 				$campaignsList[$cid]['clicks'] = $model->clicks;
