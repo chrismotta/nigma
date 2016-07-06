@@ -136,10 +136,58 @@ class AdWords
 		
 		}
 
-
 		// echo '<hr>';
 		// echo json_encode($awCampaigns);
 		// echo '<hr>';
+		
+		$return .= $this->parseResult($awCampaigns, $date);
+
+		return $return;
+
+	}
+
+
+	// csv format: date,vectorURL,clicks,cost
+	public function loadCsv($csv){
+
+		$return = '';
+
+		$return .= $csv;
+		$return .=  '<hr>';
+
+		$csv = explode("\r\n", $csv);
+
+		foreach ($csv as $line) {
+			$csvLine = str_getcsv($line);
+			$csvArray[$csvLine[0]][] = array(
+				'trackingTemplate' => $csvLine[1],
+				'impressions' => 0,
+				'clicks' => $csvLine[2],
+				'cost' => $csvLine[3] * 1000000,
+				);
+		}
+
+		$return .= json_encode($csvArray);
+		$return .= '<hr>';
+
+		foreach ($csvArray as $date => $awCampaigns) {
+			
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+
+			$return .=  $date;
+			$return .= '<br>';
+			$return .= json_encode($awCampaigns);
+			$return .= '<hr>';
+			$return .= $this->parseResult($awCampaigns, $date);
+			$return .= '<hr>';
+		}
+
+		return $return;
+	}
+
+	private function parseResult($awCampaigns, $date){
+
+		$return = '';
 
 		$this->apiLog->updateLog('Processing', 'Merginh data');
 		
@@ -172,6 +220,11 @@ class AdWords
 						$vcTable[$vid]['count']       = 1;
 
 					}
+
+					$return .= $vid;
+					$return .= ': ';
+					$return .= json_encode($vcTable[$vid]);
+					$return .= '<br>';
 					
 					// $vcTable[$campaignAttr['campaignID']]['campaign'] = $campaignAttr['campaign'];
 					// $vcTable[$campaignAttr['campaignID']]['impressions'] = $campaignAttr['impressions'];
@@ -188,11 +241,12 @@ class AdWords
 		// if(isset($campaignTable))
 		// 	echo 'Campaigns Table<hr>'.json_encode($campaignsTable, JSON_PRETTY_PRINT);
 			
-		// if(isset($vcTable)){
-		// 	// echo 'Vectors Table<hr>';
-		// 	echo json_encode($vcTable, JSON_PRETTY_PRINT);
-		// 	echo '<hr>';
-		// }
+		if(isset($vcTable)){
+			// echo 'Vectors Table<hr>';
+			$return .= '<hr>';
+			$return .= json_encode($vcTable, JSON_PRETTY_PRINT);
+			$return .= '<hr>';
+		}
 
 		$this->apiLog->updateLog('Processing', 'Assigning costs');
 		
@@ -202,8 +256,8 @@ class AdWords
 		foreach ($vcTable as $vid => $vector) {
 
 			$curCpTable = $this->explodeVector($vector, $date);
-			// echo json_encode($cpTable, JSON_PRETTY_PRINT);
-			// echo '<hr>';
+			// $return .= var_export($curCpTable, true);
+			// $return .= '<hr>';
 			// continue;
 
 			if(isset($curCpTable)){
@@ -223,7 +277,6 @@ class AdWords
 						
 					}
 				}
-
 			}
 		}
 
@@ -241,7 +294,7 @@ class AdWords
 		
 		$this->apiLog->updateLog('Completed', 'Procces completed: '.count($cpTable).' campaigns updated');
 
-		Yii::log("SUCCESS - Daily info download - ".$authenticationIniPath, 'info', 'system.model.api.adWords');
+		Yii::log("SUCCESS - Daily info download", 'info', 'system.model.api.adWords');
 		return $return;
 	}
 
@@ -262,7 +315,6 @@ class AdWords
 		$vhc = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', 
 			array(':vid'=>$vector['id']));
 
-		// echo 'Vector '.$vector['id'].'<br>';
 		$totalClicks = 0;
 		$totalConv = 0;
 
@@ -327,7 +379,6 @@ class AdWords
 
 	}
 
-
 	private function createDaily($camp, $date)
 	{
 		// echo 'Creating daily - date: '.$date.' cid: '.$camp.'<br>';
@@ -381,4 +432,56 @@ class AdWords
 		
 		return $return;
 	}
+
+	public function uploadConversions(){
+
+		$return = '';
+
+		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
+
+		$authPath = Yii::app()->basePath . '/external/Google/Api/Ads/AdWords/';
+		$user = new AdWordsUser($authPath . 'auth.ini');
+
+
+		// Enter parameters required by the code example.
+		$conversionName = 'INSERT_CONVERSION_NAME_HERE';
+		$gclid = 'INSERT_GOOGLE_CLICK_ID_HERE';
+		$conversionTime = 'INSERT_CONVERSION_TIME_HERE';
+		$conversionValue = 'INSERT_CONVERSION_VALUE_HERE';
+
+
+
+		return $return;
+	}
+
+
+	/**
+	* Runs the example.
+	* @param AdWordsUser $user the user to run the example with
+	* @param string $campaignId the ID of the campaign to add the sitelinks to
+	*/
+	private function UploadOfflineConversionsExample(AdWordsUser $user, $conversionName, $gclid, $conversionTime, $conversionValue) {
+		
+		// Get the services, which loads the required classes.
+		$offlineConversionService = $user->GetService('OfflineConversionFeedService', ADWORDS_VERSION);
+		
+		// Associate offline conversions with the existing named conversion tracker.
+		// If this tracker was newly created, it may be a few hours before it can
+		// accept conversions.
+		$feed = new OfflineConversionFeed();
+		$feed->conversionName = $conversionName;
+		$feed->conversionTime = $conversionTime;
+		$feed->conversionValue = $conversionValue;
+		$feed->googleClickId = $gclid;
+		$offlineConversionOperation = new OfflineConversionFeedOperation();
+		$offlineConversionOperation->operator = 'ADD';
+		$offlineConversionOperation->operand = $feed;
+		$offlineConversionOperations = array($offlineConversionOperation);
+		$result = $offlineConversionService->mutate($offlineConversionOperations);
+		$feed = $result->value[0];
+		
+		printf('Uploaded offline conversion value of %d for Google Click ID = ' . "'%s' to '%s'.", $feed->conversionValue, $feed->googleClickId, $feed->conversionName);
+	
+	}
+
 }

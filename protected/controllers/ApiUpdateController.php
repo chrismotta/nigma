@@ -25,6 +25,8 @@ class ApiUpdateController extends Controller
 			'index', 
 			'log', 
 			'adWords', 
+			'adWordsByCsv', 
+			'adWordsConversions',
 			'airpush', 
 			'ajillion', 
 			'buzzCity', 
@@ -128,6 +130,43 @@ class ApiUpdateController extends Controller
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
+	}
+
+	public function actionAdWordsConversions($hash=null)
+	{
+		try {
+			$adWords = new AdWords;
+			$return = $adWords->uploadConversions();
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
+		}
+	}
+
+
+	public function actionAdWordsByCsv($hash=null)
+	{
+		if(isset($_POST['AdWords'])){
+			$post = $_POST['AdWords'];
+
+			try {
+				$adWords = new AdWords;
+				$return = $adWords->loadCsv($post['csv']);
+				if(isset($hash) && $hash=='echo')
+					echo $return;
+			} catch (Exception $e) {
+				Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
+			}
+
+		}
+
+		echo '
+		<form method="POST">
+			<textarea name="AdWords[csv]" ></textarea>
+			<input type="submit" />
+		</form>
+		';
 	}
 
 	public function actionAirpush()
