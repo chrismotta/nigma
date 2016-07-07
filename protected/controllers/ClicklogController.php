@@ -379,11 +379,16 @@ class ClicklogController extends Controller
 		foreach ($vhc as $cmp) {
 			$cid = $cmp->campaigns_id;
 			$type = $cmp->campaigns->opportunities->wifi;
+			$freq = $cmp->freq;
 			
 			if($type != 'Specific Carrier')
-				$campaigns[$type][] = $cid;
+				for($i=0;$i<$freq;$i++){
+					$campaigns[$type][] = $cid;
+				}
 			else
-				$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
+				for($i=0;$i<$freq;$i++){
+					$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
+				}
 		}
 
 		if($v){
@@ -412,8 +417,8 @@ class ClicklogController extends Controller
 		echo json_encode($ipData, JSON_PRETTY_PRINT);
 		echo '<hr>';
 		
-		// HARCODE
-		// $carrier = 'CLARO';	
+		// HARCODE CARRIER
+		if(isset($_GET['c'])) $carrier = $_GET['c'];
 
 		$campaign = $carrier != '-' ? $carrier : 'WIFI';
 
@@ -428,11 +433,16 @@ class ClicklogController extends Controller
 
 		}else{
 
-			$target = $campaigns['Open'];
-			
-			if($v){
-				echo 'Showing generic campaign';
-				echo '<hr>';
+			if(isset($campaigns['Open'])){
+
+				$target = $campaigns['Open'];
+				
+				if($v){
+					echo 'Showing generic campaign';
+					echo '<hr>';
+				}
+			}else{
+				die('No campaign match');
 			}
 
 		}
