@@ -435,20 +435,73 @@ class AdWords
 
 	public function uploadConversions(){
 
-		$return = '';
+		$return = '<hr>Uploading Conversions<hr>';
 
 		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
 
+		// Find all conversions from yesterday and today
+
+		$criteria = new CDbCriteria;
+		$criteria->compare('reported', 0);
+		$criteria->compare('providers.type', 'Google AdWords');
+		$criteria->addCondition('clicksLog.ext_tid IS NOT NULL');
+		$criteria->addCondition('DATE(t.date) >= SUBDATE(CURDATE(),1)');
+
+		$criteria->with = array('clicksLog', 'clicksLog.providers', 'campaign.opportunities');
+		$criteria->select = array(
+			// 't.date AS date',
+			't.date AS conversion_time',
+			'providers.conversion_profile AS conversion_name',
+			'providers.mcc_external_id AS mcc_external_id',
+			'opportunities.rate AS conversion_value',
+			'clicksLog.ext_tid AS google_click_id',
+			't.*',
+			);
+
+		$convList = ConvLog::model()->findAll($criteria);
+
+		// var_dump($convList);die();
+
+		// Get AdWordsUser from credentials in "../auth.ini"
+		// relative to the AdWordsUser.php file's directory.
 		$authPath = Yii::app()->basePath . '/external/Google/Api/Ads/AdWords/';
 		$user = new AdWordsUser($authPath . 'auth.ini');
 
+		foreach ($convList as $id => $conv) {
 
-		// Enter parameters required by the code example.
-		$conversionName = 'INSERT_CONVERSION_NAME_HERE';
-		$gclid = 'INSERT_GOOGLE_CLICK_ID_HERE';
-		$conversionTime = 'INSERT_CONVERSION_TIME_HERE';
-		$conversionValue = 'INSERT_CONVERSION_VALUE_HERE';
+			try {
 
+				$user->SetClientCustomerId($conv['mcc_external_id']);
+				
+				// Log every SOAP XML request and response.
+				// $user->LogAll();
+				
+				// Run the method.
+				// conversion_time string format: 'yyyyMMdd HHmmss tz'
+				$return .= $this->UploadOfflineConversionsExample(
+					$user, 
+					$conv['conversion_name'], 
+					$conv['google_click_id'], 
+					date('Ymd His +0000',strtotime($conv['conversion_time'])), 
+					$conv['conversion_value']
+					);
+
+				$conv->reported = 1;
+				if(!$conv->save())
+					$return .= '<br>'.json_encode($conv->getErrors());
+
+				$return .= '<hr>';
+
+			} catch (OAuth2Exception $e) {
+				ExampleUtils::CheckForOAuth2Errors($e);
+			} catch (ValidationException $e) {
+				ExampleUtils::CheckForOAuth2Errors($e);
+			} catch (Exception $e) {
+				$return .= sprintf("An error has occurred: %s\n", $e->getMessage());
+				$return .= '<hr>';
+			}
+
+		}
 
 
 		return $return;
@@ -463,7 +516,7 @@ class AdWords
 	private function UploadOfflineConversionsExample(AdWordsUser $user, $conversionName, $gclid, $conversionTime, $conversionValue) {
 		
 		// Get the services, which loads the required classes.
-		$offlineConversionService = $user->GetService('OfflineConversionFeedService', ADWORDS_VERSION);
+		$offlineConversionService = $user->GetService('OfflineConversionFeedService', $this->adWords_version);
 		
 		// Associate offline conversions with the existing named conversion tracker.
 		// If this tracker was newly created, it may be a few hours before it can
@@ -480,7 +533,7 @@ class AdWords
 		$result = $offlineConversionService->mutate($offlineConversionOperations);
 		$feed = $result->value[0];
 		
-		printf('Uploaded offline conversion value of %d for Google Click ID = ' . "'%s' to '%s'.", $feed->conversionValue, $feed->googleClickId, $feed->conversionName);
+		return sprintf('Uploaded offline conversion value of %d for Google Click ID = ' . "'%s' to '%s'.", $feed->conversionValue, $feed->googleClickId, $feed->conversionName);
 	
 	}
 

@@ -9,6 +9,7 @@
  * @property string $date
  * @property integer $campaigns_id
  * @property integer $clicks_log_id
+ * @property integer $reported
  *
  * The followings are the available model relations:
  * @property Campaigns $campaign
@@ -22,6 +23,7 @@ class ConvLog extends CActiveRecord
 	public $dateStart;
 	public $dateEnd;
 	public $google_click_id;
+	public $mcc_external_id;
 	public $conversion_name;
 	public $conversion_value;
 	public $conversion_time;
@@ -50,13 +52,13 @@ class ConvLog extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('tid, campaigns_id, clicks_log_id', 'required'),
-			array('campaigns_id, clicks_log_id', 'numerical', 'integerOnly'=>true),
+			array('campaigns_id, clicks_log_id, reported', 'numerical', 'integerOnly'=>true),
 			array('tid', 'length', 'max'=>255),
 			// array('date','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, tid, date, campaigns_id, advertiser_id, clicks_log_id', 'safe', 'on'=>'search'),
-			array('google_click_id, conversion_time', 'safe', 'on'=>'csv'),
+			array('id, tid, date, campaigns_id, advertiser_id, clicks_log_id, reported', 'safe', 'on'=>'search'),
+			array('mcc_external_id, google_click_id, conversion_time, reported', 'safe', 'on'=>'csv'),
 		);
 	}
 
@@ -85,8 +87,10 @@ class ConvLog extends CActiveRecord
 			'campaigns_id' => 'Campaign',
 			'clicks_log_id' => 'Clicks Log',
 			'advertiser_id' => 'Advertiser',
+			'mcc_external_id' => 'Client Customer Id',
 			'google_click_id' => 'Google Click Id',
 			'conversion_time' => 'Conversion Time',
+			'reported' => 'Reported',
 			);
 	}
 
@@ -127,6 +131,7 @@ class ConvLog extends CActiveRecord
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('clicks_log_id',$this->clicks_log_id);
+		$criteria->compare('reported',$this->reported);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
