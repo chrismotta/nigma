@@ -78,7 +78,6 @@ class ApiUpdateController extends Controller
 		$this->actionStartApp();
 		
 		$this->actionAdWords();
-		$this->adWordsConversions();
 
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
@@ -115,6 +114,8 @@ class ApiUpdateController extends Controller
 
 		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
+		
+		$this->adWordsConversions();
 	}
 
 	public function actionBingCode(){
