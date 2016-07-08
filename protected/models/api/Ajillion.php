@@ -164,7 +164,7 @@ class Ajillion
 			}
 
 			$return.='<br/>';
-			$return.='Campaign:'.$dailyReport->campaigns_id.' - Impressions: '.$dailyReport->imp.' - Hits:'.$dailyReport->clicks.' - Cost:'.$dailyReport->spend;
+			$return.='Campaign:'.$campaign->campaign.' - Impressions: '.$campaign->impressions.' - Hits:'.$campaign->hits.' - Cost:'.$campaign->cost;
 
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
