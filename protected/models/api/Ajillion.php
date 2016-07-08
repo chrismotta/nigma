@@ -158,10 +158,13 @@ class Ajillion
 			if($model_adv != 'RS'){
 				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
-				$return.= ' -Yes Revenue- ';
+				$return.= ' -Revenue Share type- ';
 			}else{
-				$return.= ' -Not Revenue- ';
+				$return.= ' -Not Revenue Share type- ';
 			}
+
+			$return.='<br/>';
+			$return.='Campaign:'.$dailyReport->campaigns_id.' - Impressions: '.$dailyReport->imp.' - Hits:'.$dailyReport->clicks.' - Cost:'.$dailyReport->spend;
 
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
