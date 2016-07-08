@@ -149,7 +149,7 @@ class Ajillion
 			$dailyReport->clics = $campaign->hits;
 			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
 			//$dailyReport->conv_adv = 0;
-			$dailyReport->spend = number_format($campaign->cost, 2);
+			$dailyReport->spend = number_format($campaign->cost, 2, '.', '');
 
 			$campaignModel = Campaigns::model()->findByPk($campaigns_id);
 			$model_adv = $campaignModel->opportunities->model_adv;
@@ -165,6 +165,8 @@ class Ajillion
 
 			$return.='<br/>';
 			$return.='Campaign:'.$campaign->campaign.' - Impressions: '.$campaign->impressions.' - Hits:'.$campaign->hits.' - Cost:'.$campaign->cost;
+			$return.='<br/>';
+			$return.='Nigma write: - Impressions: '.$dailyReport->imp.' - Clicks:'.$dailyReport->clics.' - Spend:'.$dailyReport->spend;
 
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
