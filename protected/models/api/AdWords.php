@@ -435,6 +435,8 @@ class AdWords
 
 	public function uploadConversions(){
 
+		$date = isset($_GET['date']) ? $_GET['date'] : null;
+
 		$return = '<hr>Uploading Conversions<hr>';
 
 		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
@@ -445,7 +447,11 @@ class AdWords
 		$criteria->compare('reported', 0);
 		$criteria->compare('providers.type', 'Google AdWords');
 		$criteria->addCondition('clicksLog.ext_tid IS NOT NULL');
-		$criteria->addCondition('DATE(t.date) >= SUBDATE(CURDATE(),1)');
+
+		if(isset($date))
+			$criteria->addCondition('DATE(t.date) = "'.$date.'"');
+		else
+			$criteria->addCondition('DATE(t.date) >= SUBDATE(CURDATE(),1)');
 
 		$criteria->with = array('clicksLog', 'clicksLog.providers', 'campaign.opportunities');
 		$criteria->select = array(
@@ -478,7 +484,7 @@ class AdWords
 				
 				// Run the method.
 				// conversion_time string format: 'yyyyMMdd HHmmss tz'
-				$return .= $this->UploadOfflineConversionsExample(
+				$return .= $this->UploadOfflineConversions(
 					$user, 
 					$conv['conversion_name'], 
 					$conv['google_click_id'], 
@@ -513,7 +519,7 @@ class AdWords
 	* @param AdWordsUser $user the user to run the example with
 	* @param string $campaignId the ID of the campaign to add the sitelinks to
 	*/
-	private function UploadOfflineConversionsExample(AdWordsUser $user, $conversionName, $gclid, $conversionTime, $conversionValue) {
+	private function UploadOfflineConversions(AdWordsUser $user, $conversionName, $gclid, $conversionTime, $conversionValue) {
 		
 		// Get the services, which loads the required classes.
 		$offlineConversionService = $user->GetService('OfflineConversionFeedService', $this->adWords_version);
