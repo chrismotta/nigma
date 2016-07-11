@@ -387,7 +387,7 @@ class ClicklogController extends Controller
 				}
 			else
 				for($i=0;$i<$freq;$i++){
-					$campaigns[$type][$cmp->campaigns->opportunities->carriers->mobile_brand][] = $cid;
+					$campaigns[$type][strtoupper($cmp->campaigns->opportunities->carriers->mobile_brand)][] = $cid;
 				}
 		}
 
@@ -408,20 +408,22 @@ class ClicklogController extends Controller
 		$ipData   = $location->lookup($ip, IP2Location::ALL);
 		$country  = $ipData->countryCode;
 		$carrier  = strtoupper($ipData->mobileCarrierName);
+		
+		// HARCODE CARRIER
+		if(isset($_GET['c'])) $carrier = strtoupper($_GET['c']);
 
+
+		// not used
 		if($carrier == '-')
 			$connection_type = 'WIFI';
 		else
 			$connection_type = '3G';
+		$campaign = $carrier != '-' ? $carrier : 'WIFI';
+		// not used
+
 
 		echo json_encode($ipData, JSON_PRETTY_PRINT);
 		echo '<hr>';
-		
-		// HARCODE CARRIER
-		if(isset($_GET['c'])) $carrier = $_GET['c'];
-
-		$campaign = $carrier != '-' ? $carrier : 'WIFI';// USELESS
-
 
 		// if user has carrier and vector has campaigns for this carrier
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
