@@ -420,7 +420,7 @@ class ClicklogController extends Controller
 		// HARCODE CARRIER
 		if(isset($_GET['c'])) $carrier = $_GET['c'];
 
-		$campaign = $carrier != '-' ? $carrier : 'WIFI';
+		$campaign = $carrier != '-' ? $carrier : 'WIFI';// USELESS
 
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
@@ -432,6 +432,12 @@ class ClicklogController extends Controller
 			}
 
 		}else{
+
+			if($carrier != '-'){
+				echo 'No campaigns found for carrier: '.$carrier;
+				echo '<hr>';
+				Yii::log('Carrier not fount: '.$carrier.' | Country: '.$country, 'error', 'system.model.clicksLog.v');
+			}
 
 			if(isset($campaigns['Open'])){
 
