@@ -422,6 +422,8 @@ class ClicklogController extends Controller
 
 		$campaign = $carrier != '-' ? $carrier : 'WIFI';// USELESS
 
+
+		// if user has carrier and vector has campaigns for this carrier
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
 			$target = $campaigns['Specific Carrier'][$carrier];
@@ -431,27 +433,56 @@ class ClicklogController extends Controller
 				echo '<hr>';
 			}
 
-		}else{
+		}
 
-			if($carrier != '-'){
-				echo 'No campaigns found for carrier: '.$carrier;
-				echo '<hr>';
-				Yii::log('Carrier not fount: '.$carrier.' | Country: '.$country, 'error', 'system.model.clicksLog.v');
-			}
+		// if user has carrier and vector doesn't have campaigns for this carrier
+		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && !isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
-			if(isset($campaigns['Open'])){
+			$carrier_eq = CarriersEquivalence::model()->findByAttributes(array('country'=>$country, 'alias'=>$carrier));
+			
+			// if there is an equivalence
+			if(isset($carrier_eq)){
 
-				$target = $campaigns['Open'];
-				
-				if($v){
-					echo 'Showing generic campaign';
-					echo '<hr>';
+				// if vector has campaign for this equivalence
+				if(isset( $campaigns['Specific Carrier'][$carrier_eq->name] )){
+
+					$target = $campaigns['Specific Carrier'][$carrier_eq->name];
+
+					if($v){
+						echo 'Showing campaign for: '.$carrier.' | Alias of: '.$carrier_eq->name;
+						echo '<hr>';
+					}
+				}else{
+					if($v){
+						echo 'No campaigns found for carrier: '.$carrier.' | Alias of: '.$carrier_eq->name;
+						echo '<hr>';
+					}
 				}
 			}else{
-				die('No campaign match');
+				if($v){
+					echo 'No campaigns or equivalence found for carrier: '.$carrier;
+					echo '<hr>';
+				}
+				Yii::log('Carrier not fount: '.$carrier.' | Country: '.$country, 'error', 'system.model.clicksLog.v');
 			}
-
 		}
+
+
+		// if user are wifi or carrier doesn't match
+		if(!isset($target) && isset($campaigns['Open'])){
+
+			$target = $campaigns['Open'];
+			
+			if($v){
+				echo 'Showing generic campaign';
+				echo '<hr>';
+			}
+		}
+
+		if(!isset($target)){
+			die('No campaign match');
+		}
+
 
 		// echo json_encode($target);
 		// echo '<hr>';
