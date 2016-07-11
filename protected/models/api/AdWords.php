@@ -437,7 +437,10 @@ class AdWords
 
 		$date = isset($_GET['date']) ? $_GET['date'] : null;
 
-		$return = '<hr>Uploading Conversions<hr>';
+		$return = '<hr>Uploading Conversions';
+		if(isset($date))
+			$return.= ' from '.$date;
+		$return.= '<hr>';
 
 		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
 
@@ -447,7 +450,6 @@ class AdWords
 		$criteria->compare('reported', 0);
 		$criteria->compare('providers.type', 'Google AdWords');
 		$criteria->addCondition('clicksLog.ext_tid IS NOT NULL');
-
 		if(isset($date))
 			$criteria->addCondition('DATE(t.date) = "'.$date.'"');
 		else
