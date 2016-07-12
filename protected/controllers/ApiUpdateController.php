@@ -119,7 +119,7 @@ class ApiUpdateController extends Controller
 		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
 		
-		$this->adWordsConversions();
+		$this->actionAdWordsConversions();
 	}
 
 	public function actionBingCode(){
