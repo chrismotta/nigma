@@ -521,3 +521,14 @@ table .date-column {
 .code-area {
 	margin-bottom: 10px;
 }
+
+.grid-images {
+    max-width: 400px;
+    max-height: 300px;
+}
+
+.label-select {
+    display: inline-block;
+    padding-top: 4px;
+    margin-right: 10px;
+}

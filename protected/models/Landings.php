@@ -9,9 +9,7 @@
  * @property integer $country_id
  * @property string $default_color
  * @property string $highlight_color
- * @property integer $byline_images_id
  * @property string $background_color
- * @property integer $background_images_id
  * @property string $headline
  * @property string $byline
  * @property string $input_legend
@@ -25,10 +23,14 @@
  * @property string $button_label
  * @property string $thankyou_msg
  * @property string $validate_msg
+ * @property integer $background_images_id
+ * @property integer $headline_images_id
+ * @property integer $byline_images_id
  *
  * The followings are the available model relations:
  * @property GeoLocation $country
  * @property LandingImages $backgroundImages
+ * @property LandingImages $headlineImages
  * @property LandingImages $bylineImages
  */
 class Landings extends CActiveRecord
@@ -50,13 +52,13 @@ class Landings extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('tyc_body', 'required'),
-			array('country_id, byline_images_id, background_images_id', 'numerical', 'integerOnly'=>true),
+			array('country_id, byline_images_id, headline_images_id, background_images_id', 'numerical', 'integerOnly'=>true),
 			array('name, headline, byline, input_legend, tyc_headline, checkbox_label, thankyou_msg, validate_msg', 'length', 'max'=>128),
 			array('default_color, highlight_color, background_color, input_label, input_eg, select_label, button_label', 'length', 'max'=>45),
 			array('select_options', 'length', 'max'=>256),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, country_id, default_color, highlight_color, byline_images_id, background_color, background_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label, thankyou_msg, validate_msg', 'safe', 'on'=>'search'),
+			array('id, name, country_id, default_color, highlight_color, byline_images_id, background_color, background_images_id, headline_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label, thankyou_msg, validate_msg', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -71,6 +73,7 @@ class Landings extends CActiveRecord
 			'country' => array(self::BELONGS_TO, 'GeoLocation', 'country_id'),
 			'backgroundImages' => array(self::BELONGS_TO, 'LandingImages', 'background_images_id'),
 			'bylineImages' => array(self::BELONGS_TO, 'LandingImages', 'byline_images_id'),
+			'headlineImages' => array(self::BELONGS_TO, 'LandingImages', 'headline_images_id'),
 		);
 	}
 
@@ -88,6 +91,7 @@ class Landings extends CActiveRecord
 			'byline_images_id' => 'Byline Images',
 			'background_color' => 'Background Color',
 			'background_images_id' => 'Background Images',
+			'headline_images_id' => 'Headline Images',
 			'headline' => 'Headline',
 			'byline' => 'Byline',
 			'input_legend' => 'Input Legend',
@@ -128,6 +132,7 @@ class Landings extends CActiveRecord
 		$criteria->compare('default_color',$this->default_color,true);
 		$criteria->compare('highlight_color',$this->highlight_color,true);
 		$criteria->compare('byline_images_id',$this->byline_images_id);
+		$criteria->compare('headline_images_id',$this->headline_images_id);
 		$criteria->compare('background_color',$this->background_color,true);
 		$criteria->compare('background_images_id',$this->background_images_id);
 		$criteria->compare('headline',$this->headline,true);

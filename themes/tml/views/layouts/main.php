@@ -17,6 +17,7 @@
     // custom
     $cs->registerScriptFile($baseUrl.'/js/custom.js');
     $cs->registerScriptFile($baseUrl.'/js/modals.js');
+    // $cs->registerScriptFile($baseUrl.'/js/bootstrap-select.js');
 
     $cs->registerCssFile($baseUrl.'/css/styles.css');
     ?>

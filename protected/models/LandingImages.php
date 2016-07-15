@@ -5,7 +5,7 @@
  *
  * The followings are the available columns in table 'landing_images':
  * @property integer $id
- * @property string $file
+ * @property string $file_name
  * @property string $type
  *
  * The followings are the available model relations:
@@ -14,6 +14,8 @@
  */
 class LandingImages extends CActiveRecord
 {
+	public $image;
+	
 	/**
 	 * @return string the associated database table name
 	 */
@@ -30,12 +32,13 @@ class LandingImages extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('file, type', 'required'),
-			array('file', 'length', 'max'=>128),
+			array('type', 'required'),
+			array('file_name', 'length', 'max'=>128),
 			array('type', 'length', 'max'=>45),
+			array('image', 'file','types'=>'jpg', 'allowEmpty'=>true, 'on'=>'update'), // this will allow empty field when page is update (remember here i create scenario update)
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, file, type', 'safe', 'on'=>'search'),
+			array('id, file_name, type', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,7 +62,7 @@ class LandingImages extends CActiveRecord
 	{
 		return array(
 			'id' => 'ID',
-			'file' => 'File',
+			'file_name' => 'File Name',
 			'type' => 'Type',
 		);
 	}
@@ -83,7 +86,7 @@ class LandingImages extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
-		$criteria->compare('file',$this->file,true);
+		$criteria->compare('file_name',$this->file_name,true);
 		$criteria->compare('type',$this->type,true);
 
 		return new CActiveDataProvider($this, array(
@@ -100,5 +103,11 @@ class LandingImages extends CActiveRecord
 	public static function model($className=__CLASS__)
 	{
 		return parent::model($className);
+	}
+
+	public function getImagePath($file_name){
+	    $baseUrl = Yii::app()->theme->baseUrl;
+		$imgPath = $baseUrl . '/lp_img/';
+		return $imgPath . $file_name;
 	}
 }

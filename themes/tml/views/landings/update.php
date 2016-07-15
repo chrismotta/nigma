@@ -15,4 +15,10 @@ $this->breadcrumbs=array(
 
 	<h1>Update Landings <?php echo $model->id; ?></h1>
 
-<?php echo $this->renderPartial('_form',array('model'=>$model)); ?>
+<?php echo $this->renderPartial('_form',
+	array(
+		'model'=>$model,
+		'background_images_id' => $background_images_id,
+		'headline_images_id' => $headline_images_id,
+		'byline_images_id' => $byline_images_id,
+		)); ?>

@@ -62,7 +62,7 @@ if(isset($_POST['Landings']))
 {
 $model->attributes=$_POST['Landings'];
 if($model->save())
-$this->redirect(array('view','id'=>$model->id));
+$this->redirect(array('admin','id'=>$model->id));
 }
 
 $this->render('create',array(
@@ -77,21 +77,35 @@ $this->render('create',array(
 */
 public function actionUpdate($id)
 {
-$model=$this->loadModel($id);
+	$model=$this->loadModel($id);
 
-// Uncomment the following line if AJAX validation is needed
-// $this->performAjaxValidation($model);
+	// Uncomment the following line if AJAX validation is needed
+	// $this->performAjaxValidation($model);
 
-if(isset($_POST['Landings']))
-{
-$model->attributes=$_POST['Landings'];
-if($model->save())
-$this->redirect(array('view','id'=>$model->id));
-}
+	if(isset($_POST['Landings']))
+	{
+	$model->attributes=$_POST['Landings'];
+	if($model->save())
+	$this->redirect(array('admin','id'=>$model->id));
+	}
 
-$this->render('update',array(
-'model'=>$model,
-));
+	$background_images_id = CHtml::listData(
+		LandingImages::model()->findAllByAttributes(array('type'=>'Background'))
+		, 'id', 'id');
+	$headline_images_id = CHtml::listData(
+		LandingImages::model()->findAllByAttributes(array('type'=>'HeadLine'))
+		, 'id', 'id');
+	$byline_images_id = CHtml::listData(
+		LandingImages::model()->findAllByAttributes(array('type'=>'ByLine'))
+		, 'id', 'id');
+
+
+	$this->render('update',array(
+		'model' => $model,
+		'background_images_id' => $background_images_id,
+		'headline_images_id' => $headline_images_id,
+		'byline_images_id' => $byline_images_id,
+		));
 }
 
 /**

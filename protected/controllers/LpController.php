@@ -31,10 +31,17 @@ class LpController extends Controller
 			$status = 'form';
 		}
 
-
 		$model = $this->loadModel($id);
+
+		$backgroundImage = isset($model->background_images_id) ? $model->backgroundImages->getImagePath($model->backgroundImages->file_name) : null; 
+		$headlineImage = isset($model->headline_images_id) ? $model->headlineImages->getImagePath($model->headlineImages->file_name) : null; 
+		$bylineImage = isset($model->byline_images_id) ? $model->bylineImages->getImagePath($model->bylineImages->file_name) : null; 
+
 		$this->render('view', array( 
 			'model'=>$model,
+			'backgroundImage'=>$backgroundImage,
+			'headlineImage'=>$headlineImage,
+			'bylineImage'=>$bylineImage,
 			'status'=>$status, 
 		));
 	}

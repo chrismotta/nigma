@@ -15,11 +15,7 @@
 
 	<?php echo $form->textFieldRow($model,'highlight_color',array('class'=>'span5','maxlength'=>45)); ?>
 
-	<?php echo $form->textFieldRow($model,'byline_images_id',array('class'=>'span5')); ?>
-
 	<?php echo $form->textFieldRow($model,'background_color',array('class'=>'span5','maxlength'=>45)); ?>
-
-	<?php echo $form->textFieldRow($model,'background_images_id',array('class'=>'span5')); ?>
 
 	<?php echo $form->textFieldRow($model,'headline',array('class'=>'span5','maxlength'=>128)); ?>
 
@@ -46,6 +42,13 @@
 	<?php echo $form->textFieldRow($model,'thankyou_msg',array('class'=>'span5','maxlength'=>128)); ?>
 
 	<?php echo $form->textFieldRow($model,'validate_msg',array('class'=>'span5','maxlength'=>128)); ?>
+
+	<?php echo $form->dropDownListRow($model, 'background_images_id', $background_images_id, 
+		array( 'prompt' => 'No background image', )); ?>
+	<?php echo $form->dropDownListRow($model, 'headline_images_id', $headline_images_id, 
+		array('prompt' => 'No headline image',)); ?>
+	<?php echo $form->dropDownListRow($model, 'byline_images_id', $byline_images_id, 
+		array('prompt' => 'No byline image')); ?>
 
 <div class="form-actions">
 	<?php $this->widget('bootstrap.widgets.TbButton', array(
