@@ -51,7 +51,7 @@ class EtlController extends Controller
 
 		$date = isset($_GET['date']) ? $_GET['date'] : null;
 
-		if(isset($date) echo 'Data from date: '.$date.'<hr/>';
+		if(isset($date)) echo 'Data from date: '.$date.'<hr/>';
 
 		self::actionDemand();
 		self::actionSupply();
