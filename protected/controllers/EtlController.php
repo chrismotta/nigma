@@ -51,6 +51,8 @@ class EtlController extends Controller
 
 		$date = isset($_GET['date']) ? $_GET['date'] : null;
 
+		if(isset($date) echo 'Data from date: '.$date;
+
 		self::actionDemand();
 		self::actionSupply();
 		self::actionUseragent($id, $date);
