@@ -227,7 +227,7 @@ class EtlController extends Controller
 
 		$start = time();
 
-		$query = 'INSERT IGNORE INTO F_Impressions (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app) 
+		$query = 'INSERT IGNORE INTO F_Imp (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app) 
 		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, SHA(CONCAT(i.server_ip,i.user_agent)), i.pubid, i.ip_forwarded, i.referer, i.app 
 		FROM imp_log i 
 		LEFT JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
@@ -264,7 +264,7 @@ class EtlController extends Controller
 
 		$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost, profit) 
 		SELECT i.id, d.rate/1000, s.rate/1000, d.rate/1000 - s.rate/1000 
-		FROM F_Impressions i  
+		FROM F_Imp i  
 		LEFT JOIN D_Bid b         ON(i.id               = b.F_Impressions_id) 
 		LEFT JOIN D_Demand d      ON(i.D_Demand_id      = d.tag_id) 
 		LEFT JOIN D_Supply s      ON(i.D_Supply_id      = s.placement_id) 
@@ -297,7 +297,7 @@ class EtlController extends Controller
 
 			$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost, profit) 
 			SELECT i.id, d.rate/1000, s.rate/1000, d.rate/1000 - s.rate/1000  
-			FROM F_Impressions i  
+			FROM F_Imp i  
 			LEFT JOIN D_Bid b    ON(i.id          = b.F_Impressions_id) 
 			LEFT JOIN D_Demand d ON(i.D_Demand_id = d.tag_id) 
 			LEFT JOIN D_Supply s ON(i.D_Supply_id = s.placement_id) 
@@ -331,7 +331,7 @@ class EtlController extends Controller
 
 		$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id) 
 		SELECT i.id 
-		FROM F_Impressions i  
+		FROM F_Imp i  
 		LEFT JOIN D_Bid b ON(i.id = b.F_Impressions_id) 
 		WHERE b.F_Impressions_id IS NULL 
 		';

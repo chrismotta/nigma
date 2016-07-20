@@ -6,9 +6,9 @@
 */
 
 /**
- * This is the model class for table "F_Impressions".
+ * This is the model class for table "F_Imp".
  *
- * The followings are the available columns in table 'F_Impressions':
+ * The followings are the available columns in table 'F_Imp':
  * @property integer $id
  * @property integer $D_Demand_id
  * @property integer $D_Supply_id
@@ -64,7 +64,7 @@ class FImpressions extends CActiveRecord
 	 */
 	public function tableName()
 	{
-		return 'F_Impressions';
+		return 'F_Imp';
 	}
 
 	/**
