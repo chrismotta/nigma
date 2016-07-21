@@ -33,7 +33,22 @@
 
 	<?php echo $form->textFieldRow($model,'tyc_headline',array('class'=>'span5','maxlength'=>128)); ?>
 
-	<?php echo $form->textAreaRow($model,'tyc_body',array('class'=>'span5', 'rows'=>'4')); ?>
+	<?php // echo $form->textAreaRow($model,'tyc_body',array('class'=>'span5', 'rows'=>'4')); ?>
+
+	<?php echo $form->ckEditorRow(
+            $model,
+            'tyc_body',
+            array(
+                'editorOptions' => array(
+                    'fullpage' => 'js:true',
+                    'width' => '640',
+                    'resize_maxWidth' => '640',
+                    'resize_minWidth' => '320'
+                )
+            )
+        ); ?>
+
+     <br/>
 
 	<?php echo $form->textFieldRow($model,'checkbox_label',array('class'=>'span5','maxlength'=>128)); ?>
 
