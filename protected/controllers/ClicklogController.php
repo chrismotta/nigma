@@ -86,8 +86,10 @@ class ClicklogController extends Controller
 
 	}
 
-	private function saveMacros($get){
+	private function saveMacros($clickID, $get){
+
 		$saved = 0;
+
 		if(count($get)>1){
 
 			foreach ($get as $key => $value) {
@@ -96,11 +98,13 @@ class ClicklogController extends Controller
 				
 				if($macro->isValidMacro($key)){
 					if(isset($this->id)){
-						$macro->clicks_log_id = $this->id;
+						$macro->clicks_log_id = $clickID;
 						$macro->name = $key;
 						$macro->value = $value;
 						if($macro->save())
 							$saved++;
+						else
+							echo json_encode($macro->getErrors());
 					}
 				}
 			}
@@ -184,6 +188,7 @@ class ClicklogController extends Controller
 		//$model->id         = 2;
 		$model->campaigns_id = $cid;
 		$model->providers_id = $nid;
+		$model->tid = 0;
 		// $model->date       = date("Y-m-d H:i:s");
 		$model->date       = new CDbExpression('NOW()');
 
@@ -292,8 +297,7 @@ class ClicklogController extends Controller
 			}
 
 			// if click has incoming macros, log it
-			// echo $this->saveMacros($_GET);		
-			// die('<hr>');
+			$this->saveMacros($model->id, $_GET);		
 
 			// if($ntoken){
 			// 	$tmltoken = $ntoken;
