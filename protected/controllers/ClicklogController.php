@@ -85,6 +85,30 @@ class ClicklogController extends Controller
 			return $url;
 
 	}
+
+	private function saveMacros($get){
+		$saved = 0;
+		if(count($get)>1){
+
+			foreach ($get as $key => $value) {
+				
+				$macro = new ClickMacros();
+				
+				if($macro->isValidMacro($key)){
+					if(isset($this->id)){
+						$macro->clicks_log_id = $this->id;
+						$macro->name = $key;
+						$macro->value = $value;
+						if($macro->save())
+							$saved++;
+					}
+				}
+			}
+
+		}
+
+		return $saved;
+	}
 	
 	public function actionIndex($id=null, $vid=null)
 	{
@@ -259,13 +283,17 @@ class ClicklogController extends Controller
 		
 		if($model->save()){
 
-			// if clicks is from a vector, log it
+			// if click is from a vector, log it
 			if(isset($vid)){
 				$modelVL = new VectorsLog();
 				$modelVL->clicks_log_id = $model->id;
 				$modelVL->vectors_id = $vid;
 				$modelVL->save();
 			}
+
+			// if click has incoming macros, log it
+			// echo $this->saveMacros($_GET);		
+			// die('<hr>');
 
 			// if($ntoken){
 			// 	$tmltoken = $ntoken;
