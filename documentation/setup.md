@@ -15,6 +15,14 @@
   - apache2
   - libapache2-mod-php5
   - mysql-server libapache2-mod-auth-mysql php5-mysql
+- in order to fix mysql 5.7 ONLY_FULL_GROUP_BY problem
+```
+sudo vim /etc/mysql/my.cnf
+# past at the end:
+[mysqld]
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
+sudo service mysql restart
+```
 - phpmyadmin
 - php5-curl
 - php5-mysql 

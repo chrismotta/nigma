@@ -85,6 +85,34 @@ class ClicklogController extends Controller
 			return $url;
 
 	}
+
+	private function saveMacros($clickID, $get){
+
+		$saved = 0;
+
+		if(count($get)>1){
+
+			foreach ($get as $key => $value) {
+				
+				$macro = new ClickMacros();
+				
+				if($macro->isValidMacro($key)){
+					if(isset($this->id)){
+						$macro->clicks_log_id = $clickID;
+						$macro->name = $key;
+						$macro->value = $value;
+						if($macro->save())
+							$saved++;
+						else
+							echo json_encode($macro->getErrors());
+					}
+				}
+			}
+
+		}
+
+		return $saved;
+	}
 	
 	public function actionIndex($id=null, $vid=null)
 	{
@@ -160,6 +188,7 @@ class ClicklogController extends Controller
 		//$model->id         = 2;
 		$model->campaigns_id = $cid;
 		$model->providers_id = $nid;
+		$model->tid = 0;
 		// $model->date       = date("Y-m-d H:i:s");
 		$model->date       = new CDbExpression('NOW()');
 
@@ -259,13 +288,16 @@ class ClicklogController extends Controller
 		
 		if($model->save()){
 
-			// if clicks is from a vector, log it
+			// if click is from a vector, log it
 			if(isset($vid)){
 				$modelVL = new VectorsLog();
 				$modelVL->clicks_log_id = $model->id;
 				$modelVL->vectors_id = $vid;
 				$modelVL->save();
 			}
+
+			// if click has incoming macros, log it
+			$this->saveMacros($model->id, $_GET);		
 
 			// if($ntoken){
 			// 	$tmltoken = $ntoken;
