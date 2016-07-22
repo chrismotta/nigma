@@ -39,6 +39,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 			break;
 		
 		// amazon prod
+		case '52.70.104.25':
 		case '54.172.221.175':
 		case 'ec2-54-172-221-175.compute-1.amazonaws.com':
 		case '52.91.118.99':
