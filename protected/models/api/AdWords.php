@@ -62,6 +62,7 @@ class AdWords
 		
 		$accounts = Providers::model()->findAllByAttributes(array(
 			'type' => 'Google AdWords',
+			'status' => 'Active',
 			// 'name' => 'CL-CLARO',//harcode
 			),
 			'mcc_external_id IS NOT NULL'
