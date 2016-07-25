@@ -15,9 +15,9 @@
 class ClickMacros extends CActiveRecord
 {
 
-	public $date_start = '2015-07-22';
-	public $date_end = '2015-07-24';
-	public $list = array('1183040');
+	public $date_start;
+	public $date_end;
+	public $list;
 	public $campaign;
 	public $opportunity;
 	public $publisher;
@@ -128,7 +128,7 @@ class ClickMacros extends CActiveRecord
 			);
 		$criteria->group = 'campaigns.opportunities_id, campaigns.providers_id, t.value';
 		$criteria->addInCondition('t.value', $this->list);
-		$criteria->addBetweenCondition('clicksLog.date', $this->date_start, $this->date_end);
+		$criteria->addBetweenCondition('DATE(clicksLog.date)', $this->date_start, $this->date_end);
 
 		// return self::model()->findAll($criteria);
 		

@@ -7,16 +7,22 @@ $this->breadcrumbs=array(
 ?>
 <h3>List PubIDs</h3>
 
-<div class="form">
+
 <?php
+if(isset($msg)){
+	echo $msg . '<br/>';
+	echo CHtml::link('<-- Back',array('clickMacros/index'));
+}else{
+
+echo '<div class="form">';
 echo CHtml::beginForm('', 'POST', array(
 	'id'    =>'filter-form',
 	'class' =>'well form-search',
 	));
 
 
-$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'yesterday -7 days' ;
-$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'yesterday' ;
+$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'today -7 days' ;
+$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'today' ;
 
 echo KHtml::datePicker('ClickMacros[date_start]', $dateStart, array(), array('style'=>'width:100px'), 'From');
 echo KHtml::datePicker('ClickMacros[date_end]', $dateEnd, array(), array('style'=>'width:100px'), 'To');
@@ -59,5 +65,7 @@ $this->widget('bootstrap.widgets.TbButton',
 		); 
 
 
-echo CHtml::endForm(); ?>
-</div>
+echo CHtml::endForm(); 
+echo '</div>';
+}
+?>
