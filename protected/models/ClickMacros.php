@@ -14,6 +14,16 @@
  */
 class ClickMacros extends CActiveRecord
 {
+
+	public $date_start = '2015-07-22';
+	public $date_end = '2015-07-24';
+	public $list = array('1183040');
+	public $campaign;
+	public $opportunity;
+	public $publisher;
+	public $pubid;
+	public $clicks;
+
 	public $incoming = array(
 		'QS_pubid',
 		);
@@ -45,6 +55,7 @@ class ClickMacros extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, clicks_log_id, name, value', 'safe', 'on'=>'search'),
+			array('date_start, date_end, campaign, opportunity, publisher, pubid, clicks', 'safe', 'on'=>'list')
 		);
 	}
 
@@ -99,6 +110,35 @@ class ClickMacros extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 		));
+	}
+
+	public function list(){
+		
+		$criteria = new CDbCriteria;
+		$criteria->with = array(
+			'clicksLog',
+			'clicksLog.campaigns'
+			);
+		$criteria->select = array(
+			'campaigns.opportunities_id AS opportunity', 
+			'campaigns.id AS campaign', 
+			'campaigns.providers_id AS publisher', 
+			't.value AS pubid', 
+			'count(t.id) as clicks',
+			);
+		$criteria->group = 'campaigns.opportunities_id, campaigns.providers_id, t.value';
+		$criteria->addInCondition('t.value', $this->list);
+		$criteria->addBetweenCondition('clicksLog.date', $this->date_start, $this->date_end);
+
+		// return self::model()->findAll($criteria);
+		
+		$pagination = isset($_REQUEST['v']) ? null : false;
+
+		return new CActiveDataProvider($this, array(
+			'pagination'=>$pagination,
+			'criteria'=>$criteria,
+		));
+
 	}
 
 	/**
