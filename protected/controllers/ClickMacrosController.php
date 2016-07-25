@@ -42,30 +42,35 @@ class ClickMacrosController extends Controller
 			$model = new ClickMacros('list');
 			$model->date_start = $clickMacros['date_start'];
 			$model->date_start = $clickMacros['date_end'];
-			// $model->list();
 
 			$dp = $model->list();
 			// var_dump($dp->getData());
 			// echo '<hr>';
+			
+			if( $dp->getData() ){
 
-			foreach ($dp->getData() as $data) {
-				$csvData[] = array(
-					'opportunity' => $data->opportunity,
-					'campaign' => $data->campaign,
-					'publisher' => $data->publisher,
-					'pubid' => $data->pubid,
-					'clicks' => $data->clicks,
-					);
-			}
+				foreach ($dp->getData() as $data) {
+					$csvData[] = array(
+						'opportunity' => $data->opportunity,
+						'campaign' => $data->campaign,
+						'publisher' => $data->publisher,
+						'pubid' => $data->pubid,
+						'clicks' => $data->clicks,
+						);
+				}
+
+				$csv = new ECSVExport( $csvData );
+				$csv->setEnclosure(chr(0));//replace enclosure with caracter
+				$content = $csv->toCSV(); 
+
+				Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
 				
-			$csv = new ECSVExport( $csvData );
-			$csv->setEnclosure(chr(0));//replace enclosure with caracter
-			$content = $csv->toCSV(); 
-
-			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
+			}else{
+				echo 'No data available';
+			}
 
 		}else{
-			
+
 			$this->render('index');
 		}
 
