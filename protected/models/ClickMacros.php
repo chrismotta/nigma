@@ -152,3 +152,4 @@ class ClickMacros extends CActiveRecord
 		return parent::model($className);
 	}
 }
+?>

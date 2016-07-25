@@ -37,7 +37,7 @@ class ClickMacrosController extends Controller
 			
 			$clickMacros = $_POST['ClickMacros'];
 			
-			$model = new ClickMacros('list');
+			$model = new ClickMacros;
 			$model->date_start = date('Y-m-d', strtotime($clickMacros['date_start']));
 			$model->date_end = date('Y-m-d', strtotime($clickMacros['date_end']));
 			$model->list = explode("\r\n", $clickMacros['list']);
@@ -101,3 +101,4 @@ class ClickMacrosController extends Controller
 	}
 	*/
 }
+?>
