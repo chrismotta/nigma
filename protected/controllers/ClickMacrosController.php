@@ -44,9 +44,9 @@ class ClickMacrosController extends Controller
 			$model->date_start = $clickMacros['date_end'];
 
 			$dp = $model->list();
-			// var_dump($dp->getData());
-			// echo '<hr>';
-			
+			var_dump($dp->getData());
+			echo '<hr>';
+			/*
 			if( $dp->getData() ){
 
 				foreach ($dp->getData() as $data) {
@@ -68,7 +68,7 @@ class ClickMacrosController extends Controller
 			}else{
 				echo 'No data available';
 			}
-
+			*/
 		}else{
 
 			$this->render('index');
