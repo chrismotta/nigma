@@ -46,8 +46,8 @@ class ClickMacrosController extends Controller
 			$dp = $model->list();
 			var_dump($dp);
 			echo '<hr>';
-			var_dump($dp->getData());
-			echo '<hr>';
+			// var_dump($dp->getData());
+			// echo '<hr>';
 			die();
 			
 			
