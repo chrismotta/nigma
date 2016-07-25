@@ -44,10 +44,14 @@ class ClickMacrosController extends Controller
 			$model->date_start = $clickMacros['date_end'];
 
 			$dp = $model->list();
+			var_dump($dp);
+			echo '<hr>';
+			var_dump($dp->getData());
+			echo '<hr>';
+			die();
+			
 			
 			if( $dp->getData() ){
-				var_dump($dp->getData());
-				echo '<hr>';
 
 				// foreach ($dp->getData() as $data) {
 				// 	$csvData[] = array(
