@@ -64,9 +64,11 @@ class ClickMacrosController extends Controller
 
 			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
 
+		}else{
+			
+			$this->render('index');
 		}
 
-		$this->render('index');
 	}
 
 	// Uncomment the following methods and override them if needed
