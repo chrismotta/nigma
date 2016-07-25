@@ -36,8 +36,8 @@ class ClickMacrosController extends Controller
 		if(isset($_POST['ClickMacros'])){
 			
 			$clickMacros = $_POST['ClickMacros'];
-			var_dump($clickMacros);
-			echo '<hr>';
+			// var_dump($clickMacros);
+			// echo '<hr>';
 
 			$model = new ClickMacros('list');
 			$model->date_start = $clickMacros['date_start'];
@@ -45,14 +45,24 @@ class ClickMacrosController extends Controller
 			// $model->list();
 
 			$dp = $model->list();
-			var_dump($dp->getData());
-			die();
+			// var_dump($dp->getData());
+			// echo '<hr>';
 
 			foreach ($dp->getData() as $data) {
 				$csvData[] = array(
-					'Opportunity' => $data->opportunity,
+					'opportunity' => $data->opportunity,
+					'campaign' => $data->campaign,
+					'publisher' => $data->publisher,
+					'pubid' => $data->pubid,
+					'clicks' => $data->clicks,
 					);
 			}
+				
+			$csv = new ECSVExport( $csvData );
+			$csv->setEnclosure(chr(0));//replace enclosure with caracter
+			$content = $csv->toCSV(); 
+
+			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
 
 		}
 
