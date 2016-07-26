@@ -453,9 +453,10 @@ class ClicklogController extends Controller
 		$campaign = $carrier != '-' ? $carrier : 'WIFI';
 		// not used
 
-
-		echo json_encode($ipData, JSON_PRETTY_PRINT);
-		echo '<hr>';
+		if($v){
+			echo json_encode($ipData, JSON_PRETTY_PRINT);
+			echo '<hr>';
+		}
 
 		// if user has carrier and vector has campaigns for this carrier
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
