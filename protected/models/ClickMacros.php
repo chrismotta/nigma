@@ -55,7 +55,7 @@ class ClickMacros extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, clicks_log_id, name, value', 'safe', 'on'=>'search'),
-			array('date_start, date_end, campaign, opportunity, publisher, pubid, clicks', 'safe', 'on'=>'list')
+			//array('date_start, date_end, campaign, opportunity, publisher, pubid, clicks', 'safe', 'on'=>'list')
 		);
 	}
 

@@ -297,7 +297,7 @@ class ClicklogController extends Controller
 			}
 
 			// if click has incoming macros, log it
-			$this->saveMacros($model->id, $_GET);		
+			//$this->saveMacros($model->id, $_GET);		
 
 			// if($ntoken){
 			// 	$tmltoken = $ntoken;

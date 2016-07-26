@@ -1,6 +1,6 @@
 <?php
 /* @var $this ClickMacrosController */
-
+$model = new ClickMacros;
 $this->breadcrumbs=array(
 	'Click Macros',
 );
