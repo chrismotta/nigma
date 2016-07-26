@@ -530,7 +530,7 @@ class ClicklogController extends Controller
 			echo 'Showing campaign: '.$cid;
 		}else{
 			// send vector id
-			$this->actionTracking($cid, $id);
+			$this->actionIndex($cid, $id);
 		}
 		
 	}
