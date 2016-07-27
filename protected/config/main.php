@@ -300,6 +300,7 @@ return array(
 		'dbTimeZone' => isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00',
 		'adminEmail'=>'info@themedialab.co',
 	    'defaultPageSize'=>50,
+	    'serverIP'=>'52.70.104.25',
 	    'landingDomains' => array('www.games4mobi.com','games4mobi.com'),
 		'ipDbFile'       => dirname(__FILE__).'/../data/ip2location/ipdb.bin',
 	),

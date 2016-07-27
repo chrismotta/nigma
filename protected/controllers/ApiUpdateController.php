@@ -62,7 +62,7 @@ class ApiUpdateController extends Controller
 			),
 			array('allow',
 				'actions' => $adminAllowedActions,
-				'ips'     => array('52.91.118.99'),
+				'ips'     => array(Yii::app()->params['serverIP']),
 			),
 			array('allow',
 				'actions'=>array('oAuthRedirect'),

@@ -33,7 +33,7 @@ class EtlController extends Controller
 		return array(
 			array('allow',
 				'actions'=>$actions,
-				'ips'=>array('52.91.118.99'),
+				'ips'=>array(Yii::app()->params['serverIP']),
 			),
 			array('allow', 
 				'actions'=>$actions,

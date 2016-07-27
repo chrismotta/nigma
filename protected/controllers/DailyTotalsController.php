@@ -32,7 +32,7 @@ class DailyTotalsController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('consolidated'),
-				'ips'=>array('52.91.118.99'),
+				'ips'=>array(Yii::app()->params['serverIP']),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
