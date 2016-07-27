@@ -313,6 +313,7 @@ class OpportunitiesController extends Controller
 		$connection_type = KHtml::enumItem($model, 'wifi');
 		$model_adv = KHtml::enumItem($model, 'model_adv');
 		$channels = KHtml::enumItem($model, 'channel');
+		$model->open_budget = $model->budget == null ? 1 : 0;
 
 		$this->render('_form',array(
 			'model'      =>$model,
