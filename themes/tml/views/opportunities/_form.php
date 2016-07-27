@@ -136,6 +136,7 @@
       //       ));
 
       echo $form->textFieldRow($model, 'budget', array('class'=>'span3'));
+      echo '<script>if($("#Opportunities_budget").val()=="") $("#Opportunities_budget").prop("disabled", true);</script>';
       echo $form->checkboxRow($model, 'open_budget', 
             array(
               'onChange' => '

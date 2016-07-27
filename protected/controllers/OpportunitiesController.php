@@ -89,7 +89,9 @@ class OpportunitiesController extends Controller
 
 		if(isset($_POST['Opportunities']))
 		{
+			$model->budget           = NULL;
 			$model->attributes=$_POST['Opportunities'];
+			if($model->budget == '') $model->budget = new CDbExpression('NULL');
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'created'));
