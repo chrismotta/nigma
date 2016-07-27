@@ -117,7 +117,7 @@ class OpportunitiesController extends Controller
 			$model->carriers_id      = NULL;
 			$model->rate             = NULL;
 			$model->attributes       = $_POST['Opportunities'];
-			$model->budget = new CDbExpression('NULL');
+			if(!$model->budget) $model->budget = new CDbExpression('NULL');
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
 			if($model->save())
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
