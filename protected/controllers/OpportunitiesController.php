@@ -114,6 +114,7 @@ class OpportunitiesController extends Controller
 
 		if(isset($_POST['Opportunities']))
 		{
+			$model->budget           = NULL;
 			$model->carriers_id      = NULL;
 			$model->rate             = NULL;
 			$model->attributes       = $_POST['Opportunities'];
