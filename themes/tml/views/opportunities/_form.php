@@ -141,11 +141,11 @@
               'onChange' => '
                   if (this.checked == "1") {
                     //alert("ok");
-                    $("#Opportunities_budget").val(NULL);
+                    $("#Opportunities_budget").val("");
                     $("#Opportunities_budget").prop("disabled", true);
                   }else{
                     //alert("no");
-                    $("#Opportunities_budget").val(0);
+                    $("#Opportunities_budget").val("");
                     $("#Opportunities_budget").prop("disabled", false);
                   }
                   return;
