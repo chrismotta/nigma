@@ -304,7 +304,12 @@ return array(
 		'adminEmail'=>'info@themedialab.co',
 	    'defaultPageSize'=>50,
 	    'serverIP'=>'52.70.104.25',
-	    'landingDomains' => array('www.games4mobi.com','games4mobi.com'),
 		'ipDbFile'       => dirname(__FILE__).'/../data/ip2location/ipdb.bin',
+	    'landingDomains' => array(
+	    	'www.games4mobi.com',
+	    	'games4mobi.com', 
+	    	'www.ringtones4mobile.co',
+	    	'ringtones4mobile.co',
+	    	),
 	),
 );
