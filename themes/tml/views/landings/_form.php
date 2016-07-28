@@ -43,12 +43,13 @@
                     'fullpage' => 'js:true',
                     'width' => '640',
                     'resize_maxWidth' => '640',
-                    'resize_minWidth' => '320'
+                    'resize_minWidth' => '320',
                 )
             )
         ); ?>
+    <code style="margin-bottom:10px;display: inline-block;">Email macro: $$mail$$</code>
 
-     <br/>
+    <br/>
 
 	<?php echo $form->textFieldRow($model,'checkbox_label',array('class'=>'span5','maxlength'=>128)); ?>
 
