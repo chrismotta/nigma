@@ -1,10 +1,10 @@
-<div class="row-fluid" style="background-color:<?php echo $model->background_color; ?>; color:<?php echo $model->default_color; ?>; background-image: url('<?php echo $backgroundImage; ?>');">
+<div class="row-fluid" style="background-color:<?php echo $model->background_color; ?>; color:<?php echo $model->default_color; ?>;">
 	<div class="headline row-fluid text-center" style="background-color:<?php echo $model->highlight_color; ?>; color:<?php echo $model->background_color; ?>; background-image: url('<?php echo $headlineImage; ?>');">
 		<h1 class="span12">
 			<?php echo $model->headline; ?>
 		</h1>
 	</div>
-	<div class="formline row-fluid text-center" style="color:<?php echo $model->default_color; ?>;">
+	<div class="formline row-fluid text-center" style="color:<?php echo $model->default_color; ?>; background-image: url('<?php echo $backgroundImage; ?>');">
 		<h2 class="byline span6 text-center" style="color:<?php echo $model->highlight_color; ?>;">
 			<p><?php echo $model->byline; ?></p>
 			<p><img class="hidden-phone" src="<?php echo $bylineImage; ?>" /></p>
