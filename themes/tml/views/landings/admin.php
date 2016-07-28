@@ -23,26 +23,34 @@ return false;
 ");
 ?>
 
-<h1>Manage Landings</h1>
+<?php
 
-<p>
-	You may optionally enter a comparison operator (<b>&lt;</b>, <b>&lt;=</b>, <b>&gt;</b>, <b>&gt;=</b>, <b>
-		&lt;&gt;</b>
-	or <b>=</b>) at the beginning of each of your search values to specify how the comparison should be done.
-</p>
+echo '<div class="botonera">';
+$this->widget('bootstrap.widgets.TbButton', array(
+	'type'        => 'info',
+	'label'       => 'Create Landing',
+	'block'       => false,
+	'buttonType'  => 'linkButton',
+	'url'         => array("create"),
+	'htmlOptions' => array(
+		// 	"data-grid-id"      => "campaigns-grid", 
+		// 	"data-modal-id"     => "modalCampaigns", 
+		// 	"data-modal-title"  => "Create Campaign", 
+		// 	'onclick'           => 'event.preventDefault(); openModal(this)',
+		'style' => 'float:right',
+		),
+	)
+);
+echo '</div>';
 
-<?php echo CHtml::link('Advanced Search','#',array('class'=>'search-button btn')); ?>
-<div class="search-form" style="display:none">
-	<?php $this->renderPartial('_search',array(
-	'model'=>$model,
-)); ?>
-</div><!-- search-form -->
+?>
 
 <?php $this->widget('bootstrap.widgets.TbGridView',array(
-'id'=>'landings-grid',
-'dataProvider'=>$model->search(),
-'filter'=>$model,
-'columns'=>array(
+	'id'=>'landings-grid',
+	'dataProvider'=>$model->search(),
+	'filter'=>$model,
+	'template' =>'{items} {pager} {summary}',
+	'columns'=>array(
 		'id',
 		'name',
 		'country_id',
@@ -66,8 +74,17 @@ return false;
 		'thankyou_msg',
 		'validate_msg',
 		*/
-array(
-'class'=>'bootstrap.widgets.TbButtonColumn',
-),
-),
-)); ?>
+		array(
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 100px"),
+			'buttons'           => array(
+				'duplicate' => array(
+					'label' => 'Duplicate',
+					'icon'  => 'plus-sign',
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					),
+				),
+			'template' => '{view} {update} {duplicate} {delete}',
+			),
+		),
+	)); ?>
