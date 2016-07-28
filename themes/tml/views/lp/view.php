@@ -6,7 +6,7 @@
 	</div>
 	<div class="formline row-fluid text-center" style="color:<?php echo $model->default_color; ?>; background-image: url('<?php echo $backgroundImage; ?>'); background-size: 100% auto;">
 		<h2 class="byline span6 text-center" style="color:<?php echo $model->highlight_color; ?>;">
-			<p style="text-shadow: -4px 4px 5px white;"><?php echo $model->byline; ?></p>
+			<p style="text-shadow: -2px 2px 5px white;"><?php echo $model->byline; ?></p>
 			<p><img class="hidden-phone" src="<?php echo $bylineImage; ?>" /></p>
 		</h2>
 		<div class="byline span6 text-left" style="color:<?php echo $model->highlight_color; ?>;">
