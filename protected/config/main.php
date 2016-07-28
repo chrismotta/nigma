@@ -54,6 +54,16 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		case 'games4mobi.com':
 		case 'www.ringtones4mobile.co':
 		case 'ringtones4mobile.co':
+	    case 'www.mobileringtones.co':
+	    case 'mobileringtones.co':
+	    case 'www.mobiledownloads.co':
+	    case 'mobiledownloads.co':
+	    case 'www.downloadringtones.co':
+	    case 'downloadringtones.co':
+	    case 'www.downloads4mobile.co':
+	    case 'downloads4mobile.co':
+	    case 'www.descargamobile.co':
+	    case 'descargamobile.co':
 					$mysqlConnect = array(
 						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 						'emulatePrepare'   => true,
@@ -310,6 +320,17 @@ return array(
 	    	'games4mobi.com', 
 	    	'www.ringtones4mobile.co',
 	    	'ringtones4mobile.co',
+	    	'www.mobileringtones.co',
+	    	'mobileringtones.co',
+	    	'www.mobiledownloads.co',
+	    	'mobiledownloads.co',
+	    	'www.downloadringtones.co',
+	    	'downloadringtones.co',
+	    	'www.downloads4mobile.co',
+	    	'downloads4mobile.co',
+	    	'www.descargamobile.co',
+	    	'descargamobile.co',
+			'52.206.109.37',
 	    	),
 	),
 );
