@@ -294,10 +294,12 @@ class ClicklogController extends Controller
 				$modelVL->clicks_log_id = $model->id;
 				$modelVL->vectors_id = $vid;
 				$modelVL->save();
+			}else{
+				// if click has incoming macros, log it
+				// not working with vectors
+				$this->saveMacros($model->id, $_GET);		
 			}
 
-			// if click has incoming macros, log it
-			//$this->saveMacros($model->id, $_GET);		
 
 			// if($ntoken){
 			// 	$tmltoken = $ntoken;
