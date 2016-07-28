@@ -52,15 +52,15 @@ echo '</div>';
 	'template' =>'{items} {pager} {summary}',
 	'columns'=>array(
 		'id',
+		'country_name',
 		'name',
-		'country_id',
+		'headline',
+		/*
 		'default_color',
 		'highlight_color',
 		'byline_images_id',
-		/*
 		'background_color',
 		'background_images_id',
-		'headline',
 		'byline',
 		'input_legend',
 		'input_label',

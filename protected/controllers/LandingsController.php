@@ -126,12 +126,14 @@ class LandingsController extends Controller
 			LandingImages::model()->findAllByAttributes(array('type'=>'ByLine'))
 			, 'id', 'id');
 
+		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 
 		$this->render($action,array(
 			'model' => $model,
 			'background_images_id' => $background_images_id,
 			'headline_images_id' => $headline_images_id,
 			'byline_images_id' => $byline_images_id,
+			'country' => $country,
 			));
 
 	}

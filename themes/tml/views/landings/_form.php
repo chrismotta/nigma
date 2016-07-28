@@ -9,7 +9,7 @@
 
 	<?php echo $form->textFieldRow($model,'name',array('class'=>'span5','maxlength'=>128)); ?>
 
-	<?php echo $form->textFieldRow($model,'country_id',array('class'=>'span5')); ?>
+	<?php echo $form->dropDownListRow($model, 'country_id', $country, array('prompt' => 'Select a country')); ?>
 
 	<?php echo $form->textFieldRow($model,'default_color',array('class'=>'span5','maxlength'=>45)); ?>
 

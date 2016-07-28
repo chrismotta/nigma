@@ -21,4 +21,5 @@ $this->breadcrumbs=array(
 		'background_images_id' => $background_images_id,
 		'headline_images_id' => $headline_images_id,
 		'byline_images_id' => $byline_images_id,
+		'country' => $country,
 		)); ?>

@@ -35,6 +35,8 @@
  */
 class Landings extends CActiveRecord
 {
+	public $country_name;
+
 	/**
 	 * @return string the associated database table name
 	 */
@@ -58,7 +60,7 @@ class Landings extends CActiveRecord
 			array('select_options', 'length', 'max'=>256),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, name, country_id, default_color, highlight_color, byline_images_id, background_color, background_images_id, headline_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label, thankyou_msg, validate_msg', 'safe', 'on'=>'search'),
+			array('id, name, country_id, country_name, default_color, highlight_color, byline_images_id, background_color, background_images_id, headline_images_id, headline, byline, input_legend, input_label, input_eg, select_label, select_options, tyc_headline, tyc_body, checkbox_label, button_label, thankyou_msg, validate_msg', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -86,6 +88,7 @@ class Landings extends CActiveRecord
 			'id' => 'ID',
 			'name' => 'Name',
 			'country_id' => 'Country',
+			'country_name' => 'Country',
 			'default_color' => 'Default Color',
 			'highlight_color' => 'Highlight Color',
 			'byline_images_id' => 'Byline Images',
@@ -129,6 +132,7 @@ class Landings extends CActiveRecord
 		$criteria->compare('id',$this->id);
 		$criteria->compare('name',$this->name,true);
 		$criteria->compare('country_id',$this->country_id);
+		$criteria->compare('country.name',$this->country_name);
 		$criteria->compare('default_color',$this->default_color,true);
 		$criteria->compare('highlight_color',$this->highlight_color,true);
 		$criteria->compare('byline_images_id',$this->byline_images_id);
@@ -149,8 +153,25 @@ class Landings extends CActiveRecord
 		$criteria->compare('thankyou_msg',$this->thankyou_msg,true);
 		$criteria->compare('validate_msg',$this->validate_msg,true);
 
+		$criteria->with = array('country');
+		$criteria->select = array(
+			'*',
+			'country.name as country_name',
+			);
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+		        	    ),
+		            // Adding all the other default attributes
+		            '*',
+		        	),
+		    	),
 		));
 	}
 
