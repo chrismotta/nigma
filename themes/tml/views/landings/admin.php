@@ -51,10 +51,29 @@ echo '</div>';
 	'filter'=>$model,
 	'template' =>'{items} {pager} {summary}',
 	'columns'=>array(
-		'id',
-		'country_name',
-		'name',
-		'headline',
+		array(
+			'name' => 'id',
+			'headerHtmlOptions' => array(
+				'style' => 'width:60px',
+				),
+			),
+		array(
+			'name' => 'country_name',
+			'headerHtmlOptions' => array(
+				'style' => 'width:80px',
+				),
+			),
+		array(
+			'name' => 'name',
+			'headerHtmlOptions' => array(
+				'style' => 'width:200px',
+				),
+			),
+		array(
+			'type'=>'raw',
+			'header'=>'Valid URLs',
+			'value'=>'$data->validDomains()',
+			),
 		/*
 		'default_color',
 		'highlight_color',

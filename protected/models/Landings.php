@@ -175,6 +175,16 @@ class Landings extends CActiveRecord
 		));
 	}
 
+	public function validDomains(){
+		$return = '';
+
+		foreach (Yii::app()->params['landingDomains'] as $domain) {
+			if (!preg_match('/^www|^\d/', $domain))
+				$return.= 'http://'.$domain.'/lp/'.$this->id." ";
+		}
+		return $return;
+	}
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
