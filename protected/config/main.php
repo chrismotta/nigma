@@ -39,6 +39,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 			break;
 		
 		// amazon prod
+		case '52.206.109.37':
 		case '52.70.104.25':
 		case '54.172.221.175':
 		case 'ec2-54-172-221-175.compute-1.amazonaws.com':
@@ -51,6 +52,8 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		case 'console.themedialab.co':
 		case 'www.games4mobi.com':
 		case 'games4mobi.com':
+		case 'www.ringtones4mobile.co':
+		case 'ringtones4mobile.co':
 					$mysqlConnect = array(
 						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 						'emulatePrepare'   => true,
