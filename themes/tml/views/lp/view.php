@@ -4,7 +4,7 @@
 			<?php echo $model->headline; ?>
 		</h1>
 	</div>
-	<div class="formline row-fluid text-center" style="color:<?php echo $model->default_color; ?>; background-image: url('<?php echo $backgroundImage; ?>');">
+	<div class="formline row-fluid text-center" style="color:<?php echo $model->default_color; ?>; background-image: url('<?php echo $backgroundImage; ?>'); background-size: 100% auto;">
 		<h2 class="byline span6 text-center" style="color:<?php echo $model->highlight_color; ?>;">
 			<p><?php echo $model->byline; ?></p>
 			<p><img class="hidden-phone" src="<?php echo $bylineImage; ?>" /></p>
