@@ -297,7 +297,7 @@ class ClicklogController extends Controller
 			}else{
 				// if click has incoming macros, log it
 				// not working with vectors
-				$this->saveMacros($model->id, $_GET);		
+				// $this->saveMacros($model->id, $_GET);		
 			}
 
 
