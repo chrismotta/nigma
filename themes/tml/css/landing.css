@@ -9,3 +9,11 @@
 .formstyle {
     display: inline-block;
 }
+
+.thankyou-thumb {
+	clear:both; 
+	width:260px;
+	height:260px;
+    background-position: top;
+    background-size: auto 100%;
+}

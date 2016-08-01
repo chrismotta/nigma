@@ -23,7 +23,8 @@ class LpController extends Controller
 		if(isset($_POST['Lp'])){
 			$lp = $_POST['Lp'];
 			if(isset($lp['prefix']) && isset($lp['number']) && isset($lp['tc'])){
-				$status = 'thankyou';
+				$this->redirect(array('thankyou', 'id'=>$id));
+				// $status = 'thankyou';
 			}else{
 				$status = 'validate';
 			}
@@ -44,6 +45,37 @@ class LpController extends Controller
 			'bylineImage'=>$bylineImage,
 			'status'=>$status, 
 		));
+	}
+
+	/**
+	 * Displays a thankyou page.
+	 * @param integer $id the ID of the model to be displayed
+	 */
+	public function actionThankyou($id)
+	{
+		$model = $this->loadModel($id);
+		$imgModel = new LandingImages('search');
+		$imgModel->type = 'Gallery';
+
+		$backgroundImage = isset($model->background_images_id) ? $model->backgroundImages->getImagePath($model->backgroundImages->file_name) : null; 
+		$headlineImage = isset($model->headline_images_id) ? $model->headlineImages->getImagePath($model->headlineImages->file_name) : null; 
+		$bylineImage = isset($model->byline_images_id) ? $model->bylineImages->getImagePath($model->bylineImages->file_name) : null; 
+
+		$this->render('thankyou', array( 
+			'model'           =>$model,
+			'imgModel'        =>$imgModel,
+			'backgroundImage' =>$backgroundImage,
+			'headlineImage'   =>$headlineImage,
+			'bylineImage'     =>$bylineImage,
+		));
+	}
+
+	public function actionBigImg($id){
+
+		$imgModel = LandingImages::model()->findByPk($id);
+		// echo $imgModel->getImagePath($data->file_name);
+		echo CHtml::image($imgModel->getImagePath($imgModel->file_name));
+
 	}
 
 

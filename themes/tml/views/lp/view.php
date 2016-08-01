@@ -12,9 +12,9 @@
 		<div class="byline span6 text-left" style="color:<?php echo $model->highlight_color; ?>;">
 			<form class="well text-left formstyle" style="opacity: 0.7;" method='POST'>
 				<fieldset style="color:<?php echo $model->default_color; ?>; opacity: 1;">
-					<?php if($status=='thankyou'){ ?>
+					<?php /* if($status=='thankyou'){ ?>
 					<h4><?php echo $model->thankyou_msg; ?></h4>
-					<?php }else{ ?>
+					<?php }else{  */?>
 					<h4><?php echo $model->input_legend; ?></h4>
 					<label><?php echo $model->input_label; ?></label>
 					<input type="text" style="width:30px" name="Lp[prefix]">
@@ -38,7 +38,7 @@
 					<h6><?php echo $model->validate_msg; ?></h6>
 					<?php } ?>
 					<button type="submit" class="btn" ><?php echo $model->button_label; ?></button>
-					<?php } ?>
+					<?php // } ?>
 				</fieldset>
 			</form>
 		</div>
