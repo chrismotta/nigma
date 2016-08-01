@@ -13,7 +13,12 @@
 <?php 
 echo '<div class="col-md-12" style="margin-bottom:10px">';
 echo '<div class="label-select">Image Type</div>';
-echo $form->dropDownListRow($model,'type',array("Background"=>"Background","HeadLine"=>"HeadLine","ByLine"=>"ByLine",),array('class'=>'input-large')); 
+echo $form->dropDownListRow($model,'type',array(
+    "Background"=>"Background",
+    "HeadLine"=>"HeadLine",
+    "ByLine"=>"ByLine",
+    "Gallery"=>"Gallery",
+    ),array('class'=>'input-large')); 
 echo '</div>';
 ?>
 

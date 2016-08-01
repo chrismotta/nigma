@@ -22,6 +22,7 @@ echo $form->dropDownListRow($model,'type',array(
 	"Background"=>"Background",
 	"HeadLine"=>"HeadLine",
 	"ByLine"=>"ByLine",
+	"Gallery"=>"Gallery",
 	),
 	array('class'=>'input-large')
 	);
