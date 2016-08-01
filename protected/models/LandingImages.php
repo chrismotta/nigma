@@ -91,6 +91,9 @@ class LandingImages extends CActiveRecord
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder'=>'id DESC',
+				)
 		));
 	}
 

@@ -76,6 +76,7 @@ class LandingImagesController extends Controller
 		if(isset($_POST['LandingImages']))
 		{
 			$model->attributes=$_POST['LandingImages'];
+			$model->file_name='temp';
 
 			if($model->save()){
 				$fileName = $this->updateImg($model, 'LandingImages[image]');
