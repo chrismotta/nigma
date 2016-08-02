@@ -114,6 +114,12 @@ class ClicklogController extends Controller
 		return $saved;
 	}
 	
+	/**
+	 * Process Generic Request
+	 * @param  [type] $id  [description]
+	 * @param  [type] $vid [description]
+	 * @return [type]      [description]
+	 */
 	public function actionIndex($id=null, $vid=null)
 	{
 
@@ -405,7 +411,11 @@ class ClicklogController extends Controller
 
 	}
 
-	// V of Vector
+	/**
+	 * Process Vector Request
+	 * @param  [type] $id [description]
+	 * @return [type]     [description]
+	 */
 	public function actionV($id=null)
 	{
 		$v = isset($_GET['v']);
