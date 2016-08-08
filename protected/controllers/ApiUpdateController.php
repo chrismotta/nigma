@@ -121,6 +121,7 @@ class ApiUpdateController extends Controller
 		$this->actionSmaatoExchange();
 		
 		$this->actionAdWordsConversions();
+		$this->actionImpLog();
 	}
 
 	public function actionBingCode(){
