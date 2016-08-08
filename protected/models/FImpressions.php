@@ -94,10 +94,12 @@ class FImpressions extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			'dBid'         => array(self::HAS_ONE, 'DBid', 'F_Impressions_id'),
-			'dDemand'      => array(self::BELONGS_TO, 'DDemand', 'D_Demand_id'),
 			'dGeoLocation' => array(self::BELONGS_TO, 'DGeoLocation', 'D_GeoLocation_id'),
-			'dSupply'      => array(self::BELONGS_TO, 'DSupply', 'D_Supply_id'),
 			'dUserAgent'   => array(self::BELONGS_TO, 'DUserAgent', 'D_UserAgent_id'),
+			'dDemand'      => array(self::BELONGS_TO, 'DDemand', 'D_Demand_id'),
+			'dSupply'      => array(self::BELONGS_TO, 'DSupply', 'D_Supply_id'),
+			'tags'         => array(self::BELONGS_TO, 'Tags', 'D_Demand_id'),
+			'placements'   => array(self::BELONGS_TO, 'Placements', 'D_Supply_id'),
 		);
 	}
 

@@ -49,6 +49,7 @@ class ApiUpdateController extends Controller
 			'jampp',
 			'startApp',
 			'cpmCampaigns',
+			'impLog',
 			);
 		
 		return array(
@@ -367,7 +368,19 @@ class ApiUpdateController extends Controller
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {
-			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.affiliates');			
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.cpmCampaigns');			
+		}
+	}
+
+	public function actionImpLog($hash=null)
+	{
+		try {
+			$model = new ImpLogAPI;
+			$return = $model->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate.impLog');			
 		}
 	}
 

@@ -1,6 +1,6 @@
 <?php
 
-class CPMCampaignsAPI
+class ImpLogAPI
 { 
 	private $apiLog;
 
@@ -8,12 +8,13 @@ class CPMCampaignsAPI
 	{
 		date_default_timezone_set('UTC');
 		$return = '';
-		$fixedRate = isset($_GET['rate']) ? $_GET['rate'] : null;
-		$fixedCid  = isset($_GET['cid']) ? $_GET['cid'] : null;
+		// $fixedRate = isset($_GET['rate']) ? $_GET['rate'] : null;
+		// $fixedCid  = isset($_GET['cid']) ? $_GET['cid'] : null;
 
 		if ( isset( $_GET['date']) ) {
 		
 			$date = $_GET['date'];
+			$return.= '<hr/>'.$date.'<hr/>';
 			$return.= $this->downloadDateInfo($date);
 		
 		} else {
@@ -38,22 +39,25 @@ class CPMCampaignsAPI
 		$return = '';
 
 		$criteria = new CDbCriteria;
-		$criteria->with = array('campaigns.opportunities', 'providers');
-		$criteria->select = array('t.campaigns_id AS campaign', 't.providers_id AS provider', 'COUNT(t.id) AS clicks');
-		$criteria->compare('DATE(t.date)',$date);
-		$criteria->compare('opportunities.model_adv', 'CPM');
-		$criteria->compare('providers.type', array('Publisher','Network'));
-		$criteria->compare('providers.has_api', '0');
-		$criteria->group = 't.campaigns_id';
+		$criteria->with = array('tags','placements.sites','dBid');
+		$criteria->compare('DATE(t.date_time)',$date);
+		$criteria->group = 'tags.campaigns_id, sites.providers_id';
+		$criteria->select = array(
+			'tags.campaigns_id AS campaign', 
+			'sites.providers_id AS provider',
+			'count(t.id) AS impressions', 
+			'sum(dBid.revenue) AS revenue',
+			'sum(dBid.cost) AS cost',
+			);
 
-		$clicks = ClicksLog::model()->findAll($criteria);
-		// return json_encode($campaigns, JSON_PRETTY_PRINT);
+		$impressions = FImpressions::model()->findAll($criteria);
+		// return json_encode($impressions, JSON_PRETTY_PRINT);
 
 		// -- //
 
 		$updated = 0;
 
-		foreach ($clicks as $c) {
+		foreach ($impressions as $c) {
 							
 			$this->apiLog = ApiLog::initLog($date, $c->provider, null);
 			$this->apiLog->updateLog('Processing', 'Calculating traffic data');
@@ -67,23 +71,30 @@ class CPMCampaignsAPI
 					":cid"=>$c->campaign,
 					)
 				);
-			if(!$dailyReport)
+			if(!$dailyReport){
 				$dailyReport = new DailyReport();
+				$return.='New: ';
+			}else{
+				$return.='Update: ';
+			}
 			
 			$dailyReport->campaigns_id = $c->campaign;
 			$dailyReport->date         = $date;
 			$dailyReport->providers_id = $c->provider;
-			$dailyReport->imp          = $c->clicks;
-			$dailyReport->clics        = $c->clicks;
+			$dailyReport->imp          = $c->impressions;
+			$dailyReport->clics        = 0;
 			$dailyReport->conv_api     = 0;
-			$dailyReport->spend        = 0;
-			$dailyReport->updateRevenue();
+			$dailyReport->spend        = $c->cost;
+			$dailyReport->revenue      = $c->revenue;
+			// $dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
 			
 			if ( !$dailyReport->save() ) {
 				$return.="Can't save campaign: '" . $c->campaign . "message error: " . json_encode($dailyReport->getErrors());
 				Yii::log("Can't save campaign: '" . $c->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.cpmCampaigns.');
 				continue;
+			}else{
+				$return.='Campaign: '.$c->campaign.' - Traffic Source: '.$c->provider.' - Impressions: '.$c->impressions.' - Revennue: '.$c->revenue.' - Cost: '.$c->cost.'<br/>';
 			}
 			$updated++;
 
@@ -93,7 +104,7 @@ class CPMCampaignsAPI
 
 		// -- //
 
-		$return.="SUCCESS - Daily info downloaded for all cpm campaigns<br/>";
+		$return.="<hr/>SUCCESS - Daily info downloaded for all cpm campaigns<br/>";
 		Yii::log("SUCCESS - Daily info downloaded for all cpm campaigns", 'info', 'system.model.api.cpmCampaigns');
 		return $return;
 	}
