@@ -14,7 +14,7 @@ class CPMCampaignsAPI
 		if ( isset( $_GET['date']) ) {
 		
 			$date = $_GET['date'];
-			$return.= $this->downloadDateInfo($date, $fixedRate, $fixedCid);
+			$return.= $this->downloadDateInfo($date);
 		
 		} else {
 
