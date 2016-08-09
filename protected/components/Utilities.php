@@ -19,9 +19,17 @@ class Utilities {
 	}
 
 	public static function parseVectorUrlID($campaignURL){
+		
 		$id_begin = strpos($campaignURL, '/v/')+3;
+		
 		$id_end   = strpos($campaignURL, '/', $id_begin);
-		$return   = substr($campaignURL, $id_begin,  $id_end-$id_begin);
+		if(!$id_end) $id_end = strpos($campaignURL, '?', $id_begin);
+		if(!$id_end) $id_end = strpos($campaignURL, '#', $id_begin);
+
+		if($id_end)
+			$return   = substr($campaignURL, $id_begin, $id_end-$id_begin);
+		else
+			$return   = substr($campaignURL, $id_begin);
 
 		if ( is_numeric($return) ) {
 			if ( !Vectors::model()->isValidId($return) )
