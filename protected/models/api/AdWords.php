@@ -499,18 +499,16 @@ class AdWords
 				if(!$conv->save())
 					$return .= '<br>'.json_encode($conv->getErrors());
 
-				$return .= '<hr>';
-
 			} catch (OAuth2Exception $e) {
 				ExampleUtils::CheckForOAuth2Errors($e);
 			} catch (ValidationException $e) {
 				ExampleUtils::CheckForOAuth2Errors($e);
 			} catch (Exception $e) {
 				$return .= sprintf("An error has occurred: %s\n", $e->getMessage());
-				$return .= '<hr>';
 			}
 
-			$return .= '(gclid: '.$conv['google_click_id'].') ';
+			$return .= ' (gclid: '.$conv['google_click_id'].') ';
+			$return .= '<hr>';
 
 		}
 
