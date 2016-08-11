@@ -478,8 +478,6 @@ class AdWords
 
 		foreach ($convList as $id => $conv) {
 
-			$return .= '(gclid: '.$conv['google_click_id'].') ';
-
 			try {
 
 				$user->SetClientCustomerId($conv['mcc_external_id']);
@@ -511,6 +509,8 @@ class AdWords
 				$return .= sprintf("An error has occurred: %s\n", $e->getMessage());
 				$return .= '<hr>';
 			}
+
+			$return .= '(gclid: '.$conv['google_click_id'].') ';
 
 		}
 
