@@ -478,6 +478,8 @@ class AdWords
 
 		foreach ($convList as $id => $conv) {
 
+			$return .= '(gclid: '.$conv['google_click_id'].') ';
+
 			try {
 
 				$user->SetClientCustomerId($conv['mcc_external_id']);
