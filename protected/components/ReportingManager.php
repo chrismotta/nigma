@@ -135,15 +135,14 @@ class ReportingManager
         $criteria = new CDbCriteria;
         $criteria->distinct = true;
         $criteria->select = $column;
+        $criteria->addCondition($column.' != ""');
         $criteria->order = $column;
-        // $criteria->limit = 3;
 
         if(count($compare)>0){
             foreach ($compare as $col => $val) {
                 $criteria->compare($col, $val);
             }
         }
-
 
         $data = CHtml::listData(
             $model::model()->findAll($criteria), $column, $column);
