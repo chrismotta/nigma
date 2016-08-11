@@ -12,6 +12,7 @@ $this->breadcrumbs=array(
 	'template'     => '{items} {pagerExt} {summary}',
 	'columns'      =>array(
 			'id',
+			'name',
 			'campaigns_id',
 			'banner_sizes_id',
 			// 'code',

@@ -1,11 +1,13 @@
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm',array(
-	'id'=>'tags-form',
-	'enableAjaxValidation'=>false,
+    'id'=>'tags-form',
+    'enableAjaxValidation'=>false,
 )); ?>
 
 <?php echo $form->errorSummary($model); ?>
+    
+    <?php echo $form->textFieldRow($model,'name',array('class'=>'span5')); ?>
 
-	<?php 
+    <?php 
     if(isset($model->campaigns_id)){
         echo $form->hiddenField($model,'campaigns_id'); 
     }else{
@@ -13,8 +15,8 @@
     }
     ?>
 
-	<?php 
-	// echo $form->textFieldRow($model,'banner_sizes_id',array('class'=>'span5')); 
+    <?php 
+    // echo $form->textFieldRow($model,'banner_sizes_id',array('class'=>'span5')); 
 
         echo $form->dropDownListRow($model, 'banner_sizes_id', $bannerSizes, array('prompt' => 'Select a size')); ?>
 

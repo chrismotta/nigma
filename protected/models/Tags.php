@@ -44,7 +44,7 @@ class Tags extends CActiveRecord
 		return array(
 			array('campaigns_id, banner_sizes_id, analyze, freq_cap', 'numerical', 'integerOnly'=>true),
 			array('code', 'length', 'max'=>255),
-			array('comment', 'length', 'max'=>128),
+			array('name, comment', 'length', 'max'=>128),
 			array('country', 'length', 'max'=>2),
 			// array('connection_type', 'length', 'max'=>4),
 			// array('device_type', 'length', 'max'=>7),
@@ -53,7 +53,7 @@ class Tags extends CActiveRecord
 			array('country, connection_type, device_type, os, os_version', 'default', 'setOnEmpty' => true, 'value' => null),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, banner_sizes_id, code, comment, analyze, freq_cap, size, country, connection_type, device_type, os, os_version, status', 'safe', 'on'=>'search'),
+			array('id, name, campaigns_id, banner_sizes_id, code, comment, analyze, freq_cap, size, country, connection_type, device_type, os, os_version, status', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -111,6 +111,7 @@ class Tags extends CActiveRecord
 		$criteria=new CDbCriteria;
 
 		$criteria->compare('id',$this->id);
+		$criteria->compare('name',$this->name);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
 		$criteria->compare('code',$this->code,true);
