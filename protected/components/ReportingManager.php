@@ -136,6 +136,7 @@ class ReportingManager
         $criteria->distinct = true;
         $criteria->select = $column;
         $criteria->order = $column;
+        // $criteria->limit = 3;
 
         if(count($compare)>0){
             foreach ($compare as $col => $val) {
