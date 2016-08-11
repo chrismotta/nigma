@@ -72,8 +72,15 @@ class EtlController extends Controller
 
 		$start = time();
 
-		$query ='INSERT IGNORE INTO D_Demand (tag_id, advertiser, finance_entity, region, opportunity, campaign, rate, freq_cap, country, connection_type, device_type, os_type, os_version) 
-		SELECT t.id, a.name, f.name, g.name, o.product, CONCAT(o.product," - ",c.name," (",c.id,")"), o.rate, t.freq_cap, t.country, t.connection_type, t.device_type, t.os, t.os_version 
+		$query ='INSERT IGNORE INTO D_Demand (tag_id, advertiser, finance_entity, region, opportunity, campaign, tag, rate, freq_cap, country, connection_type, device_type, os_type, os_version) 
+		SELECT t.id, 
+			CONCAT(a.name," (",a.id,")"), 
+			CONCAT(f.name," (",f.id,")"), 
+			CONCAT(g.name," (",r.id,")"), 
+			CONCAT(o.product," (",o.id,")"), 
+			CONCAT(o.product," - ",c.name," (",c.id,")"), 
+			CONCAT(t.name," (",t.id,")"), 
+			o.rate, t.freq_cap, t.country, t.connection_type, t.device_type, t.os, t.os_version 
 		FROM tags t 
 		LEFT JOIN campaigns c        ON(t.campaigns_id        = c.id) 
 		LEFT JOIN opportunities o    ON(c.opportunities_id    = o.id) 
@@ -82,7 +89,13 @@ class EtlController extends Controller
 		LEFT JOIN finance_entities f ON(r.finance_entities_id = f.id) 
 		LEFT JOIN advertisers a      ON(f.advertisers_id      = a.id)
 		ON DUPLICATE KEY UPDATE
-		advertiser=a.name, finance_entity=f.name, region=g.name, opportunity=o.product, campaign=CONCAT(o.product," - ",c.name," (",c.id,")"), rate=o.rate, freq_cap=t.freq_cap, country=t.country, connection_type=t.connection_type, device_type=t.device_type, os_type=t.os, os_version=t.os_version
+			advertiser     =CONCAT(a.name," (",a.id,")"), 
+			finance_entity =CONCAT(f.name," (",f.id,")"), 
+			region         =CONCAT(g.name," (",r.id,")"), 
+			opportunity    =CONCAT(o.product," (",o.id,")"), 
+			campaign       =CONCAT(o.product," - ",c.name," (",c.id,")"), 
+			tag            =CONCAT(t.name," (",t.id,")"), 
+			rate=o.rate, freq_cap=t.freq_cap, country=t.country, connection_type=t.connection_type, device_type=t.device_type, os_type=t.os, os_version=t.os_version
 		';
 		
 		$return = Yii::app()->db->createCommand($query)->execute();
@@ -97,12 +110,19 @@ class EtlController extends Controller
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO D_Supply (placement_id, provider, site, placement, rate) 
-		SELECT p.id, o.name, s.name, p.name, p.rate 
+		SELECT p.id, 
+			CONCAT(o.name," (",o.id,")"), 
+			CONCAT(s.name," (",s.id,")"), 
+			CONCAT(p.name," (",p.id,")"), 
+			p.rate 
 		FROM placements p 
 		LEFT JOIN sites s     ON(p.sites_id     = s.id) 
 		LEFT JOIN providers o ON(s.providers_id = o.id)
 		ON DUPLICATE KEY UPDATE
-		provider=o.name, site=s.name, placement=p.name, rate=p.rate
+			provider  =CONCAT(o.name," (",o.id,")"), 
+			site      =CONCAT(s.name," (",s.id,")"), 
+			placement =CONCAT(p.name," (",p.id,")"), 
+			rate=p.rate
 		';
 	
 		$return = Yii::app()->db->createCommand($query)->execute();
