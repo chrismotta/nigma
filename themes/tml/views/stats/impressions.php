@@ -186,22 +186,22 @@ echo '<div class="row-fluid" id="filters-row">';
 
 isset($_REQUEST['filter']) ? $filter = $_REQUEST['filter'] : $filter = null;
 
-ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filter);
-ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filter);
-ReportingManager::dataMultiSelect(new DDemand(), 'tag', $filter);
 ReportingManager::dataMultiSelect(new DSupply(), 'provider', $filter);
 $comparePlacement = $partner ? array('provider'=>$partner) : array();
+ReportingManager::dataMultiSelect(new DDemand(), 'tag', $filter);
 ReportingManager::dataMultiSelect(new DSupply(), 'placement', $filter, $comparePlacement);
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type', $filter);
+ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filter);
+ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filter);
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'country', $filter);
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type', $filter);
+ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version', $filter);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'device_type', $filter);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'device_brand', $filter);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'device_model', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version', $filter);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type', $filter);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version', $filter);
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type', $filter);
+ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier', $filter);
 
 // hide all .multi-select-hide
 $jQuery = '$("div.multi-select-hide:not(:has(ul li.select2-search-choice))").hide()';
