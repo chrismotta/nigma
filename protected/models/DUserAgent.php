@@ -38,7 +38,7 @@ class DUserAgent extends CActiveRecord
 			array('user_agent', 'required'),
 			array('user_agent', 'length', 'max'=>255),
 			array('device_type', 'length', 'max'=>10),
-			array('device_brand, device_model, os_type, os_version, browser_type, browser_version', 'length', 'max'=>45),
+			// array('device_brand, device_model, os_type, os_version, browser_type, browser_version', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, user_agent, device_type, device_brand, device_model, os_type, os_version, browser_type, browser_version', 'safe', 'on'=>'search'),
