@@ -171,8 +171,12 @@ $('.search-form form').submit(function(){
 							"createByProvider",
 							params,
 							function(data) {
+								console.log(data);
+								var c_id = data.c_id.substring(1);
+								// console.log(c_id);
+
 								if (data.result == "OK") {
-									var r = $( "#" + data.c_id );
+									var r = $( "#" + c_id );
  									r.removeClass( "control-group error" );
 									r.addClass( "control-group success" );
 									var l = r.find("#labelSubmit");
@@ -181,7 +185,7 @@ $('.search-form form').submit(function(){
 									l.text("Update");
 								}
 								if (data.result == "ERROR") {
-									var r = $( "#" + data.c_id );
+									var r = $( "#" + c_id );
 									r.addClass( "control-group error" );
 									r.find("#labelSubmit").removeClass( "label-success" );
 									r.find("#labelSubmit").addClass( "label-important" );
