@@ -49,6 +49,8 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		case 'www.tmlbox.co':
 		case 'bidbox.co':
 		case 'www.bidbox.co':
+		case 'performile.com':
+		case 'www.performile.com':
 		case 'console.themedialab.co':
 		case 'www.games4mobi.com':
 		case 'games4mobi.com':
