@@ -29,7 +29,7 @@ class CampaignsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','duplicate','graphicCampaign','getOpportunities','getOppByAdv','trafficCampaignAjax','graphic','view','viewAjax','testAjax','create','update', 'response','redirectAjax','admin','archived','delete','traffic','excelReport','getProviders','getProviderCurrency','getDefaultExternalRate'),
-				'roles'=>array('admin', 'media', 'media_manager','affiliates_manager', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'media', 'media_manager','affiliates_manager', 'account_manager','account_manager_admin', 'media_buyer_admin'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('admin'),
