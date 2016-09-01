@@ -136,7 +136,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<iframe src="http://bidbox.co/tag/'.$id.'?pid=&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
+			echo 'document.write(\'<iframe src="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
 
 		}else{
 
