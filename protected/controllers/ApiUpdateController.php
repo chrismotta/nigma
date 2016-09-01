@@ -177,11 +177,13 @@ class ApiUpdateController extends Controller
 		';
 	}
 
-	public function actionAirpush()
+	public function actionAirpush($hash=null)
 	{
 		try {
 			$airpush = new Airpush;
-			$airpush->downloadInfo();
+			$return = $airpush->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}

@@ -3,24 +3,51 @@
 class Airpush
 { 
 
-	private $provider_id = 1;
+	private $provider_id = 294;
+	private $apiLog;
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
-		if ( isset( $_GET['date']) ) {
-			$date = $_GET['date'];
-		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
-		}
 
-		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date)) ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.airpush');
-			return 2;
+		date_default_timezone_set('UTC');
+		$return = '';
+
+		if ( isset( $_GET['date']) ) {
+			
+			// specific date
+			
+			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
+		} else {
+
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+				$return.= $this->downloadDateInfo($date);
+			}
+
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		}
+		
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date)
+	{
+
+		$return = '';
 
 		// Get json from Airpush API.
-		$network = Networks::model()->findbyPk($this->provider_id);
+		$network = Providers::model()->findbyPk($this->provider_id);
 		$apikey = $network->token1;
 		$apiurl = $network->url;
 		$url = $apiurl . "?apikey=" . $apikey . "&startDate=" . $date . "&endDate=" . $date;
@@ -28,11 +55,19 @@ class Airpush
 		$curl = curl_init($url);
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		$result = curl_exec($curl);
-		$result = json_decode($result);
-		if (!$result) {
+
+		if (!isset($result)) {
 			Yii::log("ERROR - decoding json", 'error', 'system.model.api.airpush');
-			return 1;
+			$return .= 'API ERROR';
+			return $return;
 		}
+		if (!isset($result->advertiser_data)) {
+			Yii::log("ERROR - decoding json", 'error', 'system.model.api.airpush');
+			$return .= $result;
+			return $return;
+		}
+
+		$result = json_decode($result);
 		curl_close($curl);
 		
 		// Save campaigns information 
@@ -42,10 +77,27 @@ class Airpush
 				continue;
 			}
 
-			$dailyReport = new DailyReport();
+			$campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
+
+			// if exists overwrite, else create a new
+			$dailyReport = DailyReport::model()->find(
+				"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+				array(
+					":providers"=>$this->provider_id, 
+					":date"=>$date, 
+					":cid"=>$campaigns_id,
+					)
+				);
+			if(!$dailyReport){
+				$dailyReport = new DailyReport();
+				$return.= "<hr/>New record: ";
+			}else{
+				$return.= "<hr/>Update record: ".$dailyReport->id;
+			}
+
 			
 			// get campaign ID used in Server, from the campaign name use in the external provider
-			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
+			$dailyReport->campaigns_id = $campaigns_id;
 
 			if ( !$dailyReport->campaigns_id ) {
 				Yii::log("Invalid external campaign name: '" . $campaign->campaignname, 'warning', 'system.model.api.airpush');
@@ -63,11 +115,13 @@ class Airpush
 			$dailyReport->setNewFields();
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaignname . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.airpush');
+				$return.= ' => ok';
 				continue;
 			}
 		}
+		
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.airpush');
-		return 0;
+		return $return;
 	}
 
 }
