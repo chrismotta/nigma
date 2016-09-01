@@ -115,9 +115,18 @@ class DailyReportController extends Controller
 
 		if ( isset($_POST['saveSubmit']) ) {
 			$tmp = Providers::model()->findByPk($_POST['DailyReport']['providers_id']);
+
 			if ( $tmp->isNetwork() && $tmp->networks->use_vectors ) { // Is entry vectors
+
 				$attr = $_POST['DailyReport'];
-				$vector_id = $attr['campaigns_id'];
+				$vector_id = substr($attr['campaigns_id'], 1);
+				$vectorModel = Vectors::model()->findByPk($vector_id);
+
+				$return = $vectorModel->explodeVector($attr);
+				echo json_encode($return);
+
+				/*
+				// DEPRECATED
 				$campaigns = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid' => $vector_id));
 
 				if (empty($campaigns)) { // if vectors hasn't associated campaigns then exit
@@ -146,6 +155,8 @@ class DailyReportController extends Controller
 					}
 				}
 				echo json_encode($r);
+				 */
+				
 			} else { // Is entry campaigns
 				$model=new DailyReport;
 				$model->attributes = $_POST['DailyReport'];

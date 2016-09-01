@@ -172,8 +172,7 @@ $('.search-form form').submit(function(){
 							params,
 							function(data) {
 								console.log(data);
-								var c_id = data.c_id.substring(1);
-								// console.log(c_id);
+								var c_id = data.c_id;
 
 								if (data.result == "OK") {
 									var r = $( "#" + c_id );
@@ -185,6 +184,7 @@ $('.search-form form').submit(function(){
 									l.text("Update");
 								}
 								if (data.result == "ERROR") {
+									alert(data.msg);
 									var r = $( "#" + c_id );
 									r.addClass( "control-group error" );
 									r.find("#labelSubmit").removeClass( "label-success" );

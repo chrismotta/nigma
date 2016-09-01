@@ -162,6 +162,153 @@ class Vectors extends CActiveRecord
 		return "v" . $model->id . "-" . $model->name . "-VEC";
 	}
 
+
+	//
+
+	public function explodeVector($data){
+		
+		$cost = $data['spend'];
+		$date = $data['date'];
+
+		$vhc = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', 
+			array(':vid'=>$this->id));
+		
+		$totalClicks = 0;
+		$totalConv = 0;
+
+		foreach ($vhc as $cmp) {
+
+			$cid = $cmp->campaigns_id;
+
+			$criteria = new CDbCriteria;
+			$criteria->with = array('clicksLog', 'clicksLog.convLogs', 'clicksLog.campaigns.opportunities');
+			$criteria->compare('t.vectors_id', $this->id);
+			$criteria->compare('clicksLog.campaigns_id', $cid);
+			$criteria->compare('opportunities.wifi', 'Specific Carrier');
+			$criteria->addCondition('DATE(clicksLog.date) = "' . $date . '"');
+			$criteria->select = array(
+				'COUNT(t.id) AS clicks',
+				'COUNT(convLogs.id) AS conv',
+				);
+
+			$model = VectorsLog::model()->find($criteria);
+			
+			if($model){
+
+				$campaignsList[$cid]['clicks'] = $model->clicks;
+				$totalClicks += $campaignsList[$cid]['clicks'];
+				$campaignsList[$cid]['conv'] = $model->conv;
+				$totalConv += $campaignsList[$cid]['conv'];
+
+			}
+
+		}
+
+		if(isset($campaignsList)){
+
+			/* deprecated 
+			// cost related to conversions
+			foreach ($campaignsList as $id => $cmp) {
+				if($totalConv * $cmp['conv'] > 0)
+					$campaignsList[$id]['cost'] = $vector['cost'] / $totalConv * $cmp['conv'];
+				else
+					$campaignsList[$id]['cost'] = 0;
+			}
+			*/
+
+			// cost related to clicks
+			foreach ($campaignsList as $id => $cmp) {
+				$campaignsList[$id]['id'] = $id;
+				if($totalClicks * $cmp['clicks'] > 0)
+					$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
+				else
+					$campaignsList[$id]['cost'] = 0;
+			}
+			
+			// echo json_encode($campaignsList);
+			// echo '<br>';
+			// echo 'TOTAL: '.$totalConv.' conv - '.$vector['cost'].' us micropound';
+			// echo '<hr>';
+			// return $campaignsList;
+
+			// inserting values //
+			foreach ($campaignsList as $cid => $camp) {
+				$daily = $this->createDaily($camp, $date);
+				$return['list'][] = $daily;
+
+				if(isset($daily['cid']))
+					$return['result'] = 'OK';
+				
+			}
+
+			$return['c_id'] = $this->id;
+		
+		}else{
+		
+			$return['result'] = 'ERROR';
+			$return['msg'] = 'No campaigns found';
+
+		}
+
+		return $return;
+
+	}
+
+	private function createDaily($camp, $date)
+	{
+		// echo 'Creating daily - date: '.$date.' cid: '.$camp.'<br>';
+		$campModel = Campaigns::model()->findByPk($camp['id']);
+		
+		// if exists overwrite, else create a new
+		$dailyReport = DailyReport::model()->find(
+			"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+			array(
+				":providers"=>$campModel->providers_id, 
+				":cid"=>$camp['id'],
+				":date"=>$date, 
+				)
+			);
+
+		if(!$dailyReport){
+			$dailyReport = new DailyReport();
+			$dailyReport->date = $date;
+			$dailyReport->campaigns_id = $camp['id'];
+			$dailyReport->providers_id = $campModel->providers_id;
+			$return['msg'] = "New record: ";
+		}else{
+			$return['msg'] =  "Update record: ".$dailyReport->id;
+		}
+				
+		if ( !$dailyReport->campaigns_id ) {
+			Yii::log("Invalid external campaign name: '" . $campaign['campaign'], 'warning', 'system.model.api.adWords');
+			return NULL;
+		}
+
+		$dailyReport->date = date( 'Y-m-d', strtotime($date) );
+		$dailyReport->imp = 0;
+		$dailyReport->clics = $camp['clicks'];
+		$dailyReport->conv_api = $camp['conv'];
+		
+		// cost is return in micropound, why? google, why? 
+		$dailyReport->spend = number_format($camp['cost'], 2, '.', '');
+
+		$dailyReport->updateRevenue();
+		$dailyReport->setNewFields();
+		
+		if ( !$dailyReport->save() ) {
+			Yii::log("Can't save campaign: '" . $camp['id'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');
+			$return['msg'] .= ' => '.json_encode($dailyReport->getErrors());
+		} else {
+			$return['msg'] .= ' => saved';
+			$return['cid'] = $dailyReport->campaigns_id;
+		}
+		
+		return $return;
+	}
+
+	//
+
+
 	/**
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
