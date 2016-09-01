@@ -77,7 +77,6 @@ class ApiUpdateController extends Controller
 
 	public function actionIndex()
 	{
-		// $this->actionAirpush();
 		// $this->actionEroAdvertising();
 		$this->actionAjillion();
 		$this->actionStartApp();
@@ -122,6 +121,8 @@ class ApiUpdateController extends Controller
 		
 		$this->actionAdWordsConversions();
 		$this->actionImpLog();
+		
+		$this->actionAirpush();
 	}
 
 	public function actionBingCode(){
