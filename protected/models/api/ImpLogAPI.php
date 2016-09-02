@@ -9,38 +9,43 @@ class ImpLogAPI
 		date_default_timezone_set('UTC');
 		$return = '';
 		// $fixedRate = isset($_GET['rate']) ? $_GET['rate'] : null;
-		// $fixedCid  = isset($_GET['cid']) ? $_GET['cid'] : null;
+		$fixedCid  = isset($_GET['cid']) ? $_GET['cid'] : null;
+		
 
 		if ( isset( $_GET['date']) ) {
 		
 			$date = $_GET['date'];
 			$return.= '<hr/>'.$date.'<hr/>';
-			$return.= $this->downloadDateInfo($date);
+			$return.= $this->downloadDateInfo($date, $fixedCid);
 		
 		} else {
 
 			if(date('G')<=$offset){
 				$return.= '<hr/>yesterday<hr/>';
 				$date = date('Y-m-d', strtotime('yesterday'));
-				$return.= $this->downloadDateInfo($date);
+				$return.= $this->downloadDateInfo($date, $fixedCid);
 			}
 			//default
 			$return.= '<hr/>today<hr/>';
 			$date = date('Y-m-d', strtotime('today'));
-			$return.= $this->downloadDateInfo($date);
+			$return.= $this->downloadDateInfo($date, $fixedCid);
 		
 		}
 
 		return $return;
 	}
 
-	public function downloadDateInfo($date)
+	public function downloadDateInfo($date, $cid=null)
 	{
 		$return = '';
 
 		$criteria = new CDbCriteria;
 		$criteria->with = array('tags','placements.sites','dBid');
+		
 		$criteria->compare('DATE(t.date_time)',$date);
+		if(isset($cid))
+			$criteria->compare('tags.campaigns_id',$cid);
+
 		$criteria->group = 'tags.campaigns_id, sites.providers_id';
 		$criteria->select = array(
 			'tags.campaigns_id AS campaign', 
