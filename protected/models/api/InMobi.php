@@ -3,15 +3,48 @@
 class InMobi
 { 
 
-	private $provider_id = 12;
+	private $provider_id = 295;
+	private $apiLog;
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
+
+		date_default_timezone_set('UTC');
+		$return = '';
+
 		if ( isset( $_GET['date']) ) {
+			
+			// specific date
+			
 			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
+
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+				$return.= $this->downloadDateInfo($date);
+			}
+
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		}
+		
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date)
+	{
+
+		$return = "";
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
@@ -20,10 +53,10 @@ class InMobi
 		}
 
 		// Get json from InMobi API.
-		$network = Networks::model()->findbyPk($this->provider_id);
-		$apikey  = $network->token3;
+		$network = Providers::model()->findbyPk($this->provider_id);
 		$user    = $network->token1;
 		$pass    = $network->token2;
+		$apikey  = $network->token3;
 		$apiurl  = $network->url;
 
 		// Create Session
@@ -64,21 +97,22 @@ class InMobi
 			return 1;
 		}
 		curl_close($ch);
+
 		if($newresponse->error=='true')
 		{
 			if($newresponse->errorList[0]->code==5001){
 				Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
-				return 0;
+				return 'ERROR 5001';
 			}
 			else {
 				Yii::log($newresponse->errorList[0]->message,'error', 'system.model.api.inmobi');
-				return 0;
+				return 'ERROR';
 			}
 		}
 
 		if ( !isset($newresponse->respList) ) { // validation add after initial implementation
 			Yii::log("Empty daily report ",'info', 'system.model.api.inmobi');
-			return 0;
+			return 'ERROR: Empty daily report';
 		}
 
 		// Save campaigns information 
@@ -88,13 +122,31 @@ class InMobi
 				continue;
 			}
 
-			$dailyReport = new DailyReport();
-			
 			// get campaign ID used in Server, from the campaign name use in the external provider
-			$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign->campaignName);
+			$campaigns_id = Utilities::parseCampaignID($campaign->campaignName);
+			
+			// if exists overwrite, else create a new
+			$dailyReport = DailyReport::model()->find(
+				"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+				array(
+					":providers"=>$this->provider_id, 
+					":date"=>$date, 
+					":cid"=>$campaigns_id,
+					)
+				);
+			if(!$dailyReport){
+				$dailyReport = new DailyReport();
+				$return.= "<hr/>New record: ";
+			}else{
+				$return.= "<hr/>Update record: ".$dailyReport->id;
+			}
+			
+			$dailyReport->campaigns_id = $campaigns_id;
+			
 
 			if ( !$dailyReport->campaigns_id ) {
 				Yii::log("InMobi: invalid external campaign name: '" . $campaign->campaignName, 'warning', 'system.model.api.inmobi');
+				$return.= "InMobi: invalid external campaign name";
 				continue;
 			}
 
@@ -107,14 +159,19 @@ class InMobi
 			$dailyReport->spend       = $campaign->adSpend;
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
+
 			if ( !$dailyReport->save() ) {
 				print json_encode($dailyReport->getErrors()) . "<br>";
 				Yii::log("InMobi: ERROR - saving campaign: " . $campaign->campaignName, 'error', 'system.model.api.inmobi');
+				$return.= "InMobi: ERROR - saving campaign: ";
+				
 				continue;
 			}
+
+			$return.= " => saved ok";
 		}
 		Yii::log("InMobi: SUCCESS - Daily info downloaded. " . date('d-m-Y', strtotime($date)), 'info', 'system.model.api.inmobi');
-		return 0;
+		return $return;
 	}
 
 }

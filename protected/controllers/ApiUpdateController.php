@@ -106,7 +106,6 @@ class ApiUpdateController extends Controller
 		1 row in set (0.19 sec)
 		*/
 
-		// $this->actionInMobi();
 		// $this->actionBingAds();
 		// $this->actionSmaato();
 		// $this->actionAdultmoda();
@@ -123,6 +122,7 @@ class ApiUpdateController extends Controller
 		$this->actionImpLog();
 		
 		$this->actionAirpush();
+		$this->actionInMobi();
 	}
 
 	public function actionBingCode(){
@@ -276,11 +276,13 @@ class ApiUpdateController extends Controller
 		}
 	}
 
-	public function actionInMobi()
+	public function actionInMobi($hash=null)
 	{
 		try {
 			$inMobi = new InMobi;
-			$inMobi->downloadInfo();
+			$return = $inMobi->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
 		} catch (Exception $e) {
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
