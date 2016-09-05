@@ -184,7 +184,8 @@ class Vectors extends CActiveRecord
 			$criteria->with = array('clicksLog', 'clicksLog.convLogs', 'clicksLog.campaigns.opportunities');
 			$criteria->compare('t.vectors_id', $this->id);
 			$criteria->compare('clicksLog.campaigns_id', $cid);
-			$criteria->compare('opportunities.wifi', 'Specific Carrier');
+			$criteria->addCondition('clicksLog.carrier != "-"');
+			// $criteria->compare('opportunities.wifi', 'Specific Carrier');
 			$criteria->addCondition('DATE(clicksLog.date) = "' . $date . '"');
 			$criteria->select = array(
 				'COUNT(t.id) AS clicks',
