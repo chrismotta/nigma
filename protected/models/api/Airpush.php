@@ -61,14 +61,18 @@ class Airpush
 			$return .= 'API ERROR';
 			return $return;
 		}
+
+		$result = json_decode($result);
+
 		if (!isset($result->advertiser_data)) {
 			Yii::log("ERROR - decoding json", 'error', 'system.model.api.airpush');
-			$return .= $result;
+			$return .= 'API ERROR: ';
+			$return .= json_encode($result);
 			return $return;
 		}
 
-		$result = json_decode($result);
 		curl_close($curl);
+
 		
 		// Save campaigns information 
 		foreach ($result->advertiser_data as $campaign) {
@@ -76,6 +80,19 @@ class Airpush
 			if ( $campaign->impression == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
 				continue;
 			}
+		
+			// if is vector
+			if(substr($campaign->campaignname, 0, 1)=='v'){
+
+				$vid = Utilities::parseVectorID($campaign->campaignname);
+				$vectorModel = Vectors::model()->findByPk($vid);
+
+				$ret = $vectorModel->explodeVector(array('spend'=>$campaign->Spent,'date'=>$date));
+				$return .= json_encode($ret);
+				continue;
+
+			}
+
 
 			$campaigns_id = Utilities::parseCampaignID($campaign->campaignname);
 

@@ -46,11 +46,13 @@ class InMobi
 
 		$return = "";
 
+		/*
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.inmobi');
 			return 2;
 		}
+		*/
 
 		// Get json from InMobi API.
 		$network = Providers::model()->findbyPk($this->provider_id);
@@ -120,6 +122,18 @@ class InMobi
 
 			if ( $campaign->impressions == 0 && $campaign->clicks == 0) { // if no impressions dismiss campaign
 				continue;
+			}
+
+			// if is vector
+			if(substr($campaign->campaignName, 0, 1)=='v'){
+
+				$vid = Utilities::parseVectorID($campaign->campaignName);
+				$vectorModel = Vectors::model()->findByPk($vid);
+
+				$ret = $vectorModel->explodeVector(array('spend'=>$campaign->adSpend,'date'=>$date));
+				$return .= json_encode($ret);
+				continue;
+
 			}
 
 			// get campaign ID used in Server, from the campaign name use in the external provider
