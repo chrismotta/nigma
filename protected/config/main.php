@@ -17,15 +17,17 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		case '127.0.0.1':
 		case 'localhost':
 					$mysqlConnect = array(
-						'connectionString'   => \dbConfig::CONNECTION_STRING,
-						'emulatePrepare'     => \dbConfig::EMULATE_PREPARE,
-						'username'           => \dbConfig::USERNAME,
-						'password'           => \dbConfig::PASSWORD,
-						'charset'            => \dbConfig::CHARSET,
+						'connectionString'   => 'mysql:host=localhost;dbname=nigma',
+						'emulatePrepare'     => true,
+						'username'           => 'root',
+						'password'           => 'mil998',
+						'charset'            => 'utf8',
 						// Uncomment to show db log
-						// 'enableParamLogging' =>\dbConfig::PARAM_LOGGIN,
-						// 'enableProfiling'    =>\dbConfig::PROFILING,
-						'initSQLs'           => unserialize ( \dbConfig::INIT_SQL )
+						// 'enableParamLogging' =>true,
+						// 'enableProfiling'    =>true,
+						'initSQLs'           => array(
+				           "SET SESSION time_zone = '".$dbTimeZone."'",
+						)
 					);
 					
 					$mailLog = array(
