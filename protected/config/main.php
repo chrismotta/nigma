@@ -15,20 +15,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// local
 		case '127.0.0.1':
 		case 'localhost':
-					$mysqlConnect = array(
-						'connectionString'   => 'mysql:host=localhost;dbname=nigma',
-						'emulatePrepare'     => true,
-						'username'           => 'root',
-						'password'           => 'mil998',
-						'charset'            => 'utf8',
-						// Uncomment to show db log
-						// 'enableParamLogging' =>true,
-						// 'enableProfiling'    =>true,
-						'initSQLs'           => array(
-				           "SET SESSION time_zone = '".$dbTimeZone."'",
-						),
-
-					);
+					$mysqlConnect = $db_params;
 					
 					$mailLog = array(
 						'class'   =>'CPhpMailerLogRoute',
