@@ -1,5 +1,4 @@
-<?php// yiibooster
-
+<?php
 
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
@@ -27,7 +26,8 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 						// 'enableProfiling'    =>true,
 						'initSQLs'           => array(
 				           "SET SESSION time_zone = '".$dbTimeZone."'",
-						)
+						),
+
 					);
 					
 					$mailLog = array(
