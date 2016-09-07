@@ -3,7 +3,7 @@
 
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
-require_once('db_params.php');
+
 // yiibooster
 Yii::setPathOfAlias('yiibooster', dirname(__FILE__).'/../extensions/yiibooster');
 $dbTimeZone = isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00';
@@ -16,7 +16,17 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// local
 		case '127.0.0.1':
 		case 'localhost':
-					$mysqlConnect = $db_params;
+					$mysqlConnect = array(
+						'connectionString'   => \dbConfig::CONNECTION_STRING,
+						'emulatePrepare'     => \dbConfig::EMULATE_PREPARE,
+						'username'           => \dbConfig::USERNAME,
+						'password'           => \dbConfig::PASSWORD,
+						'charset'            => \dbConfig::CHARSET,
+						// Uncomment to show db log
+						// 'enableParamLogging' =>\dbConfig::PARAM_LOGGIN,
+						// 'enableProfiling'    =>\dbConfig::PROFILING,
+						'initSQLs'           => unserialize ( \dbConfig::INIT_SQL )
+					);
 					
 					$mailLog = array(
 						'class'   =>'CPhpMailerLogRoute',
