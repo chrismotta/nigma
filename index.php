@@ -3,7 +3,7 @@
 
 ini_set('memory_limit', '-1');
 set_time_limit(0);
-require_once('./config/dbconfig.php');
+
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/../../yii/framework/yii.php';
 $config=dirname(__FILE__).'/protected/config/main.php';
