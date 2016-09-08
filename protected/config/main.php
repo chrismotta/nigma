@@ -5,7 +5,7 @@
  
 // yiibooster
 Yii::setPathOfAlias('yiibooster', dirname(__FILE__).'/../extensions/yiibooster');
-$dbTimeZone = isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00';
+$dbTimeZone = \localConfig::DB_TIMEZONE;
 
 // MySql Policy
 function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
@@ -15,7 +15,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// local
 		case '127.0.0.1':
 		case 'localhost':
-		/*
+					/*
 					$mysqlConnect = array(
 						'connectionString'   => 'mysql:host=localhost;dbname=nigma',
 						'emulatePrepare'     => true,
@@ -25,10 +25,13 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 						// Uncomment to show db log
 						// 'enableParamLogging' =>true,
 						// 'enableProfiling'    =>true,
-						'inisudotSQLs'           => array(
+						
+						'initSQLs'           => array(
 				           "SET SESSION time_zone = '".$dbTimeZone."'",
 						),
-		*/
+					
+					);
+					*/
 
 					$mysqlConnect = array(
 						'connectionString'   => \localConfig::DB_CONNECTION_STRING,
@@ -37,11 +40,11 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 						'password'           => \localConfig::DB_PASSWORD,
 						'charset'            => \localConfig::DB_CHARSET,
 						// Uncomment to show db log
-						// 'enableParamLogging' => \dbConfig::DB_PARAM_LOGGIN,
-						// 'enableProfiling'    => \dbConfig::DB_PROFILING,
-						'inisudotSQLs'           => unserialize( \localConfig::DB_INIT_SQL ),						
+						// 'enableParamLogging' => \localConfig::DB_PARAM_LOGGIN,
+						// 'enableProfiling'    => \localConfig::DB_PROFILING,
+						'initSQLs'           => \localConfig::DB_INIT_SQL,						
 					);
-					
+
 					$mailLog = array(
 						'class'   =>'CPhpMailerLogRoute',
 						'levels'  =>'',

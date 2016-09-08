@@ -2,6 +2,7 @@
 
 	define( 'TML_DB_TIMEZONE', isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00' );
 
+
 	class localConfig{
 
 		const DB_CONNECTION_STRING = 'mysql:host=localhost;dbname=nigma';
@@ -12,9 +13,7 @@
 		const DB_PARAM_LOGGIN = null;
 		const DB_PROFILING = null;
 		const DB_TIMEZONE = \TML_DB_TIMEZONE;
-		const DB_INIT_SQL = serialize ( array(
-           "SET SESSION time_zone = '". \TML_DB_TIMEZONE ."'",
-		) );
+		const DB_INIT_SQL = array("SET SESSION time_zone = '". \TML_DB_TIMEZONE ."'",);
 	}
 
 ?> 
