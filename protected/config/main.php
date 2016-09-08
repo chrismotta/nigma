@@ -2,7 +2,7 @@
 
 // uncomment the following to define a path alias
 // Yii::setPathOfAlias('local','path/to/local-folder');
-
+ 
 // yiibooster
 Yii::setPathOfAlias('yiibooster', dirname(__FILE__).'/../extensions/yiibooster');
 $dbTimeZone = isset($_COOKIE['dbTimeZone']) ? $_COOKIE['dbTimeZone'] : '+00:00';
