@@ -18,4 +18,3 @@ require_once(dirname(__FILE__).'/protected/config/localConfig.php');
 
 require_once($yii);
 Yii::createWebApplication($config)->run();
- 

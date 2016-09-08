@@ -39,7 +39,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 						// Uncomment to show db log
 						// 'enableParamLogging' => \dbConfig::DB_PARAM_LOGGIN,
 						// 'enableProfiling'    => \dbConfig::DB_PROFILING,
-						'inisudotSQLs'           => \localConfig::DB_INIT_SQL,						
+						'inisudotSQLs'           => unserialize( \localConfig::DB_INIT_SQL ),						
 					);
 					
 					$mailLog = array(
