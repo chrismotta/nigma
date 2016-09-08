@@ -15,19 +15,31 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// local
 		case '127.0.0.1':
 		case 'localhost':
+		/*
 					$mysqlConnect = array(
 						'connectionString'   => 'mysql:host=localhost;dbname=nigma',
 						'emulatePrepare'     => true,
 						'username'           => 'root',
-						'password'           => 'mil998',
+						'password'           => 'hadita',
 						'charset'            => 'utf8',
 						// Uncomment to show db log
 						// 'enableParamLogging' =>true,
 						// 'enableProfiling'    =>true,
-						'initSQLs'           => array(
+						'inisudotSQLs'           => array(
 				           "SET SESSION time_zone = '".$dbTimeZone."'",
 						),
+		*/
 
+					$mysqlConnect = array(
+						'connectionString'   => \localConfig::DB_CONNECTION_STRING,
+						'emulatePrepare'     => \localConfig::DB_EMULATE_PREPARE,
+						'username'           => \localConfig::DB_USERNAME,
+						'password'           => \localConfig::DB_PASSWORD,
+						'charset'            => \localConfig::DB_CHARSET,
+						// Uncomment to show db log
+						// 'enableParamLogging' => \dbConfig::DB_PARAM_LOGGIN,
+						// 'enableProfiling'    => \dbConfig::DB_PROFILING,
+						'inisudotSQLs'           => \localConfig::DB_INIT_SQL,						
 					);
 					
 					$mailLog = array(
@@ -283,7 +295,22 @@ return array(
 		
 		// uncomment the following to use a MySQL database
 		'db'=> mysqlPolicy($_SERVER['HTTP_HOST'], $dbTimeZone),
-		
+		/*
+		'db' =>  array(
+			'connectionString'   => 'mysql:host=localhost;dbname=nigma',
+			'emulatePrepare'     => true,
+			'username'           => 'root',
+			'password'           => 'hadita',
+			'charset'            => 'utf8',
+			// Uncomment to show db log
+			// 'enableParamLogging' =>true,
+			// 'enableProfiling'    =>true,
+			'initSQLs'           => array(
+	           "SET SESSION time_zone = '".$dbTimeZone."'",
+			),
+
+		),		
+		*/
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',

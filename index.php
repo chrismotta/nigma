@@ -14,5 +14,7 @@ if ( $_SERVER['HTTP_HOST'] == 'localhost' )
 // specify how many levels of call stack should be shown in each log message
 // defined('YII_TRACE_LEVEL') or define('YII_TRACE_LEVEL',3);
 
+require_once(dirname(__FILE__).'/protected/config/localConfig.php');
+
 require_once($yii);
 Yii::createWebApplication($config)->run();
