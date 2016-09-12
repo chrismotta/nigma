@@ -10,6 +10,8 @@ $dbTimeZone = \localConfig::DB_TIMEZONE;
 // MySql Policy
 function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 
+	$localConfig = new localConfig();
+
 	switch ( $httpHost ) {
 		
 		// local
@@ -42,7 +44,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 						// Uncomment to show db log
 						// 'enableParamLogging' => \localConfig::DB_PARAM_LOGGIN,
 						// 'enableProfiling'    => \localConfig::DB_PROFILING,
-						'initSQLs'           => \localConfig::DB_INIT_SQL,						
+						'initSQLs'           => $localConfig->getDbInitSql(),
 					);
 
 					$mailLog = array(
@@ -122,7 +124,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// amazon test
 		case 'dev.tmlbox.co':
 					$mysqlConnect = array(
-						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma_dev',
+						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
 						'emulatePrepare'   => true,
 						'username'         => 'www-data',
 						'password'         => 'th3m3d14l4b',

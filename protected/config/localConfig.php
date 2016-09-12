@@ -14,6 +14,18 @@
 		const DB_PROFILING = null;
 		const DB_TIMEZONE = \TML_DB_TIMEZONE;
 		const DB_INIT_SQL = array("SET SESSION time_zone = '". \TML_DB_TIMEZONE ."'",);
+
+		private $_dbInitSql;
+
+		public function __construct()
+		{
+			$this->_dbInitSql = array("SET SESSION time_zone = '". \TML_DB_TIMEZONE ."'",);
+		}
+
+		public function getDbInitSql ( )
+		{
+			return $this->_dbInitSql;
+		}
 	}
 
 ?> 
