@@ -92,6 +92,11 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => 'width: 120px'),
         ),
         array(
+			'name'  => 'rate',
+			'value' => '$data->rate',
+			'headerHtmlOptions' => array('style' => 'width: 120px'),
+        ),        
+        array(
 			'name'  => 'campaigns_associated',
 			'value' => 'join(CHtml::listData(VectorsHasCampaigns::model()->findAll(array("condition"=>"vectors_id=".$data->id)), "campaigns_id", "campaigns_id")," - ")',
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
