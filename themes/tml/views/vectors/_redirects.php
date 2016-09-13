@@ -13,12 +13,22 @@
 
 <div class="modal-body">
     <?php
+    $provider = Providers::model()->findByPk($model->providers_id);
+
+
     echo '
     <p><strong>External Name: </strong>' . $vectorName . ' </p>
     <hr/>
     ';
     echo '
-    <p><strong>Redirect: </strong>http://tmlbox.co/clicklog/v/'.$model->id.'/</p>
+    <p><strong>Redirect: </strong>http://tmlbox.co/clicklog/v/'.$model->id.'/';
+    if( $provider->has_s2s && $provider->has_token ) {
+        $redirect_new['ntoken'] = $provider->placeholder;
+        $redirect_new_query = urldecode( http_build_query($redirect_new) );
+        echo '?' . $redirect_new_query;
+    }
+
+    echo '</p>
     ';
     //<button type="button" class="btn btn-default btn-sm">copy</button> 
     ?>
