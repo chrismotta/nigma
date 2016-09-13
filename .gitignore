@@ -6,3 +6,4 @@
 /pdf/
 /protected/config/localConfig.php
 *.sublime*
+/localConfig.php
