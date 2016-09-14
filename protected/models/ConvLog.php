@@ -27,6 +27,8 @@ class ConvLog extends CActiveRecord
 	public $conversion_name;
 	public $conversion_value;
 	public $conversion_time;
+	public $model_adv;
+
 
 	public function macros()
 	{
@@ -90,8 +92,8 @@ class ConvLog extends CActiveRecord
 			'mcc_external_id' => 'Client Customer Id',
 			'google_click_id' => 'Google Click Id',
 			'conversion_time' => 'Conversion Time',
-			'reported' => 'Reported',
-			);
+			'reported' => 'Reported'
+		);
 	}
 
 
@@ -137,6 +139,7 @@ class ConvLog extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
 
 	/**
 	 * Returns the static model of the specified AR class.

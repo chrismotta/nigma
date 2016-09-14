@@ -45,6 +45,7 @@ $('.search-form form').submit(function(){
 		// businnes unit
 		'Country'       =>0, 
 		'Campaign'      =>0,
+		'Vector'      =>0,
 		);
 	if(isset($_GET['g'])) 
 		$group = array_merge($group, $_GET['g']); 
@@ -327,6 +328,11 @@ $('.search-form form').submit(function(){
 			'htmlOptions' => array('style'=>'word-wrap:break-word;'),
             'visible' => $group['Campaign'],
 		),
+		array(
+			'name'   =>	'vector',
+			//'value'	=> '$data->dailyReportVectors->vectors_id',
+            'visible' => $group['Vector'],
+		),		
 		array(	
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
