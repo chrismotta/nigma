@@ -108,21 +108,76 @@ class PartnersController extends Controller
 
 		$model = new DailyReport;
 		$advertiser = Advertisers::model()->findByUser($userId);
-		$advertiser_id = $advertiser->id;
-		
+
 		$dateStart = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : NULL;
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
 		$sum = isset($_POST['sum']) ? $_POST['sum'] : 0;
-		
-		$dataProvider = $model->advertiserSearch($advertiser_id, $dateStart, $dateEnd, $sum, false);
+
+		$dp = $model->advertiserSearch($advertiser->id, $dateStart, $dateEnd, $sum, false);
 		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
 		if( isset($_POST['excel-report-form']) ) {
-			$this->renderPartial('excelReportAdvertisers', array(
-				'model' => $model,
-				'dataProvider' => $dataProvider,
-				'user_visibility'    => $user_visibility,
-			));
+
+			$csvData = array();
+		
+
+			foreach ( $dp->getData() as $data ) {
+
+				$rowData = array();
+				
+				$rowData['Date'] = date("d-m-Y", strtotime($data->date));
+				$rowData['Name'] = $data->campaigns->opportunities->product;
+				$rowData['Adv_id'] = $advertiser->id;
+
+				if ( $user_visibility->country )
+				{
+					$rowData['Country'] = $data->campaigns->opportunities->regions->country->name;
+				}
+
+				if ( $user_visibility->carrier )
+				{
+					$rowData['Carrier'] = $data->campaigns->opportunities->carriers_id ? $data->campaigns->opportunities->carriers->mobile_brand : "All Carriers";
+				}
+						
+				if ( $user_visibility->rate )
+				{
+					$rowData['Rate'] = "$ ".number_format($data->campaigns->opportunities->rate,2);
+				}
+			
+				if ( $user_visibility->imp )
+				{
+					$rowData['Impressions'] = $data->imp;
+				}
+							
+				if ( $user_visibility->clicks )
+				{
+					$rowData['Clicks'] = $data->clics;
+				}						
+
+				if ( $user_visibility->conv )
+				{
+					$rowData['Conversions'] = $data->conv_api;
+				}	
+
+				if ( $user_visibility->spend )
+				{
+					$rowData['Spend'] = $data->revenue;
+				}					
+
+				$csvData[] = $rowData;
+			}
+				
+			$csv = new ECSVExport( $csvData );
+			$csv->setEnclosure(chr(0));//replace enclosure with caracter
+			$csv->setHeader( 'content-type', 'application/csv;charset=UTF-8' );
+			$content = $csv->toCSV();  		
+
+			if(isset($_REQUEST['v']))
+				echo str_replace("\n", '<br/>', $content);
+			else
+				$filename = 'TheMediaLab-Advertiser_'.date("Y-m-d", strtotime($dateStart)).'.csv';
+				Yii::app()->getRequest()->sendFile($filename, $content, "text/csv", false);
+
 		}
 
 		$dateStart = isset($_GET['dateStart']) ? $_GET['dateStart'] : NULL;
