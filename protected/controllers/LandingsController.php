@@ -28,7 +28,7 @@ class LandingsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 					'actions'=>array('index','view','create','update','duplicate','admin', 'response','delete', 'archived','redirect'),
-					'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
+					'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin', 'media_buyer_admin'),
 				),
 			array('deny',  // deny all users
 				'users'=>array('*'),
