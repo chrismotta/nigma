@@ -107,7 +107,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// amazon test
 		case 'dev.tmlbox.co':
 					$mysqlConnect = array(
-						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma',
+						'connectionString' => 'mysql:host=tml.cch7ui9gbr3f.us-east-1.rds.amazonaws.com;dbname=nigma_dev',
 						'emulatePrepare'   => true,
 						'username'         => 'www-data',
 						'password'         => 'th3m3d14l4b',
