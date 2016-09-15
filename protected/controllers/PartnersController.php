@@ -127,7 +127,7 @@ class PartnersController extends Controller
 				
 				$rowData['Date'] = date("d-m-Y", strtotime($data->date));
 				$rowData['Name'] = $data->campaigns->opportunities->product;
-				$rowData['Adv_id'] = $advertiser->id;
+
 
 				if ( $user_visibility->country )
 				{
