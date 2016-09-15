@@ -320,7 +320,7 @@ class DailyReport extends CActiveRecord
 				'campaigns.opportunities', 
 				'campaigns.opportunities.regions',
 				'campaigns.opportunities.regions.financeEntities',
-				'campaigns.opportunities.regions.financeEntities.advertisers' ,
+				'campaigns.opportunities.regions.financeEntities.advertisers',
 				'campaigns.opportunities.accountManager',
 				'campaigns.opportunities.regions.country' 
 			);
@@ -337,8 +337,11 @@ class DailyReport extends CActiveRecord
 			$criteria->addCondition('affiliates.providers_id IS NOT NULL');
 		else
 			FilterManager::model()->addUserFilter($criteria, 'daily');
+		
+		$pagination = isset($_REQUEST['v']) ? null : false;
 
 		return new CActiveDataProvider($this, array(
+			'pagination'=>$pagination,
 			'criteria'=>$criteria,
 		));
 	}
