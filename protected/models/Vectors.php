@@ -35,7 +35,7 @@ class Vectors extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('providers_id, name', 'required'),
+			array('providers_id, name, rate', 'required'),
 			array('providers_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
@@ -43,12 +43,12 @@ class Vectors extends CActiveRecord
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, providers_id, name, status, rate, campaigns_associated', 'safe', 'on'=>'search'),
-		);	
+		);
 	}
 
     public function validateRate($attribute, $params)
     {
-        if ( !is_numeric($this->$attribute) || !$this->$attribute>0) {
+        if ( !is_numeric($this->$attribute) || !$this->$attribute>0 ) {
             $this->addError($attribute, 'Must be a numeric value greater than zero.');
         }
     }
