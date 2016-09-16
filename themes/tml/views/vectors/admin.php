@@ -160,6 +160,17 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'duplicateIframe' => array(
+					'label' => 'Duplicate',
+					'icon'  => 'plus-sign',
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "regions-grid", 
+						"data-modal-id"     => "modalVectors", 
+						"data-modal-title"  => "Duplicate Vector", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+					),
+				),				
 				'redirects' => array(
 					'label' =>'Redirects',
 					'icon'  =>'repeat',
@@ -188,7 +199,7 @@ $('.search-form form').submit(function(){
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{addCampaignIframe} {updateAjax} {redirects} {delete}',
+			'template' => '{addCampaignIframe} {updateAjax} {duplicateIframe} {redirects} {delete}',
 		),
 	),
 

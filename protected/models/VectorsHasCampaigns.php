@@ -33,7 +33,7 @@ class VectorsHasCampaigns extends CActiveRecord
 			array('vectors_id, campaigns_id, freq', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('vectors_id, campaigns_id, freq', 'safe', 'on'=>'search'),
+			array('id, vectors_id, campaigns_id, freq', 'safe', 'on'=>'search'),
 		);
 	}
 
