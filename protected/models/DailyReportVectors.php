@@ -11,7 +11,7 @@
  * The followings are the available model relations:
  * @property DailyReport $dailyReport
  * @property Vectors $vectors
- */
+ */ 
 class DailyReportVectors extends CActiveRecord
 {
 	/**

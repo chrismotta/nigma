@@ -45,7 +45,7 @@ class Vectors extends CActiveRecord
 			array('id, providers_id, name, status, rate, campaigns_associated', 'safe', 'on'=>'search'),
 		);
 	}
-
+ 
     public function validateRate($attribute, $params)
     {
         if ( $this->$attribute && ( !is_numeric($this->$attribute) || !$this->$attribute>0 ) ) {

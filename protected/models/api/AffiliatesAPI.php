@@ -3,7 +3,7 @@
 class AffiliatesAPI
 { 
 	private $apiLog;
-
+ 
 	public function downloadInfo($offset)
 	{
 		date_default_timezone_set('UTC');
