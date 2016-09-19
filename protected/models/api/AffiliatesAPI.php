@@ -138,7 +138,7 @@ class AffiliatesAPI
 					$revenueRate = null;
 				}
 
-				$dailyReport->updateRevenue(); // Revisar si es necesario implementar el fixed rate aca tambien
+				$dailyReport->updateRevenue($revenueRate); // Revisar si es necesario implementar el fixed rate aca tambien
 				$dailyReport->setNewFields();
 				$return.= ' -Yes Revenue- ';
 			}else{
