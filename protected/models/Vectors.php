@@ -53,7 +53,7 @@ class Vectors extends CActiveRecord
         }
         else if ( !$this->$attribute ) 
         {
-        	$this->$attribute = null;	
+        	$this->$attribute = null;
         }
     }
 
