@@ -27,7 +27,7 @@ class VectorsController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('index','view','redirectAjax','admin','create','update','delete','createRelation','updateRelation','deleteRelation','archived', 'updateEditable'),
+				'actions'=>array('index','view','redirectAjax','admin','create','update', 'duplicate', 'response', 'delete','createRelation','updateRelation','deleteRelation','archived', 'updateEditable'),
 				'roles'=>array('admin', 'media_manager', 'business', 'affiliates_manager', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
@@ -89,6 +89,53 @@ class VectorsController extends Controller
 
 		$this->renderFormAjax($model);
 	}
+
+	public function actionResponse($id){
+		
+		$action = isset($_GET['action']) ? $_GET['action'] : 'created';
+		$this->layout='//layouts/modalIframe';
+		$this->render('//layouts/mainResponse',array(
+			'entity' => 'Vector',
+			'action' => $action,
+			'id'    => $id,
+		));
+	}	
+
+	public function actionDuplicate($id) 
+	{
+		$old = $this->loadModel($id);
+
+		$new = clone $old;
+		unset($new->id);
+		$new->unsetAttributes(array('id'));
+		$new->isNewRecord = true;
+		
+		// Uncomment the following line if AJAX validation is needed
+		$this->performAjaxValidation($new);
+		if(isset($_POST['Vectors']))
+		{
+			$model=new Vectors;
+			$model->attributes = $_POST['Vectors'];
+
+			$vhcs = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', 
+			array(':vid'=>$id));
+
+			if($model->save()){
+				foreach ( $vhcs as $vhc )
+				{
+					$newVHS = new VectorsHasCampaigns;
+					$newVHS->vectors_id = $model->id;
+					$newVHS->campaigns_id = $vhc->campaigns_id;
+
+					$newVHS->save();
+				}
+
+				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'duplicate'));
+			}
+		}
+		
+		$this->renderFormAjax($new, 'duplicate');
+	}	
 
 	/**
 	 * Deletes a particular model.

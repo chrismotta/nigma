@@ -49,6 +49,8 @@ class DailyReport extends CActiveRecord
 	public $percent_off;
 	public $off;
 	public $total;
+	public $vector;
+	public $daily_report_vector;
 
 	public $io_id;
 	public $opp_id;
@@ -84,7 +86,7 @@ class DailyReport extends CActiveRecord
 			array('advertiser_cat','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, rate, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, rate, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country, vector', 'safe', 'on'=>'search'),
 			// array('imp, clics, conv_api, revenue, rate', 'safe', 'on'=>'searchAdvertisers'),
 		);
 	}
@@ -101,6 +103,8 @@ class DailyReport extends CActiveRecord
 			'campaigns'    => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
 			'multiRates'   => array(self::HAS_MANY, 'MultiRate', 'daily_report_id'),
 			'dailyVectors' => array(self::HAS_MANY, 'DailyVectors', 'daily_report_id'),
+			'dailyReportVectors' => array(self::HAS_ONE, 'DailyReportVectors', 'daily_report_id'),
+			'vectors' => array(self::HAS_ONE, 'Vectors', 'dailyReportVectors.vectors_id'),
 		);
 	}
 
@@ -144,6 +148,7 @@ class DailyReport extends CActiveRecord
 			'product'            => 'Name',
 			'country'            => 'Country',
 			'carrier'            => 'Carrier',
+			'vector'			=> 'Vector',
 		);
 	}
 
@@ -315,7 +320,7 @@ class DailyReport extends CActiveRecord
 
 		$criteria->with = array( 
 				'providers', 
-				'providers.affiliates', 
+				'providers.affiliates', 				
 				'campaigns', 
 				'campaigns.opportunities', 
 				'campaigns.opportunities.regions',
@@ -972,6 +977,10 @@ class DailyReport extends CActiveRecord
 						'asc'  =>'opportunities.rate',
 						'desc' =>'opportunities.rate DESC',
 		            ),
+		            'vector'=>array(
+						'asc'  =>'vector',
+						'desc' =>'vector DESC',
+		            ),		            
 		            // Adding all the other default attributes
 		            '*',
 		        );
@@ -1000,9 +1009,15 @@ class DailyReport extends CActiveRecord
 			$orderBy[] = 't.campaigns_id ASC';
 		}
 
+		if($group['Vector'] == 1) {
+			$groupBy[] = 'dailyReportVectors.vectors_id';
+			$orderBy[] = 'vector ASC';
+		}
+
 		$criteria->group = join($groupBy,',');
 		$criteria->select = array(
 			'*', 
+			'CONCAT( vectors.name, " (", dailyReportVectors.vectors_id, ")" ) AS vector',
 			'advertisers.name AS advertisers_name',
 			'country.name AS country_name',
 			'sum(imp) as imp',
@@ -1105,6 +1120,8 @@ class DailyReport extends CActiveRecord
 		//search
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
+		$criteria->addSearchCondition( 'CONCAT( vectors.name, " (", dailyReportVectors.vectors_id, ")" )', $this->vector);
+
 		//if ( $providers == NULL) $criteria->compare('providers_id',$this->providers_id);
 		$criteria->compare('opportunities.rate',$this->rate,true);
 		$criteria->compare('imp',$this->imp,true);
@@ -1127,6 +1144,8 @@ class DailyReport extends CActiveRecord
 			'providers', 
 			'providers.affiliates', 
 			'campaigns', 
+			'dailyReportVectors',
+			'dailyReportVectors.vectors',
 			'campaigns.opportunities',
 			'campaigns.opportunities.accountManager', 
 			'campaigns.opportunities.regions',

@@ -23,6 +23,7 @@
 	<?php 
 		echo $form->dropDownListRow($model, 'providers_id', $providers, array('prompt' => 'Select traffic source'));
 		echo $form->textFieldRow($model, 'name', array('class'=>'span3')); 
+		echo $form->textFieldRow($model, 'rate', array('class'=>'span3')); 
 	?>
 
 	<div class="form-actions">

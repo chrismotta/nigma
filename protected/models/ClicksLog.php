@@ -26,7 +26,7 @@
  * @property Campaigns $campaigns
  * @property ConvLog[] $convLogs
  * @property Providers $providers
- */
+ */ 
 class ClicksLog extends CActiveRecord
 {
 	/**
@@ -50,6 +50,12 @@ class ClicksLog extends CActiveRecord
 	public $country_name;
 	public $conv;
 
+	// Affiliates API
+	public $provider_name;
+	public $model_adv;
+	public $vector_name;
+	public $vector_rate;
+ 
 	//csv
 	public $dateStart;
 	public $dateEnd;
@@ -196,6 +202,7 @@ class ClicksLog extends CActiveRecord
 			'criteria'=>$criteria,
 		));
 	}
+
 
 	public function searchTraffic($dateStart='today',$dateEnd='today', $group=array(), $filters=array(), $isTest=false, $totals=false){
 
