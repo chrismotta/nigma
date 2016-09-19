@@ -51,7 +51,7 @@ class ApiUpdateController extends Controller
 			'cpmCampaigns',
 			'impLog',
 			);
-		
+
 		return array(
 			array('allow',
 				'actions' => $adminAllowedActions,
