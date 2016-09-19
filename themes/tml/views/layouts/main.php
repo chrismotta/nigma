@@ -5,7 +5,7 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="language" content="en" />
 
-    <title><?php echo CHtml::encode($this->pageTitle); ?></title>
+    <title><?php echo CHtml::encode(localConfig::CURRENT_STAGE.' '.$this->pageTitle); ?></title>
 
     <?php 
     $baseUrl = Yii::app()->theme->baseUrl;
@@ -82,10 +82,10 @@
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
                     ),
                 array('label'=>'Landing Manager', 'url'=>array('/landings/admin'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
+                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('media_buyer_admin'),
                     ),
                 array('label'=>'Landing Images', 'url'=>array('/landingImages/thumbnails'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
+                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('media_buyer_admin'),
                     ),
             ), 
             'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('media_buyer_admin'),

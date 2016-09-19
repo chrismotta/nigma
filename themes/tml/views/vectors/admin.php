@@ -87,7 +87,7 @@ $('.search-form form').submit(function(){
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
         ),
         array(
-			'name'  => 'providers_id',
+			'name'  => 'providers_name',
 			'value' => '$data->providers->name',
 			'headerHtmlOptions' => array('style' => 'width: 120px'),
         ),
@@ -100,6 +100,7 @@ $('.search-form form').submit(function(){
 			'name'  => 'campaigns_associated',
 			'value' => 'join(CHtml::listData(VectorsHasCampaigns::model()->findAll(array("condition"=>"vectors_id=".$data->id)), "campaigns_id", "campaigns_id")," - ")',
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
+			'filter'=> false,
         ),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',

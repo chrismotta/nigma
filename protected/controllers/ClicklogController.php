@@ -122,6 +122,12 @@ class ClicklogController extends Controller
 	 */
 	public function actionIndex($id=null, $vid=null)
 	{
+		// detecting if is postback click
+		if(isset($_GET['tmltoken'])){
+			$tmltoken = $_GET['tmltoken'];
+			$pbClick = ClicksLog::model()->findByAttributes(array('tid'=>$tmltoken));
+			// var_dump($pbClick);die('<hr>End');
+		}
 
 		isset( $_GET['ts'] ) ? $test = true : $test = false;
 
@@ -190,7 +196,11 @@ class ClicklogController extends Controller
 
 		// Write down a log
 
-		$model = new ClicksLog();
+		if(isset($pbClick))
+			$model = $pbClick;//update passback click
+		else
+			$model = new ClicksLog();//new click
+
 		//$model->id         = 2;
 		$model->campaigns_id = $cid;
 		$model->providers_id = $nid;
