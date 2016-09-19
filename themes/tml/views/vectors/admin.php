@@ -103,7 +103,7 @@ $('.search-form form').submit(function(){
         ),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'headerHtmlOptions' => array('style' => "width: 85px"),
 			'buttons'           => array(
 				'addCampaign' => array(
 					'label' =>'Manage Campaigns',
