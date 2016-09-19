@@ -207,6 +207,7 @@ class IosController extends Controller
 				'io'            => $model,
 				'opportunities' => $opportunities,
 	        ));
+	        ob_end_clean();// fix TCPDF ERROR
 	        $pdf->output($output);
 	        Yii::app()->end();
 		// }
