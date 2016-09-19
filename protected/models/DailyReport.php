@@ -86,7 +86,7 @@ class DailyReport extends CActiveRecord
 			array('advertiser_cat','safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, rate, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country, vector', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, providers_name, campaign_name, account_manager, imp, imp_adv, clics, conv_api, conv_adv, spend, revenue, date, is_from_api, profit, profit_percent, click_through_rate, conversion_rate, eCPM, eCPC, eCPA, comment, product, carrier, country, vector', 'safe', 'on'=>'search'),
 			// array('imp, clics, conv_api, revenue, rate', 'safe', 'on'=>'searchAdvertisers'),
 		);
 	}
@@ -133,7 +133,7 @@ class DailyReport extends CActiveRecord
 			'campaign_name'      => 'Campaign',
 			'profit'             => 'Profit',
 			'profit_percent'     => 'Profit&nbsp;%',
-			'rate'               => 'Rate',
+			//'rate'               => 'Rate',
 			'click_through_rate' => 'CTR&nbsp;%',
 			'conversion_rate'    => 'CR&nbsp;%',
 			'eCPM'               => 'eCPM',
