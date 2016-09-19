@@ -35,7 +35,7 @@ class Vectors extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('providers_id, name, rate', 'required'),
+			array('providers_id, name', 'required'),
 			array('providers_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
@@ -48,8 +48,12 @@ class Vectors extends CActiveRecord
 
     public function validateRate($attribute, $params)
     {
-        if ( !is_numeric($this->$attribute) || !$this->$attribute>0 ) {
+        if ( $this->$attribute && ( !is_numeric($this->$attribute) || !$this->$attribute>0 ) ) {
             $this->addError($attribute, 'Must be a numeric value greater than zero.');
+        }
+        else if ( !$this->$attribute ) 
+        {
+        	$this->$attribute = null;	
         }
     }
 

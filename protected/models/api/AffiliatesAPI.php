@@ -59,7 +59,8 @@ class AffiliatesAPI
 			'count(convLogs.id) AS conversions', 
 			'opportunities.model_adv AS model_adv',
 			'vectors.id AS vectors_id',
-			'vectors.name AS vector_name'
+			'vectors.name AS vector_name',
+			'vectors.rate AS vector_rate'
 		);
 
 		$clicksLogCriteria->compare('DATE(t.date)',$date);
@@ -124,13 +125,26 @@ class AffiliatesAPI
 
 			$return .= 'Campaign: '.$clicksLog->campaigns_name.'<br/>Provider: '.$clicksLog->provider_name.'<br/>Vector: '.$clicksLog->vectors_id.'<br/>';
 
-			if( $clicksLog->model_adv != 'RS' ){
-				$dailyReport->updateRevenue();
+			if ( !$fixedRate && $clicksLog->vector_rate )
+				$fixedRate = $clicksLog->vector_rate;
+
+			if( $clicksLog->model_adv != 'RS' ){ // Esto esta porque el revenue share se ingresa manualmente
+				if ( $clicksLog->vector_rate )
+				{
+					$revenueRate = $clicksLog->vector_rate;
+				}
+				else
+				{
+					$revenueRate = null;
+				}
+
+				$dailyReport->updateRevenue(); // Revisar si es necesario implementar el fixed rate aca tambien
 				$dailyReport->setNewFields();
 				$return.= ' -Yes Revenue- ';
 			}else{
 				$return.= ' -Not Revenue- ';
 			}
+
 			$dailyReport->updateSpendAffiliates($fixedRate);
 			$return.= $clicksLog->provider.'::'.$clicksLog->campaign .' - '.$clicksLog->clicks.' - '.$clicksLog->conversions.' - '.$dailyReport->spend.'<br/><br/>';	
 

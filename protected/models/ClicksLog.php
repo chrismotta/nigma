@@ -54,6 +54,7 @@ class ClicksLog extends CActiveRecord
 	public $provider_name;
 	public $model_adv;
 	public $vector_name;
+	public $vector_rate;
 
 	//csv
 	public $dateStart;
