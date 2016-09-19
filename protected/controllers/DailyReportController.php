@@ -345,12 +345,83 @@ class DailyReportController extends Controller
 	public function actionExcelReport()
 	{
 		if( isset($_POST['excel-report-daily']) ) {
-			$this->renderPartial('excelReport', array(
-				'model' => new DailyReport,
-			));
+			set_time_limit(1000);
+			//$csvData = array();
+			$model = new DailyReport();
+
+			$dateStart      = isset($_POST['excel-dateStart']) ? $_POST['excel-dateStart'] : 'yesterday' ;
+			$dateEnd        = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : 'yesterday';
+			$accountManager = isset($_POST['excel-accountManager']) ? $_POST['excel-accountManager'] : NULL;
+			$opportunities  = isset($_POST['excel-opportunities']) ? $_POST['excel-opportunities'] : NULL;
+			$providers      = isset($_POST['excel-providers']) ? $_POST['excel-providers'] : NULL;
+			$sum            = isset($_POST['sum']) ? $_POST['sum'] : 0;
+			$adv_categories = isset($_POST['excel-advertisers-cat']) ? $_POST['excel-advertisers-cat'] : NULL;
+
+			$dp = $model->excel(
+					$dateStart,
+					$dateEnd,
+					$accountManager,
+					$opportunities,
+					$providers,
+					$sum,
+					$adv_categories
+			);
+
+			//  Traer clicks desde ClicksLog para comparar
+			/*
+				$criteria=new CDbCriteria;
+				$criteria->select                        ='count(*) as clics';
+				$criteria->addCondition("DATE(date) = '".$this->date."' AND campaigns_id=".$this->campaigns_id);
+				$clicksLogs                              = ClicksLog::model()->find($criteria)->clics;
+			*/
+
+			foreach ( $dp->getData() as $data ) {
+
+				$csvData[] = array(
+					'Account Manager'		=> $data->campaigns->opportunities->accountManager->lastname . " " . $data->campaigns->opportunities->accountManager->name,
+					'Commercial Name'		=> $data->campaigns->opportunities->regions->financeEntities->commercial->lastname . " " .$data->campaigns->opportunities->regions->financeEntities->commercial->name,
+					'Campaign'			=> Campaigns::model()->getExternalName($data->campaigns_id), // REVISAR LAZY LOAD
+					'Format'				=> $data->campaigns->formats->name,
+					'Oportunity'			=> $data->campaigns->opportunities->getVirtualName(),
+					'Finance Entity'				=> $data->campaigns->opportunities->regions->financeEntities->name,
+					'Country'				=> $data->campaigns->opportunities->regions->country->name,
+					'Category'			=> $data->campaigns->opportunities->regions->financeEntities->advertisers->cat,
+					'Provider'			=> $data->providers->name, 
+					'Rate'					=> $data->campaigns->opportunities->getRate($data->date), 
+			        'Impressions'					=> $data->imp,
+			        //'imp_adv'				=> $data->imp_adv,
+			        'Clicks'				=> $data->clics, 
+			        //'Clicks Redirect'		=> $clicksLogs, // Activar cuando se traen clicks desde ClicksLog
+			        'Conversions'				=> $data->conv_api,
+			        //'conv_adv'				=> $data->conv_adv,
+			        'Consolidated'			=> $data->getConv(),
+			        'Spend'					=> $data->spend,
+			        'Revenue'				=> $data->revenue,
+			        'Profit'				=> $data->profit,
+			        'Profit Percent'		=> $data->profit_percent * 100,
+			        'Click Through Rate'	=> $data->click_through_rate * 100,
+			        'Conversion Rate'		=> $data->conversion_rate * 100,
+			        'eCPM'					=> $data->eCPM,
+			        'eCPC'					=> $data->eCPC,
+			        'eCPA'					=> $data->eCPA,
+			        'Date'					=> date("d-m-Y", strtotime($data->date)),
+			        'CAP'					=> $data->getCapStatus() ? "Exceeded" : "", // REVISAR LAZY LOAD
+				);
+			}
+				
+			$csv = new ECSVExport( $csvData );
+			$csv->setEnclosure(chr(0));//replace enclosure with caracter
+			$csv->setHeader( 'content-type', 'application/csv;charset=UTF-8' );
+			$content = $csv->toCSV();  		
+
+			if(isset($_REQUEST['v']))
+				echo str_replace("\n", '<br/>', $content);
+			else
+				$filename = 'TML-DailyReport_'.date("Y-m-d", strtotime($dateStart)).'.csv';
+				Yii::app()->getRequest()->sendFile($filename, $content, "text/csv", false);
 		}
 
-		$this->renderPartial('_excelReport', array(), false, true);
+		$this->renderPartial('_excelReport', array(), false, true);	
 	}
 
 	public function actionMultiRate($id)

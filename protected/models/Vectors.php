@@ -18,6 +18,7 @@
 class Vectors extends CActiveRecord
 {
 	public $campaigns_associated;
+	public $providers_name;
 
 	/**
 	 * @return string the associated database table name
@@ -42,7 +43,7 @@ class Vectors extends CActiveRecord
 			array('rate', 'validateRate' ), 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, providers_id, name, status, rate, campaigns_associated', 'safe', 'on'=>'search'),
+			array('id, providers_id, name, status, rate, campaigns_associated, providers_name', 'safe', 'on'=>'search'),
 		);
 	}
  
@@ -78,7 +79,7 @@ class Vectors extends CActiveRecord
 	{
 		return array(
 			'id'                   => 'ID',
-			'providers_id'         => 'Traffic Source',
+			'providers_name'       => 'Traffic Source',
 			'name'                 => 'Name',
 			'status'               => 'Status',
 			'campaigns_associated' => 'Campaigns',
@@ -107,14 +108,26 @@ class Vectors extends CActiveRecord
 		$criteria->compare('t.id',$this->id);
 		$criteria->compare('t.name',$this->name,true);
 		$criteria->compare('t.status',$this->status,true);
+		$criteria->compare('LOWER(providers.name)',strtolower($this->providers_name),true);
 
-		$criteria->with = array( 'campaigns' );
+		$criteria->with = array( 'campaigns', 'providers' );
 
 		return new CActiveDataProvider($this, array(
-			'criteria'=>$criteria,
-			'pagination'=>array(
-                'pageSize'=>50,
-            ),
+			'criteria' =>$criteria,
+			// Setting 'sort' property in order to add 
+			// a sort tool in the related collumns
+			'pagination'=> KHtml::pagination(),
+			'sort'     =>array(
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'providers_name'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),
+		            // Adding all the other default attributes
+		            '*',
+	            ),
+	        )
 		));
 	}
 
