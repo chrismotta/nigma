@@ -125,7 +125,7 @@ class Users extends CActiveRecord
 		$roles = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
 		if ( in_array('media_buyer_admin', $roles, true) ){
 			$criteria->join = 'left join AuthAssignment aa on aa.userid = t.id';
-			$criteria->addCondition('aa.itemname = "publisher"');
+			$criteria->addCondition('aa.itemname = "publisher" OR aa.itemname = "publisherCPM"');
 		}
 
 		return new CActiveDataProvider($this, array(

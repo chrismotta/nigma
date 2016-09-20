@@ -30,12 +30,12 @@
 
         $userRol = array_keys(Yii::app()->authManager->getRoles(Yii::app()->user->id));
         if ( in_array('media_buyer_admin', $userRol, true) )
-            $userRestriction = 'publisher';
+            $userRestriction = array('publisher','publisherCPM');
 
         foreach($roles as $data) {
             
             if(isset($userRestriction))
-                if($data->name != $userRestriction) continue;
+                if(!in_array($data->name, $userRestriction)) continue;
 
             $dataRow['name']  = $data->name;
             $dataRow['type']  = 'raw';
