@@ -6,7 +6,7 @@ $dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
 $dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : 'today' ;
 $dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : 'today';
 
-$partner = isset($publisher_name) ? $publisher_name : null;
+$partner = isset($publisher_name) && isset($publisher_id) ? $publisher_name . ' (' . $publisher_id . ')' : null;
 
 $space = "<span class='formfilter-space'></span>";
 
