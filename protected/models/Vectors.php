@@ -8,6 +8,7 @@
  * @property integer $providers_id
  * @property string $name
  * @property string $status
+ * @property string $rate
  *
  * The followings are the available model relations:
  * @property DailyVectors[] $dailyVectors
@@ -39,11 +40,23 @@ class Vectors extends CActiveRecord
 			array('providers_id', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>255),
 			array('status', 'length', 'max'=>8),
+			array('rate', 'validateRate' ), 
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, providers_id, name, status, campaigns_associated, providers_name', 'safe', 'on'=>'search'),
+			array('id, providers_id, name, status, rate, campaigns_associated, providers_name', 'safe', 'on'=>'search'),
 		);
 	}
+ 
+    public function validateRate($attribute, $params)
+    {
+        if ( $this->$attribute && ( !is_numeric($this->$attribute) || !$this->$attribute>0 ) ) {
+            $this->addError($attribute, 'Must be a numeric value greater than zero.');
+        }
+        else if ( !$this->$attribute ) 
+        {
+        	$this->$attribute = null;
+        }
+    }
 
 	/**
 	 * @return array relational rules.
@@ -70,6 +83,7 @@ class Vectors extends CActiveRecord
 			'name'                 => 'Name',
 			'status'               => 'Status',
 			'campaigns_associated' => 'Campaigns',
+			'rate'					=> 'Rate',
 		);
 	}
 

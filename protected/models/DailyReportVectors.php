@@ -1,24 +1,26 @@
 <?php
 
 /**
- * This is the model class for table "vectors_has_campaigns".
+ * This is the model class for table "daily_report_vectors".
  *
- * The followings are the available columns in table 'vectors_has_campaigns':
+ * The followings are the available columns in table 'daily_report_vectors':
+ * @property integer $id
+ * @property integer $daily_report_id
  * @property integer $vectors_id
- * @property integer $campaigns_id
- * @property integer $freq
- */
-class VectorsHasCampaigns extends CActiveRecord
+ *
+ * The followings are the available model relations:
+ * @property DailyReport $dailyReport
+ * @property Vectors $vectors
+ */ 
+class DailyReportVectors extends CActiveRecord
 {
-	public $connection;
-	public $carrier;
-
 	/**
 	 * @return string the associated database table name
 	 */
+	public $vector_name;
 	public function tableName()
 	{
-		return 'vectors_has_campaigns';
+		return 'daily_report_vectors';
 	}
 
 	/**
@@ -29,11 +31,11 @@ class VectorsHasCampaigns extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('vectors_id, campaigns_id', 'required'),
-			array('vectors_id, campaigns_id, freq', 'numerical', 'integerOnly'=>true),
+			array('daily_report_id, vectors_id', 'required'),
+			array('daily_report_id, vectors_id', 'numerical', 'integerOnly'=>true),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, vectors_id, campaigns_id, freq', 'safe', 'on'=>'search'),
+			array('id, daily_report_id, vectors_id', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -45,7 +47,8 @@ class VectorsHasCampaigns extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
+			'dailyReport' => array(self::BELONGS_TO, 'DailyReport', 'daily_report_id'),
+			'vectors' => array(self::BELONGS_TO, 'Vectors', 'vectors_id'),
 		);
 	}
 
@@ -55,9 +58,10 @@ class VectorsHasCampaigns extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'vectors_id'   => 'Vectors',
-			'campaigns_id' => 'Campaigns',
-			'freq'         => 'Freq',
+			'id' => 'ID',
+			'daily_report_id' => 'Daily Report',
+			'vectors_id' => 'Vector ID',
+			'vector_name' => 'Vector Name',
 		);
 	}
 
@@ -79,37 +83,13 @@ class VectorsHasCampaigns extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('vectors_id',            $this->vectors_id);
-		$criteria->compare('campaigns_id',          $this->campaigns_id);
-		$criteria->compare('freq',                  $this->freq);
-		$criteria->compare('opportunities.wifi',    $this->connection);
-		$criteria->compare('carriers.mobile_brand', $this->carrier);
 
-		$criteria->with = array('campaigns.opportunities', 'campaigns.opportunities.carriers');
-		$criteria->select = array(
-			't.*',
-			'opportunities.wifi AS connection',
-			'carriers.mobile_brand AS carrier'
-			);
+		$criteria->compare('id',$this->id);
+		$criteria->compare('daily_report_id',$this->daily_report_id);
+		$criteria->compare('vectors_id',$this->vectors_id );
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
-			'pagination'=> KHtml::pagination(),
-			'sort'       => array(
-		        'attributes'=>array(
-					// Adding custom sort attributes
-		            'connection'=>array(
-						'asc'  =>'opportunities.wifi',
-						'desc' =>'opportunities.wifi DESC',
-		            ),
-		            'carrier'=>array(
-						'asc'  =>'carriers.mobile_brand',
-						'desc' =>'carriers.mobile_brand DESC',
-		            ),
-		            // Adding all the other default attributes
-		            '*',
-		        ),
-		    ),
 		));
 	}
 
@@ -117,7 +97,7 @@ class VectorsHasCampaigns extends CActiveRecord
 	 * Returns the static model of the specified AR class.
 	 * Please note that you should have this exact method in all your CActiveRecord descendants!
 	 * @param string $className active record class name.
-	 * @return VectorsHasCampaigns the static model class
+	 * @return DailyReportVectors the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

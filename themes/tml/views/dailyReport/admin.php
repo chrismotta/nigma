@@ -45,6 +45,7 @@ $('.search-form form').submit(function(){
 		// businnes unit
 		'Country'       =>0, 
 		'Campaign'      =>0,
+		'Vector'      =>0,
 		);
 	if(isset($_GET['g'])) 
 		$group = array_merge($group, $_GET['g']); 
@@ -57,7 +58,7 @@ $('.search-form form').submit(function(){
 		'CTR'        =>1,
 		'Conv'       =>1, 
 		'CR'         =>1,
-		'Rate'       =>1, 
+		//'Rate'       =>1, 
 		'Revenue'    =>1,
 		'Spend'      =>1,
 		'Profit'     =>1,
@@ -66,7 +67,7 @@ $('.search-form form').submit(function(){
 		'eCPA'       =>0,
 		);
 	if(isset($_GET['s'])) 
-		$sum = array_merge($sum, $_GET['s']); 
+		$sum = array_merge($sum, $_GET['s']);
 	
 	$dateStart  = date('Y-m-d', strtotime($dateStart));
 	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
@@ -327,6 +328,11 @@ $('.search-form form').submit(function(){
 			'htmlOptions' => array('style'=>'word-wrap:break-word;'),
             'visible' => $group['Campaign'],
 		),
+		array(
+			'name'   =>	'vector',
+			//'value'	=> '$data->dailyReportVectors->vectors_id',
+            'visible' => $group['Vector'],
+		),		
 		array(	
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
@@ -450,12 +456,14 @@ $('.search-form form').submit(function(){
 			'footer'            => isset($totals['clics']) && $totals['clics']!=0 ? (round( $totals['conv'] / $totals['clics'], 4 )*100)."%" : 0,
             'visible' => $sum['CR'],
 		),
+		/*
 		array(
 			'name'        => 'rate',
 			'value'       => '$data->getRateUSD() ? "$".number_format($data->getRateUSD(),2) : "$0.00"',
 			'htmlOptions' => array('style'=>'text-align:right;'),
             'visible' => $sum['Rate'] && !$grouped,
 		),
+		*/
         array(
 			'name'              => 'revenue',
 			'value'             => '"$".number_format($data->getRevenueUSD(), 2)',

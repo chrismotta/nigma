@@ -92,6 +92,11 @@ $('.search-form form').submit(function(){
 			'headerHtmlOptions' => array('style' => 'width: 120px'),
         ),
         array(
+			'name'  => 'rate',
+			'value' => '$data->rate',
+			'headerHtmlOptions' => array('style' => 'width: 120px'),
+        ),        
+        array(
 			'name'  => 'campaigns_associated',
 			'value' => 'join(CHtml::listData(VectorsHasCampaigns::model()->findAll(array("condition"=>"vectors_id=".$data->id)), "campaigns_id", "campaigns_id")," - ")',
 			//'headerHtmlOptions' => array('style' => 'width: 80px'),
@@ -99,7 +104,7 @@ $('.search-form form').submit(function(){
         ),
 		array(
 			'class'=>'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 80px"),
+			'headerHtmlOptions' => array('style' => "width: 85px"),
 			'buttons'           => array(
 				'addCampaign' => array(
 					'label' =>'Manage Campaigns',
@@ -156,6 +161,17 @@ $('.search-form form').submit(function(){
 				    }
 				    ',
 				),
+				'duplicateIframe' => array(
+					'label' => 'Duplicate',
+					'icon'  => 'plus-sign',
+					'url'     => 'array("duplicate", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "regions-grid", 
+						"data-modal-id"     => "modalVectors", 
+						"data-modal-title"  => "Duplicate Vector", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+					),
+				),				
 				'redirects' => array(
 					'label' =>'Redirects',
 					'icon'  =>'repeat',
@@ -184,7 +200,7 @@ $('.search-form form').submit(function(){
 			'deleteButtonIcon'   => $delete['icon'],
 			'deleteButtonLabel'  => $delete['label'],
 			'deleteConfirmation' => $delete['confirm'],
-			'template' => '{addCampaignIframe} {updateAjax} {redirects} {delete}',
+			'template' => '{addCampaignIframe} {updateAjax} {duplicateIframe} {redirects} {delete}',
 		),
 	),
 
