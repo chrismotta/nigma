@@ -44,7 +44,7 @@ class ClicksLog extends CActiveRecord
 	public $provider;
 	public $campaign;
 	public $advertiser;
-	public $traffic_source;
+	public $traffic_source; // PROVIDERS_NAME
 	public $convRate;
 	public $revenue;
 	public $country_name;
@@ -68,6 +68,8 @@ class ClicksLog extends CActiveRecord
 	public $product;
 	public $vectors_id;
 	public $only_conversions = false;
+	public $spend;
+
 
 	public function macros()
 	{
@@ -429,8 +431,10 @@ class ClicksLog extends CActiveRecord
 	}
 
 
-	public function csvReport()
+	public function csvReport( $dateStart = 'today', $dateEnd = 'today', $provider = null, $onlyConversions = false, array $group = null, array $filters = null )
 	{
+		$dateStart = date('Y-m-d', strtotime($dateStart)); 
+		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
 
 		$criteria = new CDbCriteria;
 		$criteria->with = array(
@@ -441,12 +445,147 @@ class ClicksLog extends CActiveRecord
 			'convLogs',
 			'vectorsLog',
 			);
-		
-		$criteria->compare('t.providers_id',$this->providers_id);
-		$criteria->compare('providers.type', array('Google AdWords','Network','Affiliate'));
-		$criteria->addBetweenCondition('DATE(t.date)', $this->dateStart, $this->dateEnd);
-		if($this->only_conversions)
+
+		$criteria->join = '
+			LEFT JOIN vectors_has_campaigns ON t.campaigns_id = vectors_has_campaigns.campaigns_id 
+			
+		';
+			//LEFT JOIN geo_location AS country ON providers.country_id = geo_location.id_location
+
+		if ( $group )
+		{
+			$groupBy = array();
+			$orderBy = array();
+
+			if($group['TrafficSource'] == 1) {
+				$groupBy[] = 't.providers_id';
+				$orderBy[] = 'providers.name ASC';
+			}
+			if($group['TrafficSourceType'] == 1) {
+				$groupBy[] = 'providers.type';
+				$orderBy[] = 'providers.type ASC';
+			}			
+			if($group['Advertiser'] == 1) {
+				$groupBy[] = 'advertisers.id';
+				$orderBy[] = 'advertisers.name ASC';
+			}
+			// HACER JOIN
+			if($group['Country'] == 1) {
+				$groupBy[] = 'country.id_location';
+				$orderBy[] = 'country.name ASC';
+			}
+			if($group['Vector'] == 1) {
+				$groupBy[] = 'vectors_has_campaigns.vectors_id';
+				$orderBy[] = 'vector ASC';
+			}			
+			if($group['Campaign'] == 1) {
+				$groupBy[] = 't.campaigns_id';
+				$orderBy[] = 't.campaigns_id ASC';
+			}
+			if($group['Product'] == 1) {
+				$groupBy[] = 'opportunities.product';
+				$orderBy[] = 'opportunities.product ASC';
+			}
+			if($group['ServerIP'] == 1) {
+				$groupBy[] = 'server_ip';
+				$orderBy[] = 'server_ip ASC';
+			}			
+			if($group['Carrier'] == 1) {
+				$groupBy[] = 't.carrier';
+				$orderBy[] = 't.carrier ASC';
+			}	
+			if($group['OS'] == 1) {
+				$groupBy[] = 't.os';
+				$orderBy[] = 't.os ASC';
+			}
+			if($group['OSVersion'] == 1) {
+				$groupBy[] = 't.os_version';
+				$orderBy[] = 't.os_version ASC';
+			}	
+			if($group['DeviceType'] == 1) {
+				$groupBy[] = 't.device_type';
+				$orderBy[] = 't.device_type ASC';
+			}				
+			if($group['DeviceBrand'] == 1) {
+				$groupBy[] = 't.device';
+				$orderBy[] = 't.device ASC';
+			}		
+			if($group['DeviceModel'] == 1) {
+				$groupBy[] = 't.device_model';
+				$orderBy[] = 't.device_model ASC';
+			}														
+			if($group['Browser'] == 1) {
+				$groupBy[] = 't.browser';
+				$orderBy[] = 't.browser ASC';
+			}
+			if($group['BrowserVersion'] == 1) {
+				$groupBy[] = 't.browser_version';
+				$orderBy[] = 't.browser_version ASC';
+			}	
+
+			$criteria->group = join($groupBy,',');		
+		}
+
+
+		if ( $filters )
+		{
+
+			if ( isset( $filters['provider'] ) )
+				$criteria->addInCondition( 't.providers_id', $filters['provider'] );
+
+			if ( isset( $filters['advertiser'] ) )
+				$criteria->addInCondition( 'advertisers.id', $filters['advertiser'] );
+
+			if ( isset( $filters['campaign'] ) )
+				$criteria->addInCondition( 't.campaigns_id', $filters['campaign'] );			
+
+			if ( isset( $filters['country'] ) )
+				$criteria->addInCondition( 't.providers_id', $filters['country'] );
+
+			if ( isset( $filters['os_type'] ) )
+				$criteria->addInCondition( 't.os', $filters['os_type'] );
+
+			if ( isset( $filters['os_version'] ) )
+				$criteria->addInCondition( 't.os_version', $filters['os_version'] );
+
+			if ( isset( $filters['devyce_type'] ) )
+				$criteria->addInCondition( 't.device_type', $filters['device_type'] );
+
+			if ( isset( $filters['device_brand'] ) )
+				$criteria->addInCondition( 't.device', $filters['device_brand'] );
+
+			if ( isset( $filters['device_model'] ) )
+				$criteria->addInCondition( 't.device_model', $filters['device_model'] );		
+
+			if ( isset( $filters['browser_type'] ) )
+				$criteria->addInCondition( 't.browser', $filters['browser_type'] );									
+
+			if ( isset( $filters['browser_version'] ) )
+				$criteria->addInCondition( 't.browser_version', $filters['browser_version'] );		
+			
+			if ( isset( $filters['carrier'] ) )
+				$criteria->addInCondition( 't.carrier', $filters['carrier'] );			
+		}
+
+		if ( $provider )
+		{
+			$criteria->compare('t.providers_id',$this->providers_id);
+			$criteria->compare('providers.type', array('Google AdWords','Network','Affiliate'));			
+		}
+
+		$criteria->addBetweenCondition('DATE(t.date)', $dateStart, $dateEnd);
+
+		if($onlyConversions)
 			$criteria->addCondition('convLogs.id IS NOT NULL');
+
+
+		$calcs = '
+			SUM(CASE 
+				WHEN campaigns.model="CPC" OR campaigns.model="CPV" THEN opportunities.rate 
+				WHEN convLogs.id IS NOT NULL AND (campaigns.model="CPA" OR campaigns.model="CPL" OR campaigns.model="CPI") THEN opportunities.rate 
+				ELSE 0
+			END) as revenue
+		';
 
 		$criteria->select = array(
 			't.*',
@@ -458,11 +597,17 @@ class ClicksLog extends CActiveRecord
 			'advertisers.name as advertiser',
 			'providers.name as traffic_source',
 			'providers.type as traffic_source_type',
+			'providers.country_id as country_id', 
 			'campaigns.name as campaigns_name',
 			'opportunities.product as product',
-			'vectorsLog.vectors_id as vectors_id'
+			'vectors_has_campaigns.vectors_id as vectors_id',
+			'count(t.id) as totalClicks', 
+			'count(convLogs.id) as totalConv',
+			'SUM(campaigns.external_rate*(CASE WHEN convLogs.id IS NULL THEN 0 ELSE 1 END)) as spend',
+			$calcs,
 			);
 
+		//$this->spend = $this->conv_adv != NULL ? $this->conv_adv * $rateAffiliate : $this->conv_api * $rateAffiliate;
 		// return self::model()->findAll($criteria);
 		
 		$pagination = isset($_REQUEST['v']) ? null : false;
@@ -471,7 +616,6 @@ class ClicksLog extends CActiveRecord
 			'pagination'=>$pagination,
 			'criteria'=>$criteria,
 		));
-
 	}
 
 
