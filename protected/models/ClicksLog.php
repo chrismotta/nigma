@@ -623,7 +623,7 @@ class ClicksLog extends CActiveRecord
 		$pagination = isset($_REQUEST['v']) ? null : false;
 
 		return new CActiveDataProvider($this, array(
-			//'pagination'=>$pagination,
+			'pagination'=>$pagination,
 			'criteria'=>$criteria,
 		));
 	}
