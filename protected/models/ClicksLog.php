@@ -590,7 +590,7 @@ class ClicksLog extends CActiveRecord
 		$spnd = '
 			SUM(
 				CASE 
-					WHEN vectorsLog.vectors_id IS NOT NULL AND convLogs.id IS NOT NULL THEN 
+					WHEN vectorsLog.vectors_id IS NOT NULL AND vectors.rate IS NOT NULL AND convLogs.id IS NOT NULL THEN 
 						vectors.rate
 					WHEN convLogs.id IS NOT NULL THEN
 						campaigns.external_rate
