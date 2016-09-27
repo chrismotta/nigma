@@ -4,6 +4,8 @@
 $dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
 $model->dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
 $model->dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
+$model->dateStart = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '12:00 AM';
+$model->dateEnd = isset($_REQUEST['timeEnd']) ? $_REQUEST['timeEnd'] : '11:59 AM';
 $model->providers_id = isset($_REQUEST['ts']) ? $_REQUEST['ts'] : null;
 $model->only_conversions = isset($_REQUEST['c']) ? true : false;
 $partner = isset($publisher_name) ? $publisher_name : null;
@@ -16,7 +18,6 @@ $groupColumns1['Campaign']            	  = 0;
 $groupColumns1['Vector']               	  = 0;
 $groupColumns1['Product']                 = 0;
 $groupColumns1['Country']                 = 0;
-
 
 $groupColumns2 = array();
 $groupColumns2['ServerIP']               = 0;
@@ -119,6 +120,7 @@ echo '<div class="row-fluid">';
 	echo KHtml::datePicker('dateEnd', $model->dateEnd, array(), array('style'=>'width:100px'), 'To');
 	
 	echo '</div>';
+
 	echo '<div class="span6">';
 
 	$this->widget(
@@ -138,6 +140,8 @@ echo '<div class="row-fluid">';
 	echo KHtml::timePicker('timeEnd', '11:59 PM', array(), array('style'=>'width:70px'), 'To');	
 
 	echo '</div>';
+
+
 echo '</div>';
 
 
@@ -221,7 +225,7 @@ echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="form-sep span12">ACTIONS</div>';
 echo '</div>';
-
+	/*
 	$this->widget('bootstrap.widgets.TbButton', 
 		array(
 			'buttonType'=>'submit', 
@@ -230,7 +234,7 @@ echo '</div>';
 			'htmlOptions' => array('class' => 'showLoading')
 			)
 		); 
-
+	*/
 	echo $space;
 	//Create link to load filters
 	//$link='csv?download=true&dateStart='.$model->dateStart.'&dateEnd='.$model->dateEnd.'&ts='.$model->providers_id.'&c='.$model->only_conversions.$groupBy;
