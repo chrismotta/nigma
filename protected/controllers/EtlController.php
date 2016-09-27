@@ -301,7 +301,7 @@ class EtlController extends Controller
 		AND (u.device_brand    = d.device_brand    OR d.device_brand    IS NULL OR d.device_brand    = "") 
 		AND (u.device_model    = d.device_model    OR d.device_model    IS NULL OR d.device_model    = "") 
 		AND (u.os_type         = d.os_type         OR d.os_type         IS NULL OR d.os_type         = "") 
-		AND (u.os_version     >= d.os_version      OR d.os_version      IS NULL OR d.os_version      = "") 
+		AND (CONVERT(u.os_version, DECIMAL(5,2)) >= (CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
 		';
 
 		$return = Yii::app()->db->createCommand($query)->execute();
