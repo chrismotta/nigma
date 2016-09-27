@@ -11,6 +11,7 @@ $model->only_conversions = isset($_REQUEST['c']) ? true : false;
 $partner = isset($publisher_name) ? $publisher_name : null;
 
 $groupColumns1 = array();
+$groupColumns1['Date']   		  = 0; 
 $groupColumns1['TrafficSource']   		  = 1; 
 $groupColumns1['TrafficSourceType']	  = 0; 
 $groupColumns1['Advertiser']              = 0;

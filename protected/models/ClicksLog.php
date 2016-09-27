@@ -456,7 +456,7 @@ class ClicksLog extends CActiveRecord
 			if($group['Country'] == 1) {
 				$groupBy[] = 'country.id_location';
 				$orderBy[] = 'country.name ASC';
-			}
+			}			
 
 			if($group['Campaign'] == 1) {
 				$groupBy[] = 't.campaigns_id';
@@ -480,6 +480,11 @@ class ClicksLog extends CActiveRecord
 			if($group['Vector'] == 1) {
 				$groupBy[] = 'vectors_has_campaigns.vectors_id';
 				$orderBy[] = 'vectors_has_campaigns.vectors_id ASC';
+			}			
+
+			if($group['Date'] == 1) {
+				$groupBy[] = 'click_date';
+				$orderBy[] = 'click_date ASC';
 			}			
 
 			if($group['Product'] == 1) {
