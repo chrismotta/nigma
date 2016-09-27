@@ -205,7 +205,7 @@ class ClicksLog extends CActiveRecord
 		));
 	}
 
-
+	// ACA HAY UN ERROR EN EL CALCULO DEL REVENUE, EN EL USO DE LOS RATES
 	public function searchTraffic($dateStart='today',$dateEnd='today', $group=array(), $filters=array(), $isTest=false, $totals=false){
 
 		$dateStart = date('Y-m-d', strtotime($dateStart)); 
@@ -444,18 +444,29 @@ class ClicksLog extends CActiveRecord
 			'providers',
 			'convLogs',
 			'vectorsLog',
+			'vectorsLog.vectors',
 			);
-
-		$criteria->join = '
-			LEFT JOIN vectors_has_campaigns ON t.campaigns_id = vectors_has_campaigns.campaigns_id 
-			
-		';
-			//LEFT JOIN geo_location AS country ON providers.country_id = geo_location.id_location
 
 		if ( $group )
 		{
 			$groupBy = array();
 			$orderBy = array();
+		
+			// HACER JOIN
+			if($group['Country'] == 1) {
+				$groupBy[] = 'country.id_location';
+				$orderBy[] = 'country.name ASC';
+			}
+
+			if($group['Campaign'] == 1) {
+				$groupBy[] = 't.campaigns_id';
+				$orderBy[] = 'campaigns.name ASC';
+			}
+
+			if($group['Advertiser'] == 1) {
+				$groupBy[] = 'advertisers.id';
+				$orderBy[] = 'advertisers.name ASC';
+			}
 
 			if($group['TrafficSource'] == 1) {
 				$groupBy[] = 't.providers_id';
@@ -464,31 +475,20 @@ class ClicksLog extends CActiveRecord
 			if($group['TrafficSourceType'] == 1) {
 				$groupBy[] = 'providers.type';
 				$orderBy[] = 'providers.type ASC';
-			}			
-			if($group['Advertiser'] == 1) {
-				$groupBy[] = 'advertisers.id';
-				$orderBy[] = 'advertisers.name ASC';
-			}
-			// HACER JOIN
-			if($group['Country'] == 1) {
-				$groupBy[] = 'country.id_location';
-				$orderBy[] = 'country.name ASC';
-			}
+			}		
+
 			if($group['Vector'] == 1) {
 				$groupBy[] = 'vectors_has_campaigns.vectors_id';
-				$orderBy[] = 'vector ASC';
+				$orderBy[] = 'vectors_has_campaigns.vectors_id ASC';
 			}			
-			if($group['Campaign'] == 1) {
-				$groupBy[] = 't.campaigns_id';
-				$orderBy[] = 't.campaigns_id ASC';
-			}
+
 			if($group['Product'] == 1) {
 				$groupBy[] = 'opportunities.product';
 				$orderBy[] = 'opportunities.product ASC';
 			}
 			if($group['ServerIP'] == 1) {
-				$groupBy[] = 'server_ip';
-				$orderBy[] = 'server_ip ASC';
+				$groupBy[] = 't.server_ip';
+				$orderBy[] = 't.server_ip ASC';
 			}			
 			if($group['Carrier'] == 1) {
 				$groupBy[] = 't.carrier';
@@ -529,7 +529,6 @@ class ClicksLog extends CActiveRecord
 
 		if ( $filters )
 		{
-
 			if ( isset( $filters['provider'] ) )
 				$criteria->addInCondition( 't.providers_id', $filters['provider'] );
 
@@ -578,13 +577,26 @@ class ClicksLog extends CActiveRecord
 		if($onlyConversions)
 			$criteria->addCondition('convLogs.id IS NOT NULL');
 
+		$rev = '
+			SUM(
+				CASE 
+					WHEN campaigns.model="CPC" OR campaigns.model="CPV" OR ( convLogs.id IS NOT NULL AND (campaigns.model="CPA" OR campaigns.model="CPL" OR campaigns.model="CPI") )
+					THEN opportunities.rate 
+					ELSE 0
+				END
+			) as revenue
+		';
 
-		$calcs = '
-			SUM(CASE 
-				WHEN campaigns.model="CPC" OR campaigns.model="CPV" THEN opportunities.rate 
-				WHEN convLogs.id IS NOT NULL AND (campaigns.model="CPA" OR campaigns.model="CPL" OR campaigns.model="CPI") THEN opportunities.rate 
-				ELSE 0
-			END) as revenue
+		$spnd = '
+			SUM(
+				CASE 
+					WHEN vectorsLog.vectors_id IS NOT NULL AND convLogs.id IS NOT NULL THEN 
+						vectors.rate
+					WHEN convLogs.id IS NOT NULL THEN
+						campaigns.external_rate
+					ELSE 0
+				END
+			) as spend
 		';
 
 		$criteria->select = array(
@@ -600,20 +612,18 @@ class ClicksLog extends CActiveRecord
 			'providers.country_id as country_id', 
 			'campaigns.name as campaigns_name',
 			'opportunities.product as product',
-			'vectors_has_campaigns.vectors_id as vectors_id',
-			'count(t.id) as totalClicks', 
+			'vectorsLog.vectors_id as vectors_id',
 			'count(convLogs.id) as totalConv',
-			'SUM(campaigns.external_rate*(CASE WHEN convLogs.id IS NULL THEN 0 ELSE 1 END)) as spend',
-			$calcs,
-			);
+			'count(t.id) as totalClicks',
+			$rev,
+			$spnd,
+		);
 
-		//$this->spend = $this->conv_adv != NULL ? $this->conv_adv * $rateAffiliate : $this->conv_api * $rateAffiliate;
-		// return self::model()->findAll($criteria);
 		
 		$pagination = isset($_REQUEST['v']) ? null : false;
 
 		return new CActiveDataProvider($this, array(
-			'pagination'=>$pagination,
+			//'pagination'=>$pagination,
 			'criteria'=>$criteria,
 		));
 	}
