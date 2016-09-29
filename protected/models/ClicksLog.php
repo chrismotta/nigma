@@ -548,6 +548,9 @@ class ClicksLog extends CActiveRecord
 			if ( isset( $filters['country'] ) )
 				$criteria->addInCondition( 't.providers_id', $filters['country'] );
 
+			if ( isset( $filters['vector'] ) )
+				$criteria->addInCondition( 'vectors_id', $filters['vector'] );
+
 			if ( isset( $filters['os_type'] ) )
 				$criteria->addInCondition( 't.os', $filters['os_type'] );
 
@@ -599,7 +602,7 @@ class ClicksLog extends CActiveRecord
 				CASE 
 					WHEN vectorsLog.vectors_id IS NOT NULL AND vectors.rate IS NOT NULL AND convLogs.id IS NOT NULL THEN 
 						vectors.rate
-					WHEN convLogs.id IS NOT NULL THEN
+					WHEN convLogs.id IS NOT NULL AND campaigns.external_rate IS NOT NULL THEN 
 						campaigns.external_rate
 					ELSE 0
 				END

@@ -565,6 +565,72 @@ class KHtml extends CHtml
         ), true);
     }
 
+
+    public static function filterCampaignsMulti($value, $providers_id = array(), $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+        if ( empty($providers_id) )
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
+        else
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "providers_id IN (" . join($providers_id, ", ") . ")") );
+
+        $data=array();
+        foreach ($campaigns as $c) {
+            $data[$c->id]=$c->getExternalName($c->id);
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All campaigns',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }     
+
+    public static function filterVectorsMulti($value, $provider_id = array(), $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+        //if ( empty($providers_id) )
+            $vectors = Vectors::model()->findAll( array('order' => 'id') );
+        /*      
+        else
+            $vectors = Vectors::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
+        */
+        $data=array();
+        foreach ($vectors as $c) {
+            $data[$c->id]=$c->getExternalName($c->id);
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All vectors',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }     
+
 //Filters select2
 
    /**
