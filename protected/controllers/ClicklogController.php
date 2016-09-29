@@ -860,7 +860,13 @@ class ClicklogController extends Controller
 
 
 			if ( $group['Vector'] == 1 )
-				$row['Vector']       			= $data->vectors_id; 	
+			{
+				if ( $data->vectors_id )
+					$row['Vector']       		= $data->vector_name . ' (' . $data->vectors_id . ')'; 	
+				else
+					$row['Vector']				= null;				
+			}
+
 
 
 			if ( $group['Campaign'] == 1 )

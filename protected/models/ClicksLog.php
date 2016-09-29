@@ -621,6 +621,7 @@ class ClicksLog extends CActiveRecord
 			'opportunities.product as product',
 			'country.name as country_name',
 			'vectorsLog.vectors_id as vectors_id',
+			'vectors.name as vector_name',
 			'count(convLogs.id) as totalConv',
 			'count(t.id) as totalClicks',
 			$rev,

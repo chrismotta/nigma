@@ -11,25 +11,25 @@ $model->only_conversions = isset($_REQUEST['c']) ? true : false;
 $partner = isset($publisher_name) ? $publisher_name : null;
 
 $groupColumns1 = array();
-$groupColumns1['Date']   		  = 0; 
-$groupColumns1['TrafficSource']   		  = 1; 
-$groupColumns1['TrafficSourceType']	  = 0; 
-$groupColumns1['Advertiser']              = 0;
-$groupColumns1['Campaign']            	  = 0;
-$groupColumns1['Vector']               	  = 0;
-$groupColumns1['Product']                 = 0;
-$groupColumns1['Country']                 = 0;
+$groupColumns1['Date']              = 1; 
+$groupColumns1['TrafficSource']     = 1; 
+$groupColumns1['TrafficSourceType'] = 1; 
+$groupColumns1['Advertiser']        = 1;
+$groupColumns1['Campaign']          = 1;
+$groupColumns1['Vector']            = 1;
+$groupColumns1['Product']           = 1;
+$groupColumns1['Country']           = 1;
 
 $groupColumns2 = array();
-$groupColumns2['ServerIP']               = 0;
-$groupColumns2['OS']	                  = 0;
-$groupColumns2['OSVersion']              = 0;
-$groupColumns2['DeviceType']             = 0;
-$groupColumns2['DeviceBrand']            = 0;
-$groupColumns2['DeviceModel']            = 0;
-$groupColumns2['Browser']                 = 0;
-$groupColumns2['BrowserVersion']         = 0;
-$groupColumns2['Carrier']                 = 0;
+$groupColumns2['ServerIP']       = 1;
+$groupColumns2['OS']             = 1;
+$groupColumns2['OSVersion']      = 1;
+$groupColumns2['DeviceType']     = 1;
+$groupColumns2['DeviceBrand']    = 1;
+$groupColumns2['DeviceModel']    = 1;
+$groupColumns2['Browser']        = 1;
+$groupColumns2['BrowserVersion'] = 1;
+$groupColumns2['Carrier']        = 1;
 
 
 if(isset($_REQUEST['group1']))
@@ -50,7 +50,7 @@ $sum = array();
 $sum['Conv']               = 1;
 $sum['Revenue']            = 1;
 $sum['Spend']              = 1;
-$sum['Profit']             = 0;
+$sum['Profit']             = 1;
 
 if(isset($_REQUEST['sum']))
 	$sum = $_REQUEST['sum'];
@@ -76,6 +76,24 @@ $filterColumns['carrier']                  = 0;
 if ( isset($_REQUEST['filters']) )
 	$filterColumns = $_REQUEST['filters'];
 
+if ( isset($_REQUEST['filter']) )
+	$filter = $_REQUEST['filter'];
+else
+{
+	$filter = array();
+	$filter['provider']				   = null; 
+	$filter['advertiser']               = null;
+	$filter['country']                  = null;
+	$filter['campaign']           	   = null;
+	$filter['os_type'] 		           = null;
+	$filter['os_version']               = null;
+	$filter['device_type']              = null;
+	$filter['device_brand']             = null;
+	$filter['device_model']             = null;
+	$filter['browser_type']             = null;
+	$filter['browser_version']          = null;
+	$filter['carrier']                  = null;	
+}
 $space = "<span class='formfilter-space'></span>";
 
 // breadcrumb
@@ -193,15 +211,13 @@ echo '</div>';
 
 echo '<div class="row-fluid">';
 echo '<div>';
-ReportingManager::addFilter($this, $filterColumns, 'filters', null, '', 'small', '', false);
+//ReportingManager::addFilter($this, $filterColumns, 'filters', null, '', 'small', '', false);
 echo '</div>';
 echo '</div>';
 echo '<div class="row-fluid" id="filters-row">';
 
 
-ReportingManager::dataMultiSelect(new DSupply(), 'provider', $filterColumns);
-ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filterColumns);
-ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filterColumns);
+/*
 ReportingManager::dataMultiSelect(new DGeoLocation(), 'country', $filterColumns);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type', $filterColumns);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version', $filterColumns);
@@ -210,8 +226,17 @@ ReportingManager::dataMultiSelect(new DUserAgent(), 'device_brand', $filterColum
 ReportingManager::dataMultiSelect(new DUserAgent(), 'device_model', $filterColumns);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type', $filterColumns);
 ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version', $filterColumns);
+*/
+KHtml::filterProvidersMulti($filter['provider'], NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'filter[provider]');
 
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier', $filterColumns);
+KHtml::filterAdvertisersMulti($filter['advertiser'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'),'filter[advertiser]');
+
+
+KHtml::filterCampaigns($filter['campaign'], null, 'filter[campaign]', array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'));
+
+
+
+
 
 // hide all .multi-select-hide
 $jQuery = '$("div.multi-select-hide:not(:has(ul li.select2-search-choice))").hide()';
