@@ -163,10 +163,12 @@ if($action == "Create"){ ?>
                 if ( ! this.value)
                     return;
 
-                if (this.value == 1) // if is affiliate show external rate
+                if (this.value == 1) { // if is affiliate show external rate
                     $(".external-rate").show();
-                else
+                } else {
                     $(".external-rate").hide();
+                    $(".external-rate input").val(null);
+                }
 
                 $.post(
                     "'.$getProviders.'/"+this.value,
