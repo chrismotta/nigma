@@ -835,6 +835,8 @@ class ClicklogController extends Controller
 				$row['Click Time']      		= $data->click_time;				
 			}
 
+			if ( $group['Date'] )
+				$row['Date']      				= $data->date;		
 
 			if ( $group['TrafficSource'] == 1 )
 			{
@@ -885,8 +887,11 @@ class ClicklogController extends Controller
 			if ( $sum['Spend'] == 1 )
 				$row['Spend']    				= $data->spend;			
 
+
 			if ( $sum['Profit'] == 1 )
+			{
 				$row['Profit']    				= $data->revenue-$data->spend;			
+			}
 
 			if ( $group['ServerIP'] == 1 )
 				$row['Server IP']     			= $data->carrier;			
