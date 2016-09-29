@@ -442,6 +442,7 @@ class ClicksLog extends CActiveRecord
 			'campaigns.opportunities',
 			'campaigns.opportunities.regions.financeEntities.advertisers',
 			'providers',
+			'providers.country',
 			'convLogs',
 			'vectorsLog',
 			'vectorsLog.vectors',
@@ -452,9 +453,9 @@ class ClicksLog extends CActiveRecord
 			$groupBy = array();
 			$orderBy = array();
 		
-			// HACER JOIN
+
 			if($group['Country'] == 1) {
-				$groupBy[] = 'country.id_location';
+				$groupBy[] = 'providers.country_id';
 				$orderBy[] = 'country.name ASC';
 			}			
 
@@ -472,14 +473,15 @@ class ClicksLog extends CActiveRecord
 				$groupBy[] = 't.providers_id';
 				$orderBy[] = 'providers.name ASC';
 			}
+
 			if($group['TrafficSourceType'] == 1) {
 				$groupBy[] = 'providers.type';
 				$orderBy[] = 'providers.type ASC';
 			}		
 
 			if($group['Vector'] == 1) {
-				$groupBy[] = 'vectors_has_campaigns.vectors_id';
-				$orderBy[] = 'vectors_has_campaigns.vectors_id ASC';
+				$groupBy[] = 'vectors.id';
+				$orderBy[] = 'vectors.id ASC';
 			}			
 
 			if($group['Date'] == 1) {
@@ -617,6 +619,7 @@ class ClicksLog extends CActiveRecord
 			'providers.country_id as country_id', 
 			'campaigns.name as campaigns_name',
 			'opportunities.product as product',
+			'country.name as country_name',
 			'vectorsLog.vectors_id as vectors_id',
 			'count(convLogs.id) as totalConv',
 			'count(t.id) as totalClicks',
