@@ -856,7 +856,7 @@ class ClicklogController extends Controller
 
 
 			if ( $group['Country'] )
-				$row['Country']      			= $data->advertiser;		
+				$row['Country']      			= $data->country;		
 
 
 			if ( $group['Vector'] == 1 )
