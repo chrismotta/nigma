@@ -831,18 +831,21 @@ class ClicklogController extends Controller
 			if ( empty($group) )
 			{
 				$row['Click ID']        		= $data->tid;
-				$row['Click Date']      		= $data->click_date;
-				$row['Click Time']      		= $data->click_time;				
+				$row['Date']      				= $data->click_date;
+				$row['Time']      				= $data->click_time;				
 			}
 
 			if ( $group['Date'] )
-				$row['Date']      				= $data->date;		
+			{
+				$row['Date']      				= $data->click_date;
+				$row['Time']      				= $data->click_time;						
+			}
 
 			if ( $group['TrafficSource'] == 1 )
 			{
+				$row['Traffic Source ID']  		= $data->providers_id;				
 				$row['Traffic Source']  		= $data->traffic_source;
 				$row['Traffic Source Type']  	= $data->traffic_source_type;				
-				$row['Traffic Source ID']  		= $data->providers_id;
 			}
 
 			if ( $group['TrafficSourceType'] == 1 )
@@ -860,13 +863,10 @@ class ClicklogController extends Controller
 
 
 			if ( $group['Vector'] == 1 )
-			{
-				if ( $data->vectors_id )
-					$row['Vector']       		= $data->vector_name . ' (' . $data->vectors_id . ')'; 	
-				else
-					$row['Vector']				= null;				
+			{	
+				$row['Vector ID']     			= $data->vectors_id;				
+				$row['Vector']     				= $data->vector_name;
 			}
-
 
 
 			if ( $group['Campaign'] == 1 )
@@ -900,7 +900,7 @@ class ClicklogController extends Controller
 			}
 
 			if ( $group['ServerIP'] == 1 )
-				$row['Server IP']     			= $data->carrier;			
+				$row['Server IP']     			= $data->server_ip;			
 
 			if ( $group['Carrier'] == 1 )
 				$row['Carrier']     			= $data->carrier;				

@@ -63,7 +63,7 @@ $filterColumns['provider']				   = 0;
 $filterColumns['advertiser']               = 0;
 $filterColumns['country']                  = 0;
 $filterColumns['campaign']           	   = 0;
-$filterColumns['os_type'] 		           = 0;
+$filterColumns['vector'] 		           = 0;
 $filterColumns['os_version']               = 0;
 $filterColumns['device_type']              = 0;
 $filterColumns['device_brand']             = 0;
@@ -85,6 +85,7 @@ else
 	$filter['advertiser']               = null;
 	$filter['country']                  = null;
 	$filter['campaign']           	   = null;
+	$filter['vector']           	   = null;
 	$filter['os_type'] 		           = null;
 	$filter['os_version']               = null;
 	$filter['device_type']              = null;
@@ -232,9 +233,9 @@ KHtml::filterProvidersMulti($filter['provider'], NULL, array('style' => "width: 
 KHtml::filterAdvertisersMulti($filter['advertiser'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'),'filter[advertiser]');
 
 
-KHtml::filterCampaigns($filter['campaign'], null, 'filter[campaign]', array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'));
+KHtml::filterCampaignsMulti($filter['campaign'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'campaigns-select'), 'filter[campaign]');
 
-
+KHtml::filterVectorsMulti($filter['vector'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'vectors-select'), 'filter[vector]');
 
 
 
