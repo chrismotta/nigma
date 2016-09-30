@@ -300,6 +300,37 @@ class KHtml extends CHtml
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 
+    public static function filterCarriersMulti($value, $htmlOptions = array(),$name, $countries = array() )
+    {
+
+        $defaultHtmlOptions = array(
+            'empty' => 'All Carriers',
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+
+        $carriers = Carriers::model()->findAll( array('order' => 'mobile_brand', 'group' => 'id_carrier') );
+
+        $data=array();
+        foreach ($carriers as $c) {
+            $data[$c->id_carrier]=$c->mobile_brand;
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       => $value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All carriers',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }     
+
     public static function filterProduct($value, $htmlOptions = array(), $feId=null, $optionAll=true)
     {
         $defaultHtmlOptions = array(
@@ -504,6 +535,36 @@ class KHtml extends CHtml
 
         return CHtml::dropDownList('country', $value, self::getCountryByFE($feId), $htmlOptions);
     }
+
+    public static function filterCountriesMulti($value, $providers_id = array(), $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+
+        $countries = GeoLocation::model()->findAll( array('order' => 'name', 'condition' => 'type="Country"') );
+
+        $data=array();
+        foreach ($countries as $c) {
+            $data[$c->id_location]=$c->getNameFromId($c->id_location);
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All countries',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }         
 
     public static function getCountryByFE($feId=null){
         $criteria = new CDbCriteria;
