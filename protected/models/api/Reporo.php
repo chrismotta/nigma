@@ -4,23 +4,55 @@ class Reporo
 { 
 
 	private $provider_id = 2;
+	private $apiLog;
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
+
+		date_default_timezone_set('UTC');
 		$return = '';
 
 		if ( isset( $_GET['date']) ) {
+			
+			// specific date
+			
 			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
+
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+				$return.= $this->downloadDateInfo($date);
+			}
+
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		}
+		
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date)
+	{
+
+		$return = "";
+
 
 		// validate if info have't been dowloaded already.
 		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
 			Yii::log("Information already downloaded.", 'warning', 'system.model.api.reporo');
 			return 2;
 		}
-		$network = Networks::model()->findbyPk($this->provider_id);
+		$network = Providers::model()->findbyPk($this->provider_id);
 
 		// --- setting actions for requests
 		$actions = array(
@@ -110,7 +142,7 @@ class Reporo
 	 * @return the object created from de json's response. Or NULL if error.
 	 */
 	private function getResponse($params) {
-		$network = Networks::model()->findbyPk($this->provider_id);
+		$network = Providers::model()->findbyPk($this->provider_id);
 		$reporoApiKey = $network->token1;
 		$reporoSecretKey = $network->token2;
 		$reporoGateway = $network->url;
@@ -130,8 +162,10 @@ class Reporo
 		);
 		$context = stream_context_create($options);
 		$response = file_get_contents($reporoGateway . $params, false, $context);
-// var_dump($options);
-// die($reporoGateway.$params);
+		
+		// var_dump($options);
+		// die($reporoGateway.$params);
+		
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
