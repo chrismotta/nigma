@@ -309,12 +309,15 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
-
-        $carriers = Carriers::model()->findAll( array('order' => 'mobile_brand', 'group' => 'id_carrier') );
+        $criteria=new CDbCriteria;
+        $criteria->with = 'idCountry';
+        $criteria->order = 't.mobile_brand, idCountry.name';
+        $criteria->select = '*, idCountry.name as country_name';
+        $carriers = Carriers::model()->findAll( $criteria );
 
         $data=array();
         foreach ($carriers as $c) {
-            $data[$c->id_carrier]=$c->mobile_brand;
+            $data[$c->id_carrier]=$c->mobile_brand . ' (' . $c->country_name .')';
         }
         return Yii::app()->controller->widget(
                 'yiibooster.widgets.TbSelect2',
