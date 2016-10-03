@@ -221,7 +221,7 @@ class ApiUpdateController extends Controller
 	{
 		try {
 			$reporo = new Reporo;
-			$return = $reporo->downloadInfo();
+			$return = $reporo->downloadInfo(7);
 			if(isset($hash) && $hash=='echo')
 				echo $return;
 		} catch (Exception $e) {

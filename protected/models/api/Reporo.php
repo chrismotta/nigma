@@ -45,13 +45,6 @@ class Reporo
 	{
 
 		$return = "";
-
-
-		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.reporo');
-			return 2;
-		}
 		$network = Providers::model()->findbyPk($this->provider_id);
 
 		// --- setting actions for requests
@@ -99,14 +92,37 @@ class Reporo
 					continue; 
 				}
 
-				$return.= json_encode($campaign_stats) . '<hr/>';
+				// $return.= json_encode($campaign_stats) . '<hr/>';
 
-				// Save campaign information
-				$dailyReport = new DailyReport();
-				
-				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
+
 				// get campaign ID used in Server, from the campaign name use in the external provider
-				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name, $network->use_alternative_convention_name);
+				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
+
+				$return.= $campaign_info->campaign_name;
+				continue;
+				
+				$campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
+
+				// if exists overwrite, else create a new
+				$dailyReport = DailyReport::model()->find(
+					"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+					array(
+						":providers"=>$this->provider_id, 
+						":date"=>$date, 
+						":cid"=>$campaigns_id,
+						)
+					);
+				if(!$dailyReport){
+					$dailyReport = new DailyReport();
+					$return.= "<hr/>New record: ";
+				}else{
+					$return.= "<hr/>Update record: ".$dailyReport->id;
+				}
+
+
+				
+				// get campaign ID used in Server, from the campaign name use in the external provider
+				$dailyReport->campaigns_id = $campaigns_id;
 
 				if ( !$dailyReport->campaigns_id ) {
 					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.reporo');
