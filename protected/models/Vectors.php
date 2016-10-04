@@ -370,10 +370,10 @@ class Vectors extends CActiveRecord
 				$dailyReportVector->daily_report_id = $dailyReport->id;
 				$dailyReportVector->save();
 				
-				$return = 'saved: '. $dailyReport->spend;
+				$return = $dailyReport->id . ' saved: '. $dailyReport->spend;
 			}else{
 				
-				$return = 'updated: '. $dailyReport->spend;
+				$return = $dailyReport->id . ' updated: '. $dailyReport->spend;
 			}
 		}
 		
