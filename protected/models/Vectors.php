@@ -332,7 +332,7 @@ class Vectors extends CActiveRecord
 			$dailyReport = new DailyReport();
 			$dailyReport->date = $date;
 			$dailyReport->campaigns_id = $camp['id'];
-			$dailyReport->providers_id = $campModel->providers_id;
+			$dailyReport->providers_id = $this->providers_id;
 
 			$isNew = true;
 			// $return['msg'] = "New record: ";
