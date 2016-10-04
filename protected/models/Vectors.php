@@ -254,20 +254,24 @@ class Vectors extends CActiveRecord
 
 				// cost related to clicks
 				foreach ($campaignsList as $id => $cmp) {
-					$campaignsList[$id]['id'] = $id;
 
+					if($cmp['clicks'] > 0){
 
-					if($totalClicks * $cmp['clicks'] > 0){
+						$campaignsList[$id]['id'] = $id;
 						$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
 						$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
-					}else{
-						$campaignsList[$id]['cost'] = 0;
-						$return[$id] = $id . ': ' .'0';
+					}
+					else{
+
+						// unset campaigns without clicks
+						unset($campaignsList[$id]);
 					}
 
 				}
 
 			}else{
+
+				// when there are no campaigns with clicks
 
 				foreach ($campaignsList as $id => $cmp) {
 					$campaignsList[$id]['id'] = $id;
