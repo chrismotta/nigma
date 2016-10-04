@@ -86,10 +86,16 @@ class Airpush
 
 				$vid = Utilities::parseVectorID($campaign->campaignname);
 				$vectorModel = Vectors::model()->findByPk($vid);
+				$return.= $campaign->campaignname;
+				$return.= '<br>';
+				$return.= $campaign->Spent;
+				$return.= '<br>';
 
 				$ret = $vectorModel->explodeVector(array('spend'=>$campaign->Spent,'date'=>$date));
-				$return .= json_encode($ret);
+				$return.= join($ret, ' - ');
+				$return.= '<hr>';
 				continue;
+				$return .= json_encode($ret);
 
 			}
 
