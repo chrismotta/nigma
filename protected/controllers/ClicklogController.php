@@ -30,7 +30,7 @@ class ClicklogController extends Controller
 				'ips'=>array('54.88.85.63'),
 			),
 			array('allow', 
-				'actions'=>array('updateClicksData', 'updateQuery', 'storage', 'test', 'csv'),
+				'actions'=>array('updateClicksData', 'admin', 'updateQuery', 'storage', 'test', 'csv'),
 				'roles'=>array('admin', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
@@ -764,8 +764,23 @@ class ClicklogController extends Controller
 
 	}
 
+
+	public function actionAdmin(){
+		KHtml::paginationController();
+		
+		$model=new ClicksLog('search');
+		$model->unsetAttributes();  // clear any default values
+		if ( isset($_REQUEST['download']) )
+		{
+			$this->_sendCsvFile( $model );
+		}
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));	
+	}
+
 	public function actionCsv(){
-	
 		/*
 		$dateStart = isset($_GET['date_start']) ? $_GET['date_start'] : date("Y-m-d", strtotime("yesterday"));
 		$dateEnd = isset($_GET['date_end']) ? $_GET['date_end'] : date("Y-m-d", strtotime("today"));
@@ -786,54 +801,153 @@ class ClicklogController extends Controller
 
 		$data = ClicksLog::model()->findAll($criteria);
 		*/
-		
-		$model = new ClicksLog();
-		$model->dateStart = isset($_REQUEST['date_start']) ? $_REQUEST['date_start'] : date("Y-m-d", strtotime("yesterday"));
-		$model->dateEnd = isset($_REQUEST['date_end']) ? $_REQUEST['date_end'] : date("Y-m-d", strtotime("today"));
-		$model->providers_id = isset($_REQUEST['ts']) ? $_REQUEST['ts'] : null;
-		$model->only_conversions = isset($_REQUEST['c']) ? true : false;
+		$model  = new ClicksLog();
+		$this->_sendCsvFile( $model );
 
-		$dp = $model->csvReport();
+	}
+
+
+	protected function _sendCsvFile ( $model )
+	{
+		$csvData = array();
+			
+		$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
+		$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
+		$provider = isset($_REQUEST['ts']) ? $_REQUEST['ts'] : null;
+		$onlyConversions = isset($_REQUEST['c']) ? true : false;
+
+		$sum = isset($_REQUEST['sum']) ? $_REQUEST['sum'] : array();
+		$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : array();
+
+		$group1 = isset($_REQUEST['group1']) ? $_REQUEST['group1'] : array();
+		$group2 = isset($_REQUEST['group2']) ? $_REQUEST['group2'] : array();
+		$group = array_merge($group1, $group2);
+
+		$dp = $model->csvReport( $dateStart, $dateEnd, $provider, $onlyConversions, $group, $filters );
+
 		foreach ($dp->getData() as $data) {
-			$csvData[] = array(
-				'Click ID'        => $data->tid,
-				'Click Date'      => $data->click_date,
-				'Click Time'      => $data->click_time,
-				'IP'              => $data->server_ip,
-				'Campaign ID'     => $data->campaigns_id,
-				'Campaign Name'     => $data->campaigns_name,
-				'Product' => $data->product,
-				'Advertiser'      => $data->advertiser,
-				'Traffic Source'  => $data->traffic_source,
-				'Traffic Source Type'  => $data->traffic_source_type,
-				'Country'         => $data->country,
-				'Carrier'         => $data->carrier,
-				'OS'              => $data->os,
-				'OS Version'      => $data->os_version,
-				'Device Type'     => $data->device_type,
-				'Device Brand'    => $data->device,
-				'Device Model'    => $data->device_model,
-				'Browser'         => $data->browser,
-				'Browser Version' => $data->browser_version,
-				'Vector ID'       => $data->vectors_id,
-				'Conv Date'       => $data->conv_date,
-				'Conv Time'       => $data->conv_time,
-				);
-		}
+			$row = array();
 
-		/*
-		ID	Transaction  Id	Campaign  Id	Advertiser	Campaign  Name	Traffic  Source	Status	Ip	Country	City	Carrier	Browser  Type	Browser  Version	Os  Type	Os  Version	Device  Brand	Device  Model	Referer  Url	App	Date
-		*/
+			if ( empty($group) )
+			{
+				$row['Click ID']        		= $data->tid;
+				$row['Date']      				= $data->click_date;
+				$row['Time']      				= $data->click_time;				
+			}
+
+			if ( $group['Date'] )
+			{
+				$row['Date']      				= $data->click_date;
+				$row['Time']      				= $data->click_time;						
+			}
+
+			if ( $group['TrafficSource'] == 1 )
+			{
+				$row['Traffic Source ID']  		= $data->providers_id;				
+				$row['Traffic Source']  		= $data->traffic_source;
+				$row['Traffic Source Type']  	= $data->traffic_source_type;				
+			}
+
+			if ( $group['TrafficSourceType'] == 1 )
+			{
+				$row['Traffic Source Type']  	= $data->traffic_source_type;				
+			}			
+
+
+			if ( $group['Advertiser'] == 1 )
+				$row['Advertiser']      		= $data->advertiser;
+
+
+			if ( $group['Country'] )
+				$row['Country']      			= $data->country;		
+
+
+			if ( $group['Vector'] == 1 )
+			{	
+				$row['Vector ID']     			= $data->vectors_id;				
+				$row['Vector']     				= $data->vector_name;
+			}
+
+
+			if ( $group['Campaign'] == 1 )
+			{
+				$row['Campaign ID']     		= $data->campaigns_id;
+				$row['Campaign Name']   		= $data->campaigns_name;				
+			}
+
+			if ( $group['Product'] == 1 )
+				$row['Product'] 		 		= $data->product;
+
+
+			if ( !empty($group) )
+			{
+				$row['Clicks']       			= $data->totalClicks;			
+			}
+
+			if ( $sum['Conv'] == 1 )
+				$row['Conversions']	     		= $data->totalConv;	
+
+			if ( $sum['Revenue'] == 1 )
+				$row['Revenue']    				= $data->revenue;
+			
+			if ( $sum['Spend'] == 1 )
+				$row['Spend']    				= $data->spend;			
+
+
+			if ( $sum['Profit'] == 1 )
+			{
+				$row['Profit']    				= $data->revenue-$data->spend;			
+			}
+
+			if ( $group['ServerIP'] == 1 )
+				$row['Server IP']     			= $data->server_ip;			
+
+			if ( $group['Carrier'] == 1 )
+				$row['Carrier']     			= $data->carrier;				
+
+			if ( $group['OS'] == 1 )
+				$row['OS']     					= $data->os;
+
+			if ( $group['OSVersion'] == 1 )
+				$row['OS Version']     			= $data->os_version;	
+
+			if ( $group['DeviceType'] == 1 )
+				$row['Device Type']    			= $data->device_type;						
+
+			if ( $group['DeviceBrand'] == 1 )
+				$row['Device Brand']    		= $data->device;	
+
+			if ( $group['DeviceModel'] == 1 )
+				$row['Device Model']    		= $data->device_model;		
+
+			if ( $group['Browser'] == 1 )
+				$row['Browser']    				= $data->browser;	
+
+			if ( $group['BrowserVersion'] == 1 )
+				$row['Browser Version']    		= $data->browser_version;			
+
+
+			if ( empty($group) )
+			{
+				$row['Conv Date']       		= $data->conv_date;
+				$row['Conv Time']       		= $data->conv_time;							
+			}
+
+			$csvData[] = $row;
+		}
 
 		$csv = new ECSVExport( $csvData );
 		$csv->setEnclosure(chr(0));//replace enclosure with caracter
-		$content = $csv->toCSV();    
-		
+		$csv->setHeader( 'content-type', 'application/csv;charset=UTF-8' );
+		$content = $csv->toCSV();   
+
 		if(isset($_REQUEST['v']))
 			echo str_replace("\n", '<br/>', $content);
 		else
-			Yii::app()->getRequest()->sendFile('conv.csv', $content, "text/csv", false);
-		
+		{
+			$filename = 'ClickLogReport_'.date("Y-m-d", strtotime($dateStart)).'.csv';
+			Yii::app()->getRequest()->sendFile($filename, $content, "text/csv", true);		
+		}		
 	}
 
 	// Uncomment the following methods and override them if needed

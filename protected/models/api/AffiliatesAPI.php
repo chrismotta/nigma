@@ -44,28 +44,29 @@ class AffiliatesAPI
 			'campaigns', 
 			'providers',
 			'campaigns.opportunities',
-			'campaigns.vectors', 
+			'vectorsLog',
+			'vectorsLog.vectors', 
 			'convLogs',
 		);
 
-		$clicksLogCriteria->group = 'campaigns.id, providers.id';
+		$clicksLogCriteria->group = 't.campaigns_id, t.providers_id, vectorsLog.vectors_id';
 
 		$clicksLogCriteria->select = array( 
-			'campaigns.id AS campaign',			
-			'providers.id AS provider', 
+			't.campaigns_id AS campaign',			
+			't.providers_id AS provider', 
 			'campaigns.name AS campaigns_name',
 			'providers.name AS provider_name', 
 			'count(t.id) AS clicks', 
 			'count(convLogs.id) AS conversions', 
 			'opportunities.model_adv AS model_adv',
-			'vectors.id AS vectors_id',
+			'vectorsLog.vectors_id AS vectors_id',
 			'vectors.name AS vector_name',
 			'vectors.rate AS vector_rate'
 		);
 
 		$clicksLogCriteria->compare('DATE(t.date)',$date);
-		$clicksLogCriteria->compare('providers.id','<>'.$testSource);
-		$clicksLogCriteria->addCondition( 'providers.id IS NOT NULL');
+		$clicksLogCriteria->compare('t.providers_id','<>'.$testSource);
+		$clicksLogCriteria->addCondition('t.providers_id IS NOT NULL');
 		$clicksLogCriteria->compare('providers.type','Affiliate');
 		if(isset($fixedCid))			
 			$clicksLogCriteria->compare( 'campaigns.id', $fixedCid );
@@ -83,6 +84,7 @@ class AffiliatesAPI
 
 		foreach ( $clicksLogs as $clicksLog )
 		{
+
 			if ( $prevProvider && $prevProvider!=$clicksLog->provider )
 			{
 				Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.affiliate.' . $prevProviderName);
@@ -95,7 +97,6 @@ class AffiliatesAPI
 				$this->apiLog->updateLog('Processing', 'Calculating traffic data');
 			}
 
-			// if exists overwrite, else create a new
 			$dailyRepCriteria = new CDbCriteria;
 
 			$dailyRepCriteria->with = array(
@@ -107,17 +108,19 @@ class AffiliatesAPI
 				'dailyReportVectors.id AS daily_report_vector',
 			);
 
-			$dailyRepCriteria->compare( 'providers_id', $clicksLog->provider );
 			$dailyRepCriteria->compare( 'DATE(date)', $date);
+			$dailyRepCriteria->compare( 'dailyReportVectors.vectors_id', $clicksLog->vectors_id );
+			$dailyRepCriteria->compare( 'providers_id', $clicksLog->provider );
 			$dailyRepCriteria->compare( 'campaigns_id', $clicksLog->campaign );
 
 			$dailyReport = DailyReport::model()->find( $dailyRepCriteria );
 
+			// if exists overwrite, else create a new
 			if(!$dailyReport)
 				$dailyReport = new DailyReport();
 
-			$dailyReport->campaigns_id = $clicksLog->campaign;
 			$dailyReport->date         = $date;
+			$dailyReport->campaigns_id = $clicksLog->campaign;
 			$dailyReport->providers_id = $clicksLog->provider;
 			$dailyReport->imp          = 0;
 			$dailyReport->clics        = $clicksLog->clicks;

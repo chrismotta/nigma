@@ -1,56 +1,43 @@
-<?php
-/* @var $this DailyReportController */
-/* @var $model DailyReport */
+<?php 
 
-$this->breadcrumbs=array(
-	'Daily Reports'=>array('index'),
-	'Manage',
-);
+// post data
+$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
+$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
+$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
+$timeStart = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '12:00 AM';
+$timeEnd   = isset($_REQUEST['timeEnd']) ? $_REQUEST['timeEnd'] : '11:59 AM';
 
-$this->menu=array(
-	array('label'=>'List DailyReport', 'url'=>array('index')),
-	array('label'=>'Create DailyReport', 'url'=>array('create')),
-);
+$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
+$advertisers    = isset($_GET['advertisers']) ? $_GET['advertisers'] : NULL;
+$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
+$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
+$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
 
-Yii::app()->clientScript->registerScript('search', "
-$('.search-button').click(function(){
-	$('.search-form').toggle();
-	return false;
-});
-$('.search-form form').submit(function(){
-	$('#daily-report-grid').yiiGridView('update', {
-		data: $(this).serialize()
-	});
-	return false;
-});
-");
-?>
+$editable = false;
 
-<?php
-	$dpp            = isset($_GET['dpp']) ? $_GET['dpp'] : '5' ;
-	$dateStart      = isset($_GET['dateStart']) ? $_GET['dateStart'] : 'today -7 days' ;
-	$dateEnd        = isset($_GET['dateEnd']) ? $_GET['dateEnd'] : 'yesterday';
-	$accountManager = isset($_GET['accountManager']) ? $_GET['accountManager'] : NULL;
-	$advertisers    = isset($_GET['advertisers']) ? $_GET['advertisers'] : NULL;
-	$opportunities  = isset($_GET['opportunities']) ? $_GET['opportunities'] : NULL;
-	$providers      = isset($_GET['providers']) ? $_GET['providers'] : NULL;
-	$adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : NULL;
+$group = array(
+	'Date'          =>1, 
+	'TrafficSource' =>1, 
+	'Advertiser'    =>1, 
+	'Category'		=>1, 
+	'Campaign'      =>1,
+	'Vector'      	=>1,
+	'Opportunity'	=>0,
+	'Country'       =>1,
+	'Carrier'		=>0,
+	'AccountManager'=>0,
+	);
 
-	$editable = false;
+if(isset($_REQUEST['group']))
+	$group = $_REQUEST['group'];
 
-	$group = array(
-		'Date'          =>0, 
-		'TrafficSource' =>0, 
-		'Advertiser'    =>1, 
-		// businnes unit
-		'Country'       =>0, 
-		'Campaign'      =>0,
-		'Vector'      =>0,
-		);
-	if(isset($_GET['g'])) 
-		$group = array_merge($group, $_GET['g']); 
+$grouped = array_search(0, $group) ? 1 : 0;
 
-	$grouped = array_search(0, $group) ? 1 : 0;
+$groupBy = '';
+foreach ( $group as $property => $value )
+{
+	$groupBy .= '&groupBy['.$property.']='.$value;
+}
 
 	$sum = array(
 		'Imp'        =>1, 
@@ -65,14 +52,55 @@ $('.search-form form').submit(function(){
 		'eCPM'       =>0,
 		'eCPC'       =>0,
 		'eCPA'       =>0,
-		);
-	if(isset($_GET['s'])) 
-		$sum = array_merge($sum, $_GET['s']);
-	
-	$dateStart  = date('Y-m-d', strtotime($dateStart));
-	$dateEnd    = date('Y-m-d', strtotime($dateEnd));
-	$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$providers, $adv_categories);
+	);
 
+if(isset($_REQUEST['sum']))
+	$sum = $_REQUEST['sum'];
+
+
+
+/*
+$filterColumns                    = array();
+$filterColumns['provider']        = 0; 
+$filterColumns['advertiser']      = 0;
+$filterColumns['opportunity']     = 0;
+$filterColumns['campaign']        = 0;
+$filterColumns['country']         = 0;
+$filterColumns['category']        = 0;
+$filterColumns['account_manager'] = 0;
+
+if ( isset($_REQUEST['filters']) )
+	$filterColumns = $_REQUEST['filters'];
+*/
+$filter                    = array();
+$filter['provider']        = null; 
+$filter['advertiser']      = null;
+$filter['country']         = null;
+$filter['campaign']        = null;
+$filter['vector']          = null;
+$filter['opportunity']     = null;
+$filter['account_manager'] = null;
+$filter['category']        = null;
+$filter['carrier']         = null;
+
+if ( isset($_REQUEST['filter']) )
+{
+	foreach ( $_REQUEST['filter'] as $f => $v )
+	{
+		$filter[$f] = $v;
+	}
+}
+
+$space = "<span class='formfilter-space'></span>";
+
+// breadcrumb
+
+$this->breadcrumbs=array(
+	'Daily Report',
+);
+
+
+$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$providers, $adv_categories);
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -115,172 +143,198 @@ $('.search-form form').submit(function(){
 	</div>
 </div>
 
-<hr>
+<?php 
 
-<div class="botonera">
 
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Add Daily Report Manualy',
-		'block'       => false,
-		'buttonType'  => 'linkButton',
-		'url'         => 'create',
-		'htmlOptions' => array(
-			'id'                => 'createIframe',
-			"data-grid-id"      => "daily-report-grid", 
-			"data-modal-id"     => "modalDailyReport", 
-			"data-modal-title"  => "Add Daily Report", 
-			'onclick'           => 'event.preventDefault(); openModal(this)',
-			),
-		)
-	); ?>
+$form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
+	'id'                   =>'date-filter-form',
+	'type'                 =>'search',
+	'htmlOptions'          =>array('class'=>'well'),
+	'enableAjaxValidation' =>true,
+	'action'               => Yii::app()->getBaseUrl() . '/dailyReport/admin',
+	'method'               => 'GET',
+	'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
+));
+
+
+// report form
+
+echo '<fieldset class="formfilter">';
+
+
+// ----- Date Time
+echo '<div class="row-fluid">';
+echo '<div class="form-sep span12" style="margin-top:0px">DATE RANGE</div>';
+//echo '<div class="form-sep span6" style="margin-top:0px">TIME RANGE</div>';
+echo '</div>';
+
+echo '<div class="row-fluid">';
+	echo '<div class="span12">';
+
+	echo KHtml::datePickerPresets($dpp, array('style'=>'width:120px'));
+
+	echo $space;
+
+	echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:100px'), 'From');
+
+	echo $space;
+
+	echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:100px'), 'To');
 	
-	<?php 
-	//Create link to load filters in modal
-	$link='excelReport?dateStart='.$dateStart.'&dateEnd='.$dateEnd.'&grouped='.$grouped;
-	if(isset($accountManager)){
-		if(is_array($accountManager)){
-			foreach ($accountManager as $id) {
-				$link.='&accountManager[]='.$id;
-			}			
-		}else{
-			$link.='&accountManager='.$accountManager;
-		}
-	}
-	if(isset($advertisers)){
-		if(is_array($advertisers)){
-			foreach ($advertisers as $id) {
-				$link.='&advertisers[]='.$id;
-			}			
-		}else{
-			$link.='&advertisers='.$advertisers;
-		}
-	}	
-	if(isset($opportunities)){
-		if(is_array($opportunities)){
-			foreach ($opportunities as $id) {
-				$link.='&opportunities[]='.$id;
-			}			
-		}else{
-			$link.='&opportunities='.$opportunities;
-		}
-	}	
-	if(isset($providers)){
-		if(is_array($providers)){
-			foreach ($providers as $id) {
-				$link.='&providers[]='.$id;
-			}			
-		}else{
-			$link.='&providers='.$providers;
-		}
-	}
-	if(isset($adv_categories)){
-		if(is_array($adv_categories)){
-			foreach ($adv_categories as $id) {
-				$link.='&advertisers-cat[]='.$id;
-			}			
-		}else{
-			$link.='&advertisers-cat='.$adv_categories;
-		}
-	}
+	echo '</div>';
+/*
+	echo '<div class="span6">';
 
-	$this->widget('bootstrap.widgets.TbButton', array(
-		'type'        => 'info',
-		'label'       => 'Excel Report',
-		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => $link,
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalDailyReport").html(dataInicial);
-					$("#modalDailyReport").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalDailyReport").html(data);
-				}',
-			),
-		'htmlOptions' => array('id' => 'excelReport'),
-		)
-	); ?>
-</div>
-<br/>
-
-<!-- FILTERS -->
-
-<?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
-		'id'                   =>'date-filter-form',
-		'type'                 =>'search',
-		'htmlOptions'          =>array('class'=>'well'),
-		'enableAjaxValidation' =>true,
-		'action'               => Yii::app()->getBaseUrl() . '/dailyReport/admin',
-		'method'               => 'GET',
-		'clientOptions'        =>array('validateOnSubmit'=>true, 'validateOnChange'=>true),
-    )); ?> 
-
-<fieldset class="formfilter">
-	<div>
-		<?php echo KHtml::datePickerPresets($dpp); ?>
-		<span class='formfilter-space'></span>
-		<?php echo KHtml::datePicker('dateStart', $dateStart, array(), array('style'=>'width:73px'), 'From'); ?>
-		<span class='formfilter-space'></span>
-		<?php echo KHtml::datePicker('dateEnd', $dateEnd, array(), array('style'=>'width:73px'), 'To'); ?>
-	</div>
-	<hr>
-	<?php 
-		//Load Filters
-
+	$this->widget(
+	    'bootstrap.widgets.TbButton',
+	    array(
+			'type'   => 'info', 
+			'toggle' => 'checkbox',
+			'label'  => 'All Day',
+	        )
+	);
+	echo $space;
 	
-		if (FilterManager::model()->isUserTotalAccess('daily'))
-			KHtml::filterAccountManagersMulti($accountManager,array('id' => 'accountManager-select'),'opportunities-select','accountManager','opportunities');
-		KHtml::filterAdvertisersMulti($advertisers, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'),'advertisers');
-		KHtml::filterAdvertisersCategoryMulti($adv_categories, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
-		KHtml::filterOpportunitiesMulti($opportunities, $accountManager, array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'opportunities');
-		KHtml::filterProvidersMulti($providers, NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'providers');
-		
-	?>
-	<hr>
+	echo KHtml::timePicker('timeStart', '12:00 AM', array(), array('style'=>'width:100px;'), 'From');
 
-	<?php
+	echo $space;
 
-	// get filters //
-	
-	$style = 'width:120px;';
-
-	echo '<div class="form-row">';
-	
-	KHtml::groupFilter($this, $group, 'g', 'Group Columns', $style);
+	echo KHtml::timePicker('timeEnd', '11:59 PM', array(), array('style'=>'width:100px;'), 'To');	
 
 	echo '</div>';
-	echo '<div>';
+*/
 
-	KHtml::groupFilter($this, $sum, 's', 'Sum Columns', $style);
+echo '</div>';
 
-	echo '</div>';
-	?>
 
-	<hr>
-	<div class="formfilter-submit">
-    <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Submit', 'type' => 'success', 'htmlOptions' => array('class' => 'showLoading'))); ?>
-	</div>
 
-</fieldset>
-<?php $this->endWidget(); ?>
+
+// ----- Groups
+
+echo '<div class="row-fluid">';
+echo '<div class="form-sep span12">GROUP COLUMNS</div>';
+echo '</div>';
+
+echo '<div class="row-fluid">';
+echo '<div class="span12">';
+echo '<div>';
+ReportingManager::groupFilter($this, $group, 'group', null, '', 'small', 'info', false);
+echo '</div>';
+echo '</div>';
+echo '</div>';
+
+	
+
+// ----- Sums
+
+echo '<div class="row-fluid">';
+echo '<div class="form-sep span12">SUM COLUMNS</div>';
+echo '</div>';
+
+echo '<div class="row-fluid">';
+echo '<div class="span12">';
+echo '<div>';
+ReportingManager::groupFilter($this, $sum, 'sum', null, '', 'small', 'info', false);
+echo '</div>';
+echo '</div>';
+echo '</div>';
+
+// ----- Filters
+
+echo '<div class="row-fluid">';
+echo '<div class="form-sep span12">FILTERS</div>';
+echo '</div>';
+
+echo '<div class="row-fluid">';
+echo '<div>';
+//ReportingManager::addFilter($this, $filterColumns, 'filters', null, '', 'small', '', false);
+echo '</div>';
+echo '</div>';
+echo '<div class="row-fluid" id="filters-row">';
+
+
+KHtml::filterProvidersMulti($filter['provider'], NULL, array('style' => "width: 140px; margin-left: 1em",'id' => 'providers-select'),'filter[provider]');
+
+KHtml::filterAdvertisersMulti($filter['advertiser'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'),'filter[advertiser]');
+
+KHtml::filterAdvertisersCategoryMulti($filter['category'], array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
+
+KHtml::filterCampaignsMulti($filter['campaign'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'campaigns-select'), 'filter[campaign]');
+
+KHtml::filterVectorsMulti($filter['vector'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'vectors-select'), 'filter[vector]');
+
+KHtml::filterOpportunitiesMulti($filter['opportunity'], $filter['account_manager'], array('style' => "width: 140px; margin-left: 1em",'id' => 'opportunities-select'),'filter[opportunity]');
+
+KHtml::filterCountriesMulti($filter['country'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'country-select'), 'filter[country]');
+
+KHtml::filterCarriersMulti($filter['carrier'], array('style' => "width: 140px; margin-left: 1em",'id' => 'carriers-select'),'filter[carrier]');
+
+if (FilterManager::model()->isUserTotalAccess('daily'))
+	KHtml::filterAccountManagersMulti($filter['account_manager'],array('id' => 'accountManager-select'),'opportunities-select','filter[account_manager]','filter[opportunity]');
+
+// hide all .multi-select-hide
+$jQuery = '$("div.multi-select-hide:not(:has(ul li.select2-search-choice))").hide()';
+Yii::app()->clientScript->registerScript('hide', $jQuery, 4);
+
+echo '</div>';
+
+
+
+// ----- actions
+
+echo '<div class="row-fluid">';
+echo '<div class="form-sep span12">ACTIONS</div>';
+echo '</div>';
+
+	$this->widget('bootstrap.widgets.TbButton', 
+		array(
+			'buttonType'=>'link', 
+			'label'=>'Submit', 
+			'type' => 'success', 
+			'htmlOptions' => array(
+				'class' => 'showLoading',
+				'onclick' => '$("#date-filter-form").attr("target", "_self");if ( $("#download-flag").length ) $("#download-flag").remove() ;$("#date-filter-form").submit();'
+			)
+		)
+	); 
+
+	echo $space;
+
+	$this->widget('bootstrap.widgets.TbButton', 
+		array(
+			'buttonType'=>'link', 
+			'label'=>'Download CSV', 
+			'type' => 'warning', 
+			//'url' => $link,
+			'htmlOptions' => array(
+				'class' => 'showLoading', 
+				'onclick' => '$("#date-filter-form").attr("target", "#");if ( $("#download-flag").length ) $("#download-flag").val("true"); else $("#date-filter-form").append("<input type=\"hidden\" style=\"visibility:collapse;\" id=\"download-flag\" name=\"download\" value=\"true\" />"); $("#date-filter-form").submit();' 
+			)
+		)
+	); 
+
+
+	
+$this->endWidget();
+
+
+echo '</div>';
+
+?>
 
 <?php 
 
-	$dataProvider=$model->search($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $group, $sum, $advertisers);
-	$totals=$model->searchTotals($dateStart, $dateEnd, $accountManager, $opportunities, $providers, $grouped, $adv_categories, $advertisers);
+if(count($_REQUEST)>1){
+	$dataProvider=$model->search($dateStart, $dateEnd, $filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $group, $sum, $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector']);
+	$totals=$model->searchTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector']);
 
 	$this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
 	'fixedHeader'              => true,
 	'headerOffset'             => 50,
+	'responsiveTable' 		   => true,
 	'dataProvider'             => $dataProvider,
-	'filter'                   => $model,
+	//'filter'                   => $model,
 	'selectionChanged'         => 'js:selectionChangedDailyReport',
 	'type'                     => 'striped condensed',
 	'rowHtmlOptionsExpression' => 'array("data-row-id" => $data->id, "data-row-net-id" => $data->providers_id, "data-row-c-id" => $data->campaigns_id)',
@@ -297,6 +351,11 @@ $('.search-form form').submit(function(){
             'visible' => false,
 		),
 		array(
+			'name'   =>	'account_manager',
+			//'filter' => $providers_names,
+            'visible' => $group['AccountManager'],
+		),		
+		array(
 			'name'              => 'date',
 			'value'             => 'date("d-m-Y", strtotime($data->date))',
 			'headerHtmlOptions' => array('style' => "width: 60px"),
@@ -310,7 +369,7 @@ $('.search-form form').submit(function(){
 		array(
 			'name'   =>	'providers_name',
 			'value'  =>	'$data->providers->name',
-			'filter' => $providers_names,
+			//'filter' => $providers_names,
             'visible' => $group['TrafficSource'],
 		),
 		array(
@@ -318,9 +377,9 @@ $('.search-form form').submit(function(){
             'visible' => $group['Advertiser'],
 		),
 		array(
-			'name'   =>	'country_name',
-            'visible' => $group['Country'],
-		),
+			'name'   =>	'advertiser_cat',
+            'visible' => $group['Category'],
+		),		
 		array(
 			'name'        => 'campaign_name',
 			'value'       => 'Campaigns::model()->getExternalName($data->campaigns_id)',
@@ -333,6 +392,18 @@ $('.search-form form').submit(function(){
 			//'value'	=> '$data->dailyReportVectors->vectors_id',
             'visible' => $group['Vector'],
 		),		
+		array(
+			'name'   =>	'opportunity',
+            'visible' => $group['Opportunity'],
+		),		
+		array(
+			'name'   =>	'country',
+            'visible' => $group['Country'],
+		),	
+		array(
+			'name'   =>	'carrier',
+            'visible' => $group['Carrier'],
+		),
 		array(	
 			'name'              => 'imp',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
@@ -520,108 +591,13 @@ $('.search-form form').submit(function(){
 			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? '$'.round($totals['spend'] / $totals['conv'], 2) : '$0',
             'visible' => $sum['eCPA'],
 		),
-        array(	
-			'name'        => 'comment',
-			'filter'      => false,
-			'sortable'    => false,
-			'class'       => 'bootstrap.widgets.TbEditableColumn',
-			'header' => false,
-			'htmlOptions' => array('class'=>'editableField'),
-			'editable'    => array(
-				'title'   => 'Comment',
-				'type'    => 'textarea',
-				'url'     => 'updateEditable/',
-				'display' => 'js:function(value, source){
-					if(value){
-						$(this).html("<i class=\"icon-font icon-red\"></i>");
-					}else{
-						$(this).html("<i class=\"icon-font\"></i>");
-					}
-				}'
-            ),
-            'visible' => !$grouped,
-        ),
-        array(
-			'class'             => 'bootstrap.widgets.TbButtonColumn',
-			'headerHtmlOptions' => array('style' => "width: 20px"),
-            'visible' => $group['Campaign'],
-			'buttons'           => array(
-				'delete' => array(
-					'visible' => '!$data->is_from_api',
-				),
-				'updateIframe' => array(
-					'label'   => 'Update',
-					'icon'    => 'pencil',
-					'visible' => '!$data->is_from_api || $data->campaigns->editable == 1',
-					'url'     => 'array("update", "id" => $data->id)',
-					'options' => array(
-						"data-grid-id"      => "daily-report-grid", 
-						"data-modal-id"     => "modalDailyReport", 
-						"data-modal-title"  => "Update Daily Report", 
-						'onclick'           => 'event.preventDefault(); openModal(this)',
-						),
-					),
-				// 'updateAjax' => array(
-				// 	'label'   => 'Update',
-				// 	'icon'    => 'pencil',
-				// 	'visible' => '!$data->is_from_api || $data->campaigns->editable == 1',
-				// 	'click'   => '
-				//     function(){
-				//     	// get row id from data-row-id attribute
-				//     	var id = $(this).parents("tr").attr("data-row-id");
 
-				//     	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-				// 		$("#modalDailyReport").html(dataInicial);
-				// 		$("#modalDailyReport").modal("toggle");
 
-				    	
-				//     	// use jquery post method to get updateAjax view in a modal window
-				//     	$.post(
-				// 		"update/"+id,
-				// 		"",
-				// 		function(data)
-				// 			{
-				// 				//alert(data);
-				// 				$("#modalDailyReport").html(data);
-				// 			}
-				// 		)
-				// 	return false;
-				//     }
-				//     ',
-				// ),
-				'updateCampaign' => array(
-					'label'   => 'Update Campaign',
-					'icon'    => 'eye-open',
-					//'visible' => '$data->getCapStatus()',
-					'click' => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-c-id");
-
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalDailyReport").html(dataInicial);
-						$("#modalDailyReport").modal("toggle");
-
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"'.Yii::app()->baseUrl.'/campaigns/updateAjax/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalDailyReport").html(data);
-							}
-						)
-						return false;
-				    }
-				    ',
-				),
-			),
-
-			'template' => $grouped ? '{updateCampaign}' : '{updateCampaign} {updateIframe} {delete}',
-		),
 	),
-)); ?>
+)); 
+}
+
+?>
 
 <?php BuildGridView::printModal($this, 'modalDailyReport', 'Daily Report'); ?>
 

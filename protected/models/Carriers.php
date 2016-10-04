@@ -16,8 +16,13 @@
  * @property Opportunities[] $opportunities
  * @property MultiRate[] $multiRates
  */
+
+
+
 class Carriers extends CActiveRecord
 {
+
+	public $country_name;
 	/**
 	 * @return string the associated database table name
 	 */

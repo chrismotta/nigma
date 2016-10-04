@@ -300,6 +300,40 @@ class KHtml extends CHtml
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
     }
 
+    public static function filterCarriersMulti($value, $htmlOptions = array(),$name, $countries = array() )
+    {
+
+        $defaultHtmlOptions = array(
+            'empty' => 'All Carriers',
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+        $criteria=new CDbCriteria;
+        $criteria->with = 'idCountry';
+        $criteria->order = 't.mobile_brand, idCountry.name';
+        $criteria->select = '*, idCountry.name as country_name';
+        $carriers = Carriers::model()->findAll( $criteria );
+
+        $data=array();
+        foreach ($carriers as $c) {
+            $data[$c->id_carrier]=$c->mobile_brand . ' (' . $c->country_name .')';
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       => $value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All carriers',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }     
+
     public static function filterProduct($value, $htmlOptions = array(), $feId=null, $optionAll=true)
     {
         $defaultHtmlOptions = array(
@@ -505,6 +539,36 @@ class KHtml extends CHtml
         return CHtml::dropDownList('country', $value, self::getCountryByFE($feId), $htmlOptions);
     }
 
+    public static function filterCountriesMulti($value, $providers_id = array(), $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+
+        $countries = GeoLocation::model()->findAll( array('order' => 'name', 'condition' => 'type="Country"') );
+
+        $data=array();
+        foreach ($countries as $c) {
+            $data[$c->id_location]=$c->getNameFromId($c->id_location);
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All countries',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }         
+
     public static function getCountryByFE($feId=null){
         $criteria = new CDbCriteria;
         $criteria->with  = array('regions','regions.country');
@@ -564,6 +628,72 @@ class KHtml extends CHtml
             ),
         ), true);
     }
+
+
+    public static function filterCampaignsMulti($value, $providers_id = array(), $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+        if ( empty($providers_id) )
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
+        else
+            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "providers_id IN (" . join($providers_id, ", ") . ")") );
+
+        $data=array();
+        foreach ($campaigns as $c) {
+            $data[$c->id]=$c->getExternalName($c->id);
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All campaigns',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }     
+
+    public static function filterVectorsMulti($value, $provider_id = array(), $htmlOptions = array(),$name)
+    {
+
+        $defaultHtmlOptions = array(
+            'multiple' => 'multiple',
+        );
+        $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
+
+        //if ( empty($providers_id) )
+            $vectors = Vectors::model()->findAll( array('order' => 'id') );
+        /*      
+        else
+            $vectors = Vectors::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
+        */
+        $data=array();
+        foreach ($vectors as $c) {
+            $data[$c->id]=$c->getExternalName($c->id);
+        }
+        return Yii::app()->controller->widget(
+                'yiibooster.widgets.TbSelect2',
+                array(
+                'name'        => $name,
+                'data'        => $data,
+                'value'       =>$value,
+                'htmlOptions' => $htmlOptions,
+                'options'     => array(
+                    'placeholder' => 'All vectors',
+                    'width'       => '20%',
+                ),
+            )
+        );
+    }     
 
 //Filters select2
 
