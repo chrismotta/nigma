@@ -359,9 +359,8 @@ class Vectors extends CActiveRecord
 		
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $camp['id'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');
-			// $return['msg'] .= ' => '.json_encode($dailyReport->getErrors());
+			$return = json_encode($dailyReport->getErrors());
 		} else {
-			// $return['msg'] .= ' => saved';
 			// $return['cid'] = $dailyReport->campaigns_id;
 
 			if($isNew){
@@ -370,11 +369,16 @@ class Vectors extends CActiveRecord
 				$dailyReportVector->vectors_id = $this->id;
 				$dailyReportVector->daily_report_id = $dailyReport->id;
 				$dailyReportVector->save();
+				
+				$return = 'saved: '. $dailyReport->spend;
+			}else{
+				
+				$return = 'updated: '. $dailyReport->spend;
 			}
 		}
 		
-		return $dailyReport->spend;
-		// return $return;
+		// return $dailyReport->spend;
+		return $return;
 	}
 
 	//
