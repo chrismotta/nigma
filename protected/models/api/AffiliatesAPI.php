@@ -128,8 +128,14 @@ class AffiliatesAPI
 
 			$return .= 'Campaign: '.$clicksLog->campaigns_name.'<br/>Provider: '.$clicksLog->provider_name.'<br/>Vector: '.$clicksLog->vectors_id.'<br/>';
 
-			if ( !$fixedRate && $clicksLog->vector_rate )
+			// spend
+
+			if ( !$fixedRate && isset($clicksLog->vector_rate) )
 				$fixedRate = $clicksLog->vector_rate;
+
+			$dailyReport->updateSpendAffiliates($fixedRate);
+
+			// revenue
 
 			if( $clicksLog->model_adv != 'RS' ){ // Esto esta porque el revenue share se ingresa manualmente
 
@@ -140,7 +146,6 @@ class AffiliatesAPI
 				$return.= ' -Not Revenue- ';
 			}
 
-			$dailyReport->updateSpendAffiliates($fixedRate);
 			$return.= $clicksLog->provider.'::'.$clicksLog->campaign .' - '.$clicksLog->clicks.' - '.$clicksLog->conversions.' - '.$dailyReport->spend.'<br/><br/>';	
 
 
