@@ -229,6 +229,10 @@ class Vectors extends CActiveRecord
 				$campaignsList[$cid]['conv'] = $model->conv;
 				$totalConv += $campaignsList[$cid]['conv'];
 
+			}else{
+				$campaignsList[$cid]['clicks'] = 0;
+				$campaignsList[$cid]['conv'] = 0;
+
 			}
 
 		}
@@ -245,17 +249,30 @@ class Vectors extends CActiveRecord
 			}
 			*/
 
-			// cost related to clicks
-			foreach ($campaignsList as $id => $cmp) {
-				$campaignsList[$id]['id'] = $id;
+			// if at least there are 1 click
+			if($totalClicks>0){
 
-				if($totalClicks * $cmp['clicks'] > 0){
-					$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
-					$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
+				// cost related to clicks
+				foreach ($campaignsList as $id => $cmp) {
+					$campaignsList[$id]['id'] = $id;
+
+
+					if($totalClicks * $cmp['clicks'] > 0){
+						$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
+						$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
+					}else{
+						$campaignsList[$id]['cost'] = 0;
+						$return[$id] = $id . ': ' .'0';
+					}
+
 				}
-				else{
-					$campaignsList[$id]['cost'] = 0;
-					$return[$id] = $id . ': ' .'0';
+
+			}else{
+
+				foreach ($campaignsList as $id => $cmp) {
+					$campaignsList[$id]['id'] = $id;
+					$campaignsList[$id]['cost'] = $cost / count($vhc);
+					$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
 				}
 			}
 
@@ -279,6 +296,7 @@ class Vectors extends CActiveRecord
 
 			// $return['c_id'] = $this->id;
 		
+
 		}else{
 		
 			$return['result'] = 'ERROR';
