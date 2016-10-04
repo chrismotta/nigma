@@ -86,6 +86,7 @@ class Airpush
 
 				$vid = Utilities::parseVectorID($campaign->campaignname);
 				$vectorModel = Vectors::model()->findByPk($vid);
+				$vectorModel->providers_id = $this->provider_id;
 				$return.= $campaign->campaignname;
 				$return.= '<br>';
 				$return.= $campaign->Spent;

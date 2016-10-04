@@ -309,7 +309,7 @@ class Vectors extends CActiveRecord
 		*/
 
 		$dailyRepCriteria->compare( 'DATE(date)', $date);
-		$dailyRepCriteria->compare( 'providers_id', $campModel->providers_id );
+		$dailyRepCriteria->compare( 'providers_id', $this->providers_id );
 		$dailyRepCriteria->compare( 'campaigns_id', $camp['id'] );
 		$dailyRepCriteria->compare( 'dailyReportVectors.vectors_id', $this->id );
 
