@@ -132,16 +132,8 @@ class AffiliatesAPI
 				$fixedRate = $clicksLog->vector_rate;
 
 			if( $clicksLog->model_adv != 'RS' ){ // Esto esta porque el revenue share se ingresa manualmente
-				if ( $clicksLog->vector_rate )
-				{
-					$revenueRate = $clicksLog->vector_rate;
-				}
-				else
-				{
-					$revenueRate = null;
-				}
 
-				$dailyReport->updateRevenue($revenueRate); // Revisar si es necesario implementar el fixed rate aca tambien
+				$dailyReport->updateRevenue();
 				$dailyReport->setNewFields();
 				$return.= ' -Yes Revenue- ';
 			}else{
