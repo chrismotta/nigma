@@ -286,8 +286,29 @@ class Vectors extends CActiveRecord
 	{
 		// echo 'Creating daily - date: '.$date.' cid: '.$camp.'<br>';
 		$campModel = Campaigns::model()->findByPk($camp['id']);
-		
+
+		//
+		$dailyRepCriteria = new CDbCriteria;
+		$dailyRepCriteria->with = array(
+			'dailyReportVectors',
+		);
+
+		/*
+		$dailyRepCriteria->select = array( 
+			'*',
+			'dailyReportVectors.id AS daily_report_vector',
+		);
+		*/
+
+		$dailyRepCriteria->compare( 'DATE(date)', $date);
+		$dailyRepCriteria->compare( 'providers_id', $campModel->providers_id );
+		$dailyRepCriteria->compare( 'campaigns_id', $camp['id'] );
+		$dailyRepCriteria->compare( 'dailyReportVectors.vectors_id', $this->id );
+
 		// if exists overwrite, else create a new
+		$dailyReport = DailyReport::model()->find( $dailyRepCriteria );
+		
+		/*
 		$dailyReport = DailyReport::model()->find(
 			"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
 			array(
@@ -296,14 +317,20 @@ class Vectors extends CActiveRecord
 				":date"=>$date, 
 				)
 			);
-
+		*/
+		
 		if(!$dailyReport){
+			
 			$dailyReport = new DailyReport();
 			$dailyReport->date = $date;
 			$dailyReport->campaigns_id = $camp['id'];
 			$dailyReport->providers_id = $campModel->providers_id;
+
+			$isNew = true;
 			$return['msg'] = "New record: ";
+		
 		}else{
+			$isNew = false;
 			$return['msg'] =  "Update record: ".$dailyReport->id;
 		}
 				
@@ -329,6 +356,14 @@ class Vectors extends CActiveRecord
 		} else {
 			$return['msg'] .= ' => saved';
 			$return['cid'] = $dailyReport->campaigns_id;
+
+			if($isNew){
+
+				$dailyReportVector = new DailyReportVectors();	
+				$dailyReportVector->vectors_id = $this->id;
+				$dailyReportVector->daily_report_id = $dailyReport->id;
+				$dailyReportVector->save();
+			}
 		}
 		
 		return $return;
