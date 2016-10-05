@@ -69,6 +69,7 @@ class ClicksLog extends CActiveRecord
 	public $vectors_id;
 	public $only_conversions = false;
 	public $spend;
+	public $profit;
 
 
 	public function macros()
@@ -105,7 +106,7 @@ class ClicksLog extends CActiveRecord
 			//array('device_type', 'length', 'max'=>45),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, campaigns_id, providers_id, tid, ext_tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, os, app, redirect_url, network_type, keyword, creative, placement, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
+			array('id, campaigns_id, providers_id, tid, ext_tid, date, server_ip, user_agent, languaje, referer, ip_forwarded, country, city, carrier, browser, device_type, device, conv_date, conv_time, os, app, redirect_url, network_type, keyword, creative, placement, campaigns_name, totalClicks, totalConv, CTR, query', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -130,34 +131,37 @@ class ClicksLog extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id'           => 'ID',
-			'campaigns_id' => 'Campaigns',
-			'providers_id' => 'Providers',
-			'tid'          => 'Tid',
-			'ext_tid'      => 'External Tid',
-			'date'         => 'Date',
-			'server_ip'    => 'Server Ip',
-			'user_agent'   => 'User Agent',
-			'languaje'     => 'Languaje',
-			'referer'      => 'Referer',
-			'ip_forwarded' => 'Ip Forwarded',
-			'country'      => 'Country',
-			'city'         => 'City',
-			'carrier'      => 'Carrier',
-			'browser'      => 'Browser',
-			'device_type'  => 'Device Type',
-			'device'       => 'Device',
-			'os'           => 'Os',
-			'app'          => 'App',
-			'clics'        => 'Clicks',
-			'redirect_url' => 'Redirect Url',
-			'totalClicks'  => 'Clicks',
-			'totalConv'    => 'Conversions',
-			'CTR'          => 'CTR&nbsp;%',
-			'conversions'  => 'Conv.',
-			'convRate'	   => 'CR&nbsp;%',
-			'provider'     => 'Traffic Source',
-			'country_name' => 'Country',
+			'id'             => 'ID',
+			'campaigns_id'   => 'Campaign ID',
+			'campaigns_name' => 'Campaign Name',
+			'providers_id'   => 'Providers',
+			'tid'            => 'Tid',
+			'ext_tid'        => 'External Tid',
+			'date'           => 'Date',
+			'server_ip'      => 'Server Ip',
+			'user_agent'     => 'User Agent',
+			'languaje'       => 'Languaje',
+			'referer'        => 'Referer',
+			'ip_forwarded'   => 'Ip Forwarded',
+			'country'        => 'Country',
+			'city'           => 'City',
+			'carrier'        => 'Carrier',
+			'browser'        => 'Browser',
+			'device_type'    => 'Device Type',
+			'device'         => 'Device',
+			'os'             => 'Os',
+			'app'            => 'App',
+			'clics'          => 'Clicks',
+			'redirect_url'   => 'Redirect Url',
+			'totalClicks'    => 'Clicks',
+			'totalConv'      => 'Conversions',
+			'CTR'            => 'CTR&nbsp;%',
+			'conversions'    => 'Conv.',
+			'convRate'       => 'CR&nbsp;%',
+			'provider'       => 'Traffic Source',
+			'country_name'   => 'Country',
+			'conv_date'		=> 'Conversion Date',
+			'conv_time'		=> 'Conversion Time'
 		);
 	}
 
@@ -431,22 +435,27 @@ class ClicksLog extends CActiveRecord
 	}
 
 
-	public function csvReport( $dateStart = 'today', $dateEnd = 'today', $provider = null, $onlyConversions = false, array $group = null, array $filters = null )
+	public function csvReport( $dateStart = 'today', $dateEnd = 'today', $provider = null, $onlyConversions = false, array $group = null, array $filters = null, $timeStart = '12:00 AM', $timeEnd = '11:59 PM', $totals = false )
 	{
 		$dateStart = date('Y-m-d', strtotime($dateStart)); 
 		$dateEnd   = date('Y-m-d', strtotime($dateEnd));
+		$timeStart = strtotime($dateStart . ' ' .$timeStart);
+		$timeEnd = strtotime($dateEnd. ' ' .$timeEnd);
 
 		$criteria = new CDbCriteria;
 		$criteria->with = array(
 			'campaigns',
 			'campaigns.opportunities',
 			'campaigns.opportunities.regions.financeEntities.advertisers',
+			'campaigns.opportunities.regions.country',
 			'providers',
-			'providers.country',
+			//'providers.country',
 			'convLogs',
 			'vectorsLog',
 			'vectorsLog.vectors',
 			);
+
+		$grouped = false;
 
 		if ( $group )
 		{
@@ -457,123 +466,295 @@ class ClicksLog extends CActiveRecord
 			if($group['Country'] == 1) {
 				$groupBy[] = 'providers.country_id';
 				$orderBy[] = 'country.name ASC';
+				$grouped = true;
 			}			
 
 			if($group['Campaign'] == 1) {
 				$groupBy[] = 't.campaigns_id';
 				$orderBy[] = 'campaigns.name ASC';
+				$grouped = true;
 			}
 
 			if($group['Advertiser'] == 1) {
 				$groupBy[] = 'advertisers.id';
 				$orderBy[] = 'advertisers.name ASC';
+				$grouped = true;
 			}
 
 			if($group['TrafficSource'] == 1) {
 				$groupBy[] = 't.providers_id';
 				$orderBy[] = 'providers.name ASC';
+				$grouped = true;
 			}
 
 			if($group['TrafficSourceType'] == 1) {
 				$groupBy[] = 'providers.type';
 				$orderBy[] = 'providers.type ASC';
+				$grouped = true;
 			}		
 
 			if($group['Vector'] == 1) {
 				$groupBy[] = 'vectors.id';
 				$orderBy[] = 'vectors.id ASC';
+				$grouped = true;
 			}			
 
 			if($group['Date'] == 1) {
 				$groupBy[] = 'click_date';
 				$orderBy[] = 'click_date ASC';
+				$grouped = true;
 			}			
 
 			if($group['Product'] == 1) {
 				$groupBy[] = 'opportunities.product';
 				$orderBy[] = 'opportunities.product ASC';
+				$grouped = true;
 			}
 			if($group['ServerIP'] == 1) {
 				$groupBy[] = 't.server_ip';
 				$orderBy[] = 't.server_ip ASC';
+				$grouped = true;
 			}			
 			if($group['Carrier'] == 1) {
 				$groupBy[] = 't.carrier';
 				$orderBy[] = 't.carrier ASC';
+				$grouped = true;
 			}	
 			if($group['OS'] == 1) {
 				$groupBy[] = 't.os';
 				$orderBy[] = 't.os ASC';
+				$grouped = true;
 			}
 			if($group['OSVersion'] == 1) {
 				$groupBy[] = 't.os_version';
 				$orderBy[] = 't.os_version ASC';
+				$grouped = true;
 			}	
 			if($group['DeviceType'] == 1) {
 				$groupBy[] = 't.device_type';
 				$orderBy[] = 't.device_type ASC';
+				$grouped = true;
 			}				
 			if($group['DeviceBrand'] == 1) {
 				$groupBy[] = 't.device';
 				$orderBy[] = 't.device ASC';
+				$grouped = true;
 			}		
 			if($group['DeviceModel'] == 1) {
 				$groupBy[] = 't.device_model';
 				$orderBy[] = 't.device_model ASC';
+				$grouped = true;
 			}														
 			if($group['Browser'] == 1) {
 				$groupBy[] = 't.browser';
 				$orderBy[] = 't.browser ASC';
+				$grouped = true;
 			}
 			if($group['BrowserVersion'] == 1) {
 				$groupBy[] = 't.browser_version';
 				$orderBy[] = 't.browser_version ASC';
+				$grouped = true;
 			}	
 
 			$criteria->group = join($groupBy,',');		
 		}
 
+		if ( !$grouped )
+		{
+			$criteria->group = 't.id';
+		}
 
 		if ( $filters )
 		{
-			if ( isset( $filters['provider'] ) )
-				$criteria->addInCondition( 't.providers_id', $filters['provider'] );
+			/*
+			if ( $filters['account_manager'] != NULL) {
+				if(is_array($filters['account_manager']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['account_manager'] as $id) {	
+						if($i==0)			
+							$query.="accountManager.id=".$id;
+						else
+							$query.=" OR accountManager.id=".$id;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('accountManager.id',$filters['account_manager']);
+				}
+			}
+			*/
+			if ( $filters['advertiser'] != NULL) {
+				if(is_array($filters['advertiser']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['advertiser'] as $adv) {	
+						if($i==0)			
+							$query.="advertisers.id=".$adv;
+						else
+							$query.=" OR advertisers.id=".$adv;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('advertisers.id',$filters['advertiser']);
+				}
+			}
+			/*
+			if ( $filters['opportunity'] != NULL) {
+				if(is_array($filters['opportunity']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['opportunity'] as $opp) {	
+						if($i==0)			
+							$query.="opportunities.id=".$opp;
+						else
+							$query.=" OR opportunities.id=".$opp;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('opportunities.id',$filters['opportunity']);
+				}
+			}
+			*/
+			if ( $filters['provider'] != NULL) {
+				if(is_array($filters['provider']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['provider'] as $prov) {	
+						if($i==0)			
+							$query.="providers.id=".$prov;
+						else
+							$query.=" OR providers.id=".$prov;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('providers.id',$filters['provider']);
+				}
+			}
+			/*
+			if ( $filters['carrier'] != NULL) {
+				if(is_array($filters['carrier']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['carrier'] as $c) {	
+						if($i==0)			
+							$query.="carriers.id_carrier=".$c;
+						else
+							$query.=" OR carriers.id_carrier=".$c;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('carriers.id_carrier',$filters['carrier']);
+				}
+			}		
 
-			if ( isset( $filters['advertiser'] ) )
-				$criteria->addInCondition( 'advertisers.id', $filters['advertiser'] );
+			if ( $filters['category'] != NULL) {
+				if(is_array($filters['category']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['category'] as $cat) {	
+						if($i==0)			
+							$query.="advertisers.cat='".$cat."'";
+						else
+							$query.=" OR advertisers.cat='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('advertisers.cat',$filters['category']);
+				}
+			}
+			*/
+			if ( $filters['country'] != NULL) {
+				if(is_array($filters['country']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['country'] as $cat) {	
+						if($i==0)			
+							$query.="country.id_location='".$cat."'";
+						else
+							$query.=" OR country.id_location='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('country.id_location',$filters['country']);
+				}
+			}
 
-			if ( isset( $filters['campaign'] ) )
-				$criteria->addInCondition( 't.campaigns_id', $filters['campaign'] );			
+			if ( $filters['campaign'] != NULL) {
+				if(is_array($filters['campaign']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['campaign'] as $cat) {	
+						if($i==0)			
+							$query.="t.campaigns_id='".$cat."'";
+						else
+							$query.=" OR t.campaigns_id='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('t.campaigns_id',$filters['campaign']);
+				}
+			}
 
-			if ( isset( $filters['country'] ) )
-				$criteria->addInCondition( 't.providers_id', $filters['country'] );
-
-			if ( isset( $filters['vector'] ) )
-				$criteria->addInCondition( 'vectors_id', $filters['vector'] );
-
-			if ( isset( $filters['os_type'] ) )
-				$criteria->addInCondition( 't.os', $filters['os_type'] );
-
-			if ( isset( $filters['os_version'] ) )
-				$criteria->addInCondition( 't.os_version', $filters['os_version'] );
-
-			if ( isset( $filters['devyce_type'] ) )
-				$criteria->addInCondition( 't.device_type', $filters['device_type'] );
-
-			if ( isset( $filters['device_brand'] ) )
-				$criteria->addInCondition( 't.device', $filters['device_brand'] );
-
-			if ( isset( $filters['device_model'] ) )
-				$criteria->addInCondition( 't.device_model', $filters['device_model'] );		
-
-			if ( isset( $filters['browser_type'] ) )
-				$criteria->addInCondition( 't.browser', $filters['browser_type'] );									
-
-			if ( isset( $filters['browser_version'] ) )
-				$criteria->addInCondition( 't.browser_version', $filters['browser_version'] );		
-			
-			if ( isset( $filters['carrier'] ) )
-				$criteria->addInCondition( 't.carrier', $filters['carrier'] );			
+			if ( $filters['vector'] != NULL) {
+				if(is_array($filters['vector']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['vector'] as $cat) {	
+						if($i==0)			
+							$query.="vectorsLog.vectors_id='".$cat."'";
+						else
+							$query.=" OR vectorsLog.vectors_id='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('vectorsLog.vectors_id',$filters['vector']);
+				}
+			}						
 		}
 
 		if ( $provider )
@@ -590,8 +771,10 @@ class ClicksLog extends CActiveRecord
 		$rev = '
 			SUM(
 				CASE 
-					WHEN campaigns.model="CPC" OR campaigns.model="CPV" OR ( convLogs.id IS NOT NULL AND (campaigns.model="CPA" OR campaigns.model="CPL" OR campaigns.model="CPI") )
-					THEN opportunities.rate 
+					WHEN ( opportunities.model_adv="CPC" OR opportunities.model_adv="CPV" ) AND opportunities.rate IS NOT NULL THEN
+						opportunities.rate 
+					WHEN ( opportunities.model_adv="CPA" OR opportunities.model_adv="CPL" OR opportunities.model_adv="CPI" ) AND convLogs.id IS NOT NULL AND opportunities.rate IS NOT NULL THEN
+						opportunities.rate 
 					ELSE 0
 				END
 			) as revenue
@@ -607,6 +790,30 @@ class ClicksLog extends CActiveRecord
 					ELSE 0
 				END
 			) as spend
+		';
+
+		$profit = '
+			(
+				SUM(
+					CASE 
+						WHEN ( opportunities.model_adv="CPC" OR opportunities.model_adv="CPV" ) AND opportunities.rate IS NOT NULL THEN
+							opportunities.rate 
+						WHEN ( opportunities.model_adv="CPA" OR opportunities.model_adv="CPL" OR opportunities.model_adv="CPI" ) AND convLogs.id IS NOT NULL AND opportunities.rate IS NOT NULL THEN
+							opportunities.rate 
+						ELSE 0
+					END
+				)
+				-
+				SUM(
+					CASE 
+						WHEN vectorsLog.vectors_id IS NOT NULL AND vectors.rate IS NOT NULL AND convLogs.id IS NOT NULL THEN 
+							vectors.rate
+						WHEN convLogs.id IS NOT NULL AND campaigns.external_rate IS NOT NULL THEN 
+							campaigns.external_rate
+						ELSE 0
+					END
+				)
+			) as profit
 		';
 
 		$criteria->select = array(
@@ -629,16 +836,109 @@ class ClicksLog extends CActiveRecord
 			'count(t.id) as totalClicks',
 			$rev,
 			$spnd,
+			$profit,
 		);
 
-		
+		// return only totals if requested
+		if ( $totals )
+		{
+			FilterManager::model()->addUserFilter($criteria, 'search');
+
+			$totals                =array();
+			$totals['totalClicks'] =0;
+			$totals['totalConv']   =0;
+			$totals['revenue']     =0;
+			$totals['spend']       =0;
+			$totals['profit']      =0;
+			if($dailys=Self::model()->findAll($criteria))
+			{			
+				foreach ($dailys as $data) {
+					$totals['totalClicks'] +=$data->totalClicks;
+					$totals['totalConv']   +=$data->totalConv;
+					$totals['revenue']     +=$data->revenue;
+					$totals['spend']       +=$data->spend;
+					$totals['profit']      +=$data->profit;
+				}
+			}
+			return $totals;				
+		}
+
 		$pagination = isset($_REQUEST['v']) ? null : false;
 
 		return new CActiveDataProvider($this, array(
 			'pagination'=>$pagination,
 			'criteria'=>$criteria,
+			'sort'       =>array(
+				'defaultOrder'=>'totalClicks DESC',
+		        'attributes'=>array(
+					// Adding custom sort attributes
+		            'totalClicks'=>array(
+						'asc'  =>'totalClicks',
+						'desc' =>'totalClicks DESC',
+		            ),
+		            'totalConv'=>array(
+						'asc'  =>'totalConv',
+						'desc' =>'totalConv DESC',
+		            ),
+		            'click_date'=>array(
+						'asc'  =>'click_date',
+						'desc' =>'click_date DESC',
+		            ),
+		            'click_time'=>array(
+						'asc'  =>'click_time',
+						'desc' =>'click_time DESC',
+		            ),	
+		            'conv_date'=>array(
+						'asc'  =>'convLogs.date',
+						'desc' =>'convLogs.date DESC',
+		            ),
+		            'conv_time'=>array(
+						'asc'  =>'convLogs.date',
+						'desc' =>'convLogs.date DESC',
+		            ),	
+		            'revenue'=>array(
+						'asc'  =>'revenue',
+						'desc' =>'revenue DESC',
+		            ),
+		            'spend'=>array(
+						'asc'  =>'spend',
+						'desc' =>'spend DESC',
+		            ),	
+		            'profit'=>array(
+						'asc'  =>'profit',
+						'desc' =>'profit DESC',
+		            ),			    	            		            		            		            
+		            'campaigns_name'=>array(
+						'asc'  =>'campaign.name',
+						'desc' =>'campaigns.name DESC',
+		            ),			
+		            'vector_name'=>array(
+						'asc'  =>'vectors.name',
+						'desc' =>'vectors.name DESC',
+		            ),				            
+		            'advertiser'=>array(
+						'asc'  =>'advertisers.name',
+						'desc' =>'advertisers.name DESC',
+		            ),	
+		            'traffic_source'=>array(
+						'asc'  =>'providers.name',
+						'desc' =>'providers.name DESC',
+		            ),	
+		            'country_name'=>array(
+						'asc'  =>'country.name',
+						'desc' =>'country.name DESC',
+		            ),			            		            
+		            'traffic_source_type'=>array(
+						'asc'  =>'providers.type',
+						'desc' =>'providers.type DESC',
+		            ),			            
+		            // Adding all the other default attributes
+		            '*',
+		        ),
+		    ),		
 		));
 	}
+	
 
 
 	public function getMatchType()
