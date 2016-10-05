@@ -296,7 +296,24 @@ class DailyReportController extends Controller
 		$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
 
 		$sum = isset($_REQUEST['sum']) ? $_REQUEST['sum'] : array();
-		$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : array();
+		$filters                    = array();
+		$filters['provider']        = null; 
+		$filters['advertiser']      = null;
+		$filters['country']         = null;
+		$filters['campaign']        = null;
+		$filters['vector']          = null;
+		$filters['opportunity']     = null;
+		$filters['account_manager'] = null;
+		$filters['category']        = null;
+		$filters['carrier']         = null;
+
+		if ( isset($_REQUEST['filter']) )
+		{
+			foreach ( $_REQUEST['filter'] as $f => $v )
+			{
+				$filters[$f] = $v;
+			}
+		}
 
 		$group = isset($_REQUEST['group']) ? $_REQUEST['group'] : array();
 
