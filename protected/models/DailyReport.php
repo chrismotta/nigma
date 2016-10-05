@@ -453,7 +453,7 @@ class DailyReport extends CActiveRecord
 			$criteria->group = join($groupBy,',');		
 		}
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		if ( $filters )
@@ -750,7 +750,7 @@ class DailyReport extends CActiveRecord
 				'campaigns.opportunities.carriers' 
 			);
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 		
 		if ( $providers != NULL) {
@@ -1419,7 +1419,7 @@ class DailyReport extends CActiveRecord
 			$opportunityName,
 			);
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		// if($sum==1){
