@@ -86,6 +86,25 @@ class ApiUpdateController extends Controller
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
 		
+		// $this->actionReporo(); //!!!!review!!!
+		// reporo disabled (works on localhost only)
+		// error:
+		/*
+		file_get_contents(http://www.reporo.com/analytics/data-api.php?action=inventory/advertiser): failed to open stream: HTTP request failed! HTTP/1.0 401 Unauthorized
+		 (/var/www/html/prod/protected/models/api/Reporo.php:127)
+		Stack trace:
+		#0 /var/www/html/prod/protected/controllers/ApiUpdateController.php(120): Reporo->downloadInfo()
+		#1 /var/www/yii/framework/web/actions/CInlineAction.php(49): ApiUpdateController->actionReporo()
+		#2 /var/www/yii/framework/web/CController.php(308): CInlineAction->runWithParams()
+		#3 /var/www/yii/framework/web/CController.php(286): ApiUpdateController->runAction()
+		#4 /var/www/yii/framework/web/CController.php(265): ApiUpdateController->runActionWithFilters()
+		#5 /var/www/yii/framework/web/CWebApplication.php(282): ApiUpdateController->run()
+		#6 /var/www/yii/framework/web/CWebApplication.php(141): CWebApplication->runController()
+		#7 /var/www/yii/framework/base/CApplication.php(184): CWebApplication->processRequest()
+		#8 /var/www/html/prod/index.php(13): CWebApplication->run()
+		REQUEST_URI=/apiUpdate/reporo
+		1 row in set (0.19 sec)
+		*/
 
 		// $this->actionBingAds();
 		// $this->actionSmaato();
@@ -104,8 +123,6 @@ class ApiUpdateController extends Controller
 		
 		$this->actionAirpush();
 		$this->actionInMobi();
-		
-		$this->actionReporo();
 	}
 
 	public function actionBingCode(){
