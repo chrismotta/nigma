@@ -288,6 +288,12 @@ class ClicklogController extends Controller
 				$model->browser         = $device->getVirtualCapability('advertised_browser');
 				$model->browser_version = $device->getVirtualCapability('advertised_browser_version');
 
+				if ($device->getCapability('is_tablet') == 'true')
+					$model->device_type = 'Tablet';
+				else if ($device->getCapability('is_wireless_device') == 'true')
+					$model->device_type = 'Mobile';
+				else
+					$model->device_type = 'Desktop';
 			}
 
 			$ts['wurfl'] = microtime(true);
@@ -813,29 +819,59 @@ class ClicklogController extends Controller
 			
 		$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
 		$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
+		$timeStart = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '12:00 AM';
+		$timeEnd = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '11:59 PM';	
 		$provider = isset($_REQUEST['ts']) ? $_REQUEST['ts'] : null;
 		$onlyConversions = isset($_REQUEST['c']) ? true : false;
 
 		$sum = isset($_REQUEST['sum']) ? $_REQUEST['sum'] : array();
-		$filters = isset($_REQUEST['filter']) ? $_REQUEST['filter'] : array();
+		$filters                    = array();
+		$filters['provider']        = null; 
+		$filters['advertiser']      = null;
+		$filters['country']         = null;
+		$filters['campaign']        = null;
+		$filters['vector']          = null;
+		$filters['opportunity']     = null;
+		$filters['account_manager'] = null;
+		$filters['category']        = null;
+		$filters['carrier']         = null;
+
+		if ( isset($_REQUEST['filter']) )
+		{
+			foreach ( $_REQUEST['filter'] as $f => $v )
+			{
+				$filters[$f] = $v;
+			}
+		}
 
 		$group1 = isset($_REQUEST['group1']) ? $_REQUEST['group1'] : array();
 		$group2 = isset($_REQUEST['group2']) ? $_REQUEST['group2'] : array();
 		$group = array_merge($group1, $group2);
+
+		$grouped = false;
+
+		foreach ( $group as $property => $value )
+		{
+			if ( $value != 0 )
+			{
+				$grouped = true;
+				break;
+			}
+		}		
 
 		$dp = $model->csvReport( $dateStart, $dateEnd, $provider, $onlyConversions, $group, $filters );
 
 		foreach ($dp->getData() as $data) {
 			$row = array();
 
-			if ( empty($group) )
+			if ( !$grouped )
 			{
 				$row['Click ID']        		= $data->tid;
 				$row['Date']      				= $data->click_date;
 				$row['Time']      				= $data->click_time;				
 			}
 
-			if ( $group['Date'] )
+			if ( $group['Date'] == 1 )
 			{
 				$row['Date']      				= $data->click_date;
 				$row['Time']      				= $data->click_time;						
@@ -858,7 +894,7 @@ class ClicklogController extends Controller
 				$row['Advertiser']      		= $data->advertiser;
 
 
-			if ( $group['Country'] )
+			if ( $group['Country'] == 1 )
 				$row['Country']      			= $data->country;		
 
 
@@ -879,7 +915,7 @@ class ClicklogController extends Controller
 				$row['Product'] 		 		= $data->product;
 
 
-			if ( !empty($group) )
+			if ( $grouped )
 			{
 				$row['Clicks']       			= $data->totalClicks;			
 			}
@@ -927,7 +963,7 @@ class ClicklogController extends Controller
 				$row['Browser Version']    		= $data->browser_version;			
 
 
-			if ( empty($group) )
+			if ( !$grouped )
 			{
 				$row['Conv Date']       		= $data->conv_date;
 				$row['Conv Time']       		= $data->conv_time;							

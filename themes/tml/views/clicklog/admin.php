@@ -4,8 +4,11 @@
 $dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
 $model->dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
 $model->dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
-$model->dateStart = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '12:00 AM';
-$model->dateEnd = isset($_REQUEST['timeEnd']) ? $_REQUEST['timeEnd'] : '11:59 AM';
+
+$timeStart = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '12:00 AM';
+$timeEnd = isset($_REQUEST['timeEnd']) ? $_REQUEST['timeEnd'] : '11:59 PM';
+
+
 $model->providers_id = isset($_REQUEST['ts']) ? $_REQUEST['ts'] : null;
 $model->only_conversions = isset($_REQUEST['c']) ? true : false;
 $partner = isset($publisher_name) ? $publisher_name : null;
@@ -38,12 +41,21 @@ if(isset($_REQUEST['group2']))
 	$groupColumns2 = $_REQUEST['group2'];
 
 $group = array_merge($groupColumns1, $groupColumns2); 
-
+$grouped = 0;
 
 $groupBy = '';
+$groupedByDate = false;
 foreach ( $group as $property => $value )
 {
 	$groupBy .= '&groupBy['.$property.']='.$value;
+
+	if ( $value != 0 )
+	{
+		$grouped++;
+
+		if ( $property == 'Date' )
+			$groupedByDate = true;
+	}
 }
 
 $sum = array();
@@ -57,7 +69,7 @@ if(isset($_REQUEST['sum']))
 
 
 
-
+/*
 $filterColumns = array();
 $filterColumns['provider']				   = 0; 
 $filterColumns['advertiser']               = 0;
@@ -71,29 +83,28 @@ $filterColumns['device_model']             = 0;
 $filterColumns['browser_type']             = 0;
 $filterColumns['browser_version']          = 0;
 $filterColumns['carrier']                  = 0;
-
+*/
 
 if ( isset($_REQUEST['filters']) )
 	$filterColumns = $_REQUEST['filters'];
 
+$filter                    = array();
+$filter['provider']        = null; 
+$filter['advertiser']      = null;
+$filter['country']         = null;
+$filter['campaign']        = null;
+$filter['vector']          = null;
+$filter['opportunity']     = null;
+$filter['account_manager'] = null;
+$filter['category']        = null;
+$filter['carrier']         = null;
+
 if ( isset($_REQUEST['filter']) )
-	$filter = $_REQUEST['filter'];
-else
 {
-	$filter = array();
-	$filter['provider']				   = null; 
-	$filter['advertiser']               = null;
-	$filter['country']                  = null;
-	$filter['campaign']           	   = null;
-	$filter['vector']           	   = null;
-	$filter['os_type'] 		           = null;
-	$filter['os_version']               = null;
-	$filter['device_type']              = null;
-	$filter['device_brand']             = null;
-	$filter['device_model']             = null;
-	$filter['browser_type']             = null;
-	$filter['browser_version']          = null;
-	$filter['carrier']                  = null;	
+	foreach ( $_REQUEST['filter'] as $f => $v )
+	{
+		$filter[$f] = $v;
+	}
 }
 $space = "<span class='formfilter-space'></span>";
 
@@ -147,17 +158,17 @@ echo '<div class="row-fluid">';
 	    'bootstrap.widgets.TbButton',
 	    array(
 			'type' => 'info', 
-	        'toggle' => 'checkbox',
 	    	'label' => 'All Day',
+	    	'htmlOptions'=> array('onclick' => '$("#timeStart").val("12:00 AM");$("#timeEnd").val("11:59 PM");'),
 	        )
 	);
 	echo $space;
 	
-	echo KHtml::timePicker('timeStart', '12:00 AM', array(), array('style'=>'width:70px'), 'From');
+	echo KHtml::timePicker('timeStart', $timeStart, array(), array('style'=>'width:70px'), 'From');
 
 	echo $space;
 
-	echo KHtml::timePicker('timeEnd', '11:59 PM', array(), array('style'=>'width:70px'), 'To');	
+	echo KHtml::timePicker('timeEnd', $timeEnd, array(), array('style'=>'width:70px'), 'To');	
 
 	echo '</div>';
 
@@ -238,6 +249,9 @@ KHtml::filterCampaignsMulti($filter['campaign'], null, array('style' => "width: 
 KHtml::filterVectorsMulti($filter['vector'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'vectors-select'), 'filter[vector]');
 
 
+KHtml::filterCountriesMulti($filter['country'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'country-select'), 'filter[country]');
+
+
 
 // hide all .multi-select-hide
 $jQuery = '$("div.multi-select-hide:not(:has(ul li.select2-search-choice))").hide()';
@@ -252,16 +266,18 @@ echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="form-sep span12">ACTIONS</div>';
 echo '</div>';
-	/*
+
 	$this->widget('bootstrap.widgets.TbButton', 
 		array(
-			'buttonType'=>'submit', 
+			'buttonType'=>'link', 
 			'label'=>'Submit', 
 			'type' => 'success', 
-			'htmlOptions' => array('class' => 'showLoading')
+			'htmlOptions' => array(
+				'class' => 'showLoading',
+				'onclick' => '$("#date-filter-form").attr("target", "_self");if ( $("#download-flag").length ) $("#download-flag").remove() ;$("#date-filter-form").submit();'
 			)
-		); 
-	*/
+		)
+	); 
 	echo $space;
 	//Create link to load filters
 	//$link='csv?download=true&dateStart='.$model->dateStart.'&dateEnd='.$model->dateEnd.'&ts='.$model->providers_id.'&c='.$model->only_conversions.$groupBy;
@@ -275,7 +291,7 @@ echo '</div>';
 			//'url' => $link,
 			'htmlOptions' => array(
 				'class' => 'showLoading', 
-				'onclick' => '$("#date-filter-form").attr("target", "#");$("#date-filter-form").append("<input type=\"hidden\" style=\"visibility:collapse;\" name=\"download\" value=\"true\" />");$("#date-filter-form").submit();' 
+				'onclick' => '$("#date-filter-form").attr("target", "#");if ( $("#download-flag").length ) $("#download-flag").val("true"); else $("#date-filter-form").append("<input type=\"hidden\" style=\"visibility:collapse;\" id=\"download-flag\" name=\"download\" value=\"true\" />"); $("#date-filter-form").submit();' 
 			)
 		)
 	); 
@@ -296,82 +312,89 @@ if(count($_REQUEST)>1){
 	// echo '<hr>';
 	// echo '</div>';
 		
-	$totals = $model->search(true, $partner);
+	//$totals = $model->search(true, $partner);
 	
+	$totals=$model->csvReport($model->dateStart, $model->dateEnd, $model->providers_id, $model->only_conversions, $group, $filter, $timeStart, $timeEnd, true );
+
 	$this->widget('application.components.NiExtendedGridView', array(
 		'id'              => 'clickslog-grid',
-		'dataProvider'    => $model->csvReport(),
+		'dataProvider'    => $model->csvReport($model->dateStart, $model->dateEnd, $model->providers_id, $model->only_conversions, $group, $filter, $timeStart, $timeEnd ),
 		'filter'          => null,
 		'type'            => 'condensed',
 		'template'        => '{items} {pagerExt} {summary}',
 		'columns'         => array(
 			array(
-				'name' => 'ID',
+				'name' => 'id',
+				'visible' => $grouped==0,
+				),
+		
+			array(
+				'name' => 'click_date',
+				'visible' => $grouped==0 || $groupedByDate,
+				),
+			array(
+				'name' => 'click_time',
+				'visible' => $grouped==0,				
+				),
+			array(
+				'name' => 'conv_date',
+				'value' => '$data->conv_date',
+				'visible' => $grouped==0,
+				),
+			array(
+				'name' => 'conv_time',
+				'value' => '$data->conv_time',
+				'visible' => $grouped==0,				
 				),			
 			array(
-				'name' => 'Click Date',
-				'value' => '$data->click_date'
-				),
-			array(
-				'name' => 'Click Time',
-				),
-			array(
-				'name' => 'Advertiser',
+				'name' => 'advertiser',
 				'visible' => $groupColumns1['Advertiser'],
 				),
 			array(
-				'name' => 'Country',
+				'name' => 'country_name',
 				'visible' => $groupColumns1['Country'],
 				),			
 			array(
-				'name' => 'Campaign ID',
-				'value' => '$data->campaigns_id',
-				//'visible' => $groupColumns1['campaigns_id'],
+				'name' => 'campaigns_id',
+				'visible' => $groupColumns1['Campaign'],
 				),			
 			array(
-				'name' => 'Campaign Name',
+				'name' => 'campaigns_name',
 				'value' => '$data->campaigns_name',
-				//'visible' => $groupColumns1['campaigns_name'],
+				'visible' => $groupColumns1['Campaign'],
 				),
 			array(
-				'name' => 'Vectors Id',
-				//'visible' => $groupColumns1['vectors_id'],
-				),					
-			array(
-				'name' => 'conv_date',
-				//'visible' => $groupColumns1['conv_date'],
+				'name' => 'vector_name',
+				'visible' => $groupColumns1['Vector'],
 				),									
 			array(
-				'name' => 'conv_time',
-				//'visible' => $groupColumns1['conv_time'],
-				),				
-			array(
-				'name' => 'Traffic Source',
-				'visible' => $groupColumns1['Traffic Source'],
+				'name' => 'traffic_source',
+				'visible' => $groupColumns1['TrafficSource'],
 				),
 			array(
-				'name' => 'Traffic Source Type',
-				'visible' => $groupColumns1['Traffic Source'],
+				'name' => 'traffic_source_type',
+				'visible' => $groupColumns1['TrafficSource'],
 				),						
 			array(
 				'name' => 'os',
-				'visible' => $groupColumns2['Os'],
+				'visible' => $groupColumns2['OS'],
 				),
 			array(
-				'name' => 'OS Version',
-				'visible' => $groupColumns2['os_version'],
+				'name' => 'os_version',
+				'visible' => $groupColumns2['OSVersion'],
 				),
 			array(
 				'name' => 'device_type',
-				'visible' => $groupColumns2['device_type'],
+				'value' => '$data->device_type',
+				'visible' => $groupColumns2['DeviceType'],
 				),
 			array(
 				'name' => 'device',
-				'visible' => $groupColumns2['device'],
+				'visible' => $groupColumns2['DeviceBrand'],
 				),
 			array(
 				'name' => 'device_model',
-				'visible' => $groupColumns2['device_model'],
+				'visible' => $groupColumns2['DeviceModel'],
 				),
 			array(
 				'name' => 'browser',
@@ -379,12 +402,37 @@ if(count($_REQUEST)>1){
 				),
 			array(
 				'name' => 'browser_version',
-				'visible' => $groupColumns2['browser_version'],
+				'visible' => $groupColumns2['BrowserVersion'],
 				),
 			array(
 				'name' => 'carrier',
-				'visible' => $groupColumns2['carrier'],
-				),									
+				'visible' => $groupColumns2['Carrier'],
+				),	
+			array(
+				'name' => 'totalClicks',
+				'footer' => number_format($totals['totalClicks']),
+				),			
+			array(
+				'name' => 'totalConv',
+				'footer' => number_format($totals['totalConv']),
+				'visible' => $sum['Conv'],
+				),	
+			array(
+				'name' => 'revenue',
+				'visible' => $sum['Revenue'],
+				'footer' => '$'.number_format($totals['revenue'],2),
+				),	
+			array(
+				'name' => 'spend',
+				'visible' => $sum['Spend'],
+				'footer' => '$'.number_format($totals['spend'], 2),
+				),	
+			array(
+				'name' => 'profit',
+				'value'=> '$data->profit',
+				'visible' => $sum['Profit'],
+				'footer' => '$'.number_format($totals['profit'], 2),
+				),																									
 			)
 	));
 
