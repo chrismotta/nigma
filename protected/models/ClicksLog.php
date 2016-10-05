@@ -564,6 +564,9 @@ class ClicksLog extends CActiveRecord
 			$criteria->group = 't.id';
 		}
 
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));		
+
 		if ( $filters )
 		{
 			/*
