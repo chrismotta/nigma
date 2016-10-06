@@ -107,7 +107,7 @@ class Reporo
 					$vid = Utilities::parseVectorID($campaign_info->campaign_name);
 					$vectorModel = Vectors::model()->findByPk($vid);
 
-					$ret = $vectorModel->explodeVector(array('spend'=>$campaign_info->campaign_name,'date'=>$date));
+					$ret = $vectorModel->explodeVector(array('spend'=>$campaign_stats[0]->spend,'date'=>$date));
 					$return .= json_encode($ret);
 					$return.= '<br>';
 					continue;

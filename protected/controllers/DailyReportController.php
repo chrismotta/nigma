@@ -255,6 +255,19 @@ class DailyReportController extends Controller
 		
 		$model=new DailyReport('search');
 		$model->unsetAttributes();  // clear any default values
+		if ( isset($_REQUEST['download']) )
+		{
+			$this->_sendCsvFile( $model );
+		}
+
+		$this->render('admin',array(
+			'model'=>$model,
+		));			
+		/*
+		KHtml::paginationController();
+		
+		$model=new DailyReport('search');
+		$model->unsetAttributes();  // clear any default values
 		if(isset($_GET['DailyReport']))
 			$model->attributes=$_GET['DailyReport'];
 
@@ -272,6 +285,149 @@ class DailyReportController extends Controller
 			'model'=>$model,
 			'providers_names' => $providers,
 		));
+		*/
+	}
+
+	protected function _sendCsvFile ( $model )
+	{
+		$csvData = array();
+			
+		$dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
+		$dateEnd = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
+
+		$sum = isset($_REQUEST['sum']) ? $_REQUEST['sum'] : array();
+		$filters                    = array();
+		$filters['provider']        = null; 
+		$filters['advertiser']      = null;
+		$filters['country']         = null;
+		$filters['campaign']        = null;
+		$filters['vector']          = null;
+		$filters['opportunity']     = null;
+		$filters['account_manager'] = null;
+		$filters['category']        = null;
+		$filters['carrier']         = null;
+
+		if ( isset($_REQUEST['filter']) )
+		{
+			foreach ( $_REQUEST['filter'] as $f => $v )
+			{
+				$filters[$f] = $v;
+			}
+		}
+
+		$group = isset($_REQUEST['group']) ? $_REQUEST['group'] : array();
+
+		$dp = $model->csvReport( $dateStart, $dateEnd, $group, $filters );
+
+		foreach ($dp->getData() as $data) {
+			$row = array();
+
+			if ( $group['AccountManager'] )
+				$row['Account Manager']      	= $data->account_manager;		
+
+			if ( $group['Date'] )
+				$row['Date']      				= $data->date;		
+
+
+			if ( $group['TrafficSource'] == 1 )
+			{
+				$row['Traffic Source']  		= $data->providers_name . ' (' . $data->providers_id . ')';
+			}
+
+			if ( $group['Advertiser'] == 1 )
+				$row['Advertiser']      		= $data->advertisers_name;
+
+
+			if ( $group['Category'] == 1 )
+				$row['Category']	      		= $data->advertiser_cat;
+
+
+			if ( $group['Country'] )
+				$row['Country']      			= $data->country;		
+
+
+			if ( $group['Vector'] == 1 )
+			{
+				$row['Vector']     			= $data->vectors_name;
+				$row['Vector ID']     		= $data->vector;
+			}
+
+
+			if ( $group['Campaign'] == 1 )
+			{
+				if ( $data->campaigns_id )
+					$row['Campaign']     		= $data->campaign_name . ' ('.$data->campaigns_id.')';
+				else
+					$row['Campaign']			= null;
+			}
+
+
+			if ( $group['Opportunity'])
+			{
+
+				$row['Opportunity'] = $data->opportunity;
+			}
+
+			if ( $group['Carrier'])
+			{
+				$row['Carrier'] = $data->carrier;
+			}
+
+			if ( $sum['Imp'] == 1 )
+				$row['Imp']	     				= $data->imp;	
+
+
+			if ( $sum['Clicks'] )
+			{
+				$row['Clicks']       			= $data->clics;			
+			}
+
+			if ( $sum['CTR'] == 1 )
+				$row['CTR']	     				= $data->click_through_rate;	
+
+			if ( $sum['Conv'] == 1 )
+				$row['Conversions']	     		= $data->conv_api;	
+
+			if ( $sum['CR'] == 1 )
+				$row['CR']	     				= $data->conversion_rate;	
+
+
+			if ( $sum['Revenue'] == 1 )
+				$row['Revenue']    				= $data->revenue;
+			
+			if ( $sum['Spend'] == 1 )
+				$row['Spend']    				= $data->spend;			
+
+
+			if ( $sum['Profit'] == 1 )
+			{
+				$row['Profit']    				= $data->revenue-$data->spend;			
+			}
+
+			if ( $sum['eCPM'] == 1 )
+				$row['eCPM']						= $data->eCPM;
+
+			if ( $sum['eCPC'] == 1 )
+				$row['eCPC']						= $data->eCPC;
+
+			if ( $sum['eCPA'] == 1 )
+				$row['eCPA']						= $data->eCPA;							
+
+			$csvData[] = $row;
+		}
+
+		$csv = new ECSVExport( $csvData );
+		$csv->setEnclosure(chr(0));//replace enclosure with caracter
+		$csv->setHeader( 'content-type', 'application/csv;charset=UTF-8' );
+		$content = $csv->toCSV();   
+
+		if(isset($_REQUEST['v']))
+			echo str_replace("\n", '<br/>', $content);
+		else
+		{
+			$filename = 'DailyReport_'.date("Y-m-d", strtotime($dateStart)).'.csv';
+			Yii::app()->getRequest()->sendFile($filename, $content, "text/csv", true);		
+		}		
 	}
 
 	/**

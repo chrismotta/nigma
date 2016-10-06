@@ -2,7 +2,7 @@
 // die('<h3>Currently undergoing maintenance</h3>');
 
 ini_set('memory_limit', '-1');
-set_time_limit(0);
+set_time_limit(100);
 
 // change the following paths if necessary
 $yii=dirname(__FILE__).'/../../yii/framework/yii.php';
