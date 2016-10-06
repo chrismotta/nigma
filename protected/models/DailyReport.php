@@ -1899,10 +1899,11 @@ class DailyReport extends CActiveRecord
 				'campaigns.opportunities.regions.country', 
 				'campaigns.opportunities.regions.financeEntities', 
 				'campaigns.opportunities.regions.financeEntities.advertisers', 
-				'campaigns.opportunities.carriers' 
+				'campaigns.opportunities.carriers',
+				'dailyReportVectors', 
 			);
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		$criteria->compare('opportunities.rate',$this->rate);
