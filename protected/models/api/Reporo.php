@@ -4,23 +4,48 @@ class Reporo
 { 
 
 	private $provider_id = 2;
+	private $apiLog;
 
-	public function downloadInfo()
+	public function downloadInfo($offset)
 	{
+
+		date_default_timezone_set('UTC');
 		$return = '';
 
 		if ( isset( $_GET['date']) ) {
+			
+			// specific date
+			
 			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		} else {
-			$date = date('Y-m-d', strtotime('yesterday'));
-		}
 
-		// validate if info have't been dowloaded already.
-		if ( DailyReport::model()->exists("providers_id=:provider AND DATE(date)=:date", array(":provider"=>$this->provider_id, ":date"=>$date)) ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.reporo');
-			return 2;
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+				$return.= $this->downloadDateInfo($date);
+			}
+
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadDateInfo($date);
+		
 		}
-		$network = Networks::model()->findbyPk($this->provider_id);
+		
+
+		return $return;
+	}
+
+	public function downloadDateInfo($date)
+	{
+
+		$return = "";
+		$network = Providers::model()->findbyPk($this->provider_id);
 
 		// --- setting actions for requests
 		$actions = array(
@@ -67,14 +92,51 @@ class Reporo
 					continue; 
 				}
 
-				$return.= json_encode($campaign_stats) . '<hr/>';
+				// $return.= json_encode($campaign_stats) . '<hr/>';
 
-				// Save campaign information
-				$dailyReport = new DailyReport();
-				
-				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
+
 				// get campaign ID used in Server, from the campaign name use in the external provider
-				$dailyReport->campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name, $network->use_alternative_convention_name);
+				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
+
+				$return.= $campaign_info->campaign_name;
+				$return.= '<br>';
+				
+				// if is vector
+				if(substr($campaign_info->campaign_name, 0, 1)=='v'){
+
+					$vid = Utilities::parseVectorID($campaign_info->campaign_name);
+					$vectorModel = Vectors::model()->findByPk($vid);
+
+					$ret = $vectorModel->explodeVector(array('spend'=>$campaign_stats[0]->spend,'date'=>$date));
+					$return .= json_encode($ret);
+					$return.= '<br>';
+					continue;
+
+				}
+
+				
+				$campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
+
+				// if exists overwrite, else create a new
+				$dailyReport = DailyReport::model()->find(
+					"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+					array(
+						":providers"=>$this->provider_id, 
+						":date"=>$date, 
+						":cid"=>$campaigns_id,
+						)
+					);
+				if(!$dailyReport){
+					$dailyReport = new DailyReport();
+					$return.= "<hr/>New record: ";
+				}else{
+					$return.= "<hr/>Update record: ".$dailyReport->id;
+				}
+
+
+				
+				// get campaign ID used in Server, from the campaign name use in the external provider
+				$dailyReport->campaigns_id = $campaigns_id;
 
 				if ( !$dailyReport->campaigns_id ) {
 					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.reporo');
@@ -110,7 +172,7 @@ class Reporo
 	 * @return the object created from de json's response. Or NULL if error.
 	 */
 	private function getResponse($params) {
-		$network = Networks::model()->findbyPk($this->provider_id);
+		$network = Providers::model()->findbyPk($this->provider_id);
 		$reporoApiKey = $network->token1;
 		$reporoSecretKey = $network->token2;
 		$reporoGateway = $network->url;
@@ -130,8 +192,10 @@ class Reporo
 		);
 		$context = stream_context_create($options);
 		$response = file_get_contents($reporoGateway . $params, false, $context);
-// var_dump($options);
-// die($reporoGateway.$params);
+		
+		// var_dump($options);
+		// die($reporoGateway.$params);
+		
 		$obj = json_decode($response);
 		
 		if ( empty($obj) ) {
