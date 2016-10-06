@@ -99,6 +99,7 @@ class Reporo
 				$campaign_info = $this->getResponse($actions["campaign"] . $campaign->campaign . $params);
 
 				$return.= $campaign_info->campaign_name;
+				$return.= '<br>';
 				continue;
 				
 				$campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
