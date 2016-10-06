@@ -100,7 +100,20 @@ class Reporo
 
 				$return.= $campaign_info->campaign_name;
 				$return.= '<br>';
-				continue;
+				
+				// if is vector
+				if(substr($campaign_info->campaign_name, 0, 1)=='v'){
+
+					$vid = Utilities::parseVectorID($campaign_info->campaign_name);
+					$vectorModel = Vectors::model()->findByPk($vid);
+
+					$ret = $vectorModel->explodeVector(array('spend'=>$campaign_info->campaign_name,'date'=>$date));
+					$return .= json_encode($ret);
+					$return.= '<br>';
+					continue;
+
+				}
+
 				
 				$campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
 
