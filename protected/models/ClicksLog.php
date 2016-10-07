@@ -70,6 +70,7 @@ class ClicksLog extends CActiveRecord
 	public $only_conversions = false;
 	public $spend;
 	public $profit;
+	public $carrier_name;
 
 
 	public function macros()
@@ -446,6 +447,7 @@ class ClicksLog extends CActiveRecord
 		$criteria->with = array(
 			'campaigns',
 			'campaigns.opportunities',
+			'campaigns.opportunities.carriers',
 			'campaigns.opportunities.regions.financeEntities.advertisers',
 			'campaigns.opportunities.regions.country',
 			'providers',
@@ -515,11 +517,6 @@ class ClicksLog extends CActiveRecord
 				$orderBy[] = 't.server_ip ASC';
 				$grouped = true;
 			}			
-			if($group['Carrier'] == 1) {
-				$groupBy[] = 't.carrier';
-				$orderBy[] = 't.carrier ASC';
-				$grouped = true;
-			}	
 			if($group['OS'] == 1) {
 				$groupBy[] = 't.os';
 				$orderBy[] = 't.os ASC';
@@ -555,6 +552,11 @@ class ClicksLog extends CActiveRecord
 				$orderBy[] = 't.browser_version ASC';
 				$grouped = true;
 			}	
+			if($group['Carrier'] == 1) {
+				$groupBy[] = 't.carrier';
+				$orderBy[] = 'carriers.mobile_brand ASC';
+				$grouped = true;
+			}			
 
 			$criteria->group = join($groupBy,',');		
 		}
@@ -837,6 +839,7 @@ class ClicksLog extends CActiveRecord
 			'vectors.name as vector_name',
 			'count(convLogs.id) as totalConv',
 			'count(t.id) as totalClicks',
+			'carriers.mobile_brand as carrier_name',
 			$rev,
 			$spnd,
 			$profit,
@@ -934,7 +937,11 @@ class ClicksLog extends CActiveRecord
 		            'traffic_source_type'=>array(
 						'asc'  =>'providers.type',
 						'desc' =>'providers.type DESC',
-		            ),			            
+		            ),	
+		            'carrier'=>array(
+						'asc'  =>'carriers.mobile_brand',
+						'desc' =>'carriers.mobile_brand DESC',
+		            ),		            		            
 		            // Adding all the other default attributes
 		            '*',
 		        ),
