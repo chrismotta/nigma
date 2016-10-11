@@ -134,57 +134,20 @@ class AdWords
 			}
 			echo '<hr>';
 			*/
-		
+			
+			// parse vectors for each MCC
+			$return .= $this->parseResult($awCampaigns, $date);
 		}
 
 		// echo '<hr>';
 		// echo json_encode($awCampaigns);
 		// echo '<hr>';
 		
-		$return .= $this->parseResult($awCampaigns, $date);
 
 		return $return;
 
 	}
 
-
-	// csv format: date,vectorURL,clicks,cost
-	public function loadCsv($csv){
-
-		$return = '';
-
-		$return .= $csv;
-		$return .=  '<hr>';
-
-		$csv = explode("\r\n", $csv);
-
-		foreach ($csv as $line) {
-			$csvLine = str_getcsv($line);
-			$csvArray[$csvLine[0]][] = array(
-				'trackingTemplate' => $csvLine[1],
-				'impressions' => 0,
-				'clicks' => $csvLine[2],
-				'cost' => $csvLine[3] * 1000000,
-				);
-		}
-
-		$return .= json_encode($csvArray);
-		$return .= '<hr>';
-
-		foreach ($csvArray as $date => $awCampaigns) {
-			
-			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-
-			$return .=  $date;
-			$return .= '<br>';
-			$return .= json_encode($awCampaigns);
-			$return .= '<hr>';
-			$return .= $this->parseResult($awCampaigns, $date);
-			$return .= '<hr>';
-		}
-
-		return $return;
-	}
 
 	private function parseResult($awCampaigns, $date){
 
@@ -434,6 +397,84 @@ class AdWords
 		return $return;
 	}
 
+
+	// csv format: date,vectorURL,clicks,cost
+	public function loadCsv($csv){
+
+		$return = '';
+
+		$return .= $csv;
+		$return .=  '<hr>';
+
+		$csv = explode("\r\n", $csv);
+
+		foreach ($csv as $line) {
+			$csvLine = str_getcsv($line);
+			$csvArray[$csvLine[0]][] = array(
+				'trackingTemplate' => $csvLine[1],
+				'impressions' => 0,
+				'clicks' => $csvLine[2],
+				'cost' => $csvLine[3] * 1000000,
+				);
+		}
+
+		$return .= json_encode($csvArray);
+		$return .= '<hr>';
+
+		foreach ($csvArray as $date => $awCampaigns) {
+			
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+
+			$return .=  $date;
+			$return .= '<br>';
+			$return .= json_encode($awCampaigns);
+			$return .= '<hr>';
+			$return .= $this->parseResult($awCampaigns, $date);
+			$return .= '<hr>';
+		}
+
+		return $return;
+	}
+
+
+
+	// csv format: date,vectorURL,clicks,cost
+	public function loadCsv($csv){
+
+		$return = '';
+
+		$return .= $csv;
+		$return .=  '<hr>';
+
+		$csv = explode("\r\n", $csv);
+
+		foreach ($csv as $line) {
+			$csvLine = str_getcsv($line);
+			$csvArray[$csvLine[0]][] = array(
+				'trackingTemplate' => $csvLine[1],
+				'impressions' => 0,
+				'clicks' => $csvLine[2],
+				'cost' => $csvLine[3] * 1000000,
+				);
+		}
+
+		$return .= json_encode($csvArray);
+		$return .= '<hr>';
+
+		foreach ($csvArray as $date => $awCampaigns) {
+			
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+
+			$return .=  $date;
+			$return .= '<br>';
+			$return .= json_encode($awCampaigns);
+			$return .= '<hr>';
+			$return .= $this->parseResult($awCampaigns, $date);
+			$return .= '<hr>';
+		}
+
+		return $return;
+	}
 	public function uploadConversions(){
 
 		$date = isset($_GET['date']) ? $_GET['date'] : null;
