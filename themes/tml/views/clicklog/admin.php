@@ -374,7 +374,11 @@ if(count($_REQUEST)>1){
 			array(
 				'name' => 'traffic_source_type',
 				'visible' => $groupColumns1['TrafficSource'],
-				),						
+				),	
+			array(
+				'name' => 'server_ip',
+				'visible' => $groupColumns2['ServerIP'],
+				),									
 			array(
 				'name' => 'os',
 				'visible' => $groupColumns2['OS'],
@@ -406,6 +410,7 @@ if(count($_REQUEST)>1){
 				),
 			array(
 				'name' => 'carrier',
+				'value' => '$data->carrier_name',
 				'visible' => $groupColumns2['Carrier'],
 				),	
 			array(
