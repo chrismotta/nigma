@@ -203,6 +203,7 @@ class Vectors extends CActiveRecord
 		$totalClicks = 0;
 		$totalConv = 0;
 
+
 		foreach ($vhc as $cmp) {
 
 			$cid = $cmp->campaigns_id;
@@ -228,6 +229,10 @@ class Vectors extends CActiveRecord
 				$campaignsList[$cid]['conv'] = $model->conv;
 				$totalConv += $campaignsList[$cid]['conv'];
 
+			}else{
+				$campaignsList[$cid]['clicks'] = 0;
+				$campaignsList[$cid]['conv'] = 0;
+
 			}
 
 		}
@@ -244,15 +249,37 @@ class Vectors extends CActiveRecord
 			}
 			*/
 
-			// cost related to clicks
-			foreach ($campaignsList as $id => $cmp) {
-				$campaignsList[$id]['id'] = $id;
-				if($totalClicks * $cmp['clicks'] > 0)
-					$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
-				else
-					$campaignsList[$id]['cost'] = 0;
+			// if at least there are 1 click
+			if($totalClicks>0){
+
+				// cost related to clicks
+				foreach ($campaignsList as $id => $cmp) {
+
+					if($cmp['clicks'] > 0){
+
+						$campaignsList[$id]['id'] = $id;
+						$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
+						$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
+					}
+					else{
+
+						// unset campaigns without clicks
+						unset($campaignsList[$id]);
+					}
+
+				}
+
+			}else{
+
+				// when there are no campaigns with clicks
+
+				foreach ($campaignsList as $id => $cmp) {
+					$campaignsList[$id]['id'] = $id;
+					$campaignsList[$id]['cost'] = $cost / count($vhc);
+					$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
+				}
 			}
-			
+
 			// echo json_encode($campaignsList);
 			// echo '<br>';
 			// echo 'TOTAL: '.$totalConv.' conv - '.$vector['cost'].' us micropound';
@@ -262,15 +289,18 @@ class Vectors extends CActiveRecord
 			// inserting values //
 			foreach ($campaignsList as $cid => $camp) {
 				$daily = $this->createDaily($camp, $date);
-				$return['list'][] = $daily;
+				
+				// $return['list'][] = $daily;
+				$return[$cid].= ' => ' . $daily . ' | ';
 
-				if(isset($daily['cid']))
-					$return['result'] = 'OK';
+				// if(isset($daily['cid']))
+				// 	$return['result'] = 'OK';
 				
 			}
 
-			$return['c_id'] = $this->id;
+			// $return['c_id'] = $this->id;
 		
+
 		}else{
 		
 			$return['result'] = 'ERROR';
@@ -301,7 +331,7 @@ class Vectors extends CActiveRecord
 		*/
 
 		$dailyRepCriteria->compare( 'DATE(date)', $date);
-		$dailyRepCriteria->compare( 'providers_id', $campModel->providers_id );
+		$dailyRepCriteria->compare( 'providers_id', $this->providers_id );
 		$dailyRepCriteria->compare( 'campaigns_id', $camp['id'] );
 		$dailyRepCriteria->compare( 'dailyReportVectors.vectors_id', $this->id );
 
@@ -324,14 +354,14 @@ class Vectors extends CActiveRecord
 			$dailyReport = new DailyReport();
 			$dailyReport->date = $date;
 			$dailyReport->campaigns_id = $camp['id'];
-			$dailyReport->providers_id = $campModel->providers_id;
+			$dailyReport->providers_id = $this->providers_id;
 
 			$isNew = true;
-			$return['msg'] = "New record: ";
+			// $return['msg'] = "New record: ";
 		
 		}else{
 			$isNew = false;
-			$return['msg'] =  "Update record: ".$dailyReport->id;
+			// $return['msg'] =  "Update record: ".$dailyReport->id;
 		}
 				
 		if ( !$dailyReport->campaigns_id ) {
@@ -344,7 +374,6 @@ class Vectors extends CActiveRecord
 		$dailyReport->clics = $camp['clicks'];
 		$dailyReport->conv_api = $camp['conv'];
 		
-		// cost is return in micropound, why? google, why? 
 		$dailyReport->spend = number_format($camp['cost'], 2, '.', '');
 
 		$dailyReport->updateRevenue();
@@ -352,10 +381,9 @@ class Vectors extends CActiveRecord
 		
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $camp['id'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');
-			$return['msg'] .= ' => '.json_encode($dailyReport->getErrors());
+			$return = json_encode($dailyReport->getErrors());
 		} else {
-			$return['msg'] .= ' => saved';
-			$return['cid'] = $dailyReport->campaigns_id;
+			// $return['cid'] = $dailyReport->campaigns_id;
 
 			if($isNew){
 
@@ -363,9 +391,15 @@ class Vectors extends CActiveRecord
 				$dailyReportVector->vectors_id = $this->id;
 				$dailyReportVector->daily_report_id = $dailyReport->id;
 				$dailyReportVector->save();
+				
+				$return = $dailyReport->id . ' saved: '. $dailyReport->spend;
+			}else{
+				
+				$return = $dailyReport->id . ' updated: '. $dailyReport->spend;
 			}
 		}
 		
+		// return $dailyReport->spend;
 		return $return;
 	}
 

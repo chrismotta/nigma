@@ -298,6 +298,26 @@ class DailyReport extends CActiveRecord
 				$criteria->compare('advertisers.cat',$adv_categories);
 			}
 		}
+		if ( $adv_categories != NULL) {
+			if(is_array($adv_categories))
+			{
+				$query="(";
+				$i=0;
+				foreach ($adv_categories as $cat) {	
+					if($i==0)			
+						$query.="advertisers.cat='".$cat."'";
+					else
+						$query.=" OR advertisers.cat='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.cat',$adv_categories);
+			}
+		}		
 		//sumas
 		if($sum==1){
 			$criteria->group  = 'campaigns_id';
@@ -433,32 +453,199 @@ class DailyReport extends CActiveRecord
 			$criteria->group = join($groupBy,',');		
 		}
 
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
+			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		if ( $filters )
 		{
-			if ( isset( $filters['provider'] ) )
-				$criteria->addInCondition( 't.providers_id', $filters['provider'] );
+			if ( $filters['account_manager'] != NULL) {
+				if(is_array($filters['account_manager']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['account_manager'] as $id) {	
+						if($i==0)			
+							$query.="accountManager.id=".$id;
+						else
+							$query.=" OR accountManager.id=".$id;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('accountManager.id',$filters['account_manager']);
+				}
+			}
 
-			if ( isset( $filters['advertiser'] ) )
-				$criteria->addInCondition( 'advertisers.id', $filters['advertiser'] );
+			if ( $filters['advertiser'] != NULL) {
+				if(is_array($filters['advertiser']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['advertiser'] as $adv) {	
+						if($i==0)			
+							$query.="advertisers.id=".$adv;
+						else
+							$query.=" OR advertisers.id=".$adv;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('advertisers.id',$filters['advertiser']);
+				}
+			}
 
-			if ( isset( $filters['campaign'] ) )
-				$criteria->addInCondition( 't.campaigns_id', $filters['campaign'] );			
+			if ( $filters['opportunity'] != NULL) {
+				if(is_array($filters['opportunity']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['opportunity'] as $opp) {	
+						if($i==0)			
+							$query.="opportunities.id=".$opp;
+						else
+							$query.=" OR opportunities.id=".$opp;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('opportunities.id',$filters['opportunity']);
+				}
+			}
 
-			if ( isset( $filters['country'] ) )
-				$criteria->addInCondition( 't.providers_id', $filters['country'] );		
-			
-			if ( isset( $filters['account_manager'] ) )
-				$criteria->addInCondition( 'accountManager.id', $filters['account_manager'] );	
+			if ( $filters['provider'] != NULL) {
+				if(is_array($filters['provider']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['provider'] as $prov) {	
+						if($i==0)			
+							$query.="providers.id=".$prov;
+						else
+							$query.=" OR providers.id=".$prov;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('providers.id',$filters['provider']);
+				}
+			}
 
-			if ( isset( $filters['category'] ) )
-				$criteria->addInCondition( 'advertisers.cat', $filters['category'] );	
+			if ( $filters['carrier'] != NULL) {
+				if(is_array($filters['carrier']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['carrier'] as $c) {	
+						if($i==0)			
+							$query.="carriers.id_carrier=".$c;
+						else
+							$query.=" OR carriers.id_carrier=".$c;
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('carriers.id_carrier',$filters['carrier']);
+				}
+			}		
 
-			if ( isset( $filters['opportunity'] ) )
-				$criteria->addInCondition( 'opportunities.id', $filters['opportunity'] );
+			if ( $filters['category'] != NULL) {
+				if(is_array($filters['category']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['category'] as $cat) {	
+						if($i==0)			
+							$query.="advertisers.cat='".$cat."'";
+						else
+							$query.=" OR advertisers.cat='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('advertisers.cat',$filters['category']);
+				}
+			}
 
-			if ( isset( $filters['carrier'] ) )
-				$criteria->addInCondition( 'carriers.id_carrier', $filters['carrier'] );						
+			if ( $filters['country'] != NULL) {
+				if(is_array($filters['country']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['country'] as $cat) {	
+						if($i==0)			
+							$query.="country.id_location='".$cat."'";
+						else
+							$query.=" OR country.id_location='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('country.id_location',$filters['country']);
+				}
+			}
+
+			if ( $filters['campaign'] != NULL) {
+				if(is_array($filters['campaign']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['campaign'] as $cat) {	
+						if($i==0)			
+							$query.="t.campaigns_id='".$cat."'";
+						else
+							$query.=" OR t.campaigns_id='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('t.campaigns_id',$filters['campaign']);
+				}
+			}
+
+			if ( $filters['vector'] != NULL) {
+				if(is_array($filters['vector']))
+				{
+					$query="(";
+					$i=0;
+					foreach ($filters['vector'] as $cat) {	
+						if($i==0)			
+							$query.="dailyReportVectors.vectors_id='".$cat."'";
+						else
+							$query.=" OR dailyReportVectors.vectors_id='".$cat."'";
+						$i++;
+					}
+					$query.=")";
+					$criteria->addCondition($query);				
+				}
+				else
+				{
+					$criteria->compare('dailyReportVectors.vectors_id',$filters['vector']);
+				}
+			}						
 		}
 
 
@@ -563,7 +750,7 @@ class DailyReport extends CActiveRecord
 				'campaigns.opportunities.carriers' 
 			);
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 		
 		if ( $providers != NULL) {
@@ -1105,7 +1292,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type]  $adv_categories [description]
 	 * @return [type]                  [description]
 	 */
-	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL, $opportunities=null, $providers=null, $sum=0, $adv_categories=null, $group=array(), $sums=array(), $advertisers=null, $countries=NULL, $campaigns=null, $vectors=null)
+	public function search($startDate=NULL, $endDate=NULL, $accountManager=NULL, $opportunities=null, $providers=null, $sum=0, $adv_categories=null, $group=array(), $sums=array(), $advertisers=null, $countries=NULL, $campaigns=null, $vectors=null, $carriers=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -1187,7 +1374,6 @@ class DailyReport extends CActiveRecord
 			$groupBy[] = 'opportunities.id';
 			$orderBy[] = 'opportunities.id ASC';
 		}		
-
 		if($group['Carrier'] == 1) {
 			$groupBy[] = 'carriers.id_carrier';
 			$orderBy[] = 'carriers.mobile_brand ASC';
@@ -1233,7 +1419,7 @@ class DailyReport extends CActiveRecord
 			$opportunityName,
 			);
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		// if($sum==1){
@@ -1441,6 +1627,27 @@ class DailyReport extends CActiveRecord
 			}
 		}
 
+		if ( $carriers != NULL) {
+			if(is_array($carriers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($carriers as $c) {	
+					if($i==0)			
+						$query.="carriers.id_carrier=".$c;
+					else
+						$query.=" OR carriers.id_carrier=".$c;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('carriers.id_carrier',$providers);
+			}
+		}		
+
 		if ( $adv_categories != NULL) {
 			if(is_array($adv_categories))
 			{
@@ -1559,7 +1766,7 @@ class DailyReport extends CActiveRecord
 	}
 
 
-	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL, $opportunities=null, $providers=null, $sum=0, $adv_categories=null, $advertisers=null)
+	public function searchTotals($startDate=NULL, $endDate=NULL, $accountManager=NULL, $opportunities=null, $providers=null, $sum=0, $adv_categories=null, $advertisers=null, $countries=NULL, $campaigns=null, $vectors=null, $carriers=NULL)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -1692,10 +1899,11 @@ class DailyReport extends CActiveRecord
 				'campaigns.opportunities.regions.country', 
 				'campaigns.opportunities.regions.financeEntities', 
 				'campaigns.opportunities.regions.financeEntities.advertisers', 
-				'campaigns.opportunities.carriers' 
+				'campaigns.opportunities.carriers',
+				'dailyReportVectors', 
 			);
 
-		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
 		$criteria->compare('opportunities.rate',$this->rate);
@@ -1766,6 +1974,48 @@ class DailyReport extends CActiveRecord
 			}
 		}
 
+		if ( $advertisers != NULL) {
+			if(is_array($advertisers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($advertisers as $adv) {	
+					if($i==0)			
+						$query.="advertisers.id=".$adv;
+					else
+						$query.=" OR advertisers.id=".$adv;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('advertisers.id',$advertisers);
+			}
+		}
+
+		if ( $carriers != NULL) {
+			if(is_array($carriers))
+			{
+				$query="(";
+				$i=0;
+				foreach ($carriers as $c) {	
+					if($i==0)			
+						$query.="carriers.id_carrier=".$c;
+					else
+						$query.=" OR carriers.id_carrier=".$c;
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('carriers.id_carrier',$providers);
+			}
+		}		
+
 		if ( $adv_categories != NULL) {
 			if(is_array($adv_categories))
 			{
@@ -1787,17 +2037,16 @@ class DailyReport extends CActiveRecord
 			}
 		}
 
-
-		if ( $advertisers != NULL) {
-			if(is_array($advertisers))
+		if ( $countries != NULL) {
+			if(is_array($countries))
 			{
 				$query="(";
 				$i=0;
-				foreach ($advertisers as $adv) {	
+				foreach ($countries as $cat) {	
 					if($i==0)			
-						$query.="advertisers.id=".$adv;
+						$query.="country.id_location='".$cat."'";
 					else
-						$query.=" OR advertisers.id=".$adv;
+						$query.=" OR country.id_location='".$cat."'";
 					$i++;
 				}
 				$query.=")";
@@ -1805,9 +2054,51 @@ class DailyReport extends CActiveRecord
 			}
 			else
 			{
-				$criteria->compare('advertisers.id',$advertisers);
+				$criteria->compare('country.id_location',$countries);
 			}
 		}
+
+		if ( $campaigns != NULL) {
+			if(is_array($campaigns))
+			{
+				$query="(";
+				$i=0;
+				foreach ($campaigns as $cat) {	
+					if($i==0)			
+						$query.="t.campaigns_id='".$cat."'";
+					else
+						$query.=" OR t.campaigns_id='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('t.campaigns_id',$campaigns);
+			}
+		}
+
+		if ( $vectors != NULL) {
+			if(is_array($vectors))
+			{
+				$query="(";
+				$i=0;
+				foreach ($vectors as $cat) {	
+					if($i==0)			
+						$query.="dailyReportVectors.vectors_id='".$cat."'";
+					else
+						$query.=" OR dailyReportVectors.vectors_id='".$cat."'";
+					$i++;
+				}
+				$query.=")";
+				$criteria->addCondition($query);				
+			}
+			else
+			{
+				$criteria->compare('dailyReportVectors.vectors_id',$vectors);
+			}
+		}				
 		
 		$tmp = new CDbCriteria;
 		$tmp->compare('t.campaigns_id',$this->campaign_name,true);

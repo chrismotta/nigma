@@ -100,7 +100,7 @@ $this->breadcrumbs=array(
 );
 
 
-$totalsGrap =$model->getTotals($dateStart,$dateEnd,$accountManager,$opportunities,$providers, $adv_categories);
+$totalsGrap =$model->getTotals($dateStart,$dateEnd,$filter['account_manager'],$filter['opportunity'],$filter['provider'] );
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
@@ -257,7 +257,7 @@ KHtml::filterProvidersMulti($filter['provider'], NULL, array('style' => "width: 
 
 KHtml::filterAdvertisersMulti($filter['advertiser'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-select'),'filter[advertiser]');
 
-KHtml::filterAdvertisersCategoryMulti($filter['category'], array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'advertisers-cat');
+KHtml::filterAdvertisersCategoryMulti($filter['category'], array('style' => "width: 140px; margin-left: 1em",'id' => 'advertisers-cat-select'),'filter[category]');
 
 KHtml::filterCampaignsMulti($filter['campaign'], null, array('style' => "width: 140px; margin-left: 1em",'id' => 'campaigns-select'), 'filter[campaign]');
 
@@ -325,8 +325,8 @@ echo '</div>';
 <?php 
 
 if(count($_REQUEST)>1){
-	$dataProvider=$model->search($dateStart, $dateEnd, $filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $group, $sum, $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector']);
-	$totals=$model->searchTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector']);
+	$dataProvider=$model->search($dateStart, $dateEnd, $filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $group, $sum, $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier']);
+	$totals=$model->searchTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier']);
 
 	$this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
