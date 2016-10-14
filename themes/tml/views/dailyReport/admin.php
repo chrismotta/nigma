@@ -16,14 +16,14 @@ $adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : N
 $editable = false;
 
 $group = array(
-	'Date'          =>1, 
-	'TrafficSource' =>1, 
+	'Date'          =>0, 
+	'TrafficSource' =>0, 
 	'Advertiser'    =>1, 
-	'Category'		=>1, 
-	'Campaign'      =>1,
-	'Vector'      	=>1,
+	'Category'		=>0, 
+	'Campaign'      =>0,
+	'Vector'      	=>0,
 	'Opportunity'	=>0,
-	'Country'       =>1,
+	'Country'       =>0,
 	'Carrier'		=>0,
 	'AccountManager'=>0,
 	);
@@ -100,7 +100,9 @@ $this->breadcrumbs=array(
 );
 
 
-$totalsGrap =$model->getTotals($dateStart,$dateEnd,$filter['account_manager'],$filter['opportunity'],$filter['provider'] );
+$totalsGrap =$model->getTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier'] );
+
+
 ?>
 <div class="row">
 	<div id="container-highchart" class="span12">
