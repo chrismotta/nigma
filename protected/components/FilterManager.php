@@ -80,6 +80,7 @@ class FilterManager
 				'account_manager_admin',
 				'media_manager',
 				'finance',
+				'operation_manager',
 			)),
 		'media' => array( 
 			'column' => 'opportunities.account_manager_id', 
