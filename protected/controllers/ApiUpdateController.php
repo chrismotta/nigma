@@ -50,6 +50,7 @@ class ApiUpdateController extends Controller
 			'startApp',
 			'cpmCampaigns',
 			'impLog',
+			'MobusiCPC',
 			);
 		
 		return array(
@@ -105,6 +106,8 @@ class ApiUpdateController extends Controller
 		$this->actionAirpush();
 		$this->actionInMobi();
 		$this->actionReporo();
+
+		$this->actionMobusiCPC();
 	}
 
 	public function actionBingCode(){
@@ -113,6 +116,7 @@ class ApiUpdateController extends Controller
 
 	public function actionAdWords($hash=null)
 	{
+
 		try {
 			$adWords = new AdWords;
 			$return = $adWords->downloadInfo(7);
@@ -227,6 +231,18 @@ class ApiUpdateController extends Controller
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
+
+	public function actionMobusiCPC($hash=null)
+	{
+		try {
+			$mobusi = new MobusiCPC;
+			$return = $mobusi->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
+		}
+	}	
 
 	public function actionVServ()
 	{
