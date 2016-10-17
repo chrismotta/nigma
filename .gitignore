@@ -7,3 +7,4 @@
 /protected/config/localConfig.php
 *.sublime*
 /localConfig.php
+/protected/runtime/*
