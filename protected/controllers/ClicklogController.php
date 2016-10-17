@@ -895,7 +895,7 @@ class ClicklogController extends Controller
 
 
 			if ( $group['Country'] == 1 )
-				$row['Country']      			= $data->country;		
+				$row['Country']      			= $data->country_name;		
 
 
 			if ( $group['Vector'] == 1 )
@@ -939,7 +939,7 @@ class ClicklogController extends Controller
 				$row['Server IP']     			= $data->server_ip;			
 
 			if ( $group['Carrier'] == 1 )
-				$row['Carrier']     			= $data->carrier;				
+				$row['Carrier']     			= $data->carrier_name;				
 
 			if ( $group['OS'] == 1 )
 				$row['OS']     					= $data->os;

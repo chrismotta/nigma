@@ -342,17 +342,6 @@ class DailyReportController extends Controller
 				$row['Category']	      		= $data->advertiser_cat;
 
 
-			if ( $group['Country'] )
-				$row['Country']      			= $data->country;		
-
-
-			if ( $group['Vector'] == 1 )
-			{
-				$row['Vector']     			= $data->vectors_name;
-				$row['Vector ID']     		= $data->vector;
-			}
-
-
 			if ( $group['Campaign'] == 1 )
 			{
 				if ( $data->campaigns_id )
@@ -361,12 +350,21 @@ class DailyReportController extends Controller
 					$row['Campaign']			= null;
 			}
 
+			if ( $group['Vector'] == 1 )
+			{
+				$row['Vector']     			= $data->vectors_name;
+				$row['Vector ID']     		= $data->vector;
+			}
 
 			if ( $group['Opportunity'])
 			{
 
 				$row['Opportunity'] = $data->opportunity;
 			}
+
+			if ( $group['Country'] )
+				$row['Country']      			= $data->country;		
+
 
 			if ( $group['Carrier'])
 			{
@@ -375,6 +373,7 @@ class DailyReportController extends Controller
 
 			if ( $sum['Imp'] == 1 )
 				$row['Imp']	     				= $data->imp;	
+
 
 
 			if ( $sum['Clicks'] )
@@ -401,7 +400,8 @@ class DailyReportController extends Controller
 
 			if ( $sum['Profit'] == 1 )
 			{
-				$row['Profit']    				= $data->revenue-$data->spend;			
+				$row['Profit']    				= $data->revenue-$data->spend;
+				$row['Profit %']    		= $data->profit_percent;			
 			}
 
 			if ( $sum['eCPM'] == 1 )

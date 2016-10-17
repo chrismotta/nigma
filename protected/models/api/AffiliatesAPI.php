@@ -156,7 +156,7 @@ class AffiliatesAPI
 			}
 
 
-			if ( $clicksLog->vectors_id )
+			if ( isset($clicksLog->vectors_id) )
 			{		
 				if ( $dailyReport->daily_report_vector )
 				{
