@@ -17,6 +17,8 @@
 	<?php 
 	if( UserManager::model()->isUserAssignToRole('account_manager_admin') )
 		$types = array("Network"=>"Network","Affiliate"=>"Affiliate","Google AdWords"=>"Google AdWords");
+	if( UserManager::model()->isUserAssignToRole('operation_manager') )
+		$types = array("Network"=>"Network", "Publisher" => "Publisher" );	
 	else
 		$types = array("Network"=>"Network","Affiliate"=>"Affiliate","Publisher"=>"Publisher","Google AdWords"=>"Google AdWords");
 
