@@ -29,7 +29,7 @@ class RegionsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin', 'response','delete', 'archived','redirect'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -247,6 +247,9 @@ class RegionsController extends Controller
         $criteria->with = array('advertisers');
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));        
 
 		$financeEntities = CHtml::listData(FinanceEntities::model()->findAll( $criteria ), 'id', 'name' );
 

@@ -33,7 +33,7 @@ class FinanceEntitiesController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update', 'response','admin','delete', 'archived','redirect','getOpportunities'),
-				'roles'=>array('admin', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'account_manager','account_manager_admin','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -428,6 +428,8 @@ class FinanceEntitiesController extends Controller
 		$criteria->compare('status', 'Active');
 		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('cat', array('Networks','Incent'));		
 		$advertiser = CHtml::listData(Advertisers::model()->findAll($criteria), 'id', 'name'); 
 		$country = CHtml::listData(GeoLocation::model()->findAll( array('order'=>'name', "condition"=>"status='Active' AND type='Country'") ), 'id_location', 'name' );
 

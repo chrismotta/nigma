@@ -28,11 +28,11 @@ class FinanceController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunityValidation','validateOpportunity','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
-				'roles'=>array('admin', 'finance', 'media','media_manager','businness', 'affiliates_manager'),
+				'roles'=>array('admin', 'finance', 'media','media_manager','businness', 'affiliates_manager','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('excelReportProviders','transactionProviders','deleteTransactionProviders','providers'),
-				'roles'=>array('admin', 'finance','media_manager','businness', 'affiliates_manager','media_buyer_admin'),
+				'roles'=>array('admin', 'finance','media_manager','businness', 'affiliates_manager','media_buyer_admin','operation_manager'),
 			),
 			array('allow',  // admin allow
 				'actions'=>array('updateValidationStatus', 'validateOpportunitiesByAdvertiser'),

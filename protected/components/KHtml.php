@@ -250,6 +250,9 @@ class KHtml extends CHtml
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));        
+
         if (FilterManager::model()->isUserTotalAccess('media'))
             $accountManagerId=Yii::app()->user->id;
 
@@ -411,10 +414,11 @@ class KHtml extends CHtml
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Network"'
                     ));
+
             $networks = CHtml::listData($networks, 
                 function($data){return strval($data->id);}, 
                 'name');
-            
+
             $affiliates_t = array('00'=>'------- Affiliates -------');
 
             $affiliates = Providers::model()->findAll( 
@@ -424,12 +428,15 @@ class KHtml extends CHtml
                     ));
             $affiliates = CHtml::listData($affiliates, 
                 function($data){return strval($data->id);}, 
-                'name');
-            
-            if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
+                'name');                
+      
+
+            if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ) {
                 $publishers_t = array();
                 $publishers = array();
-            }else{
+            }
+            else
+            {
 
                 $publishers_t = array('000'=>'------- Publishers -------');
 
@@ -465,7 +472,12 @@ class KHtml extends CHtml
 
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
             $cat = array('VAS','Affiliates','App Owners');
-        }else{
+        }
+        else if( UserManager::model()->isUserAssignToRole('operation_manager') )
+        {
+            $cat = array( 'Networks', 'Incent'); 
+        }
+        else{
             $cat = KHtml::enumItem(new Advertisers, 'cat');
         }
             
@@ -492,6 +504,10 @@ class KHtml extends CHtml
         $criteria->compare('status', 'Active');
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('cat', array('Networks','Incent'));
+
         $advs        = Advertisers::model()->findAll( $criteria );
         $list        = CHtml::listData($advs, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);
@@ -610,10 +626,23 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        if ( empty($providers_id) )
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active'") );
-        else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
+        $criteria = new CDbCriteria;
+        $criteria->order = 't.id';
+        $criteria->with = array(
+                'opportunities.regions.financeEntities.advertisers',
+        );
+
+        //check
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));   
+
+        if ( !empty($providers_id) )
+             $criteria->addCondition( 'providers_id', $providers_id );
+
+        $campaigns = Campaigns::model()->findAll( $criteria );
 
         $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
 
@@ -638,11 +667,23 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
-        if ( empty($providers_id) )
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
-        else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "providers_id IN (" . join($providers_id, ", ") . ")") );
+        $criteria = new CDbCriteria;
+        $criteria->order = 't.id';
+        $criteria->with = array(
+                'opportunities.regions.financeEntities.advertisers',
+        );
 
+        //check
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));   
+
+        if ( !empty($providers_id) )
+             $criteria->addCondition( 'providers_id', $providers_id );
+
+        $campaigns = Campaigns::model()->findAll( $criteria );
         $data=array();
         foreach ($campaigns as $c) {
             $data[$c->id]=$c->getExternalName($c->id);
@@ -670,12 +711,35 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
+        $criteria = new CDbCriteria;
+        $criteria->order = 't.id';
+        $criteria->with = array(
+                'campaigns.opportunities.regions.financeEntities.advertisers',
+        );
+
+        //check
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));   
+        /*
+        if ( !empty($providers_id) )
+             $criteria->addCondition( 'providers_id', $providers_id );
+        */
+        /*
+        if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+        */
+
         //if ( empty($providers_id) )
-            $vectors = Vectors::model()->findAll( array('order' => 'id') );
+            $vectors = Vectors::model()->findAll( $criteria );
         /*      
         else
             $vectors = Vectors::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
         */
+
+
         $data=array();
         foreach ($vectors as $c) {
             $data[$c->id]=$c->getExternalName($c->id);
@@ -720,6 +784,9 @@ class KHtml extends CHtml
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));        
+
         // if (FilterManager::model()->isUserTotalAccess('media'))
         //     $accountManagerId=Yii::app()->user->id;
 
@@ -759,10 +826,14 @@ class KHtml extends CHtml
             'multiple' => 'multiple',
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
-        
+        $categories = array('VAS','Affiliates','App Owners');
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
             $categories = array('VAS','Affiliates','App Owners');
-        }else{
+        } 
+        else if( UserManager::model()->isUserAssignToRole('operation_manager') ){
+            $categories = array('Networks','Incent');
+        }
+        else{
             $categories = KHtml::enumItem(new Advertisers, 'cat');
         }
         
@@ -807,7 +878,8 @@ class KHtml extends CHtml
             $networks = CHtml::listData($networks, 
                 function($data){return strval($data->id);}, 
                 'name');
-            
+
+
             $affiliates_t = array('00'=>'------- Affiliates -------');
 
             $affiliates = Providers::model()->findAll( 
@@ -817,7 +889,10 @@ class KHtml extends CHtml
                     ));
             $affiliates = CHtml::listData($affiliates, 
                 function($data){return strval($data->id);}, 
-                'name');
+                'name');               
+
+            
+
             
              if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
                 $publishers_t = array();
@@ -939,6 +1014,9 @@ class KHtml extends CHtml
 
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+        
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('cat', array('Networks','Incent'));        
 
         // if (FilterManager::model()->isUserTotalAccess('media'))
         //     $accountManager=Yii::app()->user->id;
@@ -1001,8 +1079,16 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
         $criteria = new CDbCriteria;
+
         $criteria->with  = array('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers','country');
         // $criteria->order = 'country.name';
+        // 
+    
+        if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));
 
         $opps = Opportunities::model()->findAll($criteria);
         $data=array();
@@ -1175,6 +1261,8 @@ class KHtml extends CHtml
         $criteria->with = array('advertisers');
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));        
         $financeentities = FinanceEntities::model()->findAll($criteria);
         $list   = CHtml::listData($financeentities, 'id', 'name');
         return CHtml::dropDownList($name, $value, $list, $htmlOptions);

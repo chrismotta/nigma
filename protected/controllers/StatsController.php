@@ -29,7 +29,7 @@ class StatsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','impressions'),
-				'roles'=>array('admin', 'media_manager', 'external', 'media_buyer', 'media_buyer_admin'),
+				'roles'=>array('admin', 'media_manager', 'external', 'media_buyer', 'media_buyer_admin','operation_manager'),
 				),
 			array('deny',  // deny all users
 				'users'=>array('*'),

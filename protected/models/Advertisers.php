@@ -113,7 +113,13 @@ class Advertisers extends CActiveRecord
 
 		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
 			$criteria->compare('cat', array('VAS','Affiliates','App Owners'));
-		}else{
+		}
+		else if( UserManager::model()->isUserAssignToRole('operation_manager') )
+		{
+			$criteria->compare('cat', array('Networks','Incent'));
+		}
+		else
+		{
 			$criteria->compare('cat',$this->cat,true);
 		}
 

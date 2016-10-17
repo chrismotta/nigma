@@ -29,7 +29,7 @@ class OpportunitiesController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','duplicate', 'response','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -280,6 +280,9 @@ class OpportunitiesController extends Controller
 	        $criteria->order = 'name';
 	        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 	            $criteria->compare('cat', array('VAS','Affiliates','App Owners'));
+
+			if( UserManager::model()->isUserAssignToRole('operation_manager') )
+				$criteria->compare('cat', array('Networks','Incent'));	        
 
 			$advertiser = CHtml::listData( Advertisers::model()->findAll($criteria), 'id', 'name' );
 

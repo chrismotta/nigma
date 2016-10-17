@@ -29,7 +29,7 @@ class DailyReportController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update', 'response', 'updateAjax','redirectAjax','admin','delete', 'graphic', 'updateColumn', 'excelReport', 'multiRate', 'createByProvider', 'updateConvs2s', 'updateEditable'),
-				'roles'=>array('admin', 'media', 'media_manager', 'business','affiliates_manager', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'media', 'media_manager', 'business','affiliates_manager', 'account_manager','account_manager_admin','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','viewAjax','redirectAjax','admin', 'excelReport', 'multiRate'),
@@ -709,6 +709,9 @@ class DailyReportController extends Controller
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'), 'AND');
+
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
 
 		$criteria->order = 'financeEntities.name';
 		$campaigns = CHtml::listData(Campaigns::model()->findAll($criteria), 'id',
