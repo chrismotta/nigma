@@ -5,6 +5,7 @@ $id = $model->id;
 
 $phpTextIframe = '<iframe src="http://bidbox.co/tag/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
 $phpTextJs = '<script type="text/javascript" src="http://bidbox.co/tag/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
+$phpTextJsp = '<script type="text/javascript" src="http://bidbox.co/tag/jsp/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 
 $iframeText1 = '<iframe src=\"http://bidbox.co/tag/'. $id . '?pid=';
 $iframeText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'. $height .'\" frameborder=\"0\" scrolling=\"no\" ></iframe>';
@@ -110,6 +111,13 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 		<div class="text-left code-area">
 		Javascript
 		<?php echo CHtml::textArea('tag_content_js', $phpTextJs,
+			array('id'=>'tag_content_js', 
+			'readonly' => true,
+			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
+		<div class="text-left code-area">
+		Javascript (incent)
+		<?php echo CHtml::textArea('tag_content_js', $phpTextJsp,
 			array('id'=>'tag_content_js', 
 			'readonly' => true,
 			'style'=>'width:100%;height:60px;cursor:text')); ?>
