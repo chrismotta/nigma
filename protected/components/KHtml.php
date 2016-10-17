@@ -419,25 +419,19 @@ class KHtml extends CHtml
                 function($data){return strval($data->id);}, 
                 'name');
 
-            if( UserManager::model()->isUserAssignToRole('operation_manager') ) {
-                $affiliates_t = array();
-                $affiliates = array();
-            }
-            else
-            {
-                $affiliates_t = array('00'=>'------- Affiliates -------');
+            $affiliates_t = array('00'=>'------- Affiliates -------');
 
-                $affiliates = Providers::model()->findAll( 
-                    array(
-                        'order' => 'name', 
-                        'condition' => 'status="Active" && type="Affiliate"'
-                        ));
-                $affiliates = CHtml::listData($affiliates, 
-                    function($data){return strval($data->id);}, 
-                    'name');                
-            }            
+            $affiliates = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Affiliate"'
+                    ));
+            $affiliates = CHtml::listData($affiliates, 
+                function($data){return strval($data->id);}, 
+                'name');                
+      
 
-            if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('operation_manager') ) {
+            if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ) {
                 $publishers_t = array();
                 $publishers = array();
             }
@@ -692,12 +686,19 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
+        /*
+        if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+        */
+
         //if ( empty($providers_id) )
             $vectors = Vectors::model()->findAll( array('order' => 'id') );
         /*      
         else
             $vectors = Vectors::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
         */
+
+
         $data=array();
         foreach ($vectors as $c) {
             $data[$c->id]=$c->getExternalName($c->id);
@@ -836,30 +837,23 @@ class KHtml extends CHtml
             $networks = CHtml::listData($networks, 
                 function($data){return strval($data->id);}, 
                 'name');
-   
 
-            if ( UserManager::model()->isUserAssignToRole('operation_manager') )    
-            {
-                $affiliates_t = array();
-                $affiliates = array();
-            } 
-            else
-            {
-                $affiliates_t = array('00'=>'------- Affiliates -------');
 
-                $affiliates = Providers::model()->findAll( 
-                    array(
-                        'order' => 'name', 
-                        'condition' => 'status="Active" && type="Affiliate"'
-                        ));
-                $affiliates = CHtml::listData($affiliates, 
-                    function($data){return strval($data->id);}, 
-                    'name');               
-            }
+            $affiliates_t = array('00'=>'------- Affiliates -------');
+
+            $affiliates = Providers::model()->findAll( 
+                array(
+                    'order' => 'name', 
+                    'condition' => 'status="Active" && type="Affiliate"'
+                    ));
+            $affiliates = CHtml::listData($affiliates, 
+                function($data){return strval($data->id);}, 
+                'name');               
+
             
 
             
-             if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('operation_manager') ){
+             if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') ){
                 $publishers_t = array();
                 $publishers = array();
             }else{
