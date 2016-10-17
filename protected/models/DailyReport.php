@@ -1664,8 +1664,13 @@ class DailyReport extends CActiveRecord
 			$opportunityName,
 			);
 
+		// account_manager
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+		
+		// new rol
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));
 
 		// if($sum==1){
 		// 	$criteria->group  = 'campaigns_id';
