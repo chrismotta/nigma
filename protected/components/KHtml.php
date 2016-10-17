@@ -626,10 +626,23 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions);
 
-        if ( empty($providers_id) )
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active'") );
-        else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
+        $criteria = new CDbCriteria;
+        $criteria->order = 't.id';
+        $criteria->with = array(
+                'opportunities.regions.financeEntities.advertisers',
+        );
+
+        //check
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));   
+
+        if ( !empty($providers_id) )
+             $criteria->addCondition( 'providers_id', $providers_id );
+
+        $campaigns = Campaigns::model()->findAll( $criteria );
 
         $list = array_values(CHtml::listData($campaigns, 'id', function($c) { return Campaigns::model()->getExternalName($c->id); } ));
 
@@ -654,11 +667,23 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
-        if ( empty($providers_id) )
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id') );
-        else
-            $campaigns = Campaigns::model()->findAll( array('order' => 'id', 'condition' => "providers_id IN (" . join($providers_id, ", ") . ")") );
+        $criteria = new CDbCriteria;
+        $criteria->order = 't.id';
+        $criteria->with = array(
+                'opportunities.regions.financeEntities.advertisers',
+        );
 
+        //check
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));   
+
+        if ( !empty($providers_id) )
+             $criteria->addCondition( 'providers_id', $providers_id );
+
+        $campaigns = Campaigns::model()->findAll( $criteria );
         $data=array();
         foreach ($campaigns as $c) {
             $data[$c->id]=$c->getExternalName($c->id);
@@ -686,13 +711,29 @@ class KHtml extends CHtml
         );
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
+        $criteria = new CDbCriteria;
+        $criteria->order = 't.id';
+        $criteria->with = array(
+                'campaigns.opportunities.regions.financeEntities.advertisers',
+        );
+
+        //check
+        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));   
+        /*
+        if ( !empty($providers_id) )
+             $criteria->addCondition( 'providers_id', $providers_id );
+        */
         /*
         if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
             $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
         */
 
         //if ( empty($providers_id) )
-            $vectors = Vectors::model()->findAll( array('order' => 'id') );
+            $vectors = Vectors::model()->findAll( $criteria );
         /*      
         else
             $vectors = Vectors::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
@@ -1038,8 +1079,16 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
         $criteria = new CDbCriteria;
+
         $criteria->with  = array('regions', 'regions.financeEntities', 'regions.financeEntities.advertisers','country');
         // $criteria->order = 'country.name';
+        // 
+    
+        if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
+            $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+        if( UserManager::model()->isUserAssignToRole('operation_manager') )
+            $criteria->compare('advertisers.cat', array('Networks','Incent'));
 
         $opps = Opportunities::model()->findAll($criteria);
         $data=array();

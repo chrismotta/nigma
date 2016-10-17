@@ -79,7 +79,7 @@
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('operation_manager'),
                     ),
                 array('label'=>'Vectors', 'url'=>array('/vectors/admin'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('operation_manager'),
+                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
                     ),
                 array('label'=>'AM Distribution', 'url'=>array('/opportunities/managersDistribution'),
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
