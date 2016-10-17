@@ -30,7 +30,7 @@ class AdvertisersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update', 'response','admin','delete', 'externalForm', 'archived','viewAjax','getAdvertisers'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin', 'operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
@@ -271,6 +271,10 @@ class AdvertisersController extends Controller
 
 		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$cat = array('VAS'=>'VAS','Affiliates'=>'Affiliates','App Owners'=>'App Owners');
+		else if( $this->isUserAssignToRole('operation_manager') )
+		{
+        	$cat = array('Networks'=>'Networks','Incent'=>'Incent');
+		}
 		else
 			$cat = KHtml::enumItem($model, 'cat');
 

@@ -107,6 +107,8 @@ class Regions extends CActiveRecord
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
 		$criteria->with=array('financeEntities','country','financeEntities.advertisers');
 
 		return new CActiveDataProvider($this, array(

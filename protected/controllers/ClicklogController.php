@@ -31,7 +31,7 @@ class ClicklogController extends Controller
 			),
 			array('allow', 
 				'actions'=>array('updateClicksData', 'admin', 'updateQuery', 'storage', 'test', 'csv'),
-				'roles'=>array('admin', 'account_manager_admin'),
+				'roles'=>array('admin', 'account_manager_admin','operation_manager'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

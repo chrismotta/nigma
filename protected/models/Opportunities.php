@@ -211,6 +211,9 @@ class Opportunities extends CActiveRecord
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
+
 		if($accountManager != NULL)
 			$criteria->compare('accountManager.id',$accountManager);
 		if($advertiser != NULL)
@@ -327,7 +330,8 @@ class Opportunities extends CActiveRecord
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
-
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));
 
 		if ( $accountManager != NULL) {
 			if(is_array($accountManager))

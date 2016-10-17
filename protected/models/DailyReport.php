@@ -456,6 +456,9 @@ class DailyReport extends CActiveRecord
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
+
 		if ( $filters )
 		{
 			if ( $filters['account_manager'] != NULL) {
@@ -870,6 +873,9 @@ class DailyReport extends CActiveRecord
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
 
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('providers.name',$this->providers_name, true);
@@ -1664,8 +1670,13 @@ class DailyReport extends CActiveRecord
 			$opportunityName,
 			);
 
+		// account_manager
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+		
+		// new rol
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));
 
 		// if($sum==1){
 		// 	$criteria->group  = 'campaigns_id';
@@ -2150,6 +2161,9 @@ class DailyReport extends CActiveRecord
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));
 
 		$criteria->compare('opportunities.rate',$this->rate);
 		$criteria->compare('providers.name',$this->providers_name, true);
