@@ -246,6 +246,9 @@ class ClicksLog extends CActiveRecord
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
+
 		//filters
 		if(isset($filters['manager'])) 
 			$criteria->compare('opportunities.account_manager_id',$filters['manager']);
@@ -569,6 +572,9 @@ class ClicksLog extends CActiveRecord
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));		
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));
+		
 		if ( $filters )
 		{
 			/*
