@@ -79,7 +79,7 @@
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('operation_manager'),
                     ),
                 array('label'=>'Vectors', 'url'=>array('/vectors/admin'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') ,
+                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('operation_manager'),
                     ),
                 array('label'=>'AM Distribution', 'url'=>array('/opportunities/managersDistribution'),
                     'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin'),
@@ -106,11 +106,11 @@
                     'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin') || rol('operation_manager')
                     ),
                 array('label'=>'Affiliates', 'url'=>array('/providers/admin/affiliates'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin')
+                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('operation_manager')
                     ),
                 array('label'=>'Networks', 'url'=>array('/providers/admin/networks')),
                 array('label'=>'Google AdWords', 'url'=>array('/providers/admin/adwords'),
-                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin')
+                    'visible' => rol('admin') || rol('account_manager') || rol('account_manager_admin') || rol('operation_manager')
                     ),
             ), 
             'visible' => rol('admin') || rol('media_buyer') || rol('media_buyer_admin') || rol('account_manager_admin') || rol('operation_manager'),
