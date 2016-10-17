@@ -51,7 +51,7 @@ class MobusiCPC
 		$network = Providers::model()->findbyPk($this->provider_id);
 
 		// --- setting actions for requests
-		$answer = $this->getResponse( array(
+		$response = $this->getResponse( array(
 			'type' => 'stats', 
 			'group' => array( "offer" ), 
 			'columns' => array( "imp","leads","money" ),
@@ -61,16 +61,71 @@ class MobusiCPC
 		));
 
 
-		if (!$answer) { 
+		if (!$response) { 
 			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.reporo');
 			return 1;
 		}
 
-		foreach ( $answer as $campaign_id => $stats )
+		if ( !isset($response['answer']) )
+			return 1;
+
+		foreach ( $response['answer'] as $campaign_name => $campaign_stats )
 		{
+			// if is vector
+			if(substr($campaign_name, 0, 1)=='v'){
 
+				$vid = Utilities::parseVectorID($campaign_name);
+				$vectorModel = Vectors::model()->findByPk($vid);
+
+				$ret = $vectorModel->explodeVector(array('spend'=>$campaign_stats['money']->spend,'date'=>$date));
+				$return .= json_encode($ret);
+				$return.= '<br>';
+				continue;
+			}
+
+			$campaigns_id = Utilities::parseCampaignID($campaign_name);
+
+			// if exists overwrite, else create a new
+			$dailyReport = DailyReport::model()->find(
+				"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
+				array(
+					":providers"=>$this->provider_id, 
+					":date"=>$date, 
+					":cid"=>$campaigns_id,
+					)
+				);
+			if(!$dailyReport){
+				$dailyReport = new DailyReport();
+				$return.= "<hr/>New record: ";
+			}else{
+				$return.= "<hr/>Update record: ".$dailyReport->id;
+			}
+
+
+			
+			// get campaign ID used in Server, from the campaign name use in the external provider
+			$dailyReport->campaigns_id = $campaigns_id;
+
+			if ( !$dailyReport->campaigns_id ) {
+				Yii::log("Invalid external campaign name: '" . $campaign_name, 'warning', 'system.model.api.reporo');
+				continue;
+			}
+
+			$dailyReport->date = $date;
+			$dailyReport->providers_id = $this->provider_id;
+			$dailyReport->imp = $campaign_stats['imp'];
+			$dailyReport->clics = $campaign_stats['leads'];
+			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
+			//$dailyReport->conv_adv = 0;
+			$dailyReport->spend = $campaign_stats['money'];
+			$dailyReport->updateRevenue();
+			$dailyReport->setNewFields();
+			if ( !$dailyReport->save() ) {
+				Yii::log("Can't save campaign: '" . $campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.reporo');
+				continue;
+			}			
 		}
-
+		/*
 		foreach ($groups->campaign_groups as $campaign_group) {
 			$group_id = $campaign_group->campaign_group;	// rename variable only to make code easy to read.
 
@@ -119,50 +174,11 @@ class MobusiCPC
 				}
 
 				
-				$campaigns_id = Utilities::parseCampaignID($campaign_info->campaign_name);
 
-				// if exists overwrite, else create a new
-				$dailyReport = DailyReport::model()->find(
-					"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
-					array(
-						":providers"=>$this->provider_id, 
-						":date"=>$date, 
-						":cid"=>$campaigns_id,
-						)
-					);
-				if(!$dailyReport){
-					$dailyReport = new DailyReport();
-					$return.= "<hr/>New record: ";
-				}else{
-					$return.= "<hr/>Update record: ".$dailyReport->id;
-				}
-
-
-				
-				// get campaign ID used in Server, from the campaign name use in the external provider
-				$dailyReport->campaigns_id = $campaigns_id;
-
-				if ( !$dailyReport->campaigns_id ) {
-					Yii::log("Invalid external campaign name: '" . $campaign_info->campaign_name, 'warning', 'system.model.api.reporo');
-					continue;
-				}
-
-				$dailyReport->date = $date;
-				$dailyReport->providers_id = $this->provider_id;
-				$dailyReport->imp = $campaign_stats[0]->impressions;
-				$dailyReport->clics = $campaign_stats[0]->clicks;
-				$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
-				//$dailyReport->conv_adv = 0;
-				$dailyReport->spend = $campaign_stats[0]->spend;
-				$dailyReport->updateRevenue();
-				$dailyReport->setNewFields();
-				if ( !$dailyReport->save() ) {
-					Yii::log("Can't save campaign: '" . $campaign->campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.reporo');
-					continue;
-				}
 			}
 			// --- end getting compaigns ids from campaign_group id
 		}
+		*/
 		// --- end getting compaign_groups ids
 		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.reporo');
 		return $return;
