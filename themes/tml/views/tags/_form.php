@@ -20,6 +20,7 @@
 
         echo $form->dropDownListRow($model, 'banner_sizes_id', $bannerSizes, array('prompt' => 'Select a size')); ?>
 
+    <?php echo $form->radioButtonListRow($model, 'type', array('Tag'=>'Tag','URL'=>'URL')); ?>
 
     <?php echo $form->textAreaRow(
         $model,
