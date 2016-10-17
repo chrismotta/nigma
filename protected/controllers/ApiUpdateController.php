@@ -78,33 +78,32 @@ class ApiUpdateController extends Controller
 	public function actionIndex()
 	{
 		// $this->actionEroAdvertising();
-		$this->actionAjillion();
-		$this->actionStartApp();
-		
-		// $this->actionAdWords();
-
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
-		
-
 		// $this->actionBingAds();
 		// $this->actionSmaato();
 		// $this->actionAdultmoda();
 		// $this->actionMobads();
 		// $this->actionPlugRush();
 		// $this->actionJampp();
+
+		$this->actionAjillion();
+		
 		$this->actionAffiliates();
 		$this->actionCpmCampaigns();
-
-		$this->actionAjillionExchange();
-		$this->actionSmaatoExchange();
 		
-		$this->actionAdWordsConversions();
-		$this->actionImpLog();
-		
+		// $this->actionAdWords();
 		$this->actionAirpush();
 		$this->actionInMobi();
 		$this->actionReporo();
+
+		$this->actionAjillionExchange();
+		$this->actionSmaatoExchange();
+
+		$this->actionImpLog();
+		
+		$this->actionAdWordsConversions();
+		$this->actionStartApp();
 	}
 
 	public function actionBingCode(){
