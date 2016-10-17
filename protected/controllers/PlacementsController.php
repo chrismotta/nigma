@@ -29,7 +29,7 @@ class PlacementsController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','duplicate','response','admin','delete','archived','getSites','labelAjax','waterfall','waterfallSort','waterfallAdd','waterfallDel','waterfallUpd'),
-				'roles'=>array('admin','media_buyer_admin'),
+				'roles'=>array('admin','media_buyer_admin','operation_manager'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),

@@ -29,7 +29,7 @@ class OpportunitiesController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','duplicate', 'response','admin','delete','getRegions', 'getCarriers', 'archived','managersDistribution','getOpportunities'),
-				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'commercial', 'commercial_manager', 'media_manager', 'account_manager','account_manager_admin','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),

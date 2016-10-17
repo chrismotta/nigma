@@ -33,7 +33,7 @@ class FinanceEntitiesController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update', 'response','admin','delete', 'archived','redirect','getOpportunities'),
-				'roles'=>array('admin', 'account_manager','account_manager_admin'),
+				'roles'=>array('admin', 'account_manager','account_manager_admin','operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','redirect','admin','archived'),
