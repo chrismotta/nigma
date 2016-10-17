@@ -151,7 +151,7 @@
                     'visible' => rol('admin') || rol('finance'),
                     ),
             ), 
-            'visible' => rol('admin') || rol('finance') || rol('media_buyer_admin') || rol('operation_manager'),
+            'visible' => rol('admin') || rol('finance') || rol('media_buyer_admin'),
             ),
         array(
             'label'=>'Archive', 
