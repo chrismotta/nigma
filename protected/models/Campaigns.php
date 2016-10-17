@@ -249,6 +249,9 @@ class Campaigns extends CActiveRecord
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
+
 		$criteria->compare('financeEntities.name',$this->financeEntities_name, true);
 		$criteria->compare('LOWER(providers.currency)', strtolower($this->net_currency), true);
 		// $criteria->compare('vectors_has_campaigns.vectors',$this->vectors_id, true);
@@ -325,6 +328,9 @@ class Campaigns extends CActiveRecord
 
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
+
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
 
 		return new CActiveDataProvider($this, array(
 			'criteria'   => $criteria,
