@@ -66,6 +66,9 @@ class UserManager
 
         if ($this->isUserAssignToRole('account_manager_admin'))
             Yii::app()->controller->redirect(Yii::app()->baseUrl.'/dailyReport/admin');
+
+        if( $this->isUserAssignToRole('operation_manager') )
+            Yii::app()->controller->redirect(Yii::app()->baseUrl.'/dailyReport/admin');       
     }
 
 }

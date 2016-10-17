@@ -710,6 +710,9 @@ class DailyReportController extends Controller
 		if( UserManager::model()->isUserAssignToRole('account_manager_admin') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'), 'AND');
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));		
+
 		$criteria->order = 'financeEntities.name';
 		$campaigns = CHtml::listData(Campaigns::model()->findAll($criteria), 'id',
 			function($camp) { return $camp->getExternalName($camp->id); } );

@@ -248,6 +248,9 @@ class RegionsController extends Controller
         if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
             $criteria->compare('advertisers.cat', array('VAS','Affiliates','App Owners'));
 
+		if( UserManager::model()->isUserAssignToRole('operation_manager') )
+			$criteria->compare('advertisers.cat', array('Networks','Incent'));        
+
 		$financeEntities = CHtml::listData(FinanceEntities::model()->findAll( $criteria ), 'id', 'name' );
 
 		$this->render('_form',array(

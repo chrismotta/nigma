@@ -271,6 +271,10 @@ class AdvertisersController extends Controller
 
 		if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 			$cat = array('VAS'=>'VAS','Affiliates'=>'Affiliates','App Owners'=>'App Owners');
+		else if( $this->isUserAssignToRole('operation_manager') )
+		{
+        	$cat = array('Networks'=>'Networks','Incent'=>'Incent');
+		}
 		else
 			$cat = KHtml::enumItem($model, 'cat');
 

@@ -590,6 +590,9 @@ class CampaignsController extends Controller
 	        if( UserManager::model()->isUserAssignToRole('account_manager') || UserManager::model()->isUserAssignToRole('account_manager_admin') )
 	            $criteria->compare('cat', array('VAS','Affiliates','App Owners'));
 
+			if( UserManager::model()->isUserAssignToRole('operation_manager') )
+				$criteria->compare('cat', array('Networks','Incent'));	        
+
 			$advertisers = CHtml::listData(
 				Advertisers::model()->findAll($criteria), 
 				'id', 
