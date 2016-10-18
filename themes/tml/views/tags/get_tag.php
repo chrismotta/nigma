@@ -6,6 +6,8 @@ $id = $model->id;
 $phpTextIframe = '<iframe src="http://bidbox.co/tag/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
 $phpTextJs = '<script type="text/javascript" src="http://bidbox.co/tag/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 $phpTextJsp = '<script type="text/javascript" src="http://bidbox.co/tag/jsp/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
+$phpTextJsi = '<script type="text/javascript" src="http://bidbox.co/tag/jsi/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
+$phpTextURL = 'http://bidbox.co/tag/jsp/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height;
 
 $iframeText1 = '<iframe src=\"http://bidbox.co/tag/'. $id . '?pid=';
 $iframeText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'. $height .'\" frameborder=\"0\" scrolling=\"no\" ></iframe>';
@@ -84,11 +86,22 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			    'class'    => 'placements-dropdownlist',
 			    'disabled' => true,
 			    'onChange' => '
-		            $("#tag_content_iframe").val("'.$iframeText1.'"+this.value+"'.$iframeText2.'");
-		            $("#tag_content_js").val("'.$jsText1.'"+this.value+"'.$jsText2.'");
+			    	var iframe = $("#tag_content_iframe").val();
+			    	var js = $("#tag_content_js").val();
+			    	var jsi = $("#tag_content_jsi").val();
+			    	var jsp = $("#tag_content_jsp").val();
+			    	var url = $("#tag_content_url").val();
+
+		            $("#tag_content_iframe").val( iframe.replace("<placementID>", this.value) );
+		            $("#tag_content_js").val( js.replace("<placementID>", this.value) );
+		            $("#tag_content_jsi").val( jsi.replace("<placementID>", this.value) );
+		            $("#tag_content_jsp").val( jsp.replace("<placementID>", this.value) );
+		            $("#tag_content_url").val( url.replace("<placementID>", this.value) );
+
 		            var downloadHref = $("#download-txt").attr("href");
 		            var downloadHrefSpl = downloadHref.split("?"); 
 		            downloadHref = downloadHrefSpl[0] + "?pid="+this.value;
+
 		            // console.log(downloadHref);
 		            $("#download-txt").attr("href", downloadHref);
 		            return;
@@ -115,12 +128,29 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			'readonly' => true,
 			'style'=>'width:100%;height:60px;cursor:text')); ?>
 		</div>
+
 		<div class="text-left code-area">
 		Javascript (incent)
-		<?php echo CHtml::textArea('tag_content_js', $phpTextJsp,
-			array('id'=>'tag_content_js', 
+		<?php echo CHtml::textArea('tag_content_jsi', $phpTextJsi,
+			array('id'=>'tag_content_jsi', 
 			'readonly' => true,
 			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
+
+		<div class="text-left code-area">
+		Javascript (pop)
+		<?php echo CHtml::textArea('tag_content_jsp', $phpTextJsp,
+			array('id'=>'tag_content_jsp', 
+			'readonly' => true,
+			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
+
+		<div class="text-left code-area">
+		Landing URL
+		<?php echo CHtml::textField('tag_content_url', $phpTextURL,
+			array('id'=>'tag_content_url', 
+			'readonly' => true,
+			'style'=>'width:100%;cursor:text')); ?>
 		</div>
 
 		<div class="text-right">

@@ -155,7 +155,26 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'window.location()\');';
+			echo 'document.write(\'window.open("")\');';
+
+		}else{
+
+			echo 'document.write(\'ERROR: Ad not setted properly\');';
+
+		}
+
+	}
+
+	public function actionJsi($id){
+		
+		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
+		$width  = isset($_GET['width']) ? $_GET['width'] : null;
+		$height = isset($_GET['height']) ? $_GET['height'] : null;
+		$pubid  = isset($_GET['pubid']) ? $_GET['pubid'] : '';
+
+		if(isset($pid) && isset($width) && isset($height)){
+
+			echo 'document.write(\'window.location=""\');';
 
 		}else{
 
