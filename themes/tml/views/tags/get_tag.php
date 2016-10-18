@@ -92,11 +92,13 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			    	var jsp = $("#tag_content_jsp").val();
 			    	var url = $("#tag_content_url").val();
 
-		            $("#tag_content_iframe").val( iframe.replace("<placementID>", this.value) );
-		            $("#tag_content_js").val( js.replace("<placementID>", this.value) );
-		            $("#tag_content_jsi").val( jsi.replace("<placementID>", this.value) );
-		            $("#tag_content_jsp").val( jsp.replace("<placementID>", this.value) );
-		            $("#tag_content_url").val( url.replace("<placementID>", this.value) );
+		            $("#tag_content_iframe").val( iframe.replace(replaceMacro, this.value) );
+		            $("#tag_content_js").val( js.replace(replaceMacro, this.value) );
+		            $("#tag_content_jsi").val( jsi.replace(replaceMacro, this.value) );
+		            $("#tag_content_jsp").val( jsp.replace(replaceMacro, this.value) );
+		            $("#tag_content_url").val( url.replace(replaceMacro, this.value) );
+
+		            replaceMacro = this.value;
 
 		            var downloadHref = $("#download-txt").attr("href");
 		            var downloadHrefSpl = downloadHref.split("?"); 
@@ -163,3 +165,7 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 </div>
 
 <?php if($parent=='c') echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>
+
+<<?php Yii::app()->clientScript->registerScript('replaceMacro', '
+    var replaceMacro = "<placementID>";
+', CClientScript::POS_END); ?>
