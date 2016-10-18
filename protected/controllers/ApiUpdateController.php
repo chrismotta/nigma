@@ -77,6 +77,13 @@ class ApiUpdateController extends Controller
 
 	public function actionIndex()
 	{
+		set_error_handler(
+		    create_function(
+		        '$severity, $message, $file, $line',
+		        'throw new ErrorException($message);'
+		    )
+		);
+
 		// $this->actionEroAdvertising();
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
@@ -88,7 +95,6 @@ class ApiUpdateController extends Controller
 		// $this->actionJampp();
 
 		$this->actionAjillion();
-		
 		$this->actionAffiliates();
 		$this->actionCpmCampaigns();
 		
