@@ -155,7 +155,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'window.open("")\');';
+			echo 'document.write(\'<img src="http://1.bp.blogspot.com/_p0ZTd1mmzMU/TIQXL67HhZI/AAAAAAAAAHY/6Q9jQ12Ifhk/s320/your_ad_here.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
 
 		}else{
 
@@ -174,11 +174,30 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'window.location=""\');';
+			echo 'document.write(\'<script>window.location="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
 
 		}else{
 
 			echo 'document.write(\'ERROR: Ad not setted properly\');';
+
+		}
+
+	}
+
+	public function actionUrl($id){
+		
+		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
+
+		if(isset($pid)){
+
+			$redirectURL = '';
+			header("Location: ".$redirectURL);
+			// echo 'document.write(\'<script>window.location="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
+
+		}else{
+
+			echo 'ERROR: Ad not setted properly';
+			die();
 
 		}
 
