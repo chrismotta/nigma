@@ -43,7 +43,7 @@ class Tags extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('campaigns_id, banner_sizes_id, analyze, freq_cap', 'numerical', 'integerOnly'=>true),
-			array('code', 'length', 'max'=>255),
+			array('code', 'safe'),
 			array('name, comment', 'length', 'max'=>128),
 			array('country', 'length', 'max'=>2),
 			// array('connection_type', 'length', 'max'=>4),
