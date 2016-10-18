@@ -27,6 +27,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'bussiness',
@@ -39,6 +40,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'bussiness',
@@ -50,6 +52,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'sem',
@@ -60,6 +63,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'media_buyer_admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'sem',
@@ -70,6 +74,7 @@ class FilterManager
 			'roles' => array(
 				'admin',
 				'media_buyer_admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 			)),
@@ -111,12 +116,14 @@ class FilterManager
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
+				'operation_manager',
 				'media',
 			)),
 		'clients.invoice' => array( 
 			'column' => 'opportunities.account_manager_id', 
 			'roles'  => array( 
 				'admin',
+				'operation_manager',
 				'finance',
 			)),
 		'clients.validateIo' => array( 
@@ -124,6 +131,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'business',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'finance',
@@ -133,6 +141,7 @@ class FilterManager
 			'roles'  => array( 
 				'admin',
 				'business',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 			)),
@@ -150,6 +159,7 @@ class FilterManager
 			'column' => 't.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'commercial_manager',
@@ -160,6 +170,7 @@ class FilterManager
 			'column' => 'financeEntities.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'commercial_manager',
@@ -170,6 +181,7 @@ class FilterManager
 			'column' => 'financeEntities.commercial_id', 
 			'roles'  => array( 
 				'admin',
+				'operation_manager',
 				'account_manager_admin',
 				'media_manager',
 				'commercial_manager',
