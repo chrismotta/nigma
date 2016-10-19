@@ -203,7 +203,6 @@ class Vectors extends CActiveRecord
 		$totalClicks = 0;
 		$totalConv = 0;
 
-
 		foreach ($vhc as $cmp) {
 
 			$cid = $cmp->campaigns_id;
@@ -221,9 +220,57 @@ class Vectors extends CActiveRecord
 				);
 
 			$model = VectorsLog::model()->find($criteria);
-			
-			if($model){
 
+			if($model){
+				$campaignsList[$cid]['clicks'] = $model->clicks;
+				$totalClicks += $campaignsList[$cid]['clicks'];
+				$campaignsList[$cid]['conv'] = $model->conv;
+				$totalConv += $campaignsList[$cid]['conv'];
+			}
+			else{
+				$criteria = new CDbCriteria;
+				$criteria->with = array('clicksLog', 'clicksLog.convLogs', 'clicksLog.campaigns.opportunities');
+				$criteria->compare('t.vectors_id', $this->id);
+				$criteria->compare('clicksLog.campaigns_id', $cid);
+
+				$criteria->addCondition('DATE(clicksLog.date) = "' . $date . '"');
+				$criteria->select = array(
+					'COUNT(t.id) AS clicks',
+					'COUNT(convLogs.id) AS conv',
+					);
+
+				$model = VectorsLog::model()->find($criteria);
+
+				if($model){		
+					$campaignsList[$cid]['clicks'] = $model->clicks;
+					$totalClicks += $campaignsList[$cid]['clicks'];
+					$campaignsList[$cid]['conv'] = $model->conv;
+					$totalConv += $campaignsList[$cid]['conv'];
+				}else{
+					$campaignsList[$cid]['clicks'] = 0;
+					$campaignsList[$cid]['conv'] = 0;
+				}				
+			}
+		}	
+		/* ORIGINAL
+		foreach ($vhc as $cmp) {
+
+			$cid = $cmp->campaigns_id;
+
+			$criteria = new CDbCriteria;
+			$criteria->with = array('vectorsLog', 'convLogs' );
+			$criteria->compare('vectorsLog.vectors_id', $this->id);
+			$criteria->compare('t.campaigns_id', $cid);
+			$criteria->addCondition('t.carrier != "-"');
+			$criteria->addCondition('DATE(t.date) = "' . $date . '"');
+			$criteria->select = array(
+				'COUNT(t.id) as clicks',
+				'COUNT(convLogs.id) as conv',
+				);		
+			
+			$model = ClicksLog::model()->find($criteria);
+
+			if($model){
 				$campaignsList[$cid]['clicks'] = $model->clicks;
 				$totalClicks += $campaignsList[$cid]['clicks'];
 				$campaignsList[$cid]['conv'] = $model->conv;
@@ -236,7 +283,7 @@ class Vectors extends CActiveRecord
 			}
 
 		}
-
+		*/ 
 		if(isset($campaignsList)){
 
 			/* deprecated 
@@ -256,13 +303,11 @@ class Vectors extends CActiveRecord
 				foreach ($campaignsList as $id => $cmp) {
 
 					if($cmp['clicks'] > 0){
-
 						$campaignsList[$id]['id'] = $id;
 						$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
 						$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
 					}
 					else{
-
 						// unset campaigns without clicks
 						unset($campaignsList[$id]);
 					}
@@ -272,7 +317,7 @@ class Vectors extends CActiveRecord
 			}else{
 
 				// when there are no campaigns with clicks
-
+				var_export('vector: ' . $this->id . ' campaign: ' . $cid . ' cost: ' . $cost . ' count: ' . count($vhc));
 				foreach ($campaignsList as $id => $cmp) {
 					$campaignsList[$id]['id'] = $id;
 					$campaignsList[$id]['cost'] = $cost / count($vhc);
