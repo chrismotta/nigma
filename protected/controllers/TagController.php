@@ -155,7 +155,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<img src="http://1.bp.blogspot.com/_p0ZTd1mmzMU/TIQXL67HhZI/AAAAAAAAAHY/6Q9jQ12Ifhk/s320/your_ad_here.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
+			echo 'document.write(\'<img src="http://bidbox.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
 
 		}else{
 
@@ -172,9 +172,9 @@ class TagController extends Controller
 		$height = isset($_GET['height']) ? $_GET['height'] : null;
 		$pubid  = isset($_GET['pubid']) ? $_GET['pubid'] : '';
 
-		if(isset($pid) && isset($width) && isset($height)){
+		if(isset($pid)){
 
-			echo 'document.write(\'<script>window.location="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
+			echo 'document.write(\'<script>window.location="http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
 
 		}else{
 
@@ -185,21 +185,43 @@ class TagController extends Controller
 	}
 
 	public function actionUrl($id){
+
+		if(!$tag = Tags::model()->findByPk($id))
+			die("Tag ID does't exists");
+		if(!isset($_GET['pid']))
+			die("Placement ID does't exists");
+
 		
-		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
+		// log impression
+		
+		$imp = new ImpLog();
+		$imp->tags_id = $tag->id;
+		$imp->placements_id = $_GET['pid'];
+		$imp->date = new CDbExpression('NOW()');
 
-		if(isset($pid)){
 
-			$redirectURL = '';
-			header("Location: ".$redirectURL);
-			// echo 'document.write(\'<script>window.location="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
+		// pubid
+		
+		$imp->pubid = isset($_GET['pubid']) ? $_GET['pubid'] : null;
 
-		}else{
+		
+		// Get visitor parameters
+		
+		$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+		$imp->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
+		$imp->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
 
-			echo 'ERROR: Ad not setted properly';
-			die();
+		// log impression
 
-		}
+		if(!$imp->save())
+			Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
+		// enviar macros
+
+		$newUrl = $imp->replaceMacro($tag->url);
+
+		// redirect to tag url
+		header("Location: ".$newUrl);
+
 
 	}
 

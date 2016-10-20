@@ -7,7 +7,7 @@ $phpTextIframe = '<iframe src="http://bidbox.co/tag/'. $id . '?pid=<placementID>
 $phpTextJs = '<script type="text/javascript" src="http://bidbox.co/tag/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 $phpTextJsp = '<script type="text/javascript" src="http://bidbox.co/tag/jsp/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 $phpTextJsi = '<script type="text/javascript" src="http://bidbox.co/tag/jsi/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
-$phpTextURL = 'http://bidbox.co/tag/url/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height;
+$phpTextURL = 'http://bidbox.co/tag/url/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>';
 
 $iframeText1 = '<iframe src=\"http://bidbox.co/tag/'. $id . '?pid=';
 $iframeText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>\" width=\"'. $width .'\" height=\"'. $height .'\" frameborder=\"0\" scrolling=\"no\" ></iframe>';
@@ -166,6 +166,6 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 
 <?php if($parent=='c') echo CHtml::link('<- Back to list',array('adminByCampaign','id'=>$model->campaigns_id)); ?>
 
-<<?php Yii::app()->clientScript->registerScript('replaceMacro', '
+<?php Yii::app()->clientScript->registerScript('replaceMacro', '
     var replaceMacro = "<placementID>";
 ', CClientScript::POS_END); ?>
