@@ -739,6 +739,7 @@ class DailyReport extends CActiveRecord
 			$dataTops[$date]['clics']       =0;
 		}
 		$criteria=new CDbCriteria;
+		$criteria->group  = 'date';
 		$sumArray=array(
 					// Adding custom sort attributes
 		            'providers_name'=>array(
@@ -760,8 +761,7 @@ class DailyReport extends CActiveRecord
 		            // Adding all the other default attributes
 		            '*',
 		        );
-		if($sum==1){
-			$criteria->group  = 'campaigns_id';
+		if($sum==1){			
 			$criteria->select = array(
 				'*', 
 				'sum(imp) as imp',
