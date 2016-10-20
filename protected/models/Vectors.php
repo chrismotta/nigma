@@ -202,7 +202,7 @@ class Vectors extends CActiveRecord
 		
 		$totalClicks = 0;
 		$totalConv = 0;
-
+		/* PENDIENTE DE CONFIRMACION
 		foreach ($vhc as $cmp) {
 
 			$cid = $cmp->campaigns_id;
@@ -252,7 +252,7 @@ class Vectors extends CActiveRecord
 				}				
 			}
 		}	
-		/* ORIGINAL
+		*/
 		foreach ($vhc as $cmp) {
 
 			$cid = $cmp->campaigns_id;
@@ -283,7 +283,7 @@ class Vectors extends CActiveRecord
 			}
 
 		}
-		*/ 
+
 		if(isset($campaignsList)){
 
 			/* deprecated 
@@ -317,7 +317,7 @@ class Vectors extends CActiveRecord
 			}else{
 
 				// when there are no campaigns with clicks
-				var_export('vector: ' . $this->id . ' campaign: ' . $cid . ' cost: ' . $cost . ' count: ' . count($vhc));
+				//var_export('vector: ' . $this->id . ' campaign: ' . $cid . ' cost: ' . $cost . ' count: ' . count($vhc));
 				foreach ($campaignsList as $id => $cmp) {
 					$campaignsList[$id]['id'] = $id;
 					$campaignsList[$id]['cost'] = $cost / count($vhc);
