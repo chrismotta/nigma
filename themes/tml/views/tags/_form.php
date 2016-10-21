@@ -20,7 +20,6 @@
 
         echo $form->dropDownListRow($model, 'banner_sizes_id', $bannerSizes, array('prompt' => 'Select a size')); ?>
 
-
     <?php echo $form->textAreaRow(
         $model,
         'code',
@@ -39,6 +38,8 @@
         // ", CClientScript::POS_READY);
     }?>
     </div>
+
+    <?php echo $form->textFieldRow($model,'url',array('class'=>'span5')); ?>
         
     <?php echo $form->textAreaRow(
         $model,

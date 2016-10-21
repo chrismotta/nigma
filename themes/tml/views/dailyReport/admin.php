@@ -99,7 +99,7 @@ $this->breadcrumbs=array(
 	'Daily Report',
 );
 
-
+if(count($_REQUEST)>1){
 $totalsGrap =$model->getTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier'] );
 
 
@@ -146,7 +146,7 @@ $totalsGrap =$model->getTotals($dateStart, $dateEnd,$filter['account_manager'], 
 </div>
 
 <?php 
-
+}
 
 $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
 	'id'                   =>'date-filter-form',
