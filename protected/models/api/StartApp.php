@@ -61,6 +61,8 @@ class StartApp
 		$apiurl = $network->url;
 		$url = $apiurl . "?partner=" . $partner . "&token=" . $token . "&startDate=" . $date . "&endDate=" . $date;
 
+		//$url = $apiurl . "?partner=" . $partner . "&token=" . $token . "&startDate=2016-01-01&endDate=2016-10-11";		
+
 		$this->apiLog->updateLog('Processing', 'Getting traffic data');
 		
 		$curl = curl_init($url);
@@ -72,11 +74,15 @@ class StartApp
 			return 1;
 		}
 		curl_close($curl);
-		
+
+		// print provider api results
+		//var_export(json_encode($result).'<br>');
+
 		$this->apiLog->updateLog('Processing', 'Writing traffic data');
 
 		$updated = 0;
-
+		//var_export($result);die();
+		
 		// Save campaigns information 
 		foreach ($result->data as $campaign) {
 
@@ -91,7 +97,21 @@ class StartApp
 				Yii::log("Invalid external campaign name: '" . $campaigns_id, 'warning', 'system.model.api.startapp');
 				continue;
 			}
+
+			// if is vector
+			if(substr($campaign->campaignName, 0, 1)=='v'){
+
+				$vid = Utilities::parseVectorID($campaign->campaignName);
+				$vectorModel = Vectors::model()->findByPk($vid);
+
+				$ret = $vectorModel->explodeVector(array('spend'=>$campaign->spent,'date'=>$date));
+				$return .= json_encode($ret);
+				$return.= '<br>';
+				continue;
+			}
 			
+			$campaigns_id = Utilities::parseCampaignID($campaign->campaignName);			
+
 			// if exists overwrite, else create a new
 			$dailyReport = DailyReport::model()->find(
 				"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
@@ -130,7 +150,7 @@ class StartApp
 			}
 			
 			if ( !$dailyReport->save() ) {
-				Yii::log("Can't save campaign: '" . $campaign->campaignname . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.startapp');
+				Yii::log("Can't save campaign: '" . $campaign->campaigNname . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.startapp');
 			}else{
 				$updated++;
 				$return.='<br/>===> saved';

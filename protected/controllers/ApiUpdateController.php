@@ -50,6 +50,7 @@ class ApiUpdateController extends Controller
 			'startApp',
 			'cpmCampaigns',
 			'impLog',
+			'MobusiCPC',
 			);
 		
 		return array(
@@ -77,6 +78,13 @@ class ApiUpdateController extends Controller
 
 	public function actionIndex()
 	{
+		set_error_handler(
+		    create_function(
+		        '$severity, $message, $file, $line',
+		        'throw new ErrorException($message);'
+		    )
+		);
+
 		// $this->actionEroAdvertising();
 		// $this->actionBuzzCity();
 		// $this->actionLeadBolt();
@@ -89,21 +97,23 @@ class ApiUpdateController extends Controller
 
 		$this->actionAjillion();
 		
-		$this->actionAffiliates();
-		$this->actionCpmCampaigns();
-		
 		// $this->actionAdWords();
 		$this->actionAirpush();
 		$this->actionInMobi();
 		$this->actionReporo();
+		//$this->actionMobusiCPC();
+		$this->actionStartApp();
 
 		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
 
-		$this->actionImpLog();
-		
+		$this->actionAffiliates();
+		$this->actionImpLog();		
+		$this->actionCpmCampaigns();
+
 		$this->actionAdWordsConversions();
-		$this->actionStartApp();
+		//$this->actionMobusiConversions();		
+
 	}
 
 	public function actionBingCode(){
@@ -112,6 +122,7 @@ class ApiUpdateController extends Controller
 
 	public function actionAdWords($hash=null)
 	{
+
 		try {
 			$adWords = new AdWords;
 			$return = $adWords->downloadInfo(7);
@@ -226,6 +237,18 @@ class ApiUpdateController extends Controller
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
 		}
 	}
+
+	public function actionMobusiCPC($hash=null)
+	{
+		try {
+			$mobusi = new MobusiCPC;
+			$return = $mobusi->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');
+		}
+	}	
 
 	public function actionVServ()
 	{

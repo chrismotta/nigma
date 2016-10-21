@@ -434,15 +434,18 @@ class ClicklogController extends Controller
 	 */
 	public function actionV($id=null)
 	{
+		// get vectors ID
 		$v = isset($_GET['v']);
+		// get associated campaigns
 		$vhc    = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', array(':vid'=>$id));
-
+		//get campaigns connection type, carrier and frequency
 		foreach ($vhc as $cmp) {
 			$cid = $cmp->campaigns_id;
 			$type = $cmp->campaigns->opportunities->wifi;
 			$freq = $cmp->freq;
 			
 			if($type != 'Specific Carrier')
+				// repeat campaigns in the array as freq number 
 				for($i=0;$i<$freq;$i++){
 					$campaigns[$type][] = $cid;
 				}
@@ -464,6 +467,7 @@ class ClicklogController extends Controller
 		else
 			$ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
 		
+		// get user location and carrier
 		$binPath  = Yii::app()->params['ipDbFile'];
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
 		$ipData   = $location->lookup($ip, IP2Location::ALL);
@@ -490,6 +494,7 @@ class ClicklogController extends Controller
 		// if user has carrier and vector has campaigns for this carrier
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
+			// set campaign/s target
 			$target = $campaigns['Specific Carrier'][$carrier];
 			
 			if($v){
@@ -502,6 +507,7 @@ class ClicklogController extends Controller
 		// if user has carrier and vector doesn't have campaigns for this carrier
 		if( $carrier != '-' && isset( $campaigns['Specific Carrier'] ) && !isset( $campaigns['Specific Carrier'][$carrier] ) ){
 
+			// find posible name equivalence
 			$carrier_eq = CarriersEquivalence::model()->findByAttributes(array('country'=>$country, 'alias'=>$carrier));
 			
 			// if there is an equivalence
@@ -510,6 +516,7 @@ class ClicklogController extends Controller
 				// if vector has campaign for this equivalence
 				if(isset( $campaigns['Specific Carrier'][$carrier_eq->name] )){
 
+					// set campaign/s target
 					$target = $campaigns['Specific Carrier'][$carrier_eq->name];
 
 					if($v){
@@ -535,6 +542,7 @@ class ClicklogController extends Controller
 		// if user are wifi or carrier doesn't match
 		if(!isset($target) && isset($campaigns['Open'])){
 
+			// set open campaign/s target
 			$target = $campaigns['Open'];
 			
 			if($v){
@@ -551,6 +559,8 @@ class ClicklogController extends Controller
 		// echo json_encode($target);
 		// echo '<hr>';
 
+		// if there are 2 target campaigns or more 
+		// target campaigns rotate depends on the freq
 		$count  = count($target);
 		$random = mt_rand(0, $count - 1);
 		$cid = $target[$random];

@@ -9,6 +9,7 @@ class AdWords
 
 	public function downloadInfo($offset)
 	{
+
 		date_default_timezone_set('UTC');
 		$return = '';
 
@@ -44,8 +45,10 @@ class AdWords
 
 		Yii::import('application.external.Google.Api.Ads.AdWords.Lib.AdWordsUser');
 		$authPath = Yii::app()->basePath . '/external/Google/Api/Ads/AdWords/';
-		$user = new AdWordsUser($authPath . $authenticationIniPath);
-				
+		
+		//die($authPath . $authenticationIniPath);
+		$user = new AdWordsUser($authPath . $authenticationIniPath);		
+
 		/*
 		$user->SetClientCustomerId('915-331-6649');
 
@@ -57,7 +60,6 @@ class AdWords
 
 		$advertisers = $customerService->get($selector);
 		*/
-		
 		$this->apiLog->updateLog('Processing', 'Getting advertisers list');
 		
 		$accounts = Providers::model()->findAllByAttributes(array(
@@ -88,62 +90,66 @@ class AdWords
 
 			// Campaign report query.
 			// $reportQuery = 'SELECT CampaignId, CampaignName, Impressions, Clicks, Cost FROM CAMPAIGN_PERFORMANCE_REPORT WHERE Impressions > 0 DURING ' . sprintf('%d,%d', $date, $date);
+			try{
+				$result = ReportUtils::DownloadReportWithAwql($reportQuery, NULL, $user, 'XML', array('version' => $this->adWords_version));	
+	
+				$result = Utilities::xml2array($result);
+				
+				// echo json_encode($result);
+				// echo '<hr>';
 
-			$result = ReportUtils::DownloadReportWithAwql($reportQuery, NULL, $user, 'XML', array('version' => $this->adWords_version));
+				// build campaigns table //
+				$test = json_encode($result).'<br><br>';
 
-			$result = Utilities::xml2array($result);
-			
-			// echo json_encode($result);
-			// echo '<hr>';
-
-			// build campaigns table //
-			
-			if(isset($result['report']['table']['row']))
-				$row = $result['report']['table']['row'];
-			else
-				continue;
-
-			// awCampaign or list of awCampaign //
-			
-			if ( isset($row['attr']) ) {
-				$awCampaigns[] = $row['attr'];
-			}else{
-				foreach ($row as $campaignRow) {
-					$awCampaigns[] = $campaignRow['attr'];
+				if(isset($result['report']['table']['row'])){
+					$row = $result['report']['table']['row'];
 				}
-			}
-			
-			
-			
-			/*
-			if ( !isset($result['report']['table']['row']) ) {
-				Yii::log("Empty daily report, advertiser:  " . $advertiser->name, 'info', 'system.model.api.adWords');
-				continue;
-			}
-
-
-			if ( isset($result['report']['table']['row']['attr']) ) {
-				$this->inspectCampaign($result['report']['table']['row']['attr'], $date);
-				continue;
-			}
-
-			// process every campaign
-			foreach ($result['report']['table']['row'] as $campaign) {
-				if ( $this->inspectCampaign($campaign['attr'], $date) === NULL )
+				else
 					continue;
+
+				// awCampaign or list of awCampaign //
+
+				if ( isset($row['attr']) ) {
+					$awCampaigns[] = $row['attr'];
+				}else{
+					foreach ($row as $campaignRow) {
+						$awCampaigns[] = $campaignRow['attr'];
+					}
+				}				
+				
+				
+				/*
+				if ( !isset($result['report']['table']['row']) ) {
+					Yii::log("Empty daily report, advertiser:  " . $advertiser->name, 'info', 'system.model.api.adWords');
+					continue;
+				}
+
+
+				if ( isset($result['report']['table']['row']['attr']) ) {
+					$this->inspectCampaign($result['report']['table']['row']['attr'], $date);
+					continue;
+				}
+
+				// process every campaign
+				foreach ($result['report']['table']['row'] as $campaign) {
+					if ( $this->inspectCampaign($campaign['attr'], $date) === NULL )
+						continue;
+				}
+				echo '<hr>';
+				*/
+				
+				// parse vectors for each MCC
+				$return .= $this->parseResult($awCampaigns, $date);							
 			}
-			echo '<hr>';
-			*/
-			
-			// parse vectors for each MCC
-			$return .= $this->parseResult($awCampaigns, $date);
+			catch( Exception $e ){ 
+				$this->apiLog->updateLog('Error', 'Advertiser External ID: ' . $advertiser->mcc_external_id . ', Message: ' . $e->getMessage() );
+			}
+
 		}
 
 		// echo '<hr>';
 		// echo json_encode($awCampaigns);
-		// echo '<hr>';
-		
-
+		// echo '<hr>';	
 		return $return;
 
 	}
@@ -156,16 +162,24 @@ class AdWords
 		$this->apiLog->updateLog('Processing', 'Merginh data');
 		
 		// vector or campaign //
-		
+		$countUpdated = 0;
 		if(isset($awCampaigns)){
 
 			foreach ($awCampaigns as $campaignAttr) {
-			
 				if( $this->isVectorURL($campaignAttr['trackingTemplate']) ){
 
 					$vid = Utilities::parseVectorUrlID($campaignAttr['trackingTemplate']);
-					$costUS = number_format($campaignAttr['cost'] / 1000000, 2, '.', '');
+					
+					$vectorModel = Vectors::model()->findByPk($vid);
+					$cost = number_format($campaignAttr['cost'] / 1000000, 2, '.', '');
+					$ret = $vectorModel->explodeVector(array('spend'=>$cost,'date'=>$date));
+					$return .= json_encode($ret);
+					$return.= '<br>';
+					$countUpdated++;
 
+					/* guardar hasta revisar el nuevo explodeVector
+					$costUS = number_format($campaignAttr['cost'] / 1000000, 2, '.', '');
+					
 					if(isset($vcTable[$vid])){
 
 						$vcTable[$vid]['impressions'] += $campaignAttr['impressions'];
@@ -189,6 +203,7 @@ class AdWords
 					$return .= ': ';
 					$return .= json_encode($vcTable[$vid]);
 					$return .= '<br>';
+					guardar hasta revisar el nuevo explodeVector */ 
 					
 					// $vcTable[$campaignAttr['campaignID']]['campaign'] = $campaignAttr['campaign'];
 					// $vcTable[$campaignAttr['campaignID']]['impressions'] = $campaignAttr['impressions'];
@@ -196,7 +211,7 @@ class AdWords
 					// $vcTable[$campaignAttr['campaignID']]['cost']        = $cost;
 
 				}else{
-					$campaignsTable[] = $campaignAttr;
+					// $campaignsTable[] = $campaignAttr; guardar hasta revisar el nuevo explodeVector
 				}
 
 			}
@@ -211,11 +226,12 @@ class AdWords
 		// 	$return .= json_encode($vcTable, JSON_PRETTY_PRINT);
 		// 	$return .= '<hr>';
 		// }
-
+		/*
 		$this->apiLog->updateLog('Processing', 'Assigning costs');
 		
 		// process for each vector //
 		
+
 		$cpTable = array();
 		foreach ($vcTable as $vid => $vector) {
 
@@ -254,9 +270,9 @@ class AdWords
 			$return .= $this->createDaily($camp, $date);
 			$return .= '<br/>';
 		}
+		*/
 
-		
-		$this->apiLog->updateLog('Completed', 'Procces completed: '.count($cpTable).' campaigns updated');
+		$this->apiLog->updateLog('Completed', 'Procces completed: '.$countUpdated.' campaigns updated');
 
 		Yii::log("SUCCESS - Daily info download", 'info', 'system.model.api.adWords');
 		return $return;
@@ -385,7 +401,7 @@ class AdWords
 
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();
-		
+
 		if ( !$dailyReport->save() ) {
 			Yii::log("Can't save campaign: '" . $camp['id'] . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.adWords');
 			$return .= '<br>'.json_encode($dailyReport->getErrors());
@@ -437,44 +453,6 @@ class AdWords
 	}
 
 
-
-	// csv format: date,vectorURL,clicks,cost
-	public function loadCsv($csv){
-
-		$return = '';
-
-		$return .= $csv;
-		$return .=  '<hr>';
-
-		$csv = explode("\r\n", $csv);
-
-		foreach ($csv as $line) {
-			$csvLine = str_getcsv($line);
-			$csvArray[$csvLine[0]][] = array(
-				'trackingTemplate' => $csvLine[1],
-				'impressions' => 0,
-				'clicks' => $csvLine[2],
-				'cost' => $csvLine[3] * 1000000,
-				);
-		}
-
-		$return .= json_encode($csvArray);
-		$return .= '<hr>';
-
-		foreach ($csvArray as $date => $awCampaigns) {
-			
-			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-
-			$return .=  $date;
-			$return .= '<br>';
-			$return .= json_encode($awCampaigns);
-			$return .= '<hr>';
-			$return .= $this->parseResult($awCampaigns, $date);
-			$return .= '<hr>';
-		}
-
-		return $return;
-	}
 	public function uploadConversions(){
 
 		$date = isset($_GET['date']) ? $_GET['date'] : null;

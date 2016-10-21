@@ -921,7 +921,7 @@ class ClicksLog extends CActiveRecord
 						'desc' =>'profit DESC',
 		            ),			    	            		            		            		            
 		            'campaigns_name'=>array(
-						'asc'  =>'campaign.name',
+						'asc'  =>'campaigns.name',
 						'desc' =>'campaigns.name DESC',
 		            ),			
 		            'vector_name'=>array(
