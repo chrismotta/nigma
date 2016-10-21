@@ -1,9 +1,9 @@
 <?php 
 
 // post data
-$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
+$dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '2' ;
 $dateStart = isset($_REQUEST['dateStart']) ? $_REQUEST['dateStart'] : date("Y-m-d", strtotime("yesterday"));
-$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("today"));
+$dateEnd   = isset($_REQUEST['dateEnd']) ? $_REQUEST['dateEnd'] : date("Y-m-d", strtotime("yesterday"));
 $timeStart = isset($_REQUEST['timeStart']) ? $_REQUEST['timeStart'] : '12:00 AM';
 $timeEnd   = isset($_REQUEST['timeEnd']) ? $_REQUEST['timeEnd'] : '11:59 AM';
 

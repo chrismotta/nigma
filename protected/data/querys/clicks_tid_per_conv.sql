@@ -1,0 +1,1 @@
+select cl.ext_tid, date(cl.date) as date from clicks_log cl left join conv_log co on cl.id=co.clicks_log_id WHERE date(cl.date)>'2016-09-28' and cl.providers_id=295 and co.id IS NOT NULL;
