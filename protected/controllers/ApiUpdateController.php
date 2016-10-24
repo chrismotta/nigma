@@ -76,7 +76,7 @@ class ApiUpdateController extends Controller
 		);
 	}
 
-	private function handleErrors ( $code, $message, $file, $line )
+	public function handleErrors ( $code, $message, $file, $line )
 	{
 		Yii::log($code.' '.$message, 'error', 'system.model.api.apiUpdate');
 	}
