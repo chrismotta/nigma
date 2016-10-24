@@ -323,11 +323,11 @@ if(count($_REQUEST)>1){
 		'type'            => 'condensed',
 		'template'        => '{items} {pagerExt} {summary}',
 		'columns'         => array(
+			/*
 			array(
 				'name' => 'id',
 				'visible' => $grouped==0,
-				),
-		
+				),	
 			array(
 				'name' => 'click_date',
 				'visible' => $grouped==0 || $groupedByDate,
@@ -336,6 +336,7 @@ if(count($_REQUEST)>1){
 				'name' => 'click_time',
 				'visible' => $grouped==0,				
 				),
+
 			array(
 				'name' => 'conv_date',
 				'value' => '$data->conv_date',
@@ -345,7 +346,8 @@ if(count($_REQUEST)>1){
 				'name' => 'conv_time',
 				'value' => '$data->conv_time',
 				'visible' => $grouped==0,				
-				),			
+				),	
+			*/		
 			array(
 				'name' => 'advertiser',
 				'visible' => $groupColumns1['Advertiser'],

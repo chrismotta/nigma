@@ -873,14 +873,14 @@ class ClicklogController extends Controller
 
 		foreach ($dp->getData() as $data) {
 			$row = array();
-
+/*
 			if ( !$grouped )
 			{
 				$row['Click ID']        		= $data->tid;
 				$row['Date']      				= $data->click_date;
 				$row['Time']      				= $data->click_time;				
 			}
-
+*/
 			if ( $group['Date'] == 1 )
 			{
 				$row['Date']      				= $data->click_date;
@@ -972,13 +972,13 @@ class ClicklogController extends Controller
 			if ( $group['BrowserVersion'] == 1 )
 				$row['Browser Version']    		= $data->browser_version;			
 
-
+/*
 			if ( !$grouped )
 			{
 				$row['Conv Date']       		= $data->conv_date;
 				$row['Conv Time']       		= $data->conv_time;							
 			}
-
+*/
 			$csvData[] = $row;
 		}
 

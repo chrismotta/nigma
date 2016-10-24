@@ -76,14 +76,14 @@ class ApiUpdateController extends Controller
 		);
 	}
 
+	public function handleErrors ( $code, $message, $file, $line )
+	{
+		Yii::log($code.' '.$message, 'error', 'system.model.api.apiUpdate');
+	}
+
 	public function actionIndex()
 	{
-		set_error_handler(
-		    create_function(
-		        '$severity, $message, $file, $line',
-		        'throw new ErrorException($message);'
-		    )
-		);
+		set_error_handler( array( $this, 'handleErrors' ) );
 
 		// $this->actionEroAdvertising();
 		// $this->actionBuzzCity();
