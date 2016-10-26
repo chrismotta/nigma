@@ -34,7 +34,7 @@ class ConvLog extends CActiveRecord
 	{
 		return array(
 			'{rate}' => $this->rate ? urlencode($this->rate) : '',
-			'{unique_value}' => $this->tid ? urlencode(md5($this->tid)) : '',
+			'{tid}' => $this->tid ? urlencode($this->tid) : '',
 		);
 	}
 
