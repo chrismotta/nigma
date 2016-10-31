@@ -333,7 +333,12 @@ class Vectors extends CActiveRecord
 
 			// inserting values //
 			foreach ($campaignsList as $cid => $camp) {
-				$daily = $this->createDaily($camp, $date);
+				if ( isset($data['not_usd']) && $data['not_usd'] )
+					$not_usd = true;
+				else
+					$not_usd = false;
+
+				$daily = $this->createDaily($camp, $date, $not_usd);
 				
 				// $return['list'][] = $daily;
 				$return[$cid].= ' => ' . $daily . ' | ';
@@ -357,7 +362,7 @@ class Vectors extends CActiveRecord
 
 	}
 
-	private function createDaily($camp, $date)
+	private function createDaily($camp, $date, $not_usd=false)
 	{
 		// echo 'Creating daily - date: '.$date.' cid: '.$camp.'<br>';
 		$campModel = Campaigns::model()->findByPk($camp['id']);
@@ -420,6 +425,9 @@ class Vectors extends CActiveRecord
 		$dailyReport->conv_api = $camp['conv'];
 		
 		$dailyReport->spend = number_format($camp['cost'], 2, '.', '');
+
+		if ( $not_usd )
+			$dailyReport->getSpendUSD();
 
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();

@@ -101,7 +101,7 @@ class ApiUpdateController extends Controller
 		$this->actionAirpush();
 		$this->actionInMobi();
 		$this->actionReporo();
-		//$this->actionMobusiCPC();
+		$this->actionMobusiCPC();
 		$this->actionStartApp();
 
 		$this->actionAjillionExchange();
