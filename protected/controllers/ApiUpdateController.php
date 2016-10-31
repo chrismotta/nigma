@@ -102,7 +102,6 @@ class ApiUpdateController extends Controller
 		$this->actionInMobi();
 		$this->actionReporo();
 		$this->actionStartApp();
-		$this->actionMobusiCPC();
 
 		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
@@ -114,6 +113,7 @@ class ApiUpdateController extends Controller
 		$this->actionAdWordsConversions();
 
 		$this->actionAirpush();
+		$this->actionMobusiCPC();
 	}
 
 	public function actionBingCode(){
