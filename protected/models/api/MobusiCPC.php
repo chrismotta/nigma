@@ -65,7 +65,7 @@ class MobusiCPC
 		));
 
 		// print Mobusi response and die
-		var_export($response);
+		//var_export($response);
 
 		if (!$response || !is_array($response) ) { 
 			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.reporo');
