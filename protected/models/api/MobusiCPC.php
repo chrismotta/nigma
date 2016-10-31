@@ -49,6 +49,10 @@ class MobusiCPC
 
 		$return = "";
 		$network = Providers::model()->findbyPk($this->provider_id);
+		if ( $network->currency!='USD')
+			$not_usd = true;
+		else
+			$not_usd = false;
 
 		// --- setting actions for requests
 		$response = $this->getResponse( array(
@@ -61,7 +65,7 @@ class MobusiCPC
 		));
 
 		// print Mobusi response and die
-		var_export($response);
+		//var_export($response);
 
 		if (!$response || !is_array($response) ) { 
 			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.reporo');
@@ -90,9 +94,12 @@ class MobusiCPC
 
 				$vid = Utilities::parseVectorID($name);
 				$vectorModel = Vectors::model()->findByPk($vid);
-
-
-				$ret = $vectorModel->explodeVector(array('spend'=>$campaign['money']['spend'],'date'=>$date));
+				//var_export($campaign);
+				$ret = $vectorModel->explodeVector(array(
+					'spend'=>$campaign['money'],
+					'date'=>$date,
+					'not_usd'=> $not_usd,
+				));
 				$return .= json_encode($ret);
 				$return.= '<br>';
 				continue;
@@ -132,7 +139,8 @@ class MobusiCPC
 			$dailyReport->clics = $campaign['leads'];
 			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			//$dailyReport->conv_adv = 0;
-			$dailyReport->spend = $campaign['money']['spend'];
+			$dailyReport->spend = $campaign['money'];
+			$dailyReport->getSpendUSD();
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
 			if ( !$dailyReport->save() ) {
