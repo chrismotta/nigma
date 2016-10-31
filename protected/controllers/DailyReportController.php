@@ -392,7 +392,7 @@ class DailyReportController extends Controller
 
 
 			if ( $sum['Revenue'] == 1 )
-				$row['Revenue']    				= $data->revenue;
+				$row['Revenue']    				= $data->getRevenueUSD();
 			
 			if ( $sum['Spend'] == 1 )
 				$row['Spend']    				= $data->getSpendUSD();			
@@ -400,7 +400,7 @@ class DailyReportController extends Controller
 
 			if ( $sum['Profit'] == 1 )
 			{
-				$row['Profit']    				= $data->revenue-$data->getSpendUSD();
+				$row['Profit']    				= $data->getRevenueUSD()-$data->getSpendUSD();
 				$row['Profit %']    		= $data->profit_percent;			
 			}
 
