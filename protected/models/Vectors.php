@@ -427,7 +427,7 @@ class Vectors extends CActiveRecord
 		$dailyReport->spend = number_format($camp['cost'], 2, '.', '');
 
 		if ( $not_usd )
-			$dailyReport->spend = $dailyReport->getSpendUSD();
+			//$dailyReport->spend = $dailyReport->getSpendUSD();
 
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();

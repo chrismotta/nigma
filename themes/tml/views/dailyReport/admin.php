@@ -547,7 +547,7 @@ if(count($_REQUEST)>1){
         ),
 		array(
 			'name'              => 'spend',
-			'value'             => '"$".number_format($data->spend, 2)',
+			'value'             => '"$".number_format($data->getSpendUSD(), 2)',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => '$'.number_format($totals['spend'],2),
