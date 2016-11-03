@@ -193,14 +193,14 @@ class Vectors extends CActiveRecord
 	//
 
 	public function explodeVector($data){
-		
+
 		$cost = $data['spend'];
 		$date = $data['date'];
 
 		$criteria = new CDbCriteria;
 
 		$criteria->select = array(
-			't.*',
+			't.id AS id',
 			'opportunities.rate AS rate',
 		);
 
@@ -209,10 +209,9 @@ class Vectors extends CActiveRecord
 			'vectors',
 		);
 
-		$criteria->compare('vectors.id', $this->_id );
-
+		$criteria->compare('vectors.id', $this->id );
 		$vhc = Campaigns::model()->findAll( $criteria );
-		
+
 		$totalClicks = 0;
 		$totalConv = 0;
 		/* PENDIENTE DE CONFIRMACION
@@ -267,7 +266,7 @@ class Vectors extends CActiveRecord
 		}	
 		*/
 		foreach ($vhc as $cmp) {
-
+			
 			$cid = $cmp->id;
 
 			$criteria = new CDbCriteria;
@@ -312,7 +311,7 @@ class Vectors extends CActiveRecord
 			if($totalClicks>0){
 
 				// cost related to clicks
-				foreach ( $campaignsList as $cmp )
+				foreach ( $campaignsList as $id => $cmp )
 				{
 					if($cmp['clicks'] > 0)
 					{
