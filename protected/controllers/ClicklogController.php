@@ -83,7 +83,10 @@ class ClicklogController extends Controller
 			'time' => $time, 
 		) );
 
-		echo 'No creative found';
+		$tmltoken = $_GET['tmltoken'] ? $_GET['tmltoken'] : '';
+
+		// echo 'No creative found';
+		header('Location: http://tmlbox.co/clicklog/tracking/2133?tmltoken='.$tmltoken);
 	}
 
 	private static function qsReplace($url, $qs_array){
