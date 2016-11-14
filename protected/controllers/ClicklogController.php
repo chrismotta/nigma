@@ -83,7 +83,7 @@ class ClicklogController extends Controller
 			'time' => $time, 
 		) );
 
-		return 'ok';
+		echo 'No creative found';
 	}
 
 	private static function qsReplace($url, $qs_array){
