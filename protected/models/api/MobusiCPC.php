@@ -49,11 +49,15 @@ class MobusiCPC
 
 		$return = "";
 		$network = Providers::model()->findbyPk($this->provider_id);
+		if ( $network->currency!='USD')
+			$not_usd = true;
+		else
+			$not_usd = false;
 
 		// --- setting actions for requests
 		$response = $this->getResponse( array(
 			'type' => 'stats', 
-			'group' => array( "offer" ), 
+			'group' => array( "id_offer" ), 
 			'columns' => array( "imp","leads","money" ),
 			'orders' => array("imp"),
 			'start_date' => $date,
@@ -61,30 +65,54 @@ class MobusiCPC
 		));
 
 
-		if (!$response) { 
+		// print Mobusi response and die
+		//var_export(json_encode($response) . '<br><br><br>');
+
+		if (!$response || !is_array($response) ) { 
 			Yii::log("Getting advertisers inventory.", 'error', 'system.model.api.reporo');
 			return 1;
 		}
 
-		if ( !isset($response['answer']) )
+		if ( 
+			!isset($response['type']) 
+			|| $response['type']!='ok' 
+			|| !isset($response['answer']) 
+			|| isset($response['answer']['items'] )
+		)
 			return 1;
 
-		foreach ( $response['answer'] as $campaign_name => $campaign_stats )
+		foreach ( $response['answer'] as $ext_cid => $campaign )
 		{
+			$p = strrpos( $campaign['offer_name'], ' ' );
+			$l = strlen($campaign['offer_name']);
+
+			if ( $p == $l-1 )
+			{
+				$tmp = substr( $campaign['offer_name'], 0, $p-1 );
+				$name = substr( $tmp, $p+1 );
+				$name .= ' ';
+			}
+			else
+				$name = substr( $campaign['offer_name'],  $p+1 );
+
 			// if is vector
-			if(substr($campaign_name, 0, 1)=='v'){
+			if(substr($name, 0, 1)=='v'){
 
-				$vid = Utilities::parseVectorID($campaign_name);
+				$vid = Utilities::parseVectorID($name);
 				$vectorModel = Vectors::model()->findByPk($vid);
-
-				$ret = $vectorModel->explodeVector(array('spend'=>$campaign_stats['money']->spend,'date'=>$date));
+				//var_export($campaign);
+				$ret = $vectorModel->explodeVector(array(
+					'spend'=>$campaign['money'],
+					'date'=>$date,
+					'not_usd'=> $not_usd,
+				));
 				$return .= json_encode($ret);
 				$return.= '<br>';
 				continue;
 			}
 
-			$campaigns_id = Utilities::parseCampaignID($campaign_name);
-
+			$campaigns_id = Utilities::parseCampaignID($name);
+			//var_export( $campaigns_id . ': ' . $campaign['leads'] . '<br>');
 			// if exists overwrite, else create a new
 			$dailyReport = DailyReport::model()->find(
 				"providers_id=:providers AND DATE(date)=:date AND campaigns_id=:cid", 
@@ -107,21 +135,22 @@ class MobusiCPC
 			$dailyReport->campaigns_id = $campaigns_id;
 
 			if ( !$dailyReport->campaigns_id ) {
-				Yii::log("Invalid external campaign name: '" . $campaign_name, 'warning', 'system.model.api.reporo');
+				Yii::log("Invalid external campaign name: '" . $name, 'warning', 'system.model.api.reporo');
 				continue;
 			}
 
 			$dailyReport->date = $date;
 			$dailyReport->providers_id = $this->provider_id;
-			$dailyReport->imp = $campaign_stats['imp'];
-			$dailyReport->clics = $campaign_stats['leads'];
+			$dailyReport->imp = $campaign['imp'];
+			$dailyReport->clics = $campaign['leads'];
 			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			//$dailyReport->conv_adv = 0;
-			$dailyReport->spend = $campaign_stats['money'];
+			$dailyReport->spend = $campaign['money'];
+			$dailyReport->spend = $dailyReport->getSpendUSD();
 			$dailyReport->updateRevenue();
 			$dailyReport->setNewFields();
 			if ( !$dailyReport->save() ) {
-				Yii::log("Can't save campaign: '" . $campaign_name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.reporo');
+				Yii::log("Can't save campaign: '" . $name . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.reporo');
 				continue;
 			}			
 		}
@@ -207,15 +236,14 @@ class MobusiCPC
 		curl_setopt ( $handler, CURLOPT_URL, $mobusiGateway );
 		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
 		curl_setopt ( $handler, CURLOPT_VERBOSE, 1 );
-		curl_setopt ( $handler, CURLOPT_HEADER, 1 );
+		curl_setopt ( $handler, CURLOPT_HEADER, false );
 		curl_setopt ( $handler, CURLOPT_POST, true );		
 		curl_setopt ( $handler, CURLOPT_POSTFIELDS, json_encode($options) );	
 		curl_setopt( $handler, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json' ) );
 		$response = curl_exec ( $handler );
 		curl_close( $handler );
-		var_export($response);die();
 
-		$obj = json_decode($response);
+		$obj = json_decode($response, true);
 		
 		if ( empty($obj) ) {
 			Yii::log("ERROR - json is empty", 'info', 'system.model.api.reporo');

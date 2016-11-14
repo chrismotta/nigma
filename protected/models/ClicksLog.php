@@ -918,10 +918,14 @@ class ClicksLog extends CActiveRecord
 						'asc'  =>'campaign.name',
 						'desc' =>'campaigns.name DESC',
 		            ),			
+		            'vectors_id'=>array(
+						'asc'  =>'vectors.id',
+						'desc' =>'vectors.id DESC',
+		            ),	
 		            'vector_name'=>array(
 						'asc'  =>'vectors.name',
 						'desc' =>'vectors.name DESC',
-		            ),				            
+		            ),		            			            
 		            'advertiser'=>array(
 						'asc'  =>'advertisers.name',
 						'desc' =>'advertisers.name DESC',

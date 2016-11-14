@@ -364,6 +364,10 @@ if(count($_REQUEST)>1){
 				'visible' => $groupColumns1['Campaign'],
 				),
 			array(
+				'name' => 'vectors_id',
+				'visible' => $groupColumns1['Vector'],
+				),			
+			array(
 				'name' => 'vector_name',
 				'visible' => $groupColumns1['Vector'],
 				),									

@@ -202,8 +202,7 @@ class Vectors extends CActiveRecord
 		
 		$totalClicks = 0;
 		$totalConv = 0;
-
-
+		/* PENDIENTE DE CONFIRMACION
 		foreach ($vhc as $cmp) {
 
 			$cid = $cmp->campaigns_id;
@@ -221,18 +220,66 @@ class Vectors extends CActiveRecord
 				);
 
 			$model = VectorsLog::model()->find($criteria);
-			
-			if($model){
 
+			if($model){
 				$campaignsList[$cid]['clicks'] = $model->clicks;
 				$totalClicks += $campaignsList[$cid]['clicks'];
 				$campaignsList[$cid]['conv'] = $model->conv;
 				$totalConv += $campaignsList[$cid]['conv'];
+			}
+			else{
+				$criteria = new CDbCriteria;
+				$criteria->with = array('clicksLog', 'clicksLog.convLogs', 'clicksLog.campaigns.opportunities');
+				$criteria->compare('t.vectors_id', $this->id);
+				$criteria->compare('clicksLog.campaigns_id', $cid);
 
+				$criteria->addCondition('DATE(clicksLog.date) = "' . $date . '"');
+				$criteria->select = array(
+					'COUNT(t.id) AS clicks',
+					'COUNT(convLogs.id) AS conv',
+					);
+
+				$model = VectorsLog::model()->find($criteria);
+
+				if($model){		
+					$campaignsList[$cid]['clicks'] = $model->clicks;
+					$totalClicks += $campaignsList[$cid]['clicks'];
+					$campaignsList[$cid]['conv'] = $model->conv;
+					$totalConv += $campaignsList[$cid]['conv'];
+				}else{
+					$campaignsList[$cid]['clicks'] = 0;
+					$campaignsList[$cid]['conv'] = 0;
+				}				
+			}
+		}	
+		*/
+		foreach ($vhc as $cmp) {
+
+			$cid = $cmp->campaigns_id;
+
+			$criteria = new CDbCriteria;
+			$criteria->with = array('vectorsLog', 'convLogs' );
+			$criteria->compare('vectorsLog.vectors_id', $this->id);
+			$criteria->compare('t.campaigns_id', $cid);
+			$criteria->addCondition('t.carrier != "-"');
+			$criteria->addCondition('DATE(t.date) = "' . $date . '"');
+			$criteria->select = array(
+				'COUNT(t.id) as clicks',
+				'COUNT(convLogs.id) as conv',
+				);		
+			
+			$model = ClicksLog::model()->find($criteria);
+
+			if($model){
+				$campaignsList[$cid]['clicks'] = $model->clicks;
+				$totalClicks += $campaignsList[$cid]['clicks'];
+				$campaignsList[$cid]['conv'] = $model->conv;
+				$totalConv += $campaignsList[$cid]['conv'];
+				var_export('('.$this->id.')'.$cid. ': ' . $model->clicks.'<br><br><br>' );		
 			}else{
 				$campaignsList[$cid]['clicks'] = 0;
 				$campaignsList[$cid]['conv'] = 0;
-
+				var_export('('.$this->id.')'.$cid. ': no clicks log<br><br><br>' );	
 			}
 
 		}
@@ -254,15 +301,12 @@ class Vectors extends CActiveRecord
 
 				// cost related to clicks
 				foreach ($campaignsList as $id => $cmp) {
-
 					if($cmp['clicks'] > 0){
-
 						$campaignsList[$id]['id'] = $id;
 						$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
 						$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
 					}
 					else{
-
 						// unset campaigns without clicks
 						unset($campaignsList[$id]);
 					}
@@ -272,7 +316,7 @@ class Vectors extends CActiveRecord
 			}else{
 
 				// when there are no campaigns with clicks
-
+				//var_export('vector: ' . $this->id . ' campaign: ' . $cid . ' cost: ' . $cost . ' count: ' . count($vhc));
 				foreach ($campaignsList as $id => $cmp) {
 					$campaignsList[$id]['id'] = $id;
 					$campaignsList[$id]['cost'] = $cost / count($vhc);
@@ -288,7 +332,12 @@ class Vectors extends CActiveRecord
 
 			// inserting values //
 			foreach ($campaignsList as $cid => $camp) {
-				$daily = $this->createDaily($camp, $date);
+				if ( isset($data['not_usd']) && $data['not_usd'] )
+					$not_usd = true;
+				else
+					$not_usd = false;
+
+				$daily = $this->createDaily($camp, $date, $not_usd);
 				
 				// $return['list'][] = $daily;
 				$return[$cid].= ' => ' . $daily . ' | ';
@@ -312,7 +361,7 @@ class Vectors extends CActiveRecord
 
 	}
 
-	private function createDaily($camp, $date)
+	private function createDaily($camp, $date, $not_usd=false)
 	{
 		// echo 'Creating daily - date: '.$date.' cid: '.$camp.'<br>';
 		$campModel = Campaigns::model()->findByPk($camp['id']);
@@ -375,7 +424,11 @@ class Vectors extends CActiveRecord
 		$dailyReport->conv_api = $camp['conv'];
 		
 		$dailyReport->spend = number_format($camp['cost'], 2, '.', '');
-
+		/*
+		if ( $not_usd )
+			$dailyReport->spend = $dailyReport->getSpendUSD();
+		*/
+	
 		$dailyReport->updateRevenue();
 		$dailyReport->setNewFields();
 		

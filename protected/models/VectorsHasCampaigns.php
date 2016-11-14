@@ -12,6 +12,7 @@ class VectorsHasCampaigns extends CActiveRecord
 {
 	public $connection;
 	public $carrier;
+	public $rate;
 
 	/**
 	 * @return string the associated database table name
