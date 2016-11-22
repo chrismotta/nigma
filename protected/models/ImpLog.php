@@ -42,7 +42,7 @@ class ImpLog extends CActiveRecord
 			// array('pubid, server_ip, user_agent, referer, ip_forwarded, app', 'length', 'max'=>255),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, tags_id, placements_id, date, pubid, server_ip, user_agent, referer, ip_forwarded, app', 'safe', 'on'=>'search'),
+			array('id, tags_id, placements_id, date, pubid, server_ip, user_agent, referer, ip_forwarded, app, tid', 'safe', 'on'=>'search'),
 		);
 	}
 
