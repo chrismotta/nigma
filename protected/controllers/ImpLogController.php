@@ -30,6 +30,14 @@ class ImpLogController extends Controller
 				'actions'=>array('index','quickReport'),
 				'roles'=>array('admin', 'media_buyer_manager', 'external'),
 				),
+			array('allow',
+				'actions'=>array('storage'),
+				'ips'=>array('54.88.85.63'),
+			),
+			array('allow', 
+				'actions'=>array('storage'),
+				'roles'=>array('admin'),
+			),			
 			array('deny',  // deny all users
 				'users'=>array('*'),
 				),
@@ -50,6 +58,40 @@ class ImpLogController extends Controller
 			array(
 				'model'=>$model
 				));
+	}
+
+	public function actionStorage()
+	{
+		$start = time();
+
+		ini_set('display_errors', 1);
+		ini_set('display_startup_errors', 1);
+		error_reporting(E_ALL);		
+		set_time_limit (0);
+
+		$transaction = Yii::app()->db->beginTransaction();	
+
+		try {
+			$insert = "INSERT INTO imp_back (id, tags_id, placements_id, date, pubid, server_ip, user_agent, referer, ip_forwarded, app) SELECT id, tags_id, placements_id, date, pubid, server_ip, user_agent, referer, ip_forwarded, app FROM imp_log WHERE datediff( curdate(),date(date)  )>7;";
+
+			$delete = "DELETE FROM imp_log WHERE datediff( curdate(),date(date) )>7;";
+
+			$rowsI = Yii::app()->db->createCommand($insert)->execute();
+			$rowsD = Yii::app()->db->createCommand($delete)->execute();
+			$transaction->commit();
+
+			$elapsed = time() - $start;
+			echo $rowsI.' rows inserted<hr/>';
+			echo $rowsD.' rows deleted<hr/>';
+			echo 'Elapsed time: '.$elapsed.' seg.';
+			
+
+		}
+		catch (PDOException $e){
+			$transaction->rollback();
+
+			echo 'Impressions backup ERROR';	
+		}		
 	}
 
 	public function actionQuickReport(){
