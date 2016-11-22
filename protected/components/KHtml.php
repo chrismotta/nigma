@@ -975,7 +975,7 @@ class KHtml extends CHtml
 
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
-        $medias = Users::model()->findUsersByRole(array('admin','account_manager','account_manager_admin'));
+        $medias = Users::model()->findUsersByRole(array('admin','account_manager','account_manager_admin', 'operation_manager'));
         $list   = CHtml::listData($medias, 'id', 'FullName');
 
         
