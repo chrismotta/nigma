@@ -185,40 +185,64 @@ class TagController extends Controller
 	}
 
 	public function actionUrl($id){
+		// $start = microtime();
+
+		// detecting if is postback click
+		if(isset($_GET['tmltoken'])){
+			$tmltoken = $_GET['tmltoken'];
+			$imp = ImpLog::model()->findByAttributes(array('tid'=>$tmltoken));
+			// var_dump($imp);
+			//die('<hr>End');
+		}
 
 		if(!$tag = Tags::model()->findByPk($id))
 			die("Tag ID does't exists");
-		if(!isset($_GET['pid']))
-			die("Placement ID does't exists");
 
+		if(!isset($imp)){
+
+			// if(!isset($_GET['pid']))
+			// 	die("Placement ID does't exists");
 		
-		// log impression
+			// log impression
+			$imp = new ImpLog();
+			$imp->tags_id = $tag->id;
+			$imp->placements_id = isset($_GET['pid']) ? $_GET['pid'] : null;
 		
-		$imp = new ImpLog();
-		$imp->tags_id = $tag->id;
-		$imp->placements_id = $_GET['pid'];
+			// pubid
+			$imp->pubid = isset($_GET['pubid']) ? $_GET['pubid'] : null;
+			
+			// Get visitor parameters
+			
+			$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+			$imp->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
+			$imp->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+		}
+
 		$imp->date = new CDbExpression('NOW()');
 
 
-		// pubid
-		
-		$imp->pubid = isset($_GET['pubid']) ? $_GET['pubid'] : null;
-
-		
-		// Get visitor parameters
-		
-		$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
-		$imp->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
-		$imp->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-
 		// log impression
-
 		if(!$imp->save())
 			Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
-		// enviar macros
 
+		// if is new
+
+		if(!isset($imp->tid)){
+			// write transaction id
+			$imp->tid = md5($imp->id);
+			if(!$imp->save())
+				Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
+		}
+
+
+		// $end = microtime();
+		// $elapsed = $end - $start;
+		// echo 'Elapsed time: '.$elapsed.' sec.';
+
+		// send macros
 		$newUrl = $imp->replaceMacro($tag->url);
 
+		// die($newUrl);
 		// redirect to tag url
 		header("Location: ".$newUrl);
 
