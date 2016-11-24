@@ -1,5 +1,5 @@
 <?php 
-
+$start = microtime(true);
 // post data
 
 $dpp       = isset($space['dpp']) ? $_REQUEST['dpp'] : '1' ;
@@ -399,7 +399,8 @@ if(count($_REQUEST)>1){
 				),
 			)
 	));
-
+$elapsed = (microtime(true) - $start);
+echo '<div class="grid-view" style="margin-bottom:30px;margin-top:-10px;padding-top:0px !important"><div class="summary">Total lapsed time: '.number_format($elapsed,2).' seg.</div></div>';
 }
 
 ?>
