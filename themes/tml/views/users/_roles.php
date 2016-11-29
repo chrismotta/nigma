@@ -32,6 +32,9 @@
         if ( in_array('media_buyer_admin', $userRol, true) )
             $userRestriction = array('publisher','publisherCPM');
 
+        if ( in_array('operation_manager', $userRol, true) )
+            $userRestriction = array('publisher','publisherCPM');        
+
         foreach($roles as $data) {
             
             if(isset($userRestriction))
