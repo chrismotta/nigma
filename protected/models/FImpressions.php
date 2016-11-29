@@ -93,7 +93,7 @@ class FImpressions extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			//'dBid'         => array(self::HAS_ONE, 'DBid', 'F_Impressions_id'),
+			'dBid'         => array(self::HAS_ONE, 'DBid', 'F_Impressions_id'),
 			'dGeoLocation' => array(self::BELONGS_TO, 'DGeoLocation', 'D_GeoLocation_id'),
 			'dUserAgent'   => array(self::BELONGS_TO, 'DUserAgent', 'D_UserAgent_id'),
 			'dDemand'      => array(self::BELONGS_TO, 'DDemand', 'D_Demand_id'),
@@ -235,12 +235,12 @@ class FImpressions extends CActiveRecord
 			// sum
 			'impressions'     => 'COUNT(t.id)',
 			'unique_user'     => 'COUNT(distinct t.unique_id)',
-			'revenue'         => !$partner ? 'SUM(t.revenue)' : 'SUM(t.cost)',
-			'cost'            => 'SUM(t.cost)',
-			'profit'          => 'SUM(t.revenue)-SUM(t.cost)',
-			'revenue_eCPM'    => !$partner ? 'SUM(t.revenue) * 1000 / COUNT(t.id)' : 'SUM(t.cost) * 1000 / COUNT(t.id)',
-			'cost_eCPM'       => 'SUM(t.cost) * 1000 / COUNT(t.id)',
-			'profit_eCPM'     => '(SUM(t.revenue)-SUM(t.cost)) * 1000 / COUNT(t.id)',
+			'revenue'         => !$partner ? 'SUM(dBid.revenue)' : 'SUM(dBid.cost)',
+			'cost'            => 'SUM(dBid.cost)',
+			'profit'          => 'SUM(dBid.revenue)-SUM(dBid.cost)',
+			'revenue_eCPM'    => !$partner ? 'SUM(dBid.revenue) * 1000 / COUNT(t.id)' : 'SUM(dBid.cost) * 1000 / COUNT(t.id)',
+			'cost_eCPM'       => 'SUM(dBid.cost) * 1000 / COUNT(t.id)',
+			'profit_eCPM'     => '(SUM(dBid.revenue)-SUM(dBid.cost)) * 1000 / COUNT(t.id)',
 			);
 		$selectQuerys = array_merge($groupQuerys, $sumQuerys);
 
@@ -308,7 +308,7 @@ class FImpressions extends CActiveRecord
 
 
 		$criteria->with = array(
-			//'dBid',
+			'dBid',
 			'dDemand',
 			'dGeoLocation',
 			'dSupply',
