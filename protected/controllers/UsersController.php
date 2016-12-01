@@ -29,7 +29,7 @@ class UsersController extends Controller
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('index','view','create','update','admin','delete','response', 'adminRoles','visibility','notAssigned'),
-				'roles'=>array('admin','media_buyer_admin'),
+				'roles'=>array('admin','media_buyer_admin', 'operation_manager'),
 			),
 			array('allow', 
 				'actions'=>array('profile'),

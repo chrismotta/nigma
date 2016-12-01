@@ -128,6 +128,11 @@ class Users extends CActiveRecord
 			$criteria->addCondition('aa.itemname = "publisher" OR aa.itemname = "publisherCPM"');
 		}
 
+		if ( in_array('operation_manager', $roles, true) ){
+			$criteria->join = 'left join AuthAssignment aa on aa.userid = t.id';
+			$criteria->addCondition('aa.itemname = "publisher" OR aa.itemname = "publisherCPM"');
+		}		
+
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
 			'pagination'=> KHtml::pagination(),
