@@ -128,7 +128,7 @@ class TagController extends Controller
 	}
 
 	public function actionTestProtocol(){
-		echo $_SERVER['SERVER_PROTOCOL'];die();
+		echo $_SERVER['SERVER_PORT'];die();
 	}
 
 	public function actionJs($id){
