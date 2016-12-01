@@ -127,6 +127,10 @@ class TagController extends Controller
 
 	}
 
+	public function actionTestProtocol(){
+		echo $_SERVER['SERVER_PROTOCOL'];die();
+	}
+
 	public function actionJs($id){
 		
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
