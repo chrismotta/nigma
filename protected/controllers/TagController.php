@@ -128,7 +128,11 @@ class TagController extends Controller
 	}
 
 	public function actionTestProtocol(){
-		echo $_SERVER['HTTPS'];die();
+		if(isset($_SERVER['HTTPS']))
+			echo 'HTTPS';
+		else
+			echo 'HTTP';
+		die();
 	}
 
 	public function actionJs($id){
