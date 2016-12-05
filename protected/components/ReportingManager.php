@@ -145,7 +145,7 @@ class ReportingManager
         }
 
         $data = CHtml::listData(
-            $model::model()->findAll($criteria), $column, $column);
+            $model::model()->cache(3600)->findAll($criteria), $column, $column);
 
         self::multiSelect(
             array(
