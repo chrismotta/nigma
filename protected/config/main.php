@@ -80,9 +80,6 @@ return array(
 
 	// application components
 	'components'=>array(
-		'cache'=>array( 
-		    'class'=>'system.caching.CDbCache'
-		),
         'bootstrap'=>array(
             'class'=>'yiibooster.components.Bootstrap',
         ),
@@ -163,7 +160,9 @@ return array(
 		
 		// uncomment the following to use a MySQL database
 		'db'=> mysqlPolicy($_SERVER['HTTP_HOST'], $dbTimeZone),
-
+		'cache'=>array( 
+		    'class'=>'system.caching.CFileCache'
+		),
 		'errorHandler'=>array(
 			// use 'site/error' action to display errors
 			'errorAction'=>'site/error',
