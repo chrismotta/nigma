@@ -13,15 +13,20 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 	$localConfig = new localConfig();
 
 	return array(
-		'connectionString'   => \localConfig::DB_CONNECTION_STRING,
-		'emulatePrepare'     => \localConfig::DB_EMULATE_PREPARE,
-		'username'           => \localConfig::DB_USERNAME,
-		'password'           => \localConfig::DB_PASSWORD,
-		'charset'            => \localConfig::DB_CHARSET,
+		'connectionString'   	=> \localConfig::DB_CONNECTION_STRING,
+		'emulatePrepare'     	=> \localConfig::DB_EMULATE_PREPARE,
+		'username'           	=> \localConfig::DB_USERNAME,
+		'password'           	=> \localConfig::DB_PASSWORD,
+		'charset'            	=> \localConfig::DB_CHARSET,
 		// Uncomment to show db log
 		// 'enableParamLogging' => \localConfig::DB_PARAM_LOGGIN,
 		// 'enableProfiling'    => \localConfig::DB_PROFILING,
-		'initSQLs'           => $localConfig->getDbInitSql(),
+		'initSQLs'           	=> $localConfig->getDbInitSql(),
+		/*
+		'enableSchemaCache' 	=> true,
+		'schemaCacheDuration' 	=> 32140800,
+		'schemaCache'			=>	'cache',
+		*/
 	);
 
 	return $mysqlConnect;
@@ -75,7 +80,11 @@ return array(
 
 	// application components
 	'components'=>array(
-    
+		/*
+        'cache' => [
+            'class' => 'yii\caching\ApcCache',
+        ],
+        */
         'bootstrap'=>array(
             'class'=>'yiibooster.components.Bootstrap',
         ),
