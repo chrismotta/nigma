@@ -127,7 +127,27 @@ class TagController extends Controller
 
 	}
 
+	public static function isSecure(){
+		if(isset($_SERVER['HTTPS']))
+			$sec = true;
+		else
+			$sec = false;
+		return $sec;
+	}
+	public static function protocol(){
+		if (self::isSecure()) 
+			$prot = 'https';
+		else 
+			$prot = 'http';
+		return $prot;
+	}
+
 	public function actionJs($id){
+
+		if (self::isSecure()) 
+			$prot = 'https';
+		else 
+			$prot = 'http';
 		
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$width  = isset($_GET['width']) ? $_GET['width'] : null;
@@ -136,7 +156,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<iframe src="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
+			echo 'document.write(\'<iframe src="'.self::protocol().'://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
 
 		}else{
 
@@ -147,7 +167,7 @@ class TagController extends Controller
 	}
 
 	public function actionJsp($id){
-		
+
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$width  = isset($_GET['width']) ? $_GET['width'] : null;
 		$height = isset($_GET['height']) ? $_GET['height'] : null;
@@ -155,7 +175,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<img src="http://bidbox.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
+			echo 'document.write(\'<img src="http://'.self::protocol().'.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
 
 		}else{
 
@@ -174,7 +194,7 @@ class TagController extends Controller
 
 		if(isset($pid)){
 
-			echo 'document.write(\'<script>window.location="http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
+			echo 'document.write(\'<script>window.location="'.self::protocol().'://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
 
 		}else{
 
