@@ -59,7 +59,9 @@ class EtlController extends Controller
 		self::actionGeolocation($id, $date);
 		self::actionImpressions($id, $date);
 		self::actionBid();
-	
+		
+		Yii::app()->cache->flush();
+		
 		$elapsed = time() - $start;
 		echo 'Total lapsed time: '.$elapsed.' seg.';
 
