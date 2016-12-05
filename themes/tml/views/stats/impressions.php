@@ -250,13 +250,13 @@ if(count($_REQUEST)>1){
 	// echo json_encode($_REQUEST);
 	// echo '<hr>';
 	// echo '</div>';
-	$dependency = new CDbCacheDependency('SELECT MAX(id) FROM F_Imp');
+	//$dependency = new CDbCacheDependency('SELECT MAX(id) FROM F_Imp');
 
-	$totals = $model->cache(1000, $dependency)->search(true, $partner);
+	$totals = $model->cache(3600)->search(true, $partner);
 	
 	$this->widget('application.components.NiExtendedGridView', array(
 		'id'              => 'impressions-grid',
-		'dataProvider'    => $model->cache(1000, $dependency)->search(false, $partner),
+		'dataProvider'    => $model->cache(3600)->search(false, $partner),
 		'filter'          => null,
 		'type'            => 'condensed',
 		'template'        => '{items} {pagerExt} {summary}',
