@@ -316,7 +316,7 @@ class KHtml extends CHtml
         $criteria->with = 'idCountry';
         $criteria->order = 't.mobile_brand, idCountry.name';
         $criteria->select = '*, idCountry.name as country_name';
-        $carriers = Carriers::model()->findAll( $criteria );
+        $carriers = Carriers::model()->cache(3600)->findAll( $criteria );
 
         $data=array();
         foreach ($carriers as $c) {
@@ -564,7 +564,7 @@ class KHtml extends CHtml
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
 
 
-        $countries = GeoLocation::model()->findAll( array('order' => 'name', 'condition' => 'type="Country"') );
+        $countries = GeoLocation::model()->cache(3600)->findAll( array('order' => 'name', 'condition' => 'type="Country"') );
 
         $data=array();
         foreach ($countries as $c) {
@@ -683,7 +683,7 @@ class KHtml extends CHtml
         if ( !empty($providers_id) )
              $criteria->addCondition( 'providers_id', $providers_id );
 
-        $campaigns = Campaigns::model()->findAll( $criteria );
+        $campaigns = Campaigns::model()->cache(3600)->findAll( $criteria );
         $data=array();
         foreach ($campaigns as $c) {
             $data[$c->id]=$c->getExternalName($c->id);
@@ -733,7 +733,7 @@ class KHtml extends CHtml
         */
 
         //if ( empty($providers_id) )
-            $vectors = Vectors::model()->findAll( $criteria );
+            $vectors = Vectors::model()->cache(3600)->findAll( $criteria );
         /*      
         else
             $vectors = Vectors::model()->findAll( array('order' => 'id', 'condition' => "status='Active' AND providers_id IN (" . join($providers_id, ", ") . ")") );
@@ -794,7 +794,7 @@ class KHtml extends CHtml
             $criteria->compare('t.account_manager_id', $accountManagerId);
 
         //$opps = Opportunities::model()->with('regions','regions.financeEntities','regions.financeEntities.advertisers', 'carriers')->findAll($criteria);
-        $opps = Opportunities::model()->findAll($criteria);
+        $opps = Opportunities::model()->cache(3600)->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
             $data[$opp->id]=$opp->getVirtualName();
@@ -870,7 +870,7 @@ class KHtml extends CHtml
 
             $networks_t = array('0' => '------- Networks -------');
 
-            $networks = Providers::model()->findAll( 
+            $networks = Providers::model()->cache(3600)->findAll( 
                 array(
                     'order' => 'name', 
                     'condition' => 'status="Active" && type="Network"'
@@ -975,7 +975,7 @@ class KHtml extends CHtml
 
         $htmlOptions = array_merge($defaultHtmlOptions, $htmlOptions); 
         
-        $medias = Users::model()->findUsersByRole(array('admin','account_manager','account_manager_admin', 'operation_manager'));
+        $medias = Users::model()->cache(3600)->findUsersByRole(array('admin','account_manager','account_manager_admin', 'operation_manager'));
         $list   = CHtml::listData($medias, 'id', 'FullName');
 
         
@@ -1042,7 +1042,7 @@ class KHtml extends CHtml
             }
         }
 
-        $opps = Opportunities::model()->with('regions','regions.financeEntities')->findAll($criteria);
+        $opps = Opportunities::model()->cache(3600)->with('regions','regions.financeEntities')->findAll($criteria);
         $data=array();
         foreach ($opps as $opp) {
             $data[$opp->regions->financeEntities->advertisers->id]=$opp->regions->financeEntities->advertisers->name;

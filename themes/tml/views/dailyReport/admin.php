@@ -100,7 +100,7 @@ $this->breadcrumbs=array(
 );
 
 if(count($_REQUEST)>1){
-$totalsGrap =$model->getTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier'] );
+$totalsGrap =$model->cache(3600)->getTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier'] );
 
 
 ?>
@@ -327,8 +327,8 @@ echo '</div>';
 <?php 
 
 if(count($_REQUEST)>1){
-	$dataProvider=$model->search($dateStart, $dateEnd, $filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $group, $sum, $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier']);
-	$totals=$model->searchTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier']);
+	$dataProvider=$model->cache(3600)->search($dateStart, $dateEnd, $filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $group, $sum, $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier']);
+	$totals=$model->cache(3600)->searchTotals($dateStart, $dateEnd,$filter['account_manager'], $filter['opportunity'], $filter['provider'], $grouped, $filter['category'], $filter['advertiser'], $filter['country'], $filter['campaign'], $filter['vector'], $filter['carrier']);
 
 	$this->widget('application.components.NiExtendedGridView', array(
 	'id'                       => 'daily-report-grid',
