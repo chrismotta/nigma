@@ -252,11 +252,11 @@ if(count($_REQUEST)>1){
 	// echo '</div>';
 	//$dependency = new CDbCacheDependency('SELECT MAX(id) FROM F_Imp');
 
-	$totals = $model->search(true, $partner);
+	$totals = $model->cache(3600, null, 2)->search(true, $partner);
 	
 	$this->widget('application.components.NiExtendedGridView', array(
 		'id'              => 'impressions-grid',
-		'dataProvider'    => $model->search(false, $partner),
+		'dataProvider'    => $model->cache(3600, null, 2)->search(false, $partner),
 		'filter'          => null,
 		'type'            => 'condensed',
 		'template'        => '{items} {pagerExt} {summary}',
