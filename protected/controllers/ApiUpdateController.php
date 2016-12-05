@@ -114,6 +114,8 @@ class ApiUpdateController extends Controller
 
 		$this->actionAirpush();
 		$this->actionMobusiCPC();
+
+		Yii::app()->cache->flush();
 	}
 
 	public function actionBingCode(){

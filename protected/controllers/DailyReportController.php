@@ -317,7 +317,7 @@ class DailyReportController extends Controller
 
 		$group = isset($_REQUEST['group']) ? $_REQUEST['group'] : array();
 
-		$dp = $model->csvReport( $dateStart, $dateEnd, $group, $filters );
+		$dp = $model->cache(3600)->csvReport( $dateStart, $dateEnd, $group, $filters );
 
 		foreach ($dp->getData() as $data) {
 			$row = array();
