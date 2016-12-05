@@ -22,11 +22,7 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// 'enableParamLogging' => \localConfig::DB_PARAM_LOGGIN,
 		// 'enableProfiling'    => \localConfig::DB_PROFILING,
 		'initSQLs'           	=> $localConfig->getDbInitSql(),
-
-		//'enableSchemaCache' 	=> true,
-		//'schemaCacheDuration' 	=> 32140800,
-		//'schemaCache'			=>	'cache',
-
+		'schemaCachingDuration' 	=> 32140800,
 	);
 
 	return $mysqlConnect;
