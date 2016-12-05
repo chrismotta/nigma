@@ -22,11 +22,11 @@ function mysqlPolicy( $httpHost, $dbTimeZone='+00:00' ){
 		// 'enableParamLogging' => \localConfig::DB_PARAM_LOGGIN,
 		// 'enableProfiling'    => \localConfig::DB_PROFILING,
 		'initSQLs'           	=> $localConfig->getDbInitSql(),
-		/*
-		'enableSchemaCache' 	=> true,
-		'schemaCacheDuration' 	=> 32140800,
-		'schemaCache'			=>	'cache',
-		*/
+
+		//'enableSchemaCache' 	=> true,
+		//'schemaCacheDuration' 	=> 32140800,
+		//'schemaCache'			=>	'cache',
+
 	);
 
 	return $mysqlConnect;
@@ -80,11 +80,9 @@ return array(
 
 	// application components
 	'components'=>array(
-		/*
-        'cache' => [
-            'class' => 'yii\caching\ApcCache',
-        ],
-        */
+		'cache'=>array( 
+		    'class'=>'system.caching.CDbCache'
+		),
         'bootstrap'=>array(
             'class'=>'yiibooster.components.Bootstrap',
         ),
