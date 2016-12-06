@@ -268,7 +268,7 @@ class TagController extends Controller
 
 		// send macros
 		$newUrl = $imp->replaceMacro( $tag->url );
-		$newUrl = 'http://unaurlquenoexiste.co/';
+		
 		if ( $urlTest )
 		{	
 			$handler = curl_init( $newUrl );
