@@ -204,23 +204,14 @@ class TagController extends Controller
 
 	}
 
-	private function testurl ( $url )
+
+	public function actionUrlt ( $id )
 	{
-		$handler = curl_init( $url );
-		curl_setopt ( $handler, CURLOPT_URL, $url );
-		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt ( $handler, CURLOPT_VERBOSE, 1 );
-		curl_setopt ( $handler, CURLOPT_HEADER, 1 );
-		$response = curl_exec ( $handler );
-
-		$status = curl_getinfo($handler, CURLINFO_HTTP_CODE);			
-		curl_close( $handler );
-
-		return $status;
+		$this->actionUrl($id, true);
 	}
 
 
-	public function actionUrl($id){
+	public function actionUrl($id, $urlTest = false){
 		// $start = microtime();
 
 		// detecting if is postback click
@@ -277,12 +268,24 @@ class TagController extends Controller
 
 		// send macros
 		$newUrl = $imp->replaceMacro( $tag->url );
-
-		if ( isset($_GET['urlTest']) )
+		$newUrl = 'http://unaurlquenoexiste.co/';
+		if ( $urlTest )
 		{	
+			$handler = curl_init( $newUrl );
+			curl_setopt ( $handler, CURLOPT_URL, $newUrl );
+			curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
+			curl_setopt ( $handler, CURLOPT_VERBOSE, 1 );
+			curl_setopt ( $handler, CURLOPT_HEADER, 1 );
+			$response = curl_exec ( $handler );
+
+			$status = curl_getinfo($handler, CURLINFO_HTTP_CODE);		
+			$msg = curl_error($handler);
+			curl_close( $handler );
+
+
 			$ref = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
-			$query = "INSERT INTO passback_status( url, code, ref ) VALUES ( '".$newUrl."', ".$this->testUrl( $newUrl ).", '".$ref."' );";
+			$query = "INSERT INTO passback_status( url, code, ref, msg ) VALUES ( '".$newUrl."', ".$status.", '".$ref."', '".$msg."' );";
 
 			$result = Yii::app()->db->createCommand($query)->execute();
 		}
