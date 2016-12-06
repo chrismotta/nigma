@@ -204,6 +204,22 @@ class TagController extends Controller
 
 	}
 
+	private function testurl ( $url )
+	{
+		$handler = curl_init( $url );
+		curl_setopt ( $handler, CURLOPT_URL, $url );
+		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt ( $handler, CURLOPT_VERBOSE, 1 );
+		curl_setopt ( $handler, CURLOPT_HEADER, 1 );
+		$response = curl_exec ( $handler );
+
+		$status = curl_getinfo($handler, CURLINFO_HTTP_CODE);			
+		curl_close( $handler );
+
+		return $status;
+	}
+
+
 	public function actionUrl($id){
 		// $start = microtime();
 
@@ -250,23 +266,32 @@ class TagController extends Controller
 		if(!isset($imp->tid)){
 			// write transaction id
 			$imp->tid = md5($imp->id);
+			die('debug '.$imp->tid);
 			if(!$imp->save())
 				Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
 		}
 
-
+		
 		// $end = microtime();
 		// $elapsed = $end - $start;
 		// echo 'Elapsed time: '.$elapsed.' sec.';
 
 		// send macros
-		$newUrl = $imp->replaceMacro($tag->url);
+		$newUrl = $imp->replaceMacro( $tag->url );
 
+		if ( isset($_GET['urlTest']) )
+		{	
+			$ref = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+			$query = "INSERT INTO passback_status( url, code, ref ) VALUES ( '".$newUrl."', ".$this->testUrl( $newUrl ).", '".$ref."' );";
+
+			echo $query;
+
+			$result = Yii::app()->db->createCommand($query)->execute();
+		}
 		// die($newUrl);
 		// redirect to tag url
 		header("Location: ".$newUrl);
-
-
 	}
 
 	/* DEPRECATED
