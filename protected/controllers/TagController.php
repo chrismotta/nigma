@@ -266,7 +266,6 @@ class TagController extends Controller
 		if(!isset($imp->tid)){
 			// write transaction id
 			$imp->tid = md5($imp->id);
-			die('debug '.$imp->tid);
 			if(!$imp->save())
 				Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
 		}
@@ -284,8 +283,6 @@ class TagController extends Controller
 			$ref = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
 
 			$query = "INSERT INTO passback_status( url, code, ref ) VALUES ( '".$newUrl."', ".$this->testUrl( $newUrl ).", '".$ref."' );";
-
-			echo $query;
 
 			$result = Yii::app()->db->createCommand($query)->execute();
 		}
