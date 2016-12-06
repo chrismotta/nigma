@@ -266,6 +266,7 @@ class TagController extends Controller
 		if(!isset($imp->tid)){
 			// write transaction id
 			$imp->tid = md5($imp->id);
+			die('debug '.$imp->tid);
 			if(!$imp->save())
 				Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
 		}
