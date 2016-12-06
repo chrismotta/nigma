@@ -127,7 +127,27 @@ class TagController extends Controller
 
 	}
 
+	public static function isSecure(){
+		if(isset($_SERVER['HTTPS']))
+			$sec = true;
+		else
+			$sec = false;
+		return $sec;
+	}
+	public static function protocol(){
+		if (self::isSecure()) 
+			$prot = 'https';
+		else 
+			$prot = 'http';
+		return $prot;
+	}
+
 	public function actionJs($id){
+
+		if (self::isSecure()) 
+			$prot = 'https';
+		else 
+			$prot = 'http';
 		
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$width  = isset($_GET['width']) ? $_GET['width'] : null;
@@ -136,7 +156,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<iframe src="http://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
+			echo 'document.write(\'<iframe src="'.self::protocol().'://bidbox.co/tag/'.$id.'?pid='.$pid.'&pubid='.$pubid.'" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></iframe>\');';
 
 		}else{
 
@@ -147,7 +167,7 @@ class TagController extends Controller
 	}
 
 	public function actionJsp($id){
-		
+
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$width  = isset($_GET['width']) ? $_GET['width'] : null;
 		$height = isset($_GET['height']) ? $_GET['height'] : null;
@@ -155,7 +175,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<img src="http://bidbox.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
+			echo 'document.write(\'<img src="http://'.self::protocol().'.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
 
 		}else{
 
@@ -174,7 +194,7 @@ class TagController extends Controller
 
 		if(isset($pid)){
 
-			echo 'document.write(\'<script>window.location="http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
+			echo 'document.write(\'<script>window.location="'.self::protocol().'://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'";</script>\');';
 
 		}else{
 
@@ -184,45 +204,93 @@ class TagController extends Controller
 
 	}
 
+	private function testurl ( $url )
+	{
+		$handler = curl_init( $url );
+		curl_setopt ( $handler, CURLOPT_URL, $url );
+		curl_setopt ( $handler, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt ( $handler, CURLOPT_VERBOSE, 1 );
+		curl_setopt ( $handler, CURLOPT_HEADER, 1 );
+		$response = curl_exec ( $handler );
+
+		$status = curl_getinfo($handler, CURLINFO_HTTP_CODE);			
+		curl_close( $handler );
+
+		return $status;
+	}
+
+
 	public function actionUrl($id){
+		// $start = microtime();
+
+		// detecting if is postback click
+		if(isset($_GET['tmltoken'])){
+			$tmltoken = $_GET['tmltoken'];
+			$imp = ImpLog::model()->findByAttributes(array('tid'=>$tmltoken));
+			// var_dump($imp);
+			//die('<hr>End');
+		}
 
 		if(!$tag = Tags::model()->findByPk($id))
 			die("Tag ID does't exists");
-		if(!isset($_GET['pid']))
-			die("Placement ID does't exists");
 
+		if(!isset($imp)){
+
+			// if(!isset($_GET['pid']))
+			// 	die("Placement ID does't exists");
 		
-		// log impression
+			// log impression
+			$imp = new ImpLog();
+			$imp->tags_id = $tag->id;
+			$imp->placements_id = isset($_GET['pid']) ? $_GET['pid'] : null;
 		
-		$imp = new ImpLog();
-		$imp->tags_id = $tag->id;
-		$imp->placements_id = $_GET['pid'];
+			// pubid
+			$imp->pubid = isset($_GET['pubid']) ? $_GET['pubid'] : null;
+			
+			// Get visitor parameters
+			
+			$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
+			$imp->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
+			$imp->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
+		}
+
 		$imp->date = new CDbExpression('NOW()');
 
 
-		// pubid
-		
-		$imp->pubid = isset($_GET['pubid']) ? $_GET['pubid'] : null;
-
-		
-		// Get visitor parameters
-		
-		$imp->server_ip    = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : null;
-		$imp->ip_forwarded = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : null;
-		$imp->user_agent   = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null;
-
 		// log impression
-
 		if(!$imp->save())
 			Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
-		// enviar macros
 
-		$newUrl = $imp->replaceMacro($tag->url);
+		// if is new
 
+		if(!isset($imp->tid)){
+			// write transaction id
+			$imp->tid = md5($imp->id);
+			if(!$imp->save())
+				Yii::log("impression error: " . json_encode($imp->getErrors(), true), 'error', 'system.model.impLog');
+		}
+
+		
+		// $end = microtime();
+		// $elapsed = $end - $start;
+		// echo 'Elapsed time: '.$elapsed.' sec.';
+
+		// send macros
+		$newUrl = $imp->replaceMacro( $tag->url );
+
+		if ( isset($_GET['urlTest']) )
+		{	
+			$ref = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '';
+
+			$query = "INSERT INTO passback_status( url, code, ref ) VALUES ( '".$newUrl."', ".$this->testUrl( $newUrl ).", '".$ref."' );";
+
+			echo $query;
+
+			$result = Yii::app()->db->createCommand($query)->execute();
+		}
+		// die($newUrl);
 		// redirect to tag url
 		header("Location: ".$newUrl);
-
-
 	}
 
 	/* DEPRECATED
