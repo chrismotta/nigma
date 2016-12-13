@@ -402,6 +402,10 @@ class DailyReport extends CActiveRecord
 			$orderBy = array();
 		
 			// HACER JOIN
+			if($group['ID'] == 1) {
+				$groupBy[] = 't.id';
+				$orderBy[] = 't.id ASC';
+			}	
 			if($group['Country'] == 1) {
 				$groupBy[] = 'country.id_location';
 				$orderBy[] = 'country.name ASC';
@@ -1597,6 +1601,10 @@ class DailyReport extends CActiveRecord
 		$groupBy = array();
 		$orderBy = array();
 
+		if($group['ID'] == 1) {
+			$groupBy[] = 't.id';
+			$orderBy[] = 't.id ASC';
+		}
 		if($group['Date'] == 1) {
 			$groupBy[] = 'DATE(t.date)';
 			$orderBy[] = 'DATE(t.date) DESC';

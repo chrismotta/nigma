@@ -16,6 +16,7 @@ $adv_categories = isset($_GET['advertisers-cat']) ? $_GET['advertisers-cat'] : N
 $editable = false;
 
 $group = array(
+	'ID'			=>0,
 	'Date'          =>0, 
 	'TrafficSource' =>0, 
 	'Advertiser'    =>1, 
@@ -287,7 +288,6 @@ echo '</div>';
 echo '<div class="row-fluid">';
 echo '<div class="form-sep span12">ACTIONS</div>';
 echo '</div>';
-
 	$this->widget('bootstrap.widgets.TbButton', 
 		array(
 			'buttonType'=>'link', 
@@ -314,8 +314,29 @@ echo '</div>';
 			)
 		)
 	); 
-
-
+	echo $space;
+	$this->widget('bootstrap.widgets.TbButton', array(
+		'type'        => 'info',
+		'label'       => 'Add Daily Report Manualy',
+		'block'       => false,
+		'buttonType'  => 'ajaxButton',
+		'url'         => 'create',
+		'ajaxOptions' => array(
+			'type'    => 'POST',
+			'beforeSend' => 'function(data)
+				{
+			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+					$("#modalDailyReport").html(dataInicial);
+					$("#modalDailyReport").modal("toggle");
+				}',
+			'success' => 'function(data)
+				{
+					$("#modalDailyReport").html(data);
+				}',
+			),
+		'htmlOptions' => array('id' => 'createAjax'),
+		)
+	);
 	
 $this->endWidget();
 
@@ -350,7 +371,7 @@ if(count($_REQUEST)>1){
 			'cssClassExpression' => '$data->isFromVector() ? "isFromVector" : NULL',
 			'htmlOptions'        => array('style' => 'padding-left: 10px; height: 70px;'),
 			'headerHtmlOptions'  => array('style' => 'border-left: medium solid #FFF;'),
-            'visible' => false,
+            'visible' => $group['ID'],
 		),
 		array(
 			'name'   =>	'account_manager',
@@ -593,7 +614,67 @@ if(count($_REQUEST)>1){
 			'footer'            => isset($totals['conv']) && $totals['conv']!=0 ? '$'.round($totals['spend'] / $totals['conv'], 2) : '$0',
             'visible' => $sum['eCPA'],
 		),
+       array(	
+			'name'        => 'comment',
+			'filter'      => false,
+			'sortable'    => false,
+			'class'       => 'bootstrap.widgets.TbEditableColumn',
+			'header' => false,
+			'htmlOptions' => array('class'=>'editableField'),
+			'editable'    => array(
+				'title'   => 'Comment',
+				'type'    => 'textarea',
+				'url'     => 'updateEditable/',
+				'display' => 'js:function(value, source){
+					if(value){
+						$(this).html("<i class=\"icon-font icon-red\"></i>");
+					}else{
+						$(this).html("<i class=\"icon-font\"></i>");
+					}
+				}'
+            ),
+            'visible' => $group['ID'],
+        ),
+        array(
+			'class'             => 'bootstrap.widgets.TbButtonColumn',
+			'headerHtmlOptions' => array('style' => "width: 20px"),
+            'visible' => $group['ID'],
+			'buttons'           => array(
+				'delete' => array(
+					'visible' => $group['ID'],
+				),
+				'updateAjax' => array(
+					'label'   => 'Update',
+					'icon'    => 'pencil',
+					'visible' => $group['ID'],
+					'click'   => '
+				    function(){
+				    	// get row id from data-row-id attribute
+				    	var id = $(this).parents("tr").attr("data-row-id");
 
+				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
+						$("#modalDailyReport").html(dataInicial);
+						$("#modalDailyReport").modal("toggle");
+
+				    	
+				    	// use jquery post method to get updateAjax view in a modal window
+				    	$.post(
+						"update/"+id,
+						"",
+						function(data)
+							{
+								//alert(data);
+								$("#modalDailyReport").html(data);
+							}
+						)
+					return false;
+				    }
+				    ',
+				),
+			),
+
+			'template' => '{updateAjax} {delete}',
+		),
 
 	),
 )); 

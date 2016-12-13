@@ -322,6 +322,9 @@ class DailyReportController extends Controller
 		foreach ($dp->getData() as $data) {
 			$row = array();
 
+			if ( $group['ID'] )
+				$row['ID'] 				     	= $data->id;	
+
 			if ( $group['AccountManager'] )
 				$row['Account Manager']      	= $data->account_manager;		
 
