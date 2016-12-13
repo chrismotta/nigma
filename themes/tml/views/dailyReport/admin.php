@@ -643,37 +643,20 @@ if(count($_REQUEST)>1){
 				'delete' => array(
 					'visible' => $group['ID'],
 				),
-				'updateAjax' => array(
-					'label'   => 'Update',
-					'icon'    => 'pencil',
-					'visible' => $group['ID'],
-					'click'   => '
-				    function(){
-				    	// get row id from data-row-id attribute
-				    	var id = $(this).parents("tr").attr("data-row-id");
-
-				    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-						$("#modalDailyReport").html(dataInicial);
-						$("#modalDailyReport").modal("toggle");
-
-				    	
-				    	// use jquery post method to get updateAjax view in a modal window
-				    	$.post(
-						"update/"+id,
-						"",
-						function(data)
-							{
-								//alert(data);
-								$("#modalDailyReport").html(data);
-							}
-						)
-					return false;
-				    }
-				    ',
-				),
+				'updateIframe' => array(
+					'label' => 'Update',
+					'icon'  => 'pencil',
+					'url'     => 'array("update", "id" => $data->id)',
+					'options' => array(
+						"data-grid-id"      => "daily-report-grid", 
+						"data-modal-id"     => "modalDailyReport", 
+						"data-modal-title"  => "Update Daily Report", 
+						'onclick'           => 'event.preventDefault(); openModal(this)',
+						),
+					),				
 			),
 
-			'template' => '{updateAjax} {delete}',
+			'template' => '{updateIframe} {delete}',
 		),
 
 	),
