@@ -82,7 +82,7 @@ class Reporo
 			// var_dump($campaigns);
 			// die();
 
-			if (!$campaigns) { continue; }
+			if (! $campaigns) { continue; }
 
 			// Saving campaigns information
 			foreach ($campaigns->campaigns as $campaign) {

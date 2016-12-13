@@ -22,7 +22,7 @@ class ClicklogController extends Controller
 	{
 		return array(
 			array('allow',
-				'actions'=>array('index', 'tracking', 'v'),
+				'actions'=>array('index', 'tracking', 'v', 'testpassback'),
 				'users'=>array('*'),
 			),
 			array('allow',
@@ -31,7 +31,7 @@ class ClicklogController extends Controller
 			),
 			array('allow', 
 				'actions'=>array('updateClicksData', 'admin', 'updateQuery', 'storage', 'test', 'csv'),
-				'roles'=>array('admin', 'account_manager_admin','operation_manager'),
+				'roles'=>array('admin', 'account_manager_admin'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
@@ -67,6 +67,26 @@ class ClicklogController extends Controller
 		echo "device_os_version = " . $device->getCapability('device_os_version') . "<br/>";
 		echo "advertised_browser = " . $device->getVirtualCapability('advertised_browser') . "<br/>";
 		echo "advertised_browser_version =" . $device->getVirtualCapability('advertised_browser_version') . "<br/>";
+	}
+
+
+	public function actionTestpassback ( $id = null, $vid = null )
+	{
+		$uri = $_SERVER['REQUEST_URI'];
+		$ref = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : null;
+		$time = new CDbExpression('NOW()');
+		$command = Yii::app()->db->createCommand();
+
+		$command->insert( 'test_passback', array( 
+			'uri' => $uri,
+			'ref' =>  $ref,
+			'time' => $time, 
+		) );
+
+		$tmltoken = isset($_GET['tmltoken']) ? $_GET['tmltoken'] : '';
+
+		// echo 'No creative found';
+		header('Location: http://tmlbox.co/clicklog/tracking/2034?tmltoken='.$tmltoken);
 	}
 
 	private static function qsReplace($url, $qs_array){

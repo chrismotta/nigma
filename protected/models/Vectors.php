@@ -193,25 +193,13 @@ class Vectors extends CActiveRecord
 	//
 
 	public function explodeVector($data){
-
+		
 		$cost = $data['spend'];
 		$date = $data['date'];
 
-		$criteria = new CDbCriteria;
-
-		$criteria->select = array(
-			't.id AS id',
-			'opportunities.rate AS rate',
-		);
-
-		$criteria->with = array(
-			'opportunities',
-			'vectors',
-		);
-
-		$criteria->compare('vectors.id', $this->id );
-		$vhc = Campaigns::model()->findAll( $criteria );
-
+		$vhc = VectorsHasCampaigns::model()->findAll('vectors_id=:vid', 
+			array(':vid'=>$this->id));
+		
 		$totalClicks = 0;
 		$totalConv = 0;
 		/* PENDIENTE DE CONFIRMACION
@@ -266,8 +254,8 @@ class Vectors extends CActiveRecord
 		}	
 		*/
 		foreach ($vhc as $cmp) {
-			
-			$cid = $cmp->id;
+
+			$cid = $cmp->campaigns_id;
 
 			$criteria = new CDbCriteria;
 			$criteria->with = array('vectorsLog', 'convLogs' );
@@ -286,17 +274,18 @@ class Vectors extends CActiveRecord
 				$campaignsList[$cid]['clicks'] = $model->clicks;
 				$totalClicks += $campaignsList[$cid]['clicks'];
 				$campaignsList[$cid]['conv'] = $model->conv;
-				$campaignsList[$cid]['rate'] = $cmp->rate;
 				$totalConv += $campaignsList[$cid]['conv'];
 
 			}else{
 				$campaignsList[$cid]['clicks'] = 0;
 				$campaignsList[$cid]['conv'] = 0;
-				$campaignsList[$cid]['rate'] = $cmp->rate;
+
 			}
+
 		}
 
 		if(isset($campaignsList)){
+
 			/* deprecated 
 			// cost related to conversions
 			foreach ($campaignsList as $id => $cmp) {
@@ -311,28 +300,6 @@ class Vectors extends CActiveRecord
 			if($totalClicks>0){
 
 				// cost related to clicks
-				foreach ( $campaignsList as $id => $cmp )
-				{
-					if($cmp['clicks'] > 0)
-					{
-						$campaignsList[$id]['id'] = $id;
-
-						// if no rate, no cost for that campaign
-						if ( $cmp['rate'] && $cmp['rate']>0.00 )
-							$campaignsList[$id]['cost'] = $cost / $totalClicks * $cmp['clicks'];
-						else
-							$campaignsList[$id]['cost'] = 0;
-
-						$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
-					}
-					else{
-						// unset campaigns without clicks
-						unset($campaignsList[$id]);
-					}					
-				}
-
-				// TO BE DEPRECATED				
-				/*
 				foreach ($campaignsList as $id => $cmp) {
 
 					if($cmp['clicks'] > 0){
@@ -346,46 +313,16 @@ class Vectors extends CActiveRecord
 					}
 
 				}
-				*/
 
 			}else{
 
 				// when there are no campaigns with clicks
-				$cmpCount = 0;
-				$campaignsWithRate = array();
-
-				// save campaigns with rate and exclude the others
-				foreach ( $vhc AS $campaign )
-				{
-					if ( isset($campaign->rate) && $campaign->rate > 0.00 )
-					{
-						$campaignsWithRate[] = $campaign;
-						$cmpCount++;
-					}
-					else
-					{
-						$id = $cmp->id;
-						unset($campaignsList[$id]);
-					}
-				}
-
-				// distribute cost between campaigns with rate
-				foreach ( $campaignsWithRate as $cmp )
-				{
-					$id = $cmp->id;
-					$campaignsList[$id]['id'] = $id;
-					$campaignsList[$id]['cost'] = $cost / $cmpCount;
-					$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];					
-				}
-
-				// TO BE DEPRECATED
-				/*
+				//var_export('vector: ' . $this->id . ' campaign: ' . $cid . ' cost: ' . $cost . ' count: ' . count($vhc));
 				foreach ($campaignsList as $id => $cmp) {
 					$campaignsList[$id]['id'] = $id;
 					$campaignsList[$id]['cost'] = $cost / count($vhc);
 					$return[$id] = $id . ': ' .$campaignsList[$id]['cost'];
 				}
-				*/
 			}
 
 			// echo json_encode($campaignsList);
@@ -488,7 +425,6 @@ class Vectors extends CActiveRecord
 		$dailyReport->conv_api = $camp['conv'];
 		
 		$dailyReport->spend = number_format($camp['cost'], 2, '.', '');
-
 		/*
 		if ( $not_usd )
 			$dailyReport->spend = $dailyReport->getSpendUSD();
