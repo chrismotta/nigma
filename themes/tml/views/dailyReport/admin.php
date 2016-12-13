@@ -317,24 +317,17 @@ echo '</div>';
 	echo $space;
 	$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
-		'label'       => 'Add Daily Report Manualy',
+		'label'       => 'Add Daily Report Manually',
 		'block'       => false,
-		'buttonType'  => 'ajaxButton',
-		'url'         => 'create',
-		'ajaxOptions' => array(
-			'type'    => 'POST',
-			'beforeSend' => 'function(data)
-				{
-			    	var dataInicial = "<div class=\"modal-header\"></div><div class=\"modal-body\" style=\"padding:100px 0px;text-align:center;\"><img src=\"'.  Yii::app()->theme->baseUrl .'/img/loading.gif\" width=\"40\" /></div><div class=\"modal-footer\"></div>";
-					$("#modalDailyReport").html(dataInicial);
-					$("#modalDailyReport").modal("toggle");
-				}',
-			'success' => 'function(data)
-				{
-					$("#modalDailyReport").html(data);
-				}',
+		'buttonType'  => 'linkButton',
+		'url'         => 'create',	
+		'htmlOptions' => array(
+				"data-grid-id"      => "daily-report-grid", 
+				"data-modal-id"     => "modalDailyReport", 
+				"data-modal-title"  => "Add Daily Report Manually", 
+				'onclick'           => 'event.preventDefault(); openModal(this)',
 			),
-		'htmlOptions' => array('id' => 'createAjax'),
+		//'htmlOptions' => array('id' => 'createAjax'),
 		)
 	);
 	
