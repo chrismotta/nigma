@@ -82,7 +82,7 @@ class MobusiCPC
 
 		foreach ( $response['answer'] as $ext_cid => $campaign )
 		{
-			/*
+
 			$p = strrpos( $campaign['offer_name'], ' ' );
 			$l = strlen($campaign['offer_name']);
 			
@@ -94,9 +94,9 @@ class MobusiCPC
 			}
 			else
 				$name = substr( $campaign['offer_name'],  $p+1 );
-			*/
+
 			
-			$name = str_replace( 'CPC Media Lab MX (juegos) ', '', $campaign['offer_name']);
+			//$name = str_replace( 'CPC Media Lab MX (juegos) ', '', $campaign['offer_name']);
 			//var_export( '<br>'.$campaign['offer_name'] . ': '.$name.'<br>');
 							
 			// if is vector
