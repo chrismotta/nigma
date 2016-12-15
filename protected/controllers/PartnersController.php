@@ -45,11 +45,11 @@ class PartnersController extends Controller
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('previewPublishers', 'previewExcelReportPublishers'),
-				'roles'=>array('admin','media_buyer_admin'),
+				'roles'=>array('admin','media_buyer_admin', 'operation_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
 				'actions'=>array('previewPublishersCPM'),
-				'roles'=>array('admin','media_buyer_admin'),
+				'roles'=>array('admin','media_buyer_admin', 'operation_manager'),
 			),
 			array('deny',  // deny all users
 				'users'=>array('*'),
