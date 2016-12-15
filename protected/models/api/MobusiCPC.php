@@ -82,9 +82,10 @@ class MobusiCPC
 
 		foreach ( $response['answer'] as $ext_cid => $campaign )
 		{
+			/*
 			$p = strrpos( $campaign['offer_name'], ' ' );
 			$l = strlen($campaign['offer_name']);
-
+			
 			if ( $p == $l-1 )
 			{
 				$tmp = substr( $campaign['offer_name'], 0, $p-1 );
@@ -93,6 +94,10 @@ class MobusiCPC
 			}
 			else
 				$name = substr( $campaign['offer_name'],  $p+1 );
+			*/
+			
+			$name = str_replace( 'CPC Media Lab MX (juegos) ', '', $campaign['offer_name']);
+			//var_export( '<br>'.$campaign['offer_name'] . ': '.$name.'<br>');
 							
 			// if is vector
 			if(substr($name, 0, 1)=='v'){
@@ -140,8 +145,8 @@ class MobusiCPC
 
 			$dailyReport->date = $date;
 			$dailyReport->providers_id = $this->provider_id;
-			$dailyReport->imp = $campaign['imp'];
-			$dailyReport->clics = $campaign['leads'];
+			$dailyReport->imp = 0;
+			$dailyReport->clics = $campaign['imp'];
 			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>$date));
 			//$dailyReport->conv_adv = 0;
 			$dailyReport->spend = $campaign['money'];
@@ -241,7 +246,7 @@ class MobusiCPC
 		curl_setopt( $handler, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json' ) );
 		$response = curl_exec ( $handler );
 		curl_close( $handler );
-
+		//var_export($response);	
 		$obj = json_decode($response, true);
 		
 		if ( empty($obj) ) {
