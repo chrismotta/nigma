@@ -100,6 +100,7 @@ class Ajillion
 		$this->apiLog->updateLog('Processing', 'Writing traffic data');
 
 		$updated = 0;
+		$prevSavedCmps = [];
 		foreach ($campaigns as $campaign) {
 
 			if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
@@ -145,18 +146,36 @@ class Ajillion
 
 			$dailyReport->date = $formated_date;
 			$dailyReport->providers_id = $this->provider_id;
-			$dailyReport->imp = $campaign->impressions;
-			$dailyReport->clics = $campaign->hits;
-			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
-			//$dailyReport->conv_adv = 0;
-			$dailyReport->spend = number_format($campaign->cost, 2, '.', '');
+
+			$sumRevenue = false;
+			if ( array_search($campaigns_id, $prevSavedCmps) ) 
+			{ 
+				$dailyReport->imp = $dailyReport->imp + $campaign->impressions;
+				$dailyReport->clics = $campaign->hits + $campaign->hits;
+				$dailyReport->conv_api = $dailyReport->conv_api + ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
+				//$dailyReport->conv_adv = 0;
+				$dailyReport->spend = number_format($dailyReport->spend+$campaign->cost, 2, '.', '');
+				$return .= ' - (sum) ';				
+			}
+			else
+			{
+				$dailyReport->imp = $campaign->impressions;
+				$dailyReport->clics = $campaign->hits;
+				$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
+				//$dailyReport->conv_adv = 0;
+				$dailyReport->spend = number_format($campaign->cost, 2, '.', '');
+
+			}
 
 			$campaignModel = Campaigns::model()->findByPk($campaigns_id);
 			$model_adv = $campaignModel->opportunities->model_adv;
 			$return.= ' - '.$model_adv;
 
+
+
 			if($model_adv != 'RS'){
-				$dailyReport->updateRevenue();
+					$dailyReport->updateRevenue();
+
 				$dailyReport->setNewFields();
 				$return.= ' -Revenue Share type- ';
 			}else{
@@ -171,6 +190,7 @@ class Ajillion
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
 			}else{
+				$prevSavedCmps[] = $campaigns_id;
 				$updated++;
 				$return.='<br/>===> saved';
 			}
