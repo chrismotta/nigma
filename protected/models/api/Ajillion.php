@@ -130,7 +130,7 @@ class Ajillion
 				$dailyReport = new DailyReport();
 				$return.= "<hr/>New record: ";
 			}else{
-				$return.= "<hr/>Update record: ".$dailyReport->id . " - ";
+				$return.= "<hr/>Update record: ".$dailyReport->id;
 			}
 			
 			$dailyReport->campaigns_id = $campaigns_id;
@@ -150,13 +150,12 @@ class Ajillion
 			$sumRevenue = false;
 			if ( array_search($campaigns_id, $prevSavedCmps) ) 
 			{ 
-				$sumRevenue = true;
 				$dailyReport->imp = $dailyReport->imp + $campaign->impressions;
 				$dailyReport->clics = $campaign->hits + $campaign->hits;
 				$dailyReport->conv_api = $dailyReport->conv_api + ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
 				//$dailyReport->conv_adv = 0;
 				$dailyReport->spend = number_format($dailyReport->spend+$campaign->cost, 2, '.', '');
-				$return .= ' (sum) ';				
+				$return .= ' - (sum) ';				
 			}
 			else
 			{
@@ -164,7 +163,8 @@ class Ajillion
 				$dailyReport->clics = $campaign->hits;
 				$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
 				//$dailyReport->conv_adv = 0;
-				$dailyReport->spend = number_format($campaign->cost, 2, '.', '');				
+				$dailyReport->spend = number_format($campaign->cost, 2, '.', '');
+
 			}
 
 			$campaignModel = Campaigns::model()->findByPk($campaigns_id);
