@@ -35,6 +35,8 @@
         echo $form->textFieldRow($model, 'imp', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'conv_adv', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'clics', array('class'=>'span3'));
+        echo "<div class=\"control-group\"><label class=\"control-label\">Set revenue manually</label><input type=\"checkbox\" style=\"margin-left:20px;\" onchange=\"if ( $('#rev').prop('disabled') ) $('#rev').prop('disabled', false); else  $('#rev').prop('disabled', true);\" /></div>";
+        echo $form->textFieldRow($model, 'revenue', array('class'=>'span3', 'disabled'=>'disabled', 'id' => 'rev'));
         echo $form->textFieldRow($model, 'spend', array('class'=>'span3', 'prepend'=>'$'));
         
         if ($model->isNewRecord)
@@ -42,10 +44,12 @@
         else
             $ma = $model->campaigns->opportunities->model_adv;
 
+        /*
         $revenueStyle = $ma == 'RS' ? 'display:block' : 'display:none';
         echo '<div style="'.$revenueStyle.'" id="revenueSelect">';
         echo $form->textFieldRow($model, 'revenue', array('class'=>'span3', 'prepend'=>'$'));
         echo '</div>';
+        */
         echo $form->hiddenField($model, 'is_from_api', array('type'=>'hidden'));       
         echo $form->datepickerRow($model, 'date', array(
                 'options' => array(
