@@ -42,6 +42,8 @@ class Ajillion
 	{
 		$return = "";
 
+		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
+
 		if ( isset( $_GET['cid']) ) {
 			$cid = $_GET['cid'];
 			if ( !Campaigns::model()->exists( "id=:id", array(":id" => $cid)) ) {
@@ -113,6 +115,11 @@ class Ajillion
 			if ( !$campaigns_id ) {
 				Yii::log("invalid external campaign name: '" . $campaign->campaign, 'warning', 'system.model.api.ajillion');
 				continue;
+			}
+
+			if (isset($fixed_adv)){ // if adv parameter is setted
+				if( !Utilities::campaignBelongAdv($campaigns_id, $fixed_adv) )
+					continue;
 			}
 
 			$formated_date = date_format( new DateTime($date), "Y-m-d" );
