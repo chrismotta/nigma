@@ -93,9 +93,13 @@ class DailyReportController extends Controller
 			$modelCampaign      = Campaigns::model()->findByPk($model->campaigns_id);
 			$model->providers_id = $modelCampaign->providers_id;
 			$model->conv_api    = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$model->campaigns_id, ":date"=>$model->date));
-			$model->updateRevenue();
+			
+			if ( !isset( $_POST['DailyReport']['revenue']) )
+				$model->updateRevenue();
+
 			$model->setNewFields();
 			if($model->save())
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'created'));
 		}
 
