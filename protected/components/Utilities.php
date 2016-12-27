@@ -51,6 +51,21 @@ class Utilities {
 		}
 		return NULL;
 	}
+
+	public static function campaignBelongAdv($cid, $aid){
+		$campaign = Campaigns::model()->findByPk($cid);
+		
+		if(!isset($campaign))
+			return false;
+		
+		$advid = $campaign->opportunities->regions->financeEntities->advertisers->id;
+
+		if($advid == $aid)
+			return true;
+		else
+			return false;
+	}
+
 	public static function parseCampaignID($campaignname, $useAlternativeName = false)
 	{
 		$campaignname = strip_tags($campaignname);
