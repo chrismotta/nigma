@@ -175,7 +175,7 @@ class TagController extends Controller
 
 		if(isset($pid) && isset($width) && isset($height)){
 
-			echo 'document.write(\'<img src="http://'.self::protocol().'.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'");</script>\');';
+			echo 'document.write(\'<img src="http://'.self::protocol().'.co/creatives/'.$width.'x'.$height.'.png" width="'.$width.'" height="'.$height.'" frameborder="0" scrolling="no" ></img><script>window.open("http://bidbox.co/tag/url/'.$id.'?pid='.$pid.'&pubid='.$pubid.'", "ad", "status=0,toolbar=0,menubar=0,directories=0");</script>\');';
 
 		}else{
 
@@ -211,7 +211,13 @@ class TagController extends Controller
 	}
 
 
-	public function actionUrl($id, $urlTest = false){
+	public function actionUrlp ( $id )
+	{
+		$this->actionUrl($id, false, true);
+	}
+
+
+	public function actionUrl($id, $urlTest = false, $resize = false){
 		// $start = microtime();
 
 		// detecting if is postback click
@@ -290,9 +296,17 @@ class TagController extends Controller
 			$result = Yii::app()->db->createCommand($query)->execute();
 		}
 		// die($newUrl);
-		// redirect to tag url
-		header("Location: ".$newUrl);
+
+		if($resize){
+			$this->renderPartial('pop',array(
+				'url'=>$newUrl,
+			));
+		}else{
+			// redirect to tag url
+			header("Location: ".$newUrl);
+		}
 	}
+
 
 	/* DEPRECATED
 
