@@ -222,7 +222,10 @@ echo '</div>';
 			'buttonType'=>'submit', 
 			'label'=>'Submit', 
 			'type' => 'success', 
-			'htmlOptions' => array('class' => 'showLoading')
+			'htmlOptions' => array(
+				'class' => 'showLoading',
+				'onclick' => '$("#filter-form").attr("target", "_self");if ( $("#download-flag").length ) $("#download-flag").remove() ;$("#filter-form").submit();'				
+				)
 			)
 		); 
 
@@ -230,12 +233,16 @@ echo '</div>';
 
 	$this->widget('bootstrap.widgets.TbButton', 
 		array(
-			'buttonType'=>'submit', 
+			'buttonType'=>'link', 
 			'label'=>'Download CSV', 
 			'type' => 'warning', 
-			'htmlOptions' => array('class' => 'showLoading')
+			//'url' => $link,
+			'htmlOptions' => array(
+				'class' => 'showLoading', 
+				'onclick' => '$("#filter-form").attr("target", "#");if ( $("#download-flag").length ) $("#download-flag").val("true"); else $("#filter-form").append("<input type=\"hidden\" style=\"visibility:collapse;\" id=\"download-flag\" name=\"download\" value=\"true\" />"); $("#filter-form").submit();' 
 			)
-		); 
+		)
+	); 
 	
 echo CHtml::endForm();
 

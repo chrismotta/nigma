@@ -51,12 +51,127 @@ class StatsController extends Controller
 		
 		// if(isset($_POST['ImpLog']))
 		// 	$model->attributes=$_POST['ImpLog'];
-
+		// 	
+		if ( isset($_REQUEST['download']) )
+		{
+			$this->_sendCsvFile( $model );
+		}
 		$this->render('impressions', 
 			array(
 				'model'=>$model
 				));
 	}
+
+	protected function _sendCsvFile ( $model )
+	{
+		$csvData = array();
+		$dateStart = date('Y-m-d', strtotime($_REQUEST['dateStart']));
+		
+		$dp = $model->cache(3600)->search(false);
+
+		foreach ($dp->getData() as $data) {
+			$row = array();
+
+			if ( $group['date'] )
+				$row['Date']      				= $data->date;		
+
+
+			if ( $group['hour'] )
+				$row['Hour']      				= $data->hour;					
+
+			if ( $group['publisher'] )
+				$row['Publisher']      			= $data->provider;
+
+
+			if ( $group['placement'] )
+				$row['Placement']      			= $data->placement;
+
+
+			if ( $group['tag'] )
+				$row['Tag']      				= $data->tag;
+
+
+			if ( $group['advertiser'] )
+				$row['Advertiser']      		= $data->avertiser;
+
+
+			if ( $group['campaign'] )
+				$row['Campaign']      			= $data->campaign;
+
+
+			if ( $group['pubid'] )
+				$row['Pub ID']      			= $data->pubid;
+
+
+			if ( $group['country'] )
+				$row['Country']      			= $data->country;
+
+			if ( $group['os_type'] )
+				$row['OS']      				= $data->os_type;
+
+			if ( $group['os_version'] )
+				$row['OS Version'] 				= $data->os_version;
+
+			if ( $group['device_type'] )
+				$row['Device Type']      		= $data->device_type;
+
+			if ( $group['device_brand'] )
+				$row['Device Brand']      		= $data->device_brand;			
+
+			if ( $group['device_model'] )
+				$row['Device Model']      		= $data->device_model;
+			
+			if ( $group['browser_type'] )
+				$row['Browser']      			= $data->browser_type;
+
+			if ( $group['browser_version'] )
+				$row['Browser Version']      	= $data->browser_version;
+
+			if ( $group['connection_type'] )
+				$row['Connection Type']      	= $data->connection_type;
+
+			if ( $group['carrier'] )
+				$row['Carrier']      			= $data->carrier;								
+			if ( $group['impressions'] )
+				$row['Impressions']      		= $data->impressions;			
+
+			if ( $group['unique_user'] )
+				$row['Unique Users']      		= $data->unique_user;
+
+			if ( $group['revenue'] )
+				$row['Revenue']      			= $data->revenue;
+
+			if ( $group['cost'] )
+				$row['Cost']      				= $data->cost;												
+			if ( $group['profit'] )
+				$row['Profit']      			= $data->profit;
+
+			if ( $group['revenue_eCPM'] )
+				$row['ReCPM']      				= $data->revenue_eCPM;												
+
+			if ( $group['cost_eCPM'] )
+				$row['CeCPM']      				= $data->cost_eCPM;	
+
+
+			if ( $group['profit_eCPM'] )
+				$row['PeCPM']      				= $data->profit_eCPM;	
+
+			$csvData[] = $row;
+		}
+
+		$csv = new ECSVExport( $csvData );
+		$csv->setEnclosure(chr(0));//replace enclosure with caracter
+		$csv->setHeader( 'content-type', 'application/csv;charset=UTF-8' );
+		$content = $csv->toCSV();   
+
+		if(isset($_REQUEST['v']))
+			echo str_replace("\n", '<br/>', $content);
+		else
+		{
+			$filename = 'ImpReport_'.date("Y-m-d", strtotime($dateStart)).'.csv';
+			Yii::app()->getRequest()->sendFile($filename, $content, "text/csv", true);		
+		}		
+	}	
 
 
 }
