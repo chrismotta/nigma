@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-<htm>
+<html>
 <head></head>
-</html>
 <body style="margin:0;padding:0">
 <?php 
 echo $code; 
@@ -14,3 +13,4 @@ if($tag->analyze){
 }
 ?>
 </body>
+</html>
