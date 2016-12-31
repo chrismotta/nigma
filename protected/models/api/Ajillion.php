@@ -160,10 +160,11 @@ class Ajillion
 			$dailyReport->date = $formated_date;
 			$dailyReport->providers_id = $this->provider_id;
 
-			// echo '<hr>'.json_encode($prevSavedCmps).' - '.$campaigns_id.'<hr>';
+			// echo '<hr>'.json_encode($prevSavedCmps).' - '.$campaigns_id.' - '.strval(array_search($campaigns_id, $prevSavedCmps)).'<hr>';
 
 			$sumRevenue = false;
-			if ( array_search($campaigns_id, $prevSavedCmps) ) 
+			// fixed, if is the first position array_search returns 0 (equal to false)
+			if ( array_search($campaigns_id, $prevSavedCmps) !== false ) 
 			{ 
 				$dailyReport->imp = $dailyReport->imp + $campaign->impressions;
 				$dailyReport->clics = $campaign->hits + $campaign->hits;
