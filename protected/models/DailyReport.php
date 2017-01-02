@@ -775,8 +775,8 @@ class DailyReport extends CActiveRecord
 				'sum(conv_adv) as conv_adv',
 				'sum(revenue) as revenue',
 				'sum(spend) as spend',
-				'sum(profit) as profit',
-				// 'revenue as profit_percent',
+				'sum(revenue-spend) as profit',
+				'IF(sum(revenue),sum(revenue-spend)/sum(revenue)*100,0) as profit_percent',
 				'round( avg(click_through_rate), 2 ) as click_through_rate',
 				'round( avg(conversion_rate), 2 ) as conversion_rate',
 				'round( avg(eCPM), 2 ) as eCPM',
@@ -784,10 +784,6 @@ class DailyReport extends CActiveRecord
 				'round( avg(eCPA), 2 ) as eCPA'
 				);
 
-			$sumArray['profit'] = array(
-					'asc'  =>'sum(profit)',
-					'desc' =>'sum(profit) DESC',
-	            );
 			$sumArray['imp'] = array(
 					'asc'  =>'sum(imp)',
 					'desc' =>'sum(imp) DESC',
@@ -815,6 +811,10 @@ class DailyReport extends CActiveRecord
 			$sumArray['spend'] = array(
 					'asc'  =>'sum(spend)',
 					'desc' =>'sum(spend) DESC',
+	            );
+			$sumArray['profit'] = array(
+					'asc'  =>'sum(profit)',
+					'desc' =>'sum(profit) DESC',
 	            );
 			$sumArray['profit_percent'] = array(
 					'asc'  =>'round( avg(profit_percent), 2 )',
@@ -1665,7 +1665,9 @@ class DailyReport extends CActiveRecord
 			'sum(conv_adv) as conv_adv',
 			'sum(revenue) as revenue',
 			'sum(spend) as spend',
-			'sum(profit) as profit',
+			'sum(revenue-spend) as profit',
+			'IF(sum(revenue),sum(revenue-spend)/sum(revenue)*100,0) as profit_percent',
+			// 'sum(profit) as profit',
 			// 'revenue as profit_percent',
 			'round( avg(click_through_rate), 2 ) as click_through_rate',
 			'round( avg(conversion_rate), 2 ) as conversion_rate',
