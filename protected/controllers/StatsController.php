@@ -135,10 +135,10 @@ class StatsController extends Controller
 				$row['Carrier']      			= $data->carrier;	
 
 			if ( $sum['impressions'] )
-				$row['Impressions']      		= $data->impressions;			
+				$row['Impressions']      		= str_replace(',', '.', $data->impressions);			
 
 			if ( $sum['unique_user'] )
-				$row['Unique Users']      		= $data->unique_user;
+				$row['Unique Users']      		= str_replace(',', '.', $data->unique_user);
 
 			if ( $sum['revenue'] )
 				$row['Revenue']      			= $data->revenue;
