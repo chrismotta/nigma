@@ -27,7 +27,7 @@
         echo $form->textFieldRow($model, 'name', array('class'=>'span3'));
         echo $form->textFieldRow($model, 'prefix', array('class'=>'span3'));
         echo $form->dropDownListRow($model, 'cat', $categories, array('prompt' => 'Select a category'));
-        
+        echo $form->textFieldRow($model, 'ext_id', array('class'=>'span3'));
         if( UserManager::model()->isUserAssignToRole('admin') )
             echo $form->dropDownListRow($model, 'users_id', $users, array('prompt' => 'Select a user to associate'));
 

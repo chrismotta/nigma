@@ -43,6 +43,7 @@ class Advertisers extends CActiveRecord
 		return array(
 			array('prefix, name, cat', 'required'),
 			array('commercial_id, users_id', 'numerical', 'integerOnly'=>true),
+			array('ext_id', 'length', 'max'=>255),
 			array('name', 'length', 'max'=>128),
 			array('prefix', 'length', 'max'=>4),
 			array('status', 'length', 'max'=>8),
@@ -85,6 +86,7 @@ class Advertisers extends CActiveRecord
 			'commercial_lastname' => 'Commercial',
 			'status'              => 'Status',
 			'users_id'            => 'External user login',
+			'ext_id'			  => 'External ID',
 		);
 	}
 
