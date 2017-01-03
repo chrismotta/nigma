@@ -67,7 +67,7 @@ class StatsController extends Controller
 		$csvData = array();
 		$dateStart = date('Y-m-d', strtotime($_REQUEST['dateStart']));
 		$group  = array_merge($_REQUEST['group1'],$_REQUEST['group2']);
-		
+		$sum = $_REQUEST['sum'];
 		$dp = $model->cache(3600)->search(false);
 
 		foreach ($dp->getData() as $data) {
@@ -132,29 +132,30 @@ class StatsController extends Controller
 				$row['Connection Type']      	= $data->connection_type;
 
 			if ( $group['carrier'] )
-				$row['Carrier']      			= $data->carrier;								
-			if ( $group['impressions'] )
+				$row['Carrier']      			= $data->carrier;	
+
+			if ( $sum['impressions'] )
 				$row['Impressions']      		= $data->impressions;			
 
-			if ( $group['unique_user'] )
+			if ( $sum['unique_user'] )
 				$row['Unique Users']      		= $data->unique_user;
 
-			if ( $group['revenue'] )
+			if ( $sum['revenue'] )
 				$row['Revenue']      			= $data->revenue;
 
-			if ( $group['cost'] )
+			if ( $sum['cost'] )
 				$row['Cost']      				= $data->cost;												
-			if ( $group['profit'] )
+			if ( $sum['profit'] )
 				$row['Profit']      			= $data->profit;
 
-			if ( $group['revenue_eCPM'] )
+			if ( $sum['revenue_eCPM'] )
 				$row['ReCPM']      				= $data->revenue_eCPM;												
 
-			if ( $group['cost_eCPM'] )
+			if ( $sum['cost_eCPM'] )
 				$row['CeCPM']      				= $data->cost_eCPM;	
 
 
-			if ( $group['profit_eCPM'] )
+			if ( $sum['profit_eCPM'] )
 				$row['PeCPM']      				= $data->profit_eCPM;	
 
 			$csvData[] = $row;
