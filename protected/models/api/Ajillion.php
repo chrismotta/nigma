@@ -221,6 +221,134 @@ class Ajillion
 		return $return;
 	}
 
+	public function compareTotals ( $offset ) {
+		date_default_timezone_set('UTC');
+		$return = '';
+
+		if ( isset( $_GET['date']) ) {
+		
+			$date = $_GET['date'];
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadTotalsInfo($date);
+
+		} else {
+
+			if(date('G')<=$offset){
+				$return.= '<hr/>yesterday<hr/>';
+				$date = date('Y-m-d', strtotime('yesterday'));
+				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+				$return.= $this->downloadTotalsInfo($date);
+			}
+			//default
+			$return.= '<hr/>today<hr/>';
+			$date = date('Y-m-d', strtotime('today'));
+			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+			$return.= $this->downloadTotalsInfo($date);
+		
+		}
+		
+		return $return;		
+	}
+
+	public function downloadTotalsInfo( $date )
+	{
+		$return = "";
+
+		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
+
+		$formated_date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
+
+
+		$this->apiLog->updateLog('Processing', 'Getting advertisers list');
+
+		// get all advertisers
+		$advertisers = $this->getResponse("advertiser.get");
+		if ( !$advertisers ) {
+			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
+			return 1;
+		}
+
+		$adv_ids = array();
+		foreach ($advertisers as $adv) {
+			$adv_ids[] = $adv->id;
+		}
+		var_export($advertisers);
+		// get totals from all advertisers
+		$params = array(
+				"columns"=>array("advertiser"),
+				"sums"=>array("hits", "cost", "impressions", "conversions"),
+				"campaign_uids"=>array(),
+				"advertiser_ids"=>$adv_ids,
+				"start_date"=>$formated_date,
+				"end_date"=>$formated_date,
+			);
+
+		$this->apiLog->updateLog('Processing', 'Getting traffic data');
+		$return .= ' - Processing: Getting traffic data - <br>';
+		$advReport = $this->getResponse("report.advertiser.performance.get", $params);
+
+		if ( !$advReport ) {
+			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
+			return 1;
+		}	
+		var_export($advReport);
+		foreach ( $advReport as $report ) {
+
+			$advExtId = false;
+			foreach ( $advertisers as $a )
+			{
+				if ( $a->name == $report->advertiser )
+				{
+					$advExtId = $a->id;
+					break;
+				}
+			}
+
+			$adv = Advertisers::model()->find(
+					'ext_id=:ext_id',
+					array(
+						':ext_id' => $advExtId,
+					)
+				);
+
+			$log = new AdvTotalsLog();
+			$log->date = $date;			
+
+			if ( !$adv ){
+				$log->status = "notid";
+				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
+				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
+			}
+			else
+			{
+				$log->advertiser = $adv->id;
+
+				$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
+
+
+				if ( $report->impressions == $totals['imp']	)
+				{
+					$log->status = "ok";
+					$log->message = "Advertiser totals match.";
+					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma totals:'.$totals['imp'].' Provider totals:'.$report->impressions.'<br>';
+				}
+				else
+				{
+					$log->status = "discrepancy";
+					$log->message = "A discrepancy was found.";
+					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma totals:'.$totals['imp'].' Provider totals:'.$report->impressions.'<br>';
+				}
+			}
+
+			$log->save();
+		}
+
+		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
+		$return .= 'Procces completed: advertisers totals succesfully compared.';
+
+		return $return;		
+	}
+
 
 	private function getResponse($method, $params = array() ) {
 

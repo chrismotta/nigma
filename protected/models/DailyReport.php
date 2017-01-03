@@ -1493,7 +1493,7 @@ class DailyReport extends CActiveRecord
 	 * @param  [type] $endDate    [description]
 	 * @return [type]             [description]
 	 */
-	public function advertiserSearchTotals($advertiser=null, $startDate=NULL, $endDate=NULL){
+	public function advertiserSearchTotals($advertiser=null, $startDate=NULL, $endDate=NULL, $provider = null, $advertiserExtId = null ){
 		$criteria=new CDbCriteria;
 		// Related search criteria items added (use only table.columnName)
 		$criteria->with = array( 
@@ -1502,10 +1502,23 @@ class DailyReport extends CActiveRecord
 			'campaigns.opportunities.regions.financeEntities.advertisers', 
 		);
 		
-		$criteria->compare('advertisers.id',$advertiser);
+		if ( $advertiser )
+		{
+			$criteria->compare('advertisers.id',$advertiser);	
+		}
+		else
+		{
+			$criteria->compare('advertisers.ext_id',$advertiserExtId);
+		}
+		
 		if ( $startDate != NULL && $endDate != NULL ) {
 			$criteria->compare('date','>=' . date('Y-m-d', strtotime($startDate)));
 			$criteria->compare('date','<=' . date('Y-m-d', strtotime($endDate)));
+		}
+
+		if ( $provider )
+		{
+			$criteria->compare('t.providers_id',$provider);	
 		}
 
 		$totals             =array();
@@ -1535,6 +1548,7 @@ class DailyReport extends CActiveRecord
 		}
 		return $totals;
 	}
+
 
 	/**
 	 * [search description]

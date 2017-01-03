@@ -41,6 +41,7 @@ class ApiUpdateController extends Controller
 			'smaato', 
 			'campaign', 
 			'ajillionExchange', 
+			'ajillionCompare',
 			'smaatoExchange', 
 			'inmobiExchange', 
 			'affiliates', 
@@ -118,13 +119,24 @@ class ApiUpdateController extends Controller
 		Yii::app()->cache->flush();
 	}
 
+
+	public function actionAjillionCompare (){
+		try {
+			$ajillion = new Ajillion;
+			$return = $ajillion->compareTotals(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
+		}		
+	}
+
 	public function actionBingCode(){
 		echo $_REQUEST['code'];
 	}
 
 	public function actionAdWords($hash=null)
 	{
-
 		try {
 			$adWords = new AdWords;
 			$return = $adWords->downloadInfo(7);
