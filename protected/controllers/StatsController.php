@@ -66,6 +66,7 @@ class StatsController extends Controller
 	{
 		$csvData = array();
 		$dateStart = date('Y-m-d', strtotime($_REQUEST['dateStart']));
+		$group  = array_merge($request['group1'],$request['group2']);
 		
 		$dp = $model->cache(3600)->search(false);
 
