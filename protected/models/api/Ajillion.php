@@ -247,6 +247,9 @@ class Ajillion
 		$mailBody = "";
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
 
+		if ( !$date )
+			$date = 'yesterday';
+
 		$formated_date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 
 
