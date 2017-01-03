@@ -89,7 +89,7 @@ class StatsController extends Controller
 
 
 			if ( $group['tag'] )
-				$row['Tag']      				= $data->tag;
+				$row['Tag']      				= str_replace(',', '.', $data->tag);
 
 
 			if ( $group['advertiser'] )
