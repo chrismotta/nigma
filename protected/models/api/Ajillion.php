@@ -225,7 +225,7 @@ class Ajillion
 		date_default_timezone_set('UTC');
 		$return = '';
 
-		$date = isset($_GET['date']) ? $_GET['date'] : 'yesterday';
+		$date = isset($_GET['date']) ? $_GET['date'] : date('Y-m-d', strtotime('yesterday'));
 		$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
 		$return.= $this->downloadTotalsInfo($date);
 		
