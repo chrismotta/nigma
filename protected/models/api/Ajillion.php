@@ -253,7 +253,7 @@ class Ajillion
 	public function downloadTotalsInfo( $date )
 	{
 		$return = "";
-
+		$mailBody = "";
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
 
 		$formated_date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
@@ -272,7 +272,7 @@ class Ajillion
 		foreach ($advertisers as $adv) {
 			$adv_ids[] = $adv->id;
 		}
-		var_export($advertisers);
+
 		// get totals from all advertisers
 		$params = array(
 				"columns"=>array("advertiser"),
@@ -284,14 +284,14 @@ class Ajillion
 			);
 
 		$this->apiLog->updateLog('Processing', 'Getting traffic data');
-		$return .= ' - Processing: Getting traffic data - <br>';
+		$return .= ' - Processing: Getting traffic data - <br><br><br>';
 		$advReport = $this->getResponse("report.advertiser.performance.get", $params);
 
 		if ( !$advReport ) {
 			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
 			return 1;
 		}	
-		var_export($advReport);
+
 		foreach ( $advReport as $report ) {
 
 			$advExtId = false;
@@ -318,6 +318,7 @@ class Ajillion
 				$log->status = "notid";
 				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
 				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
+				$mailBody .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'\r\n';
 			}
 			else
 			{
@@ -330,13 +331,14 @@ class Ajillion
 				{
 					$log->status = "ok";
 					$log->message = "Advertiser totals match.";
-					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma totals:'.$totals['imp'].' Provider totals:'.$report->impressions.'<br>';
+					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma totals:'.$totals['imp'].'    Provider totals:'.$report->impressions.'<br>';
 				}
 				else
 				{
 					$log->status = "discrepancy";
 					$log->message = "A discrepancy was found.";
-					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma totals:'.$totals['imp'].' Provider totals:'.$report->impressions.'<br>';
+					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma totals:'.$totals['imp'].'    Provider totals:'.$report->impressions.'<br>';
+					$mailBody .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma totals:'.$totals['imp'].'    Provider totals:'.$report->impressions.'\r\n';
 				}
 			}
 
@@ -344,7 +346,16 @@ class Ajillion
 		}
 
 		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
-		$return .= 'Procces completed: advertisers totals succesfully compared.';
+		$return .= '<br><br>Procces completed: advertisers totals succesfully compared.';
+
+		if ( mail( 'daniel@themedialab.co;chris@themedialab.co', 'Nigma - API Update Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
+		{
+			$return .= ('<br><br><br>(mail notification sent)');
+		}
+		else
+		{
+			$return .= ('<br><br><br>(mail notification error)');
+		}
 
 		return $return;		
 	}

@@ -120,7 +120,7 @@ class ApiUpdateController extends Controller
 	}
 
 
-	public function actionAjillionCompare (){
+	public function actionAjillionCompare ($hash=null){
 		try {
 			$ajillion = new Ajillion;
 			$return = $ajillion->compareTotals(7);
