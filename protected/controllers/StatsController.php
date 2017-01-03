@@ -80,8 +80,8 @@ class StatsController extends Controller
 			if ( $group['hour'] )
 				$row['Hour']      				= $data->hour;					
 
-			if ( $group['publisher'] )
-				$row['Publisher']      			= $data->provider;
+			if ( $group['provider'] )
+				$row['Provider']      			= $data->provider;
 
 
 			if ( $group['placement'] )
