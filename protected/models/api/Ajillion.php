@@ -42,6 +42,7 @@ class Ajillion
 	{
 		$return = "";
 
+		// ajillion IDs - separated with '-'
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
 
 		if ( isset( $_GET['cid']) ) {
@@ -68,17 +69,26 @@ class Ajillion
 		
 		$this->apiLog->updateLog('Processing', 'Getting advertisers list');
 
-		// get all advertisers
-		$advertisers = $this->getResponse("advertiser.get");
-		if ( !$advertisers ) {
-			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
-			return 1;
-		}
+		// if adv parameter is setted
+		if (isset($fixed_adv)){ 
 
-		$adv_ids = array();
-		foreach ($advertisers as $adv) {
-			$adv_ids[] = $adv->id;
-		}
+			$adv_ids = explode('-', $fixed_adv);
+		
+		}else{
+		
+			// get all advertisers
+			$advertisers = $this->getResponse("advertiser.get");
+			if ( !$advertisers ) {
+				Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
+				return 1;
+			}
+
+			$adv_ids = array();
+			foreach ($advertisers as $adv) {
+				$adv_ids[] = $adv->id;
+			}
+		
+		}	
 
 		// get all campaigns from all advertisers
 		$params = array(
@@ -117,11 +127,6 @@ class Ajillion
 				continue;
 			}
 
-			if (isset($fixed_adv)){ // if adv parameter is setted
-				if( !Utilities::campaignBelongAdv($campaigns_id, $fixed_adv) )
-					continue;
-			}
-
 			$formated_date = date_format( new DateTime($date), "Y-m-d" );
 
 			// if exists overwrite, else create a new
@@ -133,6 +138,7 @@ class Ajillion
 					":cid"=>$campaigns_id,
 					)
 				);
+
 			if(!$dailyReport){
 				$dailyReport = new DailyReport();
 				$return.= "<hr/>New record: ";
@@ -154,8 +160,11 @@ class Ajillion
 			$dailyReport->date = $formated_date;
 			$dailyReport->providers_id = $this->provider_id;
 
+			// echo '<hr>'.json_encode($prevSavedCmps).' - '.$campaigns_id.' - '.strval(array_search($campaigns_id, $prevSavedCmps)).'<hr>';
+
 			$sumRevenue = false;
-			if ( array_search($campaigns_id, $prevSavedCmps) ) 
+			// fixed, if is the first position array_search returns 0 (equal to false)
+			if ( array_search($campaigns_id, $prevSavedCmps) !== false ) 
 			{ 
 				$dailyReport->imp = $dailyReport->imp + $campaign->impressions;
 				$dailyReport->clics = $campaign->hits + $campaign->hits;
@@ -197,7 +206,7 @@ class Ajillion
 			if ( !$dailyReport->save() ) {
 				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
 			}else{
-				$prevSavedCmps[] = $campaigns_id;
+				$prevSavedCmps[] = intval($campaigns_id);
 				$updated++;
 				$return.='<br/>===> saved';
 			}
@@ -212,31 +221,13 @@ class Ajillion
 		return $return;
 	}
 
-	public function compareTotals ( $offset ) {
+	public function compareTotals ( ) {
 		date_default_timezone_set('UTC');
 		$return = '';
 
-		if ( isset( $_GET['date']) ) {
-		
-			$date = $_GET['date'];
-			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-			$return.= $this->downloadTotalsInfo($date);
-
-		} else {
-
-			if(date('G')<=$offset){
-				$return.= '<hr/>yesterday<hr/>';
-				$date = date('Y-m-d', strtotime('yesterday'));
-				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-				$return.= $this->downloadTotalsInfo($date);
-			}
-			//default
-			$return.= '<hr/>today<hr/>';
-			$date = date('Y-m-d', strtotime('today'));
-			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-			$return.= $this->downloadTotalsInfo($date);
-		
-		}
+		$date = isset($_GET['date']) ? $_GET['date'] : 'yesterday';
+		$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+		$return.= $this->downloadTotalsInfo($date);
 		
 		return $return;		
 	}
@@ -247,8 +238,6 @@ class Ajillion
 		$mailBody = "";
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
 
-		if ( !$date )
-			$date = 'yesterday';
 
 		$formated_date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 
