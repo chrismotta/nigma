@@ -221,31 +221,13 @@ class Ajillion
 		return $return;
 	}
 
-	public function compareTotals ( $offset ) {
+	public function compareTotals ( ) {
 		date_default_timezone_set('UTC');
 		$return = '';
 
-		if ( isset( $_GET['date']) ) {
-		
-			$date = $_GET['date'];
-			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-			$return.= $this->downloadTotalsInfo($date);
-
-		} else {
-
-			if(date('G')<=$offset){
-				$return.= '<hr/>yesterday<hr/>';
-				$date = date('Y-m-d', strtotime('yesterday'));
-				$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-				$return.= $this->downloadTotalsInfo($date);
-			}
-			//default
-			$return.= '<hr/>today<hr/>';
-			$date = date('Y-m-d', strtotime('today'));
-			$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
-			$return.= $this->downloadTotalsInfo($date);
-		
-		}
+		$date = isset($_GET['date']) ? $_GET['date'] : 'yesterday';
+		$this->apiLog = ApiLog::initLog($date, $this->provider_id, null);
+		$return.= $this->downloadTotalsInfo($date);
 		
 		return $return;		
 	}
@@ -256,8 +238,6 @@ class Ajillion
 		$mailBody = "";
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
 
-		if ( !$date )
-			$date = 'yesterday';
 
 		$formated_date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 
