@@ -93,7 +93,7 @@ class StatsController extends Controller
 
 
 			if ( $group['advertiser'] )
-				$row['Advertiser']      		= $data->avertiser;
+				$row['Advertiser']      		= $data->advertiser;
 
 
 			if ( $group['campaign'] )
