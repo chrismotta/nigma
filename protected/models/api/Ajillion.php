@@ -331,7 +331,7 @@ class Ajillion
 		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
 		$return .= '<br><br>Procces completed: advertisers totals succesfully compared.';
 
-		if ( mail( 'daniel@themedialab.co;chris@themedialab.co', 'Nigma - API Update Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
+		if ( mail( 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co', 'Nigma - API Update Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
 		{
 			$return .= ('<br><br><br>(mail notification sent)');
 		}
