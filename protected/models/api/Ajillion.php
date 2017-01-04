@@ -335,14 +335,13 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
-			if ( mail( 'daniel@themedialab.co', 'Nigma (API Update) - Totals Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
-			{
-				$return .= ('<br><br><br>(mail notification sent)');
-			}
-			else
-			{
-				$return .= ('<br><br><br>(mail notification error)');
-			}
+			$to = 'daniel@themedialab.co';
+			$from = 'Nigma<no-reply@tmlbox.co>';
+			$subject = 'API Update - Totals Discrepancy';
+
+			$data = 'To: '.$to.'\nSubject: '.$subject.'\nFrom:'.$from.'\n'.$mailBody;
+			$command = 'echo -e "'.$data.'" | sendmail -bm -t -v -Fnigma@themedialab.co';
+			$r = shell_exec( $command );
 		}
 
 		return $return;		
