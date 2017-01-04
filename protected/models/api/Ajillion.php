@@ -259,7 +259,7 @@ class Ajillion
 		// get totals from all advertisers
 		$params = array(
 				"columns"=>array("advertiser"),
-				"sums"=>array("hits", "cost", "impressions", "conversions"),
+				"sums"=>array("hits", "cost", "impressions", "conversions", "revenue"),
 				"campaign_uids"=>array(),
 				"advertiser_ids"=>$adv_ids,
 				"start_date"=>$formated_date,
@@ -310,18 +310,18 @@ class Ajillion
 				$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
 
 
-				if ( $report->impressions == $totals['imp']	)
+				if ( $report->impressions == $totals['imp'] && $report->cost == $totals['spend'] && $report->revenue == $totals['revenue'] )
 				{
 					$log->status = "ok";
 					$log->message = "Advertiser totals match.";
-					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma totals:'.$totals['imp'].'    Provider totals:'.$report->impressions.'<br>';
+					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].'   Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'<br>';
 				}
 				else
 				{
 					$log->status = "discrepancy";
 					$log->message = "A discrepancy was found.";
-					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma totals:'.$totals['imp'].'    Provider totals:'.$report->impressions.'<br>';
-					$mailBody .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma totals:'.$totals['imp'].'    Provider totals:'.$report->impressions.'\r\n';
+					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma imps:'.$totals['imp'].'    Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'<br>';
+					$mailBody .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma imps:'.$totals['imp'].'    Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'\r\n';
 				}
 			}
 
@@ -331,13 +331,16 @@ class Ajillion
 		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
 		$return .= '<br><br>Procces completed: advertisers totals succesfully compared.';
 
-		if ( mail( 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co', 'Nigma - API Update Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
+		if ( $mailBody!="" )
 		{
-			$return .= ('<br><br><br>(mail notification sent)');
-		}
-		else
-		{
-			$return .= ('<br><br><br>(mail notification error)');
+			if ( mail( 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co', 'Nigma (API Update) - Totals Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
+			{
+				$return .= ('<br><br><br>(mail notification sent)');
+			}
+			else
+			{
+				$return .= ('<br><br><br>(mail notification error)');
+			}
 		}
 
 		return $return;		
