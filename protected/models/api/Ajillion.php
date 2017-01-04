@@ -342,6 +342,7 @@ class Ajillion
 			$data = 'To: '.$to.'\nSubject: '.$subject.'\nFrom:'.$from.'\n'.$mailBody;
 			$command = 'echo -e "'.$data.'" | sendmail -bm -t -v -Fnigma@themedialab.co';
 			$r = shell_exec( $command );
+			var_export($r);
 		}
 
 		return $return;		
