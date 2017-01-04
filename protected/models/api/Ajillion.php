@@ -320,8 +320,10 @@ class Ajillion
 				{
 					$log->status = "discrepancy";
 					$log->message = "A discrepancy was found.";
-					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma imps:'.$totals['imp'].'    Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'<br>';
-					$mailBody .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - DISCREPANCY - Nigma imps:'.$totals['imp'].'    Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'\r\n';
+
+					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'<br>';
+
+					$mailBody .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'\r\n';
 				}
 			}
 
@@ -333,7 +335,7 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
-			if ( mail( 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co', 'Nigma (API Update) - Totals Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
+			if ( mail( 'daniel@themedialab.co', 'Nigma (API Update) - Totals Discrepancy', $mailBody, 'From:nigma@themedialab.co\r\nContent-type: text/plain; charset=utf-8' ) )
 			{
 				$return .= ('<br><br><br>(mail notification sent)');
 			}
