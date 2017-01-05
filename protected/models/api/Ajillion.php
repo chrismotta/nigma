@@ -309,8 +309,23 @@ class Ajillion
 
 				$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
 
+				if ( $report->cost > $totals['spend'] )
+				{
+					$maxCost = $report->cost;
+					$minCost = $totals['spend'];
+				}
+				else
+				{
 
-				if ( $report->impressions == $totals['imp'] && $report->cost == $totals['spend'] && $report->revenue == $totals['revenue'] )
+					$maxCost = $totals['spend'];
+					$minCost = $report->cost;
+				}
+
+				if ( 
+					$report->impressions == $totals['imp'] 
+					&& $maxCost-$minCost>1.00  
+					&& $report->revenue == $totals['revenue'] 
+				)
 				{
 					$log->status = "ok";
 					$log->message = "Advertiser totals match.";
@@ -337,7 +352,7 @@ class Ajillion
 		{
 			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
-			$subject = 'API Update - Totals Discrepancy';
+			$subject = 'API Update - Totals Discrepancy from '.date_format( new DateTime($date), "Y-m-d" );
 			$headers = 'From:'.$from.'\n';
 
 			$return .= '<br><br>mail notification status: ';
