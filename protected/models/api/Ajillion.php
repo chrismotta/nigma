@@ -461,7 +461,7 @@ class Ajillion
 					 echo "To: $MAILTO"
 					 echo "Subject: $SUBJECT"
 					 echo "MIME-Version: 1.0"
-					 echo "Content-Type: text/html charset=\'utf-8\'"
+					 echo "Content-Type: text/html; charset=UTF-8"
 					 echo $BODY
 					) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
 				';
