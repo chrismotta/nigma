@@ -305,7 +305,7 @@ class Ajillion
 				$mailBody .= '
 					<tr>
 						<td>NOT FOUND IN NIGMA</td>
-						<td>'.$report->advertiser.'</td>
+						<td>'.utf8_encode($report->advertiser).'</td>
 						<td></td>
 						<td></td>
 						<td></td>
@@ -365,13 +365,13 @@ class Ajillion
 					$mailBody .= '
 						<tr>
 							<td>DISCREPANCY</td>
-							<td>'.$adv->name . '('.$adv->id.')</td>
-							<td>'.$totals['imp'].'</td>
-							<td>'.$report->impressions.'</td>
-							<td>'.$totals['revenue'].'</td>
-							<td>'.$report->revenue.'</td>
-							<td>'.$totals['spend'].'</td>
-							<td>'.$report->cost.'</td>
+							<td>'.utf8_encode($adv->name) . '('.utf8_encode($adv->id).')</td>
+							<td>'.utf8_encode($totals['imp']).'</td>
+							<td>'.utf8_encode($report->impressions).'</td>
+							<td>'.utf8_encode($totals['revenue']).'</td>
+							<td>'.utf8_encode($report->revenue).'</td>
+							<td>'.utf8_encode($totals['spend']).'</td>
+							<td>'.utf8_encode($report->cost).'</td>
 						</tr>
 					';
 				}
@@ -389,7 +389,7 @@ class Ajillion
 			$d = date_format( new DateTime($date), "Y-m-d");
 			$to = 'daniel@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
-			$subject = 'API Update - Totals Discrepancy from '.$d;
+			$subject = 'API Totals Compare from '.$d;
 			$headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
 			$mailBody = '
 			<html>
