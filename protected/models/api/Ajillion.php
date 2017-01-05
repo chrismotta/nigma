@@ -294,6 +294,7 @@ class Ajillion
 					)
 				);
 
+
 			$log = new AdvTotalsLog();
 			$log->date = $date;			
 
@@ -317,6 +318,9 @@ class Ajillion
 			}
 			else
 			{
+				if ( $adv->id==12 || $adv->id==38 )
+					continue;
+									
 				$log->advertiser = $adv->id;
 
 				$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
@@ -377,7 +381,9 @@ class Ajillion
 				}
 			}
 
-			$log->save();
+			$log->save();				
+
+
 		}
 
 		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
@@ -463,7 +469,7 @@ class Ajillion
 					 echo "MIME-Version: 1.0"
 					 echo "Content-Type: text/html; charset=UTF-8"
 					 echo $BODY
-					) | /usr/sbin/sendmail -F $MAILTO -t -bm
+					) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
 				';
 				$r = shell_exec( $command );
 
