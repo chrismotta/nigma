@@ -463,7 +463,7 @@ class Ajillion
 					 echo "MIME-Version: 1.0"
 					 echo "Content-Type: text/html; charset=UTF-8"
 					 echo $BODY
-					) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
+					) | /usr/sbin/sendmail -F $MAILTO -t -bm
 				';
 				$r = shell_exec( $command );
 
