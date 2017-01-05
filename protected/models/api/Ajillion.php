@@ -294,90 +294,94 @@ class Ajillion
 					)
 				);
 
-			$log = new AdvTotalsLog();
-			$log->date = $date;			
-
-			if ( !$adv ){
-				$log->status = "notid";
-				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
-				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
-
-				$mailBody .= '
-					<tr>
-						<td>NOT FOUND IN NIGMA</td>
-						<td>'.utf8_encode($report->advertiser).'</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>				
-				';
-			}
-			else
+			if ( $advExtId!=10945 && $advExtId!=4942 )
 			{
-				$log->advertiser = $adv->id;
+				$log = new AdvTotalsLog();
+				$log->date = $date;			
 
-				$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
-
-				if ( $report->cost > $totals['spend'] )
-				{
-					$maxCost = $report->cost;
-					$minCost = $totals['spend'];
-				}
-				else
-				{
-
-					$maxCost = $totals['spend'];
-					$minCost = $report->cost;
-				}
-
-				if ( $report->revenue > $totals['revenue'] )
-				{
-					$maxRev = $report->revenue;
-					$minRev = $totals['revenue'];
-				}
-				else
-				{
-
-					$maxRev = $totals['revenue'];
-					$minRev = $report->revenue;
-				}				
-
-				if ( 
-					$report->impressions == $totals['imp'] 
-					&& $maxCost-$minCost<1.00  
-					&& $maxRev-$minRev<1.00  
-				)
-				{
-					$log->status = "ok";
-					$log->message = "Advertiser totals match.";
-					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].'   Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'<br>';
-				}
-				else
-				{
-					$log->status = "discrepancy";
-					$log->message = "A discrepancy was found.";
-
-					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'<br>';
+				if ( !$adv ){
+					$log->status = "notid";
+					$log->message = "External ID not matched for advertiser: ".$report->advertiser;
+					$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
 
 					$mailBody .= '
 						<tr>
-							<td>DISCREPANCY</td>
-							<td>'.utf8_encode($adv->name) . '('.utf8_encode($adv->id).')</td>
-							<td>'.utf8_encode($totals['imp']).'</td>
-							<td>'.utf8_encode($report->impressions).'</td>
-							<td>'.utf8_encode($totals['revenue']).'</td>
-							<td>'.utf8_encode($report->revenue).'</td>
-							<td>'.utf8_encode($totals['spend']).'</td>
-							<td>'.utf8_encode($report->cost).'</td>
-						</tr>
+							<td>NOT FOUND IN NIGMA</td>
+							<td>'.utf8_encode($report->advertiser).'</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>				
 					';
 				}
+				else
+				{
+					$log->advertiser = $adv->id;
+
+					$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
+
+					if ( $report->cost > $totals['spend'] )
+					{
+						$maxCost = $report->cost;
+						$minCost = $totals['spend'];
+					}
+					else
+					{
+
+						$maxCost = $totals['spend'];
+						$minCost = $report->cost;
+					}
+
+					if ( $report->revenue > $totals['revenue'] )
+					{
+						$maxRev = $report->revenue;
+						$minRev = $totals['revenue'];
+					}
+					else
+					{
+
+						$maxRev = $totals['revenue'];
+						$minRev = $report->revenue;
+					}				
+
+					if ( 
+						$report->impressions == $totals['imp'] 
+						&& $maxCost-$minCost<1.00  
+						&& $maxRev-$minRev<1.00  
+					)
+					{
+						$log->status = "ok";
+						$log->message = "Advertiser totals match.";
+						$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].'   Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'<br>';
+					}
+					else
+					{
+						$log->status = "discrepancy";
+						$log->message = "A discrepancy was found.";
+
+						$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'<br>';
+
+						$mailBody .= '
+							<tr>
+								<td>DISCREPANCY</td>
+								<td>'.utf8_encode($adv->name) . '('.utf8_encode($adv->id).')</td>
+								<td>'.utf8_encode($totals['imp']).'</td>
+								<td>'.utf8_encode($report->impressions).'</td>
+								<td>'.utf8_encode($totals['revenue']).'</td>
+								<td>'.utf8_encode($report->revenue).'</td>
+								<td>'.utf8_encode($totals['spend']).'</td>
+								<td>'.utf8_encode($report->cost).'</td>
+							</tr>
+						';
+					}
+				}
+
+				$log->save();				
 			}
 
-			$log->save();
 		}
 
 		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
@@ -463,7 +467,7 @@ class Ajillion
 					 echo "MIME-Version: 1.0"
 					 echo "Content-Type: text/html; charset=UTF-8"
 					 echo $BODY
-					) | /usr/sbin/sendmail -F $MAILTO -t -bm
+					) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
 				';
 				$r = shell_exec( $command );
 
