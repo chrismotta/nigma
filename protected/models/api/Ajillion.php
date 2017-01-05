@@ -391,9 +391,8 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
-			//,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co
 			$d = date_format( new DateTime($date), "Y-m-d");
-			$to = 'daniel@themedialab.co';
+			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
 			$subject = 'API Totals Compare from '.$d;
 			$headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
