@@ -301,7 +301,19 @@ class Ajillion
 				$log->status = "notid";
 				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
 				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
-				$mailBody .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'\r\n';
+
+				$mailBody .= '
+					<tr>
+						<td>NOT FOUND IN NIGMA</td>
+						<td>'.$report->advertiser.'</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td></td>
+					</tr>				
+				';
 			}
 			else
 			{
@@ -321,10 +333,22 @@ class Ajillion
 					$minCost = $report->cost;
 				}
 
+				if ( $report->revenue > $totals['revenue'] )
+				{
+					$maxRev = $report->revenue;
+					$minRev = $totals['revenue'];
+				}
+				else
+				{
+
+					$maxRev = $totals['revenue'];
+					$minRev = $report->revenue;
+				}				
+
 				if ( 
 					$report->impressions == $totals['imp'] 
-					&& $maxCost-$minCost>1.00  
-					&& $report->revenue == $totals['revenue'] 
+					&& $maxCost-$minCost<1.00  
+					&& $maxRev-$minRev<1.00  
 				)
 				{
 					$log->status = "ok";
@@ -338,7 +362,18 @@ class Ajillion
 
 					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'<br>';
 
-					$mailBody .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'\r\n';
+					$mailBody .= '
+						<tr>
+							<td>DISCREPANCY</td>
+							<td>'.$adv->name . '('.$adv->id.')</td>
+							<td>'.$totals['imp'].'</td>
+							<td>'.$report->impressions.'</td>
+							<td>'.$totals['revenue'].'</td>
+							<td>'.$report->revenue.'</td>
+							<td>'.$totals['spend'].'</td>
+							<td>'.$report->cost.'</td>
+						</tr>
+					';
 				}
 			}
 
@@ -350,10 +385,62 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
-			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co';
+			//,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co
+			$d = date_format( new DateTime($date), "Y-m-d");
+			$to = 'daniel@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
-			$subject = 'API Update - Totals Discrepancy from '.date_format( new DateTime($date), "Y-m-d" );
-			$headers = 'From:'.$from.'\n';
+			$subject = 'API Update - Totals Discrepancy from '.$d;
+			$headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
+			$mailBody = '
+			<html>
+				<head>
+					<style>
+						*{
+							font-family:Arial;
+							font-size:14px;
+						}
+						span{
+							font-size:21px;
+							color:black;							
+						}
+						table {
+							border-collapse: collapse;							
+						}
+						table, td, th {
+							border: 1px solid black;
+						}
+						th {
+							font-weight:bolder;
+						}
+						td {
+							padding:5px;
+						}
+						div{
+							margin-top:25px;
+							overflow-x:auto;
+						}
+					</style>
+				</head>
+				<body>
+					<span>API TOTALS COMPARE FROM '.$d.'</span>
+					<div>
+						<table>
+							<thead>
+								<th>STATUS</th>
+								<th>ADVERTISER</th>
+								<th>NIGMA IMPS</th>
+								<th>PROVIDER IMPS</th>
+								<th>NIGMA REVENUE</th>
+								<th>PROVIDER REVENUE</th>
+								<th>NIGMA SPEND</th>
+								<th>PROVIDER SPEND</th>
+							</thead>
+							<tbody>'.$mailBody.'</tbody>
+						</table>
+					</div>
+				</body>
+			</html>
+			';
 
 			$return .= '<br><br>mail notification status: ';
 			if ( mail($to, $subject, $mailBody, $headers ) )
@@ -369,15 +456,12 @@ class Ajillion
 					export FROM="'.$from.'"
 					export SUBJECT="'.$subject.'"
 					export BODY="'.$mailBody.'"
-					export ATTACH="/path/report.csv"
 					(
 					 echo "From: $FROM"
 					 echo "To: $MAILTO"
-					 echo "Cc: $MAILCC"
 					 echo "Subject: $SUBJECT"
 					 echo "MIME-Version: 1.0"
-					 echo "Content-Type: text/plain"
-					 echo "Content-Disposition: inline"
+					 echo "Content-Type: text/html"
 					 echo $BODY
 					) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
 				';
