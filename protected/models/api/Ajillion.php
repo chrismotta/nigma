@@ -335,14 +335,41 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
-			$to = 'daniel@themedialab.co';
+			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
 			$subject = 'API Update - Totals Discrepancy';
+			$headers = 'From:'.$from.'\n';
 
-			$data = 'To: '.$to.'\nSubject: '.$subject.'\nFrom:'.$from.'\n'.$mailBody;
-			$command = 'echo -e "'.$data.'" | sendmail -bm -t -v -Fnigma@themedialab.co';
-			$r = shell_exec( $command );
-			var_export($r);
+			$return .= '<br><br>mail notification status: ';
+			if ( mail($to, $subject, $mailBody, $headers ) )
+			{
+				$return .= 'sent';
+			}
+			else
+			{
+				$data = 'To: '.$to.'\nSubject: '.$subject.'\nFrom:'.$from.'\n'.$mailBody;
+				$command = 'echo -e "'.$data.'" | sendmail -bm -t -v';
+				$command = '
+					export MAILTO="'.$to.'"
+					export FROM="'.$from.'"
+					export SUBJECT="'.$subject.'"
+					export BODY="'.$mailBody.'"
+					export ATTACH="/path/report.csv"
+					(
+					 echo "From: $FROM"
+					 echo "To: $MAILTO"
+					 echo "Cc: $MAILCC"
+					 echo "Subject: $SUBJECT"
+					 echo "MIME-Version: 1.0"
+					 echo "Content-Type: text/plain"
+					 echo "Content-Disposition: inline"
+					 echo $BODY
+					) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
+				';
+				$r = shell_exec( $command );
+
+				$return .= $r;				
+			}	
 		}
 
 		return $return;		
