@@ -318,7 +318,7 @@ class Ajillion
 			}
 			else
 			{
-				if ( $adv->id==12 || $adv->id==38 )
+				if ( $adv->id==12 || $adv->id==38 || $adv->id==30 )
 					continue;
 									
 				$log->advertiser = $adv->id;
