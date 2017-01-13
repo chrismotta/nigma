@@ -11,7 +11,19 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo KHtml::currencyTotals($totals->getData());
+echo '
+<div class="row totals-bar ">
+    <div class="span12">
+        <div class="alert alert-error">
+        	<h4 class="">Subtotal: '.number_format($totals['subtotal'],2).'</h4>
+        	<h5 class="">Total Count: '.number_format($totals['subtotalCount'],2).'</h5>
+        	<h5 class="">Total Clients: '.number_format($totals['total'],2).'</h5>
+        </div>
+    </div>
+</div>
+';
+
+//echo KHtml::currencyTotals($totals->getData());
 
 $this->menu=array(
 	array('label'=>'Create Ios', 'url'=>array('create')),
@@ -19,6 +31,7 @@ $this->menu=array(
 );
 $log    =new ValidationLog;
 $financeEntity    =new FinanceEntities;
+/*
 $buttonsColumn='
 				CHtml::ajaxLink(
 					"<i style=\"cursor:default\" id=\"icon-status\" class=\"".strtolower(str_replace(" ","_",$data["status_io"]))."\"></i>", 
@@ -110,7 +123,7 @@ else
 				: 
 					"<i id=\"icon-status\" class=\"icon-status verifed\"></i>"
 				;';
-
+*/
 ?>
 
 <?php $form=$this->beginWidget('bootstrap.widgets.TbActiveForm', array(
@@ -163,7 +176,7 @@ else
 		
 	?>
     <?php $this->widget('bootstrap.widgets.TbButton', array('buttonType'=>'submit', 'label'=>'Filter', 'htmlOptions' => array('class' => 'showLoading'))); ?>
-	<?php $this->widget('bootstrap.widgets.TbButton', array(
+	<?php /*$this->widget('bootstrap.widgets.TbButton', array(
 		'type'        => 'info',
 		'label'       => 'Excel Report',
 		'block'       => false,
@@ -184,29 +197,29 @@ else
 			),
 		'htmlOptions' => array('id' => 'excelReport','style'=>'float:right'),
 		)
-	); ?>
+	);*/ ?>
 	</div>
     </fieldset>
 
 <?php $this->endWidget(); ?>
 <?php 
-	$this->widget('yiibooster.widgets.TbGroupGridView', array(
+	$this->widget('yiibooster.widgets.TbExtendedGridView', array(
 	'id'              => 'clients-grid',
 	'dataProvider'    => $dataProvider,
-	'filter'          => $filtersForm,
+	//'filter'          => $model,
 	'afterAjaxUpdate' =>'verifedIcon',
 	'type'            => 'condensed',
-	'template'        => '{items} {pager} {summary}',
+	//'template'        => '{items} {pager} {summary}',
 	'columns'         => array(		
+        array(
+            'class'=>'bootstrap.widgets.TbRelationalColumn',
+            'name' => 'commercial_name',
+            //'htmlOptions'       => array('id'=>'alignLeft'),
+			'url' => $this->createUrl('/finance/clientDetails', array('year'=>$year, 'month' => $month)),
+		),
 		array(
-			'name'              => 'name',
-			'value'             => '$data["id"] . " - " . $data["name"]',
-			'htmlOptions'       => array('id'=>'alignLeft'),		
-			'header'            => 'Commercial Name',
-			),
-		array(
-			'type'              =>'raw',
-			'header'            =>'',
+			'type'              => 'raw',
+			'header'            => '',
 			'sortable'		    => false,
 			'filter'            => false,
 			'name'              => 'mr',
@@ -214,17 +227,18 @@ else
 			'name'              =>	'name',
 			'value'             =>'$data["status_adv"] == false ?
 				CHtml::link(
-					"<i id=\"icon-status-".$data["id"]."\" class=\"not_verifed\" data_id=\"".$data["id"]."\"></i>",
-					array("finance/validateOpportunitiesByAdvertiser/".$data["id"]."?period='.$year.'-'.$month.'-01"),
+					"<i id=\"icon-status-".$data["fe_id"]."\" class=\"not_verifed\" data_id=\"".$data["fe_id"]."\"></i>",
+					array("finance/validateOpportunitiesByAdvertiser/".$data["fe_id"]."?period='.$year.'-'.$month.'-01"),
 					array(
-						"data_name" => $data["name"],
+						"data_name" => $data["advertisers_name"],
 						"onclick" => "validateAdv(this);return false;"
 						)
 					)
 				:
-				"<i class=\"icon-status verifed\" data_id=\"".$data["id"]."\"></i>"
+				"<i class=\"icon-status verifed\" data_id=\"".$data["fe_id"]."\"></i>"
 				',		
 		),
+		/*
 		array(
 			'name'              => 'opportunitie',
 			'value'             => '$data["opportunitie"]',	
@@ -275,13 +289,34 @@ else
 				'
 				,
         ),
+        
 		array(
-			'name'              =>'conv',
-			'header'            =>'Quantity',
-			'value'             =>'number_format($data["conv"])',	
+			'name'              =>'opp_vals',				
+			'headerHtmlOptions' => array('width' => '80'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),       
+		array(
+			'name'              =>'opp_count',				
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
+		*/		
+		array(
+			'name'              =>'imp',				
+			'headerHtmlOptions' => array('width' => '80'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),
+		array(
+			'name'              =>'clics',
+			'headerHtmlOptions' => array('width' => '80'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),		
+		array(
+			'name'              =>'conv_adv',
+
+			'headerHtmlOptions' => array('width' => '80'),	
+			'htmlOptions'       => array('style'=>'text-align:right;'),	
+		),		
 		array(
 			'name'              =>'revenue',
 			'header'            =>'Revenue',
@@ -289,6 +324,7 @@ else
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),		
 		),
+		/*
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
@@ -298,14 +334,16 @@ else
 			'name'              => 'opportunitie',
 			'value'             => $buttonValidate,		
 		),
+		*/
 		array(
-			'name'              =>'name',
+			'name'              =>'total',
 			'header'            =>'Total Revenue',
 			'filter'			=>false,
-			'value'             =>'number_format($data["total_revenue"],2)',
+			'value'             =>'number_format($data["total"],2)',
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
+
 		array(
 			'type'              => 'raw',
 			'header'            => '',
@@ -318,7 +356,7 @@ else
 					"<i class=\"icon-pencil\"></i>",
 					array(
 						"finance/transaction", 
-						"id"     => $data["id"],
+						"id"     => $data["fe_id"],
 						"period" => "'.$year.'-'.$month.'-01",
 						),
     				array(
@@ -332,6 +370,7 @@ else
 					);
 				',		
 		),
+		/*
 		array(
 			'name'              =>'name',
 			'header'            =>'Total Transaction',
@@ -348,6 +387,8 @@ else
 			'headerHtmlOptions' => array('width' => '80'),
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 		),
+		*/
+		/*
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
@@ -358,6 +399,8 @@ else
 			'htmlOptions'		=>array('style'=>'text-align:left !important'),
 			'value'             =>$buttonsColumn,		
 		), 
+		*/
+		/*
 		array(
 			'type'              =>'raw',
 			'header'            =>'',
@@ -372,9 +415,9 @@ else
 							    "data-content" => $data["comment"],
 							)
 						) : null;',		
-		), 
+		),
+		*/ 
 	),
-	'mergeColumns' => array('name','opportunitie'),
 )); ?>
 
 <?php $this->beginWidget('bootstrap.widgets.TbModal', 

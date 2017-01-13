@@ -64,6 +64,16 @@ class DailyReport extends CActiveRecord
 	public $advertiser_cat;
 	public $opportunity;
 
+	// get finance data
+	public $status_adv;
+	public $advertiser_id;
+
+	// getFinanceTotals
+	public $subtotal;
+	public $subtotalCount;
+	public $opp_vals;
+	public $opp_count;
+	public $fe_id;
 
 	/**
 	 * @return string the associated database table name
@@ -107,7 +117,7 @@ class DailyReport extends CActiveRecord
 			'multiRates'   => array(self::HAS_MANY, 'MultiRate', 'daily_report_id'),
 			'dailyVectors' => array(self::HAS_MANY, 'DailyVectors', 'daily_report_id'),
 			'dailyReportVectors' => array(self::HAS_ONE, 'DailyReportVectors', 'daily_report_id'),
-			'vectors' => array(self::HAS_ONE, 'Vectors', 'dailyReportVectors.vectors_id'),
+			'vectors' => array(self::HAS_ONE, 'Vectors', 'dailyReportVectors.vectors_id'),		
 		);
 	}
 
@@ -344,14 +354,14 @@ class DailyReport extends CActiveRecord
 
 		$criteria->with = array( 
 				'providers', 
-				'providers.affiliates', 				
+				'providers.affiliates', 
 				'campaigns', 
 				'campaigns.opportunities', 
-				'campaigns.opportunities.regions',
-				'campaigns.opportunities.regions.financeEntities',
+				'campaigns.opportunities.regions', 
+				'campaigns.opportunities.regions.financeEntities', 
 				'campaigns.opportunities.regions.financeEntities.advertisers',
 				'campaigns.opportunities.accountManager',
-				'campaigns.opportunities.regions.country' 
+				'campaigns.opportunities.regions.country', 
 			);
 		$criteria->compare('providers.name',$this->providers_name, true);
 		// if ( $providers->isNetwork() )
@@ -372,6 +382,240 @@ class DailyReport extends CActiveRecord
 		return new CActiveDataProvider($this, array(
 			'pagination'=>$pagination,
 			'criteria'=>$criteria,
+		));
+	}
+
+
+	public function getClientOpportunities ( $financeEntityId )
+	{
+
+		$date       =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month      =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
+
+		$startDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 1, $year) );
+		$endDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 31, $year) );
+
+		$model = DailyReport::model();
+		$criteria = new CDbCriteria;
+
+		$criteria->compare('t.date','>=' . date('Y-m-d', strtotime($startDate)));
+		$criteria->compare('t.date','<=' . date('Y-m-d', strtotime($endDate)));
+
+		$criteria->compare( 'financeEntities.id', $financeEntityId );
+
+		if( !FilterManager::model()->isUserTotalAccess('finance.clients') )
+			$criteria->compare( 'advertisers.user_id',Yii::App()->user->getId() );
+/*
+		$sumArray=array(
+					// Adding custom sort attributes
+		            'opportunity'=>array(
+						'asc'  =>'opportunities.product',
+						'desc' =>'opportunities.product DESC',
+		            ),
+		            'imp'=>array(
+						'asc'  =>'imp',
+						'desc' =>'imp DESC',
+		            ),
+		            'clics'=>array(
+						'asc'  =>'clics',
+						'desc' =>'clics DESC',
+		            ),
+		            'conv_adv'=>array(
+						'asc'  =>'conv_adv',
+						'desc' =>'conv_adv DESC',
+		            ),
+		            'revenue'=>array(
+						'asc'  =>'revenue',
+						'desc' =>'revenue DESC',
+		            ),		            
+		        );
+*/
+		$criteria->with = array( 
+				'campaigns.opportunities', 
+				'campaigns.opportunities.regions.financeEntities',
+				'campaigns.opportunities.regions.financeEntities.advertisers',
+				'campaigns.opportunities.accountManager',
+			);		
+
+		$criteria->group = 'opportunities.id';
+
+		$criteria->select = array( 
+			'CONCAT_WS(" - ", opportunities.id, opportunities.product) AS opportunity', 
+			'sum(t.revenue) AS revenue', 
+			'sum(t.imp) AS imp', 
+			'sum(t.clics) AS clics', 
+			'sum(t.conv_adv) AS conv_adv', 
+		);		
+
+		$pagination = isset($_REQUEST['v']) ? null : false;
+
+		return new CActiveDataProvider($this, array(
+			'pagination'=>$pagination,
+			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder' => 'opportunities.product ASC',
+				//'attributes'   =>$sumArray,
+		    ),			
+		));		
+	}
+
+	public function getFinanceTotals( )
+	{
+		$date       =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month      =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
+		$entity     =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat        =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status     =isset($_GET['status']) ? $_GET['status'] : null;
+
+		$startDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 1, $year) );
+		$endDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 31, $year) );
+
+		$model = DailyReport::model();
+		$criteria = new CDbCriteria;
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+
+		$criteria->compare('t.date','>=' . $startDate );
+		$criteria->compare('t.date','<=' . $startDate );
+
+
+		if ( $cat )
+			$criteria->compare( 'a.cat', $cat );
+
+		if ( $status )
+			$criteria->compare( 'a.status', $status );
+
+		if( !FilterManager::model()->isUserTotalAccess('finance.clients') )
+			$criteria->compare( 'a.user_id',Yii::App()->user->getId() );		
+
+		$criteria->join = '
+			LEFT JOIN campaigns c ON c.id=t.campaigns_id 
+			LEFT JOIN opportunities o ON o.id=c.opportunities_id 
+			LEFT JOIN regions r ON r.id=o.regions_id 
+			LEFT JOIN finance_entities fe ON fe.id=r.finance_entities_id 
+			LEFT JOIN advertisers a ON a.id=fe.advertisers_id 
+			LEFT JOIN users u ON u.id=o.account_manager_id 
+			LEFT JOIN ( SELECT sum(rate*volume) AS subtotal, finance_entities_id AS feid FROM transaction_count tc WHERE tc.period>="'.$startDate.'" AND tc.period<="'.$endDate.'") AS s ON s.feid=fe.id
+		';
+
+		$criteria->select = array( 
+			'sum(t.revenue) AS subtotal',
+			's.subtotal AS subtotalCount',
+			's.subtotal+sum(t.revenue) AS total',
+		);		
+
+		$r = DailyReport::model()->findAll( $criteria );
+
+		if ( empty($r) )
+			return array('subtotal'=>0, 'subtotalCount' => 0, 'total' => 0 );
+		else
+			return $r[0];
+			
+	}
+
+	public function getFinanceData ( )
+	{
+		$date       =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month      =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
+		$entity     =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat        =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status     =isset($_GET['status']) ? $_GET['status'] : null;
+
+		$startDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 1, $year) );
+		$endDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 31, $year) );
+
+		$model = DailyReport::model();
+		$criteria = new CDbCriteria;
+
+		$startDate = date('Y-m-d', strtotime($startDate));
+		$endDate = date('Y-m-d', strtotime($endDate));
+
+		$criteria->compare('t.date','>=' . $startDate);
+		$criteria->compare('t.date','<=' . $endDate);
+
+		if ( $cat )
+			$criteria->compare( 'a.cat', $cat );
+
+		if ( $status )
+			$criteria->compare( 'a.status', $status );	
+
+		if( !FilterManager::model()->isUserTotalAccess('finance.clients') )
+			$criteria->compare( 'a.user_id',Yii::App()->user->getId() );		
+
+		$sumArray=array(
+					// Adding custom sort attributes
+		            'commercial_name'=>array(
+						'asc'  =>'fe.name',
+						'desc' =>'fe.name DESC',
+		            ),
+		            'imp'=>array(
+						'asc'  =>'t.imp',
+						'desc' =>'t.imp DESC',
+		            ),
+		            'clics'=>array(
+						'asc'  =>'t.clics',
+						'desc' =>'t.clics DESC',
+		            ),
+		            'conv_adv'=>array(
+						'asc'  =>'t.conv_adv',
+						'desc' =>'t.conv_adv DESC',
+		            ),
+		            'revenue'=>array(
+						'asc'  =>'t.revenue',
+						'desc' =>'t.revenue DESC',
+		            ),		  
+		            'total'=>array(
+						'asc'  =>'total',
+						'desc' =>'total DESC',
+		            ),		                      	        		            
+		        );
+
+		$criteria->join = '
+			LEFT JOIN campaigns c ON c.id=t.campaigns_id 
+			LEFT JOIN opportunities o ON o.id=c.opportunities_id 
+			LEFT JOIN regions r ON r.id=o.regions_id 
+			LEFT JOIN finance_entities fe ON fe.id=r.finance_entities_id 
+			LEFT JOIN advertisers a ON a.id=fe.advertisers_id 
+			LEFT JOIN users u ON u.id=o.account_manager_id 			
+			LEFT JOIN ( SELECT sum(rate*volume) AS subtotal, finance_entities_id AS feid FROM transaction_count tc WHERE tc.period>="'.$startDate.'" AND tc.period<="'.$endDate.'" GROUP BY finance_entities_id) AS s ON s.feid=fe.id 
+			LEFT JOIN opportunities_validation v ON o.id=v.opportunities_id AND v.period>="'.$startDate.'" 
+		';
+
+		$status = '
+			CASE 
+				WHEN count(v.id)=count(o.id) THEN 1
+				ELSE 0
+			END AS status_adv
+		';
+
+		$criteria->group = 'fe.id';
+
+		$criteria->select = array( 
+			'CONCAT_WS(" - ", fe.id, fe.name) AS commercial_name', 
+			'fe.id AS fe_id',
+			'fe.id AS id', 
+			$status,
+			'count(v.id) AS opp_vals',
+			'count(o.id) AS opp_count',
+			'sum(t.revenue) AS revenue', 
+			'sum(t.imp) AS imp', 
+			'sum(t.clics) AS clics', 
+			'sum(t.conv_adv) AS conv_adv', 
+			's.subtotal+sum(t.revenue) AS total',
+		);		
+
+		$pagination = isset($_REQUEST['v']) ? null : false;
+
+		return new CActiveDataProvider($this, array(
+			'pagination'=>$pagination,
+			'criteria'=>$criteria,
+			'sort'=>array(
+				'defaultOrder' => 'fe.name ASC',
+				'attributes'   =>$sumArray,
+		    ),			
 		));
 	}
 
