@@ -577,7 +577,7 @@ if(count($_REQUEST)>1){
 		),
 		array(
 			'name'              => 'profit_percent',
-			'value'             => $grouped ? '$data->revenue == 0 ? "0%" : number_format($data->profit / $data->getRevenueUSD() * 100) . "%"' : 'number_format($data->profit_percent*100)."%"', // FIX for sum feature
+			'value'             => 'number_format($data->profit_percent)."%"',
 			'htmlOptions'       => array('style'=>'text-align:right;'),
 			'footerHtmlOptions' => array('style'=>'text-align:right;'),
 			'footer'            => isset($totals['revenue']) && $totals['revenue']!=0 ? number_format(($totals['profit'] / $totals['revenue']) * 100)."%" : 0,
