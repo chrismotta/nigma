@@ -303,22 +303,25 @@ class Ajillion
 				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
 				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
 
-				$mailBody .= '
-					<tr>
-						<td>NOT FOUND IN NIGMA</td>
-						<td>'.utf8_encode($report->advertiser).'</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>				
-				';
+				if ( !$adv->id==12 && !$adv->id==38 && !$adv->id==30 && !$adv->id==42  ){
+					$mailBody .= '
+						<tr>
+							<td>NOT FOUND IN NIGMA</td>
+							<td>'.utf8_encode($report->advertiser).'</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>				
+					';
+				}
+									
 			}
 			else
 			{
-				if ( $adv->id==12 || $adv->id==38 || $adv->id==30 )
+				if ( $adv->id==12 || $adv->id==38 || $adv->id==30 || $adv->id==42  )
 					continue;
 									
 				$log->advertiser = $adv->id;
@@ -332,7 +335,6 @@ class Ajillion
 				}
 				else
 				{
-
 					$maxCost = $totals['spend'];
 					$minCost = $report->cost;
 				}
@@ -391,8 +393,9 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
+			// ,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co
 			$d = date_format( new DateTime($date), "Y-m-d");
-			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co';
+			$to = 'daniel@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
 			$subject = 'API Totals Compare from '.$d;
 			$headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
