@@ -480,7 +480,9 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('t.date','>=' . $startDate );
 		$criteria->compare('t.date','<=' . $startDate );
 
-
+		if ( $entity )
+			$criteria->compare( 'fe.entity', $entity );
+		
 		if ( $cat )
 			$criteria->compare( 'a.cat', $cat );
 
@@ -536,6 +538,9 @@ class DailyReport extends CActiveRecord
 		$criteria->compare('t.date','>=' . $startDate);
 		$criteria->compare('t.date','<=' . $endDate);
 
+		if ( $entity )
+			$criteria->compare( 'fe.entity', $entity );
+
 		if ( $cat )
 			$criteria->compare( 'a.cat', $cat );
 
@@ -559,9 +564,9 @@ class DailyReport extends CActiveRecord
 						'asc'  =>'t.clics',
 						'desc' =>'t.clics DESC',
 		            ),
-		            'conv_adv'=>array(
-						'asc'  =>'t.conv_adv',
-						'desc' =>'t.conv_adv DESC',
+		            'conv_api'=>array(
+						'asc'  =>'t.conv_api',
+						'desc' =>'t.conv_api DESC',
 		            ),
 		            'revenue'=>array(
 						'asc'  =>'t.revenue',
@@ -591,6 +596,13 @@ class DailyReport extends CActiveRecord
 			END AS status_adv
 		';
 
+		$totalRevenue = '
+			CASE 
+				WHEN s.subtotal IS NULL THEN 0+sum(t.revenue)
+				ELSE s.subtotal+sum(t.revenue)
+			END AS total
+		';		
+
 		$criteria->group = 'fe.id';
 
 		$criteria->select = array( 
@@ -598,13 +610,14 @@ class DailyReport extends CActiveRecord
 			'fe.id AS fe_id',
 			'fe.id AS id', 
 			$status,
-			'count(v.id) AS opp_vals',
-			'count(o.id) AS opp_count',
+			//'count(v.id) AS opp_vals',
+			//'count(o.id) AS opp_count',
 			'sum(t.revenue) AS revenue', 
 			'sum(t.imp) AS imp', 
 			'sum(t.clics) AS clics', 
-			'sum(t.conv_adv) AS conv_adv', 
-			's.subtotal+sum(t.revenue) AS total',
+			'sum(t.conv_api) AS conv_api', 
+			//'s.subtotal+sum(t.revenue) AS total',
+			$totalRevenue,
 		);		
 
 		$pagination = isset($_REQUEST['v']) ? null : false;
