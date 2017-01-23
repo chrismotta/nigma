@@ -27,7 +27,7 @@ class FinanceController extends Controller
 	{
 		return array(
 			array('allow',  // allow all users to perform 'index' and 'view' actions
-				'actions'=>array('clients','view','excelReport','multiRate','sendMail','opportunityValidation','validateOpportunity','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
+				'actions'=>array('clients', 'clientDetails', 'view','excelReport','multiRate','sendMail','opportunityValidation','validateOpportunity','transaction','addTransaction','invoice','revenueValidation','delete','getCarriers','brandingClients'),
 				'roles'=>array('admin', 'finance', 'media','media_manager','businness', 'affiliates_manager'),
 			),
 			array('allow',  // allow all users to perform 'index' and 'view' actions
@@ -96,12 +96,53 @@ class FinanceController extends Controller
 		if(!isset($_GET['ajax']))
 			$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('transactionProviders'));
 	}
-	
+
+	public function actionClientDetails( )
+	{
+
+		$model=new DailyReport();
+		$dataProvider = $model->getClientOpportunities( Yii::app()->getRequest()->getParam('id') );
+
+		$this->renderPartial('_opportunities', array(
+			'dataProvider' => $dataProvider,
+		));
+	}	
+
+	public function actionClients ()
+	{
+		$date       =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
+		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
+		$month      =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
+		$entity     =isset($_GET['entity']) ? $_GET['entity'] : null;
+		$cat        =isset($_GET['cat']) ? $_GET['cat'] : null;
+		$status     =isset($_GET['status']) ? $_GET['status'] : null;
+
+		$model=new DailyReport('search');
+		$model->unsetAttributes();
+
+		$filtersForm =new FiltersForm;
+		if (isset($_GET['FiltersForm']))
+		    $filtersForm->filters=$_GET['FiltersForm'];						
+
+		$dataProvider = $model->cache(3600)->getFinanceData();
+		$totalsDataProvider = $model->cache(3600)->getFinanceTotals();
+		$this->render('clients',array(
+			'model'        =>$model,
+			'filtersForm'  =>$filtersForm,
+			'dataProvider' =>$dataProvider,
+			'totals'       =>$totalsDataProvider,
+			'month'        =>$month,
+			'year'         =>$year,
+			'stat'         =>$status,
+			'entity'       =>$entity, 
+			'cat'          =>$cat, 
+		));		
+	}
 	/**
 	 * [actionClients description]
 	 * @return [type] [description]
 	 */
-	public function actionClients()
+	public function actionClientsOld()
 	{
 		$date       =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
 		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
@@ -608,6 +649,7 @@ class FinanceController extends Controller
 		}
 		else
 			echo 'La oportunidad ya ha sido validada anteriormente';
+
  		Yii::app()->end();
 	}
 
