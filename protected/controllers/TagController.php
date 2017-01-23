@@ -233,9 +233,20 @@ class TagController extends Controller
 	}
 
 	public function actionPixel ($id){
+
 		$status = $_GET['status'];
-		$pixel = new BLA();
-		$pixel->status = $status;
+		$pixel = new SandboxStatus();
+
+		$pixel->server_render = 1;
+
+		if ( $id )
+			$pixel->id = $id;
+
+		$pixel->script_exec = isset( $_GET['script_exec'] ) ? $_GET['script_exec'] : 0;
+		$pixel->top = isset( $_GET['top'] ) ? $_GET['top'] : 0;
+		$pixel->in_iframe = isset( $_GET['in_iframe'] ) ? $_GET['in_iframe'] : 0;
+		$pixel->data = isset( $_GET['data'] ) ? $_GET['data'] : 0;
+
 		$pixel->save();
 	}
 

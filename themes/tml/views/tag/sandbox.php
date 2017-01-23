@@ -2,6 +2,7 @@
 <html>
 <head>
 	<script type="text/javascript">
+    document.write('<img src=""  />');
 	console.log('Loading frame');
 
 function inIframe() {
