@@ -1,8 +1,14 @@
+<?php
+$pixel = Yii::app()->getBaseUrl() . '/tag/pixel/'.$pixel_id;
+?>
 <!DOCTYPE html>
 <html>
 <head>
 	<script type="text/javascript">
-    document.write('<img src=""  />');
+    <?php 
+        echo ('document.write(\'<img src="'.$pixel.'?status=script_exec" />\');');
+    ?>
+    
 	console.log('Loading frame');
 
 function inIframe() {
@@ -36,7 +42,10 @@ function ReopenUrlBuilder(baseUrl) {
                     return info.substring(0, indexToCut);
                 }
             }
-        } catch (e) {
+        } catch (e) { 
+            <?php 
+                echo ('document.write(\'<img src="'.$pixel.'?status=build" />\');');
+            ?>                   
         }
 
         return '';
@@ -82,13 +91,23 @@ function ReopenUrlBuilder(baseUrl) {
     var url = builder.build();
 
     if (true && inIframe()) {
+        <?php 
+            echo ('document.write(\'<img src="'.$pixel.'?status=iframe_top" />\');');
+        ?>            
         window.top.location.replace(url);
-                    setTimeout(function () {
-                // window.location.replace("http:\/\/www.superadexchange.com\/ad\/display.php?stamat=j%7C%2CEsnE2t2dT4jeaonU7JkESoheCtnQ6p1eaonP75x.9f2%2CJtMKVa2JCJLXwPPM-w00VcXXmfVBNIqaS8WEvYCOyCHI2dp-9U0wD2AkQ7FKmhhJ1Mf2UlGaO-kAtb6Th4qAsg%2C%2C");
+                        
+                setTimeout(function () {
+                <?php 
+                    echo ('document.write(\'<img src="'.$pixel.'?status=iframe_timeout" />\');');
+                ?>                        
+                //window.location.replace("http:\/\/www.superadexchange.com\/ad\/display.php?stamat=j%7C%2CEsnE2t2dT4jeaonU7JkESoheCtnQ6p1eaonP75x.9f2%2CJtMKVa2JCJLXwPPM-w00VcXXmfVBNIqaS8WEvYCOyCHI2dp-9U0wD2AkQ7FKmhhJ1Mf2UlGaO-kAtb6Th4qAsg%2C%2C");
                 window.location.replace("http:\/\/www.themedialab.co\/apps\/?");
             }, 2500);
             }
     else {
+        <?php 
+            echo ('document.write(\'<img src="'.$pixel.'?status=not_iframe" />\');');
+        ?>          
         window.location.replace(url);
     }
 
@@ -116,6 +135,7 @@ function ReopenUrlBuilder(baseUrl) {
 </head>
 <body>
     Loading...
+        <?php echo ('<img src="'.$pixel.'?status=document_loaded" />' );?>
     <hr>
 </body>
 </html>

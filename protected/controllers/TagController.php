@@ -134,6 +134,7 @@ class TagController extends Controller
 			$sec = false;
 		return $sec;
 	}
+
 	public static function protocol(){
 		if (self::isSecure()) 
 			$prot = 'https';
@@ -229,25 +230,34 @@ class TagController extends Controller
 
 	public function actionSandbox ()
 	{
-		$this->renderPartial('sandbox');
+		$pixel = new SandboxStatus();
+		$pixel->status = 'server_render';
+		$pixel->save();		
+
+		$this->renderPartial('sandbox', array('pixel_id'=>$pixel->id) );
 	}
 
 	public function actionPixel ($id){
+		if ( $id )			
+			$pixel = SandboxStatus::model()->findByPk($id);
+		else
+			$pixel = new SandboxStatus();
 
-		$status = $_GET['status'];
-		$pixel = new SandboxStatus();
+		if(isset( $_GET['status'] ))
+			$pixel->status = $_GET['status'];
 
-		$pixel->server_render = 1;
-
-		if ( $id )
-			$pixel->id = $id;
-
-		$pixel->script_exec = isset( $_GET['script_exec'] ) ? $_GET['script_exec'] : 0;
-		$pixel->top = isset( $_GET['top'] ) ? $_GET['top'] : 0;
-		$pixel->in_iframe = isset( $_GET['in_iframe'] ) ? $_GET['in_iframe'] : 0;
-		$pixel->data = isset( $_GET['data'] ) ? $_GET['data'] : 0;
+		if(isset( $_GET['description'] ))
+			$pixel->description = $_GET['description'];		
 
 		$pixel->save();
+
+		$path = './themes/tml/img/caution.jpg';
+		$content = file_get_contents($path);
+
+		$i = array();
+		$i = getimagesize($path, $i);
+		header('Content-Type: '.$i['mime']);
+		echo $content;
 	}
 
 	public function actionUrl($id, $urlTest = false, $render = ''){

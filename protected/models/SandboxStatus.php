@@ -6,11 +6,8 @@
  * The followings are the available columns in table 'sandbox_status':
  * @property integer $id
  * @property string $date
- * @property integer $server_render
- * @property integer $in_iframe
- * @property integer $script_exec
- * @property integer $top
- * @property string $data
+ * @property string $status
+ * @property string $description
  */
 class SandboxStatus extends CActiveRecord
 {
@@ -30,13 +27,12 @@ class SandboxStatus extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('id', 'required'),
-			array('id, server_render, in_iframe, script_exec, top', 'numerical', 'integerOnly'=>true),
-			array('data', 'length', 'max'=>255),
+			array('status', 'length', 'max'=>45),
+			array('description', 'length', 'max'=>255),
 			array('date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, date, server_render, in_iframe, script_exec, top, data', 'safe', 'on'=>'search'),
+			array('id, date, status, description', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -59,11 +55,8 @@ class SandboxStatus extends CActiveRecord
 		return array(
 			'id' => 'ID',
 			'date' => 'Date',
-			'server_render' => 'Server Render',
-			'in_iframe' => 'In Iframe',
-			'script_exec' => 'Script Exec',
-			'top' => 'Top',
-			'data' => 'Data',
+			'status' => 'Status',
+			'description' => 'Description',
 		);
 	}
 
@@ -87,11 +80,8 @@ class SandboxStatus extends CActiveRecord
 
 		$criteria->compare('id',$this->id);
 		$criteria->compare('date',$this->date,true);
-		$criteria->compare('server_render',$this->server_render);
-		$criteria->compare('in_iframe',$this->in_iframe);
-		$criteria->compare('script_exec',$this->script_exec);
-		$criteria->compare('top',$this->top);
-		$criteria->compare('data',$this->data,true);
+		$criteria->compare('status',$this->status,true);
+		$criteria->compare('description',$this->description,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,
