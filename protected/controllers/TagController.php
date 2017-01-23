@@ -251,7 +251,7 @@ class TagController extends Controller
 
 		$pixel->save();
 
-		$path = './themes/tml/img/caution.jpg';
+		$path = './themes/tml/img/pixel.gif';
 		$content = file_get_contents($path);
 
 		$i = array();
