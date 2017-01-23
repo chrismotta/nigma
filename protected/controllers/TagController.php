@@ -213,11 +213,33 @@ class TagController extends Controller
 
 	public function actionUrlp ( $id )
 	{
-		$this->actionUrl($id, false, true);
+		$this->actionUrl($id, false, 'resize');
 	}
 
 
-	public function actionUrl($id, $urlTest = false, $resize = false){
+	public function actionRenderurl ( $id )
+	{
+		$this->actionUrl($id, false, 'iframe');
+	}
+	
+	public function actionRendersandbox ( $id )
+	{
+		$this->actionUrl($id, false, 'sandbox');
+	}
+
+	public function actionSandbox ()
+	{
+		$this->renderPartial('sandbox');
+	}
+
+	public function actionPixel ($id){
+		$status = $_GET['status'];
+		$pixel = new BLA();
+		$pixel->status = $status;
+		$pixel->save();
+	}
+
+	public function actionUrl($id, $urlTest = false, $render = ''){
 		// $start = microtime();
 
 		// detecting if is postback click
@@ -296,14 +318,30 @@ class TagController extends Controller
 			$result = Yii::app()->db->createCommand($query)->execute();
 		}
 		// die($newUrl);
+		
+		switch ($render) {
+			case 'resize':
+				$this->renderPartial('pop',array(
+					'url'=>$newUrl,
+				));
+				break;
 
-		if($resize){
-			$this->renderPartial('pop',array(
-				'url'=>$newUrl,
-			));
-		}else{
-			// redirect to tag url
-			header("Location: ".$newUrl);
+			case 'iframe':
+				$this->renderPartial('frame',array(
+					'url'=>$newUrl,
+				));
+				break;
+
+			case 'sandbox':
+				$this->renderPartial('frame',array(
+					'url'=>'http://localhost/nigma/tag/sandbox',
+				));
+				break;
+			
+			default:
+				// redirect to tag url
+				header("Location: ".$newUrl);
+				break;
 		}
 	}
 
