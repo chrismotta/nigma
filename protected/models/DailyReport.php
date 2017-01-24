@@ -74,6 +74,7 @@ class DailyReport extends CActiveRecord
 	public $opp_vals;
 	public $opp_count;
 	public $fe_id;
+	public $finance_entity;
 
 	/**
 	 * @return string the associated database table name
@@ -163,6 +164,7 @@ class DailyReport extends CActiveRecord
 			'carrier'            => 'Carrier',
 			'vector'			=> 'Vector',
 			'advertiser_cat'	=> 'Category',
+			'finance_entity'	=> 'Finance Entity',
 		);
 	}
 
@@ -388,7 +390,6 @@ class DailyReport extends CActiveRecord
 
 	public function getClientOpportunities ( $financeEntityId )
 	{
-
 		$date       =strtotime ( '-1 month' , strtotime ( date('Y-m-d',strtotime('NOW')) ) ) ;
 		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
 		$month      =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
@@ -445,7 +446,7 @@ class DailyReport extends CActiveRecord
 			'sum(t.revenue) AS revenue', 
 			'sum(t.imp) AS imp', 
 			'sum(t.clics) AS clics', 
-			'sum(t.conv_adv) AS conv_adv', 
+			'sum(t.conv_api) AS conv_api', 
 		);		
 
 		$pagination = isset($_REQUEST['v']) ? null : false;
@@ -478,7 +479,7 @@ class DailyReport extends CActiveRecord
 		$endDate = date('Y-m-d', strtotime($endDate));
 
 		$criteria->compare('t.date','>=' . $startDate );
-		$criteria->compare('t.date','<=' . $startDate );
+		$criteria->compare('t.date','<=' . $endDate );
 
 		if ( $entity )
 			$criteria->compare( 'fe.entity', $entity );
@@ -552,7 +553,7 @@ class DailyReport extends CActiveRecord
 
 		$sumArray=array(
 					// Adding custom sort attributes
-		            'commercial_name'=>array(
+		            'finance_entity'=>array(
 						'asc'  =>'fe.name',
 						'desc' =>'fe.name DESC',
 		            ),
@@ -606,7 +607,7 @@ class DailyReport extends CActiveRecord
 		$criteria->group = 'fe.id';
 
 		$criteria->select = array( 
-			'CONCAT_WS(" - ", fe.id, fe.name) AS commercial_name', 
+			'CONCAT_WS(" - ", fe.id, fe.name) AS finance_entity', 
 			'fe.id AS fe_id',
 			'fe.id AS id', 
 			$status,

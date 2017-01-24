@@ -25,7 +25,7 @@ $this->widget('bootstrap.widgets.TbExtendedGridView', array(
 			'sortable'			=> false,
 		),		
 		array(
-			'name'              =>'conv_adv',
+			'name'              => 'conv_api',
 			'headerHtmlOptions' => array('width' => '80'),	
 			'htmlOptions'       => array('style'=>'text-align:right;'),	
 			'sortable'			=> false,

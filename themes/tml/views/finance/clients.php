@@ -213,7 +213,7 @@ else
 	'columns'         => array(		
         array(
             'class'=>'bootstrap.widgets.TbRelationalColumn',
-            'name' => 'commercial_name',
+            'name' => 'finance_entity',
             //'htmlOptions'       => array('id'=>'alignLeft'),
 			'url' => $this->createUrl('/finance/clientDetails', array('year'=>$year, 'month' => $month)),
 		),
