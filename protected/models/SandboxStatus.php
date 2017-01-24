@@ -8,6 +8,7 @@
  * @property string $date
  * @property string $status
  * @property string $description
+ * @property string $request_hash
  */
 class SandboxStatus extends CActiveRecord
 {
@@ -28,11 +29,11 @@ class SandboxStatus extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('status', 'length', 'max'=>45),
-			array('description', 'length', 'max'=>255),
+			array('description, request_hash', 'length', 'max'=>255),
 			array('date', 'safe'),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, date, status, description', 'safe', 'on'=>'search'),
+			array('id, date, status, description, request_hash', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,6 +58,7 @@ class SandboxStatus extends CActiveRecord
 			'date' => 'Date',
 			'status' => 'Status',
 			'description' => 'Description',
+			'request_hash' => 'Request Hash',
 		);
 	}
 
@@ -82,6 +84,7 @@ class SandboxStatus extends CActiveRecord
 		$criteria->compare('date',$this->date,true);
 		$criteria->compare('status',$this->status,true);
 		$criteria->compare('description',$this->description,true);
+		$criteria->compare('request_hash',$this->request_hash,true);
 
 		return new CActiveDataProvider($this, array(
 			'criteria'=>$criteria,

@@ -234,14 +234,30 @@ class TagController extends Controller
 		$pixel->status = 'server_render';
 		$pixel->save();		
 
-		$this->renderPartial('sandbox', array('pixel_id'=>$pixel->id) );
+		$pixel->request_hash = md5($pixel->id);
+		$pixel->save();		
+
+		$this->renderPartial('sandbox', array('pixel_id'=>$pixel->request_hash) );
 	}
 
-	public function actionPixel ($id){
-		if ( $id )			
-			$pixel = SandboxStatus::model()->findByPk($id);
-		else
-			$pixel = new SandboxStatus();
+	public function actionPixel ($hash){
+		$path = './themes/tml/img/pixel.gif';
+		$content = file_get_contents($path);
+
+		$i = array();
+		$i = getimagesize($path, $i);
+		header('Content-Type: '.$i['mime']);
+
+		if ( !$hash )			
+		{
+			echo $content;
+			return false;
+		} 
+
+		$pixel = new SandboxStatus();
+		
+		if ( $hash )
+			$pixel->request_hash = $hash;
 
 		if(isset( $_GET['status'] ))
 			$pixel->status = $_GET['status'];
@@ -251,12 +267,12 @@ class TagController extends Controller
 
 		$pixel->save();
 
-		$path = './themes/tml/img/pixel.gif';
-		$content = file_get_contents($path);
+		if ( !$hash )
+		{
+			$pixel->request_hash = md5($pixel->id);
+			$pixel->save();	
+		}
 
-		$i = array();
-		$i = getimagesize($path, $i);
-		header('Content-Type: '.$i['mime']);
 		echo $content;
 	}
 

@@ -44,7 +44,7 @@ function ReopenUrlBuilder(baseUrl) {
             }
         } catch (e) { 
             <?php 
-                echo ('document.write(\'<img src="'.$pixel.'?status=build" />\');');
+                echo ('document.write(\'<img src="'.$pixel.'?status=meta_content" />\');');
             ?>                   
         }
 
@@ -75,14 +75,21 @@ function ReopenUrlBuilder(baseUrl) {
     };
 
     this.build = function () {
-        return this.baseUrl
-            + '&cbrandom=' + Math.random()
+            params = '&cbrandom=' + Math.random()
             + '&cbtitle=' + encodeURIComponent(this._getTitle())
             + '&cbiframe=' + inIframe()
             + '&cbWidth=' + this._getWidth()
             + '&cbHeight=' + this._getHeight()
             + '&cbdescription=' + encodeURIComponent(this._getMetaContent('description'))
             + '&cbkeywords=' + encodeURIComponent(this._getMetaContent('keywords'))
+
+            
+            params2 = params.replace( /(&)/g, "," );
+            <?php 
+                
+                echo ('document.write(\'<img src="'.$pixel.'?status=build&description=\'+params2+\'" />\');');
+            ?>         
+            return this.baseUrl + params;
     };
 }
 
