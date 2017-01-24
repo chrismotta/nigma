@@ -94,7 +94,7 @@ function ReopenUrlBuilder(baseUrl) {
 }
 
     // var builder = new ReopenUrlBuilder("http:\/\/www.superadexchange.com\/a\/display.php?r=1467351&treqn=867143434&runauction=1&crr=1aaa0317c1ac307091a9,AzNHNDJtNHdzRWZvR2cHNDJmBWdHNDJgxmZo92RzQSdy5WatBmYu12RzQyRzQCQyQSc1VXa9267ec492b0308ccb44e");
-    var builder = new ReopenUrlBuilder("http:\/\/www.themedialab.co\/mobile\/?");
+    var builder = new ReopenUrlBuilder("http:\/\/bidbox.co\/tag\/url\/89?");
     var url = builder.build();
 
     if (true && inIframe()) {
@@ -108,7 +108,7 @@ function ReopenUrlBuilder(baseUrl) {
                     echo ('document.write(\'<img src="'.$pixel.'?status=iframe_timeout" />\');');
                 ?>                        
                 //window.location.replace("http:\/\/www.superadexchange.com\/ad\/display.php?stamat=j%7C%2CEsnE2t2dT4jeaonU7JkESoheCtnQ6p1eaonP75x.9f2%2CJtMKVa2JCJLXwPPM-w00VcXXmfVBNIqaS8WEvYCOyCHI2dp-9U0wD2AkQ7FKmhhJ1Mf2UlGaO-kAtb6Th4qAsg%2C%2C");
-                window.location.replace("http:\/\/www.themedialab.co\/apps\/?");
+                window.location.replace("http:\/\/bidbox.co\/tag\/url\/89?");
             }, 2500);
             }
     else {
