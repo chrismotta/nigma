@@ -558,20 +558,20 @@ class DailyReport extends CActiveRecord
 						'desc' =>'fe.name DESC',
 		            ),
 		            'imp'=>array(
-						'asc'  =>'t.imp',
-						'desc' =>'t.imp DESC',
+						'asc'  =>'sum(t.imp)',
+						'desc' =>'sum(t.imp) DESC',
 		            ),
 		            'clics'=>array(
-						'asc'  =>'t.clics',
-						'desc' =>'t.clics DESC',
+						'asc'  =>'sum(t.clics)',
+						'desc' =>'sum(t.clics) DESC',
 		            ),
 		            'conv_api'=>array(
-						'asc'  =>'t.conv_api',
-						'desc' =>'t.conv_api DESC',
+						'asc'  =>'sum(t.conv_api)',
+						'desc' =>'sum(t.conv_api) DESC',
 		            ),
 		            'revenue'=>array(
-						'asc'  =>'t.revenue',
-						'desc' =>'t.revenue DESC',
+						'asc'  =>'sum(t.revenue)',
+						'desc' =>'sum(t.revenue) DESC',
 		            ),		  
 		            'total'=>array(
 						'asc'  =>'total',
@@ -628,7 +628,7 @@ class DailyReport extends CActiveRecord
 			'criteria'=>$criteria,
 			'sort'=>array(
 				'defaultOrder' => 'fe.name ASC',
-				'attributes'   =>$sumArray,
+				'attributes'   => $sumArray,
 		    ),			
 		));
 	}
