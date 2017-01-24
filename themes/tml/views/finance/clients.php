@@ -21,7 +21,7 @@ echo '
         </div>
     </div>
 </div>
-';
+'; 
 
 //echo KHtml::currencyTotals($totals->getData());
 
