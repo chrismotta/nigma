@@ -11,7 +11,7 @@ $this->breadcrumbs=array(
 
 <?php
 //Totals
-echo '
+/*echo '
 <div class="row totals-bar ">
     <div class="span12">
         <div class="alert alert-error">
@@ -21,7 +21,7 @@ echo '
         </div>
     </div>
 </div>
-';
+';*/
 
 //echo KHtml::currencyTotals($totals->getData());
 
