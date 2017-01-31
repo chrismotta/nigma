@@ -15,7 +15,7 @@
  * @property string $browser_version
  *
  * The followings are the available model relations:
- * @property FImpressions[] $fImpressions
+ * @property FImp[] $fImps
  */
 class DUserAgent extends CActiveRecord
 {
@@ -37,8 +37,8 @@ class DUserAgent extends CActiveRecord
 		return array(
 			array('user_agent', 'required'),
 			array('user_agent', 'length', 'max'=>255),
-			array('device_type', 'length', 'max'=>10),
-			// array('device_brand, device_model, os_type, os_version, browser_type, browser_version', 'length', 'max'=>45),
+			array('device_type, device_brand, os_type, os_version, browser_type, browser_version', 'length', 'max'=>45),
+			array('device_model', 'length', 'max'=>100),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
 			array('id, user_agent, device_type, device_brand, device_model, os_type, os_version, browser_type, browser_version', 'safe', 'on'=>'search'),
@@ -53,7 +53,7 @@ class DUserAgent extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'fImpressions' => array(self::HAS_MANY, 'FImpressions', 'D_UserAgent_id'),
+			'fImps' => array(self::HAS_MANY, 'FImp', 'D_UserAgent_id'),
 		);
 	}
 
