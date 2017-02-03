@@ -390,7 +390,7 @@ class TagController extends Controller
 
 				$this->renderPartial('js',array(
 					'url'				=> $newUrl,
-					'status_pixel_url'	=> 'http://localhost/nigma/tag/pixel/'.$pixel->request_hash
+					'status_pixel_url'	=> 'http://bidbox.co/nigma/tag/pixel/'.$pixel->request_hash
 				));
 				break;				
 			
