@@ -390,7 +390,7 @@ class TagController extends Controller
 
 				$this->renderPartial('js',array(
 					'url'				=> $newUrl,
-					'status_pixel_url'	=> Yii::app()->getBaseUrl() . '/tag/pixel/'.$pixel_id
+					'status_pixel_url'	=> 'http://localhost/nigma/tag/pixel/'.$pixel->request_hash
 				));
 				break;				
 			
