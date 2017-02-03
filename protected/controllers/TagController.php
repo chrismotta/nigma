@@ -228,6 +228,11 @@ class TagController extends Controller
 		$this->actionUrl($id, false, 'sandbox');
 	}
 
+	public function actionRenderjs ( $id )
+	{
+		$this->actionUrl($id, false, 'js');
+	}	
+
 	public function actionSandbox ()
 	{
 		$pixel = new SandboxStatus();
@@ -374,6 +379,20 @@ class TagController extends Controller
 					'url'=>'http://localhost/nigma/tag/sandbox',
 				));
 				break;
+
+			case 'js':
+				$pixel = new SandboxStatus();
+				$pixel->status = 'server_render';
+				$pixel->save();		
+
+				$pixel->request_hash = md5($pixel->id);
+				$pixel->save();		
+
+				$this->renderPartial('js',array(
+					'url'				=> $newUrl,
+					'status_pixel_url'	=> Yii::app()->getBaseUrl() . '/tag/pixel/'.$pixel_id
+				));
+				break;				
 			
 			default:
 				// redirect to tag url
