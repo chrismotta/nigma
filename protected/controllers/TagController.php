@@ -381,7 +381,7 @@ class TagController extends Controller
 				$pixel_request_hash = md5($imp->id);
 				$this->renderPartial('js',array(
 					'url'				=> $newUrl,
-					'status_pixel_url'	=> 'http://localhost/nigma/tag/pixel/'.$pixel_request_hash
+					'status_pixel_url'	=> 'http://bidbox.co/tag/pixel/'.$pixel_request_hash
 				));
 				break;				
 			default:
