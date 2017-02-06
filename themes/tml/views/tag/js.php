@@ -10,11 +10,11 @@ desc = 'height='+wHeight+',width='+wWidth;
 
 if ( window.self !== window.top  )
 {
-        document.write('<img src="'+pixelUrl+'?status=render_iframe&desc='+desc+'" />');
+        document.write('<img src="'+pixelUrl+'?status=render_iframe&description='+desc+'" />');
         window.top.location.replace(url);
 }
 else
 {
-        document.write('<img src="'+pixelUrl+'?status=render&desc='+desc+'" />');
+        document.write('<img src="'+pixelUrl+'?status=render&description='+desc+'" />');
         window.location.replace(url);
 }
