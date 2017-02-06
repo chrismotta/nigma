@@ -52,7 +52,7 @@ return array(
 		'application.models.api.publisher.*',
 		'application.components.*',
 		'application.external.ip2location.IP2Location',
-		'application.external.wurfl.WurflManager',
+		//'application.external.wurfl.WurflManager',
 		'ext.eexcelwriter.components.EExcelWriter',
 		'ext.pdffactory.EPdfFactoryDoc',
 		'ext.samodelversioning.SAModelVersioning',
