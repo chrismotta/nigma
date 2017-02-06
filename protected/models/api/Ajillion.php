@@ -234,6 +234,7 @@ class Ajillion
 
 	public function downloadTotalsInfo( $date )
 	{
+		$excludedAdvertisers = array( 12, 38, 30, 42, 43 );
 		$return = "";
 		$mailBody = "";
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
@@ -303,22 +304,25 @@ class Ajillion
 				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
 				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
 
-				$mailBody .= '
-					<tr>
-						<td>NOT FOUND IN NIGMA</td>
-						<td>'.utf8_encode($report->advertiser).'</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>				
-				';
+				if ( !in_array($adv->id, $excludedAdvertisers) ){
+					$mailBody .= '
+						<tr>
+							<td>NOT FOUND IN NIGMA</td>
+							<td>'.utf8_encode($report->advertiser).'</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>				
+					';
+				}
+									
 			}
 			else
 			{
-				if ( $adv->id==12 || $adv->id==38 || $adv->id==30 )
+				if ( in_array($adv->id, $excludedAdvertisers)  )
 					continue;
 									
 				$log->advertiser = $adv->id;
@@ -332,7 +336,6 @@ class Ajillion
 				}
 				else
 				{
-
 					$maxCost = $totals['spend'];
 					$minCost = $report->cost;
 				}
@@ -391,6 +394,7 @@ class Ajillion
 
 		if ( $mailBody!="" )
 		{
+
 			$d = date_format( new DateTime($date), "Y-m-d");
 			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';

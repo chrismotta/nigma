@@ -228,6 +228,11 @@ class TagController extends Controller
 		$this->actionUrl($id, false, 'sandbox');
 	}
 
+	public function actionRenderjs ( $id )
+	{
+		$this->actionUrl($id, false, 'js');
+	}	
+
 	public function actionSandbox ()
 	{
 		$pixel = new SandboxStatus();
@@ -248,16 +253,11 @@ class TagController extends Controller
 		$i = getimagesize($path, $i);
 		header('Content-Type: '.$i['mime']);
 
-		if ( !$hash )			
-		{
-			echo $content;
-			return false;
-		} 
-
 		$pixel = new SandboxStatus();
 		
 		if ( $hash )
 			$pixel->request_hash = $hash;
+
 
 		if(isset( $_GET['status'] ))
 			$pixel->status = $_GET['status'];
@@ -265,6 +265,7 @@ class TagController extends Controller
 		if(isset( $_GET['description'] ))
 			$pixel->description = $_GET['description'];		
 
+		$pixel->request_hash = md5($pixel->id);
 		$pixel->save();
 
 		if ( !$hash )
@@ -272,6 +273,7 @@ class TagController extends Controller
 			$pixel->request_hash = md5($pixel->id);
 			$pixel->save();	
 		}
+
 
 		echo $content;
 	}
@@ -374,7 +376,14 @@ class TagController extends Controller
 					'url'=>'http://localhost/nigma/tag/sandbox',
 				));
 				break;
-			
+
+			case 'js':
+				$pixel_request_hash = md5($imp->id);
+				$this->renderPartial('js',array(
+					'url'				=> $newUrl,
+					'status_pixel_url'	=> 'http://bidbox.co/tag/pixel/'.$pixel_request_hash
+				));
+				break;				
 			default:
 				// redirect to tag url
 				header("Location: ".$newUrl);
