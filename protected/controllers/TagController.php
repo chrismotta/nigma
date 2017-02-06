@@ -245,7 +245,7 @@ class TagController extends Controller
 		$this->renderPartial('sandbox', array('pixel_id'=>$pixel->request_hash) );
 	}
 
-	public function actionPixel ($hash){
+	public function actionPixel ( $hash = null ){
 		$path = './themes/tml/img/pixel.gif';
 		$content = file_get_contents($path);
 
@@ -257,7 +257,8 @@ class TagController extends Controller
 		
 		if ( $hash )
 			$pixel->request_hash = $hash;
-
+		else
+			$pixel->request_hash = 'hash_missing';
 
 		if(isset( $_GET['status'] ))
 			$pixel->status = $_GET['status'];
@@ -265,15 +266,8 @@ class TagController extends Controller
 		if(isset( $_GET['description'] ))
 			$pixel->description = $_GET['description'];		
 
-		$pixel->request_hash = md5($pixel->id);
+		//$pixel->request_hash = md5($pixel->id);
 		$pixel->save();
-
-		if ( !$hash )
-		{
-			$pixel->request_hash = md5($pixel->id);
-			$pixel->save();	
-		}
-
 
 		echo $content;
 	}
@@ -378,7 +372,7 @@ class TagController extends Controller
 				break;
 
 			case 'js':
-				$pixel_request_hash = md5($imp->id);
+				$pixel_request_hash = $imp->tid;
 				$this->renderPartial('js',array(
 					'url'				=> $newUrl,
 					'status_pixel_url'	=> 'http://bidbox.co/tag/pixel/'.$pixel_request_hash
