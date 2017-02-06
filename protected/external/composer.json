@@ -1,0 +1,7 @@
+{    
+    "require": {
+
+        "piwik/device-detector": "3.*"
+
+    }
+}
