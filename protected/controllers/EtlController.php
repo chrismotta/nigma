@@ -254,8 +254,8 @@ class EtlController extends Controller
 		$query = 'INSERT IGNORE INTO F_Imp (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app) 
 		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, SHA(CONCAT(i.server_ip,i.user_agent)), i.pubid, i.ip_forwarded, i.referer, i.app 
 		FROM imp_log i 
-		LEFT JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
-		LEFT JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
+		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
+		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
 
 		if(isset($date))
 			$query .= 'WHERE DATE(i.date) = "'.$date.'" ';
