@@ -149,12 +149,12 @@ class EtlController extends Controller
 		$query = 'INSERT IGNORE INTO D_UserAgent (user_agent) 
 		SELECT DISTINCT user_agent 
 		FROM imp_log i ';
-		
+
 		if(isset($date))
 			$query .= 'WHERE DATE(date) = "'.$date.'"';
 		else
 			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
-	
+
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
 		$elapsed = time() - $start;
@@ -215,7 +215,7 @@ class EtlController extends Controller
 			else
 				$ua->device_type = 'Desktop';
 			*/
-
+			echo $ua->id . '<br>';
 			if($ua->save())
 				$filled++;
 			else
