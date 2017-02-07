@@ -1,5 +1,13 @@
 <?php
 
+spl_autoload_unregister(array('YiiBase', 'autoload'));
+require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
+spl_autoload_register(array('YiiBase', 'autoload'));
+
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Device\DeviceParserAbstract;
+use DeviceDetector\Parser\Client\ClientParserAbstract;
+
 class ClicklogController extends Controller
 {
 
@@ -54,19 +62,31 @@ class ClicklogController extends Controller
 
 		if (isset($_GET["user_agent"])) {
 			$user_agent = $_GET["user_agent"];
-			echo $user_agent  . "<hr/>";
 		} else {
-			die ("user_agent missing");
+			$user_agent = $_SERVER['HTTP_USER_AGENT'];
 		}
 
-		$wurfl  = WurflManager::loadWurfl();
-		$device = $wurfl->getDeviceForUserAgent($user_agent);
-		echo "brand_name = " . $device->getCapability('brand_name') . "<br/>";
-		echo "marketing_name = " . $device->getCapability('marketing_name') . "<br/>";
-		echo "device_os = " . $device->getCapability('device_os') . "<br/>";
-		echo "device_os_version = " . $device->getCapability('device_os_version') . "<br/>";
-		echo "advertised_browser = " . $device->getVirtualCapability('advertised_browser') . "<br/>";
-		echo "advertised_browser_version =" . $device->getVirtualCapability('advertised_browser_version') . "<br/>";
+		echo $user_agent  . "<hr/>";
+
+		$dd = new DeviceDetector();	
+		$dd->setUserAgent( $user_agent );
+		$dd->parse();
+		$br = $dd->getClient();
+		$os = $dd->getOs();
+
+		$os_type		 = isset($os['name']) ? $os['name'] : null;
+		$os_version      = isset($os['version']) ? $os['version'] : null;
+		$browser_type    = isset($br['name']) ? $br['name'] : null;
+		$browser_version = isset($br['version']) ? $br['version'] : null;
+		$device_type 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
+
+		echo "device_type = ". $device_type . "<br/>";
+		echo "brand_name = " . $dd->getBrandName() . "<br/>";
+		echo "device_model = ". $dd->getModel() . "<br/>";
+		echo "device_os = " . $os_type . "<br/>";
+		echo "device_os_version = " . $os_version . "<br/>";
+		echo "advertised_browser = " . $browser_type . "<br/>";
+		echo "advertised_browser_version =" . $browser_version . "<br/>";
 	}
 
 
@@ -298,7 +318,7 @@ class ClicklogController extends Controller
 			// Version/4.0 Mobile Safari/534.30
 
 			if(isset($model->user_agent)){
-
+				/*
 				$wurfl = WurflManager::loadWurfl();
 				$device = $wurfl->getDeviceForUserAgent($model->user_agent);
 				$model->device          = $device->getCapability('brand_name');
@@ -314,6 +334,20 @@ class ClicklogController extends Controller
 					$model->device_type = 'Mobile';
 				else
 					$model->device_type = 'Desktop';
+				*/
+				$dd = new DeviceDetector();
+				$dd->setUserAgent( $model->user_agent );
+				$dd->parse();
+				$br = $dd->getClient();
+				$os = $dd->getOs();
+
+				$model->device          = $dd->getBrandName();
+				$model->device_model    = $dd->getModel();
+				$model->os              = isset($os['name']) ? $os['name'] : null;
+				$model->os_version      = isset($os['version']) ? $os['version'] : null;
+				$model->browser         = isset($br['name']) ? $br['name'] : null;
+				$model->browser_version = isset($br['version']) ? $br['version'] : null;
+				$model->device_type 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
 			}
 
 			$ts['wurfl'] = microtime(true);
@@ -637,11 +671,12 @@ class ClicklogController extends Controller
 		$iterator = new CDataProviderIterator($dataProvider);
 
 		// initializing tools 
-		$wurfl    = WurflManager::loadWurfl();
+		//$wurfl    = WurflManager::loadWurfl();
 		// $binPath      = YiiBase::getPathOfAlias('application') . "/data/ip2location.BIN";
 		$binPath  = Yii::app()->params['ipDbFile'];
 		$location = new IP2Location($binPath, IP2Location::FILE_IO);
-		
+		$dd = new DeviceDetector();
+
 		echo 'total: '.count($iterator).'<hr/>';
 		$timeBegin = time();
 		$countClicks = 0;
@@ -671,14 +706,19 @@ class ClicklogController extends Controller
 			$click->city            = $ipData->cityName;
 			$click->carrier         = $ipData->mobileCarrierName;
 			
-			$device                 = $wurfl->getDeviceForUserAgent($click->user_agent);
+			//$device                 = $wurfl->getDeviceForUserAgent($click->user_agent);
+			$dd->setUserAgent( $click->user_agent );
+			$dd->parse();
+			$br = $dd->getClient();
+			$os = $dd->getOs();
 
-			$click->device          = $device->getCapability('brand_name');
-			$click->device_model    = $device->getCapability('marketing_name');
-			$click->os              = $device->getCapability('device_os');
-			$click->os_version      = $device->getCapability('device_os_version');
-			$click->browser         = $device->getVirtualCapability('advertised_browser');
-			$click->browser_version = $device->getVirtualCapability('advertised_browser_version');
+			$click->device          = $dd->getBrandName();
+			$click->device_model    = $dd->getModel();
+			$click->os              = isset($os['name']) ? $os['name'] : null;
+			$click->os_version      = isset($os['version']) ? $os['version'] : null;
+			$click->browser         = isset($br['name']) ? $br['name'] : null;
+			$click->browser_version = isset($br['version']) ? $br['version'] : null;
+			$click->device_type 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
 
 			$tmp = array();
 			if (preg_match('/q=[^\&]*/', $click->referer, $tmp)) {
@@ -692,13 +732,15 @@ class ClicklogController extends Controller
 			$click->browser         === NULL ? $click->browser = "" : null;
 			$click->browser_version === NULL ? $click->browser_version = "" : null;
 
+			/*
 			if ($device->getCapability('is_tablet') == 'true')
 				$click->device_type = 'Tablet';
 			else if ($device->getCapability('is_wireless_device') == 'true')
 				$click->device_type = 'Mobile';
 			else
 				$click->device_type = 'Desktop';
-
+			*/
+		
 			$click->save();
 			echo $countClicks . " - " . $click->date . " - " . $click->id . " - updated<br/>";
 		}

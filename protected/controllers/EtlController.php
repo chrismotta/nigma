@@ -1,5 +1,13 @@
 <?php
 
+spl_autoload_unregister(array('YiiBase', 'autoload'));
+require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
+spl_autoload_register(array('YiiBase', 'autoload'));
+
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Device\DeviceParserAbstract;
+use DeviceDetector\Parser\Client\ClientParserAbstract;
+
 class EtlController extends Controller
 {
 	/**
@@ -135,7 +143,7 @@ class EtlController extends Controller
 	}
 
 	public function actionUseragent($id=1, $date=null){
-		
+			
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO D_UserAgent (user_agent) 
@@ -161,29 +169,52 @@ class EtlController extends Controller
 		$criteria->addCondition('device_type IS NULL');
 		$ua_list = DUserAgent::model()->findAll($criteria);
 
-		$wurfl = WurflManager::loadWurfl();
+		//$wurfl = WurflManager::loadWurfl();
+		$dd = new DeviceDetector();
 
 		$filled = 0;
 		foreach ($ua_list as $ua) {
-			$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
+
+			if ( !$ua->user_agent )
+			{
+				continue;
+			}
+
+			$dd->setUserAgent( $ua->user_agent );
+			$dd->parse();
+			$br = $dd->getClient();
+			$os = $dd->getOs();
+
+			//$device = $wurfl->getDeviceForUserAgent($ua->user_agent);
 			// if($device = $wurfl->getDeviceForUserAgent($ua->user_agent))
 			// 	echo $device->getCapability('brand_name').' - ';
 			// else
 			// 	echo '- ';
 
+			/*
 			$ua->device_brand    = $device->getCapability('brand_name');
 			$ua->device_model    = $device->getCapability('marketing_name');
 			$ua->os_type         = $device->getCapability('device_os');
 			$ua->os_version      = $device->getCapability('device_os_version');
 			$ua->browser_type    = $device->getVirtualCapability('advertised_browser');
 			$ua->browser_version = $device->getVirtualCapability('advertised_browser_version');
-			
+			*/
+			$ua->device_brand    = $dd->getBrandName();
+			$ua->device_model    = $dd->getModel();
+			$ua->os_type         = isset($os['name']) ? $os['name'] : null;
+			$ua->os_version      = isset($os['version']) ? $os['version'] : null;
+			$ua->browser_type    = isset($br['name']) ? $br['name'] : null;
+			$ua->browser_version = isset($br['version']) ? $br['version'] : null;
+			$ua->device_type 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
+
+			/*
 			if ($device->getCapability('is_tablet') == 'true')
 				$ua->device_type = 'Tablet';
 			else if ($device->getCapability('is_wireless_device') == 'true')
 				$ua->device_type = 'Mobile';
 			else
 				$ua->device_type = 'Desktop';
+			*/
 
 			if($ua->save())
 				$filled++;
