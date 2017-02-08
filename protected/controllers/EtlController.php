@@ -168,7 +168,7 @@ class EtlController extends Controller
 		$criteria = new CDbCriteria;
 		$criteria->addCondition('device_type IS NULL');
 		$ua_list = DUserAgent::model()->findAll($criteria);
-		var_dump($ua_list);
+		//var_dump($ua_list);
 		//$wurfl = WurflManager::loadWurfl();
 		$dd = new DeviceDetector();
 
