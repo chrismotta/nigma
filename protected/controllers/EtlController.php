@@ -151,7 +151,7 @@ class EtlController extends Controller
 		FROM imp_log i ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
 		else
 			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 
@@ -238,7 +238,7 @@ class EtlController extends Controller
 		FROM imp_log i ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
 		else
 			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 	
@@ -306,6 +306,12 @@ class EtlController extends Controller
 
 		$inicialStart = time();
 		$total = 0;
+		$date = $_GET['date'];
+
+		if(isset($date))
+			$dateCondition = 'AND DATE(i.date_time) = "'.$date.'"';
+		else
+			$dateCondition = 'AND i.date_time BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';	
 
 		$return = Yii::app()->db->createCommand()
 		->select('MAX(freq_cap) AS fc')
@@ -336,6 +342,7 @@ class EtlController extends Controller
 		AND (u.os_type         = d.os_type         OR d.os_type         IS NULL OR d.os_type         = "") 
 		AND (CONVERT(u.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
 		';
+		$query .= $dateCondition;
 
 		$return = Yii::app()->db->createCommand($query)->execute();
 		$total += $return;
@@ -348,7 +355,7 @@ class EtlController extends Controller
 
 		for($i=1; $i<=$fc; $i++){
 	
-			$start = time();
+			$start = time();	
 
 			$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost, profit) 
 			SELECT i.id, d.rate/1000, s.rate/1000, d.rate/1000 - s.rate/1000  
@@ -368,6 +375,7 @@ class EtlController extends Controller
 			AND (u.device_model    = d.device_model    OR d.device_model    IS NULL OR d.device_model    = "") 
 			AND (u.os_type         = d.os_type         OR d.os_type         IS NULL OR d.os_type         = "") 
 			AND (CONVERT(u.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
+			'.$dateCondition.' 
 			GROUP BY i.unique_id
 			';
 
@@ -388,8 +396,10 @@ class EtlController extends Controller
 		SELECT i.id 
 		FROM F_Imp i  
 		LEFT JOIN D_Bid b ON(i.id = b.F_Impressions_id) 
-		WHERE b.F_Impressions_id IS NULL 
+		WHERE b.F_Impressions_id IS NULL  
 		';
+		$query .= $dateCondition;
+
 
 		$return = Yii::app()->db->createCommand($query)->execute();
 		$total += $return;
