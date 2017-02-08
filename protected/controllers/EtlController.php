@@ -320,7 +320,7 @@ class EtlController extends Controller
 		$fc = $return['fc'];
 
 		// open freq_cap 
-		
+
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO D_Bid (F_Impressions_id, revenue, cost, profit) 
