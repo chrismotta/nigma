@@ -108,8 +108,10 @@ class ApiUpdateController extends Controller
 		$this->actionSmaatoExchange();
 
 		$this->actionAffiliates();
-		$this->actionImpLog();		
 		$this->actionCpmCampaigns();
+
+		// actionImpLog runs independently after etl
+		//$this->actionImpLog();
 
 		$this->actionAdWordsConversions();
 
