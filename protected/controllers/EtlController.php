@@ -302,7 +302,7 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionBid($date=null){
+	public function actionBid($id=1, $date=null){
 
 		$inicialStart = time();
 		$total = 0;
@@ -310,7 +310,7 @@ class EtlController extends Controller
 		if(isset($date))
 			$dateCondition = 'AND DATE(i.date_time) = "'.$date.'"';
 		else
-			$dateCondition = 'AND i.date_time BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';	
+			$dateCondition = 'AND i.date_time BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL '.$id.' HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';	
 
 		$return = Yii::app()->db->createCommand()
 		->select('MAX(freq_cap) AS fc')
