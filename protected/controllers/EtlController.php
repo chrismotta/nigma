@@ -66,7 +66,7 @@ class EtlController extends Controller
 		self::actionUseragent($id, $date);
 		self::actionGeolocation($id, $date);
 		self::actionImpressions($id, $date);
-		self::actionBid();
+		self::actionBid($date);
 
 		Yii::app()->cache->flush();
 		
@@ -302,11 +302,10 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionBid(){
+	public function actionBid($date=null){
 
 		$inicialStart = time();
 		$total = 0;
-		$date = $_GET['date'];
 
 		if(isset($date))
 			$dateCondition = 'AND DATE(i.date_time) = "'.$date.'"';
