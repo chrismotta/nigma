@@ -302,7 +302,7 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionBid($id=1, $date=null){
+	public function actionBid($id=2, $date=null){
 
 		$inicialStart = time();
 		$total = 0;
