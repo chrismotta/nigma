@@ -9,6 +9,6 @@ from F_Imp i left join D_Bid b on i.id = b.F_Impressions_id left join D_Demand d
 where year(date_time)=2017 and month(date_time)=1 group by d.advertiser;
 
 
-select s.provider as Publisher, count(i.id), sum(b.revenue) as Revenue, sum(b.cost) as Cost, sum(b.revenue - b.cost) as Profit 
+select s.provider as Publisher, count(i.id) as Impressions, sum(b.revenue) as Revenue, sum(b.cost) as Cost, sum(b.revenue - b.cost) as Profit 
 from F_Imp i left join D_Bid b on i.id = b.F_Impressions_id left join D_Supply s on i.D_Supply_ID = s.placement_id  
-where date(date_time) between '2017-02-01' and '2017-02-15';
+where date(date_time) between '2017-02-01' and '2017-02-15' group by s.provider;
