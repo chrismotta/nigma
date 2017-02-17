@@ -66,7 +66,7 @@ class EtlController extends Controller
 		self::actionUseragent($id, $date);
 		self::actionGeolocation($id, $date);
 		self::actionImpressions($id, $date);
-		self::actionBid($id, $date);
+		self::actionBid(2, $date);
 
 		Yii::app()->cache->flush();
 		
