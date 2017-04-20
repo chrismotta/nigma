@@ -206,6 +206,8 @@ class EtlController extends Controller
 			$ua->browser_type    = isset($br['name']) ? $br['name'] : null;
 			$ua->browser_version = isset($br['version']) ? $br['version'] : null;
 			$ua->device_type 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
+			if($ua->device_type == 'Phablet' || $ua->device_type == 'Smartphone')
+				$ua->device_type 	 = 'Mobile';
 
 			/*
 			if ($device->getCapability('is_tablet') == 'true')
