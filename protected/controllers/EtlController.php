@@ -151,10 +151,10 @@ class EtlController extends Controller
 		FROM imp_log i ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'"';
 		else
 			$query .= 'WHERE DATE(i.date) = CURDATE()';
-			
+
 		// $query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
@@ -242,7 +242,7 @@ class EtlController extends Controller
 		FROM imp_log i ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'"';
 		else
 			$query .= 'WHERE DATE(i.date) = CURDATE()';
 
@@ -295,7 +295,7 @@ class EtlController extends Controller
 		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'" ';
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
 		else
 			$query .= 'WHERE DATE(i.date) = CURDATE()';
 		
@@ -316,7 +316,7 @@ class EtlController extends Controller
 		$total = 0;
 
 		if(isset($date))
-			$dateCondition = 'AND DATE(i.date_time) = "'.$date.'"';
+			$dateCondition = 'AND DATE(i.date_time) = "'.date('Y-m-d', strtotime($date)).'"';
 		else
 			$dateCondition = 'WHERE DATE(i.date) = CURDATE()';
 
