@@ -394,8 +394,10 @@ class DailyReport extends CActiveRecord
 		$year       =isset($_GET['year']) ? $_GET['year'] : date('Y', $date);
 		$month      =isset($_GET['month']) ? $_GET['month'] : date('m', $date);
 
+		// first day of the selected month
 		$startDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 1, $year) );
-		$endDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 31, $year) );
+		// last day of the selected month
+		$endDate = date( 'Y-m-d', strtotime('- 1 day', mktime(0, 0, 0, $month+1, 1, $year) ) );
 
 		$model = DailyReport::model();
 		$criteria = new CDbCriteria;
@@ -470,8 +472,10 @@ class DailyReport extends CActiveRecord
 		$cat        =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status     =isset($_GET['status']) ? $_GET['status'] : null;
 
+		// first day of the selected month
 		$startDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 1, $year) );
-		$endDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 31, $year) );
+		// last day of the selected month
+		$endDate = date( 'Y-m-d', strtotime('- 1 day', mktime(0, 0, 0, $month+1, 1, $year) ) );
 
 		$model = DailyReport::model();
 		$criteria = new CDbCriteria;
@@ -527,8 +531,10 @@ class DailyReport extends CActiveRecord
 		$cat        =isset($_GET['cat']) ? $_GET['cat'] : null;
 		$status     =isset($_GET['status']) ? $_GET['status'] : null;
 
+		// first day of the selected month
 		$startDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 1, $year) );
-		$endDate = date( 'Y-m-d', mktime(0, 0, 0, $month, 31, $year) );
+		// last day of the selected month
+		$endDate = date( 'Y-m-d', strtotime('- 1 day', mktime(0, 0, 0, $month+1, 1, $year) ) );
 
 		$model = DailyReport::model();
 		$criteria = new CDbCriteria;
