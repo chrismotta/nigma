@@ -151,9 +151,11 @@ class EtlController extends Controller
 		FROM imp_log i ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'"';
 		else
-			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
+			$query .= 'WHERE DATE(i.date) = CURDATE()';
+
+		// $query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
@@ -206,6 +208,8 @@ class EtlController extends Controller
 			$ua->browser_type    = isset($br['name']) ? $br['name'] : null;
 			$ua->browser_version = isset($br['version']) ? $br['version'] : null;
 			$ua->device_type 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
+			if($ua->device_type == 'Phablet' || $ua->device_type == 'Smartphone')
+				$ua->device_type 	 = 'Mobile';
 
 			/*
 			if ($device->getCapability('is_tablet') == 'true')
@@ -238,9 +242,11 @@ class EtlController extends Controller
 		FROM imp_log i ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'"';
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'"';
 		else
-			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
+			$query .= 'WHERE DATE(i.date) = CURDATE()';
+
+		// $query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 	
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
@@ -289,9 +295,11 @@ class EtlController extends Controller
 		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
 
 		if(isset($date))
-			$query .= 'WHERE DATE(i.date) = "'.$date.'" ';
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
 		else
-			$query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
+			$query .= 'WHERE DATE(i.date) = CURDATE()';
+		
+		// $query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 
 		$query .= 'AND i.placements_id IS NOT NULL AND i.tags_id IS NOT NULL AND i.user_agent IS NOT NULL AND i.server_ip IS NOT NULL';
 
@@ -308,9 +316,11 @@ class EtlController extends Controller
 		$total = 0;
 
 		if(isset($date))
-			$dateCondition = 'AND DATE(i.date_time) = "'.$date.'"';
+			$dateCondition = 'AND DATE(i.date_time) = "'.date('Y-m-d', strtotime($date)).'"';
 		else
-			$dateCondition = 'AND i.date_time BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL '.$id.' HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';	
+			$dateCondition = 'WHERE DATE(i.date) = CURDATE()';
+
+		// $dateCondition = 'AND i.date_time BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL '.$id.' HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';	
 
 		$return = Yii::app()->db->createCommand()
 		->select('MAX(freq_cap) AS fc')
