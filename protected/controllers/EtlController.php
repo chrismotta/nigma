@@ -35,7 +35,8 @@ class EtlController extends Controller
 			'useragent',
 			'geolocation',
 			'impressions',
-			'bid'
+			'bid',
+			'piwik'
 			);
 
 		return array(
@@ -424,6 +425,37 @@ class EtlController extends Controller
 		echo 'ETL Bid: '.$total.' rows inserted - Total elapsed time: '.$elapsed.' seg.<hr/>';
 
 
+	}
+
+	public function actionPiwik ( )
+	{
+		$dd = new DeviceDetector();
+		$ua = $_GET['ua'];
+		$dd->setUserAgent( $ua );
+		$dd->parse();
+		$br = $dd->getClient();
+		$os = $dd->getOs();
+
+		$deviceType 	 = $dd->getDeviceName() ? ucfirst($dd->getDeviceName()) : 'other';
+		if($deviceType == 'Phablet' || $deviceType == 'Smartphone')
+			$deviceType 	 = 'Mobile';
+
+
+		$data = [
+			'user_agent' => [
+				'name'	  		  => $ua,
+				'device_type'  	  => $deviceType,
+				'device_brand' 	  => $dd->getBrandName(),
+				'device_model' 	  => $dd->getModel(),
+				'os_type'	   	  => isset($os['name']) ? $os['name'] : null,
+				'os_version'   	  => isset($os['version']) ? $os['version'] : null,
+				'browser_type' 	  => isset($br['name']) ? $br['name'] : null,
+				'browser_version' => isset($br['version']) ? $br['version'] : null
+			]
+		];
+
+		header('Content-Type: text/json');
+		echo json_encode($data, \JSON_PRETTY_PRINT);
 	}
 
 	// public function actionBid(){
