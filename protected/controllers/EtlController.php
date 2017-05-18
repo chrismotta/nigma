@@ -36,7 +36,8 @@ class EtlController extends Controller
 			'geolocation',
 			'impressions',
 			'bid',
-			'piwik'
+			'piwik',
+			'impcompact'
 			);
 
 		return array(
