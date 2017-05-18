@@ -1,5 +1,7 @@
 <?php
 
+set_time_limit(0);
+
 spl_autoload_unregister(array('YiiBase', 'autoload'));
 require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
@@ -312,7 +314,7 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionImpcompact($id=1, $date=null){
+	public function actionImpcompact($date=null){
 
 		$start = time();
 
@@ -326,8 +328,6 @@ class EtlController extends Controller
 			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
 		else
 			$query .= 'WHERE DATE(i.date) = CURDATE()';
-		
-		// $query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
 
 		$query .= 'AND i.placements_id IS NOT NULL AND i.tags_id IS NOT NULL AND i.user_agent IS NOT NULL AND i.server_ip IS NOT NULL ';
 
@@ -338,6 +338,11 @@ class EtlController extends Controller
 		$elapsed = time() - $start;
 
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
+	}
+
+	public function actionBidCompact($date=null){
+
+
 	}
 
 	public function actionBid($id=2, $date=null){
