@@ -310,6 +310,34 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
+	public function actionImpcompact($id=1, $date=null){
+
+		$start = time();
+
+		$query = 'INSERT IGNORE INTO F_Imp_Compact (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app, imps) 
+		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, SHA(CONCAT(i.server_ip,i.user_agent)), i.pubid, i.ip_forwarded, i.referer, i.app, count(SHA(CONCAT(i.server_ip,i.user_agent))) 
+		FROM imp_log i 
+		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
+		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
+
+		if(isset($date))
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
+		else
+			$query .= 'WHERE DATE(i.date) = CURDATE()';
+		
+		// $query .= 'WHERE i.date BETWEEN TIMESTAMP( DATE(NOW()) , SUBDATE( MAKETIME(HOUR(NOW()),0,0) , INTERVAL :h HOUR) ) AND TIMESTAMP( DATE(NOW()) , MAKETIME(HOUR(NOW()),0,0) ) ';
+
+		$query .= 'AND i.placements_id IS NOT NULL AND i.tags_id IS NOT NULL AND i.user_agent IS NOT NULL AND i.server_ip IS NOT NULL ';
+
+		$query .= 'GROUP BY SHA(CONCAT(i.server_ip,i.user_agent)) ';
+
+		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
+
+		$elapsed = time() - $start;
+
+		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
+	}
+
 	public function actionBid($id=2, $date=null){
 
 		$inicialStart = time();
