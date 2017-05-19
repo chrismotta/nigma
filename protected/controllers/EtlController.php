@@ -39,7 +39,8 @@ class EtlController extends Controller
 			'impressions',
 			'bid',
 			'piwik',
-			'impcompact'
+			'impcompact',
+			'bidcompact'
 			);
 
 		return array(
@@ -340,8 +341,36 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-	public function actionBidCompact($date=null){
+	public function actionBidcompact($date=null){
 
+		$inicialStart = time();
+
+		if(isset($date))
+			$dateCondition = 'AND DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
+		else
+			$dateCondition = 'AND DATE(i.date) = CURDATE()';
+
+		$start = time();
+
+		$query = 'UPDATE F_Imp_Compact i 
+		LEFT JOIN D_Demand d      ON(i.D_Demand_id      = d.tag_id) 
+		LEFT JOIN D_Supply s      ON(i.D_Supply_id      = s.placement_id) 
+		LEFT JOIN D_UserAgent u   ON(i.D_UserAgent_id   = u.id) 
+		LEFT JOIN D_GeoLocation g ON(i.D_GeoLocation_id = g.id) 
+		SET revenue = d.rate/1000, cost = s.rate/1000
+		WHERE 
+		(g.connection_type = d.connection_type OR d.connection_type IS NULL OR d.connection_type = "") 
+		AND (g.country         = d.country         OR d.country         IS NULL OR d.country         = "") 
+		AND (u.os_type         = d.os_type         OR d.os_type         IS NULL OR d.os_type         = "") 
+		AND (CONVERT(u.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
+		';
+		$query.= $dateCondition;
+
+		$return = Yii::app()->db->createCommand($query)->execute();
+
+		$elapsed = time() - $start;
+
+		echo 'ETL Bid - Open Freq. Cap: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<br/>';
 
 	}
 
