@@ -40,7 +40,8 @@ class EtlController extends Controller
 			'bid',
 			'piwik',
 			'impcompact',
-			'bidcompact'
+			'bidcompact',
+			'compact'
 			);
 
 		return array(
@@ -79,6 +80,29 @@ class EtlController extends Controller
 		echo 'Total lapsed time: '.$elapsed.' seg.';
 
 	}
+
+	public function actionCompact(){
+		
+		$start = time();
+
+		$date = isset($_GET['date']) ? $_GET['date'] : null;
+
+		if(isset($date)) echo 'Data from date: '.$date.'<hr/>';
+
+		self::actionDemand();
+		self::actionSupply();
+		self::actionUseragent($id, $date);
+		self::actionGeolocation($id, $date);
+		self::actionImpcompact($date);
+		self::actionBidcompact($date);
+
+		Yii::app()->cache->flush();
+		
+		$elapsed = time() - $start;
+		echo 'Total lapsed time: '.$elapsed.' seg.';
+
+	}
+
 	public function actionView($id){
 		self::actionIndex($id);
 	}
