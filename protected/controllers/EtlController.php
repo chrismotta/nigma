@@ -69,8 +69,8 @@ class EtlController extends Controller
 
 		self::actionDemand();
 		self::actionSupply();
-		self::actionUseragent(null, $date);
-		self::actionGeolocation(null, $date);
+		self::actionUseragent($id, $date);
+		self::actionGeolocation($id, $date);
 		self::actionImpressions($id, $date);
 		self::actionBid($id, $date);
 
@@ -91,8 +91,8 @@ class EtlController extends Controller
 
 		self::actionDemand();
 		self::actionSupply();
-		self::actionUseragent($id, $date);
-		self::actionGeolocation($id, $date);
+		self::actionUseragent(null, $date);
+		self::actionGeolocation(null, $date);
 		self::actionImpcompact($date);
 		self::actionBidcompact($date);
 
