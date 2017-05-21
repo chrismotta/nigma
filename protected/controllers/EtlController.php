@@ -402,7 +402,7 @@ class EtlController extends Controller
 		(CONVERT(u.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
 		';
 		$query.= $dateCondition;
-die($query);
+
 		$return = Yii::app()->db->createCommand($query)->execute();
 
 		$elapsed = time() - $start;
