@@ -1,4 +1,10 @@
 <?php
+spl_autoload_unregister(array('YiiBase', 'autoload'));
+require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
+require_once(dirname(__FILE__).'/../config/localConfig.php');
+spl_autoload_register(array('YiiBase', 'autoload'));
+
+use Predis;
 
 class CampaignsController extends Controller
 {
@@ -149,8 +155,9 @@ class CampaignsController extends Controller
 		{
 			$model->attributes=$_POST['Campaigns'];
 
-			if($model->save())
+			if($model->save()){
 				$this->redirect(array('response','id'=>$model->id));
+			}
 			
 		}
 
@@ -194,8 +201,18 @@ class CampaignsController extends Controller
 			$model->attributes=$_POST['Campaigns'];
 			if($model->status == '')
 				$model->status = 'Pending';
-			if($model->save())
+
+			if( $model->save() ){
+
+				$relatedTags = Tags::model()->findAll( ['campaign' => $model->id ] );
+
+				foreach ( $relatedTags as $relatedTag )
+				{
+					$predis->hset( 'tag:'.$relatedTag->id, 'frecuency_cap', $model->cap );
+				}
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
+			}
 		}
 
 		$this->renderFormAjax($model, 'Update');

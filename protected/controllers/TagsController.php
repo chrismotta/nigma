@@ -1,4 +1,10 @@
 <?php
+spl_autoload_unregister(array('YiiBase', 'autoload'));
+require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
+require_once(dirname(__FILE__).'/../config/localConfig.php');
+spl_autoload_register(array('YiiBase', 'autoload'));
+
+use Predis;
 
 class TagsController extends Controller
 {
@@ -118,8 +124,25 @@ class TagsController extends Controller
 		if(isset($_POST['Tags']))
 		{
 			$model->attributes=$_POST['Tags'];
-			if($model->save())
+			
+			if( $model->save() )
+			{
+
+
+				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+				$predis->hmset(
+					'tag:'.$model->id,
+					[
+						'code' 			=> $model->code,
+						'analyze'		=> $model->analyze,
+						'frecuency_cap' => $campaignsModel->cap
+					]
+				);	
+
 				$this->redirect(array('view','id'=>$model->id));
+			}
+
+		
 		}
 		
 		$model->campaigns_id = isset($_GET['cid']) ? $_GET['cid'] : null;
@@ -139,14 +162,22 @@ class TagsController extends Controller
 		$this->layout='//layouts/modalIframe';
 		$model=$this->loadModel($id);
 
-	// Uncomment the following line if AJAX validation is needed
-	// $this->performAjaxValidation($model);
+		// Uncomment the following line if AJAX validation is needed
+		// $this->performAjaxValidation($model);
 
 		if(isset($_POST['Tags']))
 		{
 			$model->attributes=$_POST['Tags'];
+
 			if($model->save())
+			{
+				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+				$predis->hset( 'tag:'.$model->id, 'code', $model->code );
+				$predis->hset( 'tag:'.$model->id, 'analyze', $model->analyze );
+				$predis->hset( 'tag:'.$model->id, 'frequency_cap', $model->campaigns->cap );
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
+			}	
 		}
 
 		$this->render('update',array(
@@ -174,12 +205,16 @@ class TagsController extends Controller
 	*/
 	public function actionDelete($id)
 	{
+		// we only allow deletion via POST request
 		if(Yii::app()->request->isPostRequest)
 		{
-	// we only allow deletion via POST request
 			$this->loadModel($id)->delete();
 
-	// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
+			$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+			$predis->del( 'tag:'.$id );
+
+
+			// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 			if(!isset($_GET['ajax']))
 				$this->redirect(isset($_POST['returnUrl']) ? $_POST['returnUrl'] : array('admin'));
 		}
@@ -207,6 +242,7 @@ class TagsController extends Controller
 		$model=new Tags('search');
 		$model->unsetAttributes();  // clear any default values
 		$model->status = 'Active';
+
 		if(isset($_GET['Tags']))
 			$model->attributes=$_GET['Tags'];
 
@@ -263,4 +299,5 @@ class TagsController extends Controller
 			Yii::app()->end();
 		}
 	}
+
 }
