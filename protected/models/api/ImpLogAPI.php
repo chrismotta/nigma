@@ -40,7 +40,7 @@ class ImpLogAPI
 		$return = '';
 
 		$criteria = new CDbCriteria;
-		$criteria->with = array('tags','placements.sites','dBid');
+		$criteria->with = array('tags','placements.sites');
 		
 		$criteria->compare('DATE(t.date_time)',$date);
 		if(isset($cid))
@@ -50,12 +50,13 @@ class ImpLogAPI
 		$criteria->select = array(
 			'tags.campaigns_id AS campaign', 
 			'sites.providers_id AS provider',
-			'count(t.id) AS impressions', 
-			'sum(dBid.revenue) AS revenue',
-			'sum(dBid.cost) AS cost',
+			'sum(t.imps) AS impressions', 
+			'sum(t.revenue) AS revenue',
+			'sum(t.cost) AS cost',
 			);
 
-		$impressions = FImpressions::model()->findAll($criteria);
+		// $impressions = FImpressions::model()->findAll($criteria);
+		$impressions = FImpCompact::model()->findAll($criteria);
 		// return json_encode($impressions, JSON_PRETTY_PRINT);
 
 		// -- //
