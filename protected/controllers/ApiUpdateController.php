@@ -100,23 +100,23 @@ class ApiUpdateController extends Controller
 		
 		// $this->actionAdWords();
 
-		$this->actionInMobi();
-		$this->actionReporo();
-		$this->actionStartApp();
+		// $this->actionInMobi();
+		// $this->actionReporo();
+		// $this->actionStartApp();
 
 		$this->actionAjillionExchange();
 		$this->actionSmaatoExchange();
 
-		$this->actionAffiliates();
-		$this->actionCpmCampaigns();
+		// $this->actionAffiliates();
+		// $this->actionCpmCampaigns();
 
 		// actionImpLog runs independently after etl
 		//$this->actionImpLog();
 
-		$this->actionAdWordsConversions();
+		// $this->actionAdWordsConversions();
 
-		$this->actionAirpush();
-		$this->actionMobusiCPC();
+		// $this->actionAirpush();
+		// $this->actionMobusiCPC();
 
 		Yii::app()->cache->flush();
 	}
