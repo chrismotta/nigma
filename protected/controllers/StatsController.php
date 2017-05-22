@@ -46,7 +46,7 @@ class StatsController extends Controller
 
 		KHtml::paginationController();
 		
-		$model = new FImpressions('search');
+		$model = new FImpCompact('search');
 		$model->unsetAttributes();
 		
 		// if(isset($_POST['ImpLog']))
@@ -137,8 +137,8 @@ class StatsController extends Controller
 			if ( $sum['impressions'] )
 				$row['Impressions']      		= str_replace(',', '.', $data->impressions);			
 
-			if ( $sum['unique_user'] )
-				$row['Unique Users']      		= str_replace(',', '.', $data->unique_user);
+			if ( $sum['unique_imps'] )
+				$row['Unique Imps']      		= str_replace(',', '.', $data->unique_imps);
 
 			if ( $sum['revenue'] )
 				$row['Revenue']      			= $data->revenue;
