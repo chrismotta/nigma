@@ -403,12 +403,12 @@ class EtlController extends Controller
 		';
 		$query.= $dateCondition;
 
-		echo $query;
-		// $return = Yii::app()->db->createCommand($query)->execute();
+		// echo $query;
+		$return = Yii::app()->db->createCommand($query)->execute();
 
 		$elapsed = time() - $start;
 
-		// echo 'ETL Bid - Open Freq. Cap: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<br/>';
+		echo 'ETL Bid - Open Freq. Cap: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<br/>';
 
 	}
 

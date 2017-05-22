@@ -104,9 +104,8 @@ class ApiUpdateController extends Controller
 		// $this->actionReporo();
 		// $this->actionStartApp();
 
-		// check if apply
-		// $this->actionAjillionExchange();
-		// $this->actionSmaatoExchange();
+		$this->actionAjillionExchange();
+		$this->actionSmaatoExchange();
 
 		// $this->actionAffiliates();
 		// $this->actionCpmCampaigns();
