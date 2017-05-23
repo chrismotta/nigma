@@ -263,7 +263,7 @@ class PartnersController extends Controller
 
 		KHtml::paginationController();
 		
-		$model = new FImpressions('search');
+		$model = new FImpCompact('search');
 		$model->unsetAttributes();
 		
 		$publisher   = Providers::model()->findByUser($userId);
