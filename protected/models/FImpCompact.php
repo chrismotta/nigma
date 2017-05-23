@@ -44,7 +44,7 @@ class FImpCompact extends CActiveRecord
 	public $browser_version;
 	// sum
 	public $impressions;
-	public $unique_imps;
+	// public $unique_imps;
 	public $revenue;
 	public $cost;
 	public $profit;
@@ -86,14 +86,14 @@ class FImpCompact extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('D_Demand_id, D_Supply_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id', 'required'),
-			array('D_Demand_id, D_Supply_id, imps, unique_imps', 'numerical', 'integerOnly'=>true),
+			array('D_Demand_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id', 'required'),
+			array('D_Demand_id, D_Supply_id, ad_req, imps, unique_imps', 'numerical', 'integerOnly'=>true),
 			array('D_GeoLocation_id, D_UserAgent_id, pubid, ip_forwarded, referer_url, referer_app', 'length', 'max'=>255),
 			array('unique_id', 'length', 'max'=>40),
 			array('revenue, cost', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, D_Demand_id, D_Supply_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id, pubid, ip_forwarded, referer_url, referer_app, imps, unique_imps, revenue, cost', 'safe', 'on'=>'search'),
+			array('id, D_Demand_id, D_Supply_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id, pubid, ip_forwarded, referer_url, referer_app, ad_req, imps, unique_imps, revenue, cost', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -138,7 +138,9 @@ class FImpCompact extends CActiveRecord
             'browser_version' => 'Browser Version',
             // sums
             'impressions'     => 'Impressions',
-            'unique_imps'       => 'Unique Imps', 
+            'ad_req'          => 'Ad Requests',
+            'imps'            => 'Impressions',
+            'unique_imps'     => 'Unique Imps', 
             'revenue'         => 'Revenue', 
             'cost'            => 'Cost', 
             'profit'          => 'Profit', 

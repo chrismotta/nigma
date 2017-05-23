@@ -28,6 +28,7 @@ class ReportingManager
             // sums
             'impressions'     => 'Impressions',
             'unique_user'     => 'Unique Users', 
+            'unique_imps'     => 'Unique Imps', 
             'revenue'         => 'Revenue', 
             'cost'            => 'Cost', 
             'profit'          => 'Profit', 
