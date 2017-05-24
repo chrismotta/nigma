@@ -164,55 +164,58 @@ class Etl2Controller extends Controller
         {
             $ua = $this->_redis->hgetall( 'ua:'.$id );
 
-            if ( $c > 0 )
-            	$values .= ',';
+            if ( $ua )
+            {
+                if ( $c > 0 )
+                    $values .= ',';
 
-            $values .= '("'.$id.'",';
+                $values .= '("'.$id.'",';
 
-            if ( $ua['device']=='Phablet' || $ua['device']=='Smartphone' )
-            	$ua['device'] = 'Mobile';
+                if ( $ua['device']=='Phablet' || $ua['device']=='Smartphone' )
+                    $ua['device'] = 'Mobile';
 
-            if ( $ua['device'] )
-            	$values .= '"'.$ua['device'].'",';
-            else
-            	$values .= 'NULL,';
+                if ( $ua['device'] )
+                    $values .= '"'.$ua['device'].'",';
+                else
+                    $values .= 'NULL,';
 
-            if ( $ua['device_brand'] )
-            	$values .= '"'.$ua['device_brand'].'",';
-            else
-            	$values .= 'NULL,';
+                if ( $ua['device_brand'] )
+                    $values .= '"'.$ua['device_brand'].'",';
+                else
+                    $values .= 'NULL,';
 
-            if ( $ua['device_model'] )
-            	$values .= '"'.$ua['device_model'].'",';
-            else
-            	$values .= 'NULL,';
+                if ( $ua['device_model'] )
+                    $values .= '"'.$ua['device_model'].'",';
+                else
+                    $values .= 'NULL,';
 
-            if ( $ua['os'] )
-            	$values .= '"'.$ua['os'].'",';
-            else
-            	$values .= 'NULL,';
+                if ( $ua['os'] )
+                    $values .= '"'.$ua['os'].'",';
+                else
+                    $values .= 'NULL,';
 
-            if ( $ua['os_version'] )
-            	$values .= '"'.$ua['os_version'].'",';
-            else
-            	$values .= 'NULL,';   
+                if ( $ua['os_version'] )
+                    $values .= '"'.$ua['os_version'].'",';
+                else
+                    $values .= 'NULL,';   
 
-            if ( $ua['browser'] )
-            	$values .= '"'.$ua['browser'].'",';
-            else
-            	$values .= 'NULL,';  
+                if ( $ua['browser'] )
+                    $values .= '"'.$ua['browser'].'",';
+                else
+                    $values .= 'NULL,';  
 
-            if ( $ua['browser_version'] )
-            	$values .= '"'.$ua['browser_version'].'"';
-            else
-            	$values .= 'NULL';  
+                if ( $ua['browser_version'] )
+                    $values .= '"'.$ua['browser_version'].'"';
+                else
+                    $values .= 'NULL';  
 
-            $values .= ')';
+                $values .= ')';
+
+                $c++;                
+            }
 
             // free memory cause there is no garbage collection until block ends
             unset($ua);
-
-            $c++;
         }
 
         if ( $values != '' )
@@ -300,51 +303,54 @@ class Etl2Controller extends Controller
     		{
     			$log = $this->_redis->hgetall( 'log:'.$sessionHash );
 
-    			if ( $values != '' )
-    				$values .= ',';
+                if ( $log )
+                {
+                    if ( $values != '' )
+                        $values .= ',';
 
+                    if ( $log['publisher_id'] )
+                        $pubId = $log['publisher_id'];
+                    else
+                        $pubId = 'NULL';
 
-    			if ( $log['publisher_id'] )
-    				$pubId = $log['publisher_id'];
-    			else
-    				$pubId = 'NULL';
+                    $values .= '( 
+                        '.$log['tag_id'].',
+                        '.$log['placement_id'].',
+                        "'.$log['ip'].'",
+                        "'.$log['user_agent'].'",
+                        '.$log['imps'].',  
+                        '.$log['imps'].', 
+                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
+                        '.$log['cost'].',  
+                        '.$log['revenue'].',  
+                        "'.$sessionHash.'",
+                        '.$pubId.'
+                    )';
 
-    			$values .= '( 
-                    '.$log['tag_id'].',
-    				'.$log['placement_id'].',
-    				"'.$log['ip'].'",
-    				"'.$log['user_agent'].'",
-    				'.$log['imps'].',  
-                    '.$log['imps'].', 
-                    "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",  				
-                    '.$log['cost'].',  
-                    '.$log['revenue'].',  
-    				"'.$sessionHash.'",
-    				'.$pubId.'
-    			)';
+                    if ( $geoValues != '' )
+                        $geoValues .= ',';
 
-    			if ( $geoValues != '' )
-    				$geoValues .= ',';
+                    $geoValues .= '("'.$log['ip'].'",';
 
-    			$geoValues .= '("'.$log['ip'].'",';
+                    if ( $log['country'] )
+                        $geoValues .= '"'.$log['country'].'",';
+                    else
+                        $geoValues .= 'NULL,';
 
-	            if ( $log['country'] )
-	            	$geoValues .= '"'.$log['country'].'",';
-	            else
-	            	$geoValues .= 'NULL,';
+                    if ( $log['carrier'] )
+                        $geoValues .= '"'.$log['carrier'].'",';
+                    else
+                        $geoValues .= 'NULL,';
 
-	            if ( $log['carrier'] )
-	            	$geoValues .= '"'.$log['carrier'].'",';
-	            else
-	            	$geoValues .= 'NULL,';
+                    if ( $log['connection_type'] )
+                        $geoValues .= '"'.strtoupper($log['connection_type']).'"';
+                    else
+                        $geoValues .= 'NULL';
+                
 
-	            if ( $log['connection_type'] )
-	            	$geoValues .= '"'.strtoupper($log['connection_type']).'"';
-	            else
-	            	$geoValues .= 'NULL';
-			
+                    $geoValues .= ')';                    
+                }
 
-	            $geoValues .= ')';
                 // free memory because there is no garbage collection until block ends
                 unset ( $log );
     		}
