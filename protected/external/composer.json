@@ -1,7 +1,8 @@
 {    
     "require": {
 
-        "piwik/device-detector": "3.*"
+        "piwik/device-detector": "3.*",
+        "predis/predis": "1.*"
 
     }
 }
