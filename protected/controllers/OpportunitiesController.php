@@ -1,4 +1,10 @@
 <?php
+spl_autoload_unregister(array('YiiBase', 'autoload'));
+require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
+require_once(dirname(__FILE__).'/../config/localConfig.php');
+spl_autoload_register(array('YiiBase', 'autoload'));
+
+use Predis;
 
 class OpportunitiesController extends Controller
 {
@@ -120,10 +126,26 @@ class OpportunitiesController extends Controller
 			$model->carriers_id      = NULL;
 			$model->rate             = NULL;
 			$model->attributes       = $_POST['Opportunities'];
+			$model->wifi = 1;
 			if($model->budget == '') $model->budget = new CDbExpression('NULL');
 			$model->versionCreatedBy = Users::model()->findByPk(Yii::app()->user->id)->username;
-			if($model->save())
+
+			if( $model->save() )
+			{			
+				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+								
+				foreach ( $model->campaigns as $campaign )
+				{
+					$relatedTags = Tags::model()->findAllByAttributes( ['campaigns_id' => $campaign->id ] );
+
+					foreach ( $relatedTags as $relatedTag )
+					{
+						$predis->hset( 'tag:'.$relatedTag->id, 'payout', $model->rate );	
+					}
+				}
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
+			}
 		}
 
 		$this->renderFormAjax($model);

@@ -1,4 +1,10 @@
 <?php
+spl_autoload_unregister(array('YiiBase', 'autoload'));
+require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
+require_once(dirname(__FILE__).'/../config/localConfig.php');
+spl_autoload_register(array('YiiBase', 'autoload'));
+
+use Predis;
 
 class PlacementsController extends Controller
 {
@@ -74,8 +80,18 @@ class PlacementsController extends Controller
 		if(isset($_POST['Placements']))
 		{
 			$model->attributes=$_POST['Placements'];
-			if($model->save())
+			if($model->save()){
+
+				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+				$predis->hmset(
+					'placement:'.$model->id,
+					[
+						'payout' => $model->rate
+					]
+				);
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'created'));
+			}
 		}
 
 		$this->renderFormAjax($model);
@@ -96,8 +112,12 @@ class PlacementsController extends Controller
 		if(isset($_POST['Placements']))
 		{
 			$model->attributes=$_POST['Placements'];
-			if($model->save())
+			if($model->save()){
+				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+				$predis->hset( 'placement:'.$model->id, 'payout', $model->rate );
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
+			}
 		}
 
 		$this->renderFormAjax($model);
@@ -147,7 +167,11 @@ class PlacementsController extends Controller
 				break;
 		}
 
-		$model->save();
+		if ( $model->save() )
+		{
+			$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+			$predis->del( 'placement:'.$id );
+		}
 
 		// if AJAX request (triggered by deletion via admin grid view), we should not redirect the browser
 		if(!isset($_GET['ajax']))
