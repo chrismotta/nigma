@@ -158,54 +158,56 @@ class Etl2Controller extends Controller
         	VALUES 
         ';
 
+        $values = '';
+
         foreach ( $userAgentIDs as $id )
         {
             $ua = $this->_redis->hgetall( 'ua:'.$id );
 
             if ( $c > 0 )
-            	$query .= ',';
+            	$values .= ',';
 
-            $query .= '("'.$id.'",';
+            $values .= '("'.$id.'",';
 
             if ( $ua['device']=='Phablet' || $ua['device']=='Smartphone' )
             	$ua['device'] = 'Mobile';
 
             if ( $ua['device'] )
-            	$query .= '"'.$ua['device'].'",';
+            	$values .= '"'.$ua['device'].'",';
             else
-            	$query .= 'NULL,';
+            	$values .= 'NULL,';
 
             if ( $ua['device_brand'] )
-            	$query .= '"'.$ua['device_brand'].'",';
+            	$values .= '"'.$ua['device_brand'].'",';
             else
-            	$query .= 'NULL,';
+            	$values .= 'NULL,';
 
             if ( $ua['device_model'] )
-            	$query .= '"'.$ua['device_model'].'",';
+            	$values .= '"'.$ua['device_model'].'",';
             else
-            	$query .= 'NULL,';
+            	$values .= 'NULL,';
 
             if ( $ua['os'] )
-            	$query .= '"'.$ua['os'].'",';
+            	$values .= '"'.$ua['os'].'",';
             else
-            	$query .= 'NULL,';
+            	$values .= 'NULL,';
 
             if ( $ua['os_version'] )
-            	$query .= '"'.$ua['os_version'].'",';
+            	$values .= '"'.$ua['os_version'].'",';
             else
-            	$query .= 'NULL,';   
+            	$values .= 'NULL,';   
 
             if ( $ua['browser'] )
-            	$query .= '"'.$ua['browser'].'",';
+            	$values .= '"'.$ua['browser'].'",';
             else
-            	$query .= 'NULL,';  
+            	$values .= 'NULL,';  
 
             if ( $ua['browser_version'] )
-            	$query .= '"'.$ua['browser_version'].'"';
+            	$values .= '"'.$ua['browser_version'].'"';
             else
-            	$query .= 'NULL';  
+            	$values .= 'NULL';  
 
-            $query .= ')';
+            $values .= ')';
 
             // free memory cause there is no garbage collection until block ends
             unset($ua);
@@ -213,9 +215,17 @@ class Etl2Controller extends Controller
             $c++;
         }
 
-        $query .= ';';
+        if ( $values != '' )
+        {
+            $query .= $values . ';';
 
-		$return = Yii::app()->db->createCommand($query)->execute();
+            $return = Yii::app()->db->createCommand($query)->execute();            
+        }
+        else
+        {
+            $return = 0;
+        }
+
 
 		$elapsed = time() - $start;
 
@@ -265,7 +275,8 @@ class Etl2Controller extends Controller
     			D_Supply_id,
     			D_Geolocation_id,
     			D_UserAgent_id,
-    			imps,
+                ad_req,
+    			imps,                
     			date_time,
     			cost,
     			revenue,
@@ -304,6 +315,7 @@ class Etl2Controller extends Controller
     				"'.$log['ip'].'",
     				"'.$log['user_agent'].'",
     				'.$log['imps'].',  
+                    '.$log['imps'].', 
                     "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",  				
                     '.$log['cost'].',  
                     '.$log['revenue'].',  
@@ -357,8 +369,66 @@ class Etl2Controller extends Controller
         unset( $sessionHashes );
 
 		return 0;
+    }
+
+
+    public function actionPopulatecache ( )
+    {
+        self::actionPopulatetags();
+        self::actionPopulateplacements();
+    }
+
+
+    public function actionPopulatetags()
+    {
+        $start = time();
+
+        $tags = Tags::model()->findAll();
+
+        foreach ( $tags as $tag )
+        {
+            $this->_redis->hmset(
+                'tag:'.$tag->id,
+                [
+                    'code'            => $tag->code,
+                    'analyze'         => $tag->analyze,
+                    'frecuency_cap'   => $tag->freq_cap,
+                    'payout'          => $tag->campaigns->opportunities->rate,
+                    'connection_type' => $tag->connection_type,
+                    'country'         => $tag->country,
+                    'os'              => $tag->os
+                ]
+            );
+        }
+
+
+        $elapsed = time() - $start;
+
+        echo 'Tags cached: '.count($tags).' - Elapsed time: '.$elapsed.' seg.<hr/>';
     }	
 
+
+    public function actionPopulateplacements()
+    {
+        $start = time();
+
+        $placements = Placements::model()->findAll();
+
+        foreach ( $placements as $placement )
+        {
+            $this->_redis->hmset(
+                'placement:'.$placement->id,
+                [
+                    'payout'          => $placement->rate
+                ]
+            );
+        }
+
+
+        $elapsed = time() - $start;
+
+        echo 'Placements cached: '.count($placements).' - Elapsed time: '.$elapsed.' seg.<hr/>';        
+    }
 
 
 }

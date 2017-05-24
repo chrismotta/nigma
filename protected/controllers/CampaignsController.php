@@ -204,13 +204,6 @@ class CampaignsController extends Controller
 
 			if( $model->save() ){
 
-				$relatedTags = Tags::model()->findAll( ['campaign' => $model->id ] );
-
-				foreach ( $relatedTags as $relatedTag )
-				{
-					$predis->hset( 'tag:'.$relatedTag->id, 'frecuency_cap', $model->cap );
-				}
-
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 			}
 		}
