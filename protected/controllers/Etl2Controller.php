@@ -171,7 +171,7 @@ class Etl2Controller extends Controller
     			revenue,
     			unique_id,
     			pubid,
-                ip,
+                server_ip,
                 country,
                 carrier,
                 connection_type,
@@ -239,7 +239,7 @@ class Etl2Controller extends Controller
                     else
                         $values .= 'NULL,';
 
-                    $values .= '"'.$log['user_agent'].'"';
+                    $values .= '"'.$log['user_agent'].'",';
 
                     if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
                         $log['device'] = 'Mobile';
