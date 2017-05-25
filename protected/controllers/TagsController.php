@@ -127,8 +127,33 @@ class TagsController extends Controller
 			
 			if( $model->save() )
 			{
+		        switch ( $model->connection_type )
+		        {
+		            case 'WIFI':
+		                $conn_type = 'wifi';
+		            break;
+		            case '3G':
+		                $conn_type = 'mobile';
+		            break;
+		            default:
+		                $conn_type = null;
+		            break;
+		        }
+
+	            switch ( $model->country )
+	            {
+	                case null:
+	                case '':
+	                case '-':
+	                    $country = null;
+	                break;
+	                default:
+	                    $country = strtolower( $model->country );
+	                break;
+	            }         		        
 
 				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+
 				$predis->hmset(
 					'tag:'.$model->id,
 					[
@@ -137,7 +162,7 @@ class TagsController extends Controller
 						'frequency_cap'   => $model->freq_cap,
 						'payout'		  => $model->campaigns->opportunities->rate,
 						'connection_type' => $model->connection_type,
-						'country' 		  => $model->country,
+						'country' 		  => $country,
 						'os'			  => $model->os
 					]
 				);	
@@ -174,13 +199,39 @@ class TagsController extends Controller
 
 			if($model->save())
 			{
+		        switch ( $model->connection_type )
+		        {
+		            case 'WIFI':
+		                $conn_type = 'wifi';
+		            break;
+		            case '3G':
+		                $conn_type = 'mobile';
+		            break;
+		            default:
+		                $conn_type = null;
+		            break;
+		        }
+
+	            switch ( $model->country )
+	            {
+	                case null:
+	                case '':
+	                case '-':
+	                    $country = null;
+	                break;
+	                default:
+	                    $country = strtolower( $model->country );
+	                break;
+	            } 
+
 				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+
 				$predis->hset( 'tag:'.$model->id, 'code', $model->code );
 				$predis->hset( 'tag:'.$model->id, 'analyze', $model->analyze );
 				$predis->hset( 'tag:'.$model->id, 'frequency_cap', $model->freq_cap );
 				$predis->hset( 'tag:'.$model->id, 'payout', $model->campaigns->opportunities->rate );
-				$predis->hset( 'tag:'.$model->id, 'connection_type', $model->connection_type );
-				$predis->hset( 'tag:'.$model->id, 'country', $model->country );
+				$predis->hset( 'tag:'.$model->id, 'connection_type', $conn_type );
+				$predis->hset( 'tag:'.$model->id, 'country', $country );
 				$predis->hset( 'tag:'.$model->id, 'os', $model->os );
 
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
