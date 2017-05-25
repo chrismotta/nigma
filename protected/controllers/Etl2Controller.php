@@ -398,7 +398,7 @@ class Etl2Controller extends Controller
                 [
                     'code'            => $tag->code,
                     'analyze'         => $tag->analyze,
-                    'frecuency_cap'   => $tag->freq_cap,
+                    'frequency_cap'   => $tag->freq_cap,
                     'payout'          => $tag->campaigns->opportunities->rate,
                     'connection_type' => $tag->connection_type,
                     'country'         => $tag->country,
