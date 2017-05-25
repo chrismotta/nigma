@@ -241,40 +241,42 @@ class Etl2Controller extends Controller
 
                     $values .= '"'.$log['user_agent'].'",';
 
-                    if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
+                    if ( !isset($log['device']) )
+                        $log['device'] = null;
+                    else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
                         $log['device'] = 'Mobile';
 
-                    if ( $log['device'] )
+                    if ( isset($log['device']) && $log['device'] )
                         $values .= '"'.$log['device'].'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['device_brand'] )
+                    if ( isset($log['device_brand']) && $log['device_brand'] )
                         $values .= '"'.$log['device_brand'].'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['device_model'] )
+                    if ( isset($log['device_model']) && $log['device_model'] )
                         $values .= '"'.$log['device_model'].'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['os'] )
+                    if ( isset($log['os']) && $log['os'] )
                         $values .= '"'.$log['os'].'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['os_version'] )
+                    if ( isset($log['os_version']) && $log['os_version'] )
                         $values .= '"'.$log['os_version'].'",';
                     else
                         $values .= 'NULL,';   
 
-                    if ( $log['browser'] )
+                    if ( isset($log['browser']) && $log['browser'] )
                         $values .= '"'.$log['browser'].'",';
                     else
                         $values .= 'NULL,';  
 
-                    if ( $log['browser_version'] )
+                    if ( isset($log['browser_version']) && $log['browser_version'] )
                         $values .= '"'.$log['browser_version'].'"';
                     else
                         $values .= 'NULL';                                      
