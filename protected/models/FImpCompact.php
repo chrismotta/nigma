@@ -236,9 +236,9 @@ class FImpCompact extends CActiveRecord
 			'revenue'         => !$partner ? 'SUM(t.revenue)' : 'SUM(t.cost)',
 			'cost'            => 'SUM(t.cost)',
 			'profit'          => 'SUM(t.revenue)-SUM(t.cost)',
-			'revenue_eCPM'    => !$partner ? 'SUM(t.revenue) * 1000 / COUNT(t.imps)' : 'SUM(t.cost) * 1000 / COUNT(t.imps)',
-			'cost_eCPM'       => 'SUM(t.cost) * 1000 / COUNT(t.imps)',
-			'profit_eCPM'     => '(SUM(t.revenue)-SUM(t.cost)) * 1000 / COUNT(t.imps)',
+			'revenue_eCPM'    => !$partner ? 'SUM(t.revenue) * 1000 / SUM(t.imps)' : 'SUM(t.cost) * 1000 / SUM(t.imps)',
+			'cost_eCPM'       => 'SUM(t.cost) * 1000 / SUM(t.imps)',
+			'profit_eCPM'     => '(SUM(t.revenue)-SUM(t.cost)) * 1000 / SUM(t.imps)',
 			);
 		$selectQuerys = array_merge($groupQuerys, $sumQuerys);
 
