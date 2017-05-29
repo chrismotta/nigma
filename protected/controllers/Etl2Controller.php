@@ -251,7 +251,7 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( $log['user_agent'] )                        
-                        $values .= '"'.$log['user_agent'].'",';
+                        $values .= '"'.mysql_real_escape_string($log['user_agent']).'",';
                     else
                         $values .= 'NULL,';
 
