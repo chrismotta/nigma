@@ -44,7 +44,7 @@ class Etl2Controller extends Controller
 		self::actionSupply();
 		self::actionImpressions();
 
-		$this->_redis->set( 'last_etl_time', $this->_currentEtlTime );
+		//$this->_redis->set( 'last_etl_time', $this->_currentEtlTime );
         
 		\gc_collect_cycles();
 	}
