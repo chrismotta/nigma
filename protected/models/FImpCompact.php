@@ -217,16 +217,16 @@ class FImpCompact extends CActiveRecord
 			'provider'        => 'dSupply.provider',
 			'placement'       => 'dSupply.placement',
 			'pubid'           => 't.pubid',
-			'connection_type' => 'dGeoLocation.connection_type',
-			'country'         => 'dGeoLocation.country',
-			'carrier'         => 'dGeoLocation.carrier',
-			'device_type'     => 'dUserAgent.device_type',
-			'device_brand'    => 'dUserAgent.device_brand',
-			'device_model'    => 'dUserAgent.device_model',
-			'os_type'         => 'dUserAgent.os_type',
-			'os_version'      => 'dUserAgent.os_version',
-			'browser_type'    => 'dUserAgent.browser_type',
-			'browser_version' => 'dUserAgent.browser_version',
+			'connection_type' => '(CASE WHEN t.connection_type IS NULL THEN dGeoLocation.connection_type ELSE t.connection_type END)',
+			'country'         => '(CASE WHEN t.country IS NULL THEN dGeoLocation.country ELSE t.country END)',
+			'carrier'         => '(CASE WHEN t.carrier IS NULL THEN dGeoLocation.carrier ELSE t.carrier END)',
+			'device_type'     => '(CASE WHEN t.device_type IS NULL THEN dUserAgent.device_type ELSE t.device_type END)',
+			'device_brand'    => '(CASE WHEN t.device_brand IS NULL THEN dUserAgent.device_brand ELSE t.device_brand END)',
+			'device_model'    => '(CASE WHEN t.device_model IS NULL THEN dUserAgent.device_model ELSE t.device_model END)',
+			'os_type'         => '(CASE WHEN t.os_type IS NULL THEN dUserAgent.os_type ELSE t.os_type END)',
+			'os_version'      => '(CASE WHEN t.os_version IS NULL THEN dUserAgent.os_version ELSE t.os_version END)',
+			'browser_type'    => '(CASE WHEN t.browser_type IS NULL THEN dUserAgent.browser_type ELSE t.browser_type END)',
+			'browser_version' => '(CASE WHEN t.browser_version IS NULL THEN dUserAgent.browser_version ELSE t.browser_version END)',
 			);
 		$sumQuerys = array(
 			// sum
@@ -236,9 +236,9 @@ class FImpCompact extends CActiveRecord
 			'revenue'         => !$partner ? 'SUM(t.revenue)' : 'SUM(t.cost)',
 			'cost'            => 'SUM(t.cost)',
 			'profit'          => 'SUM(t.revenue)-SUM(t.cost)',
-			'revenue_eCPM'    => !$partner ? 'SUM(t.revenue) * 1000 / COUNT(t.imps)' : 'SUM(t.cost) * 1000 / COUNT(t.imps)',
-			'cost_eCPM'       => 'SUM(t.cost) * 1000 / COUNT(t.imps)',
-			'profit_eCPM'     => '(SUM(t.revenue)-SUM(t.cost)) * 1000 / COUNT(t.imps)',
+			'revenue_eCPM'    => !$partner ? 'SUM(t.revenue) * 1000 / SUM(t.imps)' : 'SUM(t.cost) * 1000 / SUM(t.imps)',
+			'cost_eCPM'       => 'SUM(t.cost) * 1000 / SUM(t.imps)',
+			'profit_eCPM'     => '(SUM(t.revenue)-SUM(t.cost)) * 1000 / SUM(t.imps)',
 			);
 		$selectQuerys = array_merge($groupQuerys, $sumQuerys);
 

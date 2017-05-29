@@ -36,7 +36,6 @@ class Etl2Controller extends Controller
 
 		self::actionDemand();
 		self::actionSupply();
-		self::actionUseragent();
 		self::actionImpressions();
 
 		$this->_redis->set( 'last_etl_time', $this->_currentEtlTime );
@@ -137,106 +136,6 @@ class Etl2Controller extends Controller
 	}
 
 
-	public function actionUseragent ( ){
-
-		$start 		  = time();
-		$c     		  = 0;
-        $userAgentIDs = $this->_redis->zrangebyscore('uas', $this->_lastEtlTime, $this->_currentEtlTime);
-
-        $query 		  = '
-        	INSERT IGNORE INTO D_UserAgent 
-        		(
-        			id, 
-        			device_type,
-        			device_brand, 
-        			device_model,
-        			os_type,
-        			os_version,
-        			browser_type,
-        			browser_version
-        		)
-        	VALUES 
-        ';
-
-        $values = '';
-
-        foreach ( $userAgentIDs as $id )
-        {
-            $ua = $this->_redis->hgetall( 'ua:'.$id );
-
-            if ( $ua )
-            {
-                if ( $c > 0 )
-                    $values .= ',';
-
-                $values .= '("'.$id.'",';
-
-                if ( $ua['device']=='Phablet' || $ua['device']=='Smartphone' )
-                    $ua['device'] = 'Mobile';
-
-                if ( $ua['device'] )
-                    $values .= '"'.$ua['device'].'",';
-                else
-                    $values .= 'NULL,';
-
-                if ( $ua['device_brand'] )
-                    $values .= '"'.$ua['device_brand'].'",';
-                else
-                    $values .= 'NULL,';
-
-                if ( $ua['device_model'] )
-                    $values .= '"'.$ua['device_model'].'",';
-                else
-                    $values .= 'NULL,';
-
-                if ( $ua['os'] )
-                    $values .= '"'.$ua['os'].'",';
-                else
-                    $values .= 'NULL,';
-
-                if ( $ua['os_version'] )
-                    $values .= '"'.$ua['os_version'].'",';
-                else
-                    $values .= 'NULL,';   
-
-                if ( $ua['browser'] )
-                    $values .= '"'.$ua['browser'].'",';
-                else
-                    $values .= 'NULL,';  
-
-                if ( $ua['browser_version'] )
-                    $values .= '"'.$ua['browser_version'].'"';
-                else
-                    $values .= 'NULL';  
-
-                $values .= ')';
-
-                $c++;                
-            }
-
-            // free memory cause there is no garbage collection until block ends
-            unset($ua);
-        }
-
-        if ( $values != '' )
-        {
-            $query .= $values . ';';
-
-            $return = Yii::app()->db->createCommand($query)->execute();            
-        }
-        else
-        {
-            $return = 0;
-        }
-
-
-		$elapsed = time() - $start;
-
-		echo 'ETL UserAgent: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<br/>';
-	}
-
-
-
     public function actionImpressions ( )
     {      
     	$start 			     = time();
@@ -261,30 +160,29 @@ class Etl2Controller extends Controller
 
     private function _buildImpressionsQuery ( $start_at, $end_at )
     {
-        $geoSql 		  = '
-        	INSERT IGNORE INTO D_GeoLocation 
-        		(
-        			id,
-        			country,
-        			carrier,
-        			connection_type
-        		)
-        	VALUES 
-        ';
-
     	$sql = '
     		INSERT INTO F_Imp_Compact (                
     			D_Demand_id,
     			D_Supply_id,
-    			D_Geolocation_id,
-    			D_UserAgent_id,
                 ad_req,
     			imps,                
     			date_time,
     			cost,
     			revenue,
     			unique_id,
-    			pubid
+    			pubid,
+                server_ip,
+                country,
+                carrier,
+                connection_type,
+                user_agent,
+                device_type,
+                device_brand, 
+                device_model,
+                os_type,
+                os_version,
+                browser_type,
+                browser_version                
     		)
 			VALUES  
     	';
@@ -316,52 +214,78 @@ class Etl2Controller extends Controller
                     $values .= '( 
                         '.$log['tag_id'].',
                         '.$log['placement_id'].',
-                        "'.$log['ip'].'",
-                        "'.$log['user_agent'].'",
                         '.$log['imps'].',  
                         '.$log['imps'].', 
                         "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
                         "'.$sessionHash.'",
-                        '.$pubId.'
-                    )';
-
-                    if ( $geoValues != '' )
-                        $geoValues .= ',';
-
-                    $geoValues .= '("'.$log['ip'].'",';
+                        '.$pubId.',
+                        "'.$log['ip'].'",
+                    ';
 
                     if ( $log['country'] )
-                        $geoValues .= '"'.$log['country'].'",';
+                        $values .= '"'.strtoupper($log['country']).'",';
                     else
-                        $geoValues .= 'NULL,';
+                        $values .= 'NULL,';
 
                     if ( $log['carrier'] )
-                        $geoValues .= '"'.$log['carrier'].'",';
+                        $values .= '"'.$log['carrier'].'",';
                     else
-                        $geoValues .= 'NULL,';
+                        $values .= 'NULL,';
 
                     if ( $log['connection_type'] )
-                        $geoValues .= '"'.strtoupper($log['connection_type']).'"';
+                        $values .= '"'.strtoupper($log['connection_type']).'",';
                     else
-                        $geoValues .= 'NULL';
-                
+                        $values .= 'NULL,';
 
-                    $geoValues .= ')';                    
+                    $values .= '"'.$log['user_agent'].'",';
+
+                    if ( !isset($log['device']) )
+                        $log['device'] = null;
+                    else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
+                        $log['device'] = 'Mobile';
+
+                    if ( isset($log['device']) && $log['device'] )
+                        $values .= '"'.$log['device'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['device_brand']) && $log['device_brand'] )
+                        $values .= '"'.$log['device_brand'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['device_model']) && $log['device_model'] )
+                        $values .= '"'.$log['device_model'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['os']) && $log['os'] )
+                        $values .= '"'.$log['os'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['os_version']) && $log['os_version'] )
+                        $values .= '"'.$log['os_version'].'",';
+                    else
+                        $values .= 'NULL,';   
+
+                    if ( isset($log['browser']) && $log['browser'] )
+                        $values .= '"'.$log['browser'].'",';
+                    else
+                        $values .= 'NULL,';  
+
+                    if ( isset($log['browser_version']) && $log['browser_version'] )
+                        $values .= '"'.$log['browser_version'].'"';
+                    else
+                        $values .= 'NULL';                                      
+
+                    $values .= ')';                    
                 }
 
                 // free memory because there is no garbage collection until block ends
                 unset ( $log );
-    		}
-
-    		if ( $geoValues != '' )
-    		{
-	    		$geoSql .= $geoValues . ';';
-
-	    		$r = Yii::app()->db->createCommand( $geoSql )->execute();			
-
-	    		echo 'ETL GeoLocation: '.$r.' rows inserted<br/>';
     		}
 
     		if ( $values != '' )
@@ -393,6 +317,31 @@ class Etl2Controller extends Controller
 
         foreach ( $tags as $tag )
         {
+            switch ( $tag->connection_type )
+            {
+                case 'WIFI':
+                    $conn_type = 'wifi';
+                break;
+                case '3G':
+                    $conn_type = 'mobile';
+                break;
+                default:
+                    $conn_type = null;
+                break;
+            }
+
+            switch ( $tag->country )
+            {
+                case null:
+                case '':
+                case '-':
+                    $country = null;
+                break;
+                default:
+                    $country = strtolower( $tag->country );
+                break;
+            }            
+
             $this->_redis->hmset(
                 'tag:'.$tag->id,
                 [
@@ -400,8 +349,8 @@ class Etl2Controller extends Controller
                     'analyze'         => $tag->analyze,
                     'frequency_cap'   => $tag->freq_cap,
                     'payout'          => $tag->campaigns->opportunities->rate,
-                    'connection_type' => $tag->connection_type,
-                    'country'         => $tag->country,
+                    'connection_type' => $conn_type,
+                    'country'         => $country,
                     'os'              => $tag->os
                 ]
             );
