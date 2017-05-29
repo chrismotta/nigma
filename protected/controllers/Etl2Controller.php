@@ -381,9 +381,10 @@ class Etl2Controller extends Controller
 
                 $values .= ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps);';
 
-                return Yii::app()->db->createCommand( $values )->execute();                
+                $return = Yii::app()->db->createCommand( $values )->execute();                
             }
 
+            return $return;
             //$memoryUsage = (( memory_get_usage() - $start_memory )/1024);
         }  
 
