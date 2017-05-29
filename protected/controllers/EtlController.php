@@ -1,5 +1,7 @@
 <?php
 
+set_time_limit(0);
+
 spl_autoload_unregister(array('YiiBase', 'autoload'));
 require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
@@ -36,7 +38,10 @@ class EtlController extends Controller
 			'geolocation',
 			'impressions',
 			'bid',
-			'piwik'
+			'piwik',
+			'impcompact',
+			'bidcompact',
+			'compact'
 			);
 
 		return array(
@@ -75,6 +80,29 @@ class EtlController extends Controller
 		echo 'Total lapsed time: '.$elapsed.' seg.';
 
 	}
+
+	public function actionCompact(){
+		
+		$start = time();
+
+		$date = isset($_GET['date']) ? $_GET['date'] : null;
+
+		if(isset($date)) echo 'Data from date: '.$date.'<hr/>';
+
+		self::actionDemand();
+		self::actionSupply();
+		self::actionUseragent(null, $date);
+		self::actionGeolocation(null, $date);
+		self::actionImpcompact($date);
+		self::actionBidcompact($date);
+
+		Yii::app()->cache->flush();
+		
+		$elapsed = time() - $start;
+		echo 'Total lapsed time: '.$elapsed.' seg.';
+
+	}
+
 	public function actionView($id){
 		self::actionIndex($id);
 	}
@@ -309,6 +337,79 @@ class EtlController extends Controller
 		$elapsed = time() - $start;
 
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
+	}
+
+	public function actionImpcompact($date=null){
+
+		$start = time();
+
+		$query = 'INSERT IGNORE INTO F_Imp_Compact (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app, imps, ad_req) 
+		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, SHA(CONCAT(i.server_ip,i.user_agent)), i.pubid, i.ip_forwarded, i.referer, i.app, count(SHA(CONCAT(i.server_ip,i.user_agent))), count(SHA(CONCAT(i.server_ip,i.user_agent))) 
+		FROM imp_log i 
+		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
+		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
+
+		if(isset($date))
+			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
+		else
+			$query .= 'WHERE DATE(i.date) = CURDATE()';
+
+		$query .= 'AND i.placements_id IS NOT NULL AND i.tags_id IS NOT NULL AND i.user_agent IS NOT NULL AND i.server_ip IS NOT NULL ';
+
+		$query .= 'GROUP BY SHA(CONCAT(i.server_ip,i.user_agent)) ';
+
+		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
+
+		$elapsed = time() - $start;
+
+		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
+	}
+
+	public function actionBidcompact($date=null){
+
+		$inicialStart = time();
+
+		if(isset($date))
+			$dateCondition = 'AND DATE(i.date_time) = "'.date('Y-m-d', strtotime($date)).'" ';
+		else
+			$dateCondition = 'AND DATE(i.date_time) = CURDATE()';
+
+		$start = time();
+
+		$query = 'UPDATE F_Imp_Compact i 
+		LEFT JOIN D_Demand d      ON(i.D_Demand_id      = d.tag_id) 
+		LEFT JOIN D_Supply s      ON(i.D_Supply_id      = s.placement_id) 
+		LEFT JOIN D_UserAgent u   ON(i.D_UserAgent_id   = u.id) 
+		LEFT JOIN D_GeoLocation g ON(i.D_GeoLocation_id = g.id) 
+		SET 
+		i.revenue = CASE
+        WHEN d.freq_cap IS NULL  THEN d.rate/1000 * i.imps
+        WHEN d.freq_cap > i.imps THEN d.rate/1000 * i.imps
+        ELSE d.rate/1000 * d.freq_cap
+        END,
+		i.cost = CASE
+        WHEN d.freq_cap IS NULL  THEN s.rate/1000 * i.imps
+        WHEN d.freq_cap > i.imps THEN s.rate/1000 * i.imps
+        ELSE s.rate/1000 * d.freq_cap
+        END
+		WHERE 
+		(g.connection_type = d.connection_type OR d.connection_type IS NULL OR d.connection_type = "") 
+		AND 
+		(g.country         = d.country         OR d.country         IS NULL OR d.country         = "") 
+		AND 
+		(u.os_type         = d.os_type         OR d.os_type         IS NULL OR d.os_type         = "") 
+		AND 
+		(CONVERT(u.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
+		';
+		$query.= $dateCondition;
+
+		// echo $query;
+		$return = Yii::app()->db->createCommand($query)->execute();
+
+		$elapsed = time() - $start;
+
+		echo 'ETL Bid - Open Freq. Cap: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<br/>';
+
 	}
 
 	public function actionBid($id=2, $date=null){

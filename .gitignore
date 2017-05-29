@@ -8,4 +8,5 @@
 *.sublime*
 /localConfig.php
 /protected/runtime/*
+/protected/runtime/*/*
 /protected/external/vendor/*

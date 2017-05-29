@@ -100,7 +100,7 @@ if(isset($_REQUEST['group2']))
 
 $sumColumns = array();
 $sumColumns['impressions']               = 1;
-$sumColumns['unique_user']               = 1;
+$sumColumns['unique_imps']               = 1;
 $sumColumns['revenue']                   = 1;
 if(!$partner) $sumColumns['cost']        = 1;
 if(!$partner) $sumColumns['profit']      = 1;
@@ -349,9 +349,9 @@ if(count($_REQUEST)>1){
 				'footerHtmlOptions' => array('style'=>'text-align:right'),
 				),
 			array(
-				'name' => 'unique_user',
-				'visible' => $sumColumns['unique_user'],
-				'footer' => $totals['unique_user'],
+				'name' => 'unique_imps',
+				'visible' => $sumColumns['unique_imps'],
+				'footer' => $totals['unique_imps'],
 				'headerHtmlOptions' => array('style'=>'text-align:right'),
 				'htmlOptions' => array('style'=>'text-align:right'),
 				'footerHtmlOptions' => array('style'=>'text-align:right'),
