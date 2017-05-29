@@ -211,9 +211,14 @@ class Etl2Controller extends Controller
                     else
                         $pubId = 'NULL';
 
+                    if ( $log['placement_id'] )
+                        $pid = $log['placement_id'];
+                    else
+                        $pid = 'NULL';
+
                     $values .= '( 
                         '.$log['tag_id'].',
-                        '.$log['placement_id'].',
+                        '.$pid.',
                         '.$log['imps'].',  
                         '.$log['imps'].', 
                         "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
