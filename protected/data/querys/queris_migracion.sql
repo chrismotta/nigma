@@ -8,7 +8,6 @@ ALTER TABLE `nigma`.`F_Imp`
 DROP INDEX `fk_F_Impressions_D_UserAgent2_idx` ,
 DROP INDEX `fk_F_Impressions_D_GeoLocation2_idx` ;
 
-
 # query 2
 
 ALTER TABLE `nigma`.`F_Imp` 
@@ -18,7 +17,6 @@ ADD COLUMN `imps` INT NULL DEFAULT 1 AFTER `referer_app`;
 
 ALTER TABLE `nigma`.`F_Imp` 
 ADD COLUMN `imps` INT NULL DEFAULT 1 AFTER `referer_app`;
-
 
 # query 3
 
@@ -89,8 +87,9 @@ INSERT INTO F_Imp_Compact
 		imps,
 		date_time,
 		unique_id,
-		pubid,
-		unique_imps
+		unique_imps,
+        revenue,
+        cost
     )
 SELECT
 	i.D_Demand_id AS D_Demand_id, 
@@ -100,19 +99,59 @@ SELECT
 	count(i.id) AS imps,
     i.date_time AS date_time,
     i.unique_id AS unique_id,
-    i.pubid AS pubid
+    count(distinct i.unique_id) AS unique_imps,
+    sum(b.revenue) AS revenue,
+    sum(b.cost) AS cost
 
 FROM F_Imp i
 
 LEFT JOIN D_GeoLocation g ON (g.id = i.D_GeoLocation_id)
 LEFT JOIN D_UserAgent a ON (a.id = i.D_UserAgent_id)
+LEFT JOIN D_Bid b ON (b.F_Impressions_id = i.id)
 
-WHERE date(date_time)="2016-02-16"
-
-GROUP BY i.D_Demand_id, i.D_Supply_id, g.country, a.os_type
-
-
-, date(i.date_time)
+WHERE month(date_time)=2 AND year(date_time)=2017 
+GROUP BY i.D_Demand_id, i.D_Supply_id, g.country, a.os_type, 
 
 
-    count(distinct i.unique_id) AS unique_imps
+
+# update new columns compact
+
+UPDATE F_Imp_Compact i 
+LEFT JOIN D_GeoLocation g ON (g.id = i.D_GeoLocation_id)
+LEFT JOIN D_UserAgent a ON (a.id = i.D_UserAgent_id)
+SET 
+i.os_type = a.os_type,
+i.country = g.country,
+i.connection_type = CASE
+WHEN g.connection_type = 'WIFI' THEN 'WIFI'
+WHEN g.connection_type = '3G' THEN 'MOBILE'
+WHEN g.connection_type = '' THEN NULL
+ELSE NULL
+END
+WHERE YEAR(i.date_time) = 2016 AND MONTH(i.date_time) = 2
+
+# update new columns not compact
+
+UPDATE F_Imp_Compact i 
+LEFT JOIN D_GeoLocation g ON (g.id = i.D_GeoLocation_id)
+LEFT JOIN D_UserAgent a ON (a.id = i.D_UserAgent_id)
+SET 
+i.os_type = a.os_type,
+i.user_agent = a.user_agent,
+i.device_type = a.device_type,
+i.device_brand = a.device_brand,
+i.device_model = a.device_model,
+i.os_version = a.os_version,
+i.browser_type = a.browser_type,
+i.browser_version = a.browser_version,
+i.server_ip = g.server_ip,
+i.carrier = g.carrier,
+i.country = g.country,
+i.connection_type = CASE
+WHEN g.connection_type = 'WIFI' THEN 'WIFI'
+WHEN g.connection_type = '3G' THEN 'MOBILE'
+WHEN g.connection_type = '' THEN NULL
+ELSE NULL
+END
+WHERE DATE(i.date_time) >= '2017-05-17' 
+
