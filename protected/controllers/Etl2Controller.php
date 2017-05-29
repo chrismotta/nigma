@@ -1,8 +1,14 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 spl_autoload_unregister(array('YiiBase', 'autoload'));
 require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
 require_once(dirname(__FILE__).'/../config/localConfig.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
+
+
 
 use Predis;
 
@@ -211,9 +217,14 @@ class Etl2Controller extends Controller
                     else
                         $pubId = 'NULL';
 
+                    if ( $log['placement_id'] )
+                        $pid = $log['placement_id'];
+                    else
+                        $pid = 'NULL';
+
                     $values .= '( 
                         '.$log['tag_id'].',
-                        '.$log['placement_id'].',
+                        '.$pid.',
                         '.$log['imps'].',  
                         '.$log['imps'].', 
                         "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
