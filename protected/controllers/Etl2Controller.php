@@ -1,8 +1,14 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 spl_autoload_unregister(array('YiiBase', 'autoload'));
 require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
 require_once(dirname(__FILE__).'/../config/localConfig.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
+
+
 
 use Predis;
 
