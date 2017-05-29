@@ -9,7 +9,6 @@ require_once(dirname(__FILE__).'/../config/localConfig.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
 
 
-
 use Predis;
 
 class Etl2Controller extends Controller
@@ -25,7 +24,7 @@ class Etl2Controller extends Controller
 
     	$this->_redis 	 	  	= new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
 
-    	$this->_objectLimit 	= 50000; // how many objects to process at once
+    	$this->_objectLimit 	= 20000; // how many objects to process at once
 
     	$lastEtlTime   			= $this->_redis->get( 'last_etl_time');
     	$this->_lastEtlTime 	= $lastEtlTime ?  $lastEtlTime : 0;
@@ -196,9 +195,12 @@ class Etl2Controller extends Controller
     	$values    = '';  		
     	$geoValues = '';
 
-        echo 'query => '. $start_at.': '.$end_at.'<br>';
+        echo 'query => from '. $start_at.' to: '.$end_at.'<br>';
 
 		$sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
+
+        $start_memory = memory_get_usage();
+
 
 		if ( $sessionHashes )
 		{
@@ -299,6 +301,8 @@ class Etl2Controller extends Controller
                 unset ( $log );
     		}
 
+        echo '<br>memory usage: '. ( memory_get_usage() - $start_memory );
+        die('aca');
     		if ( $values != '' )
     		{
 	    		$sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps);';
