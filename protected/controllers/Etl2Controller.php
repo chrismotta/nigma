@@ -439,7 +439,7 @@ class Etl2Controller extends Controller
     		{
     			$log = $this->_redis->hgetall( 'log:'.$sessionHash );
 
-                if ( $log )
+                if ( $log && \filter_var($log['ip'], \FILTER_VALIDATE_IP))
                 {   
                     if ( $values != '' )
                         $values .= ',';                    
