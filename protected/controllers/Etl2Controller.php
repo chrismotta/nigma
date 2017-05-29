@@ -195,12 +195,10 @@ class Etl2Controller extends Controller
     	$values    = '';  		
     	$geoValues = '';
 
-        echo 'query => from '. $start_at.' to: '.$end_at.'<br>';
-
 		$sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
 
-        $start_memory = memory_get_usage();
-
+        //$start_memory = memory_get_usage();
+        //echo 'query => from '. $start_at.' to: '.$end_at.'<br>';  
 
 		if ( $sessionHashes )
 		{
@@ -301,15 +299,15 @@ class Etl2Controller extends Controller
                 unset ( $log );
     		}
 
-        echo '<br>memory usage: '. ( memory_get_usage() - $start_memory );
-        die('aca');
+            //$memoryUsage = (( memory_get_usage() - $start_memory )/1024);
+
     		if ( $values != '' )
     		{
 	    		$sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps);';
 
 	    		return Yii::app()->db->createCommand( $sql )->execute();			
     		}
-		}
+		}  
 
         unset( $sessionHashes );
 
