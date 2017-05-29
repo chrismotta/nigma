@@ -153,7 +153,7 @@ class Etl2Controller extends Controller
     	for ( $i=0; $i<$queries; $i++ )
     	{
     		// call each query from a separated method in order to force garbage collection (and free memory)
-    		$rows += $this->_buildImpressionsQuery( $startAt, $startAt+$this->_objectLimit );
+    		$rows += $this->_buildImpressionsQueryDebug( $startAt, $startAt+$this->_objectLimit );
 			$startAt += $this->_objectLimit;
     	}
 
@@ -162,56 +162,133 @@ class Etl2Controller extends Controller
 		echo 'Impressions: '.$rows.' rows - queries: '.$queries.' - load time: '.$elapsed.' seg.<hr/>';
     }
 
-
-    private function _buildImpressionsQuery ( $start_at, $end_at )
+    private function _buildImpressionsQueryDebug ( $start_at, $end_at )
     {
-    	$sql = '
-    		INSERT INTO F_Imp_Compact (                
-    			D_Demand_id,
-    			D_Supply_id,
-                ad_req,
-    			imps,                
-    			date_time,
-    			cost,
-    			revenue,
-    			unique_id,
-    			pubid,
-                server_ip,
-                country,
-                carrier,
-                connection_type,
-                user_agent,
-                device_type,
-                device_brand, 
-                device_model,
-                os_type,
-                os_version,
-                browser_type,
-                browser_version                
-    		)
-			VALUES  
-    	';
+        $values    = '';        
 
-    	$values    = '';  		
-    	$geoValues = '';
-
-		$sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
+        $sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
 
         //$start_memory = memory_get_usage();
         //echo 'query => from '. $start_at.' to: '.$end_at.'<br>';  
 
-		if ( $sessionHashes )
-		{
-			// add each log to sql query
-    		foreach ( $sessionHashes as $sessionHash )
-    		{
-    			$log = $this->_redis->hgetall( 'log:'.$sessionHash );
+        if ( $sessionHashes )
+        {
+            $params = [];
+            $c = 0;
+            // add each log to sql query
+            foreach ( $sessionHashes as $sessionHash )
+            {
+                $log = $this->_redis->hgetall( 'log:'.$sessionHash );
 
                 if ( $log )
-                {
-                    if ( $values != '' )
-                        $values .= ',';
+                {   
+                    $values = '
+                        INSERT INTO F_Imp_Compact (                
+                            D_Demand_id,
+                            D_Supply_id,
+                            ad_req,
+                            imps,                
+                            date_time,
+                            cost,
+                            revenue,
+                            unique_id,
+                            pubid,
+                            server_ip,
+                            country,
+                            carrier,
+                            connection_type,
+                            user_agent,
+                            device_type,
+                            device_brand, 
+                            device_model,
+                            os_type,
+                            os_version,
+                            browser_type,
+                            browser_version                
+                        )
+                        VALUES                      
+                    ';                    
 
+                    // with params
+                    /*
+                    $values .= '(
+                        :p01'.$c.',
+                        :p02'.$c.',
+                        :p03'.$c.',
+                        :p04'.$c.',
+                        :p05'.$c.',
+                        :p06'.$c.',
+                        :p07'.$c.',
+                        :p08'.$c.',
+                        :p09'.$c.',
+                        :p10'.$c.',
+                        :p11'.$c.',
+                        :p12'.$c.',
+                        :p13'.$c.',
+                        :p14'.$c.',
+                        :p15'.$c.',
+                        :p16'.$c.',
+                        :p17'.$c.',
+                        :p18'.$c.',
+                        :p19'.$c.',
+                        :p20'.$c.',
+                        :p11'.$c.'
+                    )';
+
+                    $params[':p01'.$c]  = $log['tag_id'];
+                    $params[':p02'.$c]  = $log['placement_id'] ? $log['placement_id'] : null;
+                    $params[':p03'.$c]  = $log['imps'];
+                    $params[':p04'.$c]  = $log['imps'];
+                    $params[':p05'.$c]  = \date( 'Y-m-d H:i:s', $log['imp_time'] );
+                    $params[':p06'.$c]  = $log['cost'];
+                    $params[':p07'.$c]  = $log['revenue'];
+                    $params[':p08'.$c]  = $sessionHash;
+                    $params[':p09'.$c]  = $log['publisher_id'] ? $log['publisher_id'] : null;
+                    $params[':p10'.$c]  = $log['ip'];
+                    $params[':p11'.$c]  = \strtoupper($log['country']);
+                    $params[':p12'.$c]  = $log['carrier'];
+                    $params[':p13'.$c]  = strtoupper($log['connection_type']);
+                    $params[':p14'.$c]  = null;
+
+                    if ( isset($log['device']) )
+                        $params[':p15'.$c]  = $log['device'];
+                    else
+                        $params[':p15'.$c]  = null;
+
+                    if ( isset($log['device_brand']) )
+                        $params[':p16'.$c]  = $log['device_brand'];
+                    else
+                        $params[':p16'.$c]  = null;
+
+                    if ( isset($log['device_model']) )
+                        $params[':p17'.$c]  = $log['device_model'];
+                    else
+                        $params[':p17'.$c]  = null;                    
+
+                    if ( isset($log['os']) )
+                        $params[':p18'.$c]  = $log['os'];
+                    else
+                        $params[':p18'.$c]  = null;
+
+                    if ( isset($log['os_version']) )
+                        $params[':p19'.$c]  = $log['os_version'];
+                    else
+                        $params[':p19'.$c]  = null;    
+
+                    if ( isset($log['browser']) )
+                        $params[':p20'.$c]  = $log['browser'];
+                    else
+                        $params[':p20'.$c]  = null;
+
+                    if ( isset($log['browser_version']) )
+                        $params[':p21'.$c]  = $log['browser_version'];
+                    else
+                        $params[':p21'.$c]  = null;  
+
+                    $c++;
+                    */
+                    // without params
+                    
                     if ( $log['publisher_id'] )
                         $pubId = $log['publisher_id'];
                     else
@@ -249,11 +326,10 @@ class Etl2Controller extends Controller
                         $values .= '"'.strtoupper($log['connection_type']).'",';
                     else
                         $values .= 'NULL,';
-                    /*
+
                     if ( $log['user_agent'] )                        
                         $values .= '"'.$log['user_agent'].'",';
                     else
-                    */
                         $values .= 'NULL,';
 
                     if ( !isset($log['device']) )
@@ -296,7 +372,242 @@ class Etl2Controller extends Controller
                     else
                         $values .= 'NULL';                                      
 
-                    $values .= ')';                    
+                    $values .= ') ';       
+           
+                }
+
+                // free memory because there is no garbage collection until block ends
+                unset ( $log );
+
+                $values .= ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps);';
+
+                return Yii::app()->db->createCommand( $values )->execute();                
+            }
+
+            //$memoryUsage = (( memory_get_usage() - $start_memory )/1024);
+        }  
+
+        unset( $sessionHashes );
+
+        return 0;
+    }
+
+    private function _buildImpressionsQuery ( $start_at, $end_at )
+    {
+    	$sql = '
+    		INSERT INTO F_Imp_Compact (                
+    			D_Demand_id,
+    			D_Supply_id,
+                ad_req,
+    			imps,                
+    			date_time,
+    			cost,
+    			revenue,
+    			unique_id,
+    			pubid,
+                server_ip,
+                country,
+                carrier,
+                connection_type,
+                user_agent,
+                device_type,
+                device_brand, 
+                device_model,
+                os_type,
+                os_version,
+                browser_type,
+                browser_version                
+    		)
+			VALUES  
+    	';
+
+    	$values    = '';  		
+    	$geoValues = '';
+
+		$sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
+
+        //$start_memory = memory_get_usage();
+        //echo 'query => from '. $start_at.' to: '.$end_at.'<br>';  
+
+		if ( $sessionHashes )
+		{
+            $params = [];
+            $c = 0;
+			// add each log to sql query
+    		foreach ( $sessionHashes as $sessionHash )
+    		{
+    			$log = $this->_redis->hgetall( 'log:'.$sessionHash );
+
+                if ( $log )
+                {   
+                    if ( $values != '' )
+                        $values .= ',';                    
+
+                    // with params
+                    /*
+                    $values .= '(
+                        :p01'.$c.',
+                        :p02'.$c.',
+                        :p03'.$c.',
+                        :p04'.$c.',
+                        :p05'.$c.',
+                        :p06'.$c.',
+                        :p07'.$c.',
+                        :p08'.$c.',
+                        :p09'.$c.',
+                        :p10'.$c.',
+                        :p11'.$c.',
+                        :p12'.$c.',
+                        :p13'.$c.',
+                        :p14'.$c.',
+                        :p15'.$c.',
+                        :p16'.$c.',
+                        :p17'.$c.',
+                        :p18'.$c.',
+                        :p19'.$c.',
+                        :p20'.$c.',
+                        :p11'.$c.'
+                    )';
+
+                    $params[':p01'.$c]  = $log['tag_id'];
+                    $params[':p02'.$c]  = $log['placement_id'] ? $log['placement_id'] : null;
+                    $params[':p03'.$c]  = $log['imps'];
+                    $params[':p04'.$c]  = $log['imps'];
+                    $params[':p05'.$c]  = \date( 'Y-m-d H:i:s', $log['imp_time'] );
+                    $params[':p06'.$c]  = $log['cost'];
+                    $params[':p07'.$c]  = $log['revenue'];
+                    $params[':p08'.$c]  = $sessionHash;
+                    $params[':p09'.$c]  = $log['publisher_id'] ? $log['publisher_id'] : null;
+                    $params[':p10'.$c]  = $log['ip'];
+                    $params[':p11'.$c]  = \strtoupper($log['country']);
+                    $params[':p12'.$c]  = $log['carrier'];
+                    $params[':p13'.$c]  = strtoupper($log['connection_type']);
+                    $params[':p14'.$c]  = null;
+
+                    if ( isset($log['device']) )
+                        $params[':p15'.$c]  = $log['device'];
+                    else
+                        $params[':p15'.$c]  = null;
+
+                    if ( isset($log['device_brand']) )
+                        $params[':p16'.$c]  = $log['device_brand'];
+                    else
+                        $params[':p16'.$c]  = null;
+
+                    if ( isset($log['device_model']) )
+                        $params[':p17'.$c]  = $log['device_model'];
+                    else
+                        $params[':p17'.$c]  = null;                    
+
+                    if ( isset($log['os']) )
+                        $params[':p18'.$c]  = $log['os'];
+                    else
+                        $params[':p18'.$c]  = null;
+
+                    if ( isset($log['os_version']) )
+                        $params[':p19'.$c]  = $log['os_version'];
+                    else
+                        $params[':p19'.$c]  = null;    
+
+                    if ( isset($log['browser']) )
+                        $params[':p20'.$c]  = $log['browser'];
+                    else
+                        $params[':p20'.$c]  = null;
+
+                    if ( isset($log['browser_version']) )
+                        $params[':p21'.$c]  = $log['browser_version'];
+                    else
+                        $params[':p21'.$c]  = null;  
+
+                    $c++;
+                    */
+                    // without params
+                    
+                    if ( $log['publisher_id'] )
+                        $pubId = $log['publisher_id'];
+                    else
+                        $pubId = 'NULL';
+
+                    if ( $log['placement_id'] )
+                        $pid = $log['placement_id'];
+                    else
+                        $pid = 'NULL';
+
+                    $values .= '( 
+                        '.$log['tag_id'].',
+                        '.$pid.',
+                        '.$log['imps'].',  
+                        '.$log['imps'].', 
+                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
+                        '.$log['cost'].',  
+                        '.$log['revenue'].',  
+                        "'.$sessionHash.'",
+                        '.$pubId.',
+                        "'.$log['ip'].'",
+                    ';
+
+                    if ( $log['country'] )
+                        $values .= '"'.strtoupper($log['country']).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( $log['carrier'] )
+                        $values .= '"'.$log['carrier'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( $log['connection_type'] )
+                        $values .= '"'.strtoupper($log['connection_type']).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( $log['user_agent'] )                        
+                        $values .= '"'.$log['user_agent'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( !isset($log['device']) )
+                        $log['device'] = null;
+                    else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
+                        $log['device'] = 'Mobile';
+
+                    if ( isset($log['device']) && $log['device'] )
+                        $values .= '"'.$log['device'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['device_brand']) && $log['device_brand'] )
+                        $values .= '"'.$log['device_brand'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['device_model']) && $log['device_model'] )
+                        $values .= '"'.$log['device_model'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['os']) && $log['os'] )
+                        $values .= '"'.$log['os'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['os_version']) && $log['os_version'] )
+                        $values .= '"'.$log['os_version'].'",';
+                    else
+                        $values .= 'NULL,';   
+
+                    if ( isset($log['browser']) && $log['browser'] )
+                        $values .= '"'.$log['browser'].'",';
+                    else
+                        $values .= 'NULL,';  
+
+                    if ( isset($log['browser_version']) && $log['browser_version'] )
+                        $values .= '"'.$log['browser_version'].'"';
+                    else
+                        $values .= 'NULL';                                      
+
+                    $values .= ')';       
+           
                 }
 
                 // free memory because there is no garbage collection until block ends
@@ -309,7 +620,7 @@ class Etl2Controller extends Controller
     		{
 	    		$sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps);';
 
-	    		return Yii::app()->db->createCommand( $sql )->execute();			
+	    		return Yii::app()->db->createCommand( $sql )->execute($params);			
     		}
 		}  
 
