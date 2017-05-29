@@ -253,7 +253,7 @@ class Etl2Controller extends Controller
                     if ( $log['user_agent'] )                        
                         $values .= '"'.$log['user_agent'].'",';
                     else
-                        $values .= 'NULL';
+                        $values .= 'NULL,';
 
                     if ( !isset($log['device']) )
                         $log['device'] = null;
