@@ -24,7 +24,7 @@ class Etl2Controller extends Controller
 
     	$this->_redis 	 	  	= new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
 
-    	$this->_objectLimit 	= 100000; // how many objects to process at once
+    	$this->_objectLimit 	= 30000; // how many objects to process at once
 
     	$lastEtlTime   			= $this->_redis->get( 'last_etl_time');
     	$this->_lastEtlTime 	= $lastEtlTime ?  $lastEtlTime : 0;
