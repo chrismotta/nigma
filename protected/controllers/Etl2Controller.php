@@ -43,7 +43,7 @@ class Etl2Controller extends Controller
 		self::actionSupply();
 		self::actionImpressions();
 
-		//$this->_redis->set( 'last_etl_time', $this->_currentEtlTime );
+		$this->_redis->set( 'last_etl_time', $this->_currentEtlTime );
         
 		\gc_collect_cycles();
 	}
@@ -323,7 +323,12 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( $log['connection_type'] )
+                    {
+                        if ( $log['connection_type']== '3g' )
+                            $log['connection_type']= 'MOBILE';
+
                         $values .= '"'.strtoupper($log['connection_type']).'",';
+                    }
                     else
                         $values .= 'NULL,';
 
@@ -495,7 +500,12 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( $log['connection_type'] )
+                    {
+                        if ( $log['connection_type']== '3g' || $log['connection_type']== '3G' )
+                            $log['connection_type']= 'MOBILE';
+
                         $values .= '"'.strtoupper($log['connection_type']).'",';
+                    }
                     else
                         $values .= 'NULL,';
 
