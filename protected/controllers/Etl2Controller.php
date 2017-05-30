@@ -9,7 +9,6 @@ require_once(dirname(__FILE__).'/../config/localConfig.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
 
 
-
 use Predis;
 
 class Etl2Controller extends Controller
@@ -25,16 +24,17 @@ class Etl2Controller extends Controller
 
     	$this->_redis 	 	  	= new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
 
-    	$this->_objectLimit 	= 100000; // how many objects to process at once
+        $this->_objectLimit = isset( $_GET['objectlimit'] ) ? $_GET['objectlimit'] : 50000;
+    	
+        //$this->_objectLimit 	= 30000; // how many objects to process at once
 
     	$lastEtlTime   			= $this->_redis->get( 'last_etl_time');
-    	$this->_lastEtlTime 	= $lastEtlTime ?  $lastEtlTime : 0;
+    	$this->_lastEtlTime 	= $lastEtlTime ? $lastEtlTime : 0;
     	$this->_currentEtlTime	= time();        	
 
 		\ini_set('memory_limit','3000M');
 		\set_time_limit(0);
 	}
-
 
 	public function actionIndex( )
 	{
@@ -154,8 +154,17 @@ class Etl2Controller extends Controller
     	for ( $i=0; $i<$queries; $i++ )
     	{
     		// call each query from a separated method in order to force garbage collection (and free memory)
-    		$rows += $this->_buildImpressionsQuery( $startAt, $startAt+$this->_objectLimit );
-			$startAt += $this->_objectLimit;
+            if ( isset($_GET['rowbyrow']) && $_GET['rowbyrow'] )
+            {
+                $rows += $this->_buildImpressionsQueryByRow( $startAt, $startAt+$this->_objectLimit );
+                $queries = $rows;
+            } 
+            else
+            {
+                $rows += $this->_buildImpressionsQuery( $startAt, $startAt+$this->_objectLimit );             
+            }
+
+            $startAt += $this->_objectLimit;
     	}
 
 		$elapsed = time() - $start;
@@ -163,6 +172,177 @@ class Etl2Controller extends Controller
 		echo 'Impressions: '.$rows.' rows - queries: '.$queries.' - load time: '.$elapsed.' seg.<hr/>';
     }
 
+    private function _buildImpressionsQueryByRow ( $start_at, $end_at )
+    {
+        $values    = '';        
+        $return    = 0;
+
+        $sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
+
+        //$start_memory = memory_get_usage();
+        //echo 'query => from '. $start_at.' to: '.$end_at.'<br>';  
+
+        if ( $sessionHashes )
+        {
+            // run a query for each log
+            foreach ( $sessionHashes as $sessionHash )
+            {
+                $log = $this->_redis->hgetall( 'log:'.$sessionHash );
+
+                if ( $log )
+                { 
+                    if ( !\filter_var($log['ip'], \FILTER_VALIDATE_IP) || !preg_match('/^[a-zA-Z]{2}$/', $log['country']) )
+                    {
+                        $ips = \explode( ',', $log['ip'] );
+                        $log['ip'] = $ips[0];
+
+                        $location = new IP2Location(Yii::app()->params['ipDbFile'], IP2Location::FILE_IO);
+                        $ipData      = $location->lookup($log['ip'], IP2Location::ALL);
+
+                        $log['carrier'] = $ipData->mobileCarrierName;
+                        $log['country'] = $ipData->countryCode;
+
+                        if ( $ipData->mobileCarrierName == '-' )
+                            $log['connection_type'] = 'WIFI';
+                        else
+                            $log['connection_type'] = 'MOBILE';
+                    }
+
+                    $values = '
+                        INSERT INTO F_Imp_Compact (                
+                            D_Demand_id,
+                            D_Supply_id,
+                            ad_req,
+                            imps,                
+                            date_time,
+                            cost,
+                            revenue,
+                            unique_id,
+                            pubid,
+                            server_ip,
+                            country,
+                            carrier,
+                            connection_type,
+                            user_agent,
+                            device_type,
+                            device_brand, 
+                            device_model,
+                            os_type,
+                            os_version,
+                            browser_type,
+                            browser_version                
+                        )
+                        VALUES                      
+                    ';                    
+                    
+                    if ( $log['publisher_id'] )
+                        $pubId = $log['publisher_id'];
+                    else
+                        $pubId = 'NULL';
+
+                    if ( $log['placement_id'] )
+                        $pid = $log['placement_id'];
+                    else
+                        $pid = 'NULL';
+
+                    $values .= '( 
+                        '.$log['tag_id'].',
+                        '.$pid.',
+                        '.$log['imps'].',  
+                        '.$log['imps'].', 
+                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
+                        '.$log['cost'].',  
+                        '.$log['revenue'].',  
+                        "'.$sessionHash.'",
+                        '.$pubId.',
+                        "'.$log['ip'].'",
+                    ';
+
+                    if ( $log['country'] )
+                        $values .= '"'.strtoupper($log['country']).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( $log['carrier'] )
+                        $values .= '"'.$this->_escapeSql( $log['carrier'] ).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( $log['connection_type'] )
+                    {
+                        if ( $log['connection_type']== '3g' || $log['connection_type']== '3G' )
+                            $log['connection_type']= 'MOBILE';
+
+                        $values .= '"'.strtoupper($log['connection_type']).'",';
+                    }
+                    else
+                        $values .= 'NULL,';
+
+                    if ( $log['user_agent'] )                        
+                        $values .= '"'.$this->_escapeSql( $log['user_agent'] ).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( !isset($log['device']) )
+                        $log['device'] = null;
+                    else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
+                        $log['device'] = 'Mobile';
+
+                    if ( isset($log['device']) && $log['device'] )
+                        $values .= '"'.$log['device'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['device_brand']) && $log['device_brand'] )
+                        $values .= '"'.$this->_escapeSql( $log['device_brand'] ).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['device_model']) && $log['device_model'] )
+                        $values .= '"'.$this->_escapeSql( $log['device_model'] ).'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['os']) && $log['os'] )
+                        $values .= '"'.$log['os'].'",';
+                    else
+                        $values .= 'NULL,';
+
+                    if ( isset($log['os_version']) && $log['os_version'] )
+                        $values .= '"'.$this->_escapeSql( $log['os_version'] ).'",';
+                    else
+                        $values .= 'NULL,';   
+
+                    if ( isset($log['browser']) && $log['browser'] )
+                        $values .= '"'.$this->_escapeSql( $log['browser'] ).'",';
+                    else
+                        $values .= 'NULL,';  
+
+                    if ( isset($log['browser_version']) && $log['browser_version'] )
+                        $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'"';
+                    else
+                        $values .= 'NULL';                                         
+
+                    $values .= ') ';       
+           
+                }
+
+                // free memory because there is no garbage collection until block ends
+                unset ( $log );
+
+                $values .= ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue);';
+
+                $return += Yii::app()->db->createCommand( $values )->execute();                
+            }
+
+            return $return;
+
+        }  
+
+        unset( $sessionHashes );
+
+        return 0;
+    }
 
     private function _buildImpressionsQuery ( $start_at, $end_at )
     {
@@ -196,22 +376,42 @@ class Etl2Controller extends Controller
     	$values    = '';  		
     	$geoValues = '';
 
-        echo 'query => '. $start_at.': '.$end_at.'<br>';
-
 		$sessionHashes = $this->_redis->zrangebyscore( 'sessionhashes', $this->_lastEtlTime, $this->_currentEtlTime,  'LIMIT', $start_at, $end_at );
+
+        //$start_memory = memory_get_usage();
+        //echo 'query => from '. $start_at.' to: '.$end_at.'<br>';  
 
 		if ( $sessionHashes )
 		{
+            $params = [];
+            $c = 0;
 			// add each log to sql query
     		foreach ( $sessionHashes as $sessionHash )
     		{
     			$log = $this->_redis->hgetall( 'log:'.$sessionHash );
 
                 if ( $log )
-                {
-                    if ( $values != '' )
-                        $values .= ',';
+                {   
+                    if ( !\filter_var($log['ip'], \FILTER_VALIDATE_IP) || !preg_match('/^[a-zA-Z]{2}$/', $log['country']) )
+                    {
+                        $ips = \explode( ',', $log['ip'] );
+                        $log['ip'] = $ips[0];
 
+                        $location = new IP2Location(Yii::app()->params['ipDbFile'], IP2Location::FILE_IO);
+                        $ipData      = $location->lookup($log['ip'], IP2Location::ALL);
+
+                        $log['carrier'] = $ipData->mobileCarrierName;
+                        $log['country'] = $ipData->countryCode;
+
+                        if ( $ipData->mobileCarrierName == '-' )
+                            $log['connection_type'] = 'WIFI';
+                        else
+                            $log['connection_type'] = 'MOBILE';
+                    }
+
+                    if ( $values != '' )
+                        $values .= ',';                    
+                    
                     if ( $log['publisher_id'] )
                         $pubId = $log['publisher_id'];
                     else
@@ -241,16 +441,24 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( $log['carrier'] )
-                        $values .= '"'.$log['carrier'].'",';
+                        $values .= '"'.$this->_escapeSql( $log['carrier'] ).'",';
                     else
                         $values .= 'NULL,';
 
                     if ( $log['connection_type'] )
+                    {
+                        if ( $log['connection_type']== '3g' || $log['connection_type']== '3G' )
+                            $log['connection_type']= 'MOBILE';
+
                         $values .= '"'.strtoupper($log['connection_type']).'",';
+                    }
                     else
                         $values .= 'NULL,';
 
-                    $values .= '"'.$log['user_agent'].'",';
+                    if ( $log['user_agent'] )                        
+                        $values .= '"'.$this->_escapeSql( $log['user_agent'] ).'",';
+                    else
+                        $values .= 'NULL,';
 
                     if ( !isset($log['device']) )
                         $log['device'] = null;
@@ -263,12 +471,12 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( isset($log['device_brand']) && $log['device_brand'] )
-                        $values .= '"'.$log['device_brand'].'",';
+                        $values .= '"'.$this->_escapeSql( $log['device_brand'] ).'",';
                     else
                         $values .= 'NULL,';
 
                     if ( isset($log['device_model']) && $log['device_model'] )
-                        $values .= '"'.$log['device_model'].'",';
+                        $values .= '"'.$this->_escapeSql( $log['device_model'] ).'",';
                     else
                         $values .= 'NULL,';
 
@@ -278,38 +486,75 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( isset($log['os_version']) && $log['os_version'] )
-                        $values .= '"'.$log['os_version'].'",';
+                        $values .= '"'.$this->_escapeSql( $log['os_version'] ).'",';
                     else
                         $values .= 'NULL,';   
 
                     if ( isset($log['browser']) && $log['browser'] )
-                        $values .= '"'.$log['browser'].'",';
+                        $values .= '"'.$this->_escapeSql( $log['browser'] ).'",';
                     else
                         $values .= 'NULL,';  
 
                     if ( isset($log['browser_version']) && $log['browser_version'] )
-                        $values .= '"'.$log['browser_version'].'"';
+                        $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'"';
                     else
                         $values .= 'NULL';                                      
 
-                    $values .= ')';                    
+                    $values .= ')';       
+           
                 }
 
                 // free memory because there is no garbage collection until block ends
                 unset ( $log );
     		}
 
+            //$memoryUsage = (( memory_get_usage() - $start_memory )/1024);
+
     		if ( $values != '' )
     		{
-	    		$sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps);';
+	    		$sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue);';
 
-	    		return Yii::app()->db->createCommand( $sql )->execute();			
+	    		return Yii::app()->db->createCommand( $sql )->execute($params);			
     		}
-		}
+		}  
 
         unset( $sessionHashes );
 
 		return 0;
+    }
+
+
+    private function _escapeSql( $sql )
+    {
+        return preg_replace(
+            [
+                '/(NUL)/',
+                '/(BS)/',
+                '/(TAB)/',
+                '/(LF)/',
+                '/(CR)/',
+                '/(SUB)/',
+                '/(")/',
+                '/(%)/',
+                '/(\\\')/',
+                '/(\\\\)/',
+                '/(_)/'
+            ],
+            [
+                '\0',
+                '\b',
+                '\t',
+                '\n',
+                '\r',
+                '\Z',
+                '\"',
+                '\%',
+                '\\\'',
+                '\\\\',
+                '\\'
+            ],
+            $sql
+        );
     }
 
 
