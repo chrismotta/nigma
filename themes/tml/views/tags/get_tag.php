@@ -3,6 +3,11 @@ $width = $model->bannerSizes->width;
 $height = $model->bannerSizes->height;
 $id = $model->id;
 
+// new format
+$phpTextIframeNew = '<iframe src="http://req.bidmachine.co/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
+$phpTextJsNew = '<script type="text/javascript" src="http://req.bidmachine.co/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
+
+// old format
 $phpTextIframe = '<iframe src="http://bidbox.co/tag/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
 $phpTextJs = '<script type="text/javascript" src="http://bidbox.co/tag/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 $phpTextJsp = '<script type="text/javascript" src="http://bidbox.co/tag/jsp/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
@@ -115,6 +120,30 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			</div>
 		</div>
 		
+		<div class="text-right code-area-separator">
+		NEW FORMAT TAGS
+		</div>
+
+		<div class="text-left code-area">
+		Iframe
+		<?php echo CHtml::textArea('tag_content_iframe', $phpTextIframeNew,
+			array('id'=>'tag_content_iframe', 
+			'readonly' => true,
+			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
+
+		<div class="text-left code-area">
+		Javascript
+		<?php echo CHtml::textArea('tag_content_js', $phpTextJsNew,
+			array('id'=>'tag_content_js', 
+			'readonly' => true,
+			'style'=>'width:100%;height:60px;cursor:text')); ?>
+		</div>
+
+		<div class="text-right code-area-separator">
+		OLD FORMAT TAGS
+		</div>
+
 		<div class="text-left code-area">
 		Iframe
 		<?php echo CHtml::textArea('tag_content_iframe', $phpTextIframe,

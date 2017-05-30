@@ -522,6 +522,15 @@ table .date-column {
 	margin-bottom: 10px;
 }
 
+.code-area-separator {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #3a87ad;
+    font-size: 11px;
+    font-weight: bold;
+	
+}
+
 .grid-images {
     max-width: 400px;
     max-height: 300px;
