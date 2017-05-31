@@ -330,7 +330,7 @@ class Etl2Controller extends Controller
                 // free memory because there is no garbage collection until block ends
                 unset ( $log );
 
-                $values .= ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue);';
+                $values .= ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), ad_req=VALUES(imps), revenue=VALUES(revenue);';
 
                 $return += Yii::app()->db->createCommand( $values )->execute();                
             }
