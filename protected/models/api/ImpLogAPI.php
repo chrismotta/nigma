@@ -41,6 +41,7 @@ class ImpLogAPI
 
 		$criteria = new CDbCriteria;
 		$criteria->with = array('tags','placements.sites');
+		$criteria->addCondition('sites.providers_id IS NOT NULL');
 		
 		$criteria->compare('DATE(t.date_time)',$date);
 		if(isset($cid))
