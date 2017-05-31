@@ -286,7 +286,7 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( isset($log['os']) && $log['os'] )
-                        $values .= '"'.$log['os'].'",';
+                        $values .= '"'.$this->_escapeSql( $log['os']).'",';
                     else
                         $values .= 'NULL,';
 
@@ -441,7 +441,6 @@ class Etl2Controller extends Controller
             );
         }
 
-
         $elapsed = time() - $start;
 
         echo 'Tags cached: '.count($tags).' - Elapsed time: '.$elapsed.' seg.<hr/>';
@@ -464,11 +463,149 @@ class Etl2Controller extends Controller
             );
         }
 
-
         $elapsed = time() - $start;
 
         echo 'Placements cached: '.count($placements).' - Elapsed time: '.$elapsed.' seg.<hr/>';        
     }
 
 
+    public function actionStats ()
+    {
+        $date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
+
+        $from            = strtotime( $date.' 00:00:00' );
+        $to              = strtotime( $date.' 23:59:59' );
+        $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
+        $hashCount       = $this->_redis->zcount( 'sessionhashes', $from, $to );
+        $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
+        $mysqlMatches    = 0;
+        $redisMatches    = 0;
+        $startAt         = 0;
+        $endAt           = $this->_objectLimit;
+
+        for ( $i=0; $i<$queries; $i++ )
+        {
+            $hashes = '';
+
+            $loadedLogs = $this->_redis->zrange( 'loadedlogs', $startAt, $endAt );
+            foreach ( $loadedLogs AS $hash )
+            {
+                $impTime = $this->_redis->hmget( 'log:'.$hash, 'imp_time' );
+
+                if ( !$impTime  ||  (int)$impTime[0] < $from  ||  (int)$impTime[0] > $to )
+                    continue;
+
+                if ( $hashes != '' )
+                    $hashes .= ' OR ';
+
+                $hashes .= 'unique_id="'.$hash.'"';
+
+                $redisMatches++;
+            }
+
+            if ( $hashes != '' )
+            {
+                $sql = 'SELECT count(unique_id) AS c FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" AND ('.$hashes.')';
+
+                $command = Yii::app()->db->createCommand( $sql );
+                $command->execute();
+                $r = $command->queryRow();
+
+                $mysqlMatches += $r['c'];
+            }
+
+            $startAt += $this->_objectLimit;
+            $endAt   += $this->_objectLimit;
+        }
+
+        echo 'Pending (Redis): '.$hashCount.'<hr/>'; 
+        echo 'Processed (Redis): '.$redisMatches.'<hr/>';
+        echo 'Inserted (MySQL): '.$mysqlMatches.'<hr/>';
+    }
+
+    public function actionReport ()
+    {
+        $date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
+
+        $tag = isset( $_GET['tag'] ) ? $_GET['tag'] : null;        
+
+        if ( $tag && ( !preg_match( '/^[0-9]+$/',$tag) || (int)$tag<1 ) )
+        {
+            die('invalid tag ID');
+        }
+
+        $placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;
+
+        if ( $placement && ( !preg_match( '/^[0-9]+$/',$placement) || (int)$placement<1 ) )
+        {
+            die('invalid placement ID');
+        }
+
+        $from            = strtotime( $date.' 00:00:00' );
+        $to              = strtotime( $date.' 23:59:59' );
+        $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
+        $hashCount       = $this->_redis->zcard( 'sessionhashes');
+        $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
+        $loadedImps      = 0;
+        $pendingImps     = 0;
+        $loadedCost      = 0;
+        $pendingCost     = 0;
+        $loadedRev       = 0;
+        $pendingRev      = 0;                
+        $startAt         = 0;
+        $endAt           = $this->_objectLimit;
+
+        for ( $i=0; $i<$queries; $i++ )
+        {
+            $loadedLogs = $this->_redis->zrange( 'loadedlogs', $startAt, $endAt );
+
+            foreach ( $loadedLogs AS $hash )
+            {
+                $log = $this->_redis->hgetall( 'log:'.$hash );
+
+                if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
+                    continue;
+
+                if ( $tag  &&  $log['tag_id'] != $tag )
+                    continue;
+
+                if ( $placement  &&  $log['placement'] != $placement )
+                    continue;
+
+                $loadedImps += $log['imps'];
+                $loadedCost += $log['cost'];
+                $loadedRev  += $log['revenue'];
+            }
+
+            $hashes = $this->_redis->zrange( 'sessionhashes', $startAt, $endAt );
+
+            foreach ( $hashes AS $hash )
+            {
+                $log = $this->_redis->hgetall( 'log:'.$hash );
+
+                if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
+                    continue;
+
+                if ( $tag  &&  $log['tag_id'] != $tag )
+                    continue;
+
+                if ( $placement  &&  $log['placement'] != $placement )
+                    continue;
+
+                $pendingImps += $log['imps'];
+                $pendingCost += $log['cost'];
+                $pendingRev  += $log['revenue'];
+            }            
+
+            $startAt += $this->_objectLimit;
+            $endAt   += $this->_objectLimit;
+        }
+
+        echo 'Loaded Imps: '.$loadedImps.'<hr/>'; 
+        echo 'Pending Imps: '.$pendingImps.'<hr/>'; 
+        echo 'Loaded Revenue: '.$loadedRev.'<hr/>'; 
+        echo 'Pending Revenue: '.$pendingRev.'<hr/>'; 
+        echo 'Loaded Cost: '.$loadedCost.'<hr/>'; 
+        echo 'Pending Cost: '.$pendingCost.'<hr/>'; 
+    }    
 }
