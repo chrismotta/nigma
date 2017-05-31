@@ -15,9 +15,7 @@ class Etl2Controller extends Controller
 {
     private $_redis;
     private $_objectLimit;
-    private $_maxInserts;
     private $_timestamp;
-    private $_parsed;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -27,20 +25,13 @@ class Etl2Controller extends Controller
 
         $this->_objectLimit = isset( $_GET['objectlimit'] ) ? $_GET['objectlimit'] : 50000;
 
-        if ( !preg_match( '/^[0-9]+$/',$this->_objectLimit ) )
+        if ( !preg_match( '/^[0-9]+$/',$this->_objectLimit) )
         {
             die('invalid object limit');
         }
 
-        $this->_maxInserts = isset( $_GET['maxinserts'] ) ? $_GET['maxinserts'] : null;
-        
-        if ( $this->_maxInserts && !preg_match( '/^[0-9]+$/',$this->_maxInserts ) )
-        {
-            die('invalid maxInserts');
-        }
-
         $this->_timestamp   = time();
-        $this->_parsed      = 0;
+
 
 
         \ini_set('memory_limit','3000M');
@@ -148,7 +139,7 @@ class Etl2Controller extends Controller
     private function _buildImpressionsQuery ( )
     {
         $sql = '
-            INSERT INTO F_Imp_Compact (                
+            INSERT IGNORE INTO F_Imp_Compact (                
                 D_Demand_id,
                 D_Supply_id,
                 ad_req,
@@ -180,15 +171,9 @@ class Etl2Controller extends Controller
 
         if ( $sessionHashes )
         {
-            $hashCount = 0;
-
             // add each log to sql query
             foreach ( $sessionHashes as $sessionHash )
             {
-
-                if ( $this->_maxInserts  &&  $this->_parsed >= $this->_maxInserts )
-                    break;
-
                 $log = $this->_redis->hgetall( 'log:'.$sessionHash );
 
                 if ( $log )
@@ -301,10 +286,8 @@ class Etl2Controller extends Controller
                     else
                         $values .= 'NULL';                                      
 
-                    $values .= ')';
-
-                    $this->_parsed++;
-                    $hashCount++;      
+                    $values .= ')';       
+           
                 }
 
                 // free memory because there is no garbage collection until block ends
@@ -322,7 +305,7 @@ class Etl2Controller extends Controller
                     $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
                 }
 
-                $this->_redis->zremrangebyrank( 'sessionhashes', 0, $hashCount-1 );
+                $this->_redis->zremrangebyrank( 'sessionhashes', 0, $this->_objectLimit );
 
                 return $return;
             }
