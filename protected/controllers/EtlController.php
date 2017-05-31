@@ -412,21 +412,6 @@ class EtlController extends Controller
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
 
-		$query = 'INSERT IGNORE INTO F_Imp_Compact (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app, imps, ad_req, 
-			device_type, 
-			device_brand, 
-			device_model, 
-			os, 
-			os_version, 
-			browser, 
-			browser_version, 
-			country, 
-			carrier, 
-			connection_type
-			 ) 
-		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, SHA(CONCAT(i.server_ip,i.user_agent)), i.pubid, i.ip_forwarded, i.referer, i.app, count(SHA(CONCAT(i.server_ip,i.user_agent))), count(SHA(CONCAT(i.server_ip,i.user_agent))), 
-		u.device_type, u.device_brand, u.device_model, u.os, u.os_version, u.browser, u.browser_version, g.country, g.carrier, g.connection_type ) ';
-
 
 	public function actionBidcompact($date=null){
 
