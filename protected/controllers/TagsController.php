@@ -130,9 +130,12 @@ class TagsController extends Controller
 		        switch ( $model->connection_type )
 		        {
 		            case 'WIFI':
+		            case 'wifi':
+		            case 'WiFi':
 		                $conn_type = 'wifi';
 		            break;
 		            case '3G':
+		            case '3g':
 		                $conn_type = 'mobile';
 		            break;
 		            default:
@@ -202,9 +205,12 @@ class TagsController extends Controller
 		        switch ( $model->connection_type )
 		        {
 		            case 'WIFI':
+		            case 'wifi':
+		            case 'WiFi':
 		                $conn_type = 'wifi';
 		            break;
 		            case '3G':
+		            case '3g':
 		                $conn_type = 'mobile';
 		            break;
 		            default:

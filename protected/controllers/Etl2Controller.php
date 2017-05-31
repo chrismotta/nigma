@@ -16,6 +16,9 @@ class Etl2Controller extends Controller
     private $_redis;
     private $_objectLimit;
     private $_timestamp;
+    private $_limit;
+    private $_parsedLogs;
+    private $_executedQueries;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -25,13 +28,21 @@ class Etl2Controller extends Controller
 
         $this->_objectLimit = isset( $_GET['objectlimit'] ) ? $_GET['objectlimit'] : 50000;
 
-        if ( !preg_match( '/^[0-9]+$/',$this->_objectLimit) )
+        if ( !preg_match( '/^[0-9]+$/',$this->_objectLimit) || (int)$this->_objectLimit<1 )
         {
             die('invalid object limit');
         }
 
-        $this->_timestamp   = time();
+        $this->_limit = isset( $_GET['limit'] ) ? $_GET['limit'] : false;
 
+        if ( $this->_limit && !preg_match( '/^[0-9]+$/',$this->_limit ) )
+        {
+            die('invalid limit');
+        }        
+
+        $this->_timestamp       = time();
+        $this->_parsedLogs      = 0;
+        $this->_executedQueries = 0;
 
 
         \ini_set('memory_limit','3000M');
@@ -127,12 +138,15 @@ class Etl2Controller extends Controller
         // build separate sql queries based on $_objectLimit in order to control memory usage
         for ( $i=0; $i<$queries; $i++ )
         {
+            if ( $this->_limit  &&  $this->_parsedLogs >= $this->_limit )
+                break;            
+
             $rows += $this->_buildImpressionsQuery();
         }
 
         $elapsed = time() - $start;
 
-        echo 'Impressions: '.$rows.' rows - queries: '.$queries.' - load time: '.$elapsed.' seg.<hr/>';
+        echo 'Impressions: '.$rows.' rows - queries: '.$this->_executedQueries.' - load time: '.$elapsed.' seg.<hr/>';
     }
 
 
@@ -167,13 +181,18 @@ class Etl2Controller extends Controller
 
         $values    = '';        
 
-        $sessionHashes = $this->_redis->zrange( 'sessionhashes', 0, $this->_objectLimit );
+        $sessionHashes = $this->_redis->zrange( 'sessionhashes', 0, $this->_objectLimit-1 );
 
         if ( $sessionHashes )
         {
+            echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
+            $hashCount = 0;
             // add each log to sql query
             foreach ( $sessionHashes as $sessionHash )
             {
+                if ( $this->_limit  &&  $this->_parsedLogs >= $this->_limit )
+                    break;
+
                 $log = $this->_redis->hgetall( 'log:'.$sessionHash );
 
                 if ( $log )
@@ -286,9 +305,12 @@ class Etl2Controller extends Controller
                     else
                         $values .= 'NULL';                                      
 
-                    $values .= ')';       
-           
+                    $values .= ')';
+
+                    $this->_parsedLogs++;      
                 }
+
+                $hashCount++;
 
                 // free memory because there is no garbage collection until block ends
                 unset ( $log );
@@ -300,16 +322,27 @@ class Etl2Controller extends Controller
 
                 $return = Yii::app()->db->createCommand( $sql )->execute();
 
+                
+                $hashCount2 = 0;
+
                 foreach ( $sessionHashes AS $sessionHash )
                 {
-                    $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
-                }
+                    if ( $hashCount2 >= $hashCount )
+                        break;
 
-                $this->_redis->zremrangebyrank( 'sessionhashes', 0, $this->_objectLimit );
+                    $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
+
+                    $this->_redis->zrem( 'sessionhashes', $sessionHash );
+
+                    $hashCount2++;            
+                }                    
+
+
+                $this->_executedQueries++;
 
                 return $return;
             }
-        }  
+        }
 
         unset( $sessionHashes );
 
@@ -369,9 +402,12 @@ class Etl2Controller extends Controller
             switch ( $tag->connection_type )
             {
                 case 'WIFI':
+                case 'wifi':
+                case 'WiFi':
                     $conn_type = 'wifi';
                 break;
                 case '3G':
+                case '3g':
                     $conn_type = 'mobile';
                 break;
                 default:
