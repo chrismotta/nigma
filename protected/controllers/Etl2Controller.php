@@ -395,7 +395,7 @@ class Etl2Controller extends Controller
                     if ( isset($log['browser_version']) && $log['browser_version'] )
                         $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'",';
                     else
-                        $values .= 'NULL';
+                        $values .= 'NULL,';
 
                     $values .= '2';// 2=nigma2
 
