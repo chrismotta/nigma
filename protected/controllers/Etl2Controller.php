@@ -476,7 +476,6 @@ class Etl2Controller extends Controller
         $from            = strtotime( $date.' 00:00:00' );
         $to              = strtotime( $date.' 23:59:59' );
 
-        echo date( 'Y-m-d H:i:s', $from) . ' : '. date( 'Y-m-d H:i:s', $to);
         $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
         $hashCount       = $this->_redis->zcount( 'sessionhashes', $from, $to );
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
@@ -507,7 +506,7 @@ class Etl2Controller extends Controller
 
             if ( $hashes != '' )
             {
-                $sql = 'SELECT count(unique_id) AS c FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" AND ('.$hashes.')';
+                $sql = 'SELECT count(unique_id) AS c FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" AND unique_id IN ('.$hashes.')';
 
                 $command = Yii::app()->db->createCommand( $sql );
                 $command->execute();
@@ -529,7 +528,7 @@ class Etl2Controller extends Controller
     {
         $date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
 
-        $tag = isset( $_GET['tag'] ) ? $_GET['tag'] : null;        
+        $tag = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
 
         if ( $tag && ( !preg_match( '/^[0-9]+$/',$tag) || (int)$tag<1 ) )
         {
@@ -541,6 +540,24 @@ class Etl2Controller extends Controller
         if ( $placement && ( !preg_match( '/^[0-9]+$/',$placement) || (int)$placement<1 ) )
         {
             die('invalid placement ID');
+        }
+
+        $groupby = isset( $_GET['groupby'] ) ? $_GET['groupby'] : null;
+
+
+        switch ( $groupby )
+        {
+            case 'tag':
+            case 'placement':
+            case 'totals':
+                $details = [];
+            break;
+            case null:
+                $details = null;
+            break;
+            default:
+                die ( 'invalid group setting');
+            break;
         }
 
         $from            = strtotime( $date.' 00:00:00' );
