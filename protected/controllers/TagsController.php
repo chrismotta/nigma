@@ -136,6 +136,7 @@ class TagsController extends Controller
 		            break;
 		            case '3G':
 		            case '3g':
+		            case 'MOBILE':		            
 		                $conn_type = 'mobile';
 		            break;
 		            default:
@@ -209,8 +210,10 @@ class TagsController extends Controller
 		            break;
 		            case '3G':
 		            case '3g':
+		            case 'MOBILE':
 		                $conn_type = 'mobile';
 		            break;
+
 		            default:
 		                $conn_type = null;
 		            break;
