@@ -164,7 +164,7 @@ class TagsController extends Controller
 						'analyze'		  => $model->analyze,
 						'frequency_cap'   => $model->freq_cap,
 						'payout'		  => $model->campaigns->opportunities->rate,
-						'connection_type' => $model->connection_type,
+						'connection_type' => $conn_type, 
 						'country' 		  => $country,
 						'os'			  => $model->os
 					]
@@ -172,8 +172,6 @@ class TagsController extends Controller
 
 				$this->redirect(array('view','id'=>$model->id));
 			}
-
-		
 		}
 		
 		$model->campaigns_id = isset($_GET['cid']) ? $_GET['cid'] : null;
