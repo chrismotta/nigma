@@ -347,8 +347,7 @@ class EtlController extends Controller
 
 		$start = time();
 
-		$query = 'INSERT IGNORE INTO F_Imp_Compact (
-			id, 
+		$query = 'INSERT IGNORE INTO F_Imp_Compact ( 
 			D_Demand_id, 
 			D_Supply_id, 
 			date_time, 
@@ -374,7 +373,6 @@ class EtlController extends Controller
 			ad_server_id
 			) 
 		SELECT 
-			i.id, 
 			i.tags_id, 
 			i.placements_id, 
 			i.date, 
@@ -410,6 +408,8 @@ class EtlController extends Controller
 		$query .= 'AND i.placements_id IS NOT NULL AND i.tags_id IS NOT NULL AND i.user_agent IS NOT NULL AND i.server_ip IS NOT NULL ';
 
 		$query .= 'GROUP BY MD5(CONCAT(i.server_ip,i.user_agent,date(i.date))) ';
+
+		die($query);
 
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
