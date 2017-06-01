@@ -60,6 +60,8 @@ class EtlController extends Controller
 	}
 
 	public function actionIndex($id=1){
+
+		die("deprecated");
 		
 		$start = time();
 
@@ -315,6 +317,8 @@ class EtlController extends Controller
 
 	public function actionImpressions($id=1, $date=null){
 
+		die("deprecated");
+
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO F_Imp (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app) 
@@ -356,7 +360,18 @@ class EtlController extends Controller
 			referer_url, 
 			referer_app, 
 			imps, 
-			ad_req
+			ad_req,
+			device_type, 
+			device_brand, 
+			device_model, 
+			os_type, 
+			os_version, 
+			browser_type, 
+			browser_version, 
+			country, 
+			carrier, 
+			connection_type,
+			ad_server_id
 			) 
 		SELECT 
 			i.id, 
@@ -371,25 +386,7 @@ class EtlController extends Controller
 			i.referer, 
 			i.app, 
 			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), 
-			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date))))
-		FROM imp_log i 
-		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
-		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
-
-		/*
-		,
-			device_type, 
-			device_brand, 
-			device_model, 
-			os_type, 
-			os_version, 
-			browser_type, 
-			browser_version, 
-			country, 
-			carrier, 
-			connection_type
-
-		, 
+			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), 
 			u.device_type, 
 			u.device_brand, 
 			u.device_model, 
@@ -399,8 +396,11 @@ class EtlController extends Controller
 			u.browser_version, 
 			g.country, 
 			g.carrier, 
-			g.connection_type 
-		 */
+			g.connection_type, 
+			1
+		FROM imp_log i 
+		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
+		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
 
 		if(isset($date))
 			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
@@ -427,6 +427,8 @@ class EtlController extends Controller
 			$dateCondition = 'AND DATE(i.date_time) = "'.date('Y-m-d', strtotime($date)).'" ';
 		else
 			$dateCondition = 'AND DATE(i.date_time) = CURDATE()';
+
+		$dateCondition .= 'AND i.revenue = 0 and i.cost = 0';
 
 		$start = time();
 
@@ -467,6 +469,8 @@ class EtlController extends Controller
 	}
 
 	public function actionBid($id=2, $date=null){
+
+		die("deprecated");
 
 		$inicialStart = time();
 		$total = 0;

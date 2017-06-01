@@ -264,7 +264,8 @@ class Etl2Controller extends Controller
                 os_type,
                 os_version,
                 browser_type,
-                browser_version                
+                browser_version,
+                ad_server_id 
             )
             VALUES  
         ';
@@ -392,9 +393,11 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';  
 
                     if ( isset($log['browser_version']) && $log['browser_version'] )
-                        $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'"';
+                        $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'",';
                     else
-                        $values .= 'NULL';                                      
+                        $values .= 'NULL,';
+
+                    $values .= '2';// 2=nigma2
 
                     $values .= ')';
 
