@@ -79,15 +79,12 @@ class Etl2Controller extends Controller
         }
         catch ( Exception $e )
         {
-            $msg .= "ETL DEMAND ERROR: \n\n";
-            $msg .= "code: ".$e->getCode()."\n\n";
-            $msg .= "message: \n\n";
-            $msg .= $e->getMessage()."\n\n";
+            $msg .= "ETL DEMAND ERROR: ".$e->getCode().'<hr>';
+            $msg .= $e->getMessage();
 
             $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
-            $msg2 = str_replace( "\n", "<br>", $msg);
-            die($msg2);
+            die($msg);
         }
         
         try
@@ -96,15 +93,12 @@ class Etl2Controller extends Controller
         }
         catch ( Exception $e )
         {
-            $msg .= "ETL SUPPLY ERROR \n\n";
-            $msg .= "code: ".$e->getCode()."\n\n";
-            $msg .= "message: \n\n";
-            $msg .= $e->getMessage()."\n\n";
+            $msg .= "ETL SUPPLY ERROR: ".$e->getCode().'<hr>';
+            $msg .= $e->getMessage();
 
             $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
-            $msg2 = str_replace( "\n", "<br>", $msg);
-            die($msg2);           
+            die($msg);           
         }
         
         try
@@ -113,7 +107,7 @@ class Etl2Controller extends Controller
         } 
         catch (Exception $e) {
             $msg .= "ETL IMPRESSIONS ERROR: ".$e->getCode().'<hr>';
-            $msg .= $e->getMessage()."";
+            $msg .= $e->getMessage();
 
             $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
@@ -329,7 +323,7 @@ class Etl2Controller extends Controller
                         '.$pid.',
                         '.$log['imps'].',  
                         '.$log['imps'].', 
-                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).',                 
+                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
                         "'.$sessionHash.'",
