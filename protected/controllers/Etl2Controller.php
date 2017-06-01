@@ -162,7 +162,7 @@ class Etl2Controller extends Controller
 
         if ( $this->_showsql )
             echo '<hr/>';
-        
+
         echo 'Impressions: '.$rows.' rows - queries: '.$this->_executedQueries.' - load time: '.$elapsed.' seg.<hr/>';
     }
 
@@ -279,7 +279,7 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( $log['user_agent'] )                        
-                        $values .= '"'.$this->_escapeSql( $log['user_agent'] ).'",';
+                        $values .= '"'.md5( $log['user_agent'] ).'",';
                     else
                         $values .= 'NULL,';
 
