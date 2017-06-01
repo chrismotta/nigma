@@ -356,7 +356,17 @@ class EtlController extends Controller
 			referer_url, 
 			referer_app, 
 			imps, 
-			ad_req
+			ad_req,
+			device_type, 
+			device_brand, 
+			device_model, 
+			os_type, 
+			os_version, 
+			browser_type, 
+			browser_version, 
+			country, 
+			carrier, 
+			connection_type
 			) 
 		SELECT 
 			i.id, 
@@ -371,25 +381,7 @@ class EtlController extends Controller
 			i.referer, 
 			i.app, 
 			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), 
-			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date))))
-		FROM imp_log i 
-		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
-		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
-
-		/*
-		,
-			device_type, 
-			device_brand, 
-			device_model, 
-			os_type, 
-			os_version, 
-			browser_type, 
-			browser_version, 
-			country, 
-			carrier, 
-			connection_type
-
-		, 
+			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), 
 			u.device_type, 
 			u.device_brand, 
 			u.device_model, 
@@ -400,7 +392,9 @@ class EtlController extends Controller
 			g.country, 
 			g.carrier, 
 			g.connection_type 
-		 */
+		FROM imp_log i 
+		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
+		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
 
 		if(isset($date))
 			$query .= 'WHERE DATE(i.date) = "'.date('Y-m-d', strtotime($date)).'" ';
