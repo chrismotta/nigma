@@ -112,15 +112,12 @@ class Etl2Controller extends Controller
             self::actionImpressions();
         } 
         catch (Exception $e) {
-            $msg .= "ETL IMPRESSIONS ERROR \n\n";
-            $msg .= "code: ".$e->getCode()."\n\n";
-            $msg .= "message: \n\n";
-            $msg .= $e->getMessage()."\n\n";
+            $msg .= "ETL IMPRESSIONS ERROR: ".$e->getCode().'<hr>';
+            $msg .= $e->getMessage()."";
 
             $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
-            $msg2 = str_replace( "\n", "<br>", $msg);
-            die($msg2);
+            die($msg);
         }
     }
 
