@@ -60,6 +60,8 @@ class EtlController extends Controller
 	}
 
 	public function actionIndex($id=1){
+
+		die("deprecated");
 		
 		$start = time();
 
@@ -315,6 +317,8 @@ class EtlController extends Controller
 
 	public function actionImpressions($id=1, $date=null){
 
+		die("deprecated");
+
 		$start = time();
 
 		$query = 'INSERT IGNORE INTO F_Imp (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app) 
@@ -463,6 +467,8 @@ class EtlController extends Controller
 	}
 
 	public function actionBid($id=2, $date=null){
+
+		die("deprecated");
 
 		$inicialStart = time();
 		$total = 0;
