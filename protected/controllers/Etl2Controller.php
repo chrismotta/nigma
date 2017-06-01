@@ -623,13 +623,10 @@ class Etl2Controller extends Controller
 
     public function actionReport ()
     {
-
         if ( $this->_tag && ( !preg_match( '/^[0-9]+$/',$this->_tag) || (int)$this->_tag<1 ) )
         {
             die('invalid tag ID');
         }
-
-
 
         if ( $this->_placement && ( !preg_match( '/^[0-9]+$/',$this->_placement) || (int)$this->_placement<1 ) )
         {
@@ -639,14 +636,10 @@ class Etl2Controller extends Controller
         $from            = strtotime( $this->_date.' 00:00:00' );
         $to              = strtotime( $this->_date.' 23:59:59' );
         $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
-        $hashCount       = $this->_redis->zcard( 'sessionhashes');
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
         $loadedImps      = 0;
-        $pendingImps     = 0;
         $loadedCost      = 0;
-        $pendingCost     = 0;
-        $loadedRev       = 0;
-        $pendingRev      = 0;                
+        $loadedRev       = 0;                
         $startAt         = 0;
         $endAt           = $this->_objectLimit;
 
@@ -670,31 +663,7 @@ class Etl2Controller extends Controller
                 $loadedImps += $log['imps'];
                 $loadedCost += $log['cost'];
                 $loadedRev  += $log['revenue'];
-            }
-
-            $hashes = $this->_redis->zrange( 'sessionhashes', $startAt, $endAt );
-
-            foreach ( $hashes AS $hash )
-            {
-                $log = $this->_redis->hgetall( 'log:'.$hash );
-
-                if ( $log )
-                {
-                    if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
-                        continue;
-
-                    if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
-                        continue;
-
-                    if ( $this->_placement  &&  $log['placement'] != $this->_placement )
-                        continue;
-
-                    $pendingImps += $log['imps'];
-                    $pendingCost += $log['cost'];
-                    $pendingRev  += $log['revenue'];                    
-                }
-
-            }            
+            }           
 
             unset($log); 
 
@@ -703,10 +672,7 @@ class Etl2Controller extends Controller
         }
 
         echo 'Loaded Imps: '.$loadedImps.'<hr/>'; 
-        echo 'Pending Imps: '.$pendingImps.'<hr/>'; 
         echo 'Loaded Revenue: '.$loadedRev.'<hr/>'; 
-        echo 'Pending Revenue: '.$pendingRev.'<hr/>'; 
         echo 'Loaded Cost: '.$loadedCost.'<hr/>'; 
-        echo 'Pending Cost: '.$pendingCost.'<hr/>'; 
     }    
 }
