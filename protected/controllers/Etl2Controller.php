@@ -19,6 +19,10 @@ class Etl2Controller extends Controller
     private $_limit;
     private $_parsedLogs;
     private $_executedQueries;
+    private $_date;
+    private $_tag;
+    private $_placement;
+    private $_showsql;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -38,7 +42,14 @@ class Etl2Controller extends Controller
         if ( $this->_limit && !preg_match( '/^[0-9]+$/',$this->_limit ) )
         {
             die('invalid limit');
-        }        
+        }
+
+        $this->_date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
+
+        $this->_tag  = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
+        $this->_placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
+
+        $this->_showsql = isset( $_GET['showsql'] ) ? $_GET['showsql'] : null;
 
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
@@ -135,6 +146,9 @@ class Etl2Controller extends Controller
         $startAt  = 0;
         $rows     = 0;
 
+        if ( $this->_showsql )
+            echo 'SQL: ';
+
         // build separate sql queries based on $_objectLimit in order to control memory usage
         for ( $i=0; $i<$queries; $i++ )
         {
@@ -146,6 +160,9 @@ class Etl2Controller extends Controller
 
         $elapsed = time() - $start;
 
+        if ( $this->_showsql )
+            echo '<hr/>';
+        
         echo 'Impressions: '.$rows.' rows - queries: '.$this->_executedQueries.' - load time: '.$elapsed.' seg.<hr/>';
     }
 
@@ -185,7 +202,8 @@ class Etl2Controller extends Controller
 
         if ( $sessionHashes )
         {
-            echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
+            //echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
+
             $hashCount = 0;
             // add each log to sql query
             foreach ( $sessionHashes as $sessionHash )
@@ -320,9 +338,11 @@ class Etl2Controller extends Controller
             {
                 $sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue), ad_req=VALUES(ad_req);';              
 
+                if ( $this->_showsql )
+                    echo '<br><br>'.$sql;
+
                 $return = Yii::app()->db->createCommand( $sql )->execute();
 
-                
                 $hashCount2 = 0;
 
                 foreach ( $sessionHashes AS $sessionHash )
@@ -526,38 +546,17 @@ class Etl2Controller extends Controller
 
     public function actionReport ()
     {
-        $date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
-
-        $tag = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
 
         if ( $tag && ( !preg_match( '/^[0-9]+$/',$tag) || (int)$tag<1 ) )
         {
             die('invalid tag ID');
         }
 
-        $placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;
+
 
         if ( $placement && ( !preg_match( '/^[0-9]+$/',$placement) || (int)$placement<1 ) )
         {
             die('invalid placement ID');
-        }
-
-        $groupby = isset( $_GET['groupby'] ) ? $_GET['groupby'] : null;
-
-
-        switch ( $groupby )
-        {
-            case 'tag':
-            case 'placement':
-            case 'totals':
-                $details = [];
-            break;
-            case null:
-                $details = null;
-            break;
-            default:
-                die ( 'invalid group setting');
-            break;
         }
 
         $from            = strtotime( $date.' 00:00:00' );
