@@ -508,6 +508,7 @@ class Etl2Controller extends Controller
                 break;
                 case '3G':
                 case '3g':
+                case 'MOBILE':
                     $conn_type = 'mobile';
                 break;
                 default:
