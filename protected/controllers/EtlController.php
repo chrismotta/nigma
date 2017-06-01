@@ -409,8 +409,6 @@ class EtlController extends Controller
 
 		$query .= 'GROUP BY MD5(CONCAT(i.server_ip,i.user_agent,date(i.date))) ';
 
-		die($query);
-
 		$return = Yii::app()->db->createCommand($query)->bindParam('h',$id)->execute();
 
 		$elapsed = time() - $start;
