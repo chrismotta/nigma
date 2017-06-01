@@ -370,7 +370,8 @@ class EtlController extends Controller
 			browser_version, 
 			country, 
 			carrier, 
-			connection_type
+			connection_type,
+			ad_server_id
 			) 
 		SELECT 
 			i.id, 
@@ -395,7 +396,8 @@ class EtlController extends Controller
 			u.browser_version, 
 			g.country, 
 			g.carrier, 
-			g.connection_type 
+			g.connection_type, 
+			1
 		FROM imp_log i 
 		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
 		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
