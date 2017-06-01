@@ -340,11 +340,12 @@ class Etl2Controller extends Controller
             {
                 $sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue), ad_req=VALUES(ad_req);';              
 
+                if ( $this->_showsql )
+                    echo '<br><br>'.$sql;
+
                 if ( $this->_sqltest )
                     die();
 
-                if ( $this->_showsql )
-                    echo '<br><br>'.$sql;
 
                 $return = Yii::app()->db->createCommand( $sql )->execute();
 
