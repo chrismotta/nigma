@@ -13,12 +13,21 @@ use Predis;
 
 class Etl2Controller extends Controller
 {
+    CONST ALERT_FROM = 'Nigma<no-reply@tmlbox.co>';
+    CONST ALERT_TO   = 'daniel@themedialab.co,chris@themedialab.co';
+
     private $_redis;
     private $_objectLimit;
     private $_timestamp;
     private $_limit;
     private $_parsedLogs;
     private $_executedQueries;
+    private $_date;
+    private $_tag;
+    private $_placement;
+    private $_showsql;
+    private $_sqltest;
+    private $_alertSubject;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -38,11 +47,20 @@ class Etl2Controller extends Controller
         if ( $this->_limit && !preg_match( '/^[0-9]+$/',$this->_limit ) )
         {
             die('invalid limit');
-        }        
+        }
+
+        $this->_timestamp       = time();
+        $this->_date            = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d", strtotime("yesterday") );
+        $this->_tag             = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
+        $this->_placement       = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
+        $this->_showsql         = isset( $_GET['showsql'] ) ? true : false;
+        $this->_sqltest         = isset( $_GET['sqltest'] ) ? true : false;
 
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
         $this->_executedQueries = 0;
+
+        $this->_alertSubject    = 'AD NIGMA - ETL2 ERROR ' . date( "Y-m-d H:i:s", $this->_timestamp );
 
 
         \ini_set('memory_limit','3000M');
@@ -52,12 +70,49 @@ class Etl2Controller extends Controller
     public function actionIndex( )
     {
         $start = time();
+        $msg   = '';
 
-        self::actionDemand();
-        self::actionSupply();
-        self::actionImpressions();
+        //set_error_handler( array( $this, 'handleErrors' ) );
+        try
+        {
+            self::actionDemand();
+        }
+        catch ( Exception $e )
+        {
+            $msg .= "ETL DEMAND ERROR: ".$e->getCode().'<hr>';
+            $msg .= $e->getMessage();
+
+            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+
+            die($msg);
+        }
         
-        \gc_collect_cycles();
+        try
+        {
+            self::actionSupply();
+        }
+        catch ( Exception $e )
+        {
+            $msg .= "ETL SUPPLY ERROR: ".$e->getCode().'<hr>';
+            $msg .= $e->getMessage();
+
+            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+
+            die($msg);           
+        }
+        
+        try
+        {
+            self::actionImpressions();
+        } 
+        catch (Exception $e) {
+            $msg .= "ETL IMPRESSIONS ERROR: ".$e->getCode().'<hr>';
+            $msg .= $e->getMessage();
+
+            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+
+            die($msg);
+        }
     }
 
 
@@ -128,12 +183,15 @@ class Etl2Controller extends Controller
 
 
     public function actionImpressions ( )
-    {      
+    {              
         $start    = time();
         $logCount = $this->_redis->zcard( 'sessionhashes' );
         $queries  = ceil( $logCount/$this->_objectLimit );
         $startAt  = 0;
         $rows     = 0;
+
+        if ( $this->_showsql )
+            echo 'SQL: ';
 
         // build separate sql queries based on $_objectLimit in order to control memory usage
         for ( $i=0; $i<$queries; $i++ )
@@ -146,7 +204,39 @@ class Etl2Controller extends Controller
 
         $elapsed = time() - $start;
 
+        if ( $this->_showsql || $this->_sqltest )
+            echo '<hr/>';
+
         echo 'Impressions: '.$rows.' rows - queries: '.$this->_executedQueries.' - load time: '.$elapsed.' seg.<hr/>';
+    }
+
+
+    private function _sendmail ( $from, $to, $subject, $body )
+    {
+        $headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
+
+        if ( !mail($to, $subject, $body, $headers ) )
+        {
+            $data = 'To: '.$to.'\nSubject: '.$subject.'\nFrom:'.$from.'\n'.$body;
+
+            $command = 'echo -e "'.$data.'" | sendmail -bm -t -v';
+            $command = '
+                export MAILTO="'.$to.'"
+                export FROM="'.$from.'"
+                export SUBJECT="'.$subject.'"
+                export BODY="'.$body.'"
+                (
+                 echo "From: $FROM"
+                 echo "To: $MAILTO"
+                 echo "Subject: $SUBJECT"
+                 echo "MIME-Version: 1.0"
+                 echo "Content-Type: text/html; charset=UTF-8"
+                 echo $BODY
+                ) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
+            ';
+
+            shell_exec( $command );             
+        }           
     }
 
 
@@ -185,7 +275,8 @@ class Etl2Controller extends Controller
 
         if ( $sessionHashes )
         {
-            echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
+            //echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
+
             $hashCount = 0;
             // add each log to sql query
             foreach ( $sessionHashes as $sessionHash )
@@ -223,7 +314,7 @@ class Etl2Controller extends Controller
                         $pubId = 'NULL';
 
                     if ( $log['placement_id'] )
-                        $pid = $log['placement_id'];
+                        $pid = $this->_escapeSql( $log['placement_id'] );
                     else
                         $pid = 'NULL';
 
@@ -236,7 +327,7 @@ class Etl2Controller extends Controller
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
                         "'.$sessionHash.'",
-                        '.$pubId.',
+                        "'.$pubId.'",
                         "'.$log['ip'].'",
                     ';
 
@@ -261,7 +352,7 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     if ( $log['user_agent'] )                        
-                        $values .= '"'.$this->_escapeSql( $log['user_agent'] ).'",';
+                        $values .= '"'.md5( $log['user_agent'] ).'",';
                     else
                         $values .= 'NULL,';
 
@@ -320,9 +411,15 @@ class Etl2Controller extends Controller
             {
                 $sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue), ad_req=VALUES(ad_req);';              
 
+                if ( $this->_showsql || $this->_sqltest )
+                    echo '<br><br>'.$sql;
+
+                if ( $this->_sqltest )
+                    die();
+
+
                 $return = Yii::app()->db->createCommand( $sql )->execute();
 
-                
                 $hashCount2 = 0;
 
                 foreach ( $sessionHashes AS $sessionHash )
@@ -526,51 +623,23 @@ class Etl2Controller extends Controller
 
     public function actionReport ()
     {
-        $date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
-
-        $tag = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
-
-        if ( $tag && ( !preg_match( '/^[0-9]+$/',$tag) || (int)$tag<1 ) )
+        if ( $this->_tag && ( !preg_match( '/^[0-9]+$/',$this->_tag) || (int)$this->_tag<1 ) )
         {
             die('invalid tag ID');
         }
 
-        $placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;
-
-        if ( $placement && ( !preg_match( '/^[0-9]+$/',$placement) || (int)$placement<1 ) )
+        if ( $this->_placement && ( !preg_match( '/^[0-9]+$/',$this->_placement) || (int)$this->_placement<1 ) )
         {
             die('invalid placement ID');
         }
 
-        $groupby = isset( $_GET['groupby'] ) ? $_GET['groupby'] : null;
-
-
-        switch ( $groupby )
-        {
-            case 'tag':
-            case 'placement':
-            case 'totals':
-                $details = [];
-            break;
-            case null:
-                $details = null;
-            break;
-            default:
-                die ( 'invalid group setting');
-            break;
-        }
-
-        $from            = strtotime( $date.' 00:00:00' );
-        $to              = strtotime( $date.' 23:59:59' );
+        $from            = strtotime( $this->_date.' 00:00:00' );
+        $to              = strtotime( $this->_date.' 23:59:59' );
         $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
-        $hashCount       = $this->_redis->zcard( 'sessionhashes');
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
         $loadedImps      = 0;
-        $pendingImps     = 0;
         $loadedCost      = 0;
-        $pendingCost     = 0;
-        $loadedRev       = 0;
-        $pendingRev      = 0;                
+        $loadedRev       = 0;                
         $startAt         = 0;
         $endAt           = $this->_objectLimit;
 
@@ -585,50 +654,27 @@ class Etl2Controller extends Controller
                 if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
                     continue;
 
-                if ( $tag  &&  $log['tag_id'] != $tag )
+                if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
                     continue;
 
-                if ( $placement  &&  $log['placement'] != $placement )
+                if ( $this->_placement  &&  $log['placement'] != $this->_placement )
                     continue;
 
                 $loadedImps += $log['imps'];
                 $loadedCost += $log['cost'];
                 $loadedRev  += $log['revenue'];
-            }
 
-            $hashes = $this->_redis->zrange( 'sessionhashes', $startAt, $endAt );
-
-            foreach ( $hashes AS $hash )
-            {
-                $log = $this->_redis->hgetall( 'log:'.$hash );
-
-                if ( $log )
-                {
-                    if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
-                        continue;
-
-                    if ( $tag  &&  $log['tag_id'] != $tag )
-                        continue;
-
-                    if ( $placement  &&  $log['placement'] != $placement )
-                        continue;
-
-                    $pendingImps += $log['imps'];
-                    $pendingCost += $log['cost'];
-                    $pendingRev  += $log['revenue'];                    
-                }
-
-            }            
+                unset($log); 
+            }           
 
             $startAt += $this->_objectLimit;
             $endAt   += $this->_objectLimit;
+
+            unset($loadedLogs);
         }
 
         echo 'Loaded Imps: '.$loadedImps.'<hr/>'; 
-        echo 'Pending Imps: '.$pendingImps.'<hr/>'; 
         echo 'Loaded Revenue: '.$loadedRev.'<hr/>'; 
-        echo 'Pending Revenue: '.$pendingRev.'<hr/>'; 
         echo 'Loaded Cost: '.$loadedCost.'<hr/>'; 
-        echo 'Pending Cost: '.$pendingCost.'<hr/>'; 
     }    
 }
