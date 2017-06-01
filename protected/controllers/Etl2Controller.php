@@ -50,7 +50,7 @@ class Etl2Controller extends Controller
         $this->_tag  = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
         $this->_placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
 
-        $this->_showsql = isset( $_GET['showsql'] ) ? $_GET['showsql'] : null;
+        $this->_showsql = isset( $_GET['showsql'] ) ? true : false;
         $this->_sqltest = isset( $_GET['sqltest'] ) ? true : false;
 
         $this->_timestamp       = time();
@@ -162,7 +162,7 @@ class Etl2Controller extends Controller
 
         $elapsed = time() - $start;
 
-        if ( $this->_showsql )
+        if ( $this->_showsql || $this->_sqltest )
             echo '<hr/>';
 
         echo 'Impressions: '.$rows.' rows - queries: '.$this->_executedQueries.' - load time: '.$elapsed.' seg.<hr/>';
@@ -256,7 +256,7 @@ class Etl2Controller extends Controller
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
                         "'.$sessionHash.'",
-                        '.$pubId.',
+                        '.$this->_escapeSql( $pubId ).',
                         "'.$log['ip'].'",
                     ';
 
@@ -340,7 +340,7 @@ class Etl2Controller extends Controller
             {
                 $sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue), ad_req=VALUES(ad_req);';              
 
-                if ( $this->_showsql )
+                if ( $this->_showsql || $this->_sqltest )
                     echo '<br><br>'.$sql;
 
                 if ( $this->_sqltest )
@@ -553,20 +553,20 @@ class Etl2Controller extends Controller
     public function actionReport ()
     {
 
-        if ( $tag && ( !preg_match( '/^[0-9]+$/',$tag) || (int)$tag<1 ) )
+        if ( $this->_tag && ( !preg_match( '/^[0-9]+$/',$this->_tag) || (int)$this->_tag<1 ) )
         {
             die('invalid tag ID');
         }
 
 
 
-        if ( $placement && ( !preg_match( '/^[0-9]+$/',$placement) || (int)$placement<1 ) )
+        if ( $this->_placement && ( !preg_match( '/^[0-9]+$/',$this->_placement) || (int)$this->_placement<1 ) )
         {
             die('invalid placement ID');
         }
 
-        $from            = strtotime( $date.' 00:00:00' );
-        $to              = strtotime( $date.' 23:59:59' );
+        $from            = strtotime( $this->_date.' 00:00:00' );
+        $to              = strtotime( $this->_date.' 23:59:59' );
         $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
         $hashCount       = $this->_redis->zcard( 'sessionhashes');
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
@@ -590,10 +590,10 @@ class Etl2Controller extends Controller
                 if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
                     continue;
 
-                if ( $tag  &&  $log['tag_id'] != $tag )
+                if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
                     continue;
 
-                if ( $placement  &&  $log['placement'] != $placement )
+                if ( $this->_placement  &&  $log['placement'] != $this->_placement )
                     continue;
 
                 $loadedImps += $log['imps'];
@@ -612,10 +612,10 @@ class Etl2Controller extends Controller
                     if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
                         continue;
 
-                    if ( $tag  &&  $log['tag_id'] != $tag )
+                    if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
                         continue;
 
-                    if ( $placement  &&  $log['placement'] != $placement )
+                    if ( $this->_placement  &&  $log['placement'] != $this->_placement )
                         continue;
 
                     $pendingImps += $log['imps'];
@@ -624,6 +624,8 @@ class Etl2Controller extends Controller
                 }
 
             }            
+
+            unset($log); 
 
             $startAt += $this->_objectLimit;
             $endAt   += $this->_objectLimit;
