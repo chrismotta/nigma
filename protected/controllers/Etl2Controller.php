@@ -663,9 +663,9 @@ class Etl2Controller extends Controller
                 $loadedImps += $log['imps'];
                 $loadedCost += $log['cost'];
                 $loadedRev  += $log['revenue'];
-            }           
 
-            unset($log); 
+                unset($log); 
+            }           
 
             $startAt += $this->_objectLimit;
             $endAt   += $this->_objectLimit;
