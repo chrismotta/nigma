@@ -475,6 +475,8 @@ class Etl2Controller extends Controller
 
         $from            = strtotime( $date.' 00:00:00' );
         $to              = strtotime( $date.' 23:59:59' );
+
+        echo date( 'Y-m-d H:i:s', $from) . ' : '. date( 'Y-m-d H:i:s', $to);
         $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
         $hashCount       = $this->_redis->zcount( 'sessionhashes', $from, $to );
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
@@ -496,9 +498,9 @@ class Etl2Controller extends Controller
                     continue;
 
                 if ( $hashes != '' )
-                    $hashes .= ' OR ';
+                    $hashes .= ',';
 
-                $hashes .= 'unique_id="'.$hash.'"';
+                $hashes .= "'".$hash."'";
 
                 $redisMatches++;
             }

@@ -142,7 +142,7 @@ class TagsController extends Controller
 		                $conn_type = null;
 		            break;
 		        }
-
+ 
 	            switch ( $model->country )
 	            {
 	                case null:
