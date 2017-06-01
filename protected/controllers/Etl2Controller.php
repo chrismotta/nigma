@@ -23,6 +23,7 @@ class Etl2Controller extends Controller
     private $_tag;
     private $_placement;
     private $_showsql;
+    private $_sqltest;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -50,6 +51,7 @@ class Etl2Controller extends Controller
         $this->_placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
 
         $this->_showsql = isset( $_GET['showsql'] ) ? $_GET['showsql'] : null;
+        $this->_sqltest = isset( $_GET['sqltest'] ) ? true : false;
 
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
@@ -337,6 +339,9 @@ class Etl2Controller extends Controller
             if ( $values != '' )
             {
                 $sql .= $values . ' ON DUPLICATE KEY UPDATE cost=VALUES(cost), imps=VALUES(imps), revenue=VALUES(revenue), ad_req=VALUES(ad_req);';              
+
+                if ( $this->_sqltest )
+                    die();
 
                 if ( $this->_showsql )
                     echo '<br><br>'.$sql;
