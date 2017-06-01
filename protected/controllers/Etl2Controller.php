@@ -13,6 +13,9 @@ use Predis;
 
 class Etl2Controller extends Controller
 {
+    CONST ALERT_FROM = 'Nigma<no-reply@tmlbox.co>';
+    CONST ALERT_TO   = 'daniel@themedialab.co,chris@themedialab.co';
+
     private $_redis;
     private $_objectLimit;
     private $_timestamp;
@@ -24,6 +27,7 @@ class Etl2Controller extends Controller
     private $_placement;
     private $_showsql;
     private $_sqltest;
+    private $_alertSubject;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -45,17 +49,18 @@ class Etl2Controller extends Controller
             die('invalid limit');
         }
 
-        $this->_date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
-
-        $this->_tag  = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
-        $this->_placement = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
-
-        $this->_showsql = isset( $_GET['showsql'] ) ? true : false;
-        $this->_sqltest = isset( $_GET['sqltest'] ) ? true : false;
+        $this->_timestamp       = time();
+        $this->_date            = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d", strtotime("yesterday") );
+        $this->_tag             = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
+        $this->_placement       = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
+        $this->_showsql         = isset( $_GET['showsql'] ) ? true : false;
+        $this->_sqltest         = isset( $_GET['sqltest'] ) ? true : false;
 
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
         $this->_executedQueries = 0;
+
+        $this->_alertSubject    = 'AD NIGMA - ETL2 ERROR ' . date( "Y-m-d H:i:s", $this->_timestamp );
 
 
         \ini_set('memory_limit','3000M');
@@ -65,12 +70,58 @@ class Etl2Controller extends Controller
     public function actionIndex( )
     {
         $start = time();
+        $msg   = '';
 
-        self::actionDemand();
-        self::actionSupply();
-        self::actionImpressions();
+        //set_error_handler( array( $this, 'handleErrors' ) );
+        try
+        {
+            self::actionDemand();
+        }
+        catch ( Exception $e )
+        {
+            $msg .= "ETL DEMAND ERROR: \n\n";
+            $msg .= "code: ".$e->getCode()."\n\n";
+            $msg .= "message: \n\n";
+            $msg .= $e->getMessage()."\n\n";
+
+            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+
+            $msg2 = str_replace( "\n", "<br>", $msg);
+            die($msg2);
+        }
         
-        \gc_collect_cycles();
+        try
+        {
+            self::actionSupply();
+        }
+        catch ( Exception $e )
+        {
+            $msg .= "ETL SUPPLY ERROR \n\n";
+            $msg .= "code: ".$e->getCode()."\n\n";
+            $msg .= "message: \n\n";
+            $msg .= $e->getMessage()."\n\n";
+
+            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+
+            $msg2 = str_replace( "\n", "<br>", $msg);
+            die($msg2);           
+        }
+        
+        try
+        {
+            self::actionImpressions();
+        } 
+        catch (Exception $e) {
+            $msg .= "ETL IMPRESSIONS ERROR \n\n";
+            $msg .= "code: ".$e->getCode()."\n\n";
+            $msg .= "message: \n\n";
+            $msg .= $e->getMessage()."\n\n";
+
+            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+
+            $msg2 = str_replace( "\n", "<br>", $msg);
+            die($msg2);
+        }
     }
 
 
@@ -141,7 +192,7 @@ class Etl2Controller extends Controller
 
 
     public function actionImpressions ( )
-    {      
+    {              
         $start    = time();
         $logCount = $this->_redis->zcard( 'sessionhashes' );
         $queries  = ceil( $logCount/$this->_objectLimit );
@@ -166,6 +217,35 @@ class Etl2Controller extends Controller
             echo '<hr/>';
 
         echo 'Impressions: '.$rows.' rows - queries: '.$this->_executedQueries.' - load time: '.$elapsed.' seg.<hr/>';
+    }
+
+
+    private function _sendmail ( $from, $to, $subject, $body )
+    {
+        $headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
+
+        if ( !mail($to, $subject, $body, $headers ) )
+        {
+            $data = 'To: '.$to.'\nSubject: '.$subject.'\nFrom:'.$from.'\n'.$body;
+
+            $command = 'echo -e "'.$data.'" | sendmail -bm -t -v';
+            $command = '
+                export MAILTO="'.$to.'"
+                export FROM="'.$from.'"
+                export SUBJECT="'.$subject.'"
+                export BODY="'.$body.'"
+                (
+                 echo "From: $FROM"
+                 echo "To: $MAILTO"
+                 echo "Subject: $SUBJECT"
+                 echo "MIME-Version: 1.0"
+                 echo "Content-Type: text/html; charset=UTF-8"
+                 echo $BODY
+                ) | /usr/sbin/sendmail -F $MAILTO -t -v -bm
+            ';
+
+            shell_exec( $command );             
+        }           
     }
 
 
@@ -252,7 +332,7 @@ class Etl2Controller extends Controller
                         '.$pid.',
                         '.$log['imps'].',  
                         '.$log['imps'].', 
-                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
+                        "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).',                 
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
                         "'.$sessionHash.'",
