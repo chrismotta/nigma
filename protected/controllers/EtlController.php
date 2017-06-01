@@ -422,6 +422,8 @@ class EtlController extends Controller
 		else
 			$dateCondition = 'AND DATE(i.date_time) = CURDATE()';
 
+		$dateCondition .= 'AND i.revenue = 0 and i.cost = 0';
+
 		$start = time();
 
 		$query = 'UPDATE F_Imp_Compact i 

@@ -53,7 +53,7 @@
     $countries = GeoLocation::getCountryNames();
     echo $form->dropDownListRow($model, 'country', $countries, array('prompt' => 'Select Country')); ?>
 
-    <?php echo $form->dropDownListRow($model,'connection_type',array("WIFI"=>"WIFI","3G"=>"3G",),array('class'=>'input-large','prompt'=>'Select Connection')); ?>
+    <?php echo $form->dropDownListRow($model,'connection_type',array("WIFI"=>"WIFI","MOBILE"=>"MOBILE",),array('class'=>'input-large','prompt'=>'Select Connection')); ?>
 
     <?php echo $form->dropDownListRow($model,'device_type',array("Desktop"=>"Desktop","Mobile"=>"Mobile","Tablet"=>"Tablet","Mobile+Tablet"=>"Mobile+Tablet",),array('class'=>'input-large','prompt'=>'Select Device Type')); ?>
 
