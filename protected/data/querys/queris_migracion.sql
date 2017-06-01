@@ -164,3 +164,4 @@ select
 SEC_TO_TIME( unix_timestamp( now() ) - unix_timestamp('2017-05-30 19:37:00') ) as time, 
 max(id)-205654806 as inserts 
 from F_Imp_Compact;
+
