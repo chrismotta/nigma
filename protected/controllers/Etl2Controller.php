@@ -243,7 +243,7 @@ class Etl2Controller extends Controller
                         $pubId = 'NULL';
 
                     if ( $log['placement_id'] )
-                        $pid = $log['placement_id'];
+                        $pid = $this->_escapeSql( $log['placement_id'] );
                     else
                         $pid = 'NULL';
 
@@ -256,7 +256,7 @@ class Etl2Controller extends Controller
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
                         "'.$sessionHash.'",
-                        '.$this->_escapeSql( $pubId ).',
+                        "'.$pubId.'",
                         "'.$log['ip'].'",
                     ';
 
@@ -387,7 +387,6 @@ class Etl2Controller extends Controller
                 '/(CR)/',
                 '/(SUB)/',
                 '/(")/',
-                '/(>)/',
                 '/(%)/',
                 '/(\\\')/',
                 '/(\\\\)/',
@@ -401,7 +400,6 @@ class Etl2Controller extends Controller
                 '\r',
                 '\Z',
                 '\"',
-                '\>',                
                 '\%',
                 '\\\'',
                 '\\\\',
