@@ -602,18 +602,22 @@ class Etl2Controller extends Controller
             {
                 $log = $this->_redis->hgetall( 'log:'.$hash );
 
-                if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
-                    continue;
+                if ( $log )
+                {
+                    if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
+                        continue;
 
-                if ( $tag  &&  $log['tag_id'] != $tag )
-                    continue;
+                    if ( $tag  &&  $log['tag_id'] != $tag )
+                        continue;
 
-                if ( $placement  &&  $log['placement'] != $placement )
-                    continue;
+                    if ( $placement  &&  $log['placement'] != $placement )
+                        continue;
 
-                $pendingImps += $log['imps'];
-                $pendingCost += $log['cost'];
-                $pendingRev  += $log['revenue'];
+                    $pendingImps += $log['imps'];
+                    $pendingCost += $log['cost'];
+                    $pendingRev  += $log['revenue'];                    
+                }
+
             }            
 
             $startAt += $this->_objectLimit;
