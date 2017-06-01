@@ -669,6 +669,8 @@ class Etl2Controller extends Controller
 
             $startAt += $this->_objectLimit;
             $endAt   += $this->_objectLimit;
+
+            unset($loadedLogs);
         }
 
         echo 'Loaded Imps: '.$loadedImps.'<hr/>'; 
