@@ -130,6 +130,8 @@ ELSE NULL
 END
 WHERE YEAR(i.date_time) = 2016 AND MONTH(i.date_time) = 2
 
+
+
 # update new columns not compact
 
 UPDATE F_Imp_Compact i 
@@ -153,5 +155,12 @@ WHEN g.connection_type = '3G' THEN 'MOBILE'
 WHEN g.connection_type = '' THEN NULL
 ELSE NULL
 END
-WHERE DATE(i.date_time) >= '2017-05-17' 
+where i.id > 205654806 and i.server_ip is null and i.user_agent is null and DATE(i.date_time) >= '2017-05-31' 
 
+
+# check etl 2 inserts
+# 
+select 
+SEC_TO_TIME( unix_timestamp( now() ) - unix_timestamp('2017-05-30 19:37:00') ) as time, 
+max(id)-205654806 as inserts 
+from F_Imp_Compact;

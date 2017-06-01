@@ -343,8 +343,55 @@ class EtlController extends Controller
 
 		$start = time();
 
-		$query = 'INSERT IGNORE INTO F_Imp_Compact (id, D_Demand_id, D_Supply_id, date_time, D_UserAgent_id, D_GeoLocation_id, unique_id, pubid, ip_forwarded, referer_url, referer_app, imps, ad_req) 
-		SELECT i.id, i.tags_id, i.placements_id, i.date, u.id, g.id, MD5(CONCAT(i.server_ip,i.user_agent,date(i.date))), i.pubid, i.ip_forwarded, i.referer, i.app, count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))) 
+		$query = 'INSERT IGNORE INTO F_Imp_Compact (
+			id, 
+			D_Demand_id, 
+			D_Supply_id, 
+			date_time, 
+			D_UserAgent_id, 
+			D_GeoLocation_id, 
+			unique_id, 
+			pubid, 
+			ip_forwarded, 
+			referer_url, 
+			referer_app, 
+			imps, 
+			ad_req,
+			device_type, 
+			device_brand, 
+			device_model, 
+			os_type, 
+			os_version, 
+			browser_type, 
+			browser_version, 
+			country, 
+			carrier, 
+			connection_type
+			) 
+		SELECT 
+			i.id, 
+			i.tags_id, 
+			i.placements_id, 
+			i.date, 
+			u.id, 
+			g.id, 
+			MD5(CONCAT(i.server_ip,i.user_agent,date(i.date))), 
+			i.pubid, 
+			i.ip_forwarded, 
+			i.referer, 
+			i.app, 
+			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), 
+			count(MD5(CONCAT(i.server_ip,i.user_agent,date(i.date)))), 
+			u.device_type, 
+			u.device_brand, 
+			u.device_model, 
+			u.os_type, 
+			u.os_version, 
+			u.browser_type, 
+			u.browser_version, 
+			g.country, 
+			g.carrier, 
+			g.connection_type 
 		FROM imp_log i 
 		INNER JOIN D_UserAgent u   ON(i.user_agent = u.user_agent) 
 		INNER JOIN D_GeoLocation g ON(i.server_ip  = g.server_ip) ';
@@ -364,6 +411,7 @@ class EtlController extends Controller
 
 		echo 'ETL Impressions: '.$return.' rows inserted - Elapsed time: '.$elapsed.' seg.<hr/>';
 	}
+
 
 	public function actionBidcompact($date=null){
 
