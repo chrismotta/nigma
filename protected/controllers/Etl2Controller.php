@@ -332,17 +332,17 @@ class Etl2Controller extends Controller
                         "'.$log['ip'].'",
                     ';
 
-                    if ( $log['country'] )
+                    if ( $log['country'] && $log['country']!='' )
                         $values .= '"'.strtoupper($log['country']).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['carrier'] )
+                    if ( $log['carrier'] && $log['carrier']!='' )
                         $values .= '"'.$this->_escapeSql( $log['carrier'] ).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['connection_type'] )
+                    if ( $log['connection_type'] && $log['connection_type']!='' )
                     {
                         if ( $log['connection_type']== '3g' || $log['connection_type']== '3G' )
                             $log['connection_type']= 'MOBILE';
@@ -352,7 +352,7 @@ class Etl2Controller extends Controller
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['user_agent'] )                        
+                    if ( $log['user_agent'] && $log['user_agent']!='' )                        
                         $values .= '"'.md5( $log['user_agent'] ).'",';
                     else
                         $values .= 'NULL,';
@@ -362,37 +362,37 @@ class Etl2Controller extends Controller
                     else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
                         $log['device'] = 'Mobile';
 
-                    if ( isset($log['device']) && $log['device'] )
+                    if ( isset($log['device']) && $log['device'] && $log['device']!='' )
                         $values .= '"'.$log['device'].'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['device_brand']) && $log['device_brand'] )
+                    if ( isset($log['device_brand']) && $log['device_brand'] && $log['device_brand']!='' )
                         $values .= '"'.$this->_escapeSql( $log['device_brand'] ).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['device_model']) && $log['device_model'] )
+                    if ( isset($log['device_model']) && $log['device_model'] && $log['device_model']!='' )
                         $values .= '"'.$this->_escapeSql( $log['device_model'] ).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['os']) && $log['os'] )
+                    if ( isset($log['os']) && $log['os'] && $log['os']!='' )
                         $values .= '"'.$this->_escapeSql( $log['os']).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['os_version']) && $log['os_version'] )
+                    if ( isset($log['os_version']) && $log['os_version'] && $log['os_version']!='' )
                         $values .= '"'.$this->_escapeSql( $log['os_version'] ).'",';
                     else
                         $values .= 'NULL,';   
 
-                    if ( isset($log['browser']) && $log['browser'] )
+                    if ( isset($log['browser']) && $log['browser'] && $log['browser']!='' )
                         $values .= '"'.$this->_escapeSql( $log['browser'] ).'",';
                     else
                         $values .= 'NULL,';  
 
-                    if ( isset($log['browser_version']) && $log['browser_version'] )
+                    if ( isset($log['browser_version']) && $log['browser_version'] && $log['browser_version']!='' )
                         $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'",';
                     else
                         $values .= 'NULL,';
