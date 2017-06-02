@@ -309,13 +309,13 @@ class Etl2Controller extends Controller
                     if ( $values != '' )
                         $values .= ',';                    
                     
-                    if ( $log['publisher_id'] )
-                        $pubId = $log['publisher_id'];
+                    if ( $log['publisher_id'] && $log['publisher_id']!='' )
+                        $pubId = $this->_escapeSql($log['publisher_id']);
                     else
                         $pubId = 'NULL';
 
                     if ( $log['placement_id'] )
-                        $pid = $this->_escapeSql( $log['placement_id'] );
+                        $pid =  $log['placement_id'];
                     else
                         $pid = 'NULL';
 
