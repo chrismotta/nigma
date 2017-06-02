@@ -426,8 +426,6 @@ class EtlController extends Controller
 		else
 			$dateCondition = 'AND DATE(i.date_time) = CURDATE()';
 
-		$dateCondition .= 'AND i.revenue = 0 and i.cost = 0';
-
 		$start = time();
 
 		$query = 'UPDATE F_Imp_Compact i 
@@ -454,6 +452,8 @@ class EtlController extends Controller
 		(u.os_type         = d.os_type         OR d.os_type         IS NULL OR d.os_type         = "") 
 		AND 
 		(CONVERT(u.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
+		AND 
+		ad_server_id = 1
 		';
 		$query.= $dateCondition;
 
