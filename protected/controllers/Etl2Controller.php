@@ -314,7 +314,7 @@ class Etl2Controller extends Controller
                     else
                         $pubId = 'NULL';
 
-                    if ( $log['placement_id'] && $log['placement_id']!='' )
+                    if ( $log['placement_id'] && $log['placement_id']!='' && preg_match( '/^[0-9]+$/',$log['placement_id'] ) )
                         $pid =  $log['placement_id'];
                     else
                         $pid = 'NULL';
