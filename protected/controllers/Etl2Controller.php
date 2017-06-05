@@ -667,18 +667,21 @@ class Etl2Controller extends Controller
             {
                 $log = $this->_redis->hgetall( 'log:'.$hash );
 
-                if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
-                    continue;
+                if ( $log )
+                {
+                    if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
+                        continue;
 
-                if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
-                    continue;
+                    if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
+                        continue;
 
-                if ( $this->_placement  &&  $log['placement'] != $this->_placement )
-                    continue;
+                    if ( $this->_placement  &&  $log['placement'] != $this->_placement )
+                        continue;
 
-                $loadedImps += $log['imps'];
-                $loadedCost += $log['cost'];
-                $loadedRev  += $log['revenue'];
+                    $loadedImps += $log['imps'];
+                    $loadedCost += $log['cost'];
+                    $loadedRev  += $log['revenue'];                    
+                }
 
                 unset($log); 
             }           
