@@ -22,7 +22,8 @@ class Etl2Controller extends Controller
     private $_limit;
     private $_parsedLogs;
     private $_executedQueries;
-    private $_date;
+    private $_startDate;
+    private $_endDate;
     private $_tag;
     private $_placement;
     private $_showsql;
@@ -50,7 +51,11 @@ class Etl2Controller extends Controller
         }
 
         $this->_timestamp       = time();
-        $this->_date            = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d", strtotime("yesterday") );
+
+        $this->_startDate       = isset( $_GET['from'] ) ? $_GET['from'] : date("Y-m-d", strtotime("yesterday") );
+
+        $this->_endDate         = isset( $_GET['to'] ) ? $_GET['to'] : $this->_startDate;
+
         $this->_tag             = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
         $this->_placement       = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
         $this->_showsql         = isset( $_GET['showsql'] ) ? true : false;
@@ -637,9 +642,9 @@ class Etl2Controller extends Controller
             die('invalid placement ID');
         }
 
-        $from            = strtotime( $this->_date.' 00:00:00' );
-        $to              = strtotime( $this->_date.' 23:59:59' );
-        $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
+        $from            = strtotime( $this->_startDate.' 00:00:00' );
+        $to              = strtotime( $this->_endDate.' 23:59:59' );
+        $loadedLogsCount = $this->_redis->zcount( 'loadedlogs', $from, $to );
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
         $loadedImps      = 0;
         $loadedCost      = 0;
@@ -649,7 +654,14 @@ class Etl2Controller extends Controller
 
         for ( $i=0; $i<$queries; $i++ )
         {
-            $loadedLogs = $this->_redis->zrange( 'loadedlogs', $startAt, $endAt );
+            $loadedLogs = $this->_redis->zrangebyscore( 
+                'loadedlogs', 
+                $from, 
+                $to, 
+                [
+                    'LIMIT' => [ $startAt, $endAt ]
+                ] 
+            );
 
             foreach ( $loadedLogs AS $hash )
             {
