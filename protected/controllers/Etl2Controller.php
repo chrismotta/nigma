@@ -315,7 +315,7 @@ class Etl2Controller extends Controller
                         $values .= ',';                    
                     
                     if ( $log['publisher_id'] && $log['publisher_id']!='' )
-                        $pubId = $this->_escapeSql($log['publisher_id']);
+                        $pubId = $this->_escapeSql( substr( $log['publisher_id'], 0, 254 ) );
                     else
                         $pubId = 'NULL';
 
