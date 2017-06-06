@@ -105,6 +105,35 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 
 		            replaceMacro = this.value;
 
+		            // var downloadHref = $("#download-txt").attr("href");
+		            // var downloadHrefSpl = downloadHref.split("?"); 
+		            // downloadHref = downloadHrefSpl[0] + "?pid="+this.value;
+
+		            // console.log(downloadHref);
+		            // $("#download-txt").attr("href", downloadHref);
+		            return;
+		            ',
+			    ));
+
+
+		?>
+			</div>
+			<div class="control-label">Protocol</div>
+			<div class="controls">
+		<?php 
+		echo CHtml::radioButtonList('ssl', 'http://', array('http://'=>'HTTP', 'https://'=>'HTTPS'), 
+			array(
+			    'prompt'   => 'Select a placement',
+			    'class'    => 'placements-radio',
+			    'onChange' => '
+			    	var iframe = $("#tag_content_iframe").val();
+			    	var js = $("#tag_content_js").val();
+
+		            $("#tag_content_iframe").val( iframe.replace(replaceProtocol, this.value) );
+		            $("#tag_content_js").val( js.replace(replaceProtocol, this.value) );
+
+		            replaceProtocol = this.value;
+
 		            var downloadHref = $("#download-txt").attr("href");
 		            var downloadHrefSpl = downloadHref.split("?"); 
 		            downloadHref = downloadHrefSpl[0] + "?pid="+this.value;
@@ -197,4 +226,5 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 
 <?php Yii::app()->clientScript->registerScript('replaceMacro', '
     var replaceMacro = "<placementID>";
+    var replaceProtocol = "http://";
 ', CClientScript::POS_END); ?>

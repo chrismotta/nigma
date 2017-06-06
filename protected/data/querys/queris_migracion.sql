@@ -166,4 +166,16 @@ max(id)-205654806 as inserts
 from F_Imp_Compact;
 
 
-select tags_id, count(*) from imp_log where date(date)="2017-05-31" group by tags_id
+select 
+provider as Publisher, 
+tags_id as TagID, 
+count(*) as Imps 
+from imp_log i 
+left join D_Supply s on i.placements_id=s.placement_id 
+where date(date)=curdate() 
+group by provider, tags_id;
+
+# select publisher by pubid
+select s.provider, sum(imps) from F_Imp_Compact i 
+left join D_Supply s on i.D_Supply_id = s.placement_id 
+where pubid in("x") group by s.provider
