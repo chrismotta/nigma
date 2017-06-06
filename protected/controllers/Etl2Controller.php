@@ -22,7 +22,8 @@ class Etl2Controller extends Controller
     private $_limit;
     private $_parsedLogs;
     private $_executedQueries;
-    private $_date;
+    private $_startDate;
+    private $_endDate;
     private $_tag;
     private $_placement;
     private $_showsql;
@@ -50,7 +51,11 @@ class Etl2Controller extends Controller
         }
 
         $this->_timestamp       = time();
-        $this->_date            = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d", strtotime("yesterday") );
+
+        $this->_startDate       = isset( $_GET['from'] ) ? $_GET['from'] : date("Y-m-d", strtotime("yesterday") );
+
+        $this->_endDate         = isset( $_GET['to'] ) ? $_GET['to'] : $this->_startDate;
+
         $this->_tag             = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
         $this->_placement       = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
         $this->_showsql         = isset( $_GET['showsql'] ) ? true : false;
@@ -309,13 +314,13 @@ class Etl2Controller extends Controller
                     if ( $values != '' )
                         $values .= ',';                    
                     
-                    if ( $log['publisher_id'] )
-                        $pubId = $log['publisher_id'];
+                    if ( $log['publisher_id'] && $log['publisher_id']!='' )
+                        $pubId = $this->_escapeSql( substr( $log['publisher_id'], 0, 254 ) );
                     else
                         $pubId = 'NULL';
 
-                    if ( $log['placement_id'] )
-                        $pid = $this->_escapeSql( $log['placement_id'] );
+                    if ( $log['placement_id'] && $log['placement_id']!='' && preg_match( '/^[0-9]+$/',$log['placement_id'] ) )
+                        $pid =  $log['placement_id'];
                     else
                         $pid = 'NULL';
 
@@ -332,17 +337,17 @@ class Etl2Controller extends Controller
                         "'.$log['ip'].'",
                     ';
 
-                    if ( $log['country'] )
+                    if ( $log['country'] && $log['country']!='' )
                         $values .= '"'.strtoupper($log['country']).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['carrier'] )
+                    if ( $log['carrier'] && $log['carrier']!='' )
                         $values .= '"'.$this->_escapeSql( $log['carrier'] ).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['connection_type'] )
+                    if ( $log['connection_type'] && $log['connection_type']!='' )
                     {
                         if ( $log['connection_type']== '3g' || $log['connection_type']== '3G' )
                             $log['connection_type']= 'MOBILE';
@@ -352,7 +357,7 @@ class Etl2Controller extends Controller
                     else
                         $values .= 'NULL,';
 
-                    if ( $log['user_agent'] )                        
+                    if ( $log['user_agent'] && $log['user_agent']!='' )                        
                         $values .= '"'.md5( $log['user_agent'] ).'",';
                     else
                         $values .= 'NULL,';
@@ -362,37 +367,37 @@ class Etl2Controller extends Controller
                     else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
                         $log['device'] = 'Mobile';
 
-                    if ( isset($log['device']) && $log['device'] )
+                    if ( isset($log['device']) && $log['device'] && $log['device']!='' )
                         $values .= '"'.$log['device'].'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['device_brand']) && $log['device_brand'] )
+                    if ( isset($log['device_brand']) && $log['device_brand'] && $log['device_brand']!='' )
                         $values .= '"'.$this->_escapeSql( $log['device_brand'] ).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['device_model']) && $log['device_model'] )
+                    if ( isset($log['device_model']) && $log['device_model'] && $log['device_model']!='' )
                         $values .= '"'.$this->_escapeSql( $log['device_model'] ).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['os']) && $log['os'] )
+                    if ( isset($log['os']) && $log['os'] && $log['os']!='' )
                         $values .= '"'.$this->_escapeSql( $log['os']).'",';
                     else
                         $values .= 'NULL,';
 
-                    if ( isset($log['os_version']) && $log['os_version'] )
+                    if ( isset($log['os_version']) && $log['os_version'] && $log['os_version']!='' )
                         $values .= '"'.$this->_escapeSql( $log['os_version'] ).'",';
                     else
                         $values .= 'NULL,';   
 
-                    if ( isset($log['browser']) && $log['browser'] )
+                    if ( isset($log['browser']) && $log['browser'] && $log['browser']!='' )
                         $values .= '"'.$this->_escapeSql( $log['browser'] ).'",';
                     else
                         $values .= 'NULL,';  
 
-                    if ( isset($log['browser_version']) && $log['browser_version'] )
+                    if ( isset($log['browser_version']) && $log['browser_version'] && $log['browser_version']!='' )
                         $values .= '"'.$this->_escapeSql( $log['browser_version'] ).'",';
                     else
                         $values .= 'NULL,';
@@ -454,30 +459,30 @@ class Etl2Controller extends Controller
     {
         return preg_replace(
             [
+                '/(\\\\)/',
                 '/(NUL)/',
                 '/(BS)/',
                 '/(TAB)/',
                 '/(LF)/',
                 '/(CR)/',
                 '/(SUB)/',
+                '/(%)/',                
+                "/(')/",
                 '/(")/',
-                '/(%)/',
-                '/(\\\')/',
-                '/(\\\\)/',
                 '/(_)/'
             ],
             [
+                '\\\\\\',
                 '\0',
                 '\b',
                 '\t',
                 '\n',
                 '\r',
                 '\Z',
+                '\%',                
+                "\\'",
                 '\"',
-                '\%',
-                '\\\'',
-                '\\\\',
-                '\\'
+                '\\_'
             ],
             $sql
         );
@@ -637,9 +642,9 @@ class Etl2Controller extends Controller
             die('invalid placement ID');
         }
 
-        $from            = strtotime( $this->_date.' 00:00:00' );
-        $to              = strtotime( $this->_date.' 23:59:59' );
-        $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
+        $from            = strtotime( $this->_startDate.' 00:00:00' );
+        $to              = strtotime( $this->_endDate.' 23:59:59' );
+        $loadedLogsCount = $this->_redis->zcount( 'loadedlogs', $from, $to );
         $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
         $loadedImps      = 0;
         $loadedCost      = 0;
@@ -649,24 +654,34 @@ class Etl2Controller extends Controller
 
         for ( $i=0; $i<$queries; $i++ )
         {
-            $loadedLogs = $this->_redis->zrange( 'loadedlogs', $startAt, $endAt );
+            $loadedLogs = $this->_redis->zrangebyscore( 
+                'loadedlogs', 
+                $from, 
+                $to, 
+                [
+                    'LIMIT' => [ $startAt, $endAt ]
+                ] 
+            );
 
             foreach ( $loadedLogs AS $hash )
             {
                 $log = $this->_redis->hgetall( 'log:'.$hash );
 
-                if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
-                    continue;
+                if ( $log )
+                {
+                    if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
+                        continue;
 
-                if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
-                    continue;
+                    if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
+                        continue;
 
-                if ( $this->_placement  &&  $log['placement'] != $this->_placement )
-                    continue;
+                    if ( $this->_placement  &&  $log['placement'] != $this->_placement )
+                        continue;
 
-                $loadedImps += $log['imps'];
-                $loadedCost += $log['cost'];
-                $loadedRev  += $log['revenue'];
+                    $loadedImps += $log['imps'];
+                    $loadedCost += $log['cost'];
+                    $loadedRev  += $log['revenue'];                    
+                }
 
                 unset($log); 
             }           
