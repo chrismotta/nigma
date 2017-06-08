@@ -80,6 +80,7 @@ class PlacementsController extends Controller
 		if(isset($_POST['Placements']))
 		{
 			$model->attributes=$_POST['Placements'];
+						
 			if($model->save()){
 
 				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
@@ -111,10 +112,11 @@ class PlacementsController extends Controller
 
 		if(isset($_POST['Placements']))
 		{
-			$model->attributes=$_POST['Placements'];
+			$model->attributes=$_POST['Placements'];		
 			if($model->save()){
+
 				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
-				$predis->hset( 'placement:'.$model->id, 'payout', $model->rate );
+				$predis->hmset( 'placement:'.$model->id, 'payout', $model->rate );
 
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 			}

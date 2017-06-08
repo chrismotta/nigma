@@ -52,6 +52,8 @@ class ApiUpdateController extends Controller
 			'cpmCampaigns',
 			'impLog',
 			'MobusiCPC',
+			'epom',
+			'epomCompare'
 			);
 		
 		return array(
@@ -97,7 +99,8 @@ class ApiUpdateController extends Controller
 		// $this->actionJampp();
 
 		$this->actionAjillion();
-		
+		$this->actionEpom();
+	
 		// $this->actionAdWords();
 
 		// $this->actionInMobi();
@@ -116,7 +119,7 @@ class ApiUpdateController extends Controller
 		// $this->actionAdWordsConversions();
 
 		// $this->actionAirpush();
-		// $this->actionMobusiCPC();
+		// $this->actionMobusiCPC();		
 
 		Yii::app()->cache->flush();
 	}
@@ -132,6 +135,17 @@ class ApiUpdateController extends Controller
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
 		}		
 	}
+
+	public function actionEpomCompare ($hash=null){
+		try {
+			$epom = new Epom;
+			$return = $epom->compareTotals(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
+		}		
+	}	
 
 	public function actionBingCode(){
 		echo $_REQUEST['code'];
@@ -221,6 +235,18 @@ class ApiUpdateController extends Controller
 			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
 		}
 	}
+
+	public function actionEpom($hash=null)
+	{
+		try {
+			$epom = new Epom;
+			$return = $epom->downloadInfo(7);
+			if(isset($hash) && $hash=='echo')
+				echo $return;
+		} catch (Exception $e) {
+			Yii::log($e->getCode()." ".$e->getMessage(), 'error', 'system.model.api.apiUpdate');			
+		}
+	}	
 
 	public function actionBuzzCity()
 	{
