@@ -165,7 +165,7 @@ SEC_TO_TIME( unix_timestamp( now() ) - unix_timestamp('2017-05-30 19:37:00') ) a
 max(id)-205654806 as inserts 
 from F_Imp_Compact;
 
-
+# old nigma imps
 select 
 provider as Publisher, 
 tags_id as TagID, 
@@ -175,7 +175,50 @@ left join D_Supply s on i.placements_id=s.placement_id
 where date(date)=curdate() 
 group by provider, tags_id;
 
-# select publisher by pubid
-select s.provider, sum(imps) from F_Imp_Compact i 
+# select pubid by publisher
+select s.provider, pubid, sum(imps) from F_Imp_Compact i 
 left join D_Supply s on i.D_Supply_id = s.placement_id 
-where pubid in("x") group by s.provider
+where pubid in('x','x') and date(date_time)=subdate(curdate(),1) 
+group by s.provider, pubid;
+
+# select pubid by publisher / country
+select s.provider, i.country, pubid, sum(imps) from F_Imp_Compact i 
+left join D_Supply s on i.D_Supply_id = s.placement_id 
+where pubid in('x','x') and date(date_time)=subdate(curdate(),1) 
+group by s.provider, i.country, pubid;
+
+# find null pid
+select D_Demand_id, count(imps) from F_Imp_Compact where D_Supply_id is null and date(date_time)=subdate(curdate(),1) group by D_Demand_id;
+select D_Demand_id, D_Supply_id, count(imps) from F_Imp_Compact where D_Demand_id in (245, 248, 253, 255, 258, 260) and date(date_time)=subdate(curdate(),0) group by D_Supply_id;
+
+# bid compact
+greUPDATE F_Imp_Compact i 
+LEFT JOIN D_Demand d ON(i.D_Demand_id = d.tag_id) 
+LEFT JOIN D_Supply s ON(i.D_Supply_id = s.placement_id) 
+SET 
+i.revenue = CASE 
+WHEN d.freq_cap IS NULL THEN d.rate/1000 * i.imps 
+WHEN d.freq_cap > i.imps THEN d.rate/1000 * i.imps 
+ELSE d.rate/1000 * d.freq_cap END, 
+i.cost = CASE 
+WHEN d.freq_cap IS NULL THEN s.rate/1000 * i.imps 
+WHEN d.freq_cap > i.imps THEN s.rate/1000 * i.imps 
+ELSE s.rate/1000 * d.freq_cap END 
+WHERE (i.connection_type = d.connection_type OR d.connection_type IS NULL OR d.connection_type = "") 
+AND (i.country = d.country OR d.country IS NULL OR d.country = "") 
+AND (i.os_type = d.os_type OR d.os_type IS NULL OR d.os_type = "") 
+AND (CONVERT(i.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
+AND i.D_Demand_id in (245, 248, 253, 255, 258, 260)
+AND date_time <= '2017-06-08 14:43:11' 
+AND i.revenue = 0 
+AND i.cost = 0
+
+AND DATE(i.date_time) = "2017-06-07"
+
+
+update F_Imp_Compact set D_Supply_id = 2156 where D_Demand_id = 245;
+update F_Imp_Compact set D_Supply_id = 2158 where D_Demand_id = 248;
+update F_Imp_Compact set D_Supply_id = 2165 where D_Demand_id = 253;
+update F_Imp_Compact set D_Supply_id = 2166 where D_Demand_id = 255;
+update F_Imp_Compact set D_Supply_id = 2169 where D_Demand_id = 258;
+update F_Imp_Compact set D_Supply_id = 2170 where D_Demand_id = 260;

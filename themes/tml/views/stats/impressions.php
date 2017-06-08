@@ -192,16 +192,16 @@ ReportingManager::dataMultiSelect(new DDemand(), 'tag', $filter);
 ReportingManager::dataMultiSelect(new DSupply(), 'placement', $filter, $comparePlacement);
 ReportingManager::dataMultiSelect(new DDemand(), 'advertiser', $filter);
 ReportingManager::dataMultiSelect(new DDemand(), 'campaign', $filter);
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'country', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'os_type', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'os_version', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'device_type', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'device_brand', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'device_model', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_type', $filter);
-ReportingManager::dataMultiSelect(new DUserAgent(), 'browser_version', $filter);
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'connection_type', $filter);
-ReportingManager::dataMultiSelect(new DGeoLocation(), 'carrier', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'country', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'os_type', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'os_version', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'device_type', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'device_brand', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'device_model', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'browser_type', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'browser_version', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'connection_type', $filter);
+ReportingManager::dataMultiSelect(new FImpCompact(), 'carrier', $filter);
 
 // hide all .multi-select-hide
 $jQuery = '$("div.multi-select-hide:not(:has(ul li.select2-search-choice))").hide()';

@@ -43,6 +43,7 @@ class Tags extends CActiveRecord
 		// will receive user inputs.
 		return array(
 			array('campaigns_id, banner_sizes_id, analyze, freq_cap', 'numerical', 'integerOnly'=>true),
+			array('banner_sizes_id', 'required'),
 			array('code', 'safe'),
 			array('url', 'length', 'max'=>255),
 			array('name, comment', 'length', 'max'=>128),
@@ -66,7 +67,6 @@ class Tags extends CActiveRecord
 		// NOTE: you may need to adjust the relation name and the related
 		// class name for the relations automatically generated below.
 		return array(
-			'impLogs' => array(self::HAS_MANY, 'ImpLog', 'tags_id'),
 			'bannerSizes' => array(self::BELONGS_TO, 'BannerSizes', 'banner_sizes_id'),
 			'campaigns' => array(self::BELONGS_TO, 'Campaigns', 'campaigns_id'),
 		);

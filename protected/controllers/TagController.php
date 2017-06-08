@@ -15,6 +15,9 @@ class TagController extends Controller
 	}
 
 	public function actionView($id){
+
+		die('This URL is not currently available');
+
 		// Yii::log("impresion: " . var_export($imp->getErrors(), true));
 
 		if(!$tag = Tags::model()->findByPk($id))
@@ -145,6 +148,9 @@ class TagController extends Controller
 
 	public function actionJs($id){
 
+		die('This URL is not currently available');
+
+
 		if (self::isSecure()) 
 			$prot = 'https';
 		else 
@@ -169,6 +175,9 @@ class TagController extends Controller
 
 	public function actionJsp($id){
 
+		die('This URL is not currently available');
+
+
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$width  = isset($_GET['width']) ? $_GET['width'] : null;
 		$height = isset($_GET['height']) ? $_GET['height'] : null;
@@ -187,6 +196,9 @@ class TagController extends Controller
 	}
 
 	public function actionJsi($id){
+
+		die('This URL is not currently available');
+
 		
 		$pid    = isset($_GET['pid']) ? $_GET['pid'] : null;
 		$width  = isset($_GET['width']) ? $_GET['width'] : null;
@@ -273,6 +285,9 @@ class TagController extends Controller
 	}
 
 	public function actionUrl($id, $urlTest = false, $render = ''){
+
+		die('This URL is not currently available');
+		
 		// $start = microtime();
 
 		// detecting if is postback click
