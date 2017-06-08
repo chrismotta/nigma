@@ -76,9 +76,10 @@ class TagsController extends Controller
 	{
 		$model=$this->loadModel($id);
 		$pid = isset($_GET['pid']) ? $_GET['pid'] : '<placementID>';
+		$protocol = isset($_GET['protocol']) ? $_GET['protocol'] : 'http://';
 
 		header('Content-Disposition: attachment; filename="TML_tag#'.$model->id.'.txt"');
-		echo '-- TAG IFRAmE --'."\n\n".'<iframe src="http://bidbox.co/tag/'. $model->id . '?pid='.$pid.'&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $model->bannerSizes->width .'" height="'. $model->bannerSizes->height .'" frameborder="0" scrolling="no" ></iframe>'."\n\n".'-- TAG JAVASCRIPT --'."\n\n".'<script type="text/javascript" src="http://bidbox.co/tag/js/'. $model->id . '?pid='.$pid.'&&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $model->bannerSizes->width .'&height='. $model->bannerSizes->height .'"></script>';
+		echo '-- TAG IFRAmE --'."\n\n".'<iframe src="'.$protocol.'req.bidbox.co/'. $model->id . '?pid='.$pid.'&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $model->bannerSizes->width .'" height="'. $model->bannerSizes->height .'" frameborder="0" scrolling="no" ></iframe>'."\n\n".'-- TAG JAVASCRIPT --'."\n\n".'<script type="text/javascript" src="'.$protocol.'req.bidbox.co/js/'. $model->id . '?pid='.$pid.'&&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $model->bannerSizes->width .'&height='. $model->bannerSizes->height .'"></script>';
 	}
 
 	private function getBannerSizes()
