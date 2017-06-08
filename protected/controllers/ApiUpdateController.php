@@ -53,7 +53,8 @@ class ApiUpdateController extends Controller
 			'impLog',
 			'MobusiCPC',
 			'epom',
-			'epomCompare'
+			'epomCompare',
+			'compare',
 			);
 		
 		return array(
@@ -124,6 +125,10 @@ class ApiUpdateController extends Controller
 		Yii::app()->cache->flush();
 	}
 
+	public function actionCompare ($hash=null){
+		$this->actionAjillionCompare();
+		$this->actionEpomCompare();
+	}
 
 	public function actionAjillionCompare ($hash=null){
 		try {

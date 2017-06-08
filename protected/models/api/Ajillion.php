@@ -289,10 +289,12 @@ class Ajillion
 			}
 
 			$adv = Advertisers::model()->find(
-					'ext_id=:ext_id',
+					'ext_id LIKE :ext_id1 OR ext_id LIKE :ext_id1 OR ext_id LIKE :ext_id2',
 					array(
-						':ext_id' => $advExtId,
-					)
+						':ext_id0' => 'AJ:'.$advExtId.'%',
+						':ext_id1' => '%AJ:'.$advExtId.'%',
+						':ext_id2' => '%AJ:'.$advExtId,
+					)					
 				);
 
 
@@ -304,7 +306,7 @@ class Ajillion
 				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
 				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
 
-				if ( !in_array($adv->id, $excludedAdvertisers) ){
+				if ( !in_array($advExtId, $excludedAdvertisers) ){
 					$mailBody .= '
 						<tr>
 							<td>NOT FOUND IN NIGMA</td>
@@ -385,9 +387,7 @@ class Ajillion
 			}
 
 			$log->save();				
-
-
-		}
+		}	
 
 		$this->apiLog->updateLog('Completed', 'Procces completed: advertisers totals compared.');
 		$return .= '<br><br>Procces completed: advertisers totals succesfully compared.';
