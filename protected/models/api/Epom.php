@@ -48,7 +48,7 @@ class Epom
 		if ( isset( $_GET['cid']) ) {
 			$cid = $_GET['cid'];
 			if ( !Campaigns::model()->exists( "id=:id", array(":id" => $cid)) ) {
-				Yii::log("campaigns_id: $cid doesn't exists.", 'warning', 'system.model.api.ajillion');
+				Yii::log("campaigns_id: $cid doesn't exists.", 'warning', 'system.model.api.epom');
 				return 2;
 			}
 		}
@@ -60,13 +60,13 @@ class Epom
 		else 
 			$alreadyExist = DailyReport::model()->exists("providers_id=:providers AND DATE(date)=:date", array(":providers"=>$this->provider_id, ":date"=>$date));
 		if ( $alreadyExist ) {
-			Yii::log("Information already downloaded.", 'warning', 'system.model.api.ajillion');
+			Yii::log("Information already downloaded.", 'warning', 'system.model.api.epom');
 			return 2;
 		}
 		*/
-
+		/*
 		$date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
-		
+
 		$this->apiLog->updateLog('Processing', 'Getting advertisers list');
 
 		// if adv parameter is setted
@@ -79,7 +79,7 @@ class Epom
 			// get all advertisers
 			$advertisers = $this->getResponse( );
 			if ( !$advertisers ) {
-				Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
+				Yii::log("Can't get advertisers", 'error', 'system.model.api.epom');
 				return 1;
 			}
 
@@ -99,13 +99,13 @@ class Epom
 				"start_date"=>$date,
 				"end_date"=>$date,
 			);
-
+		*/
 		$this->apiLog->updateLog('Processing', 'Getting traffic data');
 
-		$campaigns = $this->getResponse("report.advertiser.performance.get", $params);
+		$campaigns = $this->getResponse( [ 'groupBy' => 'BANNER'] );
 
 		if ( !$campaigns ) {
-			Yii::log("Can't get campaigns", 'error', 'system.model.api.ajillion');
+			Yii::log("Can't get campaigns", 'error', 'system.model.api.epom');
 			return 1;
 		}
 
@@ -115,15 +115,15 @@ class Epom
 		$prevSavedCmps = [];
 		foreach ($campaigns as $campaign) {
 
-			if ( $campaign->impressions == 0) { // if no impressions dismiss campaign
+			if ( $campaign->Impressions == 0 ) { // if no impressions dismiss campaign
 				continue;
 			}
 
 			// get campaign ID used in Server, from the campaign name use in the external provider
-			$campaigns_id = Utilities::parseCampaignID($campaign->campaign);
+			$campaigns_id = Utilities::parseCampaignID($campaign->Banner);
 
 			if ( !$campaigns_id ) {
-				Yii::log("invalid external campaign name: '" . $campaign->campaign, 'warning', 'system.model.api.ajillion');
+				Yii::log("invalid external campaign name: '" . $campaign->Banner, 'warning', 'system.model.api.epom');
 				continue;
 			}
 
@@ -145,7 +145,7 @@ class Epom
 			}else{
 				$return.= "<hr/>Update record: ".$dailyReport->id;
 			}
-			
+
 			$dailyReport->campaigns_id = $campaigns_id;
 
 			// only when $_GET['cid'] is setted // not verified
@@ -160,27 +160,13 @@ class Epom
 			$dailyReport->date = $formated_date;
 			$dailyReport->providers_id = $this->provider_id;
 
-			// echo '<hr>'.json_encode($prevSavedCmps).' - '.$campaigns_id.' - '.strval(array_search($campaigns_id, $prevSavedCmps)).'<hr>';
-
 			$sumRevenue = false;
-			// fixed, if is the first position array_search returns 0 (equal to false)
-			if ( array_search($campaigns_id, $prevSavedCmps) !== false ) 
-			{ 
-				$dailyReport->imp = $dailyReport->imp + $campaign->impressions;
-				$dailyReport->clics = $campaign->hits + $campaign->hits;
-				$dailyReport->conv_api = $dailyReport->conv_api + ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
-				//$dailyReport->conv_adv = 0;
-				$dailyReport->spend = number_format($dailyReport->spend+$campaign->cost, 2, '.', '');
-				$return .= ' - (sum) ';				
-			}
-			else
-			{
-				$dailyReport->imp = $campaign->impressions;
-				$dailyReport->clics = $campaign->hits;
-				$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
-				//$dailyReport->conv_adv = 0;
-				$dailyReport->spend = number_format($campaign->cost, 2, '.', '');
-			}
+
+			$dailyReport->imp = $campaign->Impressions;
+			$dailyReport->clics = $campaign->Clicks;
+			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
+			//$dailyReport->conv_adv = 0;
+			$dailyReport->spend = number_format($campaign->Net, 2, '.', '');
 
 			$campaignModel = Campaigns::model()->findByPk($campaigns_id);
 			$model_adv = $campaignModel->opportunities->model_adv;
@@ -198,12 +184,12 @@ class Epom
 			}
 
 			$return.='<br/>';
-			$return.='Campaign:'.$campaign->campaign.' - Impressions: '.$campaign->impressions.' - Hits:'.$campaign->hits.' - Cost:'.$campaign->cost;
+			$return.='Campaign:'.$campaign->Banner.' - Impressions: '.$campaign->Impressions.' - Hits:'.$campaign->Clicks.' - Cost:'.$campaign->Net;
 			$return.='<br/>';
 			$return.='Nigma write: - Impressions: '.$dailyReport->imp.' - Clicks:'.$dailyReport->clics.' - Spend:'.$dailyReport->spend;
 
 			if ( !$dailyReport->save() ) {
-				Yii::log("Can't save campaign: '" . $campaign->campaign . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.ajillion');
+				Yii::log("Can't save campaign: '" . $campaign->Banner . "message error: " . json_encode($dailyReport->getErrors()), 'error', 'system.model.api.epom');
 			}else{
 				$prevSavedCmps[] = intval($campaigns_id);
 				$updated++;
@@ -216,7 +202,7 @@ class Epom
 
 		$this->apiLog->updateLog('Completed', 'Procces completed: '.$updated.' campaigns updated');
 
-		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.ajillion');
+		Yii::log("SUCCESS - Daily info downloaded", 'info', 'system.model.api.epom');
 		return $return;
 	}
 
@@ -239,20 +225,20 @@ class Epom
 		$fixed_adv = isset($_GET['adv']) ? $_GET['adv'] : null;
 
 		$formated_date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
-
+		/*
 		$this->apiLog->updateLog('Processing', 'Getting advertisers list');
 
 		// get all advertisers
-		$advertisers = $this->getResponse("advertiser.get");
+		$advertisers = $this->getResponse( [ 'groupBy' => 'ADVERTISER'] );
 
 		if ( !$advertisers ) {
-			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
+			Yii::log("Can't get advertisers", 'error', 'system.model.api.epom');
 			return 1;
 		}
 
 		$adv_ids = array();
 		foreach ($advertisers as $adv) {
-			$adv_ids[] = $adv->id;
+			$adv_ids[] = $adv['Advertiser ID'];
 		}
 
 		// get totals from all advertisers
@@ -267,29 +253,21 @@ class Epom
 
 		$this->apiLog->updateLog('Processing', 'Getting traffic data');
 		$return .= ' - Processing: Getting traffic data - <br><br><br>';
-		$advReport = $this->getResponse("report.advertiser.performance.get", $params);
+		*/
+		$advReport = $this->getResponse( [ 'groupBy' => 'ADVERTISER'] );
 
 		if ( !$advReport ) {
-			Yii::log("Can't get advertisers", 'error', 'system.model.api.ajillion');
+			Yii::log("Can't get advertisers", 'error', 'system.model.api.epom');
 			return 1;
 		}	
 
 		foreach ( $advReport as $report ) {
-
-			$advExtId = false;
-			foreach ( $advertisers as $a )
-			{
-				if ( $a->name == $report->advertiser )
-				{
-					$advExtId = $a->id;
-					break;
-				}
-			}
+			$report = (array)$report;
 
 			$adv = Advertisers::model()->find(
 					'ext_id=:ext_id',
 					array(
-						':ext_id' => $advExtId,
+						':ext_id' => $report['Advertiser ID'],
 					)
 				);
 
@@ -299,14 +277,14 @@ class Epom
 
 			if ( !$adv ){
 				$log->status = "notid";
-				$log->message = "External ID not matched for advertiser: ".$report->advertiser;
-				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report->advertiser.'<br>';
+				$log->message = "External ID not matched for advertiser: ".$report['Advertiser'];
+				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report['Advertiser'].'<br>';
 
 				if ( !in_array($adv->id, $excludedAdvertisers) ){
 					$mailBody .= '
 						<tr>
 							<td>NOT FOUND IN NIGMA</td>
-							<td>'.utf8_encode($report->advertiser).'</td>
+							<td>'.utf8_encode($report['Advertiser']).'</td>
 							<td></td>
 							<td></td>
 							<td></td>
@@ -327,18 +305,18 @@ class Epom
 
 				$totals = DailyReport::model()->advertiserSearchTotals( $adv->id, $date, $date, $this->provider_id );
 
-				if ( $report->cost > $totals['spend'] )
+				if ( $report['Net'] > $totals['spend'] )
 				{
-					$maxCost = $report->cost;
+					$maxCost = $report['Net'];
 					$minCost = $totals['spend'];
 				}
 				else
 				{
 					$maxCost = $totals['spend'];
-					$minCost = $report->cost;
+					$minCost = $report['Net'];
 				}
 
-				if ( $report->revenue > $totals['revenue'] )
+				if ( $report['Gross'] > $totals['revenue'] )
 				{
 					$maxRev = $report->revenue;
 					$minRev = $totals['revenue'];
@@ -347,36 +325,36 @@ class Epom
 				{
 
 					$maxRev = $totals['revenue'];
-					$minRev = $report->revenue;
+					$minRev = $report['Gross'];
 				}				
 
 				if ( 
-					$report->impressions == $totals['imp'] 
+					$report['Impressions'] == $totals['imp'] 
 					&& $maxCost-$minCost<1.00  
 					&& $maxRev-$minRev<1.00  
 				)
 				{
 					$log->status = "ok";
 					$log->message = "Advertiser totals match.";
-					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].'   Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report->revenue.'<br>';
+					$return .= 'OK - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].'   Provider imps:'.$report['Impressions'].' - Nigma spend: '.$totals['spend'].'   Provider spend: '.$report['Net'].' - Nigma revenue: '.$totals['revenue'].'   Provider revenue: '.$report['Gross'].'<br>';
 				}
 				else
 				{
 					$log->status = "discrepancy";
 					$log->message = "A discrepancy was found.";
 
-					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report->impressions.' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report->cost.' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report->revenue.'<br>';
+					$return .= 'DISCREPANCY - ' . $adv->name . '('.$adv->id.') - Nigma imps:'.$totals['imp'].' / Provider imps:'.$report['Impressions'].' - Nigma spend: '.$totals['spend'].' / Provider spend: '.$report['Net'].' - Nigma revenue: '.$totals['revenue'].' / Provider revenue: '.$report['Gross'].'<br>';
 
 					$mailBody .= '
 						<tr>
 							<td>DISCREPANCY</td>
 							<td>'.utf8_encode($adv->name) . '('.utf8_encode($adv->id).')</td>
 							<td>'.utf8_encode($totals['imp']).'</td>
-							<td>'.utf8_encode($report->impressions).'</td>
+							<td>'.utf8_encode($report['Impressions']).'</td>
 							<td>'.utf8_encode($totals['revenue']).'</td>
-							<td>'.utf8_encode($report->revenue).'</td>
+							<td>'.utf8_encode($report['Gross']).'</td>
 							<td>'.utf8_encode($totals['spend']).'</td>
-							<td>'.utf8_encode($report->cost).'</td>
+							<td>'.utf8_encode($report['Net']).'</td>
 						</tr>
 					';
 				}
@@ -522,26 +500,26 @@ class Epom
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json-rpc"));
 		curl_setopt($curl, CURLOPT_POST, true);
 
-
+		//var_export($apiurl);
 		curl_setopt( $curl, CURLOPT_POSTFIELDS, http_build_query($data) );
 		$r = curl_exec($curl);
 		$response = json_decode($r);
-		var_export($response);
+		//var_export($response);die();
 		if ( !$response ) {
-			Yii::log("Error decoding json", 'error', 'system.model.api.ajillion');
+			Yii::log("Error decoding json", 'error', 'system.model.api.epom');
 			return NULL;
 		}
 		if (  isset($response->rest_error) && $response->rest_error !== NULL ) {
-			Yii::log($response->rest_error . " error", 'error', 'system.model.api.ajillion');
+			Yii::log($response->rest_error . " error", 'error', 'system.model.api.epom');
 			return NULL;	
 		}
 
-		if ( empty($response->result) ) {
-			Yii::log("Json is empty", 'error', 'system.model.api.ajillion');
+		if ( empty($response) ) {
+			Yii::log("Json is empty", 'error', 'system.model.api.epom');
 			return NULL;
 		}
 
 		curl_close($curl);
-		return $response->result;
+		return $response;
 	}
 }
