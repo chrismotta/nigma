@@ -538,6 +538,18 @@ table .date-column {
 
 .label-select {
     display: inline-block;
-    padding-top: 4px;
     margin-right: 10px;
+}
+
+#ssl {
+    padding-top: 5px;
+	display: flex;
+}
+
+#ssl label {
+    padding: 0 10px 0 5px;
+}
+
+.placements-radio {
+
 }
