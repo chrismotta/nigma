@@ -188,11 +188,17 @@ where pubid in('x','x') and date(date_time)=subdate(curdate(),1)
 group by s.provider, i.country, pubid;
 
 # find null pid
-select D_Demand_id, count(imps) from F_Imp_Compact where D_Supply_id is null and date(date_time)=subdate(curdate(),1) group by D_Demand_id;
-select D_Demand_id, D_Supply_id, count(imps) from F_Imp_Compact where D_Demand_id in (245, 248, 253, 255, 258, 260) and date(date_time)=subdate(curdate(),0) group by D_Supply_id;
+select D_Demand_id, count(imps) from F_Imp_Compact 
+where D_Supply_id is null and date(date_time)=subdate(curdate(),1) 
+group by D_Demand_id;
+
+select D_Demand_id, D_Supply_id, count(imps) from F_Imp_Compact 
+where D_Demand_id in (245, 248, 253, 255, 258, 260) 
+and date(date_time)=subdate(curdate(),0) 
+group by D_Supply_id;
 
 # bid compact
-greUPDATE F_Imp_Compact i 
+UPDATE F_Imp_Compact i 
 LEFT JOIN D_Demand d ON(i.D_Demand_id = d.tag_id) 
 LEFT JOIN D_Supply s ON(i.D_Supply_id = s.placement_id) 
 SET 
@@ -208,8 +214,8 @@ WHERE (i.connection_type = d.connection_type OR d.connection_type IS NULL OR d.c
 AND (i.country = d.country OR d.country IS NULL OR d.country = "") 
 AND (i.os_type = d.os_type OR d.os_type IS NULL OR d.os_type = "") 
 AND (CONVERT(i.os_version, DECIMAL(5,2)) >= CONVERT(d.os_version, DECIMAL(5,2)) OR d.os_version IS NULL OR d.os_version = "") 
-AND i.D_Demand_id in (245, 248, 253, 255, 258, 260)
-AND date_time <= '2017-06-08 14:43:11' 
+AND i.D_Demand_id in (261, 262, 263, 264, 266, 267, 268, 269, 272, 273)
+AND id <= '226479666' 
 AND i.revenue = 0 
 AND i.cost = 0
 
@@ -222,3 +228,32 @@ update F_Imp_Compact set D_Supply_id = 2165 where D_Demand_id = 253;
 update F_Imp_Compact set D_Supply_id = 2166 where D_Demand_id = 255;
 update F_Imp_Compact set D_Supply_id = 2169 where D_Demand_id = 258;
 update F_Imp_Compact set D_Supply_id = 2170 where D_Demand_id = 260;
+
+
+
+261, 262, 263, 264, 266, 267, 268, 269, 272, 273,
+
+update F_Imp_Compact set D_Supply_id = 2188 where D_Demand_id = 273;
+update F_Imp_Compact set D_Supply_id = 2187 where D_Demand_id = 272;
+update F_Imp_Compact set D_Supply_id = 2176 where D_Demand_id = 269;
+update F_Imp_Compact set D_Supply_id = 2177 where D_Demand_id = 268;
+update F_Imp_Compact set D_Supply_id = 2183 where D_Demand_id = 267;
+update F_Imp_Compact set D_Supply_id = 2182 where D_Demand_id = 266;
+update F_Imp_Compact set D_Supply_id = 2179 where D_Demand_id = 265;
+update F_Imp_Compact set D_Supply_id = 2178 where D_Demand_id = 264;
+update F_Imp_Compact set D_Supply_id = 2171 where D_Demand_id = 263;
+update F_Imp_Compact set D_Supply_id = 2172 where D_Demand_id = 262;
+update F_Imp_Compact set D_Supply_id = 2173 where D_Demand_id = 261;
+
+
+273 pubid 2188
+272 pubid 2187
+269 pubid 2176
+268 pubdi 2177
+267 pubid 2183
+266 pubid 2182
+265 pubid 2179
+264 pubid 2178
+263 pubid 2171
+262 pubid 2172
+261 pubid 2173 

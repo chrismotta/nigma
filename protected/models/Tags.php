@@ -111,7 +111,7 @@ class Tags extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id);
+		$criteria->compare('t.id',$this->id);
 		$criteria->compare('name',$this->name);
 		$criteria->compare('campaigns_id',$this->campaigns_id);
 		$criteria->compare('banner_sizes_id',$this->banner_sizes_id);
