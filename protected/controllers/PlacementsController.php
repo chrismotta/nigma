@@ -116,7 +116,7 @@ class PlacementsController extends Controller
 			if($model->save()){
 
 				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
-				$predis->hmset( 'placement:'.$model->id, 'payout', $model->rate );
+				$predis->hset( 'placement:'.$model->id, 'payout', $model->rate );
 
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 			}
@@ -141,7 +141,18 @@ class PlacementsController extends Controller
 			$model=new Placements;
 			$model->attributes       = $_POST['Placements'];
 			if($model->save())
+			{
+				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
+
+				$predis->hmset(
+					'placement:'.$model->id,
+					[
+						'payout' => $model->rate
+					]
+				);
+
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'duplicate'));
+			}
 		} 
 		
 		$this->renderFormAjax($new, 'duplicate');
