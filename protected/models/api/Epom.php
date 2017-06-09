@@ -64,6 +64,7 @@ class Epom
 			return 2;
 		}
 		*/
+	
 		/*
 		$date = date_format( new DateTime($date), "m/d/Y" ); // Ajillion api use mm/dd/YYYY date format
 
@@ -265,22 +266,24 @@ class Epom
 			$report = (array)$report;
 
 			$adv = Advertisers::model()->find(
-					'ext_id=:ext_id',
+					'ext_id LIKE :ext_id1 OR ext_id LIKE :ext_id1 OR ext_id LIKE :ext_id2',
 					array(
-						':ext_id' => $report['Advertiser ID'],
+						':ext_id0' => 'epo:'.$report['Advertiser ID'].'%',
+						':ext_id1' => '%epo:'.$report['Advertiser ID'].'%',
+						':ext_id2' => '%epo:'.$report['Advertiser ID'],
 					)
 				);
-
 
 			$log = new AdvTotalsLog();
 			$log->date = $date;			
 
 			if ( !$adv ){
+
 				$log->status = "notid";
 				$log->message = "External ID not matched for advertiser: ".$report['Advertiser'];
 				$return .= 'NOT FOUND - External ID not matched for advertiser:'.$report['Advertiser'].'<br>';
 
-				if ( !in_array($adv->id, $excludedAdvertisers) ){
+				if ( !in_array($report['Advertiser ID'], $excludedAdvertisers) ){
 					$mailBody .= '
 						<tr>
 							<td>NOT FOUND IN NIGMA</td>
@@ -318,7 +321,7 @@ class Epom
 
 				if ( $report['Gross'] > $totals['revenue'] )
 				{
-					$maxRev = $report->revenue;
+					$maxRev = $report['Gross'];
 					$minRev = $totals['revenue'];
 				}
 				else
@@ -504,7 +507,7 @@ class Epom
 		curl_setopt( $curl, CURLOPT_POSTFIELDS, http_build_query($data) );
 		$r = curl_exec($curl);
 		$response = json_decode($r);
-		//var_export($response);die();
+
 		if ( !$response ) {
 			Yii::log("Error decoding json", 'error', 'system.model.api.epom');
 			return NULL;
