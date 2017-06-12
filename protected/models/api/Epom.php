@@ -52,7 +52,7 @@ class Epom
 				return 2;
 			}
 		}
-
+		$formated_date = date_format( new DateTime($date), "Y-m-d" );
 		// validate if info have't been dowloaded already.
 		/*
 		if ( isset($cid) )
@@ -103,8 +103,14 @@ class Epom
 		*/
 		$this->apiLog->updateLog('Processing', 'Getting traffic data');
 
-		$campaigns = $this->getResponse( [ 'groupBy' => 'BANNER'] );
+		$campaigns = $this->getResponse( [ 
+			'groupBy' 	 => 'BANNER',
+			'range'   	 => 'CUSTOM',
+			'customFrom' => $formated_date,
+			'customTo'	 => $formated_date
+		]);
 
+		//var_export($campaigns);
 		if ( !$campaigns ) {
 			Yii::log("Can't get campaigns", 'error', 'system.model.api.epom');
 			return 1;
@@ -127,8 +133,6 @@ class Epom
 				Yii::log("invalid external campaign name: '" . $campaign->Banner, 'warning', 'system.model.api.epom');
 				continue;
 			}
-
-			$formated_date = date_format( new DateTime($date), "Y-m-d" );
 
 			// if exists overwrite, else create a new
 			$dailyReport = DailyReport::model()->find(
@@ -377,7 +381,7 @@ class Epom
 			$d = date_format( new DateTime($date), "Y-m-d");
 			$to = 'daniel@themedialab.co,chris@themedialab.co,matt@themedialab.co,pedro@themedialab.co,tom@themedialab.co,martin@themedialab.co';
 			$from = 'Nigma<no-reply@tmlbox.co>';
-			$subject = 'API Totals Compare from '.$d;
+			$subject = 'EPOM API Totals Compare from '.$d;
 			$headers = 'From:'.$from.'\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset="UTF-8"\r\n';
 			$mailBody = '
 			<html>
@@ -410,7 +414,7 @@ class Epom
 					</style>
 				</head>
 				<body>
-					<span>API TOTALS COMPARE FROM '.$d.'</span>
+					<span>EPOM API TOTALS COMPARE FROM '.$d.'</span>
 					<div>
 						<table>
 							<thead>
@@ -465,7 +469,7 @@ class Epom
 
 	private function getResponse( array $params = [] ) {
 
-		// Get json from Ajillion API.
+		// Get json from Epom API.
 		$network 	= Providers::model()->findbyPk($this->provider_id);
 		$timestamp  = round(microtime(true) * 1000);
 		$hash 		= md5(md5($network->token2).$timestamp);
