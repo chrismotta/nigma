@@ -223,37 +223,21 @@ AND DATE(i.date_time) = "2017-06-07"
 
 
 update F_Imp_Compact set D_Supply_id = 2156 where D_Demand_id = 245;
-update F_Imp_Compact set D_Supply_id = 2158 where D_Demand_id = 248;
-update F_Imp_Compact set D_Supply_id = 2165 where D_Demand_id = 253;
-update F_Imp_Compact set D_Supply_id = 2166 where D_Demand_id = 255;
-update F_Imp_Compact set D_Supply_id = 2169 where D_Demand_id = 258;
-update F_Imp_Compact set D_Supply_id = 2170 where D_Demand_id = 260;
 
 
 
-261, 262, 263, 264, 266, 267, 268, 269, 272, 273,
+SELECT d.advertiser, 
+sum(imps) as imps, 
+FLOOR(sum(imps)/2) as imps_corrected, 
+sum(revenue) as revenue, 
+sum(revenue)/2 as revenue_corrected
+FROM F_Imp_Compact i 
+LEFT JOIN D_Demand d ON(i.D_Demand_id = d.tag_id) 
+WHERE date(date_time) between '2017-05-26' and '2017-06-06' 
+AND (ad_server_id = 2 or ad_server_id is null) 
+AND d.advertiser = 'GGL (20)'
+AND i.D_Demand_id != 140 
 
-update F_Imp_Compact set D_Supply_id = 2188 where D_Demand_id = 273;
-update F_Imp_Compact set D_Supply_id = 2187 where D_Demand_id = 272;
-update F_Imp_Compact set D_Supply_id = 2176 where D_Demand_id = 269;
-update F_Imp_Compact set D_Supply_id = 2177 where D_Demand_id = 268;
-update F_Imp_Compact set D_Supply_id = 2183 where D_Demand_id = 267;
-update F_Imp_Compact set D_Supply_id = 2182 where D_Demand_id = 266;
-update F_Imp_Compact set D_Supply_id = 2179 where D_Demand_id = 265;
-update F_Imp_Compact set D_Supply_id = 2178 where D_Demand_id = 264;
-update F_Imp_Compact set D_Supply_id = 2171 where D_Demand_id = 263;
-update F_Imp_Compact set D_Supply_id = 2172 where D_Demand_id = 262;
-update F_Imp_Compact set D_Supply_id = 2173 where D_Demand_id = 261;
+GROUP BY d.advertiser
 
 
-273 pubid 2188
-272 pubid 2187
-269 pubid 2176
-268 pubdi 2177
-267 pubid 2183
-266 pubid 2182
-265 pubid 2179
-264 pubid 2178
-263 pubid 2171
-262 pubid 2172
-261 pubid 2173 
