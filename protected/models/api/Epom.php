@@ -167,11 +167,26 @@ class Epom
 
 			$sumRevenue = false;
 
-			$dailyReport->imp = $campaign->Impressions;
-			$dailyReport->clics = $campaign->Clicks;
-			$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
-			//$dailyReport->conv_adv = 0;
-			$dailyReport->spend = number_format($campaign->Net, 2, '.', '');
+			if ( in_array($campaigns_id, $prevSavedCmps) ) 
+			{ 
+				$dailyReport->imp = $dailyReport->imp + $campaign->Impressions;
+				$dailyReport->clics = $dailyReport->clics + $campaign->Clicks;
+				$dailyReport->conv_api = $dailyReport->conv_api + ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
+				//$dailyReport->conv_adv = 0;
+				$dailyReport->spend = number_format($dailyReport->spend+$campaign->Net, 2, '.', '');
+				$return .= ' - (sum) ';
+				echo '<br> '.$campaigns_id;			
+			}
+			else
+			{
+				$dailyReport->imp = $campaign->Impressions;
+				$dailyReport->clics = $campaign->Clicks;
+				$dailyReport->conv_api = ConvLog::model()->count("campaigns_id=:campaignid AND DATE(date)=:date", array(":campaignid"=>$dailyReport->campaigns_id, ":date"=>date('Y-m-d', strtotime($date))));
+				//$dailyReport->conv_adv = 0;
+				$dailyReport->spend = number_format($campaign->Net, 2, '.', '');				
+			}
+
+
 
 			$campaignModel = Campaigns::model()->findByPk($campaigns_id);
 			$model_adv = $campaignModel->opportunities->model_adv;
