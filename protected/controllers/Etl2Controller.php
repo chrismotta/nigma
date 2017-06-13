@@ -497,8 +497,6 @@ class Etl2Controller extends Controller
 
     public function actionPopulatetags()
     {
-        $this->_redis->select(1);
-
         $start = time();
 
         $tags = Tags::model()->findAll();
@@ -548,7 +546,6 @@ class Etl2Controller extends Controller
             );
         }
 
-        $this->_redis->select(0);
         $elapsed = time() - $start;
 
         echo 'Tags cached: '.count($tags).' - Elapsed time: '.$elapsed.' seg.<hr/>';
@@ -557,7 +554,6 @@ class Etl2Controller extends Controller
 
     public function actionPopulateplacements()
     {
-        $this->_redis->select(1);
         $start = time();
 
         $placements = Placements::model()->findAll();
@@ -572,7 +568,6 @@ class Etl2Controller extends Controller
             );
         }
 
-        $this->_redis->select(0);
         $elapsed = time() - $start;
 
         echo 'Placements cached: '.count($placements).' - Elapsed time: '.$elapsed.' seg.<hr/>';        
