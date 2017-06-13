@@ -497,6 +497,8 @@ class Etl2Controller extends Controller
 
     public function actionPopulatetags()
     {
+        $this->_redis->select(1);
+
         $start = time();
 
         $tags = Tags::model()->findAll();
@@ -546,6 +548,7 @@ class Etl2Controller extends Controller
             );
         }
 
+        $this->_redis->select(0);
         $elapsed = time() - $start;
 
         echo 'Tags cached: '.count($tags).' - Elapsed time: '.$elapsed.' seg.<hr/>';
@@ -554,6 +557,7 @@ class Etl2Controller extends Controller
 
     public function actionPopulateplacements()
     {
+        $this->_redis->select(1);
         $start = time();
 
         $placements = Placements::model()->findAll();
@@ -568,6 +572,7 @@ class Etl2Controller extends Controller
             );
         }
 
+        $this->_redis->select(0);
         $elapsed = time() - $start;
 
         echo 'Placements cached: '.count($placements).' - Elapsed time: '.$elapsed.' seg.<hr/>';        
@@ -580,7 +585,7 @@ class Etl2Controller extends Controller
         $timestamp = isset( $_GET['date'] ) ? strtotime($_GET['date']) : strtotime('yesterday');
         $miniDate  = date( 'Ymd', $timestamp );
 
-        $logCount  = $this->_redis->zcard( 'tags:' );
+        $logCount  = $this->_redis->zcard( 'dailytags:'.$miniDate );
         $queries   = ceil( $logCount/$this->_objectLimit );
 
         $html      = '';
@@ -624,7 +629,6 @@ class Etl2Controller extends Controller
         }
         else
             echo ( 'todo bien piola' );
-
     }
 
 
@@ -670,8 +674,6 @@ class Etl2Controller extends Controller
                 || $redisTag['revenue'] != $sqlTags[$tagId]['revenue'] 
             )
             {
-                $error = true;
-
                 $html .= '
                     <tr>
                         <td>'.$tagId.'</td>
