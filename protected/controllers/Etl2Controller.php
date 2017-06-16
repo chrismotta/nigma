@@ -189,6 +189,8 @@ class Etl2Controller extends Controller
 
     public function actionImpressions ( )
     {              
+        $this->_redis->select( $this->_getCurrentDatabase() );
+
         $start    = time();
         $logCount = $this->_redis->zcard( 'sessionhashes' );
         $queries  = ceil( $logCount/$this->_objectLimit );
@@ -497,6 +499,8 @@ class Etl2Controller extends Controller
 
     public function actionPopulatetags()
     {
+        $this->_redis->select( 0 );
+
         $start = time();
 
         $tags = Tags::model()->findAll();
@@ -554,6 +558,8 @@ class Etl2Controller extends Controller
 
     public function actionPopulateplacements()
     {
+        $this->_redis->select( 0 );
+
         $start = time();
 
         $placements = Placements::model()->findAll();
@@ -573,21 +579,24 @@ class Etl2Controller extends Controller
         echo 'Placements cached: '.count($placements).' - Elapsed time: '.$elapsed.' seg.<hr/>';        
     }
 
-
-    public function actionDailyMaintainance ( )
+/*
+    public function actionDailymaintenance ( )
     {
+        $this->_redis->select( $this->_getCurrentDatabase() );
+
         $date      = isset( $_GET['date'] ) ? $_GET['date'] : date( 'Y-m-d', strtotime('yesterday') );
         $timestamp = isset( $_GET['date'] ) ? strtotime($_GET['date']) : strtotime('yesterday');
         $miniDate  = date( 'Ymd', $timestamp );
 
         $logCount  = $this->_redis->zcard( 'dailytags:'.$miniDate );
-        $queries   = ceil( $logCount/$this->_objectLimit );
+        $queries   = (int)ceil( $logCount/($this->_objectLimit/2) );
 
         $html      = '';
 
         for ( $i=0; $i<$queries; $i++ )
         {
-            $html .= $this->_maintainanceQuery( $date, $miniDate );
+
+            $html .= $this->_maintenanceQuery( $date, $miniDate );
         }
 
         if ( $html != '' )
@@ -623,20 +632,26 @@ class Etl2Controller extends Controller
             );
         }
         else
+        {        
             echo ( 'todo bien piola' );
+        }
     }
 
 
-    private function _maintainanceQuery ( $date, $miniDate )
+    private function _maintenanceQuery (  )
     {
-        $html      = '';
-        $limit     = $this->_objectLimit-1/2;
+        $dates = $this->_redis->smembers( 'dates' );
+        foreach ( $dates as $date )
+        {
+            
+        }
+
+        $limit     = $this->_objectLimit/2;
         $redisTags = $this->_redis->zrange( 'dailytags:'.$miniDate, 0, $limit );
 
         $sql       = 'SELECT DISTINCT D_Demand_id AS id, sum(imps) AS imps, sum(cost) AS cost, sum(revenue) AS revenue FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" GROUP BY D_Demand_id LIMIT '. $limit;
 
-        $tmpSqlTags   = Yii::app()->db->createCommand( $sql )->queryAll();
-
+        $tmpSqlTags   = Yii::app()->db->createCommand( $sql )->queryAll();        
         $sqlTags = [];
         foreach ( $tmpSqlTags as $tmpSqlTag )
         {
@@ -687,5 +702,19 @@ class Etl2Controller extends Controller
 
         return $html;
     }
+    */
+
+    private function _getCurrentDatabase (  )
+    {
+        switch ( floor(($this->_timestamp/60/60/24))%2+1 )
+        {
+            case 1:
+                return 2;
+            break;
+            case 2:
+                return 1;
+            break;
+        }
+    }    
 
 }
