@@ -188,7 +188,7 @@ class Etl2Controller extends Controller
 
 
     public function actionImpressions ( )
-    {              
+    {
         $this->_redis->select( $this->_getCurrentDatabase() );
 
         $start    = time();
@@ -582,8 +582,18 @@ class Etl2Controller extends Controller
 
     public function actionDailymaintenance ( )
     {
-        $this->_redis->select( $this->_getYesterdayDatabase() );
+        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'yesterday';
 
+        switch ( $db )
+        {
+            case 'yesterday':
+                $this->_redis->select( $this->_getYesterdayDatabase() );
+            break;
+            case 'current':
+                $this->_redis->select( $this->_getCurrentDatabase() );
+            break;
+        }
+        
         $dates     = $this->_redis->smembers( 'dates' );
         $html      = '';
 
@@ -687,6 +697,7 @@ class Etl2Controller extends Controller
             {
                 $html .= '
                     <tr>
+                        <td>'.$date.'</td>
                         <td>'.$tagId.'</td>
                         <td>'.$redisTag['imps'].'</td>
                         <td>'.$sqlTags[$tagId]['imps'].'</td>
