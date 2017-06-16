@@ -579,24 +579,29 @@ class Etl2Controller extends Controller
         echo 'Placements cached: '.count($placements).' - Elapsed time: '.$elapsed.' seg.<hr/>';        
     }
 
-/*
+
     public function actionDailymaintenance ( )
     {
         $this->_redis->select( $this->_getCurrentDatabase() );
 
-        $date      = isset( $_GET['date'] ) ? $_GET['date'] : date( 'Y-m-d', strtotime('yesterday') );
-        $timestamp = isset( $_GET['date'] ) ? strtotime($_GET['date']) : strtotime('yesterday');
-        $miniDate  = date( 'Ymd', $timestamp );
-
-        $logCount  = $this->_redis->zcard( 'dailytags:'.$miniDate );
-        $queries   = (int)ceil( $logCount/($this->_objectLimit/2) );
-
+        $dates     = $this->_redis->smembers( 'dates' );
         $html      = '';
 
-        for ( $i=0; $i<$queries; $i++ )
-        {
+        foreach ( $dates as $date )
+        {   
+            $miniDate  = date( 'Ymd', strtotime($date) );
+            $logCount  = $this->_redis->zcard( 'tags:'.$miniDate );
+            $queries   = (int)ceil( $logCount/($this->_objectLimit/2) );
 
-            $html .= $this->_maintenanceQuery( $date, $miniDate );
+            for ( $i=0; $i<$queries; $i++ )
+            {
+                $html .= $this->_maintenanceQuery( 
+                    $date,
+                    $miniDate 
+                );
+            }
+
+            unset( $logCount );
         }
 
         if ( $html != '' )
@@ -608,6 +613,7 @@ class Etl2Controller extends Controller
                     <body>
                         <table>
                             <thead>
+                                <td>DATE</td>
                                 <td>TAG ID</td>
                                 <td>REDIS IMPS</td>
                                 <td>MYSQL IMPS</td>
@@ -638,21 +644,16 @@ class Etl2Controller extends Controller
     }
 
 
-    private function _maintenanceQuery (  )
+    private function _maintenanceQuery ( $date, $miniDate )
     {
-        $dates = $this->_redis->smembers( 'dates' );
-        foreach ( $dates as $date )
-        {
-            
-        }
-
         $limit     = $this->_objectLimit/2;
-        $redisTags = $this->_redis->zrange( 'dailytags:'.$miniDate, 0, $limit );
+        $redisTags = $this->_redis->zrange( 'tags:'.$miniDate, 0, $limit );
 
         $sql       = 'SELECT DISTINCT D_Demand_id AS id, sum(imps) AS imps, sum(cost) AS cost, sum(revenue) AS revenue FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" GROUP BY D_Demand_id LIMIT '. $limit;
 
         $tmpSqlTags   = Yii::app()->db->createCommand( $sql )->queryAll();        
         $sqlTags = [];
+
         foreach ( $tmpSqlTags as $tmpSqlTag )
         {
             $sqlTagId           = $tmpSqlTag['id'];
@@ -667,7 +668,7 @@ class Etl2Controller extends Controller
 
         foreach ( $redisTags as $tagId )
         {
-            $redisTag = $this->_redis->hgetall( 'req:t:'.$tagId.':'.$miniDate );
+            $redisTag = $this->_redis->hgetall( 'tagsum:'.$tagId.':'.$miniDate );
 
             if ( !isset( $sqlTags[$tagId] ) )
             {
@@ -702,7 +703,7 @@ class Etl2Controller extends Controller
 
         return $html;
     }
-    */
+
 
     private function _getCurrentDatabase (  )
     {
