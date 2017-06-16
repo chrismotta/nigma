@@ -582,7 +582,7 @@ class Etl2Controller extends Controller
 
     public function actionDailymaintenance ( )
     {
-        $this->_redis->select( $this->_getCurrentDatabase() );
+        $this->_redis->select( $this->_getYesterdayDatabase() );
 
         $dates     = $this->_redis->smembers( 'dates' );
         $html      = '';
@@ -705,7 +705,7 @@ class Etl2Controller extends Controller
     }
 
 
-    private function _getCurrentDatabase (  )
+    private function _getYesterdayDatabase (  )
     {
         switch ( floor(($this->_timestamp/60/60/24))%2+1 )
         {
@@ -716,6 +716,12 @@ class Etl2Controller extends Controller
                 return 1;
             break;
         }
-    }    
+    }
+
+
+    private function _getCurrentDatabase (  )
+    {
+        return floor(($this->_timestamp/60/60/24))%2+1;
+    }         
 
 }
