@@ -656,6 +656,7 @@ class Etl2Controller extends Controller
 
     private function _maintenanceQuery ( $date, $miniDate )
     {
+        $html      = '';
         $limit     = $this->_objectLimit/2;
         $redisTags = $this->_redis->zrange( 'tags:'.$miniDate, 0, $limit );
 
@@ -678,7 +679,7 @@ class Etl2Controller extends Controller
 
         foreach ( $redisTags as $tagId )
         {
-            $redisTag = $this->_redis->hgetall( 'tagsum:'.$tagId.':'.$miniDate );
+            $redisTag = $this->_redis->hgetall( 'req:t:'.$tagId.':'.$miniDate );
 
             if ( !isset( $sqlTags[$tagId] ) )
             {
