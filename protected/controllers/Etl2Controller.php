@@ -27,6 +27,7 @@ class Etl2Controller extends Controller
     private $_alertSubject;
     private $_error;
     private $_noalerts;
+    private $_db;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -58,6 +59,8 @@ class Etl2Controller extends Controller
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
         $this->_executedQueries = 0;
+
+        $this->_db              = false;
 
         $this->_alertSubject    = 'AD NIGMA - ETL2 ERROR ' . date( "Y-m-d H:i:s", $this->_timestamp );
 
@@ -115,6 +118,8 @@ class Etl2Controller extends Controller
 
             die($msg);
         }
+
+        return true;
     }
 
 
@@ -186,7 +191,10 @@ class Etl2Controller extends Controller
 
     public function actionImpressions ( )
     {
-        $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
+        if ( $this->_db )
+            $db = $this->_db;
+        else
+            $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
 
         switch ( $db )
         {
@@ -589,7 +597,9 @@ class Etl2Controller extends Controller
 
     public function actionDailymaintenance ( )
     {
-        $db           = isset( $_GET['date'] ) ? $_GET['date'] : 'yesterday';
+        $db           = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
+        $etl          = isset( $_GET['noetl'] ) && $_GET['noetl'] ? false : true;
+
         $this->_error = false;
 
         if ( isset( $_GET['flush'] ) )
@@ -606,8 +616,6 @@ class Etl2Controller extends Controller
             $flush = false;
         }
 
-        $flushCache = $db=='yesterday' && isset( $_GET['flush'] ) ? $_GET['flush'] : 'yesterday';
-
         switch ( $db )
         {
             case 'yesterday':
@@ -617,6 +625,12 @@ class Etl2Controller extends Controller
                 $this->_redis->select( $this->_getCurrentDatabase() );
             break;
         }        
+
+        if ( $flush || $etl )
+        {
+            $this->_db = 'yesterday';
+            $this->actionIndex();
+        }
 
         $dates     = $this->_redis->smembers( 'dates' );
         $html      = '';
@@ -674,7 +688,12 @@ class Etl2Controller extends Controller
         }
         else
         {
-            $this->_redis->flushdb();
+            if (  $flush )
+            {
+                $this->_redis->flushdb();
+            }
+
+
             echo ( 'todo bien piola' );
         }
     }
