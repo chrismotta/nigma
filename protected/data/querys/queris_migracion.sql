@@ -77,7 +77,8 @@ CREATE TABLE `F_Imp_Compact` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
-
+# compact query
+# 
 INSERT INTO F_Imp_Compact
 	(
 		D_Demand_id,
@@ -241,3 +242,14 @@ AND i.D_Demand_id != 140
 GROUP BY d.advertiser
 
 
+ADD INDEX `country` (`country` ASC),
+ADD INDEX `device_brand` (`device_brand` ASC),
+ADD INDEX `device_model` (`device_model` ASC),
+ADD INDEX `os_type` (`os_type` ASC),
+ADD INDEX `os_version` (`os_version` ASC),
+ADD INDEX `browser_type` (`browser_type` ASC),
+ADD INDEX `browser_version` (`os_version` ASC),
+
+ALTER TABLE `nigma`.`F_Imp_Compact` 
+ADD INDEX `carrier` (`carrier` ASC),
+ADD INDEX `connection_type` (`connection_type` ASC)

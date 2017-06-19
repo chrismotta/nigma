@@ -41,7 +41,8 @@ class EtlController extends Controller
 			'piwik',
 			'impcompact',
 			'bidcompact',
-			'compact'
+			'compact',
+			'compactHistoricalData'
 			);
 
 		return array(
@@ -619,5 +620,46 @@ class EtlController extends Controller
 
 	// 	$inicialStart = time();
 	// 	$total = 0;
+	
+
+    function actionCompactHistoricalData(){
+
+		$start = time();
+
+		$query = 'INSERT INTO F_Imp_Compact
+			(
+				D_Demand_id,
+				D_Supply_id,
+				D_Geolocation_id,
+				D_UserAgent_id,
+				imps,
+				date_time,
+				unique_id,
+				unique_imps,
+		        revenue,
+		        cost
+		    )
+		SELECT
+			D_Demand_id AS D_Demand_id, 
+			D_Supply_id AS D_Supply_id,
+		    D_Geolocation_id AS D_Geolocation_id,
+		    D_UserAgent_id AS D_UserAgent_id,
+			count(id) AS imps,
+		    date_time AS date_time,
+		    unique_id AS unique_id,
+		    count(distinct unique_id) AS unique_imps,
+		    sum(revenue) AS revenue,
+		    sum(cost) AS cost
+
+		FROM F_Imp i
+
+		WHERE month(date_time)=2 AND year(date_time)=2017 
+		GROUP BY D_Demand_id, D_Supply_id, country, os_type, 
+		';
+
+		$elapsed = time() - $start;
+
+        echo 'Rows affected: '.' in '.$elapsed.' sec.';
+    }
 
 }
