@@ -189,7 +189,17 @@ class Etl2Controller extends Controller
 
     public function actionImpressions ( )
     {
-        $this->_redis->select( $this->_getCurrentDatabase() );
+        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'current';
+
+        switch ( $db )
+        {
+            case 'yesterday':
+                $this->_redis->select( $this->_getYesterdayDatabase() );
+            break;
+            case 'current':
+                $this->_redis->select( $this->_getCurrentDatabase() );
+            break;
+        }        
 
         $start    = time();
         $logCount = $this->_redis->zcard( 'sessionhashes' );
