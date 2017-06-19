@@ -689,6 +689,22 @@ class Etl2Controller extends Controller
                     'revenue'   => 0.00
                 ];
             }
+            if ( !$redisTag )
+            {
+                $html .= '
+                    <tr>
+                        <td>'.$date.'</td>
+                        <td>'.$tagId.'</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                    </tr>
+                ';
+                continue;
+            }
 
             if ( 
                 $redisTag['imps']       != $sqlTags[$tagId]['imps'] 
