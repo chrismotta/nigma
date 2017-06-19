@@ -69,8 +69,8 @@ class FImpCompact extends CActiveRecord
 		// class name for the relations automatically generated below.
 		return array(
 			//'dBid'         => array(self::HAS_ONE, 'DBid', 'F_Impressions_id'),
-			'dGeoLocation' => array(self::BELONGS_TO, 'DGeoLocation', 'D_GeoLocation_id'),
-			'dUserAgent'   => array(self::BELONGS_TO, 'DUserAgent', 'D_UserAgent_id'),
+			// 'dGeoLocation' => array(self::BELONGS_TO, 'DGeoLocation', 'D_GeoLocation_id'),
+			// 'dUserAgent'   => array(self::BELONGS_TO, 'DUserAgent', 'D_UserAgent_id'),
 			'dDemand'      => array(self::BELONGS_TO, 'DDemand', 'D_Demand_id'),
 			'dSupply'      => array(self::BELONGS_TO, 'DSupply', 'D_Supply_id'),
 			'tags'         => array(self::BELONGS_TO, 'Tags', 'D_Demand_id'),
@@ -86,14 +86,14 @@ class FImpCompact extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('D_Demand_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id', 'required'),
+			array('D_Demand_id, date_time, unique_id', 'required'),
 			array('D_Demand_id, D_Supply_id, ad_req, imps, unique_imps', 'numerical', 'integerOnly'=>true),
-			array('D_GeoLocation_id, D_UserAgent_id, pubid, ip_forwarded, referer_url, referer_app', 'length', 'max'=>255),
+			array('pubid, ip_forwarded, referer_url, referer_app', 'length', 'max'=>255),
 			array('unique_id', 'length', 'max'=>40),
 			array('revenue, cost', 'length', 'max'=>11),
 			// The following rule is used by search().
 			// @todo Please remove those attributes that should not be searched.
-			array('id, D_Demand_id, D_Supply_id, D_GeoLocation_id, D_UserAgent_id, date_time, unique_id, pubid, ip_forwarded, referer_url, referer_app, ad_req, imps, unique_imps, revenue, cost', 'safe', 'on'=>'search'),
+			array('id, D_Demand_id, D_Supply_id, date_time, unique_id, pubid, ip_forwarded, referer_url, referer_app, ad_req, imps, unique_imps, revenue, cost', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -106,8 +106,6 @@ class FImpCompact extends CActiveRecord
 			'id'               => 'ID',
 			'D_Demand_id'      => 'D Demand',
 			'D_Supply_id'      => 'D Supply',
-			'D_GeoLocation_id' => 'D Geo Location',
-			'D_UserAgent_id'   => 'D User Agent',
 			'date_time'        => 'Date Time',
 			'unique_id'        => 'Unique',
 			'pubid'            => 'Pub ID',
@@ -217,16 +215,16 @@ class FImpCompact extends CActiveRecord
 			'provider'        => 'dSupply.provider',
 			'placement'       => 'dSupply.placement',
 			'pubid'           => 't.pubid',
-			'connection_type' => '(CASE WHEN t.connection_type IS NULL THEN dGeoLocation.connection_type ELSE t.connection_type END)',
-			'country'         => '(CASE WHEN t.country IS NULL THEN dGeoLocation.country ELSE t.country END)',
-			'carrier'         => '(CASE WHEN t.carrier IS NULL THEN dGeoLocation.carrier ELSE t.carrier END)',
-			'device_type'     => '(CASE WHEN t.device_type IS NULL THEN dUserAgent.device_type ELSE t.device_type END)',
-			'device_brand'    => '(CASE WHEN t.device_brand IS NULL THEN dUserAgent.device_brand ELSE t.device_brand END)',
-			'device_model'    => '(CASE WHEN t.device_model IS NULL THEN dUserAgent.device_model ELSE t.device_model END)',
-			'os_type'         => '(CASE WHEN t.os_type IS NULL THEN dUserAgent.os_type ELSE t.os_type END)',
-			'os_version'      => '(CASE WHEN t.os_version IS NULL THEN dUserAgent.os_version ELSE t.os_version END)',
-			'browser_type'    => '(CASE WHEN t.browser_type IS NULL THEN dUserAgent.browser_type ELSE t.browser_type END)',
-			'browser_version' => '(CASE WHEN t.browser_version IS NULL THEN dUserAgent.browser_version ELSE t.browser_version END)',
+			'connection_type' => 't.connection_type',
+			'country'         => 't.country',
+			'carrier'         => 't.carrier',
+			'device_type'     => 't.device_type',
+			'device_brand'    => 't.device_brand',
+			'device_model'    => 't.device_model',
+			'os_type'         => 't.os_type',
+			'os_version'      => 't.os_version',
+			'browser_type'    => 't.browser_type',
+			'browser_version' => 't.browser_version',
 			);
 		$sumQuerys = array(
 			// sum
@@ -307,9 +305,7 @@ class FImpCompact extends CActiveRecord
 
 		$criteria->with = array(
 			'dDemand',
-			'dGeoLocation',
 			'dSupply',
-			'dUserAgent',
 			);
 
 		if(isset($select)) $criteria->select = $select;
