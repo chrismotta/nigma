@@ -188,7 +188,19 @@ class Etl2Controller extends Controller
 
 
     public function actionImpressions ( )
-    {              
+    {
+        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'current';
+
+        switch ( $db )
+        {
+            case 'yesterday':
+                $this->_redis->select( $this->_getYesterdayDatabase() );
+            break;
+            case 'current':
+                $this->_redis->select( $this->_getCurrentDatabase() );
+            break;
+        }        
+
         $start    = time();
         $logCount = $this->_redis->zcard( 'sessionhashes' );
         $queries  = ceil( $logCount/$this->_objectLimit );
@@ -403,7 +415,6 @@ class Etl2Controller extends Controller
                         $values .= 'NULL,';
 
                     $values .= '2';// 2=nigma2
-
                     $values .= ')';
 
                     $this->_parsedLogs++;      
@@ -498,6 +509,8 @@ class Etl2Controller extends Controller
 
     public function actionPopulatetags()
     {
+        $this->_redis->select( 0 );
+
         $start = time();
 
         $tags = Tags::model()->findAll();
@@ -555,6 +568,8 @@ class Etl2Controller extends Controller
 
     public function actionPopulateplacements()
     {
+        $this->_redis->select( 0 );
+
         $start = time();
 
         $placements = Placements::model()->findAll();
@@ -575,125 +590,176 @@ class Etl2Controller extends Controller
     }
 
 
-    public function actionStats ()
+    public function actionDailymaintenance ( )
     {
-        $date = isset( $_GET['date'] ) ? $_GET['date'] : date("Y-m-d",strtotime("yesterday"));
+        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'yesterday';
 
-        $from            = strtotime( $date.' 00:00:00' );
-        $to              = strtotime( $date.' 23:59:59' );
-
-        $loadedLogsCount = $this->_redis->zcard( 'loadedlogs' );
-        $hashCount       = $this->_redis->zcount( 'sessionhashes', $from, $to );
-        $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
-        $mysqlMatches    = 0;
-        $redisMatches    = 0;
-        $startAt         = 0;
-        $endAt           = $this->_objectLimit;
-
-        for ( $i=0; $i<$queries; $i++ )
+        switch ( $db )
         {
-            $hashes = '';
+            case 'yesterday':
+                $this->_redis->select( $this->_getYesterdayDatabase() );
+            break;
+            case 'current':
+                $this->_redis->select( $this->_getCurrentDatabase() );
+            break;
+        }
+        
+        $dates     = $this->_redis->smembers( 'dates' );
+        $html      = '';
 
-            $loadedLogs = $this->_redis->zrange( 'loadedlogs', $startAt, $endAt );
-            foreach ( $loadedLogs AS $hash )
+        foreach ( $dates as $date )
+        {   
+            $miniDate  = date( 'Ymd', strtotime($date) );
+            $logCount  = $this->_redis->zcard( 'tags:'.$miniDate );
+            $queries   = (int)ceil( $logCount/($this->_objectLimit/2) );
+
+            for ( $i=0; $i<$queries; $i++ )
             {
-                $impTime = $this->_redis->hmget( 'log:'.$hash, 'imp_time' );
-
-                if ( !$impTime  ||  (int)$impTime[0] < $from  ||  (int)$impTime[0] > $to )
-                    continue;
-
-                if ( $hashes != '' )
-                    $hashes .= ',';
-
-                $hashes .= "'".$hash."'";
-
-                $redisMatches++;
+                $html .= $this->_maintenanceQuery( 
+                    $date,
+                    $miniDate 
+                );
             }
 
-            if ( $hashes != '' )
-            {
-                $sql = 'SELECT count(unique_id) AS c FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" AND unique_id IN ('.$hashes.')';
-
-                $command = Yii::app()->db->createCommand( $sql );
-                $command->execute();
-                $r = $command->queryRow();
-
-                $mysqlMatches += $r['c'];
-            }
-
-            $startAt += $this->_objectLimit;
-            $endAt   += $this->_objectLimit;
+            unset( $logCount );
         }
 
-        echo 'Pending (Redis): '.$hashCount.'<hr/>'; 
-        echo 'Processed (Redis): '.$redisMatches.'<hr/>';
-        echo 'Inserted (MySQL): '.$mysqlMatches.'<hr/>';
+        if ( $html != '' )
+        {
+            $html     = '
+                <html>
+                    <head>
+                    </head>
+                    <body>
+                        <table>
+                            <thead>
+                                <td>DATE</td>
+                                <td>TAG ID</td>
+                                <td>REDIS IMPS</td>
+                                <td>MYSQL IMPS</td>
+                                <td>REDIS COST</td>
+                                <td>MYSQL COST</td>
+                                <td>REDIS REVENUE</td>
+                                <td>MYSQL REVENUE</td>
+                            </thead>
+                            <tbody>'.$html.'</tbody>
+                        </table>
+                    </body>
+                </html>
+            ';
+            
+            echo $html;
+
+            $this->_sendMail ( 
+                self::ALERT_FROM, 
+                self::ALERT_TO, 
+                'AD NIGMA - TRAFFIC COMPARE ERROR ('.$date.')', 
+                $html 
+            );
+        }
+        else
+        {        
+            echo ( 'todo bien piola' );
+        }
     }
 
-    public function actionReport ()
+
+    private function _maintenanceQuery ( $date, $miniDate )
     {
-        if ( $this->_tag && ( !preg_match( '/^[0-9]+$/',$this->_tag) || (int)$this->_tag<1 ) )
+        $html      = '';
+        $limit     = $this->_objectLimit/2;
+        $redisTags = $this->_redis->zrange( 'tags:'.$miniDate, 0, $limit );
+
+        $sql       = 'SELECT DISTINCT D_Demand_id AS id, sum(imps) AS imps, sum(cost) AS cost, sum(revenue) AS revenue FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" GROUP BY D_Demand_id LIMIT '. $limit;
+
+        $tmpSqlTags   = Yii::app()->db->createCommand( $sql )->queryAll();        
+        $sqlTags = [];
+
+        foreach ( $tmpSqlTags as $tmpSqlTag )
         {
-            die('invalid tag ID');
+            $sqlTagId           = $tmpSqlTag['id'];
+            $sqlTags[$sqlTagId] = [
+                'imps'     => $tmpSqlTag['imps'],
+                'cost'     => $tmpSqlTag['cost'],
+                'revenue'  => $tmpSqlTag['revenue']
+            ];
         }
 
-        if ( $this->_placement && ( !preg_match( '/^[0-9]+$/',$this->_placement) || (int)$this->_placement<1 ) )
+        unset ( $tmpSqlTags );
+
+        foreach ( $redisTags as $tagId )
         {
-            die('invalid placement ID');
-        }
+            $redisTag = $this->_redis->hgetall( 'req:t:'.$tagId.':'.$miniDate );
 
-        $from            = strtotime( $this->_startDate.' 00:00:00' );
-        $to              = strtotime( $this->_endDate.' 23:59:59' );
-        $loadedLogsCount = $this->_redis->zcount( 'loadedlogs', $from, $to );
-        $queries         = ceil( $loadedLogsCount/$this->_objectLimit );
-        $loadedImps      = 0;
-        $loadedCost      = 0;
-        $loadedRev       = 0;                
-        $startAt         = 0;
-        $endAt           = $this->_objectLimit;
-
-        for ( $i=0; $i<$queries; $i++ )
-        {
-            $loadedLogs = $this->_redis->zrangebyscore( 
-                'loadedlogs', 
-                $from, 
-                $to, 
-                [
-                    'LIMIT' => [ $startAt, $endAt ]
-                ] 
-            );
-
-            foreach ( $loadedLogs AS $hash )
+            if ( !isset( $sqlTags[$tagId] ) )
             {
-                $log = $this->_redis->hgetall( 'log:'.$hash );
+                $sqlTags[$tagId] = [
+                    'imps'      => 0,
+                    'cost'      => 0.00,
+                    'revenue'   => 0.00
+                ];
+            }
+            if ( !$redisTag )
+            {
+                $html .= '
+                    <tr>
+                        <td>'.$date.'</td>
+                        <td>'.$tagId.'</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                        <td>no data</td>
+                    </tr>
+                ';
+                continue;
+            }
 
-                if ( $log )
-                {
-                    if ( !$log['imp_time']  ||  (int)$log['imp_time'] < $from  ||  (int)$log['imp_time'] > $to )
-                        continue;
+            if ( 
+                $redisTag['imps']       != $sqlTags[$tagId]['imps'] 
+                || $redisTag['cost']    != $sqlTags[$tagId]['cost'] 
+                || $redisTag['revenue'] != $sqlTags[$tagId]['revenue'] 
+            )
+            {
+                $html .= '
+                    <tr>
+                        <td>'.$date.'</td>
+                        <td>'.$tagId.'</td>
+                        <td>'.$redisTag['imps'].'</td>
+                        <td>'.$sqlTags[$tagId]['imps'].'</td>
+                        <td>'.$redisTag['cost'].'</td>
+                        <td>'.$sqlTags[$tagId]['cost'].'</td>
+                        <td>'.$redisTag['revenue'].'</td>
+                        <td>'.$sqlTags[$tagId]['revenue'].'</td>
+                    </tr>
+                ';
+            }
 
-                    if ( $this->_tag  &&  $log['tag_id'] != $this->_tag )
-                        continue;
-
-                    if ( $this->_placement  &&  $log['placement'] != $this->_placement )
-                        continue;
-
-                    $loadedImps += $log['imps'];
-                    $loadedCost += $log['cost'];
-                    $loadedRev  += $log['revenue'];                    
-                }
-
-                unset($log); 
-            }           
-
-            $startAt += $this->_objectLimit;
-            $endAt   += $this->_objectLimit;
-
-            unset($loadedLogs);
+            unset( $redisTag );
         }
 
-        echo 'Loaded Imps: '.$loadedImps.'<hr/>'; 
-        echo 'Loaded Revenue: '.$loadedRev.'<hr/>'; 
-        echo 'Loaded Cost: '.$loadedCost.'<hr/>'; 
-    }    
+        return $html;
+    }
+
+
+    private function _getYesterdayDatabase (  )
+    {
+        switch ( floor(($this->_timestamp/60/60/24))%2+1 )
+        {
+            case 1:
+                return 2;
+            break;
+            case 2:
+                return 1;
+            break;
+        }
+    }
+
+
+    private function _getCurrentDatabase (  )
+    {
+        return floor(($this->_timestamp/60/60/24))%2+1;
+    }         
+
 }
