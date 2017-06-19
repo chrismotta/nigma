@@ -22,13 +22,11 @@ class Etl2Controller extends Controller
     private $_limit;
     private $_parsedLogs;
     private $_executedQueries;
-    private $_startDate;
-    private $_endDate;
-    private $_tag;
-    private $_placement;
     private $_showsql;
     private $_sqltest;
     private $_alertSubject;
+    private $_error;
+    private $_noalerts;
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -52,14 +50,10 @@ class Etl2Controller extends Controller
 
         $this->_timestamp       = time();
 
-        $this->_startDate       = isset( $_GET['from'] ) ? $_GET['from'] : date("Y-m-d", strtotime("yesterday") );
-
-        $this->_endDate         = isset( $_GET['to'] ) ? $_GET['to'] : $this->_startDate;
-
-        $this->_tag             = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
-        $this->_placement       = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
-        $this->_showsql         = isset( $_GET['showsql'] ) ? true : false;
-        $this->_sqltest         = isset( $_GET['sqltest'] ) ? true : false;
+      
+        $this->_showsql         = isset( $_GET['showsql'] ) && $_GET['showsql'] ? true : false;
+        $this->_noalerts        = isset( $_GET['noalerts'] ) && $_GET['noalerts'] ? true : false;
+        $this->_sqltest         = isset( $_GET['sqltest'] ) && $_GET['sqltest'] ? true : false;
 
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
@@ -87,7 +81,8 @@ class Etl2Controller extends Controller
             $msg .= "ETL DEMAND ERROR: ".$e->getCode().'<hr>';
             $msg .= $e->getMessage();
 
-            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
             die($msg);
         }
@@ -101,7 +96,8 @@ class Etl2Controller extends Controller
             $msg .= "ETL SUPPLY ERROR: ".$e->getCode().'<hr>';
             $msg .= $e->getMessage();
 
-            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
             die($msg);           
         }
@@ -114,7 +110,8 @@ class Etl2Controller extends Controller
             $msg .= "ETL IMPRESSIONS ERROR: ".$e->getCode().'<hr>';
             $msg .= $e->getMessage();
 
-            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
             die($msg);
         }
@@ -189,7 +186,7 @@ class Etl2Controller extends Controller
 
     public function actionImpressions ( )
     {
-        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'current';
+        $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
 
         switch ( $db )
         {
@@ -592,7 +589,24 @@ class Etl2Controller extends Controller
 
     public function actionDailymaintenance ( )
     {
-        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'yesterday';
+        $db           = isset( $_GET['date'] ) ? $_GET['date'] : 'yesterday';
+        $this->_error = false;
+
+        if ( isset( $_GET['flush'] ) )
+        {
+            if ( $db != 'yesterday' )
+            {
+                die("only yesterday's database is allowed to be flushed");
+            }
+
+            $flush = $_GET['flush'];
+        }
+        else
+        {
+            $flush = false;
+        }
+
+        $flushCache = $db=='yesterday' && isset( $_GET['flush'] ) ? $_GET['flush'] : 'yesterday';
 
         switch ( $db )
         {
@@ -602,8 +616,8 @@ class Etl2Controller extends Controller
             case 'current':
                 $this->_redis->select( $this->_getCurrentDatabase() );
             break;
-        }
-        
+        }        
+
         $dates     = $this->_redis->smembers( 'dates' );
         $html      = '';
 
@@ -624,7 +638,7 @@ class Etl2Controller extends Controller
             unset( $logCount );
         }
 
-        if ( $html != '' )
+        if ( $this->_error || $html != '' )
         {
             $html     = '
                 <html>
@@ -650,15 +664,17 @@ class Etl2Controller extends Controller
             
             echo $html;
 
-            $this->_sendMail ( 
-                self::ALERT_FROM, 
-                self::ALERT_TO, 
-                'AD NIGMA - TRAFFIC COMPARE ERROR ('.$date.')', 
-                $html 
-            );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( 
+                    self::ALERT_FROM, 
+                    self::ALERT_TO, 
+                    'AD NIGMA - TRAFFIC COMPARE ERROR ('.$date.')', 
+                    $html 
+                );
         }
         else
-        {        
+        {
+            $this->_redis->flushdb();
             echo ( 'todo bien piola' );
         }
     }
@@ -713,6 +729,8 @@ class Etl2Controller extends Controller
                         <td>no data</td>
                     </tr>
                 ';
+
+                $this->_error = true;
                 continue;
             }
 
@@ -734,6 +752,8 @@ class Etl2Controller extends Controller
                         <td>'.$sqlTags[$tagId]['revenue'].'</td>
                     </tr>
                 ';
+
+                $this->_error = true;
             }
 
             unset( $redisTag );
