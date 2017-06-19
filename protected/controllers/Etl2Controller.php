@@ -8,8 +8,11 @@ require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
 require_once(dirname(__FILE__).'/../config/localConfig.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
 
-
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Device\DeviceParserAbstract;
+use DeviceDetector\Parser\Client\ClientParserAbstract;
 use Predis;
+
 
 class Etl2Controller extends Controller
 {
@@ -68,6 +71,42 @@ class Etl2Controller extends Controller
         \ini_set('memory_limit','3000M');
         \set_time_limit(0);
     }
+
+    public function filters()
+    {
+        return array(
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    public function accessRules()
+    {
+        $actions = array(
+            'index',
+            'dailymaintenance',
+            'supply',
+            'demand',
+            'impressions',
+            'populatecache',
+            'populatetags',
+            'populateplacements',
+        );
+
+        return array(
+            array('allow',
+                'actions'=>$actions,
+                'ips'=>array(Yii::app()->params['serverIP']),
+            ),
+            array('allow', 
+                'actions'=>$actions,
+                'roles'=>array('admin'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }    
 
     public function actionIndex( )
     {
@@ -693,7 +732,6 @@ class Etl2Controller extends Controller
                 $this->_redis->flushdb();
             }
 
-
             echo ( 'todo bien piola' );
         }
     }
@@ -799,6 +837,6 @@ class Etl2Controller extends Controller
     private function _getCurrentDatabase (  )
     {
         return floor(($this->_timestamp/60/60/24))%2+1;
-    }         
+    }
 
 }
