@@ -636,8 +636,10 @@ class Etl2Controller extends Controller
 
     public function actionDailymaintenance ( )
     {
-        $db           = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
-        $etl          = isset( $_GET['noetl'] ) && $_GET['noetl'] ? false : true;
+        $db      = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
+        $etl     = isset( $_GET['noetl'] ) && $_GET['noetl'] ? false : true;
+
+        $showAll = isset( $_GET['showall'] ) && $_GET['showall'] ? true : false;
 
         $this->_error = false;
 
@@ -684,7 +686,8 @@ class Etl2Controller extends Controller
             {
                 $html .= $this->_maintenanceQuery( 
                     $date,
-                    $miniDate 
+                    $miniDate,
+                    $showAll 
                 );
             }
 
@@ -700,6 +703,7 @@ class Etl2Controller extends Controller
                     <body>
                         <table>
                             <thead>
+                                <td>STATUS</td>
                                 <td>DATE</td>
                                 <td>TAG ID</td>
                                 <td>REDIS IMPS</td>
@@ -737,7 +741,7 @@ class Etl2Controller extends Controller
     }
 
 
-    private function _maintenanceQuery ( $date, $miniDate )
+    private function _maintenanceQuery ( $date, $miniDate, $showAll )
     {
         $html      = '';
         $limit     = $this->_objectLimit/2;
@@ -776,14 +780,15 @@ class Etl2Controller extends Controller
             {
                 $html .= '
                     <tr>
+                        <td style="color:#FC5005;>NO DATA</td>
                         <td>'.$date.'</td>
                         <td>'.$tagId.'</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                     </tr>
                 ';
 
@@ -794,11 +799,12 @@ class Etl2Controller extends Controller
             if ( 
                 $redisTag['imps']       != $sqlTags[$tagId]['imps'] 
                 || $redisTag['cost']    != $sqlTags[$tagId]['cost'] 
-                || $redisTag['revenue'] != $sqlTags[$tagId]['revenue'] 
+                || $redisTag['revenue'] != $sqlTags[$tagId]['revenue']
             )
             {
                 $html .= '
                     <tr>
+                        <td style="color:#B40303;">DISCREPANCY</td>
                         <td>'.$date.'</td>
                         <td>'.$tagId.'</td>
                         <td>'.$redisTag['imps'].'</td>
@@ -811,6 +817,23 @@ class Etl2Controller extends Controller
                 ';
 
                 $this->_error = true;
+            }
+
+            if ( $showAll )
+            {
+                $html .= '
+                    <tr>
+                        <td style="color:#079005;">MATCH</td>
+                        <td>'.$date.'</td>
+                        <td>'.$tagId.'</td>
+                        <td>'.$redisTag['imps'].'</td>
+                        <td>'.$sqlTags[$tagId]['imps'].'</td>
+                        <td>'.$redisTag['cost'].'</td>
+                        <td>'.$sqlTags[$tagId]['cost'].'</td>
+                        <td>'.$redisTag['revenue'].'</td>
+                        <td>'.$sqlTags[$tagId]['revenue'].'</td>
+                    </tr>
+                ';                
             }
 
             unset( $redisTag );
