@@ -235,6 +235,9 @@ class Etl2Controller extends Controller
         else
             $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
 
+        $tag_id = (isset( $_GET['tag_id'] ) && $_GET['tag_id']) ? $_GET['tag_id'] : null;
+   
+
         switch ( $db )
         {
             case 'yesterday':
@@ -260,7 +263,7 @@ class Etl2Controller extends Controller
             if ( $this->_limit  &&  $this->_parsedLogs >= $this->_limit )
                 break;            
 
-            $rows += $this->_buildImpressionsQuery();
+            $rows += $this->_buildImpressionsQuery( $tag_id );
         }
 
         $elapsed = time() - $start;
@@ -301,7 +304,7 @@ class Etl2Controller extends Controller
     }
 
 
-    private function _buildImpressionsQuery ( )
+    private function _buildImpressionsQuery ( $tag_id = null )
     {
         $sql = '
             INSERT IGNORE INTO F_Imp_Compact (                
@@ -350,6 +353,12 @@ class Etl2Controller extends Controller
 
                 if ( $log )
                 {   
+                    if ( $tag_id  &&  $tag_id != $log['tag_id'] )
+                    {
+                        unset($log);
+                        continue;
+                    }
+                    
                     if ( !\filter_var($log['ip'], \FILTER_VALIDATE_IP) || !preg_match('/^[a-zA-Z]{2}$/', $log['country']) )
                     {
                         $ips = \explode( ',', $log['ip'] );
