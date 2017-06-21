@@ -32,6 +32,8 @@ class Etl2Controller extends Controller
     private $_noalerts;
     private $_db;
 
+    private $_test;
+
     public function __construct ( $id, $module, $config = [] )
     {
         parent::__construct( $id, $module, $config );
@@ -236,7 +238,8 @@ class Etl2Controller extends Controller
             $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
 
         $tag_id = (isset( $_GET['tag_id'] ) && $_GET['tag_id']) ? $_GET['tag_id'] : null;
-   
+
+        $this->_test = 0;
 
         switch ( $db )
         {
@@ -265,6 +268,7 @@ class Etl2Controller extends Controller
 
             $rows += $this->_buildImpressionsQuery( $tag_id );
         }
+        echo $this->_test.'<br>';
 
         $elapsed = time() - $start;
 
@@ -353,12 +357,13 @@ class Etl2Controller extends Controller
 
                 if ( $log )
                 {   
-                    if ( $tag_id  &&  $tag_id != $log['tag_id'] )
+                    if ( $tag_id  &&  $tag_id == $log['tag_id'] )
                     {
+                        $this->_test += $log['imps'];
                         unset($log);
                         continue;
                     }
-                    
+
                     if ( !\filter_var($log['ip'], \FILTER_VALIDATE_IP) || !preg_match('/^[a-zA-Z]{2}$/', $log['country']) )
                     {
                         $ips = \explode( ',', $log['ip'] );
