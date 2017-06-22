@@ -39,6 +39,25 @@
     }?>
     </div>
 
+    <?php echo $form->textAreaRow(
+        $model,
+        'passback_tag',
+        array('class' => 'span5', 'rows' => 5)
+        ); ?>
+
+    <div id='macros' style="margin: -8px 0 10px 0;">
+    <small>MACROS: </small> 
+    <?php
+    foreach (ImpLog::model()->macros() as $key => $value) {
+        echo CHtml::label($key, $key, array('class'=>'label')).' ';
+        // Yii::app()->clientScript->registerScript('register_script_name', "
+        //     $('#macros label').click(function(){
+        //        $('#Tags_code').val( $('#Tags_code').val() + $(this).text());
+        //     });
+        // ", CClientScript::POS_READY);
+    }?>
+    </div>
+
     <?php echo $form->textFieldRow($model,'url',array('class'=>'span5')); ?>
         
     <?php echo $form->textAreaRow(
