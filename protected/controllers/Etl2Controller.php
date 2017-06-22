@@ -854,7 +854,7 @@ class Etl2Controller extends Controller
         $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
         $this->_test = [];
         $logCount    = $this->_redis->zcard( 'loadedlogs' );
-        $queries     = ceil( $logCount/$this->_objectLimit );
+        $queries     = (int)ceil( $logCount/$this->_objectLimit );
 
         switch ( $date )
         {
@@ -873,17 +873,15 @@ class Etl2Controller extends Controller
 
         if ( empty($this->_test) )
         {
-            $this->_test[$tagId] = [
-                'imps'          => 0,
-                'unique_imps'   => 0,
-                'cost'          => 0,
-                'revenue'       => 0
-            ];
+            die('no traffic found');
+        }
+        else
+        {
+            echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
+            echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
+            echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';                    
         }
 
-        echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
-        echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
-        echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';        
     } 
 
 
