@@ -34,6 +34,7 @@ class Etl2Controller extends Controller
 
     private $_test;
 
+
     public function __construct ( $id, $module, $config = [] )
     {
         parent::__construct( $id, $module, $config );
@@ -93,6 +94,7 @@ class Etl2Controller extends Controller
             'populatecache',
             'populatetags',
             'populateplacements',
+            'scanloadedtag',
         );
 
         return array(
@@ -237,10 +239,6 @@ class Etl2Controller extends Controller
         else
             $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
 
-        $tag_id = (isset( $_GET['tag_id'] ) && $_GET['tag_id']) ? $_GET['tag_id'] : null;
-
-        $this->_test = 0;
-
         switch ( $db )
         {
             case 'yesterday':
@@ -266,9 +264,8 @@ class Etl2Controller extends Controller
             if ( $this->_limit  &&  $this->_parsedLogs >= $this->_limit )
                 break;            
 
-            $rows += $this->_buildImpressionsQuery( $tag_id );
+            $rows += $this->_buildImpressionsQuery( );
         }
-        echo $this->_test.'<br>';
 
         $elapsed = time() - $start;
 
@@ -308,7 +305,7 @@ class Etl2Controller extends Controller
     }
 
 
-    private function _buildImpressionsQuery ( $tag_id = null )
+    private function _buildImpressionsQuery ( )
     {
         $sql = '
             INSERT IGNORE INTO F_Imp_Compact (                
@@ -344,8 +341,6 @@ class Etl2Controller extends Controller
 
         if ( $sessionHashes )
         {
-            //echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
-
             $hashCount = 0;
             // add each log to sql query
             foreach ( $sessionHashes as $sessionHash )
@@ -357,13 +352,6 @@ class Etl2Controller extends Controller
 
                 if ( $log )
                 {   
-                    if ( $tag_id  &&  $tag_id == $log['tag_id'] )
-                    {
-                        $this->_test += $log['imps'];
-                        unset($log);
-                        continue;
-                    }
-
                     if ( !\filter_var($log['ip'], \FILTER_VALIDATE_IP) || !preg_match('/^[a-zA-Z]{2}$/', $log['country']) )
                     {
                         $ips = \explode( ',', $log['ip'] );
@@ -758,7 +746,7 @@ class Etl2Controller extends Controller
     private function _maintenanceQuery ( $date, $miniDate, $showAll )
     {
         $html      = '';
-        $limit     = $this->_objectLimit/2;
+        $limit     = ceil($this->_objectLimit/2);
         $redisTags = $this->_redis->zrange( 'tags:'.$miniDate, 0, $limit );
 
         $sql       = 'SELECT DISTINCT D_Demand_id AS id, sum(imps) AS imps, sum(cost) AS cost, sum(revenue) AS revenue FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" GROUP BY D_Demand_id LIMIT '. $limit;
@@ -854,6 +842,73 @@ class Etl2Controller extends Controller
         }
 
         return $html;
+    }
+
+    public function actionScanloadedtag ( )
+    {   
+        if ( !isset( $_GET['tag_id'] ) || !$_GET['tag_id'] )
+            die( 'tag id required');
+        else
+            $tagId = $_GET['tag_id'];
+
+        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
+        $this->_test = [];
+        $logCount    = $this->_redis->zcard( 'loadedlogs' );
+        $queries     = ceil( $logCount/$this->_objectLimit );
+
+        switch ( $date )
+        {
+            case 'yesterday':
+                $this->_redis->select( $this->_getYesterdayDatabase() );
+            break;
+            case 'today':
+                $this->_redis->select( $this->_getCurrentDatabase() );
+            break;
+        }        
+
+        for ( $i=0; $i<$queries; $i++ )
+        {
+            $this->_scanTagQuery( $tagId );
+        }
+
+        if ( empty($this->_test) )
+        {
+            $this->_test[$tagId] = [
+                'imps'          => 0,
+                'unique_imps'   => 0,
+                'cost'          => 0,
+                'revenue'       => 0
+            ];
+        }
+
+        echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
+        echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
+        echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';        
+    } 
+
+
+    private function _scanTagQuery ( $tag_id )
+    {
+        $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit-1 );
+
+        if ( $sessionHashes )
+        {
+            foreach ( $sessionHashes as $sessionHash )
+            {
+                $log    = $this->_redis->hgetall( 'log:'.$sessionHash );
+                $tagId  = $log['tag_id'];
+
+                if ( $tagId == $tag_id )
+                {
+                    $this->_test[$tagId]['imps']        += $log['imps'];
+                    $this->_test[$tagId]['unique_imps'] += $log['unique_imps'];
+                    $this->_test[$tagId]['cost']        += $log['cost'];
+                    $this->_test[$tagId]['revenue']     += $log['revenue'];                            
+                }
+
+                unset( $log );
+            }
+        }
     }
 
 
