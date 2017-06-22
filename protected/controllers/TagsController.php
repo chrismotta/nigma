@@ -168,7 +168,8 @@ class TagsController extends Controller
 						'payout'		  => $model->campaigns->opportunities->rate,
 						'connection_type' => $conn_type, 
 						'country' 		  => $country,
-						'os'			  => $model->os
+						'os'			  => $model->os,
+						'device'		  => strtolower($model->device_type)
 					]
 				);	
 
@@ -241,6 +242,7 @@ class TagsController extends Controller
 				$predis->hset( 'tag:'.$model->id, 'connection_type', $conn_type );
 				$predis->hset( 'tag:'.$model->id, 'country', $country );
 				$predis->hset( 'tag:'.$model->id, 'os', $model->os );
+				$predis->hset( 'tag:'.$model->id, 'device', strtolower($model->device_type) );
 
 				$this->redirect(array('response', 'id'=>$model->id, 'action'=>'updated'));
 			}	

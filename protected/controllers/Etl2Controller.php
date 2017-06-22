@@ -422,8 +422,6 @@ class Etl2Controller extends Controller
 
                     if ( !isset($log['device']) )
                         $log['device'] = null;
-                    else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
-                        $log['device'] = 'Mobile';
 
                     if ( isset($log['device']) && $log['device'] && $log['device']!='' )
                         $values .= '"'.$log['device'].'",';
@@ -601,7 +599,8 @@ class Etl2Controller extends Controller
                     'payout'          => $tag->campaigns->opportunities->rate,
                     'connection_type' => $conn_type,
                     'country'         => $country,
-                    'os'              => $tag->os
+                    'os'              => $tag->os,
+                    'device'          => strtolower($tag->device_type)
                 ]
             );
         }
