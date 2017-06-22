@@ -42,7 +42,7 @@ class EtlController extends Controller
 			'impcompact',
 			'bidcompact',
 			'compact',
-			'compactHistoricalData'
+			'compactData15'
 			);
 
 		return array(
@@ -622,40 +622,62 @@ class EtlController extends Controller
 	// 	$total = 0;
 	
 
-    function actionCompactHistoricalData(){
+    function actionCompactData15(){
+
+    	$daysago = isset($_GET['daysago']) ? $_GET['daysago'] : 15;
 
 		$start = time();
 
-		$query = 'INSERT INTO F_Imp_Compact
+		$insertQuery = 'INSERT INTO F_Imp_Compact
 			(
 				D_Demand_id,
 				D_Supply_id,
-				D_Geolocation_id,
-				D_UserAgent_id,
-				imps,
 				date_time,
-				unique_id,
 				unique_imps,
+				ad_req,
+				imps,
 		        revenue,
-		        cost
+		        cost,
+		        country,
+		        connection_type,
+		        device_type,
+		        os_type,
+		        os_version
 		    )
+
 		SELECT
 			D_Demand_id AS D_Demand_id, 
 			D_Supply_id AS D_Supply_id,
-		    D_Geolocation_id AS D_Geolocation_id,
-		    D_UserAgent_id AS D_UserAgent_id,
-			count(id) AS imps,
 		    date_time AS date_time,
-		    unique_id AS unique_id,
-		    count(distinct unique_id) AS unique_imps,
-		    sum(revenue) AS revenue,
-		    sum(cost) AS cost
+			SUM(id) AS imps,
+			SUM(id) AS imps,
+		    SUM(distinct unique_id) AS unique_imps,
+		    SUM(revenue) AS revenue,
+		    SUM(cost) AS cost,
+		    country,
+	        connection_type,
+	        device_type,
+	        os_type,
+	        os_version
 
-		FROM F_Imp i
+		FROM F_Imp_Compact i
 
-		WHERE month(date_time)=2 AND year(date_time)=2017 
-		GROUP BY D_Demand_id, D_Supply_id, country, os_type, 
+		WHERE date(date_time) = SUBDATE(CURDATE(), :daysago) 
+
+		GROUP BY 
+			D_Demand_id, 
+			D_Supply_id, 
+			country,
+	        connection_type,
+	        device_type,
+	        os_type,
+	        os_version
 		';
+
+		// WHERE date(date_time) BETWEEN SUBDATE(CURDATE(), 30) AND SUBDATE(CURDATE(), 15) 
+
+		// $return = Yii::app()->db->createCommand($insertQuery)->bindParam('daysago',$daysago)->execute();
+
 
 		$elapsed = time() - $start;
 
