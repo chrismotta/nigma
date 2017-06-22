@@ -8,8 +8,11 @@ require_once(dirname(__FILE__).'/../external/vendor/autoload.php');
 require_once(dirname(__FILE__).'/../config/localConfig.php');
 spl_autoload_register(array('YiiBase', 'autoload'));
 
-
+use DeviceDetector\DeviceDetector;
+use DeviceDetector\Parser\Device\DeviceParserAbstract;
+use DeviceDetector\Parser\Client\ClientParserAbstract;
 use Predis;
+
 
 class Etl2Controller extends Controller
 {
@@ -22,13 +25,15 @@ class Etl2Controller extends Controller
     private $_limit;
     private $_parsedLogs;
     private $_executedQueries;
-    private $_startDate;
-    private $_endDate;
-    private $_tag;
-    private $_placement;
     private $_showsql;
     private $_sqltest;
     private $_alertSubject;
+    private $_error;
+    private $_noalerts;
+    private $_db;
+
+    private $_test;
+
 
     public function __construct ( $id, $module, $config = [] )
     {
@@ -52,18 +57,16 @@ class Etl2Controller extends Controller
 
         $this->_timestamp       = time();
 
-        $this->_startDate       = isset( $_GET['from'] ) ? $_GET['from'] : date("Y-m-d", strtotime("yesterday") );
-
-        $this->_endDate         = isset( $_GET['to'] ) ? $_GET['to'] : $this->_startDate;
-
-        $this->_tag             = isset( $_GET['tag'] ) ? $_GET['tag'] : null;
-        $this->_placement       = isset( $_GET['placement'] ) ? $_GET['placement'] : null;        
-        $this->_showsql         = isset( $_GET['showsql'] ) ? true : false;
-        $this->_sqltest         = isset( $_GET['sqltest'] ) ? true : false;
+      
+        $this->_showsql         = isset( $_GET['showsql'] ) && $_GET['showsql'] ? true : false;
+        $this->_noalerts        = isset( $_GET['noalerts'] ) && $_GET['noalerts'] ? true : false;
+        $this->_sqltest         = isset( $_GET['sqltest'] ) && $_GET['sqltest'] ? true : false;
 
         $this->_timestamp       = time();
         $this->_parsedLogs      = 0;
         $this->_executedQueries = 0;
+
+        $this->_db              = false;
 
         $this->_alertSubject    = 'AD NIGMA - ETL2 ERROR ' . date( "Y-m-d H:i:s", $this->_timestamp );
 
@@ -71,6 +74,43 @@ class Etl2Controller extends Controller
         \ini_set('memory_limit','3000M');
         \set_time_limit(0);
     }
+
+    public function filters()
+    {
+        return array(
+            'accessControl', // perform access control for CRUD operations
+            'postOnly + delete', // we only allow deletion via POST request
+        );
+    }
+
+    public function accessRules()
+    {
+        $actions = array(
+            'index',
+            'dailymaintenance',
+            'supply',
+            'demand',
+            'impressions',
+            'populatecache',
+            'populatetags',
+            'populateplacements',
+            'scanloadedtag',
+        );
+
+        return array(
+            array('allow',
+                'actions'=>$actions,
+                'ips'=>array(Yii::app()->params['serverIP']),
+            ),
+            array('allow', 
+                'actions'=>$actions,
+                'roles'=>array('admin'),
+            ),
+            array('deny',  // deny all users
+                'users'=>array('*'),
+            ),
+        );
+    }    
 
     public function actionIndex( )
     {
@@ -87,7 +127,8 @@ class Etl2Controller extends Controller
             $msg .= "ETL DEMAND ERROR: ".$e->getCode().'<hr>';
             $msg .= $e->getMessage();
 
-            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
             die($msg);
         }
@@ -101,7 +142,8 @@ class Etl2Controller extends Controller
             $msg .= "ETL SUPPLY ERROR: ".$e->getCode().'<hr>';
             $msg .= $e->getMessage();
 
-            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
             die($msg);           
         }
@@ -114,10 +156,13 @@ class Etl2Controller extends Controller
             $msg .= "ETL IMPRESSIONS ERROR: ".$e->getCode().'<hr>';
             $msg .= $e->getMessage();
 
-            $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( self::ALERT_FROM, self::ALERT_TO, $this->_alertSubject, $msg );
 
             die($msg);
         }
+
+        return true;
     }
 
 
@@ -189,7 +234,10 @@ class Etl2Controller extends Controller
 
     public function actionImpressions ( )
     {
-        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'current';
+        if ( $this->_db )
+            $db = $this->_db;
+        else
+            $db = isset( $_GET['date'] ) ? $_GET['date'] : 'current';
 
         switch ( $db )
         {
@@ -216,7 +264,7 @@ class Etl2Controller extends Controller
             if ( $this->_limit  &&  $this->_parsedLogs >= $this->_limit )
                 break;            
 
-            $rows += $this->_buildImpressionsQuery();
+            $rows += $this->_buildImpressionsQuery( );
         }
 
         $elapsed = time() - $start;
@@ -293,8 +341,6 @@ class Etl2Controller extends Controller
 
         if ( $sessionHashes )
         {
-            //echo 'query => from 0 to: '.count($sessionHashes).'/'.$this->_redis->zcard('sessionhashes').'<br>';
-
             $hashCount = 0;
             // add each log to sql query
             foreach ( $sessionHashes as $sessionHash )
@@ -592,7 +638,26 @@ class Etl2Controller extends Controller
 
     public function actionDailymaintenance ( )
     {
-        $db = isset( $_GET['db'] ) ? $_GET['db'] : 'yesterday';
+        $db      = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
+        $etl     = isset( $_GET['noetl'] ) && $_GET['noetl'] ? false : true;
+
+        $showAll = isset( $_GET['showall'] ) && $_GET['showall'] ? true : false;
+
+        $this->_error = false;
+
+        if ( isset( $_GET['flush'] ) )
+        {
+            if ( $db != 'yesterday' )
+            {
+                die("only yesterday's database is allowed to be flushed");
+            }
+
+            $flush = $_GET['flush'];
+        }
+        else
+        {
+            $flush = false;
+        }
 
         switch ( $db )
         {
@@ -602,8 +667,14 @@ class Etl2Controller extends Controller
             case 'current':
                 $this->_redis->select( $this->_getCurrentDatabase() );
             break;
+        }        
+
+        if ( $flush || $etl )
+        {
+            $this->_db = 'yesterday';
+            $this->actionIndex();
         }
-        
+
         $dates     = $this->_redis->smembers( 'dates' );
         $html      = '';
 
@@ -617,14 +688,15 @@ class Etl2Controller extends Controller
             {
                 $html .= $this->_maintenanceQuery( 
                     $date,
-                    $miniDate 
+                    $miniDate,
+                    $showAll 
                 );
             }
 
             unset( $logCount );
         }
 
-        if ( $html != '' )
+        if ( $this->_error || $html != '' )
         {
             $html     = '
                 <html>
@@ -633,6 +705,7 @@ class Etl2Controller extends Controller
                     <body>
                         <table>
                             <thead>
+                                <td>STATUS</td>
                                 <td>DATE</td>
                                 <td>TAG ID</td>
                                 <td>REDIS IMPS</td>
@@ -650,24 +723,30 @@ class Etl2Controller extends Controller
             
             echo $html;
 
-            $this->_sendMail ( 
-                self::ALERT_FROM, 
-                self::ALERT_TO, 
-                'AD NIGMA - TRAFFIC COMPARE ERROR ('.$date.')', 
-                $html 
-            );
+            if ( !$this->_noalerts )
+                $this->_sendMail ( 
+                    self::ALERT_FROM, 
+                    self::ALERT_TO, 
+                    'AD NIGMA - TRAFFIC COMPARE ERROR ('.$date.')', 
+                    $html 
+                );
         }
         else
-        {        
+        {
+            if (  $flush )
+            {
+                $this->_redis->flushdb();
+            }
+
             echo ( 'todo bien piola' );
         }
     }
 
 
-    private function _maintenanceQuery ( $date, $miniDate )
+    private function _maintenanceQuery ( $date, $miniDate, $showAll )
     {
         $html      = '';
-        $limit     = $this->_objectLimit/2;
+        $limit     = ceil($this->_objectLimit/2);
         $redisTags = $this->_redis->zrange( 'tags:'.$miniDate, 0, $limit );
 
         $sql       = 'SELECT DISTINCT D_Demand_id AS id, sum(imps) AS imps, sum(cost) AS cost, sum(revenue) AS revenue FROM F_Imp_Compact WHERE date(date_time)="'.$date.'" GROUP BY D_Demand_id LIMIT '. $limit;
@@ -703,27 +782,31 @@ class Etl2Controller extends Controller
             {
                 $html .= '
                     <tr>
+                        <td style="color:#FC5005;>NO DATA</td>
                         <td>'.$date.'</td>
                         <td>'.$tagId.'</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
-                        <td>no data</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
                     </tr>
                 ';
+
+                $this->_error = true;
                 continue;
             }
 
             if ( 
                 $redisTag['imps']       != $sqlTags[$tagId]['imps'] 
                 || $redisTag['cost']    != $sqlTags[$tagId]['cost'] 
-                || $redisTag['revenue'] != $sqlTags[$tagId]['revenue'] 
+                || $redisTag['revenue'] != $sqlTags[$tagId]['revenue']
             )
             {
                 $html .= '
                     <tr>
+                        <td style="color:#B40303;">DISCREPANCY</td>
                         <td>'.$date.'</td>
                         <td>'.$tagId.'</td>
                         <td>'.$redisTag['imps'].'</td>
@@ -734,12 +817,96 @@ class Etl2Controller extends Controller
                         <td>'.$sqlTags[$tagId]['revenue'].'</td>
                     </tr>
                 ';
+
+                $this->_error = true;
+            }
+
+            if ( $showAll )
+            {
+                $html .= '
+                    <tr>
+                        <td style="color:#079005;">MATCH</td>
+                        <td>'.$date.'</td>
+                        <td>'.$tagId.'</td>
+                        <td>'.$redisTag['imps'].'</td>
+                        <td>'.$sqlTags[$tagId]['imps'].'</td>
+                        <td>'.$redisTag['cost'].'</td>
+                        <td>'.$sqlTags[$tagId]['cost'].'</td>
+                        <td>'.$redisTag['revenue'].'</td>
+                        <td>'.$sqlTags[$tagId]['revenue'].'</td>
+                    </tr>
+                ';                
             }
 
             unset( $redisTag );
         }
 
         return $html;
+    }
+
+    public function actionScanloadedtag ( )
+    {   
+        if ( !isset( $_GET['tag_id'] ) || !$_GET['tag_id'] )
+            die( 'tag id required');
+        else
+            $tagId = $_GET['tag_id'];
+
+        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
+        $this->_test = [];
+        $logCount    = $this->_redis->zcard( 'loadedlogs' );
+        $queries     = (int)ceil( $logCount/$this->_objectLimit );
+
+        switch ( $date )
+        {
+            case 'yesterday':
+                $this->_redis->select( $this->_getYesterdayDatabase() );
+            break;
+            case 'today':
+                $this->_redis->select( $this->_getCurrentDatabase() );
+            break;
+        }        
+
+        for ( $i=0; $i<$queries; $i++ )
+        {
+            $this->_scanTagQuery( $tagId );
+        }
+
+        if ( empty($this->_test) )
+        {
+            die('no traffic found');
+        }
+        else
+        {
+            echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
+            echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
+            echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';                    
+        }
+
+    } 
+
+
+    private function _scanTagQuery ( $tag_id )
+    {
+        $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit-1 );
+
+        if ( $sessionHashes )
+        {
+            foreach ( $sessionHashes as $sessionHash )
+            {
+                $log    = $this->_redis->hgetall( 'log:'.$sessionHash );
+                $tagId  = $log['tag_id'];
+
+                if ( $tagId == $tag_id )
+                {
+                    $this->_test[$tagId]['imps']        += $log['imps'];
+                    $this->_test[$tagId]['unique_imps'] += $log['unique_imps'];
+                    $this->_test[$tagId]['cost']        += $log['cost'];
+                    $this->_test[$tagId]['revenue']     += $log['revenue'];                            
+                }
+
+                unset( $log );
+            }
+        }
     }
 
 
@@ -760,6 +927,6 @@ class Etl2Controller extends Controller
     private function _getCurrentDatabase (  )
     {
         return floor(($this->_timestamp/60/60/24))%2+1;
-    }         
+    }
 
 }
