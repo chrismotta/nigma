@@ -907,9 +907,13 @@ class Etl2Controller extends Controller
             foreach ( $sessionHashes as $sessionHash )
             {
                 $log    = $this->_redis->hgetall( 'log:'.$sessionHash );
-                $tagId  = $log['tag_id'];
 
-                if ( $tagId == $tag_id && $log && \date('Y-m-d', $log['imp_time'])==$date )
+                if ( $log )
+                    $tagId  = $log['tag_id'];
+                else
+                    $tagId = null;
+
+                if ( $log && $tagId == $tag_id && \date('Y-m-d', $log['imp_time'])==$date )
                 {
                     $this->_test[$tagId]['imps']        += (int)$log['imps'];
                     $this->_test[$tagId]['cost']        += (float)$log['cost'];
