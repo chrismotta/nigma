@@ -382,10 +382,15 @@ class Etl2Controller extends Controller
                     else
                         $pid = 'NULL';
 
+                    if ( isset($log['requests']) )
+                        $ad_req = $log['requests'];
+                    else
+                        $ad_req = $log['imps'];
+
                     $values .= '( 
                         '.$log['tag_id'].',
                         '.$pid.',
-                        '.$log['imps'].',  
+                        '.$ad_req.',  
                         '.$log['imps'].', 
                         "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
                         '.$log['cost'].',  
@@ -907,9 +912,11 @@ class Etl2Controller extends Controller
                 if ( $tagId == $tag_id && $log && \date('Y-m-d', $log['imp_time'])==$date )
                 {
                     $this->_test[$tagId]['imps']        += (int)$log['imps'];
-                    $this->_test[$tagId]['requests']    += (int)$log['requests'];
                     $this->_test[$tagId]['cost']        += (float)$log['cost'];
-                    $this->_test[$tagId]['revenue']     += (float)$log['revenue'];                            
+                    $this->_test[$tagId]['revenue']     += (float)$log['revenue'];
+
+                    if ( isset($log['requests']) )
+                        $this->_test[$tagId]['requests']+= (int)$log['requests'];
                 }
 
                 unset( $log );
