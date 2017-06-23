@@ -844,6 +844,8 @@ class Etl2Controller extends Controller
         return $html;
     }
 
+    // in developement
+
     public function actionScanloadedtag ( )
     {   
         if ( !isset( $_GET['tag_id'] ) || !$_GET['tag_id'] )
@@ -851,12 +853,11 @@ class Etl2Controller extends Controller
         else
             $tagId = $_GET['tag_id'];
 
-        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
-        $this->_test = [];
-        $logCount    = $this->_redis->zcard( 'loadedlogs' );
-        $queries     = (int)ceil( $logCount/$this->_objectLimit );
+        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : \date('Y-m-d');
 
-        switch ( $date )
+        $db          = isset( $_GET['db'] ) && $_GET['db'] ? $_GET['db'] : 'yesterday';
+
+        switch ( $db )
         {
             case 'yesterday':
                 $this->_redis->select( $this->_getYesterdayDatabase() );
@@ -864,28 +865,35 @@ class Etl2Controller extends Controller
             case 'today':
                 $this->_redis->select( $this->_getCurrentDatabase() );
             break;
-        }        
+        }   
+
+        $this->_test = [
+            $tagId => [
+                'imps'          => 0,
+                'requests'      => 0,
+                'cost'          => 0,
+                'revenue'       => 0
+            ]
+        ];
+
+        $logCount    = $this->_redis->zcard( 'loadedlogs' );
+        $queries     = (int)ceil( $logCount/$this->_objectLimit );
+
 
         for ( $i=0; $i<$queries; $i++ )
-        {
-            $this->_scanTagQuery( $tagId );
+        {   
+            $this->_scanTagQuery( $tagId, $date );
         }
 
-        if ( empty($this->_test) )
-        {
-            die('no traffic found');
-        }
-        else
-        {
-            echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
-            echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
-            echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';                    
-        }
+        echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
+        echo 'Requests: '.$this->_test[$tagId]['requests'].'<hr/>'; 
+        echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
+        echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';
 
     } 
 
 
-    private function _scanTagQuery ( $tag_id )
+    private function _scanTagQuery ( $tag_id, $date )
     {
         $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit-1 );
 
@@ -896,12 +904,12 @@ class Etl2Controller extends Controller
                 $log    = $this->_redis->hgetall( 'log:'.$sessionHash );
                 $tagId  = $log['tag_id'];
 
-                if ( $tagId == $tag_id )
+                if ( $tagId == $tag_id && $log && \date('Y-m-d', $log['imp_time'])==$date )
                 {
-                    $this->_test[$tagId]['imps']        += $log['imps'];
-                    $this->_test[$tagId]['unique_imps'] += $log['unique_imps'];
-                    $this->_test[$tagId]['cost']        += $log['cost'];
-                    $this->_test[$tagId]['revenue']     += $log['revenue'];                            
+                    $this->_test[$tagId]['imps']        += (int)$log['imps'];
+                    $this->_test[$tagId]['requests']    += (int)$log['requests'];
+                    $this->_test[$tagId]['cost']        += (float)$log['cost'];
+                    $this->_test[$tagId]['revenue']     += (float)$log['revenue'];                            
                 }
 
                 unset( $log );
