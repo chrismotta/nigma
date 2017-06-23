@@ -33,6 +33,7 @@ class Etl2Controller extends Controller
     private $_db;
 
     private $_test;
+    private $_orfan;
 
 
     public function __construct ( $id, $module, $config = [] )
@@ -861,6 +862,7 @@ class Etl2Controller extends Controller
         $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : \date('Y-m-d');
 
         $db          = isset( $_GET['db'] ) && $_GET['db'] ? $_GET['db'] : 'yesterday';
+        $this->_orfan;
 
         switch ( $db )
         {
@@ -894,6 +896,7 @@ class Etl2Controller extends Controller
         echo 'Requests: '.$this->_test[$tagId]['requests'].'<hr/>'; 
         echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
         echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';
+        echo 'Orfan Logs: '.$this->_orfan.'<hr/>';
 
     } 
 
@@ -909,9 +912,14 @@ class Etl2Controller extends Controller
                 $log    = $this->_redis->hgetall( 'log:'.$sessionHash );
 
                 if ( $log )
+                {
                     $tagId  = $log['tag_id'];
+                }
                 else
+                {
                     $tagId = null;
+                    $this->_orfan++;
+                }
 
                 if ( $log && $tagId == $tag_id && \date('Y-m-d', $log['imp_time'])==$date )
                 {
