@@ -589,7 +589,7 @@ class Etl2Controller extends Controller
                     $country = strtolower( $tag->country );
                 break;
             }            
-
+            var_export($tag);die();
             $this->_redis->hmset(
                 'tag:'.$tag->id,
                 [
