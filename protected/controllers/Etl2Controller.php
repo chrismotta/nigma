@@ -859,10 +859,11 @@ class Etl2Controller extends Controller
         else
             $tagId = $_GET['tag_id'];
 
-        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : \date('Y-m-d');
+        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : null;
 
         $db          = isset( $_GET['db'] ) && $_GET['db'] ? $_GET['db'] : 'yesterday';
-        $this->_orfan;
+
+        $this->_orfan = 0;
 
         switch ( $db )
         {
@@ -903,7 +904,7 @@ class Etl2Controller extends Controller
 
     private function _scanTagQuery ( $tag_id, $date )
     {
-        $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit-1 );
+        $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit );
 
         if ( $sessionHashes )
         {
@@ -921,8 +922,12 @@ class Etl2Controller extends Controller
                     $this->_orfan++;
                 }
 
-                if ( $log && $tagId == $tag_id && \date('Y-m-d', $log['imp_time'])==$date )
+
+                if ( $log && $tagId == $tag_id  )
                 {
+                    if ( $date && \date('Y-m-d', $log['imp_time'])!=$date )
+                        continue;
+
                     $this->_test[$tagId]['imps']        += (int)$log['imps'];
                     $this->_test[$tagId]['cost']        += (float)$log['cost'];
                     $this->_test[$tagId]['revenue']     += (float)$log['revenue'];
