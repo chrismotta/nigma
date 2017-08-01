@@ -730,7 +730,7 @@ class Etl2Controller extends Controller
             
             echo $html;
 
-            if ( !$this->_noalerts )
+            if ( $this->_error && !$this->_noalerts )
                 $this->_sendMail ( 
                     self::ALERT_FROM, 
                     self::ALERT_TO, 
