@@ -162,8 +162,6 @@ class Etl2Controller extends Controller
 
             die($msg);
         }
-
-        return true;
     }
 
 
@@ -365,9 +363,9 @@ class Etl2Controller extends Controller
                         $log['country'] = $ipData->countryCode;
 
                         if ( $ipData->mobileCarrierName == '-' )
-                            $log['connection_type'] = 'WIFI';
+                            $log['connection_type'] = 'wifi';
                         else
-                            $log['connection_type'] = 'MOBILE';
+                            $log['connection_type'] = 'mobile';
                     }
 
                     if ( $values != '' )
@@ -491,17 +489,25 @@ class Etl2Controller extends Controller
 
                 $hashCount2 = 0;
 
-                foreach ( $sessionHashes AS $sessionHash )
+                if ( $return )
                 {
-                    if ( $hashCount2 >= $hashCount )
-                        break;
+                    foreach ( $sessionHashes AS $sessionHash )
+                    {
+                        if ( $hashCount2 >= $hashCount )
+                            break;
 
-                    $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
+                        $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
 
-                    $this->_redis->zrem( 'sessionhashes', $sessionHash );
+                        $this->_redis->zrem( 'sessionhashes', $sessionHash );
 
-                    $hashCount2++;            
-                }                    
+                        $hashCount2++;            
+                    }                                        
+                }
+                else
+                {
+                    
+                }
+
 
 
                 $this->_executedQueries++;
@@ -702,29 +708,24 @@ class Etl2Controller extends Controller
             unset( $logCount );
         }
 
-        if ( $this->_error || $html != '' )
+        if ( $html != '' )
         {
             $html     = '
-                <html>
-                    <head>
-                    </head>
-                    <body>
-                        <table>
-                            <thead>
-                                <td>STATUS</td>
-                                <td>DATE</td>
-                                <td>TAG ID</td>
-                                <td>REDIS IMPS</td>
-                                <td>MYSQL IMPS</td>
-                                <td>REDIS COST</td>
-                                <td>MYSQL COST</td>
-                                <td>REDIS REVENUE</td>
-                                <td>MYSQL REVENUE</td>
-                            </thead>
-                            <tbody>'.$html.'</tbody>
-                        </table>
-                    </body>
-                </html>
+                <table>
+                    <thead>
+                        <td>STATUS</td>
+                        <td>DATE</td>
+                        <td>TAG ID</td>
+                        <td>REDIS IMPS</td>
+                        <td>MYSQL IMPS</td>
+                        <td>REDIS COST</td>
+                        <td>MYSQL COST</td>
+                        <td>REDIS REVENUE</td>
+                        <td>MYSQL REVENUE</td>
+                    </thead>
+                    <tbody>'.$html.'</tbody>
+                </table>
+                <hr/>
             ';
             
             echo $html;
@@ -737,14 +738,16 @@ class Etl2Controller extends Controller
                     $html 
                 );
         }
-        else
-        {
-            if (  $flush )
-            {
-                $this->_redis->flushdb();
-            }
 
-            echo ( 'todo bien piola' );
+        if ( !$this->_error && $flush )
+        {
+            $this->_redis->flushdb();
+            echo 'DB flush: OK<hr/>'; 
+        }
+        else if ( $this->_error )
+        {
+            $this->_redis->flushdb();
+            echo 'DB flush: SKIPPED<hr/>';             
         }
     }
 
@@ -824,7 +827,13 @@ class Etl2Controller extends Controller
                     </tr>
                 ';
 
-                $this->_error = true;
+                if ( 
+                    $sqlTags[$tagId]['imps'] - $redisTag['imps'] > 1000
+                    || $sqlTags[$tagId]['imps'] - $redisTag['imps'] < -1000
+                )
+                {
+                    $this->_error = true;
+                }
             }
 
             if ( $showAll )
