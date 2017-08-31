@@ -33,6 +33,7 @@ class Etl2Controller extends Controller
     private $_db;
 
     private $_test;
+    private $_orfan;
 
 
     public function __construct ( $id, $module, $config = [] )
@@ -161,8 +162,6 @@ class Etl2Controller extends Controller
 
             die($msg);
         }
-
-        return true;
     }
 
 
@@ -364,9 +363,9 @@ class Etl2Controller extends Controller
                         $log['country'] = $ipData->countryCode;
 
                         if ( $ipData->mobileCarrierName == '-' )
-                            $log['connection_type'] = 'WIFI';
+                            $log['connection_type'] = 'wifi';
                         else
-                            $log['connection_type'] = 'MOBILE';
+                            $log['connection_type'] = 'mobile';
                     }
 
                     if ( $values != '' )
@@ -382,10 +381,15 @@ class Etl2Controller extends Controller
                     else
                         $pid = 'NULL';
 
+                    if ( isset($log['requests']) )
+                        $ad_req = $log['requests'];
+                    else
+                        $ad_req = $log['imps'];
+
                     $values .= '( 
                         '.$log['tag_id'].',
                         '.$pid.',
-                        '.$log['imps'].',  
+                        '.$ad_req.',  
                         '.$log['imps'].', 
                         "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
                         '.$log['cost'].',  
@@ -422,8 +426,6 @@ class Etl2Controller extends Controller
 
                     if ( !isset($log['device']) )
                         $log['device'] = null;
-                    else if ( $log['device']=='Phablet' || $log['device']=='Smartphone' )
-                        $log['device'] = 'Mobile';
 
                     if ( isset($log['device']) && $log['device'] && $log['device']!='' )
                         $values .= '"'.$log['device'].'",';
@@ -487,17 +489,25 @@ class Etl2Controller extends Controller
 
                 $hashCount2 = 0;
 
-                foreach ( $sessionHashes AS $sessionHash )
+                if ( $return )
                 {
-                    if ( $hashCount2 >= $hashCount )
-                        break;
+                    foreach ( $sessionHashes AS $sessionHash )
+                    {
+                        if ( $hashCount2 >= $hashCount )
+                            break;
 
-                    $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
+                        $this->_redis->zadd( 'loadedlogs', $this->_timestamp, $sessionHash );
 
-                    $this->_redis->zrem( 'sessionhashes', $sessionHash );
+                        $this->_redis->zrem( 'sessionhashes', $sessionHash );
 
-                    $hashCount2++;            
-                }                    
+                        $hashCount2++;            
+                    }                                        
+                }
+                else
+                {
+                    
+                }
+
 
 
                 $this->_executedQueries++;
@@ -596,12 +606,14 @@ class Etl2Controller extends Controller
                 'tag:'.$tag->id,
                 [
                     'code'            => $tag->code,
+                    'passback_tag'    => $tag->passback_tag,
                     'analyze'         => $tag->analyze,
                     'frequency_cap'   => $tag->freq_cap,
                     'payout'          => $tag->campaigns->opportunities->rate,
                     'connection_type' => $conn_type,
                     'country'         => $country,
-                    'os'              => $tag->os
+                    'os'              => $tag->os,
+                    'device'          => strtolower($tag->device_type)
                 ]
             );
         }
@@ -696,34 +708,29 @@ class Etl2Controller extends Controller
             unset( $logCount );
         }
 
-        if ( $this->_error || $html != '' )
+        if ( $html != '' )
         {
             $html     = '
-                <html>
-                    <head>
-                    </head>
-                    <body>
-                        <table>
-                            <thead>
-                                <td>STATUS</td>
-                                <td>DATE</td>
-                                <td>TAG ID</td>
-                                <td>REDIS IMPS</td>
-                                <td>MYSQL IMPS</td>
-                                <td>REDIS COST</td>
-                                <td>MYSQL COST</td>
-                                <td>REDIS REVENUE</td>
-                                <td>MYSQL REVENUE</td>
-                            </thead>
-                            <tbody>'.$html.'</tbody>
-                        </table>
-                    </body>
-                </html>
+                <table>
+                    <thead>
+                        <td>STATUS</td>
+                        <td>DATE</td>
+                        <td>TAG ID</td>
+                        <td>REDIS IMPS</td>
+                        <td>MYSQL IMPS</td>
+                        <td>REDIS COST</td>
+                        <td>MYSQL COST</td>
+                        <td>REDIS REVENUE</td>
+                        <td>MYSQL REVENUE</td>
+                    </thead>
+                    <tbody>'.$html.'</tbody>
+                </table>
+                <hr/>
             ';
             
             echo $html;
 
-            if ( !$this->_noalerts )
+            if ( $this->_error && !$this->_noalerts )
                 $this->_sendMail ( 
                     self::ALERT_FROM, 
                     self::ALERT_TO, 
@@ -731,14 +738,16 @@ class Etl2Controller extends Controller
                     $html 
                 );
         }
-        else
-        {
-            if (  $flush )
-            {
-                $this->_redis->flushdb();
-            }
 
-            echo ( 'todo bien piola' );
+        if ( !$this->_error && $flush )
+        {
+            $this->_redis->flushdb();
+            echo 'DB flush: OK<hr/>'; 
+        }
+        else if ( $this->_error )
+        {
+            $this->_redis->flushdb();
+            echo 'DB flush: SKIPPED<hr/>';             
         }
     }
 
@@ -818,7 +827,13 @@ class Etl2Controller extends Controller
                     </tr>
                 ';
 
-                $this->_error = true;
+                if ( 
+                    $sqlTags[$tagId]['imps'] - $redisTag['imps'] > 1000
+                    || $sqlTags[$tagId]['imps'] - $redisTag['imps'] < -1000
+                )
+                {
+                    $this->_error = true;
+                }
             }
 
             if ( $showAll )
@@ -844,6 +859,8 @@ class Etl2Controller extends Controller
         return $html;
     }
 
+    // in developement
+
     public function actionScanloadedtag ( )
     {   
         if ( !isset( $_GET['tag_id'] ) || !$_GET['tag_id'] )
@@ -851,12 +868,13 @@ class Etl2Controller extends Controller
         else
             $tagId = $_GET['tag_id'];
 
-        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : 'yesterday';
-        $this->_test = [];
-        $logCount    = $this->_redis->zcard( 'loadedlogs' );
-        $queries     = (int)ceil( $logCount/$this->_objectLimit );
+        $date        = isset( $_GET['date'] ) && $_GET['date'] ? $_GET['date'] : null;
 
-        switch ( $date )
+        $db          = isset( $_GET['db'] ) && $_GET['db'] ? $_GET['db'] : 'yesterday';
+
+        $this->_orfan = 0;
+
+        switch ( $db )
         {
             case 'yesterday':
                 $this->_redis->select( $this->_getYesterdayDatabase() );
@@ -864,44 +882,67 @@ class Etl2Controller extends Controller
             case 'today':
                 $this->_redis->select( $this->_getCurrentDatabase() );
             break;
-        }        
+        }   
+
+        $this->_test = [
+            $tagId => [
+                'imps'          => 0,
+                'requests'      => 0,
+                'cost'          => 0,
+                'revenue'       => 0
+            ]
+        ];
+
+        $logCount    = $this->_redis->zcard( 'loadedlogs' );
+        $queries     = (int)ceil( $logCount/$this->_objectLimit );
+
 
         for ( $i=0; $i<$queries; $i++ )
-        {
-            $this->_scanTagQuery( $tagId );
+        {   
+            $this->_scanTagQuery( $tagId, $date );
         }
 
-        if ( empty($this->_test) )
-        {
-            die('no traffic found');
-        }
-        else
-        {
-            echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
-            echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
-            echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';                    
-        }
+        echo 'Impressions: '.$this->_test[$tagId]['imps'].'<hr/>';        
+        echo 'Requests: '.$this->_test[$tagId]['requests'].'<hr/>'; 
+        echo 'Cost: '.$this->_test[$tagId]['cost'].'<hr/>';        
+        echo 'Revenue: '.$this->_test[$tagId]['revenue'].'<hr/>';
+        echo 'Orfan Logs: '.$this->_orfan.'<hr/>';
 
     } 
 
 
-    private function _scanTagQuery ( $tag_id )
+    private function _scanTagQuery ( $tag_id, $date )
     {
-        $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit-1 );
+        $sessionHashes = $this->_redis->zrange( 'loadedlogs', 0, $this->_objectLimit );
 
         if ( $sessionHashes )
         {
             foreach ( $sessionHashes as $sessionHash )
             {
                 $log    = $this->_redis->hgetall( 'log:'.$sessionHash );
-                $tagId  = $log['tag_id'];
 
-                if ( $tagId == $tag_id )
+                if ( $log )
                 {
-                    $this->_test[$tagId]['imps']        += $log['imps'];
-                    $this->_test[$tagId]['unique_imps'] += $log['unique_imps'];
-                    $this->_test[$tagId]['cost']        += $log['cost'];
-                    $this->_test[$tagId]['revenue']     += $log['revenue'];                            
+                    $tagId  = $log['tag_id'];
+                }
+                else
+                {
+                    $tagId = null;
+                    $this->_orfan++;
+                }
+
+
+                if ( $log && $tagId == $tag_id  )
+                {
+                    if ( $date && \date('Y-m-d', $log['imp_time'])!=$date )
+                        continue;
+
+                    $this->_test[$tagId]['imps']        += (int)$log['imps'];
+                    $this->_test[$tagId]['cost']        += (float)$log['cost'];
+                    $this->_test[$tagId]['revenue']     += (float)$log['revenue'];
+
+                    if ( isset($log['requests']) )
+                        $this->_test[$tagId]['requests']+= (int)$log['requests'];
                 }
 
                 unset( $log );
