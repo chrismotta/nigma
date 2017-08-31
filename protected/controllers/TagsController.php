@@ -235,6 +235,8 @@ class TagsController extends Controller
 
 				$predis = new \Predis\Client( 'tcp://'.localConfig::REDIS_HOST.':6379' );
 
+				
+
 				$predis->hset( 'tag:'.$model->id, 'code', $model->code );
 				$predis->hset( 'tag:'.$model->id, 'passback_tag', $model->passback_tag );
 				$predis->hset( 'tag:'.$model->id, 'analyze', $model->analyze );
@@ -248,10 +250,21 @@ class TagsController extends Controller
 			}	
 		}
 
+		$criteria=new CDbCriteria;
+        $criteria->compare('t.status','Active');
+        $criteria->order = 'name';
+
+		$campaignsList = CHtml::listData( Campaigns::model()->findAll($criteria), 
+			'id',
+			'name'
+		);
+			// function($opp) { return $opp->getVirtualName(); }
+
 		$this->render('update',array(
 			'model'=>$model,
 			'bannerSizes'=>$this->getBannerSizes(),
 			'parent'=>$parent,
+			'campaignsList'=>$campaignsList,
 			));
 	}
 

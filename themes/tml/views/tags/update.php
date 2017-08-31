@@ -19,6 +19,7 @@ $this->breadcrumbs=array(
 <?php echo $this->renderPartial('_form',array(
 	'model'=>$model,
 	'bannerSizes'=>$bannerSizes,
+	'campaignsList'=>$campaignsList,
 	)); ?>
 
 </div>
