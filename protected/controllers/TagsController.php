@@ -252,21 +252,20 @@ class TagsController extends Controller
 			}	
 		}
 
-		$criteria=new CDbCriteria;
-        $criteria->compare('t.status','Active');
-        $criteria->order = 'name';
+		// $criteria=new CDbCriteria;
+		// $criteria->compare('t.status','Active');
+		// $criteria->order = 'name';
 
-		$campaignsList = CHtml::listData( Campaigns::model()->findAll($criteria), 
-			'id',
-			'name'
-		);
-			// function($opp) { return $opp->getVirtualName(); }
+		// $campaignsList = CHtml::listData( Campaigns::model()->findAll($criteria), 
+		// 	'id',
+		// 	'name'
+		// );
 
 		$this->render('update',array(
 			'model'=>$model,
 			'bannerSizes'=>$this->getBannerSizes(),
 			'parent'=>$parent,
-			'campaignsList'=>$campaignsList,
+			// 'campaignsList'=>$campaignsList,
 			));
 	}
 
