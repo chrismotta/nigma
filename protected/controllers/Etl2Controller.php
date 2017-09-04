@@ -994,11 +994,10 @@ class Etl2Controller extends Controller
             {
                 $ua = $this->_redis->hgetall( 'ua:'.$id );
 
-                if ( !$first )
-                {
-                    $sql  .= ','; 
+                if ( $first )
                     $first = false;
-                }
+                else
+                    $sql  .= ','; 
 
                 $sql .= '( "'.$id.'", "'.$this->_escapeSql(substr($ua['ua'], 0, 255)).'" )';
 
