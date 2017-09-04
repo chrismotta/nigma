@@ -996,11 +996,12 @@ class Etl2Controller extends Controller
 
                 if ( !$first )
                 {
-                    $sql .= ','; 
+                    $sql  .= ','; 
+                    $first = false;
                 }
 
-                $sql .= '( "'.$id.'", "'.substr($this->_escapeSql($ua['ua']), 0, 255).'" )';
-                
+                $sql .= '( "'.$id.'", "'.$this->_escapeSql(substr($ua['ua'], 0, 255)).'" )';
+
                 // free memory cause there is no garbage collection until block ends
                 unset($ua);
             }
