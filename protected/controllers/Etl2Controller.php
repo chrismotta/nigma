@@ -981,12 +981,15 @@ class Etl2Controller extends Controller
 
         $uaCount = $this->_redis->zcard( 'uas' );
         $queries = ceil( $uaCount/$this->_objectLimit );
+
+        $startAt = 0;
+        $endAt   = $this->_objectLimit;
         $total   = 0;
 
-        for ( $i=0; $i<=$queries; $i++ )
+        for ( $i=0; $i<$queries; $i++ )
         {
             // load user agents into local cache
-            $userAgentIds = $this->_redis->zrange( 'uas', 0, $this->_objectLimit );
+            $userAgentIds = $this->_redis->zrange( 'uas', $startAt, $endAt );
             $sql          = 'INSERT IGNORE INTO user_agent_log ( hash, user_agent ) VALUES ';
 
             $first = true;
@@ -1008,6 +1011,9 @@ class Etl2Controller extends Controller
             $sql .= ';';
 
             $total += Yii::app()->db->createCommand( $sql )->execute();
+
+            $startAt += $this->_objectLimit-1;
+            $endAt   += $this->_objectLimit;
         }
 
         
