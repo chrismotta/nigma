@@ -159,7 +159,7 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			$phpTextJs = '<script type="text/javascript" src="http://req.'.$value.'/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 			
 			echo '<div class="text-right code-area-separator">';
-			echo $key . ' DOMAIN TAGS';
+			echo $key . ' DOMAIN TAGS: '.$value;
 			echo '</div>';
 
 			echo '<div class="text-left code-area">';
