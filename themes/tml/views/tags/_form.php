@@ -7,12 +7,14 @@
     
     <?php echo $form->textFieldRow($model,'name',array('class'=>'span5')); ?>
 
-    <?php 
+    <?php
     if(isset($model->campaigns_id)){
-        echo $form->hiddenField($model,'campaigns_id'); 
-    }else{
-        echo $form->textFieldRow($model,'campaigns_id',array('class'=>'span5')); 
-    }
+        if($model->isNewRecord){
+            echo $form->textFieldRow($model,'campaigns_id',array('class'=>'span5','readonly'=>'readonly')); 
+        }else{
+            echo $form->textFieldRow($model,'campaigns_id',array('class'=>'span5')); 
+        }
+    } 
     ?>
 
     <?php 
