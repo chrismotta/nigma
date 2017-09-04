@@ -987,7 +987,7 @@ class Etl2Controller extends Controller
         {
             // load user agents into local cache
             $userAgentIds = $this->_redis->zrange( 'uas', 0, $this->_objectLimit );
-            $sql          = 'INSERT INTO user_agent_log ( hash, user_agent ) VALUES ';
+            $sql          = 'INSERT IGNORE INTO user_agent_log ( hash, user_agent ) VALUES ';
 
             $first = true;
             foreach ( $userAgentIds as $id )
