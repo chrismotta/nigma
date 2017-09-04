@@ -999,7 +999,7 @@ class Etl2Controller extends Controller
                     $sql .= ','; 
                 }
 
-                $sql .= '( "'.$id.'", "'.$ua['ua'].'" )';
+                $sql .= '( "'.$id.'", "'.$this->_escapeSql($ua['ua']).'" )';
                 
                 // free memory cause there is no garbage collection until block ends
                 unset($ua);
