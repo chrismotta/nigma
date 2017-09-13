@@ -96,6 +96,7 @@ class Etl2Controller extends Controller
             'populatetags',
             'populateplacements',
             'scanloadedtag',
+            'useragents'
         );
 
         return array(
@@ -969,5 +970,56 @@ class Etl2Controller extends Controller
     {
         return floor(($this->_timestamp/60/60/24))%2+1;
     }
+
+
+    public function actionUseragents ( )
+    {
+        $start = time();
+
+        $this->_redis->select(0);
+
+
+        $uaCount = $this->_redis->zcard( 'uas' );
+        $queries = ceil( $uaCount/$this->_objectLimit );
+
+        $startAt = 0;
+        $endAt   = $this->_objectLimit;
+        $total   = 0;
+
+        for ( $i=0; $i<$queries; $i++ )
+        {
+            // load user agents into local cache
+            $userAgentIds = $this->_redis->zrange( 'uas', $startAt, $endAt );
+            $sql          = 'INSERT IGNORE INTO user_agent_log ( hash, user_agent ) VALUES ';
+
+            $first = true;
+            foreach ( $userAgentIds as $id )
+            {
+                $ua = $this->_redis->hgetall( 'ua:'.$id );
+
+                if ( $first )
+                    $first = false;
+                else
+                    $sql  .= ','; 
+
+                $sql .= '( "'.$id.'", "'.$this->_escapeSql(substr($ua['ua'], 0, 255)).'" )';
+
+                // free memory cause there is no garbage collection until block ends
+                unset($ua);
+            }
+
+            $sql .= ';';
+
+            $total += Yii::app()->db->createCommand( $sql )->execute();
+
+            $startAt += $this->_objectLimit-1;
+            $endAt   += $this->_objectLimit;
+        }
+
+        
+        $elapsed = time() - $start;
+
+        echo 'User agents: '.$total.' objects - load time: '.$elapsed.' seg.<hr/>';        
+    }    
 
 }
