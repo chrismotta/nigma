@@ -88,26 +88,43 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			    'class'    => 'placements-dropdownlist',
 			    'disabled' => true,
 			    'onChange' => '
-			    	var iframe = $("#tag_content_iframe").val();
-			    	var js = $("#tag_content_js").val();
 			    	// var jsi = $("#tag_content_jsi").val();
 			    	// var jsp = $("#tag_content_jsp").val();
 			    	// var url = $("#tag_content_url").val();
 
-		            $(".tag_content_iframe").val( iframe.replace(replaceMacro, this.value) );
-		            $(".tag_content_js").val( js.replace(replaceMacro, this.value) );
+			    	var newValue = this.value;
+
+			    	$(".tag_content_iframe").each(function( index ) {
+				    	var iframe = $(this).val();
+				    	console.log("text: "+iframe);
+				    	console.log("macro: "+replaceMacro);
+				    	console.log("value: "+newValue);
+			            
+			            $(this).val( iframe.replace(replaceMacro, newValue) );
+			        });
+			    	
+			    	$(".tag_content_js").each(function( index ) {
+				    	var js = $(this).val();
+				    	console.log(js);
+			            console.log(replaceMacro);
+				    	console.log(newValue);
+			            
+			            $(this).val( js.replace(replaceMacro, newValue) );
+			        });
+
+		            replaceMacro = this.value;
+
 		            // $("#tag_content_jsi").val( jsi.replace(replaceMacro, this.value) );
 		            // $("#tag_content_jsp").val( jsp.replace(replaceMacro, this.value) );
 		            // $("#tag_content_url").val( url.replace(replaceMacro, this.value) );
 
-		            replaceMacro = this.value;
 
-		            var downloadHref = $("#download-txt").attr("href");
-		            var downloadHrefSpl = downloadHref.split("?"); 
-		            downloadHref = downloadHrefSpl[0] + "?pid=" + this.value + "&protocol=" + replaceProtocol;
+		            // var downloadHref = $("#download-txt").attr("href");
+		            // var downloadHrefSpl = downloadHref.split("?"); 
+		            // downloadHref = downloadHrefSpl[0] + "?pid=" + this.value + "&protocol=" + replaceProtocol;
 
-		            console.log(downloadHref);
-		            $("#download-txt").attr("href", downloadHref);
+		            // console.log(downloadHref);
+		            // $("#download-txt").attr("href", downloadHref);
 		            return;
 		            ',
 			    ));
@@ -247,10 +264,10 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 		*/ ?>
 
 		<div class="text-right">
-		<?php echo CHtml::link('Download .txt',
+		<?php /* echo CHtml::link('Download .txt',
 			array('getTxt','id'=>$model->id),
 			array('id'=>'download-txt')
-			); ?>
+			); */ ?>
 		</div>
 	</div>
 </div>
