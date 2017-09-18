@@ -68,7 +68,7 @@ class StatsController extends Controller
 		$dateStart = date('Y-m-d', strtotime($_REQUEST['dateStart']));
 		$group  = array_merge($_REQUEST['group1'],$_REQUEST['group2']);
 		$sum = $_REQUEST['sum'];
-		$dp = $model->cache(3600)->search(false, null, true);
+		$dp = $model->cache(3600)->search(false);
 
 		foreach ($dp->getData() as $data) {
 			$row = array();
@@ -89,7 +89,7 @@ class StatsController extends Controller
 
 
 			if ( $group['tag'] )
-				$row['Tag']      				= $data->tag;
+				$row['Tag']      				= str_replace(',', '', $data->tag);
 
 
 			if ( $group['advertiser'] )
@@ -135,10 +135,10 @@ class StatsController extends Controller
 				$row['Carrier']      			= $data->carrier;	
 
 			if ( $sum['impressions'] )
-				$row['Impressions']      		= $data->impressions;			
+				$row['Impressions']      		= str_replace(',', '', $data->impressions);			
 
 			if ( $sum['unique_imps'] )
-				$row['Unique Imps']      		= $data->unique_imps;
+				$row['Unique Imps']      		= str_replace(',', '', $data->unique_imps);
 
 			if ( $sum['revenue'] )
 				$row['Revenue']      			= $data->revenue;
