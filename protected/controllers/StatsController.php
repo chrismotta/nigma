@@ -89,7 +89,7 @@ class StatsController extends Controller
 
 
 			if ( $group['tag'] )
-				$row['Tag']      				= str_replace(',', '.', $data->tag);
+				$row['Tag']      				= $data->tag;
 
 
 			if ( $group['advertiser'] )
@@ -135,10 +135,10 @@ class StatsController extends Controller
 				$row['Carrier']      			= $data->carrier;	
 
 			if ( $sum['impressions'] )
-				$row['Impressions']      		= str_replace(',', '.', $data->impressions);			
+				$row['Impressions']      		= $data->impressions;			
 
 			if ( $sum['unique_imps'] )
-				$row['Unique Imps']      		= str_replace(',', '.', $data->unique_imps);
+				$row['Unique Imps']      		= $data->unique_imps;
 
 			if ( $sum['revenue'] )
 				$row['Revenue']      			= $data->revenue;
