@@ -94,8 +94,8 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			    	// var jsp = $("#tag_content_jsp").val();
 			    	// var url = $("#tag_content_url").val();
 
-		            $("#tag_content_iframe").val( iframe.replace(replaceMacro, this.value) );
-		            $("#tag_content_js").val( js.replace(replaceMacro, this.value) );
+		            $(".tag_content_iframe").val( iframe.replace(replaceMacro, this.value) );
+		            $(".tag_content_js").val( js.replace(replaceMacro, this.value) );
 		            // $("#tag_content_jsi").val( jsi.replace(replaceMacro, this.value) );
 		            // $("#tag_content_jsp").val( jsp.replace(replaceMacro, this.value) );
 		            // $("#tag_content_url").val( url.replace(replaceMacro, this.value) );
@@ -123,11 +123,11 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			    'prompt'   => 'Select a placement',
 			    'class'    => 'placements-radio',
 			    'onChange' => '
-			    	var iframe = $("#tag_content_iframe").val();
-			    	var js = $("#tag_content_js").val();
+			    	var iframe = $(".tag_protocol_iframe").val();
+			    	var js = $(".tag_protocol_js").val();
 
-		            $("#tag_content_iframe").val( iframe.replace(replaceProtocol, this.value) );
-		            $("#tag_content_js").val( js.replace(replaceProtocol, this.value) );
+		            $(".tag_protocol_iframe").val( iframe.replace(replaceProtocol, this.value) );
+		            $(".tag_protocol_js").val( js.replace(replaceProtocol, this.value) );
 
 		            replaceProtocol = this.value;
 
@@ -148,25 +148,37 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 
 		<?php 
 
-		$domains['MAIN'] = 'mobformance.com';
-		$domains['ALT_1'] = 'performile.com';
-		$domains['ALT_2'] = 'bidmachine.co';
-		$domains['ALT_3'] = 'bidbox.co';
+		$domains[] = array(
+			'domain' => 'bidmachine.co',
+			'name' => 'MAIN DOMAIN (HTTPS ALLOWED)',
+			'secure' => true,
+		);
+		$domains[] = array(
+			'domain' => 'mobformance.com',
+			'name' => 'ALT_1 DOMAIN (HTTP ONLY)',
+			'secure' => false,
+		);
+		$domains[] = array(
+			'domain' => 'performile.com',
+			'name' => 'ALT_2 DOMAIN (HTTP ONLY)',
+			'secure' => false,
+		);
 
-		foreach ($domains as $key => $value) {
+		foreach ($domains as $value) {
 
-			$phpTextIframe = '<iframe src="http://req.'.$value.'/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
-			$phpTextJs = '<script type="text/javascript" src="http://req.'.$value.'/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
+			$phpTextIframe = '<iframe src="http://req.'.$value['domain'].'/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>" width="'. $width .'" height="'. $height .'" frameborder="0" scrolling="no" ></iframe>';
+			
+			$phpTextJs = '<script type="text/javascript" src="http://req.'.$value['domain'].'/js/'. $id . '?pid=<placementID>&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $height .'"></script>';
 			
 			echo '<div class="text-right code-area-separator">';
-			echo $key . ' DOMAIN TAGS: '.$value;
+			echo $value['name'] . ': ' . $value['domain'];
 			echo '</div>';
 
 			echo '<div class="text-left code-area">';
 			echo 'Iframe';
 			
 			echo CHtml::textArea('tag_content_iframe', $phpTextIframe,
-				array('id'=>'tag_content_iframe', 
+				array('class' => $value['secure'] ? 'tag_content_iframe tag_protocol_iframe' : 'tag_content_iframe', 
 				'readonly' => true,
 				'style'=>'width:100%;height:60px;cursor:text'));
 			
@@ -176,7 +188,7 @@ $jsText2 = '&pubid=<INSERT_PUBID_MACRO_HERE>&width='. $width .'&height='. $heigh
 			echo 'Javascript';
 
 			echo CHtml::textArea('tag_content_js', $phpTextJs,
-				array('id'=>'tag_content_js', 
+				array('class' => $value['secure'] ? 'tag_content_js tag_protocol_js' : 'tag_content_js', 
 				'readonly' => true,
 				'style'=>'width:100%;height:60px;cursor:text')); 
 			

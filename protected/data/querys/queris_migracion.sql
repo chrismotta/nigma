@@ -253,3 +253,32 @@ ADD INDEX `browser_version` (`os_version` ASC),
 ALTER TABLE `nigma`.`F_Imp_Compact` 
 ADD INDEX `carrier` (`carrier` ASC),
 ADD INDEX `connection_type` (`connection_type` ASC)
+
+
+
+#
+ALTER TABLE `nigma`.`F_Imp_Compact` 
+DROP COLUMN `D_UserAgent_id`,
+DROP COLUMN `D_GeoLocation_id`
+
+
+
+# compact data 
+#261251997
+
+SET @compactdate := '2017-06-08';
+SET @maxid := (SELECT MAX(id) FROM F_Imp_Compact);
+
+INSERT INTO F_Imp_Compact 
+( ad_server_id, D_Demand_id, D_Supply_id, date_time, ad_req, imps, unique_imps, revenue, cost , country, connection_type, device_type, os_type, os_version ) 
+SELECT ad_server_id, D_Demand_id AS D_Demand_id, D_Supply_id AS D_Supply_id, date_time AS date_time, SUM(imps) AS ad_req, SUM(imps) AS imps, SUM(unique_imps) AS unique_imps, SUM(revenue) AS revenue, SUM(cost) AS cost , country, connection_type, device_type, os_type, os_version 
+FROM F_Imp_Compact 
+WHERE date(date_time) = @compactdate 
+GROUP BY ad_server_id, D_Demand_id, D_Supply_id , country, connection_type, device_type, os_type, os_version
+;
+
+DELETE FROM F_Imp_Compact WHERE date(date_time) = @compactdate AND id <= @maxid;
+
+# chech data
+
+select date(date_time), count(*), sum(imps), sum(unique_imps), sum(revenue), sum(cost) from F_Imp_Compact where date(date_time) = @compactdate and id > @maxid;
