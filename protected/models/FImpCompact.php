@@ -161,7 +161,7 @@ class FImpCompact extends CActiveRecord
 	 * @return CActiveDataProvider the data provider that can return the models
 	 * based on the search/filter conditions.
 	 */
-	public function search($totals=false, $partner=null)
+	public function search($totals=false, $partner=null, $csv=false)
 	{
 		// @todo Please modify the following code to remove attributes that should not be searched.
 
@@ -316,8 +316,8 @@ class FImpCompact extends CActiveRecord
 			return $this->find($criteria); 
 		}else{
 			return new CActiveDataProvider($this, array(
-				'criteria'=>$criteria,
-				'pagination'=> KHtml::pagination($request),
+				'criteria'   => $criteria,
+				'pagination' => $csv ? false : KHtml::pagination($request),
 				'sort'=>array(
 					'route' => !$partner ? 'stats/impressions' : 'partners/previewPublishersCPM',
 					'params' => $request,

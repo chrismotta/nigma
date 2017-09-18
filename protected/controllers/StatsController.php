@@ -68,7 +68,7 @@ class StatsController extends Controller
 		$dateStart = date('Y-m-d', strtotime($_REQUEST['dateStart']));
 		$group  = array_merge($_REQUEST['group1'],$_REQUEST['group2']);
 		$sum = $_REQUEST['sum'];
-		$dp = $model->cache(3600)->search(false);
+		$dp = $model->cache(3600)->search(false, null, true);
 
 		foreach ($dp->getData() as $data) {
 			$row = array();
