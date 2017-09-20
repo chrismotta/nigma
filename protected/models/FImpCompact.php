@@ -228,6 +228,7 @@ class FImpCompact extends CActiveRecord
 			);
 		$sumQuerys = array(
 			// sum
+			'ad_req'          => 'SUM(t.ad_req)',
 			'impressions'     => 'SUM(t.imps)',
 			//'unique_user'     => 'COUNT(distinct t.unique_id)',
 			'unique_imps'     => 'SUM(t.unique_imps)',
@@ -241,6 +242,7 @@ class FImpCompact extends CActiveRecord
 		$selectQuerys = array_merge($groupQuerys, $sumQuerys);
 
 		$decimalColumns = array(
+			'ad_req'          => '0',
 			'impressions'     => '0',
 			'unique_imps'     => '0',
 			'revenue'         => '2',
