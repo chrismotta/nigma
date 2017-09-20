@@ -69,7 +69,7 @@ echo '<div class="row-fluid">';
 	echo '</div>';
 echo '</div>';
 
-
+// defaults
 
 $groupColumns1 = array();
 $groupColumns1['date']                     = 0;
@@ -99,7 +99,7 @@ if(isset($_REQUEST['group2']))
 	$groupColumns2 = $_REQUEST['group2'];
 
 $sumColumns = array();
-$sumColumns['ad_req']                    = 0;
+$sumColumns['ad_req']                    = 1;
 $sumColumns['impressions']               = 1;
 $sumColumns['unique_imps']               = 1;
 $sumColumns['revenue']                   = 1;
