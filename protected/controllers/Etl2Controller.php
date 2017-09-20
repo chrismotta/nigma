@@ -312,7 +312,8 @@ class Etl2Controller extends Controller
                 D_Demand_id,
                 D_Supply_id,
                 ad_req,
-                imps,                
+                imps,     
+                unique_imps,           
                 date_time,
                 cost,
                 revenue,
@@ -387,11 +388,14 @@ class Etl2Controller extends Controller
                     else
                         $ad_req = $log['imps'];
 
+                    $uniqueImps = $log['imps']>0 ? 1 : 0;
+                    
                     $values .= '( 
                         '.$log['tag_id'].',
                         '.$pid.',
                         '.$ad_req.',  
                         '.$log['imps'].', 
+                        '.$uniqueImps.', 
                         "'.\date( 'Y-m-d H:i:s', $log['imp_time'] ).'",                 
                         '.$log['cost'].',  
                         '.$log['revenue'].',  
