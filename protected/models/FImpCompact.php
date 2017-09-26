@@ -138,7 +138,7 @@ class FImpCompact extends CActiveRecord
             'impressions'     => 'Impressions',
             'ad_req'          => 'Ad Requests',
             'imps'            => 'Impressions',
-            'unique_imps'     => 'Unique Imps', 
+            'unique_imps'     => 'Unique Usr', 
             'revenue'         => 'Revenue', 
             'cost'            => 'Cost', 
             'profit'          => 'Profit', 
