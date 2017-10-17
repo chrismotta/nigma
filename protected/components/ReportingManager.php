@@ -26,9 +26,10 @@ class ReportingManager
             'browser_type'    => 'Browser',
             'browser_version' => 'Browser Version',
             // sums
+            'ad_req'          => 'Ad. Requests',
             'impressions'     => 'Impressions',
             'unique_user'     => 'Unique Users', 
-            'unique_imps'     => 'Unique Imps', 
+            'unique_imps'     => 'Unique Usr', 
             'revenue'         => 'Revenue', 
             'cost'            => 'Cost', 
             'profit'          => 'Profit', 

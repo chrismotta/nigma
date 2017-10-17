@@ -69,7 +69,7 @@ echo '<div class="row-fluid">';
 	echo '</div>';
 echo '</div>';
 
-
+// defaults
 
 $groupColumns1 = array();
 $groupColumns1['date']                     = 0;
@@ -99,6 +99,7 @@ if(isset($_REQUEST['group2']))
 	$groupColumns2 = $_REQUEST['group2'];
 
 $sumColumns = array();
+$sumColumns['ad_req']                    = 1;
 $sumColumns['impressions']               = 1;
 $sumColumns['unique_imps']               = 1;
 $sumColumns['revenue']                   = 1;
@@ -339,6 +340,14 @@ if(count($_REQUEST)>1){
 			array(
 				'name' => 'carrier',
 				'visible' => $groupColumns2['carrier'],
+				),
+			array(
+				'name' => 'ad_req',
+				'visible' => $sumColumns['ad_req'],
+				'footer' => $totals['ad_req'],
+				'headerHtmlOptions' => array('style'=>'text-align:right'),
+				'htmlOptions' => array('style'=>'text-align:right'),
+				'footerHtmlOptions' => array('style'=>'text-align:right'),
 				),
 			array(
 				'name' => 'impressions',

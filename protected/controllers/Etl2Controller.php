@@ -388,7 +388,8 @@ class Etl2Controller extends Controller
                     else
                         $ad_req = $log['imps'];
 
-                    $uniqueImps = $log['imps']>0 ? 1 : 0;
+                    // every ad request register a unique imp
+                    $uniqueImps = 1;//$log['imps']>0 ? 1 : 0;
                     
                     $values .= '( 
                         '.$log['tag_id'].',

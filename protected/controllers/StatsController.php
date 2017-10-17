@@ -134,6 +134,9 @@ class StatsController extends Controller
 			if ( $group['carrier'] )
 				$row['Carrier']      			= $data->carrier;	
 
+			if ( $sum['ad_req'] )
+				$row['ad_req']          		= str_replace(',', '', $data->ad_req);			
+
 			if ( $sum['impressions'] )
 				$row['Impressions']      		= str_replace(',', '', $data->impressions);			
 
