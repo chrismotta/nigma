@@ -113,7 +113,7 @@ class PartnersController extends Controller
 		$dateEnd = isset($_POST['excel-dateEnd']) ? $_POST['excel-dateEnd'] : NULL;
 		$sum = isset($_POST['sum']) ? $_POST['sum'] : 0;
 
-		$dp = $model->advertiserSearch($advertiser->id, $dateStart, $dateEnd, $sum, false);
+		$dp = $model->advertiserSearch($advertiser->id, $dateStart, $dateEnd, $sum, false, false);
 		$user_visibility = Visibility::model()->findByAttributes(array('users_id' => $userId));
 
 		if( isset($_POST['excel-report-form']) ) {

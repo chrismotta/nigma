@@ -1657,7 +1657,7 @@ class DailyReport extends CActiveRecord
 	 * @param  boolean $totals     [description]
 	 * @return [type]              [description]
 	 */
-	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL, $sum=0, $totals=false){
+	public function advertiserSearch($advertiser=null, $startDate=NULL, $endDate=NULL, $sum=0, $totals=false, $pagination = true ){
 
 		$criteria = new CDbCriteria;
 		// Related search criteria items added (use only table.columnName)
@@ -1702,11 +1702,20 @@ class DailyReport extends CActiveRecord
 		if($totals){
 			return Self::model()->find($criteria);
 		}else{
+			if ( $pagination )
+			{
+				$p = array(
+			        'pageSize'=>50,
+			    );				
+			}
+			else
+			{
+				$p = false;
+			}
+
 			return new CActiveDataProvider($this, array(
 				'criteria'=>$criteria,
-			    'pagination'=>array(
-			        'pageSize'=>50,
-			    ),
+			    'pagination'=> $p,
 				'sort'=>array(
 					'defaultOrder' => 't.id DESC',
 					'attributes'   => array(
