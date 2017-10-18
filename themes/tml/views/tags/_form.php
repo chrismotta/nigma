@@ -47,6 +47,12 @@
         array('class' => 'span5', 'rows' => 5)
         ); ?>
 
+    <?php echo $form->textAreaRow(
+        $model,
+        'pubid_blacklist',
+        array('class' => 'span5', 'rows' => 5)
+        ); ?>        
+
     <div id='macros' style="margin: -8px 0 10px 0;">
         <small>To show all the traffic without passback put <b>{show_all}</b></small> 
     </div>
